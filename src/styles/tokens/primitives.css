@@ -1,0 +1,410 @@
+/* ============================================================================
+ * Poneglyph · Primitive Tokens (Tier 1)
+ * ----------------------------------------------------------------------------
+ * Raw design atoms. The lowest layer of the token system.
+ *
+ * RULES
+ *   1. Primitives are NEVER consumed directly by components or templates.
+ *      Components must only consume semantic tokens (see `semantic.css`).
+ *   2. Primitives are theme-agnostic: the same values apply in light, dark,
+ *      and any future theme. Re-theming happens at the semantic layer by
+ *      re-aliasing primitives — primitives themselves do not change.
+ *   3. Primitives are ordered ramps. Prefer adding a new step on an existing
+ *      ramp over introducing a one-off value.
+ *
+ * NAMING
+ *   --<category>-<hue>-<step>   e.g. --color-gray-500, --color-red-600
+ *   --<category>-<step>         e.g. --radius-md, --duration-200
+ *
+ * COLOR SPACE
+ *   All colors are authored in OKLCH for perceptually-uniform ramps.
+ *   Format: oklch(L C H)  where L ∈ [0..1], C ≈ [0..0.4], H ∈ [0..360]
+ *
+ * SCALE PATTERN
+ *   50  — background tints
+ *   100 — subtle surfaces
+ *   200 — hairline borders
+ *   300 — disabled / placeholder
+ *   400 — secondary text on light / strong border
+ *   500 — mid-key (often the "500 is the brand" convention)
+ *   600 — primary action bg on light
+ *   700 — hover on 600
+ *   800 — pressed / text on light
+ *   900 — strong text / surface on dark
+ *   950 — deepest surface on dark
+ * ========================================================================== */
+
+:root {
+  /* --------------------------------------------------------------------------
+   * Color · Gray (neutral ramp — the workhorse of the system)
+   * ------------------------------------------------------------------------ */
+  --color-gray-0:   oklch(1     0 0);       /* pure white */
+  --color-gray-50:  oklch(0.985 0 0);
+  --color-gray-100: oklch(0.97  0 0);
+  --color-gray-200: oklch(0.922 0 0);
+  --color-gray-300: oklch(0.87  0 0);
+  --color-gray-400: oklch(0.708 0 0);
+  --color-gray-500: oklch(0.556 0 0);
+  --color-gray-600: oklch(0.439 0 0);
+  --color-gray-700: oklch(0.371 0 0);
+  --color-gray-800: oklch(0.269 0 0);
+  --color-gray-900: oklch(0.205 0 0);
+  --color-gray-950: oklch(0.145 0 0);
+  --color-gray-1000: oklch(0    0 0);       /* pure black */
+
+  /* --------------------------------------------------------------------------
+   * Color · Red (destructive / error)
+   * ------------------------------------------------------------------------ */
+  --color-red-50:  oklch(0.971 0.013 17.38);
+  --color-red-100: oklch(0.936 0.032 17.72);
+  --color-red-200: oklch(0.885 0.062 18.33);
+  --color-red-300: oklch(0.808 0.114 19.57);
+  --color-red-400: oklch(0.704 0.191 22.22);
+  --color-red-500: oklch(0.637 0.237 25.33);
+  --color-red-600: oklch(0.577 0.245 27.33);
+  --color-red-700: oklch(0.505 0.213 27.52);
+  --color-red-800: oklch(0.444 0.177 26.90);
+  --color-red-900: oklch(0.396 0.141 25.72);
+  --color-red-950: oklch(0.258 0.092 26.04);
+
+  /* --------------------------------------------------------------------------
+   * Color · Green (success)
+   * ------------------------------------------------------------------------ */
+  --color-green-50:  oklch(0.982 0.018 155.83);
+  --color-green-100: oklch(0.962 0.044 156.74);
+  --color-green-200: oklch(0.925 0.084 155.99);
+  --color-green-300: oklch(0.871 0.150 154.45);
+  --color-green-400: oklch(0.792 0.209 151.71);
+  --color-green-500: oklch(0.723 0.219 149.58);
+  --color-green-600: oklch(0.627 0.194 149.21);
+  --color-green-700: oklch(0.527 0.154 150.07);
+  --color-green-800: oklch(0.448 0.119 151.33);
+  --color-green-900: oklch(0.393 0.095 152.54);
+  --color-green-950: oklch(0.266 0.065 152.93);
+
+  /* --------------------------------------------------------------------------
+   * Color · Amber (warning)
+   * ------------------------------------------------------------------------ */
+  --color-amber-50:  oklch(0.987 0.022 95.28);
+  --color-amber-100: oklch(0.962 0.059 95.62);
+  --color-amber-200: oklch(0.924 0.120 95.75);
+  --color-amber-300: oklch(0.879 0.169 91.61);
+  --color-amber-400: oklch(0.828 0.189 84.43);
+  --color-amber-500: oklch(0.769 0.188 70.08);
+  --color-amber-600: oklch(0.666 0.179 58.32);
+  --color-amber-700: oklch(0.555 0.163 48.99);
+  --color-amber-800: oklch(0.473 0.137 46.20);
+  --color-amber-900: oklch(0.414 0.112 45.90);
+  --color-amber-950: oklch(0.279 0.077 45.64);
+
+  /* --------------------------------------------------------------------------
+   * Color · Blue (info / accent option)
+   * ------------------------------------------------------------------------ */
+  --color-blue-50:  oklch(0.970 0.014 254.60);
+  --color-blue-100: oklch(0.932 0.032 255.59);
+  --color-blue-200: oklch(0.882 0.059 254.12);
+  --color-blue-300: oklch(0.809 0.105 251.81);
+  --color-blue-400: oklch(0.707 0.165 254.62);
+  --color-blue-500: oklch(0.623 0.214 259.81);
+  --color-blue-600: oklch(0.546 0.245 262.88);
+  --color-blue-700: oklch(0.488 0.243 264.38);
+  --color-blue-800: oklch(0.424 0.199 265.64);
+  --color-blue-900: oklch(0.379 0.146 265.52);
+  --color-blue-950: oklch(0.282 0.091 267.94);
+
+  /* --------------------------------------------------------------------------
+   * Color · Apna brand ramps
+   *
+   * Derived from the Apna logo + product screenshots:
+   *   apna-green  · #1F8268 — primary CTA, selected state, positive column
+   *   apna-gold   · #FFD166 — inline typography highlight, price callouts
+   *   apna-navy   · #0F0B1A — dark-mode surface (deep blue-purple, not black)
+   *   apna-plum   · #4D3951 — wordmark text (reserved, not currently in semantic map)
+   *   apna-sky    · #83BDE4 — tertiary accent (reserved)
+   *
+   * The ramps below are tuned so the anchor step (600 for green, 400 for
+   * gold, 950 for navy) lands on the brand hex value. Intermediate steps
+   * are perceptually interpolated in OKLCH.
+   * ------------------------------------------------------------------------ */
+  --color-apna-green-50:  oklch(0.972 0.018 165);
+  --color-apna-green-100: oklch(0.935 0.040 165);
+  --color-apna-green-200: oklch(0.884 0.074 165);
+  --color-apna-green-300: oklch(0.808 0.112 165);
+  --color-apna-green-400: oklch(0.709 0.128 165);
+  --color-apna-green-500: oklch(0.612 0.118 165);
+  --color-apna-green-600: oklch(0.510 0.090 168);   /* #1F8268 anchor */
+  --color-apna-green-700: oklch(0.432 0.076 168);
+  --color-apna-green-800: oklch(0.372 0.065 168);
+  --color-apna-green-900: oklch(0.314 0.054 168);
+  --color-apna-green-950: oklch(0.216 0.038 168);
+
+  --color-apna-gold-50:  oklch(0.985 0.020 90);
+  --color-apna-gold-100: oklch(0.962 0.050 90);
+  --color-apna-gold-200: oklch(0.928 0.098 88);
+  --color-apna-gold-300: oklch(0.902 0.128 87);
+  --color-apna-gold-400: oklch(0.878 0.146 87);    /* #FFD166 anchor */
+  --color-apna-gold-500: oklch(0.800 0.148 85);
+  --color-apna-gold-600: oklch(0.706 0.148 78);
+  --color-apna-gold-700: oklch(0.586 0.142 65);
+  --color-apna-gold-800: oklch(0.485 0.118 55);
+  --color-apna-gold-900: oklch(0.410 0.095 52);
+  --color-apna-gold-950: oklch(0.285 0.067 48);
+
+  --color-apna-navy-50:  oklch(0.980 0.006 290);
+  --color-apna-navy-100: oklch(0.950 0.010 290);
+  --color-apna-navy-200: oklch(0.900 0.018 290);
+  --color-apna-navy-300: oklch(0.820 0.028 290);
+  --color-apna-navy-400: oklch(0.660 0.044 290);
+  --color-apna-navy-500: oklch(0.520 0.050 290);
+  --color-apna-navy-600: oklch(0.400 0.048 290);
+  --color-apna-navy-700: oklch(0.300 0.040 291);
+  --color-apna-navy-800: oklch(0.220 0.034 291);
+  --color-apna-navy-900: oklch(0.170 0.028 291);
+  --color-apna-navy-950: oklch(0.130 0.024 291);   /* #0F0B1A anchor */
+
+  --color-apna-plum-600: oklch(0.330 0.036 324);   /* #4D3951 — wordmark */
+  --color-apna-sky-400:  oklch(0.760 0.090 240);   /* #83BDE4 — tertiary accent */
+
+  /* --------------------------------------------------------------------------
+   * Color · Alpha (translucent neutrals for overlays, rings, dividers)
+   * ------------------------------------------------------------------------ */
+  --color-alpha-black-5:   oklch(0 0 0 / 0.05);
+  --color-alpha-black-10:  oklch(0 0 0 / 0.10);
+  --color-alpha-black-20:  oklch(0 0 0 / 0.20);
+  --color-alpha-black-40:  oklch(0 0 0 / 0.40);
+  --color-alpha-black-60:  oklch(0 0 0 / 0.60);
+  --color-alpha-white-5:   oklch(1 0 0 / 0.05);
+  --color-alpha-white-10:  oklch(1 0 0 / 0.10);
+  --color-alpha-white-15:  oklch(1 0 0 / 0.15);
+  --color-alpha-white-20:  oklch(1 0 0 / 0.20);
+  --color-alpha-white-40:  oklch(1 0 0 / 0.40);
+
+  /* --------------------------------------------------------------------------
+   * Radius — modular scale
+   *
+   * TWO KNOBS drive the entire ramp:
+   *   --radius-base    anchor corner (the `md` step). Shift to retune the
+   *                    whole system's perceived softness without touching
+   *                    individual steps.
+   *   --radius-ratio   geometric multiplier between adjacent steps. Raise
+   *                    for a more dramatic progression, lower for a tighter
+   *                    one. Typical range: 1.2 – 1.4.
+   *
+   * `none` and `full` are intentionally NOT on the ramp — they're discrete
+   * behaviours (square corner, pill corner), not a size step.
+   * ------------------------------------------------------------------------ */
+  /* Radius is authored in `px`, not `rem`, on purpose: corner softness is a
+     visual constant tied to the physical pixel grid. If a user bumps their
+     browser root font size for accessibility, text scales but corners should
+     not — distorting corner curvature with accessibility zoom looks wrong.  */
+  --radius-base:  8px;     /* the anchor (md)                                */
+  --radius-ratio: 1.25;    /* geometric step between corners                 */
+
+  --radius-none: 0;
+  --radius-xs:   calc(var(--radius-base) / var(--radius-ratio) / var(--radius-ratio)); /* md / ratio^2 */
+  --radius-sm:   calc(var(--radius-base) / var(--radius-ratio));                        /* md / ratio   */
+  --radius-md:   var(--radius-base);                                                    /* anchor       */
+  --radius-lg:   calc(var(--radius-base) * var(--radius-ratio));                        /* md * ratio   */
+  --radius-xl:   calc(var(--radius-base) * var(--radius-ratio) * var(--radius-ratio));  /* md * ratio^2 */
+  --radius-2xl:  calc(var(--radius-base) * var(--radius-ratio) * var(--radius-ratio) * var(--radius-ratio)); /* md * ratio^3 */
+  --radius-3xl:  calc(var(--radius-base) * var(--radius-ratio) * var(--radius-ratio) * var(--radius-ratio) * var(--radius-ratio)); /* md * ratio^4 */
+  --radius-full: 9999px;   /* pills, avatars — a behaviour, not a step       */
+
+  /* --------------------------------------------------------------------------
+   * Typography · Families
+   *
+   * The sans/mono stacks *pull in* whichever font next/font is serving via
+   * its generated `--font-geist-*` CSS variable (set on <html> in
+   * layout.tsx). That one hook means: change the font in layout.tsx and
+   * the whole system re-themes — no edits needed here.
+   * ------------------------------------------------------------------------ */
+  --font-family-sans:  var(--font-geist-sans, "Figtree"),
+                       ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+                       "Segoe UI", sans-serif;
+  --font-family-mono:  var(--font-geist-mono, "Geist Mono"),
+                       ui-monospace, SFMono-Regular, Menlo,
+                       Monaco, Consolas, monospace;
+  --font-family-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+
+  /* --------------------------------------------------------------------------
+   * Typography · Size ramp — tuned for UI density
+   *
+   * We originally shipped a pure geometric minor-third scale off a 1rem
+   * anchor. In practice that pushed `text-sm` to 13.33px — noticeably
+   * smaller than the 14px every UI toolkit (Tailwind, Material, Polaris,
+   * shadcn, Radix) uses for body/control text. At small sizes a modular
+   * ratio rounds to the wrong integers: every control ended up reading
+   * "slightly off."
+   *
+   * Pragmatic fix: align the body scale (sm → 3xl) with the conventional
+   * 14 / 16 / 18 / 20 / 24 / 30px ramp, and keep a geometric display
+   * ramp above it for marketing surfaces. rem units are retained so the
+   * whole system still respects the root font-size preference.
+   *
+   * If you want to retune the system for a denser / airier density,
+   * change these values — do NOT switch back to calc() on a ratio.
+   * ------------------------------------------------------------------------ */
+  --font-size-base: 1rem; /* 16px — body anchor (kept for compatibility) */
+
+  --font-size-2xs: 0.625rem;  /* 10px  — micro labels, stat subcopy        */
+  --font-size-xs:  0.75rem;   /* 12px  — meta, captions                    */
+  --font-size-sm:  0.875rem;  /* 14px  — controls, table cells, body-sm    */
+  --font-size-md:  1rem;      /* 16px  — body default                      */
+  --font-size-lg:  1.125rem;  /* 18px  — lead paragraph, card title        */
+  --font-size-xl:  1.25rem;   /* 20px  — page subtitle                     */
+  --font-size-2xl: 1.5rem;    /* 24px  — section heading                   */
+  --font-size-3xl: 1.875rem;  /* 30px  — page title                        */
+  --font-size-4xl: 2.25rem;   /* 36px  — hero small                        */
+
+  /* Display scale — geometric bump for marketing-level drama.              */
+  --font-size-5xl: 3rem;      /* 48px */
+  --font-size-6xl: 3.75rem;   /* 60px */
+
+  /* --------------------------------------------------------------------------
+   * Typography · Line-height ramp (unitless, pairs with size ramp)
+   * ------------------------------------------------------------------------ */
+  --line-height-tight:   1.15;
+  --line-height-snug:    1.3;
+  --line-height-normal:  1.5;
+  --line-height-relaxed: 1.625;
+  --line-height-loose:   1.85;
+
+  /* --------------------------------------------------------------------------
+   * Typography · Weight (raw CSS weights, 100 → 900)
+   *
+   * Role-named weights (regular / medium / bold / …) live on the SEMANTIC
+   * tier. Changing "regular" from 400 → 300 is a one-line edit in
+   * semantic.css — the primitives below never change.
+   * ------------------------------------------------------------------------ */
+  --font-weight-100: 100; /* thin        */
+  --font-weight-200: 200; /* extralight  */
+  --font-weight-300: 300; /* light       */
+  --font-weight-400: 400; /* book        */
+  --font-weight-500: 500; /* medium      */
+  --font-weight-600: 600; /* semibold    */
+  --font-weight-700: 700; /* bold        */
+  --font-weight-800: 800; /* extrabold   */
+  --font-weight-900: 900; /* black       */
+
+  /* --------------------------------------------------------------------------
+   * Typography · Letter-spacing
+   * ------------------------------------------------------------------------ */
+  --letter-spacing-tighter: -0.04em;
+  --letter-spacing-tight:   -0.02em;
+  --letter-spacing-normal:  0;
+  --letter-spacing-wide:     0.02em;
+  --letter-spacing-wider:    0.06em;
+  --letter-spacing-widest:   0.12em;
+
+  /* --------------------------------------------------------------------------
+   * Spacing — numeric scale anchored on a 4px base unit.
+   *
+   * Every step listed here is explicitly sanctioned. If your design calls
+   * for a gap or padding that isn't on this ramp, you are almost certainly
+   * wrong — round to the nearest step. A genuinely new step requires a
+   * system-level review (see AGENTS.md · Strict mode).
+   *
+   * Odd multiples (7, 9, 11, 13, …) are deliberately omitted so the system
+   * funnels towards consistent rhythm. If one turns out to be necessary,
+   * add it here with a comment explaining the intent — do NOT reach for an
+   * arbitrary Tailwind value (`p-[13px]`) in the consumer.
+   * ------------------------------------------------------------------------ */
+  --spacing-base: 0.25rem;       /* 4px — do not change without a system audit */
+
+  --space-0:    0;
+  --space-px:   1px;
+  --space-0-5:  0.125rem;        /*   2px  hairline gap                         */
+  --space-1:    0.25rem;         /*   4px  tight inline                         */
+  --space-1-5:  0.375rem;        /*   6px                                       */
+  --space-2:    0.5rem;          /*   8px  small inline                         */
+  --space-3:    0.75rem;         /*  12px                                       */
+  --space-4:    1rem;            /*  16px  default inset                        */
+  --space-5:    1.25rem;         /*  20px                                       */
+  --space-6:    1.5rem;          /*  24px  default stack                        */
+  --space-8:    2rem;            /*  32px                                       */
+  --space-10:   2.5rem;          /*  40px                                       */
+  --space-12:   3rem;            /*  48px  block gap                            */
+  --space-14:   3.5rem;          /*  56px                                       */
+  --space-16:   4rem;            /*  64px                                       */
+  --space-20:   5rem;            /*  80px                                       */
+  --space-24:   6rem;            /*  96px  section gap                          */
+  --space-28:   7rem;            /* 112px                                       */
+  --space-32:   8rem;            /* 128px                                       */
+  --space-40:  10rem;            /* 160px                                       */
+  --space-48:  12rem;            /* 192px                                       */
+  --space-56:  14rem;            /* 224px                                       */
+  --space-64:  16rem;            /* 256px  page-level max                       */
+
+  /* --------------------------------------------------------------------------
+   * Shadow · Elevation ramp. Composed from neutral + alpha primitives only.
+   * ------------------------------------------------------------------------ */
+  --shadow-xs:   0 1px 2px 0 var(--color-alpha-black-5);
+  --shadow-sm:   0 1px 2px 0 var(--color-alpha-black-5), 0 1px 3px 0 var(--color-alpha-black-10);
+  --shadow-md:   0 2px 4px -1px var(--color-alpha-black-10), 0 4px 6px -1px var(--color-alpha-black-10);
+  --shadow-lg:   0 4px 6px -2px var(--color-alpha-black-5), 0 10px 15px -3px var(--color-alpha-black-10);
+  --shadow-xl:   0 8px 10px -6px var(--color-alpha-black-10), 0 20px 25px -5px var(--color-alpha-black-10);
+  --shadow-2xl:  0 25px 50px -12px var(--color-alpha-black-20);
+  --shadow-inner: inset 0 2px 4px 0 var(--color-alpha-black-5);
+
+  /* --------------------------------------------------------------------------
+   * Motion · Durations
+   * ------------------------------------------------------------------------ */
+  --duration-instant: 0ms;
+  --duration-75:     75ms;
+  --duration-100:   100ms;
+  --duration-150:   150ms;
+  --duration-200:   200ms;  /* default for hover/pressed state changes      */
+  --duration-300:   300ms;  /* default for small enter/exit                 */
+  --duration-500:   500ms;  /* default for large surfaces (sheets, dialogs) */
+  --duration-700:   700ms;
+  --duration-1000: 1000ms;
+
+  /* --------------------------------------------------------------------------
+   * Motion · Easings
+   * Named after intent, not curve shape, so they remain swappable.
+   * ------------------------------------------------------------------------ */
+  --ease-linear:   linear;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);    /* default: material-style       */
+  --ease-emphasis: cubic-bezier(0.3, 0, 0.8, 0.15); /* ingress                     */
+  --ease-decel:    cubic-bezier(0.05, 0.7, 0.1, 1); /* egress / enter              */
+  --ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1); /* playful / bouncy           */
+
+  /* --------------------------------------------------------------------------
+   * Z-index — reserved tiers. Never use raw numeric literals in components.
+   * ------------------------------------------------------------------------ */
+  --z-hide:      -1;
+  --z-base:       0;
+  --z-docked:    10;
+  --z-dropdown:  20;
+  --z-sticky:    30;
+  --z-overlay:   40;
+  --z-modal:     50;
+  --z-popover:   60;
+  --z-toast:     70;
+  --z-tooltip:   80;
+  --z-debug:   9999;
+
+  /* --------------------------------------------------------------------------
+   * Ring width — focus-visible outline + aria-invalid hairline.
+   *
+   * Components use `ring-{sm|md|lg}` via the Tailwind utilities registered in
+   * globals.css. The 3px default (`--ring-width-md`) is WCAG-compliant and
+   * matches the ring-offset behaviour of our shadow ramp.
+   * ------------------------------------------------------------------------ */
+  --ring-width-xs: 1px;
+  --ring-width-sm: 2px;
+  --ring-width-md: 3px;  /* default focus-visible width                       */
+  --ring-width-lg: 4px;
+
+  /* --------------------------------------------------------------------------
+   * Breakpoints — documentation mirrors of Tailwind v4's internal scale.
+   * Kept here so JS consumers (`matchMedia` helpers, hooks) and design tools
+   * can reference the same numbers. NOT registered in @theme; Tailwind owns
+   * its own breakpoint logic in v4 via `@variant md`, `@variant lg`, etc.
+   * ------------------------------------------------------------------------ */
+  --breakpoint-sm:  40rem;   /*  640px */
+  --breakpoint-md:  48rem;   /*  768px */
+  --breakpoint-lg:  64rem;   /* 1024px */
+  --breakpoint-xl:  80rem;   /* 1280px */
+  --breakpoint-2xl: 96rem;   /* 1536px */
+}

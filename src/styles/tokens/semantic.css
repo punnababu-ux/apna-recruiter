@@ -1,0 +1,382 @@
+/* ============================================================================
+ * Poneglyph · Semantic Tokens (Tier 2)
+ * ----------------------------------------------------------------------------
+ * Intent-based aliases that components consume.
+ *
+ * RULES
+ *   1. Every value on this layer MUST reference a primitive (`var(--color-*)`,
+ *      `var(--radius-*)`, etc.). Never a raw OKLCH/hex literal.
+ *   2. Names describe ROLE, not appearance. Use `--primary`, not `--black`.
+ *      This is what makes re-theming and dark mode possible.
+ *   3. A semantic token may alias another semantic token when the intent is
+ *      genuinely the same (e.g. `--input` → `--border`). Use sparingly to
+ *      avoid indirection churn.
+ *   4. Theme overrides live in `.dark` (and any future theme class). Only the
+ *      mapping changes — the primitives remain constant.
+ *
+ * NAMING
+ *   --<role>                 e.g. --background, --primary, --border
+ *   --<role>-foreground      text/icon color that sits on that role surface
+ *   --<surface>-<role>       when a role exists inside a sub-surface, e.g.
+ *                            --sidebar-primary
+ * ========================================================================== */
+
+:root {
+  /* --------------------------------------------------------------------------
+   * Surfaces
+   * ------------------------------------------------------------------------ */
+  --background:          var(--color-gray-0);     /* page background          */
+  --foreground:          var(--color-gray-950);   /* primary text on bg       */
+  --card:                var(--color-gray-0);     /* elevated container       */
+  --card-foreground:     var(--color-gray-950);
+  --popover:             var(--color-gray-0);     /* floating surface         */
+  --popover-foreground:  var(--color-gray-950);
+
+  /* --------------------------------------------------------------------------
+   * Roles — Primary (high-emphasis action) · Apna green
+   * The brand's action colour. CTAs, selected state, focus ring, any
+   * surface that reads as "Apna did the thing".
+   * ------------------------------------------------------------------------ */
+  --primary:             var(--color-apna-green-600);
+  --primary-foreground:  var(--color-gray-50);
+
+  /* --------------------------------------------------------------------------
+   * Roles — Secondary (medium-emphasis action / container)
+   * ------------------------------------------------------------------------ */
+  --secondary:            var(--color-gray-100);
+  --secondary-foreground: var(--color-gray-900);
+
+  /* --------------------------------------------------------------------------
+   * Roles — Muted (low-emphasis surface + text)
+   * ------------------------------------------------------------------------ */
+  --muted:             var(--color-gray-100);
+  --muted-foreground:  var(--color-gray-500);
+
+  /* --------------------------------------------------------------------------
+   * Roles — Accent (hover / selection tint keyed to primary hue)
+   * ------------------------------------------------------------------------ */
+  --accent:             var(--color-apna-green-50);
+  --accent-foreground:  var(--color-apna-green-700);
+
+  /* --------------------------------------------------------------------------
+   * Roles — Highlight · Apna gold
+   *
+   * TYPOGRAPHY ACCENT ONLY. This is the "TalentPass", "always on", "₹1,333"
+   * colour — an inline text emphasis. NEVER use as a button/CTA surface;
+   * that role belongs to `--primary`. Available as `text-highlight` /
+   * `bg-highlight` via `@theme inline`.
+   *
+   * Recipe:
+   *   <h1>Keep your hiring <span className="text-highlight">always on</span>.</h1>
+   * ------------------------------------------------------------------------ */
+  --highlight:             var(--color-apna-gold-400);
+  --highlight-foreground:  var(--color-gray-950);
+
+  /* --------------------------------------------------------------------------
+   * Status roles — destructive, success, warning, info
+   * Each has a surface (used for bg) + foreground (used for text/icon on that
+   * bg).  The "-subtle" variant is the quiet banner/badge background.
+   * ------------------------------------------------------------------------ */
+  --destructive:            var(--color-red-600);
+  --destructive-foreground: var(--color-gray-50);
+  --destructive-subtle:     var(--color-red-50);
+
+  --success:                var(--color-apna-green-600);
+  --success-foreground:     var(--color-gray-50);
+  --success-subtle:         var(--color-apna-green-50);
+
+  --warning:                var(--color-amber-500);
+  --warning-foreground:     var(--color-gray-950);
+  --warning-subtle:         var(--color-amber-50);
+
+  --info:                   var(--color-blue-600);
+  --info-foreground:        var(--color-gray-50);
+  --info-subtle:            var(--color-blue-50);
+
+  /* --------------------------------------------------------------------------
+   * Lines — border, input outline, focus ring
+   * ------------------------------------------------------------------------ */
+  --border:  var(--color-gray-200);
+  --input:   var(--color-gray-200); /* mirrors --border by default            */
+  --ring:    var(--color-apna-green-500); /* brand focus ring                 */
+
+  /* --------------------------------------------------------------------------
+   * Sidebar — a self-contained sub-surface with its own role tokens.
+   * ------------------------------------------------------------------------ */
+  --sidebar:                     var(--color-gray-50);
+  --sidebar-foreground:          var(--color-gray-950);
+  --sidebar-primary:             var(--color-apna-green-600);
+  --sidebar-primary-foreground:  var(--color-gray-50);
+  /* Selected nav rows read as *current*, not *brand accent*. A neutral
+     gray fill matches the reference app and keeps brand tint reserved for
+     primary CTAs. Hover uses the same token at half alpha (applied via
+     opacity on the Tailwind class, see ui/sidebar.tsx). */
+  --sidebar-accent:              var(--color-gray-200);
+  --sidebar-accent-foreground:   var(--color-gray-950);
+  --sidebar-border:              var(--color-gray-200);
+  --sidebar-ring:                var(--color-apna-green-500);
+
+  /* --------------------------------------------------------------------------
+   * Charts — categorical palette. Ordered by emphasis, not hue.
+   * Consumers address by slot (chart-1..5), never by colour name.
+   * ------------------------------------------------------------------------ */
+  --chart-1: var(--color-apna-green-600);
+  --chart-2: var(--color-apna-gold-500);
+  --chart-3: var(--color-apna-sky-400);
+  --chart-4: var(--color-apna-plum-600);
+  --chart-5: var(--color-apna-green-300);
+
+  /* --------------------------------------------------------------------------
+   * Radius — intent roles
+   *
+   * Describes WHAT is being rounded, not HOW MUCH. Components prefer these
+   * over primitive sizes (`rounded-md` / `rounded-lg`) because:
+   *
+   *   1. The intent is readable at the callsite (`rounded-control` tells you
+   *      a button was rounded, not a hero surface).
+   *   2. Shifting a brand's "feel" becomes two lines: retune `--radius-base`
+   *      or `--radius-ratio` in primitives, or rebalance a single role here.
+   *   3. Different component families can evolve independently — making
+   *      inputs sharper doesn't require touching cards.
+   *
+   * `--radius` is the legacy system default (retained for shadcn's internal
+   * `var(--radius)` references).
+   * ------------------------------------------------------------------------ */
+  --radius:         var(--radius-lg); /* legacy default — keep for shadcn   */
+  --radius-field:   var(--radius-sm); /* inputs, selects, textareas         */
+  --radius-control: var(--radius-md); /* buttons, chips, toggles            */
+  --radius-surface: var(--radius-lg); /* cards, popovers, menus             */
+  --radius-overlay: var(--radius-xl); /* dialogs, sheets, drawers           */
+  --radius-hero:    var(--radius-2xl);/* marketing blocks, splashes         */
+  --radius-pill:    var(--radius-full);/* avatars, pills, capsule buttons   */
+
+  /* ==========================================================================
+   * Elevation — intent roles on top of the primitive shadow ramp.
+   *
+   * Components read these by role; the primitive ramp is available too
+   * (shadow-xs … shadow-2xl) but role-based utilities retune globally when a
+   * single line here changes.
+   * ======================================================================== */
+  --shadow-card:     var(--shadow-sm);  /* Card default, resting             */
+  --shadow-popover:  var(--shadow-md);  /* Popover, Tooltip, DropdownMenu    */
+  --shadow-elevated: var(--shadow-lg);  /* hovered cards, HoverCard          */
+  --shadow-dialog:   var(--shadow-xl);  /* Dialog, AlertDialog, Sheet        */
+  --shadow-marketing: var(--shadow-2xl);/* hero sections, marketing blocks   */
+
+  /* ==========================================================================
+   * Motion — intent roles on top of the duration + easing primitives.
+   *
+   * Naming by INTENT (hover, enter, leave) lets the whole system re-time
+   * without churning every component. Pair with easings: UI enters with
+   * `--ease-out-ui`, leaves with `--ease-in-ui`, hovers use standard.
+   * ======================================================================== */
+  --duration-hover:  var(--duration-150); /* hover / pressed state flips     */
+  --duration-enter:  var(--duration-200); /* small surface enter             */
+  --duration-exit:   var(--duration-150); /* small surface exit              */
+  --duration-large:  var(--duration-500); /* sheets, drawers, large panels   */
+
+  --ease-in-ui:  var(--ease-emphasis); /* exit curve — fast out of view      */
+  --ease-out-ui: var(--ease-decel);    /* enter curve — decelerate in        */
+
+  /* ==========================================================================
+   * Ring width — intent roles for focus + invalid indicators.
+   * ======================================================================== */
+  --ring-width:         var(--ring-width-md); /* default focus ring          */
+  --ring-width-subtle:  var(--ring-width-sm); /* inline validation hairline  */
+  --ring-width-strong:  var(--ring-width-lg); /* high-emphasis focus         */
+
+  /* ==========================================================================
+   * Typography
+   * --------------------------------------------------------------------------
+   * Three groups, each aliasing a primitive:
+   *   1. Family roles  — swap whole-app body/heading typeface in one line
+   *   2. Weight roles  — "regular = 300" is a single re-alias here
+   *   3. Size roles    — expose Tailwind-conventional names via tokens
+   *
+   * Components and templates only read from this tier. Never a raw
+   * `font-family: "Inter"` or `font-weight: 600` in JSX.
+   * ======================================================================== */
+
+  /* Family roles — the two-family model: heading vs body, plus mono for code */
+  --font-body:    var(--font-family-sans);
+  --font-heading: var(--font-family-sans);
+  --font-mono:    var(--font-family-mono);
+
+  /* Weight roles — industry-standard defaults. Re-alias to shift the whole
+     system's weight feel (e.g. regular → 300 for a lighter brand). */
+  --font-weight-regular:   var(--font-weight-400);
+  --font-weight-medium:    var(--font-weight-500);
+  --font-weight-semibold:  var(--font-weight-600);
+  --font-weight-bold:      var(--font-weight-700);
+  --font-weight-extrabold: var(--font-weight-800);
+
+  /* Size roles — named to match Tailwind's `.text-*` utility convention so
+     `className="text-base"` and `var(--text-base)` refer to the same token. */
+  --text-2xs:  var(--font-size-2xs);
+  --text-xs:   var(--font-size-xs);
+  --text-sm:   var(--font-size-sm);
+  --text-base: var(--font-size-md);
+  --text-lg:   var(--font-size-lg);
+  --text-xl:   var(--font-size-xl);
+  --text-2xl:  var(--font-size-2xl);
+  --text-3xl:  var(--font-size-3xl);
+  --text-4xl:  var(--font-size-4xl);
+  --text-5xl:  var(--font-size-5xl);
+  --text-6xl:  var(--font-size-6xl);
+
+  /* ==========================================================================
+   * Spacing
+   * --------------------------------------------------------------------------
+   * Two families of aliases, both mapping onto primitive `--space-*` steps:
+   *
+   *   1. T-shirt sizes — generic, layout-agnostic (2xs, xs, sm, md, lg, …).
+   *      Use when the spacing role is "small / medium / large" without a
+   *      more specific meaning.
+   *   2. Context roles — describe WHAT the space separates, not how big it
+   *      is (inline, stack, inset, field, section). Prefer these in
+   *      component and template code; they communicate intent and let the
+   *      system shift the rhythm globally by re-aliasing.
+   *
+   * The numeric primitives remain available (e.g. `--space-4`), but
+   * components should reach for these role aliases first.
+   * ======================================================================== */
+
+  /* T-shirt sizes */
+  --space-2xs: var(--space-1);   /*  4 */
+  --space-xs:  var(--space-2);   /*  8 */
+  --space-sm:  var(--space-3);   /* 12 */
+  --space-md:  var(--space-4);   /* 16 */
+  --space-lg:  var(--space-6);   /* 24 */
+  --space-xl:  var(--space-8);   /* 32 */
+  --space-2xl: var(--space-12);  /* 48 */
+  --space-3xl: var(--space-16);  /* 64 */
+  --space-4xl: var(--space-24);  /* 96 */
+  --space-5xl: var(--space-32);  /* 128 */
+
+  /* Context roles — prefer these over raw sizes in new code. */
+  --space-inline:  var(--space-xs);  /* between siblings in a row (icon→label)  */
+  --space-stack:   var(--space-md);  /* between stacked blocks within a section */
+  --space-field:   var(--space-sm);  /* between label / control / help text     */
+  --space-inset:   var(--space-md);  /* padding inside a contained surface      */
+  --space-section: var(--space-2xl); /* between top-level page sections         */
+  --space-page:    var(--space-3xl); /* page gutter / max breathing room        */
+
+  /* ==========================================================================
+   * Gradients — brand-expressive roles.
+   *
+   * Composed ONLY from primitives (never raw hex/oklch). Two roles:
+   *   --gradient-primary  signature brand gradient for hero surfaces / marks
+   *   --gradient-accent   secondary pop — badges, chips, highlight bars
+   *
+   * Expose via `bg-gradient-primary`, `bg-gradient-accent`,
+   * `text-gradient-primary`, `text-gradient-accent` utilities (see globals.css).
+   *
+   * DEFAULT THEME — Apna: subtle tonal gradient in the green family.
+   * ======================================================================== */
+  --gradient-primary: linear-gradient(135deg,
+                        var(--color-apna-green-500) 0%,
+                        var(--color-apna-green-700) 100%);
+  --gradient-accent:  linear-gradient(135deg,
+                        var(--color-apna-gold-400) 0%,
+                        var(--color-apna-gold-600) 100%);
+}
+
+/* ============================================================================
+ * OnlyRounds theme — sub-brand under Apna for the AI-interview product.
+ *
+ * Scope: overrides ONLY the gradient roles. Every other role (primary,
+ * accent, highlight, surfaces, sidebar, charts) inherits the Apna parent
+ * theme unchanged. OnlyRounds is expressed through its distinctive
+ * gradient, not a separate colour system.
+ *
+ * Both gradients compose from the Apna primitive library
+ * (apna-green, apna-sky, apna-gold, apna-plum) — no new raw colours.
+ *
+ * USAGE
+ *   <div className="theme-onlyrounds">…</div>
+ * ========================================================================== */
+.theme-onlyrounds {
+  /* Luminous rainbow across the Apna primary hues — green → sky → gold.
+   * All three stops sit in the bright band, so there's no dark smear at
+   * the end. Interpolated in OKLCH to keep chroma high through the
+   * mid-points (sRGB would desaturate the green→sky and sky→gold
+   * transitions into grey). */
+  --gradient-primary: linear-gradient(135deg in oklch,
+                        var(--color-apna-green-400) 0%,
+                        var(--color-apna-sky-400)  50%,
+                        var(--color-apna-gold-400) 100%);
+  --gradient-accent:  linear-gradient(135deg in oklch,
+                        var(--color-apna-gold-300)  0%,
+                        var(--color-apna-green-400) 100%);
+}
+
+/* ============================================================================
+ * Dark theme — only the mapping changes, primitives are untouched.
+ * ========================================================================== */
+.dark {
+  /* Surfaces — Apna navy, matching the TalentPass slide deck */
+  --background:         var(--color-apna-navy-950);
+  --foreground:         var(--color-gray-50);
+  --card:               var(--color-apna-navy-900);
+  --card-foreground:    var(--color-gray-50);
+  --popover:            var(--color-apna-navy-900);
+  --popover-foreground: var(--color-gray-50);
+
+  /* Roles — green stays the action colour on dark; brightened one step
+     so it sits comfortably on the navy surface. */
+  --primary:            var(--color-apna-green-500);
+  --primary-foreground: var(--color-gray-50);
+
+  --secondary:            var(--color-apna-navy-800);
+  --secondary-foreground: var(--color-gray-50);
+
+  --muted:            var(--color-apna-navy-800);
+  --muted-foreground: var(--color-gray-400);
+
+  --accent:            var(--color-apna-green-900);
+  --accent-foreground: var(--color-apna-green-200);
+
+  /* Highlight — gold, brightened for dark surfaces */
+  --highlight:             var(--color-apna-gold-400);
+  --highlight-foreground:  var(--color-gray-950);
+
+  /* Status */
+  --destructive:            var(--color-red-400);
+  --destructive-foreground: var(--color-gray-50);
+  --destructive-subtle:     var(--color-red-950);
+
+  --success:                var(--color-apna-green-500);
+  --success-foreground:     var(--color-gray-50);
+  --success-subtle:         var(--color-apna-green-950);
+
+  --warning:                var(--color-amber-400);
+  --warning-foreground:     var(--color-gray-950);
+  --warning-subtle:         var(--color-amber-950);
+
+  --info:                   var(--color-blue-400);
+  --info-foreground:        var(--color-gray-950);
+  --info-subtle:            var(--color-blue-950);
+
+  /* Lines — translucent on dark for softer hairlines */
+  --border: var(--color-alpha-white-10);
+  --input:  var(--color-alpha-white-15);
+  --ring:   var(--color-apna-green-400);
+
+  /* Sidebar */
+  --sidebar:                    var(--color-apna-navy-900);
+  --sidebar-foreground:         var(--color-gray-50);
+  --sidebar-primary:            var(--color-apna-green-500);
+  --sidebar-primary-foreground: var(--color-gray-50);
+  /* Dark-mode active row: neutral tint, not brand. Mirrors light theme. */
+  --sidebar-accent:             var(--color-gray-800);
+  --sidebar-accent-foreground:  var(--color-gray-50);
+  --sidebar-border:             var(--color-alpha-white-10);
+  --sidebar-ring:               var(--color-apna-green-400);
+
+  /* Charts — same slots, different keyed values for dark backdrops */
+  --chart-1: var(--color-apna-green-400);
+  --chart-2: var(--color-apna-gold-400);
+  --chart-3: var(--color-apna-sky-400);
+  --chart-4: var(--color-gray-400);
+  --chart-5: var(--color-apna-green-700);
+}
