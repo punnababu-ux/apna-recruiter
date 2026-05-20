@@ -417,7 +417,7 @@ function Section({
   children: React.ReactNode
 }) {
   return (
-    <section className="flex flex-col gap-4 rounded-lg border border-border bg-gray-50 p-5">
+    <section className="flex flex-col gap-4 rounded-lg border border-border bg-card p-5">
       <header>
         <h3 className="text-base font-semibold leading-tight">{title}</h3>
         {description ? (
@@ -622,7 +622,7 @@ function QABankSection({
   // Section index is embedded in the title prop's position in the form, but
   // we don't strictly need it numbered here — use a plain title header.
   return (
-    <section className="flex flex-col gap-4 rounded-lg border border-border bg-gray-50 p-5">
+    <section className="flex flex-col gap-4 rounded-lg border border-border bg-card p-5">
       <header className="flex items-start justify-between gap-3">
         <div>
           <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
@@ -664,7 +664,7 @@ function QABankSection({
       </header>
 
       {items.length > 0 ? (
-        <ul className="flex flex-col divide-y divide-border rounded-md border border-border bg-white">
+        <ul className="flex flex-col divide-y divide-border rounded-md border border-border bg-card">
           {items.map((item, idx) => (
             <li
               key={item.id}
@@ -742,7 +742,7 @@ function QABankSection({
       ) : null}
 
       <Dialog open={editorOpen} onOpenChange={setEditorOpen}>
-        <DialogContent className="sm:max-w-lg [&_[data-slot=input]]:bg-white [&_[data-slot=textarea]]:bg-white [&_[data-slot=select-trigger]]:bg-white">
+        <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>
               {editingId
