@@ -103,7 +103,7 @@
   /* --------------------------------------------------------------------------
    * Sidebar — a self-contained sub-surface with its own role tokens.
    * ------------------------------------------------------------------------ */
-  --sidebar:                     var(--color-gray-50);
+  --sidebar:                     var(--color-gray-0);
   --sidebar-foreground:          var(--color-gray-950);
   --sidebar-primary:             var(--color-apna-green-600);
   --sidebar-primary-foreground:  var(--color-gray-50);

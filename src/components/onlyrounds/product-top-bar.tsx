@@ -38,7 +38,7 @@ export function ProductTopBar({
   return (
     <div
       className={cn(
-        "sticky top-0 z-10 flex h-16 items-center gap-1 border-b border-border bg-background/80 px-3 backdrop-blur",
+        "sticky top-0 z-10 flex h-16 items-center gap-1 border-b border-border bg-card px-3",
         className
       )}
     >

@@ -154,12 +154,12 @@ function JobsPageInner() {
             value={tab}
             onValueChange={(v) => setTab(v as JobTab)}
           >
-            <TabsList>
+            <TabsList className="h-10">
               {TABS.map((t) => (
                 <TabsTrigger
                   key={t.value}
                   value={t.value}
-                  className="leading-none"
+                  className="h-8 px-4 leading-none"
                 >
                   <span>
                     {t.label}{" "}
@@ -172,11 +172,11 @@ function JobsPageInner() {
         }
         actions={
           <Button
-            size="sm"
+            size="lg"
             nativeButton={false}
             render={<Link href="/onlyrounds/jobs/new" />}
           >
-            <Plus className="size-3.5" />
+            <Plus className="size-4" />
             Create New Job
           </Button>
         }
@@ -186,7 +186,6 @@ function JobsPageInner() {
         <div className="relative flex-1">
           <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            inputSize="sm"
             placeholder="Search jobs..."
             className="pl-9"
           />

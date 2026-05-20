@@ -19,7 +19,7 @@ export default function OnlyRoundsProductLayout({
   return (
     <SidebarProvider>
       <OnlyRoundsSidebar />
-      <SidebarInset className="bg-background">
+      <SidebarInset className="bg-muted">
         <ProductTopBar />
         {children}
       </SidebarInset>

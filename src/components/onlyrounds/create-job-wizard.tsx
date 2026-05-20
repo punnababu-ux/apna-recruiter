@@ -108,7 +108,7 @@ export function CreateJobWizard() {
           {activeId === "details" ? (
             <JobDetailsStep form={form.details} update={updateDetails} />
           ) : (
-            <div className="rounded-lg border border-border bg-gray-50 p-6">
+            <div className="rounded-lg border border-border bg-card p-6">
               {activeId === "description" ? (
                 <DescriptionStep form={form} update={update} />
               ) : null}
@@ -126,11 +126,10 @@ export function CreateJobWizard() {
           )}
 
           {/* Action card — sits below the step body */}
-          <div className="rounded-lg border border-border bg-gray-50 px-4 py-3">
+          <div className="rounded-lg border border-border bg-card px-4 py-3">
             <div className="flex items-center justify-between gap-3">
               <Button
                 variant="outline"
-                size="sm"
                 onClick={() =>
                   !isFirst && setActiveId(STEPS[activeIdx - 1].id)
                 }
@@ -139,11 +138,11 @@ export function CreateJobWizard() {
                 <ArrowLeft className="size-4" /> Back
               </Button>
               <div className="flex items-center gap-2">
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost">
                   <Save className="size-4" /> Save & exit
                 </Button>
                 <Button
-                  size="sm"
+                  size="lg"
                   onClick={() =>
                     !isLast && setActiveId(STEPS[activeIdx + 1].id)
                   }

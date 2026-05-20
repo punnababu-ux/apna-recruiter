@@ -88,7 +88,7 @@ function JobRowItem({ row }: { row: JobRow }) {
   const showRounds = row.status !== "draft"
 
   return (
-    <div className="rounded-lg border border-border bg-card px-4 py-3 transition-colors hover:bg-muted/50">
+    <div className="rounded-xl border border-border/60 bg-card px-5 py-4 shadow-card transition-shadow hover:shadow-elevated">
       <div className="flex items-start gap-4">
         <ClientLogo client={row.client} src={row.clientLogo} />
 
@@ -122,7 +122,7 @@ function JobRowItem({ row }: { row: JobRow }) {
 
       {showRounds ? (
         <>
-          <hr className="-mx-4 mt-3 border-t border-border" />
+          <hr className="-mx-5 mt-4 border-t border-border/60" />
           <div className="mt-3 flex flex-wrap items-center gap-x-1.5 gap-y-2">
             <RoundPill
               href={`/onlyrounds/jobs/${row.id}?round=screening`}
