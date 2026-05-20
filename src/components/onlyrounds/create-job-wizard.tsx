@@ -104,7 +104,7 @@ export function CreateJobWizard() {
 
       <div className="flex flex-1 px-6 py-6">
         {/* Body */}
-        <section className="mx-auto flex w-full max-w-3xl min-w-0 flex-1 flex-col gap-6 [&_[data-slot=input]]:bg-white [&_[data-slot=textarea]]:bg-white [&_[data-slot=select-trigger]]:bg-white">
+        <section className="mx-auto flex w-full max-w-3xl min-w-0 flex-1 flex-col gap-6">
           {activeId === "details" ? (
             <JobDetailsStep form={form.details} update={updateDetails} />
           ) : (
