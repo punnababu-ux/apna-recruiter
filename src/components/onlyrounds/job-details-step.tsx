@@ -108,6 +108,41 @@ export const defaultJobDetails: JobDetailsForm = {
   additionalDetails: "",
 }
 
+/**
+ * Returns human-readable labels for every mandatory field that is empty.
+ * Question bank, FAQs, and additional details are intentionally excluded.
+ */
+export function validateJobDetails(form: JobDetailsForm): string[] {
+  const errors: string[] = []
+  if (!form.clientId) errors.push("Client")
+  if (!form.city.trim()) errors.push("Job city")
+  if (!form.area.trim()) errors.push("Job area")
+  if (
+    (form.experienceType === "any" || form.experienceType === "experienced") &&
+    !form.experiencedPersona.trim()
+  )
+    errors.push("Experienced candidate profile")
+  if (
+    (form.experienceType === "any" || form.experienceType === "freshers") &&
+    !form.fresherPersona.trim()
+  )
+    errors.push("Fresher candidate profile")
+  if (!form.workType) errors.push("Work type")
+  if (!form.workMode) errors.push("Work mode")
+  if (!form.scheduleDetails.trim()) errors.push("Work schedule details")
+  if (
+    (form.experienceType === "any" || form.experienceType === "experienced") &&
+    !form.compExperienced.trim()
+  )
+    errors.push("Compensation for experienced")
+  if (
+    (form.experienceType === "any" || form.experienceType === "freshers") &&
+    !form.compFresher.trim()
+  )
+    errors.push("Compensation for freshers")
+  return errors
+}
+
 const MAX_QA = 15
 
 // Module-level monotonic counter — used to mint stable keys for draft rows
@@ -139,12 +174,14 @@ export const CLIENTS: { id: string; name: string }[] = [
 export function JobDetailsStep({
   form,
   update,
+  showErrors = false,
 }: {
   form: JobDetailsForm
   update: <K extends keyof JobDetailsForm>(
     key: K,
     value: JobDetailsForm[K],
   ) => void
+  showErrors?: boolean
 }) {
   const showExperiencedPersona =
     form.experienceType === "any" || form.experienceType === "experienced"
@@ -160,12 +197,20 @@ export function JobDetailsStep({
         description="Tell us who the role is for and where it's based."
       >
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label="Client" htmlFor="client">
+          <Field
+            label="Client"
+            htmlFor="client"
+            error={showErrors && !form.clientId ? "Required" : undefined}
+          >
             <Select
               value={form.clientId}
               onValueChange={(v) => update("clientId", (v as string) ?? "")}
             >
-              <SelectTrigger id="client" className="w-full">
+              <SelectTrigger
+                id="client"
+                className="w-full"
+                aria-invalid={showErrors && !form.clientId ? true : undefined}
+              >
                 <SelectValue placeholder="Select the client" />
               </SelectTrigger>
               <SelectContent>
@@ -177,20 +222,34 @@ export function JobDetailsStep({
               </SelectContent>
             </Select>
           </Field>
-          <Field label="Job city" htmlFor="city">
+          <Field
+            label="Job city"
+            htmlFor="city"
+            error={showErrors && !form.city.trim() ? "Required" : undefined}
+          >
             <Input
               id="city"
               value={form.city}
               onChange={(e) => update("city", e.target.value)}
               placeholder="e.g. Bengaluru"
+              aria-invalid={
+                showErrors && !form.city.trim() ? true : undefined
+              }
             />
           </Field>
-          <Field label="Job area" htmlFor="area">
+          <Field
+            label="Job area"
+            htmlFor="area"
+            error={showErrors && !form.area.trim() ? "Required" : undefined}
+          >
             <Input
               id="area"
               value={form.area}
               onChange={(e) => update("area", e.target.value)}
               placeholder="e.g. Koramangala"
+              aria-invalid={
+                showErrors && !form.area.trim() ? true : undefined
+              }
             />
           </Field>
           <Field label="Required experience" htmlFor="experience-type">
@@ -214,6 +273,11 @@ export function JobDetailsStep({
             label="Who is an experienced candidate for this role?"
             htmlFor="experienced-persona"
             hint="Describe the kind of experienced candidate you're hoping to meet."
+            error={
+              showErrors && !form.experiencedPersona.trim()
+                ? "Required"
+                : undefined
+            }
           >
             <Textarea
               id="experienced-persona"
@@ -221,6 +285,11 @@ export function JobDetailsStep({
               onChange={(e) => update("experiencedPersona", e.target.value)}
               placeholder="e.g. 2+ years in B2C product support, comfortable on calls, CRM-literate."
               rows={3}
+              aria-invalid={
+                showErrors && !form.experiencedPersona.trim()
+                  ? true
+                  : undefined
+              }
             />
           </Field>
         ) : null}
@@ -229,6 +298,9 @@ export function JobDetailsStep({
             label="Who is a fresher candidate for this role?"
             htmlFor="fresher-persona"
             hint="Describe the fresher profile that fits this role."
+            error={
+              showErrors && !form.fresherPersona.trim() ? "Required" : undefined
+            }
           >
             <Textarea
               id="fresher-persona"
@@ -236,6 +308,9 @@ export function JobDetailsStep({
               onChange={(e) => update("fresherPersona", e.target.value)}
               placeholder="e.g. Graduates with strong spoken English, quick learners, open to shift work."
               rows={3}
+              aria-invalid={
+                showErrors && !form.fresherPersona.trim() ? true : undefined
+              }
             />
           </Field>
         ) : null}
@@ -248,14 +323,24 @@ export function JobDetailsStep({
         description="What kind of work is this, and when will it happen?"
       >
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label="Work type" htmlFor="work-type">
+          <Field
+            label="Work type"
+            htmlFor="work-type"
+            error={showErrors && !form.workType ? "Required" : undefined}
+          >
             <Select
               value={form.workType}
               onValueChange={(v) =>
                 update("workType", ((v as string) ?? "") as WorkType | "")
               }
             >
-              <SelectTrigger id="work-type" className="w-full">
+              <SelectTrigger
+                id="work-type"
+                className="w-full"
+                aria-invalid={
+                  showErrors && !form.workType ? true : undefined
+                }
+              >
                 <SelectValue placeholder="Select work type" />
               </SelectTrigger>
               <SelectContent>
@@ -265,14 +350,24 @@ export function JobDetailsStep({
               </SelectContent>
             </Select>
           </Field>
-          <Field label="Work mode" htmlFor="work-mode">
+          <Field
+            label="Work mode"
+            htmlFor="work-mode"
+            error={showErrors && !form.workMode ? "Required" : undefined}
+          >
             <Select
               value={form.workMode}
               onValueChange={(v) =>
                 update("workMode", ((v as string) ?? "") as WorkMode | "")
               }
             >
-              <SelectTrigger id="work-mode" className="w-full">
+              <SelectTrigger
+                id="work-mode"
+                className="w-full"
+                aria-invalid={
+                  showErrors && !form.workMode ? true : undefined
+                }
+              >
                 <SelectValue placeholder="Select work mode" />
               </SelectTrigger>
               <SelectContent>
@@ -288,6 +383,9 @@ export function JobDetailsStep({
           label="Work schedule and shift details"
           htmlFor="schedule-details"
           hint="E.g. Mon–Sat, 9am–6pm; two rotational shifts; one weekly off."
+          error={
+            showErrors && !form.scheduleDetails.trim() ? "Required" : undefined
+          }
         >
           <Textarea
             id="schedule-details"
@@ -295,6 +393,9 @@ export function JobDetailsStep({
             onChange={(e) => update("scheduleDetails", e.target.value)}
             placeholder="Describe the expected schedule and shifts."
             rows={3}
+            aria-invalid={
+              showErrors && !form.scheduleDetails.trim() ? true : undefined
+            }
           />
         </Field>
       </Section>
@@ -311,12 +412,20 @@ export function JobDetailsStep({
               label="Compensation — experienced candidates"
               htmlFor="comp-experienced"
               hint="E.g. ₹4–6 LPA fixed + incentives."
+              error={
+                showErrors && !form.compExperienced.trim()
+                  ? "Required"
+                  : undefined
+              }
             >
               <Input
                 id="comp-experienced"
                 value={form.compExperienced}
                 onChange={(e) => update("compExperienced", e.target.value)}
                 placeholder="₹ Fixed + variable"
+                aria-invalid={
+                  showErrors && !form.compExperienced.trim() ? true : undefined
+                }
               />
             </Field>
           ) : null}
@@ -325,12 +434,18 @@ export function JobDetailsStep({
               label="Compensation — fresher candidates"
               htmlFor="comp-fresher"
               hint="E.g. ₹2–3 LPA fixed + incentives."
+              error={
+                showErrors && !form.compFresher.trim() ? "Required" : undefined
+              }
             >
               <Input
                 id="comp-fresher"
                 value={form.compFresher}
                 onChange={(e) => update("compFresher", e.target.value)}
                 placeholder="₹ Fixed + variable"
+                aria-invalid={
+                  showErrors && !form.compFresher.trim() ? true : undefined
+                }
               />
             </Field>
           ) : null}
@@ -437,20 +552,29 @@ function Field({
   label,
   htmlFor,
   hint,
+  error,
   children,
 }: {
   label: string
   htmlFor?: string
   hint?: string
+  error?: string
   children: React.ReactNode
 }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <Label htmlFor={htmlFor} className="text-sm font-medium">
+      <Label
+        htmlFor={htmlFor}
+        className={cn("text-sm font-medium", error && "text-destructive")}
+      >
         {label}
       </Label>
       {children}
-      {hint ? <p className="text-xs text-muted-foreground">{hint}</p> : null}
+      {error ? (
+        <p className="text-xs text-destructive">{error}</p>
+      ) : hint ? (
+        <p className="text-xs text-muted-foreground">{hint}</p>
+      ) : null}
     </div>
   )
 }
