@@ -154,7 +154,7 @@ function JobsPageInner() {
             value={tab}
             onValueChange={(v) => setTab(v as JobTab)}
           >
-            <TabsList className="shadow-card">
+            <TabsList className="bg-card [&_[data-active]]:bg-foreground! [&_[data-active]]:text-background!">
               {TABS.map((t) => (
                 <TabsTrigger
                   key={t.value}
