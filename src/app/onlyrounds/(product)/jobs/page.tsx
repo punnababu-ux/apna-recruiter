@@ -193,8 +193,8 @@ function JobsPageInner() {
         <Popover>
           <PopoverTrigger
             render={
-              <Button variant="outline">
-                <SlidersHorizontal className="size-3.5" />
+              <Button variant="outline" size="lg">
+                <SlidersHorizontal className="size-4" />
                 Filters
                 {activeFilterCount > 0 ? (
                   <Badge className="ml-1 h-5 min-w-5 bg-success px-1.5 text-white [a]:hover:bg-success/90">
