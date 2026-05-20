@@ -163,7 +163,7 @@ function JobsPageInner() {
                 >
                   <span>
                     {t.label}{" "}
-                    <span className="text-muted-foreground">({t.count})</span>
+                    <span className="opacity-60">({t.count})</span>
                   </span>
                 </TabsTrigger>
               ))}
