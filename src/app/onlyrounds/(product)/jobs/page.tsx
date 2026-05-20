@@ -154,17 +154,11 @@ function JobsPageInner() {
             value={tab}
             onValueChange={(v) => setTab(v as JobTab)}
           >
-            <TabsList className="bg-card [&_[data-active]]:bg-foreground! [&_[data-active]]:text-background!">
+            <TabsList variant="inverted">
               {TABS.map((t) => (
-                <TabsTrigger
-                  key={t.value}
-                  value={t.value}
-                  className="leading-none"
-                >
-                  <span>
-                    {t.label}{" "}
-                    <span className="opacity-60">({t.count})</span>
-                  </span>
+                <TabsTrigger key={t.value} value={t.value}>
+                  {t.label}{" "}
+                  <span className="opacity-60">({t.count})</span>
                 </TabsTrigger>
               ))}
             </TabsList>
