@@ -13,11 +13,12 @@
  * the right, sticky footer with Back / Save & exit / Next.
  */
 
-import { ArrowLeft, ArrowRight, Save, Sparkles, Upload } from "lucide-react"
+import { ArrowLeft, ArrowRight, Save, Sparkles, Upload, X } from "lucide-react"
 import * as React from "react"
 import { useState } from "react"
 
 import {
+  CLIENTS,
   JobDetailsStep,
   defaultJobDetails,
   type JobDetailsForm,
@@ -61,6 +62,8 @@ export function CreateJobWizard() {
     details: defaultJobDetails,
   })
 
+  const [filledFromJd, setFilledFromJd] = useState(false)
+
   const updateDetails = <K extends keyof JobDetailsForm>(
     key: K,
     value: JobDetailsForm[K],
@@ -89,6 +92,36 @@ export function CreateJobWizard() {
     setForm((prev) => ({ ...prev, [key]: value }))
   }
 
+  const goNext = () => {
+    if (isLast) return
+    const nextStep = STEPS[activeIdx + 1]
+
+    // Auto-fill step 2 from JD when transitioning description → details
+    if (
+      activeId === "description" &&
+      nextStep.id === "details" &&
+      form.jd.trim().length > 0
+    ) {
+      const detailsAreEmpty =
+        !form.details.city &&
+        !form.details.clientId &&
+        !form.details.workMode &&
+        !form.details.workType
+      if (detailsAreEmpty) {
+        const extracted = extractDetailsFromJd(form.jd, form.title)
+        if (Object.keys(extracted).length > 0) {
+          setForm((prev) => ({
+            ...prev,
+            details: { ...prev.details, ...extracted },
+          }))
+          setFilledFromJd(true)
+        }
+      }
+    }
+
+    setActiveId(nextStep.id)
+  }
+
   return (
     <div className="flex min-h-svh flex-col">
       {/* Sticky horizontal stepper, sits directly below the page header */}
@@ -106,7 +139,26 @@ export function CreateJobWizard() {
         {/* Body */}
         <section className="mx-auto flex w-full max-w-3xl min-w-0 flex-1 flex-col gap-6">
           {activeId === "details" ? (
-            <JobDetailsStep form={form.details} update={updateDetails} />
+            <>
+              {filledFromJd ? (
+                <div className="flex items-center gap-3 rounded-lg border border-primary/20 bg-primary/5 px-4 py-2.5 text-sm">
+                  <Sparkles className="size-4 shrink-0 text-primary" />
+                  <span>
+                    Fields pre-filled from your job description — review and
+                    adjust as needed.
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setFilledFromJd(false)}
+                    className="ml-auto shrink-0 text-muted-foreground hover:text-foreground"
+                    aria-label="Dismiss"
+                  >
+                    <X className="size-4" />
+                  </button>
+                </div>
+              ) : null}
+              <JobDetailsStep form={form.details} update={updateDetails} />
+            </>
           ) : (
             <div className="rounded-lg border border-border bg-card p-6">
               {activeId === "description" ? (
@@ -143,9 +195,7 @@ export function CreateJobWizard() {
                 </Button>
                 <Button
                   size="lg"
-                  onClick={() =>
-                    !isLast && setActiveId(STEPS[activeIdx + 1].id)
-                  }
+                  onClick={goNext}
                 >
                   {isLast ? "Publish job" : "Next"}
                   {!isLast ? <ArrowRight className="size-4" /> : null}
@@ -359,6 +409,117 @@ function JDField({
       </div>
     </div>
   )
+}
+
+// ---- known cities for JD extraction ------------------------------------
+
+const KNOWN_CITIES: { value: string; pattern: RegExp }[] = [
+  { value: "Bengaluru", pattern: /bengaluru|bangalore/i },
+  { value: "Mumbai", pattern: /mumbai|bombay/i },
+  { value: "Delhi", pattern: /delhi|new delhi/i },
+  { value: "Hyderabad", pattern: /hyderabad/i },
+  { value: "Chennai", pattern: /chennai|madras/i },
+  { value: "Pune", pattern: /\bpune\b/i },
+  { value: "Kolkata", pattern: /kolkata|calcutta/i },
+  { value: "Hubli", pattern: /\bhubli\b/i },
+  { value: "Ahmedabad", pattern: /ahmedabad/i },
+  { value: "Gurgaon", pattern: /gurgaon|gurugram/i },
+  { value: "Noida", pattern: /\bnoida\b/i },
+  { value: "Jaipur", pattern: /\bjaipur\b/i },
+  { value: "Lucknow", pattern: /\blucknow\b/i },
+]
+
+/**
+ * Heuristic extraction of step-2 fields from a free-text JD. This is a
+ * prototype mock — production would call a backend NLP endpoint instead.
+ * Returns only the keys it's confident about so existing data isn't clobbered.
+ */
+function extractDetailsFromJd(
+  jd: string,
+  title: string,
+): Partial<JobDetailsForm> {
+  const combined = `${title} ${jd}`
+  const result: Partial<JobDetailsForm> = {}
+
+  // Client
+  for (const client of CLIENTS) {
+    if (new RegExp(client.name, "i").test(combined)) {
+      result.clientId = client.id
+      break
+    }
+  }
+
+  // City
+  for (const city of KNOWN_CITIES) {
+    if (city.pattern.test(combined)) {
+      result.city = city.value
+      break
+    }
+  }
+
+  // Area — look for "in <Area>, <City>" or "at <Area>" patterns
+  const areaMatch = combined.match(
+    /\b(?:in|at|near)\s+([A-Z][A-Za-z\s]{2,25?}?)(?=\s*[,.]|\s+(?:Bengaluru|Bangalore|Mumbai|Delhi|Hyderabad|Chennai|Pune|Kolkata|Hubli|Gurgaon|Noida))/,
+  )
+  if (areaMatch?.[1]) {
+    const area = areaMatch[1].trim()
+    // Skip if it looks like a city name itself
+    if (!KNOWN_CITIES.some((c) => c.pattern.test(area))) {
+      result.area = area
+    }
+  }
+
+  // Experience type
+  const hasFresher =
+    /fresher|fresh\s*graduate|0\s*year|no.{0,10}experience\s+required/i.test(
+      combined,
+    )
+  const hasExperienced =
+    /experienced|\b\d\+?\s*(?:year|yr)s?\s*(?:of\s+)?(?:experience|exp)\b|\bmin(?:imum)?\s*\d\s*year/i.test(
+      combined,
+    )
+  if (hasFresher && hasExperienced) result.experienceType = "any"
+  else if (hasFresher) result.experienceType = "freshers"
+  else if (hasExperienced) result.experienceType = "experienced"
+
+  // Work type
+  if (/part[\s-]?time/i.test(combined)) result.workType = "part-time"
+  else if (/full[\s-]?time/i.test(combined)) result.workType = "full-time"
+
+  // Work mode
+  if (/work\s+from\s+home|wfh|\bremote\b/i.test(combined))
+    result.workMode = "wfh"
+  else if (
+    /field\s*(?:job|work|sales|executive|agent|officer)/i.test(combined)
+  )
+    result.workMode = "field"
+  else if (/work\s+from\s+store|store\s*(?:job|executive)/i.test(combined))
+    result.workMode = "store"
+  else if (/work\s+from\s+office|wfo|on[\s-]?site/i.test(combined))
+    result.workMode = "wfo"
+
+  // Compensation — match ₹/Rs patterns like "₹4–6 LPA"
+  const salaryRe =
+    /(?:₹|rs\.?|inr)\s*([\d,]+)\s*(?:–|-|to)\s*([\d,]+)\s*(?:lpa|l\.?p\.?a\.?|lakh(?:\s*per\s*annum)?|\/\s*(?:year|annum))/gi
+  const salaryMatches = [...combined.matchAll(salaryRe)]
+  if (salaryMatches.length >= 2) {
+    result.compExperienced = `₹${salaryMatches[0][1].replace(/,/g, "")}–${salaryMatches[0][2].replace(/,/g, "")} LPA`
+    result.compFresher = `₹${salaryMatches[1][1].replace(/,/g, "")}–${salaryMatches[1][2].replace(/,/g, "")} LPA`
+  } else if (salaryMatches.length === 1) {
+    const comp = `₹${salaryMatches[0][1].replace(/,/g, "")}–${salaryMatches[0][2].replace(/,/g, "")} LPA`
+    if (result.experienceType === "freshers") result.compFresher = comp
+    else result.compExperienced = comp
+  }
+
+  // Schedule — extract a schedule sentence if present
+  const scheduleMatch = combined.match(
+    /(?:schedule|timing|shift|working hours?)\s*[:\-]?\s*([^\n.]{10,120})/i,
+  )
+  if (scheduleMatch?.[1]) {
+    result.scheduleDetails = scheduleMatch[1].trim()
+  }
+
+  return result
 }
 
 /**

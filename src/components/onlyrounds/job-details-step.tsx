@@ -17,7 +17,7 @@
  * question/FAQ list editors.
  */
 
-import { Download, Pencil, Plus, Trash2, Upload } from "lucide-react"
+import { ChevronDown, Download, Pencil, Plus, Trash2, Upload } from "lucide-react"
 import * as React from "react"
 
 import { Button } from "@/components/ui/button"
@@ -53,6 +53,12 @@ export type WorkMode = "wfh" | "wfo" | "field" | "store"
 
 export type QAItem = { id: string; question: string; answer: string }
 
+export type FaqSection = {
+  id: string
+  title: string
+  items: QAItem[]
+}
+
 export type JobDetailsForm = {
   // Section 1
   clientId: string
@@ -77,7 +83,7 @@ export type JobDetailsForm = {
   randomizeQuestions: boolean
 
   // Section 5
-  faqs: QAItem[]
+  faqSections: FaqSection[]
 
   // Section 6
   additionalDetails: string
@@ -98,7 +104,7 @@ export const defaultJobDetails: JobDetailsForm = {
   questions: [],
   questionsPerCandidate: 2,
   randomizeQuestions: false,
-  faqs: [],
+  faqSections: [],
   additionalDetails: "",
 }
 
@@ -120,7 +126,7 @@ const makeDraft = (): Draft => ({
 })
 
 // Mock client list — the real flow would fetch from the workspace.
-const CLIENTS: { id: string; name: string }[] = [
+export const CLIENTS: { id: string; name: string }[] = [
   { id: "flipkart", name: "Flipkart" },
   { id: "swiggy", name: "Swiggy" },
   { id: "amazon", name: "Amazon" },
@@ -377,11 +383,9 @@ export function JobDetailsStep({
       />
 
       {/* Section 5 — candidate FAQs */}
-      <QABankSection
-        title="Candidate FAQs"
-        description="Upload a CSV or add FAQs manually. Up to 15 FAQs. Shown to candidates during the flow."
-        items={form.faqs}
-        onChange={(next) => update("faqs", next)}
+      <FaqSectionsEditor
+        sections={form.faqSections}
+        onChange={(next) => update("faqSections", next)}
       />
 
       {/* Section 6 — additional details */}
@@ -859,6 +863,526 @@ function QABankSection({
         </DialogContent>
       </Dialog>
     </section>
+  )
+}
+
+// ---- multi-section FAQ editor ------------------------------------------
+
+const FAQ_PRESET_SECTIONS = [
+  "English Speaking",
+  "Field Sales Capability",
+  "Technical Skills",
+  "Freshers",
+  "Experienced",
+]
+
+function FaqSectionsEditor({
+  sections,
+  onChange,
+}: {
+  sections: FaqSection[]
+  onChange: (next: FaqSection[]) => void
+}) {
+  const [showAddSection, setShowAddSection] = React.useState(false)
+  const [addingSectionName, setAddingSectionName] = React.useState("")
+
+  const addSection = (title: string) => {
+    const trimmed = title.trim()
+    if (!trimmed) return
+    onChange([
+      ...sections,
+      { id: nextId("faq-section"), title: trimmed, items: [] },
+    ])
+    setAddingSectionName("")
+    setShowAddSection(false)
+  }
+
+  const updateSection = (id: string, patch: Partial<FaqSection>) => {
+    onChange(sections.map((s) => (s.id === id ? { ...s, ...patch } : s)))
+  }
+
+  const removeSection = (id: string) => {
+    onChange(sections.filter((s) => s.id !== id))
+  }
+
+  const unusedPresets = FAQ_PRESET_SECTIONS.filter(
+    (p) => !sections.some((s) => s.title.toLowerCase() === p.toLowerCase()),
+  )
+
+  return (
+    <section className="flex flex-col gap-4 rounded-lg border border-border bg-card p-5">
+      <header>
+        <h3 className="text-base font-semibold leading-tight">
+          Candidate FAQs
+        </h3>
+        <p className="mt-0.5 text-xs text-muted-foreground">
+          Organise FAQs into sections — e.g. English Speaking, Field Sales,
+          Freshers. Each section is shown to candidates during the screening
+          flow.
+        </p>
+      </header>
+
+      {sections.length === 0 ? (
+        <div className="flex min-h-20 items-center justify-center rounded-md border border-dashed border-border bg-muted/30 text-sm text-muted-foreground">
+          No FAQ sections yet. Add one below.
+        </div>
+      ) : (
+        <div className="flex flex-col gap-2">
+          {sections.map((section) => (
+            <FaqSectionItem
+              key={section.id}
+              section={section}
+              onUpdate={(patch) => updateSection(section.id, patch)}
+              onRemove={() => removeSection(section.id)}
+            />
+          ))}
+        </div>
+      )}
+
+      {showAddSection ? (
+        <div className="flex flex-col gap-2 rounded-md border border-border bg-muted/30 p-3">
+          <span className="text-xs font-medium text-muted-foreground">
+            Section name
+          </span>
+          <div className="flex gap-2">
+            <Input
+              autoFocus
+              value={addingSectionName}
+              onChange={(e) => setAddingSectionName(e.target.value)}
+              placeholder="e.g. English Speaking"
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault()
+                  addSection(addingSectionName)
+                }
+                if (e.key === "Escape") {
+                  setShowAddSection(false)
+                  setAddingSectionName("")
+                }
+              }}
+              className="flex-1"
+            />
+            <Button
+              type="button"
+              size="sm"
+              onClick={() => addSection(addingSectionName)}
+              disabled={!addingSectionName.trim()}
+            >
+              Add
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setShowAddSection(false)
+                setAddingSectionName("")
+              }}
+            >
+              Cancel
+            </Button>
+          </div>
+          {unusedPresets.length > 0 ? (
+            <div className="flex flex-wrap items-center gap-1.5 pt-1">
+              <span className="text-xs text-muted-foreground">Quick add:</span>
+              {unusedPresets.map((preset) => (
+                <button
+                  key={preset}
+                  type="button"
+                  onClick={() => addSection(preset)}
+                  className="rounded-full border border-border bg-background px-2.5 py-0.5 text-xs transition-colors hover:bg-muted"
+                >
+                  + {preset}
+                </button>
+              ))}
+            </div>
+          ) : null}
+        </div>
+      ) : (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => setShowAddSection(true)}
+          className="self-start"
+        >
+          <Plus className="size-3.5" />
+          Add FAQ section
+        </Button>
+      )}
+    </section>
+  )
+}
+
+function FaqSectionItem({
+  section,
+  onUpdate,
+  onRemove,
+}: {
+  section: FaqSection
+  onUpdate: (patch: Partial<FaqSection>) => void
+  onRemove: () => void
+}) {
+  const [expanded, setExpanded] = React.useState(true)
+  const [editingTitle, setEditingTitle] = React.useState(false)
+  const [titleDraft, setTitleDraft] = React.useState(section.title)
+
+  const commitTitle = () => {
+    const trimmed = titleDraft.trim()
+    if (trimmed) onUpdate({ title: trimmed })
+    else setTitleDraft(section.title)
+    setEditingTitle(false)
+  }
+
+  return (
+    <div className="rounded-md border border-border bg-muted/20">
+      <div className="flex items-center gap-2 px-3 py-2.5">
+        <button
+          type="button"
+          onClick={() => setExpanded((e) => !e)}
+          className="shrink-0 text-muted-foreground"
+          aria-label={expanded ? "Collapse section" : "Expand section"}
+        >
+          <ChevronDown
+            className={cn(
+              "size-4 transition-transform duration-150",
+              !expanded && "-rotate-90",
+            )}
+          />
+        </button>
+
+        {editingTitle ? (
+          <Input
+            autoFocus
+            value={titleDraft}
+            onChange={(e) => setTitleDraft(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault()
+                commitTitle()
+              }
+              if (e.key === "Escape") {
+                setTitleDraft(section.title)
+                setEditingTitle(false)
+              }
+            }}
+            onBlur={commitTitle}
+            className="h-7 flex-1 text-sm font-medium"
+          />
+        ) : (
+          <button
+            type="button"
+            onClick={() => {
+              setEditingTitle(true)
+              setExpanded(true)
+            }}
+            className="flex-1 text-left text-sm font-medium"
+          >
+            {section.title}
+          </button>
+        )}
+
+        <span className="shrink-0 text-xs text-muted-foreground">
+          {section.items.length}{" "}
+          {section.items.length === 1 ? "FAQ" : "FAQs"}
+        </span>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-xs"
+          aria-label="Rename section"
+          onClick={() => {
+            setEditingTitle(true)
+            setExpanded(true)
+          }}
+        >
+          <Pencil className="size-3.5" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-xs"
+          aria-label="Remove section"
+          onClick={onRemove}
+        >
+          <Trash2 className="size-3.5" />
+        </Button>
+      </div>
+
+      {expanded ? (
+        <div className="border-t border-border px-3 pb-3 pt-3">
+          <FaqSectionBody
+            items={section.items}
+            onChange={(items) => onUpdate({ items })}
+          />
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
+function FaqSectionBody({
+  items,
+  onChange,
+}: {
+  items: QAItem[]
+  onChange: (next: QAItem[]) => void
+}) {
+  const [editorOpen, setEditorOpen] = React.useState(false)
+  const [editingId, setEditingId] = React.useState<string | null>(null)
+  const [drafts, setDrafts] = React.useState<Draft[]>([])
+
+  const atLimit = items.length >= MAX_QA
+
+  const openAdd = () => {
+    if (atLimit) return
+    setEditingId(null)
+    setDrafts([makeDraft()])
+    setEditorOpen(true)
+  }
+
+  const openEdit = (item: QAItem) => {
+    setEditingId(item.id)
+    setDrafts([{ key: item.id, question: item.question, answer: item.answer }])
+    setEditorOpen(true)
+  }
+
+  const updateDraft = (key: string, patch: Partial<Omit<Draft, "key">>) => {
+    setDrafts((ds) => ds.map((d) => (d.key === key ? { ...d, ...patch } : d)))
+  }
+
+  const removeDraft = (key: string) => {
+    setDrafts((ds) => (ds.length <= 1 ? ds : ds.filter((d) => d.key !== key)))
+  }
+
+  const addAnotherDraft = () => {
+    setDrafts((ds) => {
+      if (items.length + ds.length >= MAX_QA) return ds
+      return [...ds, makeDraft()]
+    })
+  }
+
+  const saveDraft = () => {
+    if (editingId) {
+      const d = drafts[0]
+      const q = d.question.trim()
+      const a = d.answer.trim()
+      if (!q && !a) {
+        setEditorOpen(false)
+        return
+      }
+      onChange(
+        items.map((it) =>
+          it.id === editingId ? { ...it, question: q, answer: a } : it,
+        ),
+      )
+      setEditorOpen(false)
+      return
+    }
+    const filled = drafts
+      .map((d) => ({ question: d.question.trim(), answer: d.answer.trim() }))
+      .filter((d) => d.question || d.answer)
+    if (filled.length === 0) {
+      setEditorOpen(false)
+      return
+    }
+    onChange(
+      [
+        ...items,
+        ...filled.map((d) => ({
+          id: nextId("faq-qa"),
+          question: d.question,
+          answer: d.answer,
+        })),
+      ].slice(0, MAX_QA),
+    )
+    setEditorOpen(false)
+  }
+
+  const canAddAnother = !editingId && items.length + drafts.length < MAX_QA
+  const removeAt = (id: string) => onChange(items.filter((q) => q.id !== id))
+  const remaining = Math.max(0, MAX_QA - items.length - drafts.length)
+
+  return (
+    <div className="flex flex-col gap-3">
+      {items.length > 0 ? (
+        <ul className="flex flex-col divide-y divide-border rounded-md border border-border bg-card">
+          {items.map((item, idx) => (
+            <li key={item.id} className="flex items-center gap-3 px-3 py-2">
+              <span className="w-6 shrink-0 text-xs font-medium text-muted-foreground">
+                {idx + 1}.
+              </span>
+              <button
+                type="button"
+                onClick={() => openEdit(item)}
+                className="min-w-0 flex-1 cursor-pointer text-left text-sm"
+              >
+                <span className="block truncate font-medium">
+                  {item.question || (
+                    <span className="italic text-muted-foreground">
+                      (empty question)
+                    </span>
+                  )}
+                </span>
+                {item.answer ? (
+                  <span className="block truncate text-xs text-muted-foreground">
+                    {item.answer}
+                  </span>
+                ) : null}
+              </button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-xs"
+                aria-label="Edit FAQ"
+                onClick={() => openEdit(item)}
+              >
+                <Pencil className="size-3.5" />
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-xs"
+                aria-label="Remove FAQ"
+                onClick={() => removeAt(item.id)}
+              >
+                <Trash2 className="size-3.5" />
+              </Button>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-xs text-muted-foreground">
+          No FAQs in this section yet.
+        </p>
+      )}
+
+      <div className="flex items-center justify-between gap-3">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={openAdd}
+          disabled={atLimit}
+        >
+          <Plus className="size-3.5" />
+          Add FAQ
+        </Button>
+        <span
+          className={cn(
+            "text-xs text-muted-foreground",
+            atLimit && "text-warning",
+          )}
+        >
+          {items.length} / {MAX_QA}
+        </span>
+      </div>
+
+      <Dialog open={editorOpen} onOpenChange={setEditorOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>{editingId ? "Edit FAQ" : "Add FAQs"}</DialogTitle>
+          </DialogHeader>
+          <div className="-mx-1 flex max-h-96 flex-col gap-4 overflow-y-auto px-1 py-1">
+            {drafts.map((d, idx) => (
+              <div
+                key={d.key}
+                className={cn(
+                  "flex flex-col gap-3",
+                  !editingId &&
+                    drafts.length > 1 &&
+                    "rounded-md border border-border bg-muted/30 p-3",
+                )}
+              >
+                {!editingId && drafts.length > 1 ? (
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-muted-foreground">
+                      FAQ {idx + 1}
+                    </span>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-xs"
+                      aria-label="Remove FAQ"
+                      onClick={() => removeDraft(d.key)}
+                    >
+                      <Trash2 className="size-3.5" />
+                    </Button>
+                  </div>
+                ) : null}
+                <div className="flex flex-col gap-1.5">
+                  <Label
+                    htmlFor={`faq-dialog-q-${d.key}`}
+                    className="text-sm font-medium"
+                  >
+                    Question
+                  </Label>
+                  <Input
+                    id={`faq-dialog-q-${d.key}`}
+                    autoFocus={idx === 0}
+                    value={d.question}
+                    onChange={(e) =>
+                      updateDraft(d.key, { question: e.target.value })
+                    }
+                    placeholder="e.g. What are the working hours?"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label
+                    htmlFor={`faq-dialog-a-${d.key}`}
+                    className="text-sm font-medium"
+                  >
+                    Answer
+                  </Label>
+                  <Textarea
+                    id={`faq-dialog-a-${d.key}`}
+                    value={d.answer}
+                    onChange={(e) =>
+                      updateDraft(d.key, { answer: e.target.value })
+                    }
+                    placeholder="Share the answer candidates should see."
+                    rows={3}
+                  />
+                </div>
+              </div>
+            ))}
+            {!editingId ? (
+              <div className="flex items-center justify-between gap-3">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={addAnotherDraft}
+                  disabled={!canAddAnother}
+                >
+                  <Plus className="size-3.5" />
+                  Add another FAQ
+                </Button>
+                <span className="text-xs text-muted-foreground">
+                  {remaining} {remaining === 1 ? "slot" : "slots"} left
+                </span>
+              </div>
+            ) : null}
+          </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setEditorOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button type="button" onClick={saveDraft}>
+              {editingId
+                ? "Save changes"
+                : drafts.length > 1
+                  ? `Add ${drafts.length} FAQs`
+                  : "Add FAQ"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
   )
 }
 
