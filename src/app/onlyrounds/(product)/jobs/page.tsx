@@ -154,12 +154,12 @@ function JobsPageInner() {
             value={tab}
             onValueChange={(v) => setTab(v as JobTab)}
           >
-            <TabsList className="h-10">
+            <TabsList variant="line">
               {TABS.map((t) => (
                 <TabsTrigger
                   key={t.value}
                   value={t.value}
-                  className="h-8 px-4 leading-none"
+                  className="leading-none"
                 >
                   <span>
                     {t.label}{" "}
@@ -187,7 +187,7 @@ function JobsPageInner() {
           <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Search jobs..."
-            className="pl-9"
+            className="bg-card pl-9"
           />
         </div>
         <Popover>
