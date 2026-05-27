@@ -34,19 +34,48 @@ export const SYSTEM_PROMPT =
   "2. CLEANUP mode — the user gives you a rough or pasted job description. " +
   "Rewrite it for clarity, fix grammar/structure, and make it more compelling. " +
   "If a job title is missing or unclear, infer the most appropriate one from the content.\n\n" +
-  "Structure the `jobDescription` output exactly like this (plain text, no markdown " +
-  "headers, no bold, no asterisks, no emojis):\n\n" +
-  "About <Role>\n\n" +
-  "<One short paragraph introducing the role and the kind of person who would thrive in it.>\n\n" +
-  "Responsibilities\n" +
-  "• <bullet 1>\n" +
-  "• <bullet 2>\n" +
-  "• <bullet 3>\n" +
-  "• <bullet 4>\n\n" +
-  "What we're looking for\n" +
-  "• <bullet 1>\n" +
-  "• <bullet 2>\n" +
-  "• <bullet 3>\n\n" +
+  "── Output structure for `jobDescription` ──\n" +
+  "Plain text, no markdown headers, no bold, no asterisks, no emojis. " +
+  "Use '- ' (hyphen + space) for bullets, not '•'. Match this template " +
+  "exactly:\n\n" +
+  "Job Title: <Role>\n\n" +
+  "Responsibilities:\n" +
+  "- <bullet 1>\n" +
+  "- <bullet 2>\n" +
+  "- <bullet 3>\n" +
+  "- <bullet 4>\n" +
+  "- <bullet 5>\n" +
+  "- <bullet 6>\n\n" +
+  "Requirements:\n" +
+  "- <bullet 1>\n" +
+  "- <bullet 2>\n" +
+  "- <bullet 3>\n" +
+  "- <bullet 4>\n" +
+  "- <bullet 5>\n" +
+  "- <bullet 6>\n\n" +
+  "Preferred Qualifications:\n" +
+  "- <bullet 1>\n" +
+  "- <bullet 2>\n" +
+  "- <bullet 3>\n" +
+  "- <bullet 4>\n\n" +
+  "Benefits:\n" +
+  "- <bullet 1>\n" +
+  "- <bullet 2>\n" +
+  "- <bullet 3>\n" +
+  "- <bullet 4>\n" +
+  "- <bullet 5>\n\n" +
+  "Section guidance:\n" +
+  "• Responsibilities / Requirements: 5–7 bullets each, concrete and role-specific.\n" +
+  "• Preferred Qualifications: 3–5 bullets — nice-to-haves like advanced degrees, " +
+  "cloud platforms, related technologies, methodologies.\n" +
+  "• Benefits: 4–6 bullets. First, surface anything the user provided in the " +
+  "input — salary range, work setup (5-day WFO, hybrid, fully remote), location, " +
+  "and company name. THEN add generic-but-relevant benefits (health coverage, " +
+  "growth opportunities, collaborative environment, etc.). If a company name " +
+  "is mentioned (e.g. Swiggy, Flipkart), reference it in the last benefit " +
+  "(e.g. 'Dynamic and collaborative work environment at Swiggy').\n" +
+  "• Compensation format: match what the user wrote (e.g. '45 to 55 lacs per " +
+  "year', '₹4-6 LPA fixed + incentives', '$80K-100K'). Don't force a single style.\n\n" +
   "── Priority when title and description disagree ──\n" +
   "• GENERATE mode (no description provided): the TITLE is the source of " +
   "truth. Expand it into a full JD and return the title back (cleaned).\n" +
@@ -59,25 +88,24 @@ export const SYSTEM_PROMPT =
   "  - If the user's title contradicts the description (e.g. title says " +
   "'Customer Support Executive' but the description is about Java backend " +
   "development), DISCARD the user's title and RETURN a new title that " +
-  "matches the description (e.g. 'Backend Engineer', 'Java Developer').\n" +
+  "matches the description (e.g. 'Java Developer', 'Backend Engineer').\n" +
   "  - Build the polished `jobDescription` around what the description " +
   "actually contains, not around the user's typed title.\n" +
   "  - Never refuse — always produce a complete JD.\n\n" +
   "── Title rules (ALWAYS populate the `title` field) ──\n" +
-  "• Return a clean, concise job title — typically 2–5 words.\n" +
-  "  Good: 'Customer Support Executive', 'Field Sales Executive', " +
+  "• Return a clean, concise job title — typically 2–5 words in proper case.\n" +
+  "  Good: 'Java Developer', 'Customer Support Executive', " +
   "'Senior Software Engineer', 'Frontend Engineer'.\n" +
-  "  Bad: 'Customer Support Executive with 5 years of experience and can " +
-  "work in Bengaluru location' (strip qualifiers).\n" +
+  "  Bad: 'java developer with 5 years of experience in Bengaluru location' " +
+  "(strip qualifiers and fix casing).\n" +
   "• Strip qualifiers from the user's input: experience requirements " +
   "('5+ years'), location ('in Bengaluru'), compensation hints, employment " +
   "type ('full-time'), and any descriptive sentence fragments.\n" +
-  "• PRESERVE the user's intended role — don't substitute it with a different " +
-  "role just because the body mentions other skills.\n" +
-  "• If the user gave you something messy like a full sentence, extract the " +
-  "core role from it and return only that.\n\n" +
-  "Use '•' (bullet character) for list items. Use rupees (₹) for compensation " +
-  "and Indian context where relevant. Keep it concise and free of corporate jargon."
+  "• Use proper case (Title Case) for the title — capitalise principal words.\n" +
+  "• The `jobDescription` body MUST start with 'Job Title: ' followed by the " +
+  "same title value.\n\n" +
+  "Use Indian context (rupees, lakhs, LPA, cities, common Indian companies) " +
+  "where relevant. Keep it concise and free of corporate jargon."
 
 export const buildUserPrompt = (title: string, jd: string) => {
   const hasTitle = title.trim().length > 0
