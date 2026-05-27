@@ -47,6 +47,15 @@ export const SYSTEM_PROMPT =
   "• <bullet 1>\n" +
   "• <bullet 2>\n" +
   "• <bullet 3>\n\n" +
+  "── When title and description don't match ──\n" +
+  "If the user provides BOTH a job title and a draft description, and they " +
+  "appear to be about unrelated roles (e.g. title says 'Software Engineer' " +
+  "but the description is for a 'Cook'):\n" +
+  "• Treat the TITLE as the canonical role — that's what they want to hire for.\n" +
+  "• Use the description only for supporting context that's still relevant " +
+  "(location, hours, compensation, soft skills, etc.).\n" +
+  "• Discard description content that clearly belongs to a different role.\n" +
+  "• Never refuse — always produce a complete JD for the title.\n\n" +
   "── Title rules (ALWAYS populate the `title` field) ──\n" +
   "• Return a clean, concise job title — typically 2–5 words.\n" +
   "  Good: 'Customer Support Executive', 'Field Sales Executive', " +
@@ -137,10 +146,14 @@ function deriveDummyTitle(jd: string): string {
 // ── Route handler ─────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
+  // Captured outside the try so the catch block can build a fallback from them.
+  let title = ""
+  let jd = ""
+
   try {
     const body = await req.json().catch(() => ({}))
-    const title: string = (body?.title ?? "").toString()
-    const jd: string = (body?.jd ?? body?.seed ?? "").toString()
+    title = (body?.title ?? "").toString()
+    jd = (body?.jd ?? body?.seed ?? "").toString()
 
     if (!title.trim() && !jd.trim()) {
       return NextResponse.json({ jobDescription: "" })
@@ -170,7 +183,13 @@ export async function POST(req: NextRequest) {
     }
     return NextResponse.json(result)
   } catch (err) {
+    // Common causes: schema-validation error from a confused model
+    // (e.g. mismatched title + JD), upstream timeout, quota exhaustion.
+    // Always return SOMETHING the wizard can show.
     console.error("[generate-jd]", err)
+    if (title.trim() || jd.trim()) {
+      return NextResponse.json(buildDummyResult(title, jd))
+    }
     return NextResponse.json({ jobDescription: "" }, { status: 200 })
   }
 }

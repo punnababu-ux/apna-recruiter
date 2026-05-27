@@ -380,7 +380,9 @@ function JDField({
         title?: string
       }
       if (!data.jobDescription) {
-        setError("No description returned. Try a different title or draft.")
+        // The server already falls back to a template on Gemini errors, so
+        // an empty response means the form was empty too. Nudge the user.
+        setError("Add a job title or paste a rough JD, then try again.")
         return
       }
       onChange(data.jobDescription)
