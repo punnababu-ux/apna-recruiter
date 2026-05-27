@@ -146,19 +146,19 @@ function deriveDummyTitle(jd: string): string {
 // ── Route handler ─────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
-  // Captured outside the try so the catch block can build a fallback from them.
-  let title = ""
-  let jd = ""
-
   try {
     const body = await req.json().catch(() => ({}))
-    title = (body?.title ?? "").toString()
-    jd = (body?.jd ?? body?.seed ?? "").toString()
+    const title: string = (body?.title ?? "").toString()
+    const jd: string = (body?.jd ?? body?.seed ?? "").toString()
 
     if (!title.trim() && !jd.trim()) {
       return NextResponse.json({ jobDescription: "" })
     }
 
+    // Dummy fallback ONLY for local dev without a Gemini key set.
+    // Once GOOGLE_GENERATIVE_AI_API_KEY is configured we never fall back to
+    // dummy content — the user should see a real error instead of generic
+    // template text that doesn't match what they typed.
     if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
       console.log(
         "[generate-jd] dummy mode — set GOOGLE_GENERATIVE_AI_API_KEY to use live Gemini",
@@ -178,18 +178,38 @@ export async function POST(req: NextRequest) {
       title: output?.title?.trim() || undefined,
     }
     if (!result.jobDescription) {
-      console.error("[generate-jd] empty jobDescription from model")
-      return NextResponse.json(buildDummyResult(title, jd))
+      console.error("[generate-jd] empty jobDescription from Gemini")
+      return NextResponse.json({
+        jobDescription: "",
+        error:
+          "The AI didn't return a usable description. Try simplifying your input or clearing one of the fields.",
+      })
     }
     return NextResponse.json(result)
   } catch (err) {
-    // Common causes: schema-validation error from a confused model
-    // (e.g. mismatched title + JD), upstream timeout, quota exhaustion.
-    // Always return SOMETHING the wizard can show.
-    console.error("[generate-jd]", err)
-    if (title.trim() || jd.trim()) {
-      return NextResponse.json(buildDummyResult(title, jd))
+    // Map common Gemini failure modes to actionable user-facing messages.
+    const raw = String(
+      (err as { message?: unknown })?.message ?? err ?? "",
+    )
+    console.error("[generate-jd]", raw)
+
+    let error = "Couldn't reach the generator. Try again in a moment."
+    if (/rate.?limit|quota|RESOURCE_EXHAUSTED|429/i.test(raw)) {
+      error =
+        "Rate limit reached on Gemini's free tier (20 req/min). Wait ~30 seconds and try again."
+    } else if (
+      /NoObjectGenerated|schema|invalid.json|could not parse|validation/i.test(
+        raw,
+      )
+    ) {
+      error =
+        "The AI couldn't structure a response from that. Try simplifying your input or clearing one of the fields."
+    } else if (/timeout|deadline|ECONNRESET|ETIMEDOUT/i.test(raw)) {
+      error = "The AI request timed out. Try again in a moment."
+    } else if (/401|403|unauthorized|forbidden|api.?key/i.test(raw)) {
+      error =
+        "Gemini rejected the API key. Check GOOGLE_GENERATIVE_AI_API_KEY in .env.local."
     }
-    return NextResponse.json({ jobDescription: "" }, { status: 200 })
+    return NextResponse.json({ jobDescription: "", error })
   }
 }

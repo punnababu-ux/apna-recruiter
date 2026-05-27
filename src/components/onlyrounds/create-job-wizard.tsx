@@ -378,11 +378,14 @@ function JDField({
       const data = (await res.json()) as {
         jobDescription?: string
         title?: string
+        error?: string
       }
       if (!data.jobDescription) {
-        // The server already falls back to a template on Gemini errors, so
-        // an empty response means the form was empty too. Nudge the user.
-        setError("Add a job title or paste a rough JD, then try again.")
+        // Surface the server's specific reason (rate limit, schema error,
+        // bad key, timeout, etc.) when present. Generic nudge otherwise.
+        setError(
+          data.error ?? "Add a job title or paste a rough JD, then try again.",
+        )
         return
       }
       onChange(data.jobDescription)
