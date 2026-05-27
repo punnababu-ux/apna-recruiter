@@ -56,8 +56,10 @@ export type QAItem = { id: string; question: string; answer: string }
 export type QuestionSection = {
   id: string
   title: string
-  /** Who this section is shown to during the screening flow */
-  target: "freshers" | "experienced" | "both"
+  /** Who this section is shown to during the screening flow.
+   *  Forced to match the job-level `experienceType` when the job is
+   *  single-audience; user-selectable only when the job is `"any"`. */
+  target: "freshers" | "experienced"
   /** How many questions from this section each candidate gets */
   questionsPerCandidate: number
   /** Whether to shuffle the question order per candidate */
@@ -454,6 +456,7 @@ export function JobDetailsStep({
       <QuestionSectionsEditor
         sections={form.questionSections}
         onChange={(next) => update("questionSections", next)}
+        experienceType={form.experienceType}
       />
 
       {/* Section 5 — additional details */}
@@ -546,12 +549,15 @@ function RadioOption({ value, label }: { value: string; label: string }) {
 
 // ---- question sections editor ------------------------------------------
 
+// Each preset can optionally hint its preferred target. When the job is
+// single-audience we ignore the hint and force the audience to match the
+// job-level setting.
 const QUESTION_SECTION_PRESETS: {
   title: string
-  target: QuestionSection["target"]
+  target?: QuestionSection["target"]
 }[] = [
-  { title: "English Speaking", target: "both" },
-  { title: "Field Sales Capability", target: "both" },
+  { title: "English Speaking" },
+  { title: "Field Sales Capability" },
   { title: "Technical Skills", target: "experienced" },
   { title: "Freshers", target: "freshers" },
   { title: "Experienced", target: "experienced" },
@@ -560,16 +566,29 @@ const QUESTION_SECTION_PRESETS: {
 function QuestionSectionsEditor({
   sections,
   onChange,
+  experienceType,
 }: {
   sections: QuestionSection[]
   onChange: (next: QuestionSection[]) => void
+  experienceType: ExperienceRequirement
 }) {
   const [showAddSection, setShowAddSection] = React.useState(false)
   const [addingSectionName, setAddingSectionName] = React.useState("")
 
+  // Default audience for a new section: forced to match the job-level
+  // setting when it's single-audience, else use the preset's hint, else
+  // default to experienced.
+  const resolveTarget = (
+    presetTarget?: QuestionSection["target"],
+  ): QuestionSection["target"] => {
+    if (experienceType === "experienced") return "experienced"
+    if (experienceType === "freshers") return "freshers"
+    return presetTarget ?? "experienced"
+  }
+
   const addSection = (
     title: string,
-    target: QuestionSection["target"] = "both",
+    presetTarget?: QuestionSection["target"],
   ) => {
     const trimmed = title.trim()
     if (!trimmed) return
@@ -578,7 +597,7 @@ function QuestionSectionsEditor({
       {
         id: nextId("qs"),
         title: trimmed,
-        target,
+        target: resolveTarget(presetTarget),
         questionsPerCandidate: 2,
         randomize: false,
         items: [],
@@ -602,34 +621,30 @@ function QuestionSectionsEditor({
 
   return (
     <section className="flex flex-col gap-4 rounded-lg border border-border bg-card p-5">
-      <header>
-        <h3 className="text-base font-semibold leading-tight">
-          Question sections
-        </h3>
-        <p className="mt-0.5 text-xs text-muted-foreground">
-          Create sections for screening questions and candidate FAQs. Each
-          section targets freshers, experienced candidates, or both — with its
-          own per-candidate count and randomisation toggle.
-        </p>
+      {/* Title + Add CTA on a single row */}
+      <header className="flex items-start justify-between gap-3">
+        <div>
+          <h3 className="text-base font-semibold leading-tight">
+            Question sections
+          </h3>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            Create sections for screening questions and candidate FAQs. Each
+            section has its own per-candidate count and randomisation toggle.
+          </p>
+        </div>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => setShowAddSection((s) => !s)}
+          className="shrink-0"
+        >
+          <Plus className="size-3.5" />
+          Add section
+        </Button>
       </header>
 
-      {sections.length === 0 ? (
-        <div className="flex min-h-20 items-center justify-center rounded-md border border-dashed border-border bg-muted/30 text-sm text-muted-foreground">
-          No sections yet. Add one below.
-        </div>
-      ) : (
-        <div className="flex flex-col gap-2">
-          {sections.map((section) => (
-            <QuestionSectionItem
-              key={section.id}
-              section={section}
-              onUpdate={(patch) => updateSection(section.id, patch)}
-              onRemove={() => removeSection(section.id)}
-            />
-          ))}
-        </div>
-      )}
-
+      {/* Add-section form appears between header and list when active */}
       {showAddSection ? (
         <div className="flex flex-col gap-2 rounded-md border border-border bg-muted/30 p-3">
           <span className="text-xs font-medium text-muted-foreground">
@@ -689,17 +704,24 @@ function QuestionSectionsEditor({
             </div>
           ) : null}
         </div>
+      ) : null}
+
+      {sections.length === 0 ? (
+        <div className="flex min-h-20 items-center justify-center rounded-md border border-dashed border-border bg-muted/30 text-sm text-muted-foreground">
+          No sections yet. Use Add section to create one.
+        </div>
       ) : (
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => setShowAddSection(true)}
-          className="self-start"
-        >
-          <Plus className="size-3.5" />
-          Add section
-        </Button>
+        <div className="flex flex-col gap-2">
+          {sections.map((section) => (
+            <QuestionSectionItem
+              key={section.id}
+              section={section}
+              onUpdate={(patch) => updateSection(section.id, patch)}
+              onRemove={() => removeSection(section.id)}
+              experienceType={experienceType}
+            />
+          ))}
+        </div>
       )}
     </section>
   )
@@ -709,10 +731,12 @@ function QuestionSectionItem({
   section,
   onUpdate,
   onRemove,
+  experienceType,
 }: {
   section: QuestionSection
   onUpdate: (patch: Partial<QuestionSection>) => void
   onRemove: () => void
+  experienceType: ExperienceRequirement
 }) {
   const [expanded, setExpanded] = React.useState(true)
   const [editingTitle, setEditingTitle] = React.useState(false)
@@ -726,10 +750,28 @@ function QuestionSectionItem({
   }
 
   const TARGET_LABELS: Record<QuestionSection["target"], string> = {
-    both: "Both",
     freshers: "Freshers only",
     experienced: "Experienced only",
   }
+
+  // Show the "For" dropdown only when the job supports both audiences.
+  // Otherwise the section's audience is forced to match the job-level
+  // setting (and the data is kept in sync below).
+  const showTargetSelect = experienceType === "any"
+  const forcedTarget: QuestionSection["target"] | null =
+    experienceType === "experienced"
+      ? "experienced"
+      : experienceType === "freshers"
+        ? "freshers"
+        : null
+  // Keep stored section.target in sync with the job-level setting when
+  // the latter is single-audience.
+  React.useEffect(() => {
+    if (forcedTarget && section.target !== forcedTarget) {
+      onUpdate({ target: forcedTarget })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [forcedTarget])
 
   return (
     <div className="rounded-md border border-border bg-muted/20">
@@ -787,10 +829,6 @@ function QuestionSectionItem({
           </span>
         ) : null}
 
-        <span className="shrink-0 text-xs text-muted-foreground">
-          {section.items.length}{" "}
-          {section.items.length === 1 ? "Q" : "Qs"}
-        </span>
         <Button
           type="button"
           variant="ghost"
@@ -819,24 +857,34 @@ function QuestionSectionItem({
         <div className="border-t border-border">
           {/* settings row */}
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 px-3 py-2.5">
-            <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              For
-              <Select
-                value={section.target}
-                onValueChange={(v) =>
-                  onUpdate({ target: v as QuestionSection["target"] })
-                }
-              >
-                <SelectTrigger className="h-7 w-auto gap-1 border border-border bg-background px-2 text-xs font-medium text-foreground shadow-none">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="both">Both</SelectItem>
-                  <SelectItem value="freshers">Freshers only</SelectItem>
-                  <SelectItem value="experienced">Experienced only</SelectItem>
-                </SelectContent>
-              </Select>
-            </label>
+            {showTargetSelect ? (
+              <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                For
+                <Select
+                  value={section.target}
+                  onValueChange={(v) =>
+                    onUpdate({ target: v as QuestionSection["target"] })
+                  }
+                >
+                  <SelectTrigger className="h-7 w-auto gap-1 border border-border bg-background px-2 text-xs font-medium text-foreground shadow-none">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="freshers">Freshers only</SelectItem>
+                    <SelectItem value="experienced">
+                      Experienced only
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </label>
+            ) : (
+              <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                For
+                <span className="rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-foreground">
+                  {TARGET_LABELS[section.target]}
+                </span>
+              </span>
+            )}
 
             <label
               htmlFor={`qpc-${section.id}`}
