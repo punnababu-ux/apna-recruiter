@@ -853,17 +853,11 @@ function QuestionSectionItem({
         ) : (
           <button
             type="button"
-            // Clicking the title text on a *collapsed* section just
-            // expands it. To rename, the user has to click the pencil
-            // (or click the title again while expanded).
-            onClick={() => {
-              if (!isOpen) {
-                onToggle()
-                return
-              }
-              setEditingTitle(true)
-            }}
-            className="flex-1 text-left text-sm font-medium"
+            // Title text is only a collapse/expand affordance. Editing
+            // is exclusively triggered by the pencil icon next to it.
+            onClick={onToggle}
+            className="flex-1 cursor-pointer text-left text-sm font-medium"
+            aria-label={isOpen ? "Collapse section" : "Expand section"}
           >
             {section.title}
           </button>
