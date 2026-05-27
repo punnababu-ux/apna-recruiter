@@ -354,10 +354,12 @@
 }
 
 /* ----------------------------------------------------------------------------
- * AI activity shimmer — animated gradient used as a "border" when an AI
- * action is in flight (e.g. JD generation, JD cleanup). Apply to a wrapper
- * with `p-[2px]` and let the inner element have a solid background so the
- * animated gradient peeks through as a glowing ring.
+ * AI activity shimmer — subtle animated gradient used as a full-field cover
+ * when an AI action is in flight (e.g. JD generation, JD cleanup).
+ *
+ * Uses the semantic `--muted` and `--accent` tokens so it sits softly against
+ * the surrounding UI in both light and dark themes (a faint brand tint
+ * sweeping across a near-white field, rather than a saturated brand gradient).
  * -------------------------------------------------------------------------- */
 @keyframes ai-shimmer {
   0%, 100% { background-position: 0% 50%; }
@@ -365,7 +367,12 @@
 }
 
 @utility animate-ai-shimmer {
-  background-image: var(--gradient-primary);
+  background-image: linear-gradient(
+    90deg,
+    var(--muted),
+    var(--accent),
+    var(--muted)
+  );
   background-size: 200% 100%;
   animation: ai-shimmer 2.4s ease-in-out infinite;
 }
