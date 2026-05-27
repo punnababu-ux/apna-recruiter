@@ -367,14 +367,28 @@
 }
 
 @utility animate-ai-shimmer {
+  /* Pastel multi-hue wave (green → gold → green) — visible but not loud.
+     Dark-theme override below remaps to the same hues in the 800 tier so
+     the shimmer reads correctly against dark surfaces. */
   background-image: linear-gradient(
     90deg,
-    var(--muted),
-    var(--accent),
-    var(--muted)
+    var(--color-apna-green-100),
+    var(--color-apna-gold-200),
+    var(--color-apna-green-200),
+    var(--color-apna-green-100)
   );
   background-size: 200% 100%;
   animation: ai-shimmer 2.4s ease-in-out infinite;
+}
+
+.dark .animate-ai-shimmer {
+  background-image: linear-gradient(
+    90deg,
+    var(--color-apna-green-900),
+    var(--color-apna-gold-800),
+    var(--color-apna-green-800),
+    var(--color-apna-green-900)
+  );
 }
 
 /* Text gradients — clip a gradient to a glyph run. Pairs beautifully with
