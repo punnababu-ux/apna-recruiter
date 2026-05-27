@@ -924,7 +924,10 @@ function QuestionSectionItem({
             ) : (
               <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 For
-                <span className="rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-foreground">
+                {/* Mirrors the SelectTrigger's visual weight so the single-
+                    audience read-only badge sits at the same height as the
+                    other controls (h-7, same border/bg/padding). */}
+                <span className="inline-flex h-7 items-center rounded-md border border-border bg-background px-2 text-xs font-medium text-foreground">
                   {TARGET_LABELS[section.target]}
                 </span>
               </span>
@@ -939,13 +942,13 @@ function QuestionSectionItem({
                 id={`qpc-${section.id}`}
                 type="number"
                 min={1}
-                max={Math.max(1, section.items.length || MAX_QA)}
+                max={MAX_QA}
                 value={section.questionsPerCandidate}
                 onChange={(e) =>
                   onUpdate({
-                    questionsPerCandidate: Math.max(
-                      1,
-                      Number(e.target.value) || 1,
+                    questionsPerCandidate: Math.min(
+                      MAX_QA,
+                      Math.max(1, Number(e.target.value) || 1),
                     ),
                   })
                 }
