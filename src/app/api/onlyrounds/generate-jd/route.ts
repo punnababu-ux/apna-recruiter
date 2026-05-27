@@ -1,33 +1,52 @@
 /**
  * POST /api/onlyrounds/generate-jd
  *
- * Proxies to the Apna OnlyRounds JD-generation service.
- * Keeps the bearer token server-side (never shipped to the browser).
+ * Generates a structured job description from a short seed (job title or
+ * a few lines of draft text) using Google Gemini via @ai-sdk/google.
  *
- * Upstream:
- *   POST {API_BASE}/api/workspace/{WORKSPACE_ID}/jobs/generate-job-description
- *   Body: { "jobDescriptionText": "<seed text>" }
- *   Response envelope: { statusCode, status, message, data }
+ * Setup: add GOOGLE_GENERATIVE_AI_API_KEY to your .env.local.
+ *
+ * See INTEGRATION.md in this directory to swap providers or call the model
+ * directly from your own backend.
  *
  * ── Dummy mode ────────────────────────────────────────────────────────────
- * When APNA_ONLYROUND_BEARER_TOKEN is absent, returns a locally-generated
- * placeholder JD so the wizard flow works without staging credentials.
- * Set the env var to enable the live call.
+ * When GOOGLE_GENERATIVE_AI_API_KEY is absent the route returns a templated
+ * placeholder JD so the wizard flow works without an API key.
+ * Set the env var to enable the live Gemini call.
  * ──────────────────────────────────────────────────────────────────────────
  */
 
+import { google } from "@ai-sdk/google"
+import { generateText } from "ai"
 import { NextRequest, NextResponse } from "next/server"
 
-const API_BASE =
-  process.env.APNA_ONLYROUND_API_BASE ??
-  "https://api.staging.infra.apna.co/only-round"
+// ── Prompt ─────────────────────────────────────────────────────────────────
+// Exported so it can be copied verbatim when calling a provider directly
+// (without the AI SDK). See INTEGRATION.md.
 
-// Staging default. Override per environment.
-const WORKSPACE_ID =
-  process.env.APNA_ONLYROUND_WORKSPACE_ID ??
-  "aaa1bdde-4796-4f1c-ba2e-34d9be4ed9ce"
+export const SYSTEM_PROMPT =
+  "You are an expert recruiter writing job descriptions for the Indian job market. " +
+  "Generate a clear, well-structured job description for the role provided.\n\n" +
+  "Structure the output exactly like this (plain text, no markdown headers, " +
+  "no bold, no asterisks, no emojis):\n\n" +
+  "About <Role>\n\n" +
+  "<One short paragraph introducing the role and the kind of person who " +
+  "would thrive in it.>\n\n" +
+  "Responsibilities\n" +
+  "• <bullet 1>\n" +
+  "• <bullet 2>\n" +
+  "• <bullet 3>\n" +
+  "• <bullet 4>\n\n" +
+  "What we're looking for\n" +
+  "• <bullet 1>\n" +
+  "• <bullet 2>\n" +
+  "• <bullet 3>\n\n" +
+  "Keep it concise, candidate-friendly, and free of corporate jargon. " +
+  "Use '•' (bullet character) for list items. Use rupees (₹) for any " +
+  "compensation references and Indian context where relevant."
 
-const BEARER_TOKEN = process.env.APNA_ONLYROUND_BEARER_TOKEN
+export const buildUserPrompt = (seed: string) =>
+  `Generate a job description based on this seed:\n\n${seed}`
 
 // ── Dummy generation ──────────────────────────────────────────────────────
 
@@ -49,40 +68,12 @@ function buildDummyJd(seed: string): string {
   )
 }
 
-// ── Response shape from the upstream API ──────────────────────────────────
-// We don't have a published schema yet, so this is defensive: try the most
-// likely keys in order and accept a plain string as a fallback.
-
-function extractJd(data: unknown): string {
-  if (typeof data === "string") return data
-  if (data && typeof data === "object") {
-    const d = data as Record<string, unknown>
-    for (const key of [
-      "jobDescription",
-      "jobDescriptionText",
-      "description",
-      "text",
-      "content",
-      "generatedText",
-    ]) {
-      const v = d[key]
-      if (typeof v === "string" && v.trim()) return v
-    }
-  }
-  return ""
-}
-
 // ── Route handler ─────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => ({}))
-    const seed: string = (
-      body?.seed ??
-      body?.title ??
-      body?.jobDescriptionText ??
-      ""
-    )
+    const seed: string = (body?.seed ?? body?.title ?? body?.jd ?? "")
       .toString()
       .trim()
 
@@ -90,52 +81,21 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ jobDescription: "" })
     }
 
-    // Dummy fallback when no token is configured.
-    if (!BEARER_TOKEN) {
+    // Dummy fallback when no Gemini key is configured.
+    if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
       console.log(
-        "[generate-jd] dummy mode — set APNA_ONLYROUND_BEARER_TOKEN to use live API",
+        "[generate-jd] dummy mode — set GOOGLE_GENERATIVE_AI_API_KEY to use live Gemini",
       )
       return NextResponse.json({ jobDescription: buildDummyJd(seed) })
     }
 
-    const url = `${API_BASE}/api/workspace/${WORKSPACE_ID}/jobs/generate-job-description`
-    const upstream = await fetch(url, {
-      method: "POST",
-      headers: {
-        accept: "application/json, text/plain, */*",
-        authorization: `Bearer ${BEARER_TOKEN}`,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({ jobDescriptionText: seed }),
+    const { text } = await generateText({
+      model: google("gemini-2.5-flash"),
+      system: SYSTEM_PROMPT,
+      prompt: buildUserPrompt(seed),
     })
 
-    if (!upstream.ok) {
-      console.error(
-        "[generate-jd] upstream HTTP",
-        upstream.status,
-        await upstream.text().catch(() => ""),
-      )
-      return NextResponse.json({ jobDescription: buildDummyJd(seed) })
-    }
-
-    const json = await upstream.json().catch(() => null)
-
-    // Apna envelope: { statusCode, status, message, data }
-    if (json?.status === "ERROR") {
-      console.error("[generate-jd] upstream ERROR:", json?.message)
-      return NextResponse.json({ jobDescription: buildDummyJd(seed) })
-    }
-
-    const jobDescription = extractJd(json?.data ?? json)
-    if (!jobDescription) {
-      console.error(
-        "[generate-jd] could not extract JD from response:",
-        JSON.stringify(json).slice(0, 500),
-      )
-      return NextResponse.json({ jobDescription: buildDummyJd(seed) })
-    }
-
-    return NextResponse.json({ jobDescription })
+    return NextResponse.json({ jobDescription: text.trim() })
   } catch (err) {
     console.error("[generate-jd]", err)
     // Don't block the UI on failure — return empty so the wizard keeps moving.

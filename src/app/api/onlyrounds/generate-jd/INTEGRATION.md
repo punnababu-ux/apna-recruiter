@@ -2,94 +2,157 @@
 
 `POST /api/onlyrounds/generate-jd`
 
-Wraps the Apna OnlyRounds JD-generation service. The wizard's
-**Generate with AI** button calls this route — it should never call the
-upstream service directly (keeps the bearer token out of the browser).
+Generates a structured job description from a short seed (title or a few
+lines of draft text) using **Google Gemini** via `@ai-sdk/google`. The
+wizard's **Generate with AI** button calls this route.
 
 ---
 
-## Request (from the browser)
+## Request
 
 ```json
-{
-  "seed": "Software Engineer"
-}
+{ "seed": "Software Engineer" }
 ```
 
 `seed` is the title (or a few lines of draft JD) the model expands into a
-full job description. The route also accepts `title` or `jobDescriptionText`
-as the seed key for convenience.
+full job description.
 
 ---
 
-## Response (to the browser)
+## Response
 
 ```json
 {
-  "jobDescription": "About Software Engineer\n\nWe're looking for..."
+  "jobDescription": "About Software Engineer\n\nWe're looking for a Software Engineer to join..."
 }
 ```
 
 `jobDescription` is the generated text, ready to drop straight into the
 JD textarea. The route always returns HTTP 200 — on failure the field is
-empty or contains a dummy fallback so the wizard never blocks.
+empty so the wizard never blocks.
 
 ---
 
-## Upstream call
-
-```
-POST {APNA_ONLYROUND_API_BASE}/api/workspace/{APNA_ONLYROUND_WORKSPACE_ID}/jobs/generate-job-description
-
-Authorization: Bearer {APNA_ONLYROUND_BEARER_TOKEN}
-Content-Type:  application/json
-
-{ "jobDescriptionText": "<seed>" }
-```
-
-Response envelope (Apna standard):
-
-```json
-{
-  "statusCode": 200,
-  "status": "SUCCESS",
-  "message": "...",
-  "data": { "...generated JD lives here..." }
-}
-```
-
-The route is **defensive about the `data` shape** — it accepts any of
-`data` (plain string), `data.jobDescription`, `data.jobDescriptionText`,
-`data.description`, `data.text`, `data.content`, `data.generatedText`.
-If the upstream contract changes, update `extractJd()` in `route.ts`.
-
----
-
-## Environment variables
+## Setup
 
 ```bash
 # .env.local
-
-# Bearer token issued for the staging / production OnlyRounds workspace.
-# Without this the route falls back to a local dummy JD so dev keeps moving.
-APNA_ONLYROUND_BEARER_TOKEN=eyJhbGciOi...
-
-# Optional — defaults shown.
-APNA_ONLYROUND_API_BASE=https://api.staging.infra.apna.co/only-round
-APNA_ONLYROUND_WORKSPACE_ID=aaa1bdde-4796-4f1c-ba2e-34d9be4ed9ce
+GOOGLE_GENERATIVE_AI_API_KEY=<key from aistudio.google.com>
 ```
 
-For production, pull these from the Vercel project's environment-variable
-settings rather than committing them anywhere.
+> The **same** key powers `/api/onlyrounds/extract-jd` as well — one Gemini
+> key, both AI flows.
+
+Without the key the route logs `[generate-jd] dummy mode` and returns a
+templated placeholder JD so local dev keeps moving.
 
 ---
 
-## Dummy mode
+## System prompt
 
-When `APNA_ONLYROUND_BEARER_TOKEN` is absent the route logs
-`[generate-jd] dummy mode` and returns a templated JD built from the
-seed string. This keeps the **Generate with AI** button working out of
-the box for local development with no secrets.
+Copy this verbatim if calling Gemini (or any provider) directly:
+
+```
+You are an expert recruiter writing job descriptions for the Indian job market.
+Generate a clear, well-structured job description for the role provided.
+
+Structure the output exactly like this (plain text, no markdown headers,
+no bold, no asterisks, no emojis):
+
+About <Role>
+
+<One short paragraph introducing the role and the kind of person who would thrive in it.>
+
+Responsibilities
+• <bullet 1>
+• <bullet 2>
+• <bullet 3>
+• <bullet 4>
+
+What we're looking for
+• <bullet 1>
+• <bullet 2>
+• <bullet 3>
+
+Keep it concise, candidate-friendly, and free of corporate jargon.
+Use '•' (bullet character) for list items. Use rupees (₹) for any
+compensation references and Indian context where relevant.
+```
+
+## User prompt template
+
+```
+Generate a job description based on this seed:
+
+{seed}
+```
+
+---
+
+## Provider integration
+
+The route uses `@ai-sdk/google` with `gemini-2.5-flash`. To swap providers,
+change **only** the model line in `route.ts` — the rest of the code is
+provider-agnostic.
+
+### Option A — AI Gateway (recommended for production)
+
+One key covers Gemini, Claude, OpenAI, and 100+ other models with
+automatic failover and observability.
+
+```ts
+// route.ts — drop the @ai-sdk/google import, use a plain string instead
+import { generateText } from "ai"
+
+const { text } = await generateText({
+  model: "google/gemini-2.5-flash", // routes through AI Gateway
+  system: SYSTEM_PROMPT,
+  prompt: buildUserPrompt(seed),
+})
+```
+
+Auth via OIDC:
+
+```bash
+vercel link
+vercel env pull .env.local   # provisions VERCEL_OIDC_TOKEN
+```
+
+### Option B — Direct Gemini (what we're shipping today)
+
+```ts
+import { google } from "@ai-sdk/google"
+
+model: google("gemini-2.5-flash")
+```
+
+```bash
+# .env.local
+GOOGLE_GENERATIVE_AI_API_KEY=<key from aistudio.google.com>
+```
+
+---
+
+## Calling Gemini directly (without the AI SDK)
+
+If you'd rather call Gemini from your own backend and relay the result to
+this route, send a `generateContent` request:
+
+```bash
+curl -X POST \
+  -H "x-goog-api-key: $GOOGLE_GENERATIVE_AI_API_KEY" \
+  -H "Content-Type: application/json" \
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent" \
+  -d '{
+    "system_instruction": { "parts": [{ "text": "<SYSTEM_PROMPT from above>" }] },
+    "contents": [{
+      "role": "user",
+      "parts": [{ "text": "Generate a job description based on this seed:\n\nSoftware Engineer" }]
+    }]
+  }'
+```
+
+The generated text is at `response.candidates[0].content.parts[0].text`.
 
 ---
 
@@ -97,24 +160,11 @@ the box for local development with no secrets.
 
 The route never throws to the client:
 
-| Upstream condition | Returned to browser |
-|---|---|
-| Token missing | Dummy JD |
-| Non-2xx HTTP | Dummy JD (server log has the status + body) |
-| `status: "ERROR"` envelope | Dummy JD (server log has the message) |
-| Unknown `data` shape | Dummy JD (server log has the raw response) |
-| Network throw | `{ jobDescription: "" }` |
+| Condition | Returned to browser | Server log |
+|---|---|---|
+| Missing key | Dummy JD | `dummy mode` |
+| Gemini error / quota | `{ jobDescription: "" }` | error stack |
+| Empty seed | `{ jobDescription: "" }` | — |
+| Network throw | `{ jobDescription: "" }` | error stack |
 
 Check server logs for `[generate-jd]` entries to diagnose failures.
-
----
-
-## Curl reference
-
-```bash
-curl -X POST \
-  -H "Authorization: Bearer $APNA_ONLYROUND_BEARER_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"jobDescriptionText":"Software Engineer"}' \
-  "$APNA_ONLYROUND_API_BASE/api/workspace/$APNA_ONLYROUND_WORKSPACE_ID/jobs/generate-job-description"
-```
