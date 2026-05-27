@@ -361,28 +361,44 @@ function JDField({
     if (!canGenerate) return
     setError(null)
     setGenerating(true)
-    await new Promise((r) => setTimeout(r, 900))
-    let role = title.trim()
-    if (!role) {
-      role = deriveTitleFromJd(value)
-      if (role) onTitleChange(role)
+    try {
+      // Build the seed: prefer the title; otherwise try to derive one from
+      // whatever's in the JD textarea; finally fall back to the raw JD text.
+      let seed = title.trim()
+      if (!seed) {
+        const derived = deriveTitleFromJd(value)
+        if (derived) {
+          seed = derived
+          onTitleChange(derived)
+        }
+      }
+      if (!seed) seed = value.trim()
+
+      const res = await fetch("/api/onlyrounds/generate-jd", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ seed }),
+      })
+      if (!res.ok) {
+        setError("Could not generate. Try again in a moment.")
+        return
+      }
+      const { jobDescription } = (await res.json()) as { jobDescription?: string }
+      if (!jobDescription) {
+        setError("No description returned. Try a different title.")
+        return
+      }
+      onChange(jobDescription)
+      // If the title was still empty, see if the generated JD reveals one.
+      if (!title.trim()) {
+        const derivedFromOutput = deriveTitleFromJd(jobDescription)
+        if (derivedFromOutput) onTitleChange(derivedFromOutput)
+      }
+    } catch {
+      setError("Could not reach the generator. Try again.")
+    } finally {
+      setGenerating(false)
     }
-    if (!role) role = "this role"
-    onChange(
-      `About ${role}\n\n` +
-        `We're looking for a ${role} to join a high-growth team. You'll own ` +
-        `the end-to-end outcomes for your area, partner closely with cross-` +
-        `functional stakeholders, and ship thoughtful work at a steady pace.\n\n` +
-        `Responsibilities\n` +
-        `• Lead core day-to-day execution for your scope\n` +
-        `• Partner with product, design, and data peers\n` +
-        `• Communicate trade-offs clearly and raise risks early\n\n` +
-        `What we're looking for\n` +
-        `• 2+ years of relevant experience\n` +
-        `• Strong written communication and a bias for action\n` +
-        `• Comfort working through ambiguity`,
-    )
-    setGenerating(false)
   }
 
   const handleFile = async (file: File) => {
