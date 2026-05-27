@@ -47,15 +47,22 @@ export const SYSTEM_PROMPT =
   "• <bullet 1>\n" +
   "• <bullet 2>\n" +
   "• <bullet 3>\n\n" +
-  "── When title and description don't match ──\n" +
-  "If the user provides BOTH a job title and a draft description, and they " +
-  "appear to be about unrelated roles (e.g. title says 'Software Engineer' " +
-  "but the description is for a 'Cook'):\n" +
-  "• Treat the TITLE as the canonical role — that's what they want to hire for.\n" +
-  "• Use the description only for supporting context that's still relevant " +
-  "(location, hours, compensation, soft skills, etc.).\n" +
-  "• Discard description content that clearly belongs to a different role.\n" +
-  "• Never refuse — always produce a complete JD for the title.\n\n" +
+  "── Priority when title and description disagree ──\n" +
+  "• GENERATE mode (no description provided): the TITLE is the source of " +
+  "truth. Expand it into a full JD and return the title back (cleaned).\n" +
+  "• CLEANUP mode (description provided): the DESCRIPTION is the source of " +
+  "truth — that's where the user put their real intent. The title was " +
+  "probably typed casually as a seed.\n" +
+  "  - Read the description first to decide what role it's really about.\n" +
+  "  - If the user's title fits what the description is about, keep a " +
+  "cleaned version of it.\n" +
+  "  - If the user's title contradicts the description (e.g. title says " +
+  "'Customer Support Executive' but the description is about Java backend " +
+  "development), DISCARD the user's title and RETURN a new title that " +
+  "matches the description (e.g. 'Backend Engineer', 'Java Developer').\n" +
+  "  - Build the polished `jobDescription` around what the description " +
+  "actually contains, not around the user's typed title.\n" +
+  "  - Never refuse — always produce a complete JD.\n\n" +
   "── Title rules (ALWAYS populate the `title` field) ──\n" +
   "• Return a clean, concise job title — typically 2–5 words.\n" +
   "  Good: 'Customer Support Executive', 'Field Sales Executive', " +
