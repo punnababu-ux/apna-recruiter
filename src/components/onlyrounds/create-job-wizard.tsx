@@ -168,18 +168,26 @@ export function CreateJobWizard() {
 
   return (
     <div className="flex min-h-svh flex-col bg-muted">
-      {/* Sticky top bar — back link + step-progress rail */}
-      <div className="sticky top-0 z-10 border-b border-border bg-card px-6 py-3">
-        <div className="mx-auto flex w-full max-w-3xl items-center gap-6">
-          <Link
-            href="/onlyrounds/jobs"
-            className="inline-flex shrink-0 items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
-            aria-label="Back to jobs"
-          >
-            <ArrowLeft className="size-4" />
-            <span className="hidden sm:inline">Jobs</span>
-          </Link>
-          <div className="flex-1">
+      {/* Sticky top — title row + step-progress rail */}
+      <div className="sticky top-0 z-10 border-b border-border bg-card">
+        {/* Title row */}
+        <div className="border-b border-border px-6 py-3">
+          <div className="mx-auto w-full max-w-3xl">
+            <Link
+              href="/onlyrounds/jobs"
+              aria-label="Back to jobs"
+              className="group inline-flex items-center gap-2 text-base font-semibold text-foreground"
+            >
+              <span className="flex size-7 items-center justify-center rounded-md border border-border bg-card text-muted-foreground transition-colors group-hover:bg-muted group-hover:text-foreground">
+                <ArrowLeft className="size-4" />
+              </span>
+              Create new job
+            </Link>
+          </div>
+        </div>
+        {/* Stepper row */}
+        <div className="px-6 py-3">
+          <div className="mx-auto w-full max-w-3xl">
             <Stepper
               orientation="horizontal"
               steps={stepsForRail}
