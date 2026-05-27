@@ -17,7 +17,15 @@
  * question/FAQ list editors.
  */
 
-import { ChevronDown, Download, Pencil, Plus, Trash2, Upload } from "lucide-react"
+import {
+  Check,
+  ChevronDown,
+  Download,
+  Pencil,
+  Plus,
+  Trash2,
+  Upload,
+} from "lucide-react"
 import * as React from "react"
 
 import { Button } from "@/components/ui/button"
@@ -845,9 +853,15 @@ function QuestionSectionItem({
         ) : (
           <button
             type="button"
+            // Clicking the title text on a *collapsed* section just
+            // expands it. To rename, the user has to click the pencil
+            // (or click the title again while expanded).
             onClick={() => {
+              if (!isOpen) {
+                onToggle()
+                return
+              }
               setEditingTitle(true)
-              openIfNeeded()
             }}
             className="flex-1 text-left text-sm font-medium"
           >
@@ -876,13 +890,29 @@ function QuestionSectionItem({
           type="button"
           variant="ghost"
           size="icon-xs"
-          aria-label="Rename section"
+          aria-label={editingTitle ? "Save section title" : "Rename section"}
+          // When editing, we commit on click. Use onMouseDown +
+          // preventDefault to stop the input from losing focus before
+          // our onClick runs — otherwise the input's onBlur would
+          // commit and flip editingTitle to false *before* this handler
+          // sees the right value.
+          onMouseDown={
+            editingTitle ? (e) => e.preventDefault() : undefined
+          }
           onClick={() => {
+            if (editingTitle) {
+              commitTitle()
+              return
+            }
             setEditingTitle(true)
             openIfNeeded()
           }}
         >
-          <Pencil className="size-3.5" />
+          {editingTitle ? (
+            <Check className="size-3.5" />
+          ) : (
+            <Pencil className="size-3.5" />
+          )}
         </Button>
         <Button
           type="button"
