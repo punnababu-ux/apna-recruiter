@@ -253,18 +253,20 @@ export function CreateJobWizard() {
           {/* Action card — sits below the step body */}
           <div className="rounded-lg border border-border bg-card px-4 py-3">
             <div className="flex items-center justify-between gap-3">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  if (!isFirst) {
+              {/* Hidden on step 1 — the top-bar back link is the only way out */}
+              {isFirst ? (
+                <div />
+              ) : (
+                <Button
+                  variant="outline"
+                  onClick={() => {
                     setShowErrors(false)
                     setActiveId(STEPS[activeIdx - 1].id)
-                  }
-                }}
-                disabled={isFirst}
-              >
-                <ArrowLeft className="size-4" /> Back
-              </Button>
+                  }}
+                >
+                  <ArrowLeft className="size-4" /> Previous
+                </Button>
+              )}
               <div className="flex items-center gap-2">
                 <Button variant="ghost">
                   <Save className="size-4" /> Save & exit
