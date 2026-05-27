@@ -58,8 +58,9 @@ export type QuestionSection = {
   title: string
   /** Who this section is shown to during the screening flow.
    *  Forced to match the job-level `experienceType` when the job is
-   *  single-audience; user-selectable only when the job is `"any"`. */
-  target: "freshers" | "experienced"
+   *  single-audience; user-selectable (with `"both"` available) when the
+   *  job is `"any"`. */
+  target: "freshers" | "experienced" | "both"
   /** How many questions from this section each candidate gets */
   questionsPerCandidate: number
   /** Whether to shuffle the question order per candidate */
@@ -549,15 +550,15 @@ function RadioOption({ value, label }: { value: string; label: string }) {
 
 // ---- question sections editor ------------------------------------------
 
-// Each preset can optionally hint its preferred target. When the job is
-// single-audience we ignore the hint and force the audience to match the
-// job-level setting.
+// Each preset hints its preferred target. When the job is single-audience
+// the hint is ignored and the audience is forced to match the job-level
+// setting.
 const QUESTION_SECTION_PRESETS: {
   title: string
-  target?: QuestionSection["target"]
+  target: QuestionSection["target"]
 }[] = [
-  { title: "English Speaking" },
-  { title: "Field Sales Capability" },
+  { title: "English Speaking", target: "both" },
+  { title: "Field Sales Capability", target: "both" },
   { title: "Technical Skills", target: "experienced" },
   { title: "Freshers", target: "freshers" },
   { title: "Experienced", target: "experienced" },
@@ -574,16 +575,22 @@ function QuestionSectionsEditor({
 }) {
   const [showAddSection, setShowAddSection] = React.useState(false)
   const [addingSectionName, setAddingSectionName] = React.useState("")
+  // Accordion: at most one section open at a time. Lifted here so we can
+  // open a freshly-added section and close the others in one go.
+  const [expandedSectionId, setExpandedSectionId] = React.useState<
+    string | null
+  >(sections[0]?.id ?? null)
 
   // Default audience for a new section: forced to match the job-level
   // setting when it's single-audience, else use the preset's hint, else
-  // default to experienced.
+  // default to "both" (sections like English Speaking are typically
+  // relevant to both audiences when the job supports both).
   const resolveTarget = (
     presetTarget?: QuestionSection["target"],
   ): QuestionSection["target"] => {
     if (experienceType === "experienced") return "experienced"
     if (experienceType === "freshers") return "freshers"
-    return presetTarget ?? "experienced"
+    return presetTarget ?? "both"
   }
 
   const addSection = (
@@ -592,17 +599,19 @@ function QuestionSectionsEditor({
   ) => {
     const trimmed = title.trim()
     if (!trimmed) return
-    onChange([
-      ...sections,
-      {
-        id: nextId("qs"),
-        title: trimmed,
-        target: resolveTarget(presetTarget),
-        questionsPerCandidate: 2,
-        randomize: false,
-        items: [],
-      },
-    ])
+    const newSection: QuestionSection = {
+      id: nextId("qs"),
+      title: trimmed,
+      target: resolveTarget(presetTarget),
+      questionsPerCandidate: 2,
+      randomize: false,
+      items: [],
+    }
+    // New sections appear at the TOP of the list (in the same spot the
+    // "add" input was a moment ago) and auto-expand. All other sections
+    // collapse via the single-open accordion model.
+    onChange([newSection, ...sections])
+    setExpandedSectionId(newSection.id)
     setAddingSectionName("")
     setShowAddSection(false)
   }
@@ -612,7 +621,18 @@ function QuestionSectionsEditor({
   }
 
   const removeSection = (id: string) => {
-    onChange(sections.filter((s) => s.id !== id))
+    const remaining = sections.filter((s) => s.id !== id)
+    onChange(remaining)
+    // If the user removed the currently-open section, expand the next
+    // remaining one (if any) so the list never goes fully collapsed
+    // after a delete.
+    if (expandedSectionId === id) {
+      setExpandedSectionId(remaining[0]?.id ?? null)
+    }
+  }
+
+  const toggleSection = (id: string) => {
+    setExpandedSectionId((curr) => (curr === id ? null : id))
   }
 
   const unusedPresets = QUESTION_SECTION_PRESETS.filter(
@@ -719,6 +739,8 @@ function QuestionSectionsEditor({
               onUpdate={(patch) => updateSection(section.id, patch)}
               onRemove={() => removeSection(section.id)}
               experienceType={experienceType}
+              isOpen={expandedSectionId === section.id}
+              onToggle={() => toggleSection(section.id)}
             />
           ))}
         </div>
@@ -732,15 +754,25 @@ function QuestionSectionItem({
   onUpdate,
   onRemove,
   experienceType,
+  isOpen,
+  onToggle,
 }: {
   section: QuestionSection
   onUpdate: (patch: Partial<QuestionSection>) => void
   onRemove: () => void
   experienceType: ExperienceRequirement
+  /** Single source of truth for the accordion: only one section can be
+   *  open at a time. Lifted to QuestionSectionsEditor. */
+  isOpen: boolean
+  onToggle: () => void
 }) {
-  const [expanded, setExpanded] = React.useState(true)
   const [editingTitle, setEditingTitle] = React.useState(false)
   const [titleDraft, setTitleDraft] = React.useState(section.title)
+  // When the user starts editing the title from a collapsed section we
+  // want the body to expand so they can see the rest while editing.
+  const openIfNeeded = () => {
+    if (!isOpen) onToggle()
+  }
 
   const commitTitle = () => {
     const trimmed = titleDraft.trim()
@@ -750,6 +782,7 @@ function QuestionSectionItem({
   }
 
   const TARGET_LABELS: Record<QuestionSection["target"], string> = {
+    both: "Both",
     freshers: "Freshers only",
     experienced: "Experienced only",
   }
@@ -779,14 +812,14 @@ function QuestionSectionItem({
       <div className="flex items-center gap-2 px-3 py-2.5">
         <button
           type="button"
-          onClick={() => setExpanded((e) => !e)}
+          onClick={onToggle}
           className="shrink-0 text-muted-foreground"
-          aria-label={expanded ? "Collapse section" : "Expand section"}
+          aria-label={isOpen ? "Collapse section" : "Expand section"}
         >
           <ChevronDown
             className={cn(
               "size-4 transition-transform duration-150",
-              !expanded && "-rotate-90",
+              !isOpen && "-rotate-90",
             )}
           />
         </button>
@@ -814,7 +847,7 @@ function QuestionSectionItem({
             type="button"
             onClick={() => {
               setEditingTitle(true)
-              setExpanded(true)
+              openIfNeeded()
             }}
             className="flex-1 text-left text-sm font-medium"
           >
@@ -822,11 +855,21 @@ function QuestionSectionItem({
           </button>
         )}
 
-        {/* compact target badge when collapsed */}
-        {!expanded && !editingTitle ? (
-          <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-            {TARGET_LABELS[section.target]}
-          </span>
+        {/* Compact metadata badges visible only when the section is
+            collapsed — audience + question count. */}
+        {!isOpen && !editingTitle ? (
+          <>
+            <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+              {TARGET_LABELS[section.target]}
+            </span>
+            <span className="shrink-0 text-xs text-muted-foreground">
+              {section.items.length === 0
+                ? "No questions"
+                : `${section.items.length} ${
+                    section.items.length === 1 ? "question" : "questions"
+                  }`}
+            </span>
+          </>
         ) : null}
 
         <Button
@@ -836,7 +879,7 @@ function QuestionSectionItem({
           aria-label="Rename section"
           onClick={() => {
             setEditingTitle(true)
-            setExpanded(true)
+            openIfNeeded()
           }}
         >
           <Pencil className="size-3.5" />
@@ -853,7 +896,7 @@ function QuestionSectionItem({
       </div>
 
       {/* ── expanded body ──────────────────────────────────────── */}
-      {expanded ? (
+      {isOpen ? (
         <div className="border-t border-border">
           {/* settings row */}
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 px-3 py-2.5">
@@ -870,6 +913,7 @@ function QuestionSectionItem({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="both">Both</SelectItem>
                     <SelectItem value="freshers">Freshers only</SelectItem>
                     <SelectItem value="experienced">
                       Experienced only
