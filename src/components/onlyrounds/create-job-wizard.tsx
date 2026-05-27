@@ -505,15 +505,9 @@ function JDField({
           />
         </div>
       </div>
-      {/* Wrap the textarea in a 2px-padded shimmer ring while AI is working.
-          The ring is invisible when idle (transparent bg), and animates as a
-          glowing brand-gradient border while `generating` is true. */}
-      <div
-        className={cn(
-          "rounded-md transition-colors",
-          generating ? "animate-ai-shimmer p-[2px]" : "p-0",
-        )}
-      >
+      {/* The JD textarea — fully covered by an animated brand-gradient
+          overlay while the AI is working. */}
+      <div className="relative">
         <Textarea
           id="jd"
           value={value}
@@ -522,11 +516,28 @@ function JDField({
           rows={12}
           aria-invalid={jdMissing ? true : undefined}
           readOnly={generating}
-          className={cn(
-            generating && "bg-card",
-            "transition-shadow",
-          )}
         />
+        {generating ? (
+          <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-md">
+            {/* Animated gradient fills the entire field */}
+            <div
+              className="absolute inset-0 animate-ai-shimmer"
+              aria-hidden="true"
+            />
+            {/* Centered status chip — announced to screen readers */}
+            <div
+              className="absolute inset-0 flex items-center justify-center"
+              aria-live="polite"
+            >
+              <div className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium shadow-sm">
+                <Sparkles className="size-4 animate-pulse text-primary" />
+                <span>
+                  {isCleanup ? "Cleaning up with AI…" : "Writing with AI…"}
+                </span>
+              </div>
+            </div>
+          </div>
+        ) : null}
       </div>
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span>
