@@ -47,8 +47,19 @@ export const SYSTEM_PROMPT =
   "• <bullet 1>\n" +
   "• <bullet 2>\n" +
   "• <bullet 3>\n\n" +
-  "Always return the `title` field in CLEANUP mode (infer it if not provided). " +
-  "In GENERATE mode you may echo the provided title back. " +
+  "── Title rules (ALWAYS populate the `title` field) ──\n" +
+  "• Return a clean, concise job title — typically 2–5 words.\n" +
+  "  Good: 'Customer Support Executive', 'Field Sales Executive', " +
+  "'Senior Software Engineer', 'Frontend Engineer'.\n" +
+  "  Bad: 'Customer Support Executive with 5 years of experience and can " +
+  "work in Bengaluru location' (strip qualifiers).\n" +
+  "• Strip qualifiers from the user's input: experience requirements " +
+  "('5+ years'), location ('in Bengaluru'), compensation hints, employment " +
+  "type ('full-time'), and any descriptive sentence fragments.\n" +
+  "• PRESERVE the user's intended role — don't substitute it with a different " +
+  "role just because the body mentions other skills.\n" +
+  "• If the user gave you something messy like a full sentence, extract the " +
+  "core role from it and return only that.\n\n" +
   "Use '•' (bullet character) for list items. Use rupees (₹) for compensation " +
   "and Indian context where relevant. Keep it concise and free of corporate jargon."
 

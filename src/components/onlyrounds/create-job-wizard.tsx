@@ -384,15 +384,16 @@ function JDField({
         return
       }
       onChange(data.jobDescription)
-      // Cleanup mode: prefer the AI-inferred title when the user didn't
-      // provide one. Generate mode: fall back to local regex if needed.
-      if (!title.trim()) {
-        if (data.title) {
-          onTitleChange(data.title)
-        } else {
-          const derived = deriveTitleFromJd(data.jobDescription)
-          if (derived) onTitleChange(derived)
-        }
+      // Always apply the AI-cleaned title. The model strips qualifiers
+      // ("with 5 years of experience", "in Bengaluru", etc.) from whatever
+      // the user typed, and infers a title in CLEANUP mode when none was
+      // provided. Fall back to the local regex if the model didn't return
+      // one and the user's title is still empty.
+      if (data.title) {
+        onTitleChange(data.title)
+      } else if (!title.trim()) {
+        const derived = deriveTitleFromJd(data.jobDescription)
+        if (derived) onTitleChange(derived)
       }
     } catch {
       setError("Could not reach the generator. Try again.")
