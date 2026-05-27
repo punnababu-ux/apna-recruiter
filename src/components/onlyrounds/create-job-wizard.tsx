@@ -355,6 +355,10 @@ function JDField({
 
   const hasTitle = title.trim().length > 0
   const hasJd = value.trim().length > 0
+  // "Cleanup" mode kicks in when the user has typed/pasted a meaningful
+  // chunk of JD — we still send the title if they have one, but the model
+  // is expected to polish the existing text rather than write from scratch.
+  const isCleanup = value.trim().length > 50
   const canGenerate = hasTitle || hasJd
 
   const generate = async () => {
@@ -362,37 +366,33 @@ function JDField({
     setError(null)
     setGenerating(true)
     try {
-      // Build the seed: prefer the title; otherwise try to derive one from
-      // whatever's in the JD textarea; finally fall back to the raw JD text.
-      let seed = title.trim()
-      if (!seed) {
-        const derived = deriveTitleFromJd(value)
-        if (derived) {
-          seed = derived
-          onTitleChange(derived)
-        }
-      }
-      if (!seed) seed = value.trim()
-
       const res = await fetch("/api/onlyrounds/generate-jd", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ seed }),
+        body: JSON.stringify({ title, jd: value }),
       })
       if (!res.ok) {
         setError("Could not generate. Try again in a moment.")
         return
       }
-      const { jobDescription } = (await res.json()) as { jobDescription?: string }
-      if (!jobDescription) {
-        setError("No description returned. Try a different title.")
+      const data = (await res.json()) as {
+        jobDescription?: string
+        title?: string
+      }
+      if (!data.jobDescription) {
+        setError("No description returned. Try a different title or draft.")
         return
       }
-      onChange(jobDescription)
-      // If the title was still empty, see if the generated JD reveals one.
+      onChange(data.jobDescription)
+      // Cleanup mode: prefer the AI-inferred title when the user didn't
+      // provide one. Generate mode: fall back to local regex if needed.
       if (!title.trim()) {
-        const derivedFromOutput = deriveTitleFromJd(jobDescription)
-        if (derivedFromOutput) onTitleChange(derivedFromOutput)
+        if (data.title) {
+          onTitleChange(data.title)
+        } else {
+          const derived = deriveTitleFromJd(data.jobDescription)
+          if (derived) onTitleChange(derived)
+        }
       }
     } catch {
       setError("Could not reach the generator. Try again.")
@@ -468,7 +468,9 @@ function JDField({
             variant="outline"
             size="sm"
             onClick={generate}
-            disabled={generating || !canGenerate}
+            disabled={!canGenerate || generating || processing}
+            loading={generating}
+            loadingText={isCleanup ? "Cleaning up with AI…" : "Writing with AI…"}
             title={
               !canGenerate
                 ? "Enter a job title or a few lines of description first"
@@ -476,14 +478,14 @@ function JDField({
             }
           >
             <Sparkles className="size-3.5" />
-            {generating ? "Generating…" : "Generate with AI"}
+            {isCleanup ? "Clean up with AI" : "Generate with AI"}
           </Button>
           <Button
             type="button"
             variant="outline"
             size="sm"
             onClick={() => fileRef.current?.click()}
-            disabled={processing}
+            disabled={processing || generating}
             loading={processing}
             loadingText="Processing your document…"
           >
@@ -503,14 +505,29 @@ function JDField({
           />
         </div>
       </div>
-      <Textarea
-        id="jd"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder="Paste or write the JD here — or let AI draft a starting point."
-        rows={12}
-        aria-invalid={jdMissing ? true : undefined}
-      />
+      {/* Wrap the textarea in a 2px-padded shimmer ring while AI is working.
+          The ring is invisible when idle (transparent bg), and animates as a
+          glowing brand-gradient border while `generating` is true. */}
+      <div
+        className={cn(
+          "rounded-md transition-colors",
+          generating ? "animate-ai-shimmer p-[2px]" : "p-0",
+        )}
+      >
+        <Textarea
+          id="jd"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="Paste or write the JD here — or let AI draft a starting point."
+          rows={12}
+          aria-invalid={jdMissing ? true : undefined}
+          readOnly={generating}
+          className={cn(
+            generating && "bg-card",
+            "transition-shadow",
+          )}
+        />
+      </div>
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span>
           {fileName

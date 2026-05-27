@@ -353,6 +353,23 @@
   background-image: var(--gradient-accent);
 }
 
+/* ----------------------------------------------------------------------------
+ * AI activity shimmer — animated gradient used as a "border" when an AI
+ * action is in flight (e.g. JD generation, JD cleanup). Apply to a wrapper
+ * with `p-[2px]` and let the inner element have a solid background so the
+ * animated gradient peeks through as a glowing ring.
+ * -------------------------------------------------------------------------- */
+@keyframes ai-shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+
+@utility animate-ai-shimmer {
+  background-image: var(--gradient-primary);
+  background-size: 200% 100%;
+  animation: ai-shimmer 2.4s ease-in-out infinite;
+}
+
 /* Text gradients — clip a gradient to a glyph run. Pairs beautifully with
    display-size headings for the "AI-powered" / "TalentPass" kind of inline
    emphasis. Foreground is `transparent` so the background-image shows through. */
