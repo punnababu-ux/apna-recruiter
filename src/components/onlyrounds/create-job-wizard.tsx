@@ -14,6 +14,7 @@
  */
 
 import { ArrowLeft, ArrowRight, Save, Sparkles, Upload, X } from "lucide-react"
+import Link from "next/link"
 import * as React from "react"
 import { useState } from "react"
 
@@ -166,18 +167,28 @@ export function CreateJobWizard() {
   }
 
   return (
-    <div className="flex min-h-svh flex-col">
-      {/* Sticky horizontal stepper, sits directly below the page header */}
+    <div className="flex min-h-svh flex-col bg-muted">
+      {/* Sticky top bar — back link + step-progress rail */}
       <div className="sticky top-0 z-10 border-b border-border bg-card px-6 py-3">
-        <div className="mx-auto w-full max-w-3xl">
-          <Stepper
-            orientation="horizontal"
-            steps={stepsForRail}
-            onStepClick={(id) => {
-              setShowErrors(false)
-              setActiveId(id as StepId)
-            }}
-          />
+        <div className="mx-auto flex w-full max-w-3xl items-center gap-6">
+          <Link
+            href="/onlyrounds/jobs"
+            className="inline-flex shrink-0 items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+            aria-label="Back to jobs"
+          >
+            <ArrowLeft className="size-4" />
+            <span className="hidden sm:inline">Jobs</span>
+          </Link>
+          <div className="flex-1">
+            <Stepper
+              orientation="horizontal"
+              steps={stepsForRail}
+              onStepClick={(id) => {
+                setShowErrors(false)
+                setActiveId(id as StepId)
+              }}
+            />
+          </div>
         </div>
       </div>
 
