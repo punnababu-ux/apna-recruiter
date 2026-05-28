@@ -14,7 +14,7 @@
  */
 
 import { ArrowLeft, ArrowRight, Save, Sparkles, Upload, X } from "lucide-react"
-import Link from "next/link"
+import { useRouter } from "next/navigation"
 import * as React from "react"
 import { useState } from "react"
 
@@ -31,6 +31,16 @@ import {
 } from "@/components/onlyrounds/job-details-step"
 import { Stepper, type Step, type StepStatus } from "@/components/onlyrounds/stepper"
 import { toast } from "sonner"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -41,6 +51,45 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
+
+// ── Form shape ────────────────────────────────────────────────────────────
+
+type FormShape = {
+  title: string
+  jd: string
+  details: JobDetailsForm
+}
+
+// ── Draft persistence ─────────────────────────────────────────────────────
+// Prototype-level: persist to localStorage so the user can come back to a
+// saved draft. Production would swap this for a server-side draft API.
+
+const DRAFT_KEY = "onlyrounds:create-job-draft"
+
+const emptyForm: FormShape = {
+  title: "",
+  jd: "",
+  details: defaultJobDetails,
+}
+
+function loadDraft(): FormShape | null {
+  if (typeof window === "undefined") return null
+  try {
+    const raw = window.localStorage.getItem(DRAFT_KEY)
+    return raw ? (JSON.parse(raw) as FormShape) : null
+  } catch {
+    return null
+  }
+}
+
+function persistDraft(form: FormShape) {
+  if (typeof window === "undefined") return
+  try {
+    window.localStorage.setItem(DRAFT_KEY, JSON.stringify(form))
+  } catch {
+    // Quota exceeded / disabled — silently ignore for the prototype.
+  }
+}
 
 type StepId = "description" | "details" | "rounds" | "review"
 
@@ -68,12 +117,9 @@ const STEPS: { id: StepId; label: string; description: string }[] = [
 ]
 
 export function CreateJobWizard() {
+  const router = useRouter()
   const [activeId, setActiveId] = useState<StepId>("description")
-  const [form, setForm] = useState<FormShape>({
-    title: "",
-    jd: "",
-    details: defaultJobDetails,
-  })
+  const [form, setForm] = useState<FormShape>(emptyForm)
 
   const [filledFromJd, setFilledFromJd] = useState(false)
   const [showErrors, setShowErrors] = useState(false)
@@ -83,6 +129,62 @@ export function CreateJobWizard() {
   const [step2OpenSection, setStep2OpenSection] = useState<SectionId | null>(
     "basics",
   )
+  // Snapshot of the form state at the last successful save. Anything that
+  // differs makes the wizard "dirty" and triggers the exit confirm dialog.
+  const [lastSavedJson, setLastSavedJson] = useState<string>(() =>
+    JSON.stringify(emptyForm),
+  )
+  const [exitDialogOpen, setExitDialogOpen] = useState(false)
+
+  // Load any existing draft on mount. Guarded in a useEffect so it runs
+  // client-only (avoids SSR hydration mismatches when localStorage is
+  // unavailable on the server).
+  React.useEffect(() => {
+    const draft = loadDraft()
+    if (draft) {
+      setForm(draft)
+      setLastSavedJson(JSON.stringify(draft))
+      toast.info("Loaded your saved draft", {
+        description: "Pick up where you left off.",
+      })
+    }
+  }, [])
+
+  const isDirty = React.useMemo(
+    () => JSON.stringify(form) !== lastSavedJson,
+    [form, lastSavedJson],
+  )
+
+  const saveDraftNow = () => {
+    persistDraft(form)
+    setLastSavedJson(JSON.stringify(form))
+    toast.success("Draft saved", {
+      description: "Your changes are stored locally.",
+    })
+  }
+
+  /** Top-bar "Create new job" back link click. If there's nothing to
+   *  lose, navigate immediately; otherwise open the 3-option confirm. */
+  const handleExitAttempt = () => {
+    if (isDirty) {
+      setExitDialogOpen(true)
+      return
+    }
+    router.push("/onlyrounds/jobs")
+  }
+
+  const handleDiscardAndExit = () => {
+    setExitDialogOpen(false)
+    router.push("/onlyrounds/jobs")
+  }
+
+  const handleSaveAndExit = () => {
+    persistDraft(form)
+    setLastSavedJson(JSON.stringify(form))
+    setExitDialogOpen(false)
+    toast.success("Draft saved")
+    router.push("/onlyrounds/jobs")
+  }
 
   const updateDetails = <K extends keyof JobDetailsForm>(
     key: K,
@@ -311,8 +413,9 @@ export function CreateJobWizard() {
         {/* Title row */}
         <div className="border-b border-border px-6 py-3">
           <div className="mx-auto w-full max-w-3xl">
-            <Link
-              href="/onlyrounds/jobs"
+            <button
+              type="button"
+              onClick={handleExitAttempt}
               aria-label="Back to jobs"
               className="group inline-flex items-center gap-2 text-base font-semibold text-foreground"
             >
@@ -320,7 +423,7 @@ export function CreateJobWizard() {
                 <ArrowLeft className="size-4" />
               </span>
               Create new job
-            </Link>
+            </button>
           </div>
         </div>
         {/* Stepper row */}
@@ -427,13 +530,17 @@ export function CreateJobWizard() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    aria-label="Save & exit"
+                    onClick={saveDraftNow}
+                    disabled={!isDirty}
+                    aria-label="Save draft"
                   >
                     <Save className="size-4" />
                   </Button>
                 }
               />
-              <TooltipContent>Save & exit</TooltipContent>
+              <TooltipContent>
+                {isDirty ? "Save draft" : "Nothing to save"}
+              </TooltipContent>
             </Tooltip>
           </div>
 
@@ -465,14 +572,38 @@ export function CreateJobWizard() {
           </Tooltip>
         </div>
       </div>
+
+      {/* Exit-confirmation dialog — fires when the user clicks the
+          top-bar "Create new job" link with unsaved changes. */}
+      <AlertDialog
+        open={exitDialogOpen}
+        onOpenChange={setExitDialogOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Leave without saving?</AlertDialogTitle>
+            <AlertDialogDescription>
+              You have unsaved changes. Save them as a draft to pick up
+              later, or exit without saving to discard.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              variant="ghost"
+              onClick={handleDiscardAndExit}
+            >
+              Exit without saving
+            </AlertDialogAction>
+            <AlertDialogAction onClick={handleSaveAndExit}>
+              <Save className="size-4" />
+              Save & exit
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
-}
-
-type FormShape = {
-  title: string
-  jd: string
-  details: JobDetailsForm
 }
 
 function DescriptionStep({
