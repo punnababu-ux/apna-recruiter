@@ -203,6 +203,8 @@ export function CreateJobWizard() {
   // ── Derived footer state (Variant A + P2) ──────────────────────────────
   // Everything below is pure derivation — no extra state.
 
+  const lastStep2SectionId = SECTION_IDS[SECTION_IDS.length - 1]
+
   const step2AllRequiredValid =
     activeId === "details" && validateJobDetails(form.details).length === 0
 
@@ -213,6 +215,22 @@ export function CreateJobWizard() {
     step2OpenSection !== null &&
     REQUIRED_SECTION_IDS.includes(step2OpenSection) &&
     validateSection(form.details, step2OpenSection).length > 0
+
+  /**
+   * Are we positioned to advance the wizard step (rather than move
+   * within Step 2)? True when we're on the very last Step 2 section, or
+   * the user has collapsed every section.
+   *
+   * This is *the* key behaviour change: we no longer flip to "Next" just
+   * because all required fields are valid. Continue walks linearly
+   * through every section — including the optional Question sections and
+   * Additional details — so the user always encounters them at least
+   * once. They can still "skip" an optional section by clicking Continue
+   * with it empty.
+   */
+  const aboutToAdvanceStep =
+    activeId === "details" &&
+    (step2OpenSection === lastStep2SectionId || step2OpenSection === null)
 
   /** Next section in Step 2 in declaration order. */
   const nextStep2Section = (curr: SectionId | null): SectionId | null => {
@@ -228,28 +246,35 @@ export function CreateJobWizard() {
     return i > 0 ? SECTION_IDS[i - 1] : null
   }
 
-  // Primary CTA label: "Continue" within Step 2 until all required are
-  // valid, then "Next". "Publish job" on the last wizard step.
+  // Primary CTA label: "Next" only when the next click should leave
+  // Step 2 (on the last section or collapsed). Otherwise "Continue" —
+  // moves to the next section within Step 2.
   const ctaLabel = isLast
     ? "Publish job"
-    : activeId === "details" && !step2AllRequiredValid
+    : activeId === "details" && !aboutToAdvanceStep
       ? "Continue"
       : "Next"
 
-  // Primary CTA disabled state. Variant A: disabled when the currently-
-  // open Step 2 section is invalid. Step 1 disabled until title + JD set.
+  // ctaDisabled — block the action when it wouldn't work:
+  //   • Step 1 without title/JD
+  //   • Step 2 with an invalid required section open (Continue won't move)
+  //   • Step 2 about to advance step but a required section upstream is
+  //     still invalid (Next can't actually advance)
   const ctaDisabled =
     extracting ||
     (activeId === "description" &&
       (!form.title.trim() || !form.jd.trim())) ||
-    (activeId === "details" && currentSectionInvalid)
+    (activeId === "details" && currentSectionInvalid) ||
+    (aboutToAdvanceStep && !step2AllRequiredValid)
 
   const ctaDisabledReason =
     activeId === "description" && (!form.title.trim() || !form.jd.trim())
       ? "Add a job title and description first"
       : activeId === "details" && currentSectionInvalid && step2OpenSection
         ? `Fill the required fields in ${SECTION_LABELS[step2OpenSection]} to continue`
-        : null
+        : aboutToAdvanceStep && !step2AllRequiredValid
+          ? "Some required sections still need to be filled"
+          : null
 
   // Previous (P2): step-level when at section §1 or outside Step 2;
   // section-level inside Step 2 when a non-first section is open.
@@ -337,16 +362,9 @@ export function CreateJobWizard() {
 
     // ── Step 2 (Job Details) — section navigation, then step advance ────
     if (activeId === "details") {
-      // If all required sections are valid → advance to Step 3.
-      if (validateJobDetails(form.details).length === 0) {
-        setShowErrors(false)
-        setActiveId("rounds")
-        return
-      }
-      // Otherwise: if the current section is valid, move to the next
-      // (declared-order) section. If it isn't, fall back to toast +
-      // auto-open the first invalid required section (covers the rare
-      // case of the disabled CTA being bypassed).
+      // If the current required section is invalid, the disabled CTA
+      // should have blocked this — but if we get here via keyboard /
+      // programmatic invocation, surface a toast.
       if (step2OpenSection && currentSectionInvalid) {
         const errs = validateSection(form.details, step2OpenSection)
         setShowErrors(true)
@@ -358,26 +376,41 @@ export function CreateJobWizard() {
         )
         return
       }
+
+      // About to leave Step 2 (on the last section or everything
+      // collapsed) → validate the whole step before advancing.
+      if (aboutToAdvanceStep) {
+        if (validateJobDetails(form.details).length === 0) {
+          setShowErrors(false)
+          setActiveId("rounds")
+          return
+        }
+        // Required section(s) upstream are still invalid — toast and
+        // auto-open the first one. (Disabled CTA usually prevents this
+        // path; remaining as a safety net.)
+        const firstInvalid = REQUIRED_SECTION_IDS.find(
+          (id) => validateSection(form.details, id).length > 0,
+        )
+        if (firstInvalid) {
+          const errs = validateSection(form.details, firstInvalid)
+          setStep2OpenSection(firstInvalid)
+          setShowErrors(true)
+          toast.error(
+            `${errs.length} required ${
+              errs.length === 1 ? "field" : "fields"
+            } missing in ${SECTION_LABELS[firstInvalid]}`,
+            { description: errs.join(" · ") },
+          )
+        }
+        return
+      }
+
+      // Otherwise: walk to the next section in declaration order. This
+      // includes the optional sections — Continue never skips over them
+      // any more, so the user is guaranteed to at least see them once.
       const next = nextStep2Section(step2OpenSection)
       if (next) {
         setStep2OpenSection(next)
-        return
-      }
-      // Reached the last section but required still invalid — surface
-      // a toast and auto-open the first invalid required section.
-      const firstInvalid = REQUIRED_SECTION_IDS.find(
-        (id) => validateSection(form.details, id).length > 0,
-      )
-      if (firstInvalid) {
-        const errs = validateSection(form.details, firstInvalid)
-        setStep2OpenSection(firstInvalid)
-        setShowErrors(true)
-        toast.error(
-          `${errs.length} required ${
-            errs.length === 1 ? "field" : "fields"
-          } missing in ${SECTION_LABELS[firstInvalid]}`,
-          { description: errs.join(" · ") },
-        )
       }
       return
     }
