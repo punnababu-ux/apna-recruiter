@@ -20,9 +20,14 @@ import { useState } from "react"
 
 import {
   JobDetailsStep,
+  REQUIRED_SECTION_IDS,
+  SECTION_IDS,
+  SECTION_LABELS,
   defaultJobDetails,
   validateJobDetails,
+  validateSection,
   type JobDetailsForm,
+  type SectionId,
 } from "@/components/onlyrounds/job-details-step"
 import { Stepper, type Step, type StepStatus } from "@/components/onlyrounds/stepper"
 import { toast } from "sonner"
@@ -30,6 +35,11 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 
 type StepId = "description" | "details" | "rounds" | "review"
@@ -68,6 +78,11 @@ export function CreateJobWizard() {
   const [filledFromJd, setFilledFromJd] = useState(false)
   const [showErrors, setShowErrors] = useState(false)
   const [extracting, setExtracting] = useState(false)
+  // Step 2 single-open accordion — lifted here so the sticky footer can
+  // drive section navigation.
+  const [step2OpenSection, setStep2OpenSection] = useState<SectionId | null>(
+    "basics",
+  )
 
   const updateDetails = <K extends keyof JobDetailsForm>(
     key: K,
@@ -82,6 +97,65 @@ export function CreateJobWizard() {
   const activeIdx = STEPS.findIndex((s) => s.id === activeId)
   const isFirst = activeIdx === 0
   const isLast = activeIdx === STEPS.length - 1
+
+  // ── Derived footer state (Variant A + P2) ──────────────────────────────
+  // Everything below is pure derivation — no extra state.
+
+  const step2AllRequiredValid =
+    activeId === "details" && validateJobDetails(form.details).length === 0
+
+  /** Is the currently-open Step 2 section invalid? Drives Continue's
+   *  disabled state per Variant A. Optional sections never disable. */
+  const currentSectionInvalid =
+    activeId === "details" &&
+    step2OpenSection !== null &&
+    REQUIRED_SECTION_IDS.includes(step2OpenSection) &&
+    validateSection(form.details, step2OpenSection).length > 0
+
+  /** Next section in Step 2 in declaration order. */
+  const nextStep2Section = (curr: SectionId | null): SectionId | null => {
+    if (!curr) return SECTION_IDS[0]
+    const i = SECTION_IDS.indexOf(curr)
+    return i >= 0 && i < SECTION_IDS.length - 1 ? SECTION_IDS[i + 1] : null
+  }
+
+  /** Previous section in Step 2 in declaration order. */
+  const prevStep2Section = (curr: SectionId | null): SectionId | null => {
+    if (!curr) return null
+    const i = SECTION_IDS.indexOf(curr)
+    return i > 0 ? SECTION_IDS[i - 1] : null
+  }
+
+  // Primary CTA label: "Continue" within Step 2 until all required are
+  // valid, then "Next". "Publish job" on the last wizard step.
+  const ctaLabel = isLast
+    ? "Publish job"
+    : activeId === "details" && !step2AllRequiredValid
+      ? "Continue"
+      : "Next"
+
+  // Primary CTA disabled state. Variant A: disabled when the currently-
+  // open Step 2 section is invalid. Step 1 disabled until title + JD set.
+  const ctaDisabled =
+    extracting ||
+    (activeId === "description" &&
+      (!form.title.trim() || !form.jd.trim())) ||
+    (activeId === "details" && currentSectionInvalid)
+
+  const ctaDisabledReason =
+    activeId === "description" && (!form.title.trim() || !form.jd.trim())
+      ? "Add a job title and description first"
+      : activeId === "details" && currentSectionInvalid && step2OpenSection
+        ? `Fill the required fields in ${SECTION_LABELS[step2OpenSection]} to continue`
+        : null
+
+  // Previous (P2): step-level when at section §1 or outside Step 2;
+  // section-level inside Step 2 when a non-first section is open.
+  const canGoPrev =
+    !isFirst ||
+    (activeId === "details" &&
+      step2OpenSection !== null &&
+      step2OpenSection !== SECTION_IDS[0])
 
   const stepsForRail: Step[] = STEPS.map((s, i) => {
     const status: StepStatus =
@@ -99,71 +173,135 @@ export function CreateJobWizard() {
 
   const goNext = async () => {
     if (isLast) return
-    const nextStep = STEPS[activeIdx + 1]
 
-    // ── Validate current step ────────────────────────────────────────────
-    let stepErrors: string[] = []
-
+    // ── Step 1 (Job Description) — validate, AI-extract, advance ────────
     if (activeId === "description") {
+      const stepErrors: string[] = []
       if (!form.title.trim()) stepErrors.push("Job title")
       if (!form.jd.trim()) stepErrors.push("Job description")
-    }
+      if (stepErrors.length > 0) {
+        // Variant A: button is disabled in this case, so this branch is
+        // only reached via keyboard or programmatic invocation. Toast
+        // fallback for visibility.
+        setShowErrors(true)
+        toast.error(
+          `${stepErrors.length} required ${
+            stepErrors.length === 1 ? "field" : "fields"
+          } missing`,
+          { description: stepErrors.join(" · ") },
+        )
+        return
+      }
+      setShowErrors(false)
 
-    if (activeId === "details") {
-      stepErrors = validateJobDetails(form.details)
-    }
+      // AI-powered auto-fill of Step 2 if Step 2 looks empty.
+      if (form.jd.trim().length > 0) {
+        const detailsAreEmpty =
+          !form.details.city &&
+          !form.details.clientId &&
+          !form.details.workMode &&
+          !form.details.workType
+        if (detailsAreEmpty) {
+          setExtracting(true)
+          try {
+            const res = await fetch("/api/onlyrounds/extract-jd", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ jd: form.jd, title: form.title }),
+            })
+            if (res.ok) {
+              const extracted: Partial<JobDetailsForm> = await res.json()
+              if (Object.keys(extracted).length > 0) {
+                setForm((prev) => ({
+                  ...prev,
+                  details: { ...prev.details, ...extracted },
+                }))
+                setFilledFromJd(true)
+              }
+            }
+          } catch {
+            // Silent fail — network error doesn't block navigation
+          } finally {
+            setExtracting(false)
+          }
+        }
+      }
 
-    if (stepErrors.length > 0) {
-      setShowErrors(true)
-      toast.error(
-        `${stepErrors.length} required ${stepErrors.length === 1 ? "field" : "fields"} missing`,
-        { description: stepErrors.join(" · ") },
-      )
+      // Land on §1 of Step 2.
+      setStep2OpenSection(SECTION_IDS[0])
+      setActiveId("details")
       return
     }
 
-    // ── Clear errors on successful advance ───────────────────────────────
-    setShowErrors(false)
-
-    // ── AI-powered auto-fill when moving from step 1 → step 2 ───────────
-    if (
-      activeId === "description" &&
-      nextStep.id === "details" &&
-      form.jd.trim().length > 0
-    ) {
-      const detailsAreEmpty =
-        !form.details.city &&
-        !form.details.clientId &&
-        !form.details.workMode &&
-        !form.details.workType
-
-      if (detailsAreEmpty) {
-        setExtracting(true)
-        try {
-          const res = await fetch("/api/onlyrounds/extract-jd", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ jd: form.jd, title: form.title }),
-          })
-          if (res.ok) {
-            const extracted: Partial<JobDetailsForm> = await res.json()
-            if (Object.keys(extracted).length > 0) {
-              setForm((prev) => ({
-                ...prev,
-                details: { ...prev.details, ...extracted },
-              }))
-              setFilledFromJd(true)
-            }
-          }
-        } catch {
-          // Silent fail — network error doesn't block navigation
-        } finally {
-          setExtracting(false)
-        }
+    // ── Step 2 (Job Details) — section navigation, then step advance ────
+    if (activeId === "details") {
+      // If all required sections are valid → advance to Step 3.
+      if (validateJobDetails(form.details).length === 0) {
+        setShowErrors(false)
+        setActiveId("rounds")
+        return
       }
+      // Otherwise: if the current section is valid, move to the next
+      // (declared-order) section. If it isn't, fall back to toast +
+      // auto-open the first invalid required section (covers the rare
+      // case of the disabled CTA being bypassed).
+      if (step2OpenSection && currentSectionInvalid) {
+        const errs = validateSection(form.details, step2OpenSection)
+        setShowErrors(true)
+        toast.error(
+          `${errs.length} required ${
+            errs.length === 1 ? "field" : "fields"
+          } missing in ${SECTION_LABELS[step2OpenSection]}`,
+          { description: errs.join(" · ") },
+        )
+        return
+      }
+      const next = nextStep2Section(step2OpenSection)
+      if (next) {
+        setStep2OpenSection(next)
+        return
+      }
+      // Reached the last section but required still invalid — surface
+      // a toast and auto-open the first invalid required section.
+      const firstInvalid = REQUIRED_SECTION_IDS.find(
+        (id) => validateSection(form.details, id).length > 0,
+      )
+      if (firstInvalid) {
+        const errs = validateSection(form.details, firstInvalid)
+        setStep2OpenSection(firstInvalid)
+        setShowErrors(true)
+        toast.error(
+          `${errs.length} required ${
+            errs.length === 1 ? "field" : "fields"
+          } missing in ${SECTION_LABELS[firstInvalid]}`,
+          { description: errs.join(" · ") },
+        )
+      }
+      return
     }
 
-    setActiveId(nextStep.id)
+    // ── Steps 3 & 4 — straightforward step advance ──────────────────────
+    setActiveId(STEPS[activeIdx + 1].id)
+  }
+
+  /**
+   * P2 Previous — within-step first, then step-level.
+   * On Step 2 with a non-first section open → open the previous section.
+   * Otherwise (on §1, or outside Step 2) → go to the previous wizard step.
+   */
+  const goPrev = () => {
+    if (
+      activeId === "details" &&
+      step2OpenSection !== null &&
+      step2OpenSection !== SECTION_IDS[0]
+    ) {
+      setShowErrors(false)
+      setStep2OpenSection(prevStep2Section(step2OpenSection))
+      return
+    }
+    if (isFirst) return
+    setShowErrors(false)
+    setActiveId(STEPS[activeIdx - 1].id)
   }
 
   return (
@@ -200,9 +338,9 @@ export function CreateJobWizard() {
         </div>
       </div>
 
-      <div className="flex flex-1 px-6 py-6">
-        {/* Body */}
-        <section className="mx-auto flex w-full max-w-3xl min-w-0 flex-1 flex-col gap-6">
+      {/* Scrollable body — between sticky top and sticky bottom */}
+      <div className="flex-1 px-6 py-6 pb-24">
+        <section className="mx-auto flex w-full max-w-3xl min-w-0 flex-col gap-6">
           {activeId === "details" ? (
             <>
               {filledFromJd ? (
@@ -226,6 +364,8 @@ export function CreateJobWizard() {
                 form={form.details}
                 update={updateDetails}
                 showErrors={showErrors}
+                openSectionId={step2OpenSection}
+                onSectionChange={setStep2OpenSection}
               />
             </>
           ) : (
@@ -249,44 +389,81 @@ export function CreateJobWizard() {
               ) : null}
             </div>
           )}
-
-          {/* Action card — sits below the step body */}
-          <div className="rounded-lg border border-border bg-card px-4 py-3">
-            <div className="flex items-center justify-between gap-3">
-              {/* Hidden on step 1 — the top-bar back link is the only way out */}
-              {isFirst ? (
-                <div />
-              ) : (
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setShowErrors(false)
-                    setActiveId(STEPS[activeIdx - 1].id)
-                  }}
-                >
-                  <ArrowLeft className="size-4" /> Previous
-                </Button>
-              )}
-              <div className="flex items-center gap-2">
-                <Button variant="ghost">
-                  <Save className="size-4" /> Save & exit
-                </Button>
-                <Button
-                  size="lg"
-                  onClick={goNext}
-                  loading={extracting}
-                  loadingText="Filling from JD…"
-                  disabled={extracting}
-                >
-                  {isLast ? "Publish job" : "Next"}
-                  {!isLast && !extracting ? (
-                    <ArrowRight className="size-4" />
-                  ) : null}
-                </Button>
-              </div>
-            </div>
-          </div>
         </section>
+      </div>
+
+      {/* Sticky bottom — consistent across all steps */}
+      <div className="sticky bottom-0 z-10 border-t border-border bg-card">
+        <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-3 px-6 py-3">
+          {/* Left cluster — icon-only Back + Save & exit. base-ui's
+              TooltipTrigger uses `render={...}` (not Radix's `asChild`)
+              to render as a custom element. */}
+          <div className="flex items-center gap-1">
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={goPrev}
+                    disabled={!canGoPrev}
+                    aria-label="Previous"
+                  >
+                    <ArrowLeft className="size-4" />
+                  </Button>
+                }
+              />
+              <TooltipContent>
+                {activeId === "details" &&
+                step2OpenSection &&
+                step2OpenSection !== SECTION_IDS[0]
+                  ? "Previous section"
+                  : "Previous step"}
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Save & exit"
+                  >
+                    <Save className="size-4" />
+                  </Button>
+                }
+              />
+              <TooltipContent>Save & exit</TooltipContent>
+            </Tooltip>
+          </div>
+
+          {/* Right — adaptive primary CTA. Tooltip shows the disabled
+              reason so the user knows what's blocking them.
+              Disabled buttons don't emit pointer events, so we wrap
+              the Button in a span and make THAT the trigger element. */}
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <span className={cn(ctaDisabled && "cursor-not-allowed")}>
+                  <Button
+                    size="lg"
+                    onClick={goNext}
+                    loading={extracting}
+                    loadingText="Filling from JD…"
+                    disabled={ctaDisabled}
+                    aria-disabled={ctaDisabled || undefined}
+                  >
+                    {ctaLabel}
+                    {!extracting ? <ArrowRight className="size-4" /> : null}
+                  </Button>
+                </span>
+              }
+            />
+            {ctaDisabledReason ? (
+              <TooltipContent>{ctaDisabledReason}</TooltipContent>
+            ) : null}
+          </Tooltip>
+        </div>
       </div>
     </div>
   )

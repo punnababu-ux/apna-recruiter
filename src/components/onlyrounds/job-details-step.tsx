@@ -117,39 +117,145 @@ export const defaultJobDetails: JobDetailsForm = {
   additionalDetails: "",
 }
 
+// ── Section model ──────────────────────────────────────────────────────────
+// Step 2 renders as a single-open accordion. The wizard footer reads section
+// status to drive the adaptive Continue/Next button.
+
+export const SECTION_IDS = [
+  "basics",
+  "schedule",
+  "compensation",
+  "questions",
+  "additional",
+] as const
+export type SectionId = (typeof SECTION_IDS)[number]
+
+export const REQUIRED_SECTION_IDS: readonly SectionId[] = [
+  "basics",
+  "schedule",
+  "compensation",
+]
+export const OPTIONAL_SECTION_IDS: readonly SectionId[] = [
+  "questions",
+  "additional",
+]
+
+export const SECTION_LABELS: Record<SectionId, string> = {
+  basics: "Basic job details",
+  schedule: "Work schedule",
+  compensation: "Compensation details",
+  questions: "Question sections",
+  additional: "Additional details",
+}
+
+export type SectionStatus =
+  | "untouched" // user hasn't filled anything in this section
+  | "in-progress" // some fields filled but required ones still empty
+  | "complete" // all required fields valid (or has content for optional)
+  | "invalid" // showErrors=true AND has empty required fields
+
 /**
- * Returns human-readable labels for every mandatory field that is empty.
- * Question bank, FAQs, and additional details are intentionally excluded.
+ * Returns human-readable labels for every empty required field in the given
+ * section. Optional sections (questions, additional) always return `[]`.
+ */
+export function validateSection(
+  form: JobDetailsForm,
+  id: SectionId,
+): string[] {
+  const errors: string[] = []
+  switch (id) {
+    case "basics":
+      if (!form.clientId) errors.push("Client")
+      if (!form.city.trim()) errors.push("Job city")
+      if (!form.area.trim()) errors.push("Job area")
+      if (
+        (form.experienceType === "any" ||
+          form.experienceType === "experienced") &&
+        !form.experiencedPersona.trim()
+      )
+        errors.push("Experienced candidate profile")
+      if (
+        (form.experienceType === "any" || form.experienceType === "freshers") &&
+        !form.fresherPersona.trim()
+      )
+        errors.push("Fresher candidate profile")
+      return errors
+    case "schedule":
+      if (!form.workType) errors.push("Work type")
+      if (!form.workMode) errors.push("Work mode")
+      if (!form.scheduleDetails.trim()) errors.push("Work schedule details")
+      return errors
+    case "compensation":
+      if (
+        (form.experienceType === "any" ||
+          form.experienceType === "experienced") &&
+        !form.compExperienced.trim()
+      )
+        errors.push("Compensation for experienced")
+      if (
+        (form.experienceType === "any" || form.experienceType === "freshers") &&
+        !form.compFresher.trim()
+      )
+        errors.push("Compensation for freshers")
+      return errors
+    case "questions":
+    case "additional":
+      return []
+  }
+}
+
+/** True if the user has filled at least one field in this section. */
+function sectionHasContent(form: JobDetailsForm, id: SectionId): boolean {
+  switch (id) {
+    case "basics":
+      return Boolean(
+        form.clientId ||
+          form.city.trim() ||
+          form.area.trim() ||
+          form.experiencedPersona.trim() ||
+          form.fresherPersona.trim(),
+      )
+    case "schedule":
+      return Boolean(
+        form.workType || form.workMode || form.scheduleDetails.trim(),
+      )
+    case "compensation":
+      return Boolean(form.compExperienced.trim() || form.compFresher.trim())
+    case "questions":
+      return form.questionSections.length > 0
+    case "additional":
+      return form.additionalDetails.trim().length > 0
+  }
+}
+
+/**
+ * Derives the accordion-status pip for a section purely from form state and
+ * the current `showErrors` flag — no stored state.
+ */
+export function getSectionStatus(
+  form: JobDetailsForm,
+  id: SectionId,
+  showErrors: boolean,
+): SectionStatus {
+  if (
+    id === "questions" ||
+    id === "additional"
+  ) {
+    return sectionHasContent(form, id) ? "complete" : "untouched"
+  }
+  const errors = validateSection(form, id)
+  if (errors.length === 0) return "complete"
+  if (showErrors) return "invalid"
+  return sectionHasContent(form, id) ? "in-progress" : "untouched"
+}
+
+/**
+ * Returns human-readable labels for every mandatory field that is empty
+ * across all required sections — backwards-compatible aggregator used by
+ * the wizard's overall validity check.
  */
 export function validateJobDetails(form: JobDetailsForm): string[] {
-  const errors: string[] = []
-  if (!form.clientId) errors.push("Client")
-  if (!form.city.trim()) errors.push("Job city")
-  if (!form.area.trim()) errors.push("Job area")
-  if (
-    (form.experienceType === "any" || form.experienceType === "experienced") &&
-    !form.experiencedPersona.trim()
-  )
-    errors.push("Experienced candidate profile")
-  if (
-    (form.experienceType === "any" || form.experienceType === "freshers") &&
-    !form.fresherPersona.trim()
-  )
-    errors.push("Fresher candidate profile")
-  if (!form.workType) errors.push("Work type")
-  if (!form.workMode) errors.push("Work mode")
-  if (!form.scheduleDetails.trim()) errors.push("Work schedule details")
-  if (
-    (form.experienceType === "any" || form.experienceType === "experienced") &&
-    !form.compExperienced.trim()
-  )
-    errors.push("Compensation for experienced")
-  if (
-    (form.experienceType === "any" || form.experienceType === "freshers") &&
-    !form.compFresher.trim()
-  )
-    errors.push("Compensation for freshers")
-  return errors
+  return REQUIRED_SECTION_IDS.flatMap((id) => validateSection(form, id))
 }
 
 const MAX_QA = 15
@@ -184,6 +290,8 @@ export function JobDetailsStep({
   form,
   update,
   showErrors = false,
+  openSectionId,
+  onSectionChange,
 }: {
   form: JobDetailsForm
   update: <K extends keyof JobDetailsForm>(
@@ -191,19 +299,33 @@ export function JobDetailsStep({
     value: JobDetailsForm[K],
   ) => void
   showErrors?: boolean
+  /** Which section's body is open — single-open accordion. Lifted to the
+   *  wizard so its footer can drive section navigation. */
+  openSectionId: SectionId | null
+  onSectionChange: (id: SectionId | null) => void
 }) {
   const showExperiencedPersona =
     form.experienceType === "any" || form.experienceType === "experienced"
   const showFresherPersona =
     form.experienceType === "any" || form.experienceType === "freshers"
 
+  // Toggle handler shared by every section header — opens this one and
+  // closes whichever was open. Clicking the open section again collapses
+  // it fully.
+  const toggle = (id: SectionId) =>
+    onSectionChange(openSectionId === id ? null : id)
+
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-3">
       {/* Section 1 — basic job details */}
       <Section
+        id="basics"
         index={1}
         title="Basic job details"
         description="Tell us who the role is for and where it's based."
+        status={getSectionStatus(form, "basics", showErrors)}
+        isOpen={openSectionId === "basics"}
+        onToggle={() => toggle("basics")}
       >
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field
@@ -327,9 +449,13 @@ export function JobDetailsStep({
 
       {/* Section 2 — work schedule */}
       <Section
+        id="schedule"
         index={2}
         title="Work schedule"
         description="What kind of work is this, and when will it happen?"
+        status={getSectionStatus(form, "schedule", showErrors)}
+        isOpen={openSectionId === "schedule"}
+        onToggle={() => toggle("schedule")}
       >
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field
@@ -411,9 +537,13 @@ export function JobDetailsStep({
 
       {/* Section 3 — compensation */}
       <Section
+        id="compensation"
         index={3}
         title="Compensation details"
         description="Share what each candidate profile can expect to earn."
+        status={getSectionStatus(form, "compensation", showErrors)}
+        isOpen={openSectionId === "compensation"}
+        onToggle={() => toggle("compensation")}
       >
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {showExperiencedPersona ? (
@@ -462,17 +592,31 @@ export function JobDetailsStep({
       </Section>
 
       {/* Section 4 — question sections (merged AI question bank + candidate FAQs) */}
-      <QuestionSectionsEditor
-        sections={form.questionSections}
-        onChange={(next) => update("questionSections", next)}
-        experienceType={form.experienceType}
-      />
+      <Section
+        id="questions"
+        index={4}
+        title="Question sections"
+        description="Optional — add screening questions and candidate FAQs."
+        status={getSectionStatus(form, "questions", showErrors)}
+        isOpen={openSectionId === "questions"}
+        onToggle={() => toggle("questions")}
+      >
+        <QuestionSectionsEditor
+          sections={form.questionSections}
+          onChange={(next) => update("questionSections", next)}
+          experienceType={form.experienceType}
+        />
+      </Section>
 
       {/* Section 5 — additional details */}
       <Section
+        id="additional"
         index={5}
         title="Additional details"
-        description="Interview process, company benefits, perks, or anything else worth highlighting."
+        description="Optional — interview process, perks, anything else worth highlighting."
+        status={getSectionStatus(form, "additional", showErrors)}
+        isOpen={openSectionId === "additional"}
+        onToggle={() => toggle("additional")}
       >
         <Field label="Notes" htmlFor="additional-details">
           <Textarea
@@ -490,25 +634,104 @@ export function JobDetailsStep({
 
 // ---- section primitives -------------------------------------------------
 
+function StatusPip({ status }: { status: SectionStatus }) {
+  if (status === "complete") {
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-success-subtle px-2 py-0.5 text-xs font-medium text-success">
+        <Check className="size-3" />
+        Complete
+      </span>
+    )
+  }
+  if (status === "in-progress") {
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-warning-subtle px-2 py-0.5 text-xs font-medium text-warning-foreground">
+        In progress
+      </span>
+    )
+  }
+  if (status === "invalid") {
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-destructive/10 px-2 py-0.5 text-xs font-medium text-destructive">
+        Missing fields
+      </span>
+    )
+  }
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+      Not started
+    </span>
+  )
+}
+
 function Section({
+  id,
+  index,
   title,
   description,
+  status,
+  isOpen,
+  onToggle,
   children,
 }: {
-  index?: number
+  id: SectionId
+  index: number
   title: string
   description?: string
+  status: SectionStatus
+  isOpen: boolean
+  onToggle: () => void
   children: React.ReactNode
 }) {
+  const bodyId = `section-${id}-body`
   return (
-    <section className="flex flex-col gap-4 rounded-lg border border-border bg-card p-5">
-      <header>
-        <h3 className="text-base font-semibold leading-tight">{title}</h3>
-        {description ? (
-          <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>
-        ) : null}
-      </header>
-      <div className="flex flex-col gap-4">{children}</div>
+    <section className="overflow-hidden rounded-lg border border-border bg-card">
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={isOpen}
+        aria-controls={bodyId}
+        className="flex w-full items-center gap-3 px-5 py-4 text-left transition-colors hover:bg-muted/30"
+      >
+        <span
+          className={cn(
+            "flex size-7 shrink-0 items-center justify-center rounded-full border text-xs font-semibold",
+            status === "complete"
+              ? "border-transparent bg-primary text-primary-foreground"
+              : status === "invalid"
+                ? "border-destructive bg-destructive/10 text-destructive"
+                : "border-border bg-muted text-muted-foreground",
+          )}
+          aria-hidden="true"
+        >
+          {status === "complete" ? <Check className="size-3.5" /> : index}
+        </span>
+        <div className="min-w-0 flex-1">
+          <h3 className="text-base font-semibold leading-tight">{title}</h3>
+          {description ? (
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              {description}
+            </p>
+          ) : null}
+        </div>
+        <StatusPip status={status} />
+        <ChevronDown
+          className={cn(
+            "size-4 shrink-0 text-muted-foreground transition-transform duration-150",
+            !isOpen && "-rotate-90",
+          )}
+          aria-hidden="true"
+        />
+      </button>
+      {isOpen ? (
+        <div
+          id={bodyId}
+          role="region"
+          className="flex flex-col gap-4 border-t border-border bg-card p-5"
+        >
+          {children}
+        </div>
+      ) : null}
     </section>
   )
 }
@@ -648,29 +871,20 @@ function QuestionSectionsEditor({
   )
 
   return (
-    <section className="flex flex-col gap-4 rounded-lg border border-border bg-card p-5">
-      {/* Title + Add CTA on a single row */}
-      <header className="flex items-start justify-between gap-3">
-        <div>
-          <h3 className="text-base font-semibold leading-tight">
-            Question sections
-          </h3>
-          <p className="mt-0.5 text-xs text-muted-foreground">
-            Create sections for screening questions and candidate FAQs. Each
-            section has its own per-candidate count and randomisation toggle.
-          </p>
-        </div>
+    <div className="flex flex-col gap-4">
+      {/* Add section CTA — right-aligned, the outer accordion already
+          provides the title/description. */}
+      <div className="flex justify-end">
         <Button
           type="button"
           variant="outline"
           size="sm"
           onClick={() => setShowAddSection((s) => !s)}
-          className="shrink-0"
         >
           <Plus className="size-3.5" />
           Add section
         </Button>
-      </header>
+      </div>
 
       {/* Add-section form appears between header and list when active */}
       {showAddSection ? (
@@ -753,7 +967,7 @@ function QuestionSectionsEditor({
           ))}
         </div>
       )}
-    </section>
+    </div>
   )
 }
 
