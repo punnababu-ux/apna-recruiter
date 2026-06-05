@@ -843,10 +843,10 @@ function QuestionSectionsEditor({
       randomize: false,
       items: [],
     }
-    // New sections appear at the TOP of the list (in the same spot the
-    // "add" input was a moment ago) and auto-expand. All other sections
-    // collapse via the single-open accordion model.
-    onChange([newSection, ...sections])
+    // New sections append to the BOTTOM of the list — right where the
+    // "Add section" CTA / add form sits — and auto-expand. All other
+    // sections collapse via the single-open accordion model.
+    onChange([...sections, newSection])
     setExpandedSectionId(newSection.id)
     setAddingSectionName("")
     setShowAddSection(false)
@@ -877,8 +877,44 @@ function QuestionSectionsEditor({
 
   return (
     <div className="flex flex-col gap-4">
+      {/* Section list */}
+      {sections.length > 0 ? (
+        <div className="flex flex-col gap-2">
+          {sections.map((section) => (
+            <QuestionSectionItem
+              key={section.id}
+              section={section}
+              onUpdate={(patch) => updateSection(section.id, patch)}
+              onRemove={() => removeSection(section.id)}
+              experienceType={experienceType}
+              isOpen={expandedSectionId === section.id}
+              onToggle={() => toggleSection(section.id)}
+            />
+          ))}
+        </div>
+      ) : null}
 
-      {/* Add-section form appears between header and list when active */}
+      {/* Empty state — only when there are no sections and the add form
+          is not open. Carries its own CTA. */}
+      {sections.length === 0 && !showAddSection ? (
+        <div className="flex min-h-32 flex-col items-center justify-center gap-3 rounded-md border border-dashed border-border bg-muted/30 p-6 text-center">
+          <p className="text-sm text-muted-foreground">
+            No question sections yet.
+          </p>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setShowAddSection(true)}
+          >
+            <Plus className="size-3.5" />
+            Add section
+          </Button>
+        </div>
+      ) : null}
+
+      {/* Add-section form — sits at the BOTTOM, where the CTA is, so the
+          new section lands right where the user was looking. */}
       {showAddSection ? (
         <div className="flex flex-col gap-2 rounded-md border border-border bg-muted/30 p-3">
           <span className="text-xs font-medium text-muted-foreground">
@@ -940,58 +976,21 @@ function QuestionSectionsEditor({
         </div>
       ) : null}
 
-      {sections.length === 0 ? (
-        // Empty state with embedded CTA. Hidden while the inline add
-        // form is open (the form takes its place).
-        !showAddSection ? (
-          <div className="flex min-h-32 flex-col items-center justify-center gap-3 rounded-md border border-dashed border-border bg-muted/30 p-6 text-center">
-            <p className="text-sm text-muted-foreground">
-              No question sections yet.
-            </p>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setShowAddSection(true)}
-            >
-              <Plus className="size-3.5" />
-              Add section
-            </Button>
-          </div>
-        ) : null
-      ) : (
-        <>
-          <div className="flex flex-col gap-2">
-            {sections.map((section) => (
-              <QuestionSectionItem
-                key={section.id}
-                section={section}
-                onUpdate={(patch) => updateSection(section.id, patch)}
-                onRemove={() => removeSection(section.id)}
-                experienceType={experienceType}
-                isOpen={expandedSectionId === section.id}
-                onToggle={() => toggleSection(section.id)}
-              />
-            ))}
-          </div>
-          {/* Bottom-right Add section CTA — visible only when there's
-              already at least one section and the inline add form is
-              not already open. */}
-          {!showAddSection ? (
-            <div className="flex justify-end">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => setShowAddSection(true)}
-              >
-                <Plus className="size-3.5" />
-                Add section
-              </Button>
-            </div>
-          ) : null}
-        </>
-      )}
+      {/* Bottom-right Add section CTA — only when at least one section
+          exists and the add form is not already open. */}
+      {sections.length > 0 && !showAddSection ? (
+        <div className="flex justify-end">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setShowAddSection(true)}
+          >
+            <Plus className="size-3.5" />
+            Add section
+          </Button>
+        </div>
+      ) : null}
     </div>
   )
 }
