@@ -413,6 +413,7 @@ export function JobDetailsStep({
             the chips have room to sit on one line. */}
         <Field label="Required experience">
           <ChipTabs
+            variant="choice"
             items={EXPERIENCE_CHIPS}
             value={form.experienceType}
             onValueChange={(v) => update("experienceType", v)}
@@ -483,6 +484,7 @@ export function JobDetailsStep({
           error={showErrors && !form.workType ? "Required" : undefined}
         >
           <ChipTabs
+            variant="choice"
             items={WORK_TYPE_CHIPS}
             value={form.workType}
             onValueChange={(v) => update("workType", v)}
@@ -495,6 +497,7 @@ export function JobDetailsStep({
           error={showErrors && !form.workMode ? "Required" : undefined}
         >
           <ChipTabs
+            variant="choice"
             items={WORK_MODE_CHIPS}
             value={form.workMode}
             onValueChange={(v) => update("workMode", v)}

@@ -29,6 +29,7 @@ export function ChipTabs<V extends string = string>({
   onValueChange,
   className,
   size = "md",
+  variant = "default",
   "aria-label": ariaLabel,
   "aria-invalid": ariaInvalid,
 }: {
@@ -37,6 +38,14 @@ export function ChipTabs<V extends string = string>({
   onValueChange: (next: V) => void
   className?: string
   size?: "sm" | "md"
+  /**
+   * Visual treatment:
+   * - "default" — segmented control: active chip on the `secondary`
+   *   surface, inactive chips text-only. Use for view-switching tabs.
+   * - "choice" — single-select form field: inactive chips are filled
+   *   grey, the selected chip gets a green (brand) tint + green border.
+   */
+  variant?: "default" | "choice"
   "aria-label"?: string
   /** When true (e.g. a required, unselected field), inactive chips gain a
    *  destructive outline to signal a selection is needed. */
@@ -51,6 +60,18 @@ export function ChipTabs<V extends string = string>({
     >
       {items.map((item) => {
         const active = value === item.value
+        const stateClass =
+          variant === "choice"
+            ? active
+              ? "border-primary bg-accent text-accent-foreground"
+              : ariaInvalid
+                ? "border-destructive/60 bg-destructive/5 text-destructive hover:bg-destructive/10"
+                : "border-border bg-muted text-muted-foreground hover:text-foreground"
+            : active
+              ? "border-transparent bg-secondary text-secondary-foreground"
+              : ariaInvalid
+                ? "border-destructive/60 text-destructive hover:bg-destructive/10"
+                : "border-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
         return (
           <button
             key={item.value}
@@ -61,11 +82,7 @@ export function ChipTabs<V extends string = string>({
             className={cn(
               "inline-flex items-center gap-1 rounded-full border font-medium transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
               size === "sm" ? "h-7 px-2.5 text-xs" : "h-8 px-3 text-sm",
-              active
-                ? "border-transparent bg-secondary text-secondary-foreground"
-                : ariaInvalid
-                  ? "border-destructive/60 text-destructive hover:bg-destructive/10"
-                  : "border-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
+              stateClass
             )}
           >
             {item.label}
@@ -73,7 +90,9 @@ export function ChipTabs<V extends string = string>({
               <span
                 className={cn(
                   "text-xs",
-                  active ? "text-secondary-foreground/70" : "text-muted-foreground"
+                  active
+                    ? "text-secondary-foreground/70"
+                    : "text-muted-foreground"
                 )}
               >
                 ({item.count})
