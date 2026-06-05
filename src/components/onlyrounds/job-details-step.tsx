@@ -674,7 +674,7 @@ function Section({
 }) {
   const bodyId = `section-${id}-body`
   return (
-    <section className="overflow-hidden rounded-lg border border-border bg-card">
+    <section className="overflow-hidden rounded-lg border border-border bg-card shadow-card">
       <button
         type="button"
         onClick={onToggle}

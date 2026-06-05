@@ -516,7 +516,7 @@ export function CreateJobWizard() {
               />
             </>
           ) : (
-            <div className="rounded-lg border border-border bg-card p-6">
+            <div className="rounded-lg border border-border bg-card p-6 shadow-card">
               {activeId === "description" ? (
                 <DescriptionStep
                   form={form}
