@@ -564,36 +564,55 @@ const TOC_GROUPS: TocGroup[] = [
 
 const TOC: { id: string; label: string }[] = TOC_GROUPS.flatMap((g) => g.items)
 
-// Sample candidates for the OnlyRounds CandidateCard showcase — mirrors the
-// two "hard" states the component was designed around.
+// Sample candidates for the OnlyRounds CandidateCard showcase — covers the
+// four distinct state branches the component renders.
 const SAMPLE_CANDIDATES: Candidate[] = [
   {
-    id: "chaitra-inbound",
-    name: "chaitra_inbound",
-    email: "ravi_hindi@test.com",
-    phone: "+918971981508",
-    score: 1,
-    verdict: "not-fit",
-    rejectedByAI: true,
-    insights: [
-      { tone: "miss", label: "Unresponsive to role details" },
-      { tone: "miss", label: "Notice period not discussed" },
-      { tone: "miss", label: "Salary details not discussed" },
-      { tone: "miss", label: "Location / policy not discussed" },
-      { tone: "miss", label: "Tools familiarity not discussed" },
-    ],
+    id: "aditi-fit",
+    name: "Aditi Sharma",
+    role: "Se Engineer",
+    company: "Apna",
+    email: "aditi@apna.co",
+    phone: "+917003393362",
+    state: {
+      kind: "completed",
+      score: 100,
+      verdict: "fit",
+      insights: [
+        { tone: "ok", label: "Three years experience" },
+        { tone: "ok", label: "Agreed to salary budget" },
+        { tone: "ok", label: "Agreed to location and shifts" },
+        { tone: "ok", label: "15-day notice period" },
+        { tone: "ok", label: "Expert in test case design" },
+        { tone: "ok", label: "Articulate and clear communicator" },
+        { tone: "ok", label: "Exceeds minimum English level" },
+        { tone: "miss", label: "Employment history not discussed" },
+        { tone: "miss", label: "Industry domain not discussed" },
+      ],
+    },
   },
   {
-    id: "harsha-ravi",
-    name: "harsha_ravi_hindi_agent",
-    email: "harsha_ravi_hindi_agent@test.com",
+    id: "sadanand-pending",
+    name: "Sadanand",
+    role: "Se Engineer",
+    company: "Apna",
+    email: "buruds@gmail.com",
+    phone: "+919164862614",
+    state: { kind: "pending", attempted: 0, total: 5 },
+  },
+  {
+    id: "demo-incomplete",
+    name: "demo 1",
+    email: "retaker@test.co",
+    phone: "+918637266290",
+    state: { kind: "incomplete", attempted: 5, total: 5 },
+  },
+  {
+    id: "chaitra-no-response",
+    name: "chaitra",
+    email: "chaitra.b.ext@apna.co",
     phone: "+918971981508",
-    statusTag: { label: "Incomplete call", tone: "warning" },
-    incompleteCall: {
-      attempted: 1,
-      total: 2,
-      message: "will try again",
-    },
+    state: { kind: "no-response", attempted: 5, total: 5 },
   },
 ]
 
@@ -1319,22 +1338,70 @@ export default function Home() {
               />
             </Sub>
             <Sub title="Tabs">
-              <Tabs defaultValue="account" className="w-full">
-                <TabsList>
-                  <TabsTrigger value="account">Account</TabsTrigger>
-                  <TabsTrigger value="password">Password</TabsTrigger>
-                  <TabsTrigger value="team">Team</TabsTrigger>
-                </TabsList>
-                <TabsContent value="account" className="pt-4 text-sm text-muted-foreground">
-                  Your account settings and profile information live here.
-                </TabsContent>
-                <TabsContent value="password" className="pt-4 text-sm text-muted-foreground">
-                  Update your password here.
-                </TabsContent>
-                <TabsContent value="team" className="pt-4 text-sm text-muted-foreground">
-                  Manage team members and roles.
-                </TabsContent>
-              </Tabs>
+              <div className="flex flex-col gap-6 w-full">
+                {/* default — muted background, white active pill */}
+                <div className="flex flex-col gap-2">
+                  <p className="text-xs text-muted-foreground font-mono">variant="default"</p>
+                  <Tabs defaultValue="account" className="w-full">
+                    <TabsList>
+                      <TabsTrigger value="account">Account</TabsTrigger>
+                      <TabsTrigger value="password">Password</TabsTrigger>
+                      <TabsTrigger value="team">Team</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="account" className="pt-4 text-sm text-muted-foreground">
+                      Your account settings and profile information live here.
+                    </TabsContent>
+                    <TabsContent value="password" className="pt-4 text-sm text-muted-foreground">
+                      Update your password here.
+                    </TabsContent>
+                    <TabsContent value="team" className="pt-4 text-sm text-muted-foreground">
+                      Manage team members and roles.
+                    </TabsContent>
+                  </Tabs>
+                </div>
+
+                {/* inverted — white/card background, near-black active pill. Use on tinted/gray canvases. */}
+                <div className="flex flex-col gap-2 rounded-lg bg-muted p-4">
+                  <p className="text-xs text-muted-foreground font-mono">variant="inverted"</p>
+                  <Tabs defaultValue="account" className="w-full">
+                    <TabsList variant="inverted">
+                      <TabsTrigger value="account">Account</TabsTrigger>
+                      <TabsTrigger value="password">Password</TabsTrigger>
+                      <TabsTrigger value="team">Team</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="account" className="pt-4 text-sm text-muted-foreground">
+                      Your account settings and profile information live here.
+                    </TabsContent>
+                    <TabsContent value="password" className="pt-4 text-sm text-muted-foreground">
+                      Update your password here.
+                    </TabsContent>
+                    <TabsContent value="team" className="pt-4 text-sm text-muted-foreground">
+                      Manage team members and roles.
+                    </TabsContent>
+                  </Tabs>
+                </div>
+
+                {/* line — underline indicator, transparent background */}
+                <div className="flex flex-col gap-2">
+                  <p className="text-xs text-muted-foreground font-mono">variant="line"</p>
+                  <Tabs defaultValue="account" className="w-full">
+                    <TabsList variant="line">
+                      <TabsTrigger value="account">Account</TabsTrigger>
+                      <TabsTrigger value="password">Password</TabsTrigger>
+                      <TabsTrigger value="team">Team</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="account" className="pt-4 text-sm text-muted-foreground">
+                      Your account settings and profile information live here.
+                    </TabsContent>
+                    <TabsContent value="password" className="pt-4 text-sm text-muted-foreground">
+                      Update your password here.
+                    </TabsContent>
+                    <TabsContent value="team" className="pt-4 text-sm text-muted-foreground">
+                      Manage team members and roles.
+                    </TabsContent>
+                  </Tabs>
+                </div>
+              </div>
             </Sub>
           </Section>
 
@@ -1826,36 +1893,40 @@ export default function Home() {
 
             <Section id="or-organisms" title="OnlyRounds · Organisms">
               <Sub title="PageHeader · title + tabs + actions">
-                <PageHeader
-                  title={
-                    <span className="inline-flex items-center gap-2">
-                      <span>Product Designer</span>
-                      <Badge variant="success">Active</Badge>
-                    </span>
-                  }
-                  description="Simplilearn · Hubli"
-                  tabs={
-                    <Tabs value={orTab} onValueChange={(v) => setOrTab(v as typeof orTab)}>
-                      <TabsList>
-                        <TabsTrigger value="all">Screening (2)</TabsTrigger>
-                        <TabsTrigger value="active">Selected (0)</TabsTrigger>
-                      </TabsList>
-                    </Tabs>
-                  }
-                  actions={
-                    <>
-                      <Button variant="outline" size="sm">
-                        <Download className="size-4" /> Download
-                      </Button>
-                      <Button variant="outline" size="sm">
-                        <UserPlus className="size-4" /> Add candidates
-                      </Button>
-                      <Button size="sm" onClick={() => setOrShareOpen(true)}>
-                        <Share2 className="size-4" /> Share job
-                      </Button>
-                    </>
-                  }
-                />
+                {/* bg-muted mirrors the real product page background so the
+                    white header card and inverted tabs render in correct context. */}
+                <div className="rounded-lg bg-muted overflow-hidden">
+                  <PageHeader
+                    title={
+                      <span className="inline-flex items-center gap-2">
+                        <span>Product Designer</span>
+                        <Badge variant="success">Active</Badge>
+                      </span>
+                    }
+                    description="Simplilearn · Hubli"
+                    tabs={
+                      <Tabs value={orTab} onValueChange={(v) => setOrTab(v as typeof orTab)}>
+                        <TabsList variant="inverted">
+                          <TabsTrigger value="all">Screening (2)</TabsTrigger>
+                          <TabsTrigger value="active">Selected (0)</TabsTrigger>
+                        </TabsList>
+                      </Tabs>
+                    }
+                    actions={
+                      <>
+                        <Button variant="outline" size="sm">
+                          <Download className="size-4" /> Download
+                        </Button>
+                        <Button variant="outline" size="sm">
+                          <UserPlus className="size-4" /> Add candidates
+                        </Button>
+                        <Button size="sm" onClick={() => setOrShareOpen(true)}>
+                          <Share2 className="size-4" /> Share job
+                        </Button>
+                      </>
+                    }
+                  />
+                </div>
               </Sub>
 
               <Sub title="JobsTable · title + status + client + location + screening/interview/shortlisted counts">
@@ -1953,10 +2024,11 @@ export default function Home() {
                 </div>
               </Sub>
 
-              <Sub title="CandidateCard · rejected + incomplete-call variants">
+              <Sub title="CandidateCard · 4 state variants (completed Fit · pending · incomplete · no-response)">
                 <div className="flex flex-col gap-3">
-                  <CandidateCard candidate={SAMPLE_CANDIDATES[0]} />
-                  <CandidateCard candidate={SAMPLE_CANDIDATES[1]} />
+                  {SAMPLE_CANDIDATES.map((c) => (
+                    <CandidateCard key={c.id} candidate={c} />
+                  ))}
                 </div>
               </Sub>
 

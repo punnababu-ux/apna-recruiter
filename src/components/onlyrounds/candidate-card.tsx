@@ -3,94 +3,102 @@
 /**
  * CandidateCard — single row in the candidate pipeline.
  *
- * Composes Avatar, contact-meta strip, AIInsightChip list, ScorePill,
- * and a per-candidate action cluster. Rejected-by-AI and incomplete-call
- * states are supported inline.
+ * State branches (one of):
+ *   - pending       → call attempts running; show attempt counter + helper
+ *   - incomplete    → all attempts used, still not complete; show "View" log link
+ *   - completed     → AI scored the candidate; show insight chip cloud + verdict
+ *   - no-response   → simple muted status row
+ *   - not-interested→ simple muted status row
  *
- * Design intent: information-dense but quiet. Contact affordances
- * (email / phone / whatsapp) are icon-only tooltips; score and verdict
- * read from the right edge; AI insights are a wrapping row of outlined
- * chips so they don't shout. Actions live in the bottom bar so the
- * reading path (identity → signals → decision) stays left-to-right.
+ * The whole card is clickable (opens the drawer). Action buttons stop
+ * propagation so they don't fire the card click.
  */
 
 import {
   AtSign,
-  Edit3,
+  ChevronRight,
   MessageCircle,
-  MoreVertical,
   Phone,
   Pencil,
+  XCircle,
+  CircleCheck,
+  RotateCcw,
 } from "lucide-react"
 
-import { AIInsightChip } from "@/components/onlyrounds/ai-insight-chip"
-import { ScorePill } from "@/components/onlyrounds/score-pill"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { AttemptStatusBand } from "@/components/onlyrounds/attempt-status-band"
+import { ScoreGauge, type Verdict } from "@/components/onlyrounds/score-gauge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Progress } from "@/components/ui/progress"
 import { cn } from "@/lib/utils"
 
-type Verdict = "fit" | "review" | "not-fit"
-
 export type CandidateInsight = {
-  tone: "miss" | "warn" | "info" | "ok"
+  /** "ok" = positive finding, "miss" = topic not covered. */
+  tone: "ok" | "miss"
   label: string
 }
+
+export type CandidateState =
+  | { kind: "pending"; attempted: number; total: number }
+  | { kind: "incomplete"; attempted: number; total: number }
+  | { kind: "completed"; score: number; verdict: Verdict; insights: CandidateInsight[] }
+  | { kind: "no-response"; attempted: number; total: number }
+  | { kind: "not-interested" }
 
 export type Candidate = {
   id: string
   name: string
+  role?: string
+  company?: string
   email?: string
   phone?: string
-  score?: number
-  verdict?: Verdict
-  statusTag?: { label: string; tone: "success" | "warning" | "destructive" | "info" }
-  insights?: CandidateInsight[]
-  rejectedByAI?: boolean
-  incompleteCall?: { attempted: number; total: number; message: string }
+  state: CandidateState
 }
 
 export function CandidateCard({
   candidate,
-  onMoveToSelected,
+  onOpen,
+  onMoveToNextRound,
+  onReject,
   onReTake,
   onAddNote,
+  onViewInsights,
   className,
 }: {
   candidate: Candidate
-  onMoveToSelected?: () => void
+  onOpen?: () => void
+  onMoveToNextRound?: () => void
+  onReject?: () => void
   onReTake?: () => void
   onAddNote?: () => void
+  onViewInsights?: () => void
   className?: string
 }) {
-  const {
-    name,
-    email,
-    phone,
-    score,
-    verdict,
-    statusTag,
-    insights,
-    rejectedByAI,
-    incompleteCall,
-  } = candidate
+  const { name, role, company, email, phone, state } = candidate
+
+  const stop = (fn?: () => void) => (e: React.MouseEvent) => {
+    e.stopPropagation()
+    fn?.()
+  }
 
   return (
     <article
+      role={onOpen ? "button" : undefined}
+      tabIndex={onOpen ? 0 : undefined}
+      onClick={onOpen}
+      onKeyDown={(e) => {
+        if (onOpen && (e.key === "Enter" || e.key === " ")) {
+          e.preventDefault()
+          onOpen()
+        }
+      }}
       className={cn(
-        "rounded-lg border border-border bg-card transition-shadow hover:shadow-sm",
+        "rounded-lg border border-border bg-card transition-shadow",
+        onOpen && "cursor-pointer hover:shadow-sm focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
         className,
       )}
     >
-      {/* Header: identity + contact + score */}
+      {/* Header: identity + contact + score/status */}
       <div className="flex items-start gap-3 px-4 py-3">
         <Avatar className="size-9">
           <AvatarFallback className="bg-accent text-xs font-semibold text-accent-foreground">
@@ -98,132 +106,164 @@ export function CandidateCard({
           </AvatarFallback>
         </Avatar>
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <h3 className="truncate text-sm font-semibold">{name}</h3>
-            {statusTag ? (
-              <Badge variant={statusTag.tone} className="capitalize">
-                {statusTag.label}
-              </Badge>
-            ) : null}
+            <ChevronRight className="size-3.5 text-muted-foreground" />
           </div>
+          {(role || company) && (
+            <p className="mt-0.5 truncate text-xs text-muted-foreground">
+              {role}
+              {role && company ? " @ " : ""}
+              {company}
+            </p>
+          )}
           <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-            {email ? (
+            {email && (
               <span className="inline-flex items-center gap-1">
-                <AtSign className="size-3" /> {email}
+                <AtSign className="size-3" />
+                {email}
               </span>
-            ) : null}
-            {phone ? (
+            )}
+            {phone && (
               <span className="inline-flex items-center gap-1">
-                <Phone className="size-3" /> {phone}
+                <Phone className="size-3" />
+                {phone}
               </span>
-            ) : null}
-            {phone ? (
-              <span className="inline-flex size-4 items-center justify-center text-muted-foreground">
+            )}
+            {phone && (
+              <button
+                type="button"
+                onClick={stop()}
+                aria-label="Message on WhatsApp"
+                className="inline-flex size-4 items-center justify-center text-muted-foreground hover:text-foreground"
+              >
                 <MessageCircle className="size-3" />
-              </span>
-            ) : null}
+              </button>
+            )}
           </div>
         </div>
-        {typeof score === "number" && verdict ? (
-          <ScorePill score={score} verdict={verdict} className="mt-0.5" />
-        ) : null}
+
+        {/* Right-edge status indicator */}
+        <div className="flex shrink-0 items-center">
+          {state.kind === "completed" && (
+            <ScoreGauge score={state.score} verdict={state.verdict} layout="row" />
+          )}
+          {state.kind === "pending" && (
+            <Badge variant="warning">Interview pending</Badge>
+          )}
+          {state.kind === "incomplete" && (
+            <Badge variant="warning">Incomplete call</Badge>
+          )}
+          {state.kind === "no-response" && (
+            <Badge variant="secondary">No response</Badge>
+          )}
+          {state.kind === "not-interested" && (
+            <Badge variant="secondary">Not interested</Badge>
+          )}
+        </div>
       </div>
 
-      {/* Insights */}
-      {insights && insights.length > 0 ? (
+      {/* State-specific body */}
+      {state.kind === "pending" && (
+        <AttemptStatusBand
+          tone="info"
+          label="Interview Pending"
+          reason="Call not connected, Rescheduled for completion"
+          attempted={state.attempted}
+          total={state.total}
+          helper="We're trying to reach the candidate for this interview. We'll update the status once they respond."
+        />
+      )}
+
+      {state.kind === "incomplete" && (
+        <AttemptStatusBand
+          tone="warning"
+          label="Interview Incomplete"
+          reason="Candidate left early, Rescheduled for completion"
+          attempted={state.attempted}
+          total={state.total}
+          helper="Candidate attempted the interview but didn't complete it. We've notified the candidate to complete the interview, we'll update the status here once it's completed."
+          onViewAttempts={stop()}
+        />
+      )}
+
+      {state.kind === "no-response" && (
+        <AttemptStatusBand
+          tone="muted"
+          label="No Response"
+          reason="Candidate did not respond after all attempts"
+          attempted={state.attempted}
+          total={state.total}
+        />
+      )}
+
+      {state.kind === "completed" && state.insights.length > 0 && (
         <div className="border-t border-border px-4 py-3">
           <div className="mb-2 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-            <span className="inline-block size-1.5 rounded-full bg-highlight" />
+            <span className="inline-block size-1.5 rounded-full bg-primary" />
             AI call insights
           </div>
           <div className="flex flex-wrap gap-1.5">
-            {insights.map((it, i) => (
-              <AIInsightChip key={i} tone={it.tone}>
+            {state.insights.slice(0, 12).map((it, i) => (
+              <InsightChip key={i} tone={it.tone}>
                 {it.label}
-              </AIInsightChip>
+              </InsightChip>
             ))}
           </div>
-        </div>
-      ) : null}
-
-      {/* Incomplete-call banner (replaces normal action bar when active) */}
-      {incompleteCall ? (
-        <Alert
-          variant="warning"
-          className="rounded-none border-x-0 border-b-0 px-4 py-3"
-        >
-          <AlertTitle className="text-xs font-medium">
-            Call not connected:{" "}
-            <span className="font-normal opacity-80">
-              {incompleteCall.message}
-            </span>
-          </AlertTitle>
-          <AlertDescription className="mt-2 flex flex-col gap-1.5">
-            <Progress
-              value={(incompleteCall.attempted / incompleteCall.total) * 100}
-              className="h-1.5"
-            />
-            <span className="text-2xs text-muted-foreground">
-              {incompleteCall.attempted} of {incompleteCall.total} call attempts
-              completed
-            </span>
-          </AlertDescription>
-        </Alert>
-      ) : (
-        <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-2.5">
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onReTake}
-              className="h-8"
+          {state.insights.length > 12 && (
+            <button
+              type="button"
+              onClick={stop(onViewInsights)}
+              className="mt-2 text-xs font-medium text-primary hover:underline"
             >
-              <Edit3 className="size-3.5" />
-              Re-take
-            </Button>
-          </div>
-          <div className="flex items-center gap-2">
-            {rejectedByAI ? (
-              <Badge variant="destructive">{name} was rejected by AI</Badge>
-            ) : null}
-            <Button
-              variant="default"
-              size="sm"
-              onClick={onMoveToSelected}
-              className="h-8"
+              See detailed insights… ›
+            </button>
+          )}
+          {state.insights.length <= 12 && onViewInsights && (
+            <button
+              type="button"
+              onClick={stop(onViewInsights)}
+              className="mt-2 text-xs font-medium text-primary hover:underline"
             >
-              Move to selected
-            </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                render={
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    aria-label="More"
-                    className="h-8 px-2"
-                  >
-                    <MoreVertical className="size-3.5" />
-                  </Button>
-                }
-              />
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>Re-evaluate</DropdownMenuItem>
-                <DropdownMenuItem>Re-take interview</DropdownMenuItem>
-                <DropdownMenuItem className="text-destructive">
-                  Reject
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+              See detailed insights… ›
+            </button>
+          )}
         </div>
       )}
+
+      {/* Action bar */}
+      <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-2.5">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={stop(onReTake)}
+          className="h-8"
+        >
+          <RotateCcw className="size-3.5" />
+          Re-take
+        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={stop(onReject)}
+            className="h-8 text-destructive hover:text-destructive"
+          >
+            <XCircle className="size-3.5" />
+            Reject
+          </Button>
+          <Button size="sm" onClick={stop(onMoveToNextRound)} className="h-8">
+            <CircleCheck className="size-3.5" />
+            Move to next round
+          </Button>
+        </div>
+      </div>
 
       {/* Footer note action */}
       <div className="flex items-center justify-end border-t border-border px-4 py-1.5 text-xs">
         <button
           type="button"
-          onClick={onAddNote}
+          onClick={stop(onAddNote)}
           className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground"
         >
           <Pencil className="size-3" />
@@ -231,6 +271,36 @@ export function CandidateCard({
         </button>
       </div>
     </article>
+  )
+}
+
+// ── Insight chip (inline — green check or red cross) ──────────────────────
+
+function InsightChip({
+  tone,
+  children,
+}: {
+  tone: "ok" | "miss"
+  children: React.ReactNode
+}) {
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs",
+        tone === "ok"
+          ? "border-success/40 bg-success/5 text-success-foreground"
+          : "border-destructive/40 bg-destructive/5 text-destructive",
+      )}
+    >
+      {tone === "ok" ? (
+        <CircleCheck className="size-3 text-success" />
+      ) : (
+        <XCircle className="size-3" />
+      )}
+      <span className={tone === "ok" ? "text-foreground" : undefined}>
+        {children}
+      </span>
+    </span>
   )
 }
 

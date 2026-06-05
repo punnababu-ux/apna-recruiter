@@ -12,22 +12,15 @@
  * Tabs drive an in-page status filter; URL wiring TBD.
  */
 
-import { Plus, Search, SlidersHorizontal } from "lucide-react"
+import { Plus } from "lucide-react"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Suspense, useMemo, useState } from "react"
 
 import { JobsTable, type JobRow, type JobStatus } from "@/components/onlyrounds/jobs-table"
 import { PageHeader } from "@/components/onlyrounds/page-header"
-import { Badge } from "@/components/ui/badge"
+import { SearchFilterBar } from "@/components/onlyrounds/search-filter-bar"
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Input } from "@/components/ui/input"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 const MOCK: JobRow[] = [
@@ -118,6 +111,8 @@ function JobsPageInner() {
     router.replace(`${pathname}?${params.toString()}`, { scroll: false })
   }
 
+  const [searchQuery, setSearchQuery] = useState("")
+
   const clients = useMemo(
     () => Array.from(new Set(MOCK.map((j) => j.client))).sort(),
     [],
@@ -127,28 +122,23 @@ function JobsPageInner() {
     [],
   )
 
+  const toggle = (list: string[], value: string) =>
+    list.includes(value) ? list.filter((v) => v !== value) : [...list, value]
+
   const filtered = MOCK.filter((j) => {
     if (tab !== "all" && j.status !== tab) return false
     if (clientFilters.length > 0 && !clientFilters.includes(j.client)) return false
-    if (locationFilters.length > 0 && !locationFilters.includes(j.location))
-      return false
+    if (locationFilters.length > 0 && !locationFilters.includes(j.location)) return false
+    if (searchQuery.trim() && !j.title.toLowerCase().includes(searchQuery.toLowerCase())) return false
     return true
   })
-
-  const activeFilterCount = clientFilters.length + locationFilters.length
-
-  const clearAll = () => {
-    setClientFilters([])
-    setLocationFilters([])
-  }
-
-  const toggle = (list: string[], value: string) =>
-    list.includes(value) ? list.filter((v) => v !== value) : [...list, value]
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col">
       <PageHeader
-        className="mt-2 border-0 bg-transparent"
+        variant="transparent"
+        className="px-6 pt-4"
+        title="Jobs"
         tabs={
           <Tabs
             value={tab}
@@ -157,8 +147,7 @@ function JobsPageInner() {
             <TabsList variant="inverted">
               {TABS.map((t) => (
                 <TabsTrigger key={t.value} value={t.value}>
-                  {t.label}{" "}
-                  <span className="opacity-60">({t.count})</span>
+                  {t.label} ({t.count})
                 </TabsTrigger>
               ))}
             </TabsList>
@@ -166,68 +155,37 @@ function JobsPageInner() {
         }
         actions={
           <Button
-            size="lg"
+            size="sm"
             nativeButton={false}
             render={<Link href="/onlyrounds/jobs/new" />}
           >
             <Plus className="size-4" />
-            Create New Job
+            Create new job
           </Button>
         }
       />
 
-      <div className="flex items-center gap-3 px-6 pt-3">
-        <div className="relative flex-1">
-          <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search jobs..."
-            className="bg-card pl-9"
-          />
-        </div>
-        <Popover>
-          <PopoverTrigger
-            render={
-              <Button variant="outline" size="lg">
-                <SlidersHorizontal className="size-4" />
-                Filters
-                {activeFilterCount > 0 ? (
-                  <Badge variant="success" className="ml-1 h-5 min-w-5 px-1.5">
-                    {activeFilterCount}
-                  </Badge>
-                ) : null}
-              </Button>
-            }
-          />
-          <PopoverContent align="end" className="w-64 p-0">
-            <div className="flex items-center justify-between border-b border-border px-3 py-2">
-              <span className="text-sm font-medium">Filters</span>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={clearAll}
-                disabled={activeFilterCount === 0}
-                className="h-7 text-xs"
-              >
-                Clear all
-              </Button>
-            </div>
-            <FilterSection
-              label="Client"
-              options={clients}
-              selected={clientFilters}
-              onToggle={(v) => setClientFilters((prev) => toggle(prev, v))}
-            />
-            <div className="border-t border-border" />
-            <FilterSection
-              label="Location"
-              options={locations}
-              selected={locationFilters}
-              onToggle={(v) => setLocationFilters((prev) => toggle(prev, v))}
-            />
-          </PopoverContent>
-        </Popover>
-      </div>
+      <SearchFilterBar
+        className="px-6 pt-3"
+        placeholder="Search jobs…"
+        value={searchQuery}
+        onChange={setSearchQuery}
+        filterGroups={[
+          {
+            label: "Client",
+            options: clients,
+            selected: clientFilters,
+            onToggle: (v) => setClientFilters((prev) => toggle(prev, v)),
+          },
+          {
+            label: "Location",
+            options: locations,
+            selected: locationFilters,
+            onToggle: (v) => setLocationFilters((prev) => toggle(prev, v)),
+          },
+        ]}
+        onClearFilters={() => { setClientFilters([]); setLocationFilters([]) }}
+      />
 
       <main className="flex-1 px-6 py-4">
         <JobsTable rows={filtered} />
@@ -236,40 +194,3 @@ function JobsPageInner() {
   )
 }
 
-function FilterSection({
-  label,
-  options,
-  selected,
-  onToggle,
-}: {
-  label: string
-  options: string[]
-  selected: string[]
-  onToggle: (value: string) => void
-}) {
-  return (
-    <div className="flex flex-col gap-1.5 p-3">
-      <span className="text-xs font-medium text-muted-foreground">{label}</span>
-      <div className="flex flex-col gap-1">
-        {options.map((opt) => {
-          const id = `filter-${label}-${opt}`.replace(/\s+/g, "-").toLowerCase()
-          const checked = selected.includes(opt)
-          return (
-            <label
-              key={opt}
-              htmlFor={id}
-              className="flex cursor-pointer items-center gap-2 rounded-md px-1.5 py-1 text-sm hover:bg-muted"
-            >
-              <Checkbox
-                id={id}
-                checked={checked}
-                onCheckedChange={() => onToggle(opt)}
-              />
-              <span className="truncate">{opt}</span>
-            </label>
-          )
-        })}
-      </div>
-    </div>
-  )
-}
