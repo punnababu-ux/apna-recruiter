@@ -22,6 +22,7 @@
 import {
   Bot,
   CalendarClock,
+  Check,
   CircleCheck,
   Flag,
   Languages,
@@ -1210,34 +1211,18 @@ function InlineCategoryGroup({
 
       {items.length > 0 ? (
         <div className="flex flex-col gap-1.5">
-          {items.map((c) => {
-            // Criteria synced from the CEFR add-on carry a "cefr-" id.
-            const isAddon = c.id.includes("cefr-")
-            return (
-            <div key={c.id} className="flex items-center gap-1.5">
-              <Input
-                value={c.text}
-                onChange={(e) => onUpdate(c.id, e.target.value)}
-                placeholder={`Describe a ${label.toLowerCase()} criterion`}
-                className="h-8 flex-1 bg-card text-xs"
-              />
-              {isAddon ? (
-                <Badge variant="info" className="shrink-0">
-                  Add-on
-                </Badge>
-              ) : null}
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon-xs"
-                aria-label="Remove criterion"
-                onClick={() => onRemove(c.id)}
-              >
-                <Trash2 className="size-3" />
-              </Button>
-            </div>
-            )
-          })}
+          {items.map((c) => (
+            <CriterionRow
+              key={c.id}
+              criterion={c}
+              // Criteria synced from the CEFR add-on carry a "cefr-" id —
+              // they're locked (not editable or removable).
+              locked={c.id.includes("cefr-")}
+              placeholder={`Describe a ${label.toLowerCase()} criterion`}
+              onChange={(text) => onUpdate(c.id, text)}
+              onRemove={() => onRemove(c.id)}
+            />
+          ))}
         </div>
       ) : null}
 
@@ -1252,6 +1237,94 @@ function InlineCategoryGroup({
       >
         <Plus className="mr-1 size-3" />
         Add {label.toLowerCase()}
+      </Button>
+    </div>
+  )
+}
+
+/**
+ * A single criterion row.
+ * - Locked (CEFR add-on): read-only, shows an "Add-on" tag inside the field,
+ *   no edit/remove.
+ * - Otherwise: read-only by default — click the pencil to edit, the check to
+ *   confirm. New (empty) criteria open in edit mode.
+ */
+function CriterionRow({
+  criterion,
+  locked,
+  placeholder,
+  onChange,
+  onRemove,
+}: {
+  criterion: Criterion
+  locked: boolean
+  placeholder: string
+  onChange: (text: string) => void
+  onRemove: () => void
+}) {
+  const [editing, setEditing] = React.useState(
+    () => !locked && criterion.text.trim() === "",
+  )
+
+  if (locked) {
+    return (
+      <div className="flex h-8 items-center gap-2 rounded-md border border-input bg-muted/40 px-3">
+        <span className="flex-1 truncate text-xs">{criterion.text}</span>
+        <Badge variant="info" className="shrink-0">
+          Add-on
+        </Badge>
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex items-center gap-1.5">
+      {editing ? (
+        <Input
+          autoFocus
+          value={criterion.text}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault()
+              setEditing(false)
+            }
+          }}
+          className="h-8 flex-1 bg-card text-xs"
+        />
+      ) : (
+        <div className="flex h-8 flex-1 items-center rounded-md border border-input bg-card px-3">
+          <span className="flex-1 truncate text-xs">
+            {criterion.text || (
+              <span className="text-muted-foreground">{placeholder}</span>
+            )}
+          </span>
+        </div>
+      )}
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon-xs"
+        aria-label={editing ? "Done editing" : "Edit criterion"}
+        // Stop the input blurring before this click registers while editing.
+        onMouseDown={editing ? (e) => e.preventDefault() : undefined}
+        onClick={() => setEditing((v) => !v)}
+      >
+        {editing ? (
+          <Check className="size-3" />
+        ) : (
+          <Pencil className="size-3" />
+        )}
+      </Button>
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon-xs"
+        aria-label="Remove criterion"
+        onClick={onRemove}
+      >
+        <Trash2 className="size-3" />
       </Button>
     </div>
   )
