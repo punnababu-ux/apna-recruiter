@@ -21,6 +21,7 @@ import {
   Check,
   ChevronDown,
   Download,
+  MoreVertical,
   Pencil,
   Plus,
   Trash2,
@@ -29,6 +30,12 @@ import {
 import * as React from "react"
 
 import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import {
   Dialog,
   DialogContent,
@@ -872,19 +879,6 @@ function QuestionSectionsEditor({
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Add section CTA — right-aligned, the outer accordion already
-          provides the title/description. */}
-      <div className="flex justify-end">
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => setShowAddSection((s) => !s)}
-        >
-          <Plus className="size-3.5" />
-          Add section
-        </Button>
-      </div>
 
       {/* Add-section form appears between header and list when active */}
       {showAddSection ? (
@@ -949,23 +943,56 @@ function QuestionSectionsEditor({
       ) : null}
 
       {sections.length === 0 ? (
-        <div className="flex min-h-20 items-center justify-center rounded-md border border-dashed border-border bg-muted/30 text-sm text-muted-foreground">
-          No sections yet. Use Add section to create one.
-        </div>
+        // Empty state with embedded CTA. Hidden while the inline add
+        // form is open (the form takes its place).
+        !showAddSection ? (
+          <div className="flex min-h-32 flex-col items-center justify-center gap-3 rounded-md border border-dashed border-border bg-muted/30 p-6 text-center">
+            <p className="text-sm text-muted-foreground">
+              No question sections yet.
+            </p>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setShowAddSection(true)}
+            >
+              <Plus className="size-3.5" />
+              Add section
+            </Button>
+          </div>
+        ) : null
       ) : (
-        <div className="flex flex-col gap-2">
-          {sections.map((section) => (
-            <QuestionSectionItem
-              key={section.id}
-              section={section}
-              onUpdate={(patch) => updateSection(section.id, patch)}
-              onRemove={() => removeSection(section.id)}
-              experienceType={experienceType}
-              isOpen={expandedSectionId === section.id}
-              onToggle={() => toggleSection(section.id)}
-            />
-          ))}
-        </div>
+        <>
+          <div className="flex flex-col gap-2">
+            {sections.map((section) => (
+              <QuestionSectionItem
+                key={section.id}
+                section={section}
+                onUpdate={(patch) => updateSection(section.id, patch)}
+                onRemove={() => removeSection(section.id)}
+                experienceType={experienceType}
+                isOpen={expandedSectionId === section.id}
+                onToggle={() => toggleSection(section.id)}
+              />
+            ))}
+          </div>
+          {/* Bottom-right Add section CTA — visible only when there's
+              already at least one section and the inline add form is
+              not already open. */}
+          {!showAddSection ? (
+            <div className="flex justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setShowAddSection(true)}
+              >
+                <Plus className="size-3.5" />
+                Add section
+              </Button>
+            </div>
+          ) : null}
+        </>
       )}
     </div>
   )
@@ -1094,43 +1121,54 @@ function QuestionSectionItem({
           </>
         ) : null}
 
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-xs"
-          aria-label={editingTitle ? "Save section title" : "Rename section"}
-          // When editing, we commit on click. Use onMouseDown +
-          // preventDefault to stop the input from losing focus before
-          // our onClick runs — otherwise the input's onBlur would
-          // commit and flip editingTitle to false *before* this handler
-          // sees the right value.
-          onMouseDown={
-            editingTitle ? (e) => e.preventDefault() : undefined
-          }
-          onClick={() => {
-            if (editingTitle) {
-              commitTitle()
-              return
-            }
-            setEditingTitle(true)
-            openIfNeeded()
-          }}
-        >
-          {editingTitle ? (
+        {editingTitle ? (
+          // While renaming, the same slot becomes a Save (Check) button.
+          // onMouseDown + preventDefault stops the input from losing focus
+          // before our onClick runs — otherwise onBlur would commit and
+          // flip editingTitle to false before this handler sees the
+          // right state.
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-xs"
+            aria-label="Save section title"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={commitTitle}
+          >
             <Check className="size-3.5" />
-          ) : (
-            <Pencil className="size-3.5" />
-          )}
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-xs"
-          aria-label="Remove section"
-          onClick={onRemove}
-        >
-          <Trash2 className="size-3.5" />
-        </Button>
+          </Button>
+        ) : (
+          // Idle: a single three-dot menu with Rename + Delete.
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-xs"
+                  aria-label="Section actions"
+                >
+                  <MoreVertical className="size-3.5" />
+                </Button>
+              }
+            />
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                onClick={() => {
+                  setEditingTitle(true)
+                  openIfNeeded()
+                }}
+              >
+                <Pencil className="size-3.5" />
+                Rename
+              </DropdownMenuItem>
+              <DropdownMenuItem variant="destructive" onClick={onRemove}>
+                <Trash2 className="size-3.5" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
 
       {/* ── expanded body ──────────────────────────────────────── */}
