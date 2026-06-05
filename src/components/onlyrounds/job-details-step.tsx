@@ -692,23 +692,19 @@ function Section({
         aria-controls={bodyId}
         className="flex w-full items-center gap-3 px-5 py-4 text-left transition-colors hover:bg-muted/30"
       >
-        <span
-          className={cn(
-            "flex size-7 shrink-0 items-center justify-center rounded-full border text-xs font-semibold",
-            status === "complete"
-              ? "border-transparent bg-primary text-primary-foreground"
-              : status === "invalid"
-                ? "border-destructive bg-destructive/10 text-destructive"
-                : "border-border bg-muted text-muted-foreground",
-          )}
-          aria-hidden="true"
-        >
-          {status === "complete" ? (
-            <Check className="size-3.5" />
-          ) : (
-            <Icon className="size-4" />
-          )}
-        </span>
+        {status === "complete" ? (
+          <Check className="size-6 shrink-0 text-primary" aria-hidden="true" />
+        ) : (
+          <Icon
+            className={cn(
+              "size-6 shrink-0",
+              status === "invalid"
+                ? "text-destructive"
+                : "text-muted-foreground",
+            )}
+            aria-hidden="true"
+          />
+        )}
         <div className="min-w-0 flex-1">
           <h3 className="text-base font-semibold leading-tight">{title}</h3>
           {description ? (
