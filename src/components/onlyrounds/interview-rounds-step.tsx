@@ -741,22 +741,52 @@ function TaskCard({
   )
 }
 
-/** Compact one-line summary shown in the header for tasks that have a
- *  mode (screening / interview / scheduling). */
+/** Compact chips shown in the task header — mode, direction, and call
+ *  format (voice/video), each with its own icon. */
 function ScreeningSummary({ task }: { task: InterviewTask }) {
   if (task.type === "custom") return null
   const { mode, direction, format } = task.screening
   if (!mode) return null
-  const parts: string[] = [mode === "ai" ? "AI" : "Human"]
-  // Direction / format only apply to call tasks (screening / interview).
+
+  const chips: { icon: LucideIcon; label: string }[] = [
+    {
+      icon: mode === "ai" ? Bot : UserRound,
+      label: mode === "ai" ? "AI" : "Human",
+    },
+  ]
+  // Direction / format only apply to AI call tasks (screening / interview).
   if (CALL_TASK_TYPES.has(task.type) && mode === "ai") {
-    if (direction) parts.push(direction)
-    if (format) parts.push(format)
+    if (direction) {
+      chips.push({
+        icon:
+          direction === "outbound"
+            ? PhoneOutgoing
+            : direction === "inbound"
+              ? PhoneIncoming
+              : PhoneCall,
+        label: direction.charAt(0).toUpperCase() + direction.slice(1),
+      })
+    }
+    if (format) {
+      chips.push({
+        icon: format === "video" ? Video : Mic,
+        label: format === "video" ? "Video call" : "Voice call",
+      })
+    }
   }
+
   return (
-    <span className="hidden shrink-0 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground sm:inline">
-      {parts.join(" · ")}
-    </span>
+    <div className="hidden shrink-0 items-center gap-1.5 sm:flex">
+      {chips.map(({ icon: Icon, label }) => (
+        <span
+          key={label}
+          className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground"
+        >
+          <Icon className="size-3" />
+          {label}
+        </span>
+      ))}
+    </div>
   )
 }
 
@@ -1180,7 +1210,10 @@ function InlineCategoryGroup({
 
       {items.length > 0 ? (
         <div className="flex flex-col gap-1.5">
-          {items.map((c) => (
+          {items.map((c) => {
+            // Criteria synced from the CEFR add-on carry a "cefr-" id.
+            const isAddon = c.id.includes("cefr-")
+            return (
             <div key={c.id} className="flex items-center gap-1.5">
               <Input
                 value={c.text}
@@ -1188,6 +1221,11 @@ function InlineCategoryGroup({
                 placeholder={`Describe a ${label.toLowerCase()} criterion`}
                 className="h-8 flex-1 bg-card text-xs"
               />
+              {isAddon ? (
+                <Badge variant="info" className="shrink-0">
+                  Add-on
+                </Badge>
+              ) : null}
               <Button
                 type="button"
                 variant="ghost"
@@ -1198,7 +1236,8 @@ function InlineCategoryGroup({
                 <Trash2 className="size-3" />
               </Button>
             </div>
-          ))}
+            )
+          })}
         </div>
       ) : null}
 
@@ -1245,20 +1284,17 @@ function InterviewerCard({
   index,
   agentId,
   language,
-  format,
   onAgentChange,
   onLanguageChange,
 }: {
   index: number
   agentId: AgentId
   language: InterviewLanguage
-  format: ScreeningFormat | ""
   onAgentChange: (id: AgentId) => void
   onLanguageChange: (lang: InterviewLanguage) => void
 }) {
   const [editOpen, setEditOpen] = React.useState(false)
   const agent = AGENTS[agentId]
-  const isVideo = format === "video"
 
   return (
     <div className="flex items-center gap-3 rounded-lg border border-primary/20 bg-accent/30 p-3">
@@ -1274,9 +1310,6 @@ function InterviewerCard({
           {agent.role} · {agent.voice} voice
         </div>
         <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-          <InfoPill icon={isVideo ? Video : Mic}>
-            {isVideo ? "Video call" : "Voice call"}
-          </InfoPill>
           <InfoPill icon={Languages}>{LANGUAGES[language].label}</InfoPill>
         </div>
       </div>
@@ -1610,6 +1643,18 @@ function TaskCriteriaSection({
 
   return (
     <div className="space-y-4">
+      {/* AI interviewer (agent + language) — this is bot/language config,
+          not criteria, so it sits ABOVE the evaluation-criteria heading. */}
+      {hasCriteria ? (
+        <InterviewerCard
+          index={index}
+          agentId={task.agentId ?? "isha"}
+          language={task.language ?? "english"}
+          onAgentChange={(agentId) => onUpdateTask({ agentId })}
+          onLanguageChange={(language) => onUpdateTask({ language })}
+        />
+      ) : null}
+
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <Sparkles className="size-4 text-primary" />
@@ -1625,16 +1670,6 @@ function TaskCriteriaSection({
         </div>
       ) : (
         <div className="flex flex-col gap-4">
-          {/* AI interviewer (agent + mode + language) */}
-          <InterviewerCard
-            index={index}
-            agentId={task.agentId ?? "isha"}
-            language={task.language ?? "english"}
-            format={task.screening.format}
-            onAgentChange={(agentId) => onUpdateTask({ agentId })}
-            onLanguageChange={(language) => onUpdateTask({ language })}
-          />
-
           {CRITERIA_CATEGORIES.map((meta) => (
             <InlineCategoryGroup
               key={meta.key}
