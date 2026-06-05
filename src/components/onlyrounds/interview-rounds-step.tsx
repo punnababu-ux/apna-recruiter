@@ -53,6 +53,13 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
@@ -99,6 +106,10 @@ export type InterviewTask = {
   screening: ScreeningConfig
   /** Task-specific evaluation criteria. */
   criteria: Criterion[]
+  /** AI interviewer persona for AI rounds. */
+  agentId: AgentId
+  /** Conversation language for AI rounds. */
+  language: InterviewLanguage
 }
 
 export type CriteriaCategory = "must-have" | "good-to-have" | "red-flag"
@@ -109,6 +120,21 @@ export type Criterion = {
 }
 
 export const MAX_CRITERIA = 15
+
+// ---- AI interviewer (agent + language) ----------------------------------
+
+export type AgentId = "isha" | "ravi"
+export type InterviewLanguage = "english" | "hindi"
+
+export const AGENTS: Record<AgentId, { name: string; role: string }> = {
+  isha: { name: "Isha", role: "Senior AI Interviewer" },
+  ravi: { name: "Ravi", role: "Lead AI Recruiter" },
+}
+
+export const LANGUAGE_LABELS: Record<InterviewLanguage, string> = {
+  english: "English",
+  hindi: "Hindi",
+}
 
 export type InterviewRoundsForm = {
   tasks: InterviewTask[]
@@ -310,6 +336,8 @@ export function InterviewRoundsStep({
       notes: "",
       screening: makeScreening(),
       criteria: [],
+      agentId: "isha",
+      language: "english",
     }
     update({ ...form, tasks: [...form.tasks, task] })
     setShowPicker(false)
@@ -613,6 +641,7 @@ function TaskCard({
             task={task}
             generating={!!isAnyGenerating}
             onUpdateCriteria={(criteria) => onUpdate({ criteria })}
+            onUpdateTask={(patch) => onUpdate(patch)}
           />
         ) : isAnyGenerating ? (
           <>
@@ -1065,6 +1094,7 @@ const CRITERIA_CATEGORIES = [
     description: "Required criteria the candidate must meet.",
     icon: CircleCheck,
     tone: "text-success",
+    surface: "border-success/30 bg-success-subtle",
   },
   {
     key: "good-to-have" as CriteriaCategory,
@@ -1072,6 +1102,7 @@ const CRITERIA_CATEGORIES = [
     description: "Bonus criteria that strengthen a candidate.",
     icon: Star,
     tone: "text-warning",
+    surface: "border-warning/40 bg-warning-subtle",
   },
   {
     key: "red-flag" as CriteriaCategory,
@@ -1079,6 +1110,7 @@ const CRITERIA_CATEGORIES = [
     description: "Dealbreakers — candidate is not shortlisted if unmet.",
     icon: Flag,
     tone: "text-destructive",
+    surface: "border-destructive/30 bg-destructive/5",
   },
 ]
 
@@ -1087,6 +1119,7 @@ function InlineCategoryGroup({
   description,
   Icon,
   tone,
+  surface,
   items,
   atLimit,
   onAdd,
@@ -1097,6 +1130,8 @@ function InlineCategoryGroup({
   description: string
   Icon: LucideIcon
   tone: string
+  /** Tinted border + background that colour-codes the category. */
+  surface: string
   items: Criterion[]
   atLimit: boolean
   onAdd: () => void
@@ -1104,13 +1139,13 @@ function InlineCategoryGroup({
   onRemove: (id: string) => void
 }) {
   return (
-    <div className="flex flex-col gap-2">
+    <div className={cn("flex flex-col gap-2 rounded-lg border p-3", surface)}>
       <div className="flex items-center gap-2">
         <Icon className={cn("size-3.5 shrink-0", tone)} />
         <span className="text-xs font-semibold">{label}</span>
         <span className="text-xs text-muted-foreground">({items.length})</span>
       </div>
-      <p className="text-xs text-muted-foreground -mt-1">{description}</p>
+      <p className="-mt-1 text-xs text-muted-foreground">{description}</p>
 
       {items.length > 0 ? (
         <div className="flex flex-col gap-1.5">
@@ -1120,7 +1155,7 @@ function InlineCategoryGroup({
                 value={c.text}
                 onChange={(e) => onUpdate(c.id, e.target.value)}
                 placeholder={`Describe a ${label.toLowerCase()} criterion`}
-                className="h-8 text-xs flex-1"
+                className="h-8 flex-1 bg-card text-xs"
               />
               <Button
                 type="button"
@@ -1142,10 +1177,10 @@ function InlineCategoryGroup({
         size="xs"
         onClick={onAdd}
         disabled={atLimit}
-        className="self-start h-7 text-xs"
+        className="h-7 self-start bg-card text-xs"
         title={atLimit ? `Limit of ${MAX_CRITERIA} criteria reached` : undefined}
       >
-        <Plus className="size-3 mr-1" />
+        <Plus className="mr-1 size-3" />
         Add {label.toLowerCase()}
       </Button>
     </div>
@@ -1158,14 +1193,107 @@ const nextInlineCritId = (taskId: string) => {
   return `crit-${taskId}-${inlineCritCounter}`
 }
 
+// ---- AI interviewer card ------------------------------------------------
+
+function InterviewerCard({
+  agentId,
+  language,
+  format,
+  onAgentChange,
+  onLanguageChange,
+}: {
+  agentId: AgentId
+  language: InterviewLanguage
+  format: ScreeningFormat | ""
+  onAgentChange: (id: AgentId) => void
+  onLanguageChange: (lang: InterviewLanguage) => void
+}) {
+  const agent = AGENTS[agentId]
+  const isVideo = format === "video"
+
+  return (
+    <div className="flex flex-col gap-3 rounded-lg border border-primary/20 bg-accent/30 p-3">
+      <div className="flex items-center gap-3">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
+          {agent.name.charAt(0)}
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-1.5 text-sm font-medium">
+            {agent.name}
+            <Sparkles className="size-3 text-primary" />
+          </div>
+          <div className="text-xs text-muted-foreground">{agent.role}</div>
+        </div>
+        {/* Mode is read-only — it follows the call format chosen above. */}
+        <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-border bg-card px-2 py-0.5 text-xs text-muted-foreground">
+          {isVideo ? (
+            <Video className="size-3" />
+          ) : (
+            <Mic className="size-3" />
+          )}
+          {isVideo ? "Video call" : "Voice call"}
+        </span>
+      </div>
+
+      {/* Editable: agent + language */}
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <label className="flex items-center gap-2 text-xs text-muted-foreground">
+          Agent
+          <Select
+            value={agentId}
+            onValueChange={(v) => onAgentChange(v as AgentId)}
+          >
+            <SelectTrigger className="h-7 flex-1 bg-card text-xs">
+              <SelectValue>
+                {(v) => AGENTS[v as AgentId]?.name ?? ""}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {(Object.keys(AGENTS) as AgentId[]).map((id) => (
+                <SelectItem key={id} value={id}>
+                  {AGENTS[id].name} · {AGENTS[id].role}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </label>
+        <label className="flex items-center gap-2 text-xs text-muted-foreground">
+          Language
+          <Select
+            value={language}
+            onValueChange={(v) => onLanguageChange(v as InterviewLanguage)}
+          >
+            <SelectTrigger className="h-7 flex-1 bg-card text-xs">
+              <SelectValue>
+                {(v) => LANGUAGE_LABELS[v as InterviewLanguage] ?? ""}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {(Object.keys(LANGUAGE_LABELS) as InterviewLanguage[]).map(
+                (lang) => (
+                  <SelectItem key={lang} value={lang}>
+                    {LANGUAGE_LABELS[lang]}
+                  </SelectItem>
+                ),
+              )}
+            </SelectContent>
+          </Select>
+        </label>
+      </div>
+    </div>
+  )
+}
+
 function TaskCriteriaSection({
   task,
   generating,
   onUpdateCriteria,
+  onUpdateTask,
 }: {
   task: InterviewTask
   generating: boolean
   onUpdateCriteria: (criteria: Criterion[]) => void
+  onUpdateTask: (patch: Partial<InterviewTask>) => void
 }) {
   const criteria = task.criteria || []
   const total = criteria.length
@@ -1219,6 +1347,15 @@ function TaskCriteriaSection({
         </div>
       ) : (
         <div className="flex flex-col gap-4">
+          {/* AI interviewer (agent + mode + language) */}
+          <InterviewerCard
+            agentId={task.agentId ?? "isha"}
+            language={task.language ?? "english"}
+            format={task.screening.format}
+            onAgentChange={(agentId) => onUpdateTask({ agentId })}
+            onLanguageChange={(language) => onUpdateTask({ language })}
+          />
+
           {CRITERIA_CATEGORIES.map((meta) => (
             <InlineCategoryGroup
               key={meta.key}
@@ -1226,6 +1363,7 @@ function TaskCriteriaSection({
               description={meta.description}
               Icon={meta.icon}
               tone={meta.tone}
+              surface={meta.surface}
               items={criteria.filter((c) => c.category === meta.key)}
               atLimit={atLimit}
               onAdd={() => addCriterion(meta.key)}
