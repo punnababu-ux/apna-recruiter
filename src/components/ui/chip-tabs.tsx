@@ -21,6 +21,9 @@ export type ChipTabItem<V extends string = string> = {
   value: V
   label: React.ReactNode
   count?: number
+  /** Render the chip non-interactive and dimmed (e.g. an option that
+   *  isn't valid given another selection). */
+  disabled?: boolean
 }
 
 export function ChipTabs<V extends string = string>({
@@ -78,9 +81,10 @@ export function ChipTabs<V extends string = string>({
             type="button"
             role="tab"
             aria-selected={active}
+            disabled={item.disabled}
             onClick={() => onValueChange(item.value)}
             className={cn(
-              "inline-flex items-center gap-1 rounded-full border font-medium transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+              "inline-flex items-center gap-1 rounded-full border font-medium transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-40",
               size === "sm" ? "h-7 px-2.5 text-xs" : "h-8 px-3 text-sm",
               stateClass
             )}

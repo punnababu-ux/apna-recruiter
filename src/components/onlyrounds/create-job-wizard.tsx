@@ -27,6 +27,11 @@ import * as React from "react"
 import { useState } from "react"
 
 import {
+  InterviewRoundsStep,
+  defaultInterviewRounds,
+  type InterviewRoundsForm,
+} from "@/components/onlyrounds/interview-rounds-step"
+import {
   JobDetailsStep,
   REQUIRED_SECTION_IDS,
   SECTION_IDS,
@@ -66,6 +71,7 @@ type FormShape = {
   title: string
   jd: string
   details: JobDetailsForm
+  rounds: InterviewRoundsForm
 }
 
 // ── Draft persistence ─────────────────────────────────────────────────────
@@ -78,13 +84,17 @@ const emptyForm: FormShape = {
   title: "",
   jd: "",
   details: defaultJobDetails,
+  rounds: defaultInterviewRounds,
 }
 
 function loadDraft(): FormShape | null {
   if (typeof window === "undefined") return null
   try {
     const raw = window.localStorage.getItem(DRAFT_KEY)
-    return raw ? (JSON.parse(raw) as FormShape) : null
+    if (!raw) return null
+    // Merge over defaults so drafts saved before a field existed (e.g.
+    // `rounds`) still hydrate with a valid shape.
+    return { ...emptyForm, ...(JSON.parse(raw) as Partial<FormShape>) }
   } catch {
     return null
   }
@@ -194,6 +204,10 @@ export function CreateJobWizard() {
       ...prev,
       details: { ...prev.details, [key]: value },
     }))
+  }
+
+  const updateRounds = (next: InterviewRoundsForm) => {
+    setForm((prev) => ({ ...prev, rounds: next }))
   }
 
   const activeIdx = STEPS.findIndex((s) => s.id === activeId)
@@ -515,6 +529,8 @@ export function CreateJobWizard() {
                 onSectionChange={setStep2OpenSection}
               />
             </>
+          ) : activeId === "rounds" ? (
+            <InterviewRoundsStep form={form.rounds} update={updateRounds} />
           ) : (
             <div className="rounded-lg border border-border bg-card p-6 shadow-card">
               {activeId === "description" ? (
@@ -523,11 +539,6 @@ export function CreateJobWizard() {
                   update={update}
                   showErrors={showErrors}
                 />
-              ) : null}
-              {activeId === "rounds" ? (
-                <StepPlaceholder>
-                  Rounds pipeline builder — coming next.
-                </StepPlaceholder>
               ) : null}
               {activeId === "review" ? (
                 <StepPlaceholder>
