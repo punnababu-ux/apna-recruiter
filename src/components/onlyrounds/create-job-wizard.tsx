@@ -13,7 +13,15 @@
  * the right, sticky footer with Back / Save & exit / Next.
  */
 
-import { ArrowLeft, ArrowRight, Save, Sparkles, Upload, X } from "lucide-react"
+import {
+  ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
+  Save,
+  Sparkles,
+  Upload,
+  X,
+} from "lucide-react"
 import { useRouter } from "next/navigation"
 import * as React from "react"
 import { useState } from "react"
@@ -155,14 +163,6 @@ export function CreateJobWizard() {
     [form, lastSavedJson],
   )
 
-  const saveDraftNow = () => {
-    persistDraft(form)
-    setLastSavedJson(JSON.stringify(form))
-    toast.success("Draft saved", {
-      description: "Your changes are stored locally.",
-    })
-  }
-
   /** Top-bar "Create new job" back link click. If there's nothing to
    *  lose, navigate immediately; otherwise open the 3-option confirm. */
   const handleExitAttempt = () => {
@@ -255,13 +255,15 @@ export function CreateJobWizard() {
       ? "Continue"
       : "Next"
 
-  // ctaDisabled — block the action when it wouldn't work:
+  // ctaBlocked — the action can't proceed yet, but the button stays
+  // CLICKABLE (soft-disabled): clicking reveals the field-level errors
+  // via goNext (which sets showErrors + opens the offending section).
+  // Hard-disable is reserved for `extracting` (handled by `loading`).
   //   • Step 1 without title/JD
   //   • Step 2 with an invalid required section open (Continue won't move)
   //   • Step 2 about to advance step but a required section upstream is
   //     still invalid (Next can't actually advance)
-  const ctaDisabled =
-    extracting ||
+  const ctaBlocked =
     (activeId === "description" &&
       (!form.title.trim() || !form.jd.trim())) ||
     (activeId === "details" && currentSectionInvalid) ||
@@ -443,9 +445,9 @@ export function CreateJobWizard() {
     <div className="flex min-h-svh flex-col bg-muted">
       {/* Sticky top — title row + step-progress rail */}
       <div className="sticky top-0 z-10 border-b border-border bg-card">
-        {/* Title row */}
+        {/* Title row — back/title on the left, Save & exit on the right */}
         <div className="border-b border-border px-6 py-3">
-          <div className="mx-auto w-full max-w-3xl">
+          <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-3">
             <button
               type="button"
               onClick={handleExitAttempt}
@@ -457,6 +459,15 @@ export function CreateJobWizard() {
               </span>
               Create new job
             </button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleSaveAndExit}
+            >
+              <Save className="size-4" />
+              Save &amp; exit
+            </Button>
           </div>
         </div>
         {/* Stepper row */}
@@ -531,21 +542,20 @@ export function CreateJobWizard() {
       {/* Sticky bottom — consistent across all steps */}
       <div className="sticky bottom-0 z-10 border-t border-border bg-card">
         <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-3 px-6 py-3">
-          {/* Left cluster — icon-only Back + Save & exit. base-ui's
-              TooltipTrigger uses `render={...}` (not Radix's `asChild`)
-              to render as a custom element. */}
+          {/* Left — Previous (chevron; the back arrow lives in the top
+              bar, so the footer uses a chevron to stay distinct). base-ui's
+              TooltipTrigger uses `render={...}` (not Radix's `asChild`). */}
           <div className="flex items-center gap-1">
             <Tooltip>
               <TooltipTrigger
                 render={
                   <Button
-                    variant="ghost"
-                    size="icon"
+                    variant="outline"
                     onClick={goPrev}
                     disabled={!canGoPrev}
-                    aria-label="Previous"
                   >
-                    <ArrowLeft className="size-4" />
+                    <ChevronLeft className="size-4" />
+                    Previous
                   </Button>
                 }
               />
@@ -557,44 +567,26 @@ export function CreateJobWizard() {
                   : "Previous step"}
               </TooltipContent>
             </Tooltip>
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={saveDraftNow}
-                    disabled={!isDirty}
-                    aria-label="Save draft"
-                  >
-                    <Save className="size-4" />
-                  </Button>
-                }
-              />
-              <TooltipContent>
-                {isDirty ? "Save draft" : "Nothing to save"}
-              </TooltipContent>
-            </Tooltip>
           </div>
 
-          {/* Right — adaptive primary CTA. Tooltip shows the disabled
-              reason so the user knows what's blocking them.
-              Disabled buttons don't emit pointer events, so we wrap
-              the Button in a span and make THAT the trigger element. */}
+          {/* Right — adaptive primary CTA. Soft-disabled when blocked:
+              the button LOOKS disabled (opacity + not-allowed cursor +
+              aria-disabled) but stays clickable so a click reveals the
+              field-level errors. The tooltip explains what's blocking. */}
           <Tooltip>
             <TooltipTrigger
               render={
-                <span className={cn(ctaDisabled && "cursor-not-allowed")}>
+                <span className={cn(ctaBlocked && "cursor-not-allowed")}>
                   <Button
                     size="lg"
                     onClick={goNext}
                     loading={extracting}
                     loadingText="Filling from JD…"
-                    disabled={ctaDisabled}
-                    aria-disabled={ctaDisabled || undefined}
+                    aria-disabled={ctaBlocked || undefined}
+                    className={cn(ctaBlocked && "opacity-50")}
                   >
                     {ctaLabel}
-                    {!extracting ? <ArrowRight className="size-4" /> : null}
+                    {!extracting ? <ChevronRight className="size-4" /> : null}
                   </Button>
                 </span>
               }

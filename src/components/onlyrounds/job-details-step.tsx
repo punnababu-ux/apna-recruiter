@@ -664,11 +664,9 @@ function StatusPip({ status }: { status: SectionStatus }) {
       </span>
     )
   }
-  return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-      Not started
-    </span>
-  )
+  // "untouched" → no pip. An empty section needs no badge; optionality is
+  // already conveyed by the section's "Optional — …" description.
+  return null
 }
 
 function Section({
