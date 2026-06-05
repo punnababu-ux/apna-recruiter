@@ -48,6 +48,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
@@ -84,9 +85,12 @@ export type ScreeningConfig = {
 export type InterviewTask = {
   id: string
   type: TaskType
-  /** Free-text notes for the Custom task type. */
+  /** Custom task name (Custom task type only; empty falls back to the label). */
+  title: string
+  /** Free-text notes — Custom task details, or Human-scheduling instructions. */
   notes: string
-  /** Call config — used by Screening and Interview task types. */
+  /** Call config — used by Screening and Interview task types. The `mode`
+   *  and `humanNotes` fields are also reused by Interview scheduling. */
   screening: ScreeningConfig
 }
 
@@ -236,6 +240,7 @@ export function InterviewRoundsStep({
     const task: InterviewTask = {
       id: nextTaskId(),
       type,
+      title: "",
       notes: "",
       screening: makeScreening(),
     }
@@ -435,6 +440,11 @@ function TaskCard({
   const Icon = meta.icon
   const bodyId = `task-${task.id}-body`
   const isCallTask = CALL_TASK_TYPES.has(task.type)
+  // Custom tasks show their user-given name (falling back to the label).
+  const headerLabel =
+    task.type === "custom" && task.title.trim()
+      ? task.title.trim()
+      : meta.label
 
   return (
     <section className="overflow-hidden rounded-lg border border-border bg-card shadow-card">
@@ -449,7 +459,7 @@ function TaskCard({
           <Icon className="size-5 shrink-0 text-muted-foreground" />
           <span className="min-w-0">
             <span className="block truncate text-sm font-medium">
-              {meta.label}
+              {headerLabel}
             </span>
             <span className="block text-xs text-muted-foreground">
               Task {index}
@@ -505,22 +515,33 @@ function TaskCard({
               onChange={(screening) => onUpdate({ screening })}
               cefrLockedElsewhere={cefrLockedElsewhere}
             />
-          ) : task.type === "custom" ? (
-            <Field
-              label="Task details"
-              hint="Describe what happens in this custom step."
-            >
-              <Textarea
-                value={task.notes}
-                onChange={(e) => onUpdate({ notes: e.target.value })}
-                placeholder="e.g. Take-home assignment shared over email, 48-hour turnaround."
-                rows={4}
-              />
-            </Field>
+          ) : task.type === "scheduling" ? (
+            <SchedulingEditor
+              config={task.screening}
+              onChange={(screening) => onUpdate({ screening })}
+            />
           ) : (
-            <p className="rounded-md border border-dashed border-border bg-muted/30 p-3 text-sm text-muted-foreground">
-              {meta.label} configuration is coming soon.
-            </p>
+            // custom
+            <div className="flex flex-col gap-5">
+              <Field label="Task name">
+                <Input
+                  value={task.title}
+                  onChange={(e) => onUpdate({ title: e.target.value })}
+                  placeholder="e.g. Take-home assignment"
+                />
+              </Field>
+              <Field
+                label="Task details"
+                hint="Describe what happens in this custom step."
+              >
+                <Textarea
+                  value={task.notes}
+                  onChange={(e) => onUpdate({ notes: e.target.value })}
+                  placeholder="e.g. Take-home assignment shared over email, 48-hour turnaround."
+                  rows={4}
+                />
+              </Field>
+            </div>
           )}
         </div>
       ) : null}
@@ -528,13 +549,15 @@ function TaskCard({
   )
 }
 
-/** Compact one-line summary of a call task (screening/interview). */
+/** Compact one-line summary shown in the header for tasks that have a
+ *  mode (screening / interview / scheduling). */
 function ScreeningSummary({ task }: { task: InterviewTask }) {
-  if (!CALL_TASK_TYPES.has(task.type)) return null
+  if (task.type === "custom") return null
   const { mode, direction, format } = task.screening
   if (!mode) return null
   const parts: string[] = [mode === "ai" ? "AI" : "Human"]
-  if (mode === "ai") {
+  // Direction / format only apply to call tasks (screening / interview).
+  if (CALL_TASK_TYPES.has(task.type) && mode === "ai") {
     if (direction) parts.push(direction)
     if (format) parts.push(format)
   }
@@ -542,6 +565,52 @@ function ScreeningSummary({ task }: { task: InterviewTask }) {
     <span className="hidden shrink-0 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground sm:inline">
       {parts.join(" · ")}
     </span>
+  )
+}
+
+// ---- interview scheduling editor ----------------------------------------
+
+function SchedulingEditor({
+  config,
+  onChange,
+}: {
+  // Reuses the call config's `mode` + `humanNotes`.
+  config: ScreeningConfig
+  onChange: (next: ScreeningConfig) => void
+}) {
+  const set = (patch: Partial<ScreeningConfig>) =>
+    onChange({ ...config, ...patch })
+
+  return (
+    <div className="flex flex-col gap-5">
+      <Field label="Scheduling type">
+        <ChipTabs
+          variant="choice"
+          items={modeChips("scheduling")}
+          value={config.mode}
+          onValueChange={(v) => set({ mode: v })}
+          aria-label="Scheduling type"
+        />
+      </Field>
+
+      {config.mode === "ai" ? (
+        <p className="rounded-md border border-dashed border-border bg-muted/30 p-3 text-sm text-muted-foreground">
+          AI scheduling is coming soon.
+        </p>
+      ) : config.mode === "human" ? (
+        <Field
+          label="Task details"
+          hint="Instructions for the team coordinating interview slots."
+        >
+          <Textarea
+            value={config.humanNotes}
+            onChange={(e) => set({ humanNotes: e.target.value })}
+            placeholder="e.g. Offer 3 slots across the week, confirm over WhatsApp, and share the meeting link a day before."
+            rows={4}
+          />
+        </Field>
+      ) : null}
+    </div>
   )
 }
 
