@@ -25,11 +25,14 @@ import {
   CircleCheck,
   Flag,
   Languages,
+  Mars,
   Mic,
   MoreVertical,
+  Pencil,
   PhoneCall,
   PhoneIncoming,
   PhoneOutgoing,
+  Play,
   Plus,
   Puzzle,
   Sparkles,
@@ -37,6 +40,7 @@ import {
   Trash2,
   UserRound,
   Users,
+  Venus,
   Video,
   type LucideIcon,
 } from "lucide-react"
@@ -46,6 +50,13 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ChipTabs, type ChipTabItem } from "@/components/ui/chip-tabs"
 import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -53,13 +64,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
@@ -126,14 +130,40 @@ export const MAX_CRITERIA = 15
 export type AgentId = "isha" | "ravi"
 export type InterviewLanguage = "english" | "hindi"
 
-export const AGENTS: Record<AgentId, { name: string; role: string }> = {
-  isha: { name: "Isha", role: "Senior AI Interviewer" },
-  ravi: { name: "Ravi", role: "Lead AI Recruiter" },
+export type AgentMeta = {
+  name: string
+  role: string
+  voice: "Male" | "Female"
+  interviewsTaken: string
+  completionRate: string
+  recommended?: boolean
 }
 
-export const LANGUAGE_LABELS: Record<InterviewLanguage, string> = {
-  english: "English",
-  hindi: "Hindi",
+// Order matters — keys render left→right in the picker (Ravi, then Isha).
+export const AGENTS: Record<AgentId, AgentMeta> = {
+  ravi: {
+    name: "Ravi",
+    role: "Lead AI recruiter",
+    voice: "Male",
+    interviewsTaken: "16K",
+    completionRate: "88%",
+  },
+  isha: {
+    name: "Isha",
+    role: "Senior AI recruiter",
+    voice: "Female",
+    interviewsTaken: "24K",
+    completionRate: "96%",
+    recommended: true,
+  },
+}
+
+export const LANGUAGES: Record<
+  InterviewLanguage,
+  { label: string; badge: string }
+> = {
+  english: { label: "English", badge: "En" },
+  hindi: { label: "Hindi", badge: "हि" },
 }
 
 export type InterviewRoundsForm = {
@@ -638,6 +668,7 @@ function TaskCard({
       >
         {showCriteriaView ? (
           <TaskCriteriaSection
+            index={index}
             task={task}
             generating={!!isAnyGenerating}
             onUpdateCriteria={(criteria) => onUpdate({ criteria })}
@@ -1195,101 +1226,348 @@ const nextInlineCritId = (taskId: string) => {
 
 // ---- AI interviewer card ------------------------------------------------
 
+function InfoPill({
+  icon: Icon,
+  children,
+}: {
+  icon: LucideIcon
+  children: React.ReactNode
+}) {
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-2 py-0.5 text-xs text-muted-foreground">
+      <Icon className="size-3" />
+      {children}
+    </span>
+  )
+}
+
 function InterviewerCard({
+  index,
   agentId,
   language,
   format,
   onAgentChange,
   onLanguageChange,
 }: {
+  index: number
   agentId: AgentId
   language: InterviewLanguage
   format: ScreeningFormat | ""
   onAgentChange: (id: AgentId) => void
   onLanguageChange: (lang: InterviewLanguage) => void
 }) {
+  const [editOpen, setEditOpen] = React.useState(false)
   const agent = AGENTS[agentId]
   const isVideo = format === "video"
 
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-primary/20 bg-accent/30 p-3">
-      <div className="flex items-center gap-3">
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
-          {agent.name.charAt(0)}
-        </span>
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-1.5 text-sm font-medium">
-            {agent.name}
-            <Sparkles className="size-3 text-primary" />
-          </div>
-          <div className="text-xs text-muted-foreground">{agent.role}</div>
+    <div className="flex items-center gap-3 rounded-lg border border-primary/20 bg-accent/30 p-3">
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
+        {agent.name.charAt(0)}
+      </span>
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-1.5 text-sm font-medium">
+          {agent.name}
+          <Sparkles className="size-3 text-primary" />
         </div>
-        {/* Mode is read-only — it follows the call format chosen above. */}
-        <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-border bg-card px-2 py-0.5 text-xs text-muted-foreground">
-          {isVideo ? (
-            <Video className="size-3" />
-          ) : (
-            <Mic className="size-3" />
-          )}
-          {isVideo ? "Video call" : "Voice call"}
-        </span>
+        <div className="text-xs text-muted-foreground">
+          {agent.role} · {agent.voice} voice
+        </div>
+        <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+          <InfoPill icon={isVideo ? Video : Mic}>
+            {isVideo ? "Video call" : "Voice call"}
+          </InfoPill>
+          <InfoPill icon={Languages}>{LANGUAGES[language].label}</InfoPill>
+        </div>
+      </div>
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        onClick={() => setEditOpen(true)}
+        className="shrink-0 bg-card"
+      >
+        <Pencil className="size-3.5" />
+        Edit
+      </Button>
+
+      <InterviewerEditDialog
+        open={editOpen}
+        onOpenChange={setEditOpen}
+        index={index}
+        agentId={agentId}
+        language={language}
+        onSave={(a, l) => {
+          onAgentChange(a)
+          onLanguageChange(l)
+          setEditOpen(false)
+        }}
+      />
+    </div>
+  )
+}
+
+function InterviewerEditDialog({
+  open,
+  onOpenChange,
+  index,
+  agentId,
+  language,
+  onSave,
+}: {
+  open: boolean
+  onOpenChange: (o: boolean) => void
+  index: number
+  agentId: AgentId
+  language: InterviewLanguage
+  onSave: (agentId: AgentId, language: InterviewLanguage) => void
+}) {
+  const [draftAgent, setDraftAgent] = React.useState<AgentId>(agentId)
+  const [draftLang, setDraftLang] = React.useState<InterviewLanguage>(language)
+
+  // Reset the drafts to the task's current values each time the dialog opens.
+  React.useEffect(() => {
+    if (open) {
+      setDraftAgent(agentId)
+      setDraftLang(language)
+    }
+  }, [open, agentId, language])
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Edit round {index} configuration</DialogTitle>
+        </DialogHeader>
+
+        <div className="flex flex-col gap-5 py-1">
+          {/* Language */}
+          <section className="flex flex-col gap-3">
+            <header className="flex items-start gap-2.5">
+              <Languages className="mt-0.5 size-5 shrink-0 text-muted-foreground" />
+              <div>
+                <h4 className="text-sm font-semibold">
+                  Choose AI Interview language{" "}
+                  <span className="text-destructive">*</span>
+                </h4>
+                <p className="text-xs text-muted-foreground">
+                  Select the primary language you want our AI to conduct
+                  interviews in
+                </p>
+              </div>
+            </header>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {(Object.keys(LANGUAGES) as InterviewLanguage[]).map((lang) => (
+                <LanguageOption
+                  key={lang}
+                  lang={lang}
+                  selected={draftLang === lang}
+                  onSelect={() => setDraftLang(lang)}
+                />
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Reach out to us if you need additional languages
+            </p>
+          </section>
+
+          {/* AI recruiter */}
+          <section className="flex flex-col gap-3 border-t border-border pt-5">
+            <header className="flex items-start gap-2.5">
+              <Mic className="mt-0.5 size-5 shrink-0 text-muted-foreground" />
+              <div>
+                <h4 className="text-sm font-semibold">
+                  Choose your AI recruiter{" "}
+                  <span className="text-destructive">*</span>
+                </h4>
+                <p className="text-xs text-muted-foreground">
+                  Choose the AI capabilities for your automated interviews
+                </p>
+              </div>
+            </header>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {(Object.keys(AGENTS) as AgentId[]).map((id) => (
+                <AgentOption
+                  key={id}
+                  id={id}
+                  selected={draftAgent === id}
+                  onSelect={() => setDraftAgent(id)}
+                />
+              ))}
+            </div>
+          </section>
+        </div>
+
+        <DialogFooter>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+          >
+            Cancel
+          </Button>
+          <Button type="button" onClick={() => onSave(draftAgent, draftLang)}>
+            Save changes
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function RadioDot({ selected }: { selected: boolean }) {
+  return (
+    <span
+      className={cn(
+        "flex size-4 shrink-0 items-center justify-center rounded-full border",
+        selected ? "border-primary" : "border-muted-foreground/40",
+      )}
+      aria-hidden="true"
+    >
+      {selected ? <span className="size-2 rounded-full bg-primary" /> : null}
+    </span>
+  )
+}
+
+function LanguageOption({
+  lang,
+  selected,
+  onSelect,
+}: {
+  lang: InterviewLanguage
+  selected: boolean
+  onSelect: () => void
+}) {
+  const meta = LANGUAGES[lang]
+  return (
+    <button
+      type="button"
+      onClick={onSelect}
+      aria-pressed={selected}
+      className={cn(
+        "flex items-center gap-3 rounded-lg border p-3 text-left transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
+        selected
+          ? "border-primary bg-accent/30"
+          : "border-border hover:bg-muted/40",
+      )}
+    >
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-md bg-muted text-sm font-medium">
+        {meta.badge}
+      </span>
+      <span className="flex-1 text-sm font-medium">{meta.label}</span>
+      <RadioDot selected={selected} />
+    </button>
+  )
+}
+
+function AgentOption({
+  id,
+  selected,
+  onSelect,
+}: {
+  id: AgentId
+  selected: boolean
+  onSelect: () => void
+}) {
+  const agent = AGENTS[id]
+  const [playing, setPlaying] = React.useState(false)
+  const Gender = agent.voice === "Female" ? Venus : Mars
+
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      aria-pressed={selected}
+      onClick={onSelect}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault()
+          onSelect()
+        }
+      }}
+      className={cn(
+        "flex cursor-pointer flex-col gap-3 rounded-lg border p-4 text-left outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/50",
+        selected
+          ? "border-primary bg-accent/30"
+          : "border-border hover:bg-muted/40",
+      )}
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex min-w-0 items-start gap-3">
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-muted text-primary">
+            <Bot className="size-5" />
+          </span>
+          <div className="min-w-0">
+            <div className="text-sm font-semibold">
+              {agent.name} ({agent.role})
+            </div>
+            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+              {agent.voice} Voice
+              <Gender className="size-3" />
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col items-end gap-2">
+          {agent.recommended ? (
+            <Badge variant="default">Recommended</Badge>
+          ) : null}
+          <RadioDot selected={selected} />
+        </div>
       </div>
 
-      {/* Editable: agent + language */}
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-        <label className="flex items-center gap-2 text-xs text-muted-foreground">
-          Agent
-          <Select
-            value={agentId}
-            onValueChange={(v) => onAgentChange(v as AgentId)}
+      {/* Stats */}
+      <div className="flex items-center justify-between rounded-md bg-muted/60 px-3 py-2.5">
+        <div>
+          <div className="text-base font-semibold">{agent.interviewsTaken}</div>
+          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+            <Users className="size-3" />
+            Interviews Taken
+          </div>
+        </div>
+        <div className="text-right">
+          <div className="text-base font-semibold">{agent.completionRate}</div>
+          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+            <CircleCheck className="size-3" />
+            Completion rate
+          </div>
+        </div>
+      </div>
+
+      {/* Preview tone — prototype placeholder (no audio wired). */}
+      <div className="flex flex-col gap-1.5">
+        <span className="text-xs font-medium text-muted-foreground">
+          Preview Tone
+        </span>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              setPlaying((p) => !p)
+            }}
+            aria-label={playing ? "Pause preview" : "Play preview"}
+            className="flex size-7 shrink-0 items-center justify-center rounded-full border border-border bg-card text-foreground"
           >
-            <SelectTrigger className="h-7 flex-1 bg-card text-xs">
-              <SelectValue>
-                {(v) => AGENTS[v as AgentId]?.name ?? ""}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              {(Object.keys(AGENTS) as AgentId[]).map((id) => (
-                <SelectItem key={id} value={id}>
-                  {AGENTS[id].name} · {AGENTS[id].role}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </label>
-        <label className="flex items-center gap-2 text-xs text-muted-foreground">
-          Language
-          <Select
-            value={language}
-            onValueChange={(v) => onLanguageChange(v as InterviewLanguage)}
-          >
-            <SelectTrigger className="h-7 flex-1 bg-card text-xs">
-              <SelectValue>
-                {(v) => LANGUAGE_LABELS[v as InterviewLanguage] ?? ""}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              {(Object.keys(LANGUAGE_LABELS) as InterviewLanguage[]).map(
-                (lang) => (
-                  <SelectItem key={lang} value={lang}>
-                    {LANGUAGE_LABELS[lang]}
-                  </SelectItem>
-                ),
-              )}
-            </SelectContent>
-          </Select>
-        </label>
+            <Play className="size-3" />
+          </button>
+          <div className="h-1 flex-1 rounded-full bg-muted">
+            <div className="h-full w-0 rounded-full bg-primary" />
+          </div>
+          <span className="text-xs text-muted-foreground">0:00 / 0:00</span>
+        </div>
       </div>
     </div>
   )
 }
 
 function TaskCriteriaSection({
+  index,
   task,
   generating,
   onUpdateCriteria,
   onUpdateTask,
 }: {
+  index: number
   task: InterviewTask
   generating: boolean
   onUpdateCriteria: (criteria: Criterion[]) => void
@@ -1349,6 +1627,7 @@ function TaskCriteriaSection({
         <div className="flex flex-col gap-4">
           {/* AI interviewer (agent + mode + language) */}
           <InterviewerCard
+            index={index}
             agentId={task.agentId ?? "isha"}
             language={task.language ?? "english"}
             format={task.screening.format}
