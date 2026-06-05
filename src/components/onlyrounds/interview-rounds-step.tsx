@@ -59,15 +59,26 @@ export type TaskType = "screening" | "interview" | "scheduling" | "custom"
 export type ScreeningMode = "ai" | "human"
 export type ScreeningDirection = "inbound" | "outbound" | "both"
 export type ScreeningFormat = "audio" | "video"
+export type CefrLevel = "A1" | "A2" | "B1" | "B2" | "C1" | "C2"
 
+/**
+ * Shared call configuration. Both Screening and Interview tasks use this —
+ * an interview round is configured exactly like a screening call (AI/human,
+ * inbound/outbound/both, audio/video with the same constraints, plus the
+ * CEFR add-on).
+ */
 export type ScreeningConfig = {
   mode: ScreeningMode | ""
   direction: ScreeningDirection | ""
   format: ScreeningFormat | ""
-  /** CEFR language proficiency assessment add-on (+3–4 min). */
-  cefrEnabled: boolean
-  /** Key questions / notes for a human-led screening. */
+  /** Key questions / notes for a human-led call. */
   humanNotes: string
+  /** CEFR language proficiency assessment add-on (+3–4 min). Can be enabled
+   *  on at most one task across the whole pipeline. */
+  cefrEnabled: boolean
+  cefrMinLevel: CefrLevel | ""
+  cefrPreferredLevel: CefrLevel | ""
+  cefrQuestions: string
 }
 
 export type InterviewTask = {
@@ -75,6 +86,7 @@ export type InterviewTask = {
   type: TaskType
   /** Free-text notes for the Custom task type. */
   notes: string
+  /** Call config — used by Screening and Interview task types. */
   screening: ScreeningConfig
 }
 
@@ -88,9 +100,21 @@ const makeScreening = (): ScreeningConfig => ({
   mode: "",
   direction: "",
   format: "",
-  cefrEnabled: false,
   humanNotes: "",
+  cefrEnabled: false,
+  cefrMinLevel: "",
+  cefrPreferredLevel: "",
+  cefrQuestions: "",
 })
+
+/** Task types that may only appear once in the pipeline. */
+const SINGLETON_TASK_TYPES: ReadonlySet<TaskType> = new Set(["screening"])
+
+/** Task types that use the shared call/screening config + editor. */
+const CALL_TASK_TYPES: ReadonlySet<TaskType> = new Set([
+  "screening",
+  "interview",
+])
 
 // ---- task-type metadata -------------------------------------------------
 
@@ -142,13 +166,15 @@ const nextTaskId = () => {
 
 // ---- chip option sets ---------------------------------------------------
 
-const MODE_CHIPS: ChipTabItem<ScreeningMode>[] = [
+// Mode chips are built per-task so the label reads "AI screening" /
+// "AI interview" etc.
+const modeChips = (noun: string): ChipTabItem<ScreeningMode>[] => [
   {
     value: "ai",
     label: (
       <span className="inline-flex items-center gap-1.5">
         <Bot className="size-3.5" />
-        AI screening
+        AI {noun}
       </span>
     ),
   },
@@ -157,11 +183,17 @@ const MODE_CHIPS: ChipTabItem<ScreeningMode>[] = [
     label: (
       <span className="inline-flex items-center gap-1.5">
         <UserRound className="size-3.5" />
-        Human screening
+        Human {noun}
       </span>
     ),
   },
 ]
+
+const CEFR_LEVELS: CefrLevel[] = ["A1", "A2", "B1", "B2", "C1", "C2"]
+const CEFR_CHIPS: ChipTabItem<CefrLevel>[] = CEFR_LEVELS.map((l) => ({
+  value: l,
+  label: l,
+}))
 
 const DIRECTION_CHIPS: ChipTabItem<ScreeningDirection>[] = [
   {
@@ -230,6 +262,16 @@ export function InterviewRoundsStep({
     setOpenTaskId((curr) => (curr === id ? null : id))
   }
 
+  // CEFR can be enabled on at most one task across the pipeline.
+  const cefrTaskId = form.tasks.find((t) => t.screening.cefrEnabled)?.id ?? null
+
+  // Singleton task types already present can't be added again.
+  const disabledTypes = new Set<TaskType>(
+    [...SINGLETON_TASK_TYPES].filter((type) =>
+      form.tasks.some((t) => t.type === type),
+    ),
+  )
+
   return (
     <div className="flex flex-col gap-4">
       <header>
@@ -252,6 +294,7 @@ export function InterviewRoundsStep({
               onToggle={() => toggleTask(task.id)}
               onUpdate={(patch) => updateTask(task.id, patch)}
               onRemove={() => removeTask(task.id)}
+              cefrLockedElsewhere={cefrTaskId !== null && cefrTaskId !== task.id}
             />
           ))}
         </div>
@@ -263,6 +306,7 @@ export function InterviewRoundsStep({
           index={1}
           title="Choose a task to add"
           onPick={addTask}
+          disabledTypes={disabledTypes}
         />
       ) : null}
 
@@ -273,6 +317,7 @@ export function InterviewRoundsStep({
           title="Add a task"
           onPick={addTask}
           onCancel={() => setShowPicker(false)}
+          disabledTypes={disabledTypes}
         />
       ) : form.tasks.length > 0 ? (
         <div className="flex justify-end">
@@ -298,12 +343,15 @@ function TaskTypePicker({
   title,
   onPick,
   onCancel,
+  disabledTypes,
 }: {
   /** The task number this picker will create (1-based). */
   index: number
   title: string
   onPick: (type: TaskType) => void
   onCancel?: () => void
+  /** Types already used that can't be added again (e.g. Screening). */
+  disabledTypes: ReadonlySet<TaskType>
 }) {
   return (
     <div className="flex flex-col gap-3 rounded-lg border border-border bg-card p-4 shadow-card">
@@ -323,18 +371,34 @@ function TaskTypePicker({
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         {TASK_TYPES.map((t) => {
           const Icon = t.icon
+          const disabled = disabledTypes.has(t.type)
           return (
             <button
               key={t.type}
               type="button"
+              disabled={disabled}
               onClick={() => onPick(t.type)}
-              className="flex items-start gap-3 rounded-lg border border-border bg-card p-3 text-left shadow-card transition-colors hover:border-primary hover:bg-accent/40"
+              // No shadow — the picker container already carries the
+              // elevation. `group` lets the icon box react on hover.
+              className={cn(
+                "group flex items-start gap-3 rounded-lg border border-border bg-card p-3 text-left transition-colors",
+                disabled
+                  ? "cursor-not-allowed opacity-50"
+                  : "hover:border-primary hover:bg-accent/40",
+              )}
             >
-              <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-muted text-primary">
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-muted text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                 <Icon className="size-5" />
               </span>
               <span className="min-w-0">
-                <span className="block text-sm font-medium">{t.label}</span>
+                <span className="block text-sm font-medium">
+                  {t.label}
+                  {disabled ? (
+                    <span className="ml-1.5 text-xs font-normal text-muted-foreground">
+                      · Added
+                    </span>
+                  ) : null}
+                </span>
                 <span className="block text-xs text-muted-foreground">
                   {t.description}
                 </span>
@@ -356,6 +420,7 @@ function TaskCard({
   onToggle,
   onUpdate,
   onRemove,
+  cefrLockedElsewhere,
 }: {
   index: number
   task: InterviewTask
@@ -363,10 +428,13 @@ function TaskCard({
   onToggle: () => void
   onUpdate: (patch: Partial<InterviewTask>) => void
   onRemove: () => void
+  /** True when another task already has the CEFR add-on enabled. */
+  cefrLockedElsewhere: boolean
 }) {
   const meta = TASK_META[task.type]
   const Icon = meta.icon
   const bodyId = `task-${task.id}-body`
+  const isCallTask = CALL_TASK_TYPES.has(task.type)
 
   return (
     <section className="overflow-hidden rounded-lg border border-border bg-card shadow-card">
@@ -430,10 +498,12 @@ function TaskCard({
           role="region"
           className="border-t border-border p-4"
         >
-          {task.type === "screening" ? (
+          {isCallTask ? (
             <ScreeningEditor
+              noun={task.type === "interview" ? "interview" : "screening"}
               config={task.screening}
               onChange={(screening) => onUpdate({ screening })}
+              cefrLockedElsewhere={cefrLockedElsewhere}
             />
           ) : task.type === "custom" ? (
             <Field
@@ -458,9 +528,9 @@ function TaskCard({
   )
 }
 
-/** Compact one-line summary of a screening task, shown in the header. */
+/** Compact one-line summary of a call task (screening/interview). */
 function ScreeningSummary({ task }: { task: InterviewTask }) {
-  if (task.type !== "screening") return null
+  if (!CALL_TASK_TYPES.has(task.type)) return null
   const { mode, direction, format } = task.screening
   if (!mode) return null
   const parts: string[] = [mode === "ai" ? "AI" : "Human"]
@@ -475,18 +545,25 @@ function ScreeningSummary({ task }: { task: InterviewTask }) {
   )
 }
 
-// ---- screening editor ---------------------------------------------------
+// ---- call task editor (screening + interview) ---------------------------
 
 function ScreeningEditor({
+  noun,
   config,
   onChange,
+  cefrLockedElsewhere,
 }: {
+  /** Lowercase task noun used in labels, e.g. "screening" / "interview". */
+  noun: string
   config: ScreeningConfig
   onChange: (next: ScreeningConfig) => void
+  /** Another task already owns the CEFR add-on — hide it here. */
+  cefrLockedElsewhere: boolean
 }) {
   const set = (patch: Partial<ScreeningConfig>) =>
     onChange({ ...config, ...patch })
 
+  const Noun = noun.charAt(0).toUpperCase() + noun.slice(1)
   const isAI = config.mode === "ai"
   // Video is available for inbound only. Outbound runs as a regular phone
   // call (audio), and "Both" includes outbound — so both disable video.
@@ -517,20 +594,23 @@ function ScreeningEditor({
 
   return (
     <div className="flex flex-col gap-5">
-      <Field label="Screening type">
+      <Field label={`${Noun} type`}>
         <ChipTabs
           variant="choice"
-          items={MODE_CHIPS}
+          items={modeChips(noun)}
           value={config.mode}
-          onValueChange={(v) => set({ mode: v })}
-          aria-label="Screening type"
+          onValueChange={(v) =>
+            // Human mode has no CEFR add-on — clear it when switching.
+            set(v === "human" ? { mode: v, cefrEnabled: false } : { mode: v })
+          }
+          aria-label={`${Noun} type`}
         />
       </Field>
 
       {config.mode === "human" ? (
         <Field
           label="Key questions or notes"
-          hint="What should your team cover at this screening stage?"
+          hint={`What should your team cover at this ${noun} stage?`}
         >
           <Textarea
             value={config.humanNotes}
@@ -542,7 +622,7 @@ function ScreeningEditor({
       ) : isAI ? (
         <>
           <Field
-            label="Screening direction"
+            label={`${Noun} direction`}
             hint="Inbound: the candidate calls in. Outbound: we call the candidate."
           >
             <ChipTabs
@@ -559,12 +639,12 @@ function ScreeningEditor({
                     : { direction: v },
                 )
               }
-              aria-label="Screening direction"
+              aria-label={`${Noun} direction`}
             />
           </Field>
 
           <Field
-            label="Screening format"
+            label={`${Noun} format`}
             hint={
               config.direction === "outbound"
                 ? "Outbound runs as a regular call — audio only."
@@ -578,39 +658,105 @@ function ScreeningEditor({
               items={formatChips}
               value={config.format}
               onValueChange={(v) => set({ format: v })}
-              aria-label="Screening format"
+              aria-label={`${Noun} format`}
             />
           </Field>
 
-          {/* Add-ons */}
-          <div className="flex flex-col gap-1.5">
-            <Label className="text-sm font-medium">Add-ons</Label>
-            <label
-              htmlFor="cefr-toggle"
-              className="flex cursor-pointer items-start justify-between gap-3 rounded-lg border border-border p-3"
-            >
-              <span className="min-w-0">
-                <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-medium">
-                  <Languages className="size-4 text-primary" />
-                  CEFR language proficiency assessment
-                  <Badge variant="info">New</Badge>
-                </span>
-                <span className="mt-0.5 block text-xs text-muted-foreground">
-                  Scores the candidate&apos;s spoken language level (A1–C2).
-                  Adds 3–4 minutes to the screening.
-                </span>
-              </span>
-              <Switch
-                id="cefr-toggle"
-                checked={config.cefrEnabled}
-                onCheckedChange={(checked) =>
-                  set({ cefrEnabled: checked === true })
-                }
-              />
-            </label>
-          </div>
+          {cefrLockedElsewhere ? (
+            <p className="rounded-md border border-dashed border-border bg-muted/30 p-3 text-xs text-muted-foreground">
+              The CEFR language assessment is enabled on another task. It can be
+              used once per pipeline.
+            </p>
+          ) : (
+            <CefrAddon config={config} onChange={onChange} />
+          )}
         </>
       ) : null}
+    </div>
+  )
+}
+
+// ---- CEFR language proficiency add-on -----------------------------------
+
+function CefrAddon({
+  config,
+  onChange,
+}: {
+  config: ScreeningConfig
+  onChange: (next: ScreeningConfig) => void
+}) {
+  const set = (patch: Partial<ScreeningConfig>) =>
+    onChange({ ...config, ...patch })
+  const toggleId = React.useId()
+
+  return (
+    <div className="flex flex-col gap-1.5">
+      <Label className="text-sm font-medium">Add-ons</Label>
+      <div className="overflow-hidden rounded-lg border border-border">
+        <label
+          htmlFor={toggleId}
+          className="flex cursor-pointer items-start justify-between gap-3 p-3"
+        >
+          <span className="min-w-0">
+            <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-medium">
+              <Languages className="size-4 text-primary" />
+              CEFR language proficiency assessment
+              <Badge variant="info">New</Badge>
+            </span>
+            <span className="mt-0.5 block text-xs text-muted-foreground">
+              Scores the candidate&apos;s spoken language level (A1–C2). Adds
+              3–4 minutes.
+            </span>
+          </span>
+          <Switch
+            id={toggleId}
+            checked={config.cefrEnabled}
+            onCheckedChange={(checked) => set({ cefrEnabled: checked === true })}
+          />
+        </label>
+
+        {config.cefrEnabled ? (
+          <div className="flex flex-col gap-4 border-t border-border p-3">
+            <Field
+              label="Minimum CEFR level"
+              hint="The lowest level a candidate must reach to pass."
+            >
+              <ChipTabs
+                variant="choice"
+                size="sm"
+                items={CEFR_CHIPS}
+                value={config.cefrMinLevel}
+                onValueChange={(v) => set({ cefrMinLevel: v })}
+                aria-label="Minimum CEFR level"
+              />
+            </Field>
+            <Field
+              label="Preferred CEFR level"
+              hint="The level you’d ideally like to see."
+            >
+              <ChipTabs
+                variant="choice"
+                size="sm"
+                items={CEFR_CHIPS}
+                value={config.cefrPreferredLevel}
+                onValueChange={(v) => set({ cefrPreferredLevel: v })}
+                aria-label="Preferred CEFR level"
+              />
+            </Field>
+            <Field
+              label="Specific questions"
+              hint="Optional — anything particular you want the assessment to probe."
+            >
+              <Textarea
+                value={config.cefrQuestions}
+                onChange={(e) => set({ cefrQuestions: e.target.value })}
+                placeholder="e.g. Ask the candidate to describe a past customer escalation in English."
+                rows={3}
+              />
+            </Field>
+          </div>
+        ) : null}
+      </div>
     </div>
   )
 }
