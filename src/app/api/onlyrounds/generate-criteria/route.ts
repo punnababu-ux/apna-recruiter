@@ -51,10 +51,15 @@ export const buildUserPrompt = (input: {
   jd: string
   detailsSummary: string
   tasksSummary: string
+  taskName?: string
+  taskType?: string
 }) =>
   `Job title: ${input.title || "(not provided)"}\n\n` +
   `Job details:\n${input.detailsSummary || "(none)"}\n\n` +
-  `Interview tasks:\n${input.tasksSummary || "(none)"}\n\n` +
+  `Interview pipeline stages:\n${input.tasksSummary || "(none)"}\n\n` +
+  (input.taskName
+    ? `Specific pipeline stage to generate evaluation criteria for:\n- Stage name: ${input.taskName}\n- Stage type: ${input.taskType || "screening"}\n\nGenerate evaluation criteria directly relevant to what should be assessed or filtered during this specific stage. Keep in mind the role requirements from the JD.\n\n`
+    : "") +
   `Job description:\n${input.jd || "(not provided)"}`
 
 export const CriteriaSchema = z.object({
@@ -75,11 +80,12 @@ export type CriteriaResult = z.infer<typeof CriteriaSchema>
 
 // ── Dummy generation ──────────────────────────────────────────────────────
 
-function buildDummyCriteria(title: string): CriteriaResult {
+function buildDummyCriteria(title: string, taskName?: string): CriteriaResult {
   const role = title.trim() || "this role"
+  const taskText = taskName ? ` for ${taskName}` : ""
   return {
     mustHave: [
-      `Relevant experience for a ${role}`,
+      `Relevant experience for a ${role}${taskText}`,
       "Clear spoken communication",
       "Available to start within the expected notice period",
       "Comfortable with the stated work mode and schedule",
@@ -122,6 +128,8 @@ export async function POST(req: NextRequest) {
     const jd: string = (body?.jd ?? "").toString()
     const detailsSummary: string = (body?.detailsSummary ?? "").toString()
     const tasksSummary: string = (body?.tasksSummary ?? "").toString()
+    const taskName: string = (body?.taskName ?? "").toString()
+    const taskType: string = (body?.taskType ?? "").toString()
 
     if (!jd.trim() && !title.trim()) {
       return NextResponse.json({ mustHave: [], goodToHave: [], redFlag: [] })
@@ -131,14 +139,14 @@ export async function POST(req: NextRequest) {
       console.log(
         "[generate-criteria] dummy mode — set GOOGLE_GENERATIVE_AI_API_KEY to use live Gemini",
       )
-      return NextResponse.json(capTotal(buildDummyCriteria(title)))
+      return NextResponse.json(capTotal(buildDummyCriteria(title, taskName)))
     }
 
     const { output } = await generateText({
       model: google("gemini-2.5-flash"),
       output: Output.object({ schema: CriteriaSchema }),
       system: SYSTEM_PROMPT,
-      prompt: buildUserPrompt({ title, jd, detailsSummary, tasksSummary }),
+      prompt: buildUserPrompt({ title, jd, detailsSummary, tasksSummary, taskName, taskType }),
     })
 
     if (!output) {

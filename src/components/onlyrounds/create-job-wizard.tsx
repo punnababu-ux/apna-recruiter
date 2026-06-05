@@ -30,7 +30,14 @@ import {
   InterviewRoundsStep,
   defaultInterviewRounds,
   hasAiRound,
+  CALL_TASK_TYPES,
+  MAX_CRITERIA,
+  syncCefrCriteria,
+  summarizeDetails,
+  summarizeTasks,
   type InterviewRoundsForm,
+  type CriteriaCategory,
+  type Criterion,
 } from "@/components/onlyrounds/interview-rounds-step"
 import {
   JobDetailsStep,
@@ -154,6 +161,7 @@ export function CreateJobWizard() {
     JSON.stringify(emptyForm),
   )
   const [exitDialogOpen, setExitDialogOpen] = useState(false)
+  const [generatingTasks, setGeneratingTasks] = useState<Record<string, boolean>>({})
 
   // Load any existing draft on mount. Guarded in a useEffect so it runs
   // client-only (avoids SSR hydration mismatches when localStorage is
@@ -261,6 +269,14 @@ export function CreateJobWizard() {
     return i > 0 ? SECTION_IDS[i - 1] : null
   }
 
+  const eligibleTasks = form.rounds.tasks.filter(
+    (t) => CALL_TASK_TYPES.has(t.type) && t.screening.mode === "ai"
+  )
+  const needsCriteriaGeneration =
+    activeId === "rounds" &&
+    eligibleTasks.length > 0 &&
+    eligibleTasks.some((t) => !t.criteria || t.criteria.length === 0)
+
   // Primary CTA label: "Next" only when the next click should leave
   // Step 2 (on the last section or collapsed). Otherwise "Continue" —
   // moves to the next section within Step 2.
@@ -268,7 +284,9 @@ export function CreateJobWizard() {
     ? "Publish job"
     : activeId === "details" && !aboutToAdvanceStep
       ? "Continue"
-      : "Next"
+      : needsCriteriaGeneration
+        ? "Generate criteria"
+        : "Next"
 
   // ctaBlocked — the action can't proceed yet, but the button stays
   // CLICKABLE (soft-disabled): clicking reveals the field-level errors
@@ -286,7 +304,7 @@ export function CreateJobWizard() {
       (!form.title.trim() || !form.jd.trim())) ||
     (activeId === "details" && currentSectionInvalid) ||
     (aboutToAdvanceStep && !step2AllRequiredValid) ||
-    roundsBlocked
+    (roundsBlocked && !needsCriteriaGeneration)
 
   const ctaDisabledReason =
     activeId === "description" && (!form.title.trim() || !form.jd.trim())
@@ -295,7 +313,7 @@ export function CreateJobWizard() {
         ? `Fill the required fields in ${SECTION_LABELS[step2OpenSection]} to continue`
         : aboutToAdvanceStep && !step2AllRequiredValid
           ? "Some required sections still need to be filled"
-          : roundsBlocked
+          : roundsBlocked && !needsCriteriaGeneration
             ? "Add at least one AI round (AI screening or AI interview)"
             : null
 
@@ -319,6 +337,96 @@ export function CreateJobWizard() {
 
   function update<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
     setForm((prev) => ({ ...prev, [key]: value }))
+  }
+
+  const generateTaskCriteria = async (taskId: string) => {
+    const task = form.rounds.tasks.find((t) => t.id === taskId)
+    if (!task || !CALL_TASK_TYPES.has(task.type)) return
+
+    setGeneratingTasks((prev) => ({ ...prev, [taskId]: true }))
+    try {
+      const res = await fetch("/api/onlyrounds/generate-criteria", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          title: form.title,
+          jd: form.jd,
+          detailsSummary: summarizeDetails(form.details),
+          tasksSummary: summarizeTasks(form.rounds.tasks),
+          taskName: task.title || (task.type === "screening" ? "Screening" : "Interview"),
+          taskType: task.type,
+        }),
+      })
+
+      if (!res.ok) {
+        throw new Error("Failed to generate")
+      }
+
+      const data = await res.json()
+      if (data.error) {
+        throw new Error(data.error)
+      }
+
+      const nextCriteria: Criterion[] = []
+      let critCounter = 0
+      const push = (category: CriteriaCategory, arr?: string[]) => {
+        for (const raw of arr ?? []) {
+          if (nextCriteria.length >= MAX_CRITERIA) break
+          const text = String(raw).trim()
+          if (text) {
+            critCounter++
+            nextCriteria.push({
+              id: `crit-${task.id}-${critCounter}`,
+              category,
+              text,
+            })
+          }
+        }
+      }
+      push("must-have", data.mustHave)
+      push("good-to-have", data.goodToHave)
+      push("red-flag", data.redFlag)
+
+      const synced = syncCefrCriteria(nextCriteria, task.screening, task.id)
+
+      setForm((prev) => {
+        const updatedTasks = prev.rounds.tasks.map((t) => {
+          if (t.id === taskId) {
+            return { ...t, criteria: synced }
+          }
+          return t
+        })
+        return {
+          ...prev,
+          rounds: {
+            ...prev.rounds,
+            tasks: updatedTasks,
+          },
+        }
+      })
+    } catch (err) {
+      console.error(`Error generating criteria for task ${taskId}:`, err)
+      toast.error(`Could not generate criteria for ${task.title || (task.type === "screening" ? "Screening" : "Interview")} round.`)
+    } finally {
+      setGeneratingTasks((prev) => {
+        const next = { ...prev }
+        delete next[taskId]
+        return next
+      })
+    }
+  }
+
+  const generateAllCriteria = async () => {
+    const tasksToGenerate = form.rounds.tasks.filter(
+      (t) =>
+        CALL_TASK_TYPES.has(t.type) &&
+        t.screening.mode === "ai" &&
+        (!t.criteria || t.criteria.length === 0)
+    )
+
+    if (tasksToGenerate.length === 0) return
+
+    await Promise.all(tasksToGenerate.map((t) => generateTaskCriteria(t.id)))
   }
 
   const goNext = async () => {
@@ -446,6 +554,10 @@ export function CreateJobWizard() {
         })
         return
       }
+      if (needsCriteriaGeneration) {
+        await generateAllCriteria()
+        return
+      }
       setActiveId("review")
       return
     }
@@ -552,11 +664,7 @@ export function CreateJobWizard() {
             <InterviewRoundsStep
               form={form.rounds}
               update={updateRounds}
-              jobContext={{
-                title: form.title,
-                jd: form.jd,
-                details: form.details,
-              }}
+              generatingTasks={generatingTasks}
             />
           ) : (
             <div className="rounded-lg border border-border bg-card p-6 shadow-card">
@@ -618,13 +726,13 @@ export function CreateJobWizard() {
                   <Button
                     size="lg"
                     onClick={goNext}
-                    loading={extracting}
-                    loadingText="Filling from JD…"
+                    loading={extracting || Object.values(generatingTasks).some(Boolean)}
+                    loadingText={Object.values(generatingTasks).some(Boolean) ? "Generating criteria…" : "Filling from JD…"}
                     aria-disabled={ctaBlocked || undefined}
                     className={cn(ctaBlocked && "opacity-50")}
                   >
                     {ctaLabel}
-                    {!extracting ? <ChevronRight className="size-4" /> : null}
+                    {!(extracting || Object.values(generatingTasks).some(Boolean)) ? <ChevronRight className="size-4" /> : null}
                   </Button>
                 </span>
               }

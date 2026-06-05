@@ -22,7 +22,8 @@
 import {
   Bot,
   CalendarClock,
-  ChevronDown,
+  CircleCheck,
+  Flag,
   Languages,
   Mic,
   MoreVertical,
@@ -31,6 +32,8 @@ import {
   PhoneOutgoing,
   Plus,
   Puzzle,
+  Sparkles,
+  Star,
   Trash2,
   UserRound,
   Users,
@@ -54,7 +57,6 @@ import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 
-import { EvaluationCriteriaSection } from "./evaluation-criteria"
 import { type JobDetailsForm } from "./job-details-step"
 
 // ---- types --------------------------------------------------------------
@@ -95,6 +97,8 @@ export type InterviewTask = {
   /** Call config — used by Screening and Interview task types. The `mode`
    *  and `humanNotes` fields are also reused by Interview scheduling. */
   screening: ScreeningConfig
+  /** Task-specific evaluation criteria. */
+  criteria: Criterion[]
 }
 
 export type CriteriaCategory = "must-have" | "good-to-have" | "red-flag"
@@ -108,12 +112,10 @@ export const MAX_CRITERIA = 15
 
 export type InterviewRoundsForm = {
   tasks: InterviewTask[]
-  criteria: Criterion[]
 }
 
 export const defaultInterviewRounds: InterviewRoundsForm = {
   tasks: [],
-  criteria: [],
 }
 
 const makeScreening = (): ScreeningConfig => ({
@@ -131,7 +133,7 @@ const makeScreening = (): ScreeningConfig => ({
 const SINGLETON_TASK_TYPES: ReadonlySet<TaskType> = new Set(["screening"])
 
 /** Task types that use the shared call/screening config + editor. */
-const CALL_TASK_TYPES: ReadonlySet<TaskType> = new Set([
+export const CALL_TASK_TYPES: ReadonlySet<TaskType> = new Set([
   "screening",
   "interview",
 ])
@@ -141,6 +143,10 @@ export function hasAiRound(rounds: InterviewRoundsForm): boolean {
   return rounds.tasks.some(
     (t) => CALL_TASK_TYPES.has(t.type) && t.screening.mode === "ai",
   )
+}
+
+export function isAiRound(task: InterviewTask): boolean {
+  return CALL_TASK_TYPES.has(task.type) && task.screening.mode === "ai"
 }
 
 // ---- task-type metadata -------------------------------------------------
@@ -217,10 +223,14 @@ const modeChips = (noun: string): ChipTabItem<ScreeningMode>[] => [
 ]
 
 const CEFR_LEVELS: CefrLevel[] = ["A1", "A2", "B1", "B2", "C1", "C2"]
-const CEFR_CHIPS: ChipTabItem<CefrLevel>[] = CEFR_LEVELS.map((l) => ({
-  value: l,
-  label: l,
-}))
+const CEFR_LABELS: Record<CefrLevel, string> = {
+  A1: "A1 (Beginner)",
+  A2: "A2 (Elementary)",
+  B1: "B1 (Intermediate)",
+  B2: "B2 (Upper-Int)",
+  C1: "C1 (Advanced)",
+  C2: "C2 (Mastery)",
+}
 
 const DIRECTION_CHIPS: ChipTabItem<ScreeningDirection>[] = [
   {
@@ -246,7 +256,7 @@ const DIRECTION_CHIPS: ChipTabItem<ScreeningDirection>[] = [
 
 // ---- generate-context summaries -----------------------------------------
 
-function summarizeDetails(d: JobDetailsForm): string {
+export function summarizeDetails(d: JobDetailsForm): string {
   const lines: string[] = []
   if (d.city) lines.push(`Location: ${d.city}${d.area ? `, ${d.area}` : ""}`)
   if (d.experienceType) lines.push(`Experience required: ${d.experienceType}`)
@@ -262,7 +272,7 @@ function summarizeDetails(d: JobDetailsForm): string {
   return lines.join("\n")
 }
 
-function summarizeTasks(tasks: InterviewTask[]): string {
+export function summarizeTasks(tasks: InterviewTask[]): string {
   return tasks
     .map((t, i) => {
       const meta = TASK_META[t.type]
@@ -284,18 +294,13 @@ function summarizeTasks(tasks: InterviewTask[]): string {
 export function InterviewRoundsStep({
   form,
   update,
-  jobContext,
+  generatingTasks = {},
 }: {
   form: InterviewRoundsForm
   update: (next: InterviewRoundsForm) => void
-  /** Read-only job context used to generate evaluation criteria. */
-  jobContext: { title: string; jd: string; details: JobDetailsForm }
+  generatingTasks?: Record<string, boolean>
 }) {
   const [showPicker, setShowPicker] = React.useState(false)
-  // Single-open accordion across task cards.
-  const [openTaskId, setOpenTaskId] = React.useState<string | null>(
-    form.tasks[0]?.id ?? null,
-  )
 
   const addTask = (type: TaskType) => {
     const task: InterviewTask = {
@@ -304,29 +309,46 @@ export function InterviewRoundsStep({
       title: "",
       notes: "",
       screening: makeScreening(),
+      criteria: [],
     }
     update({ ...form, tasks: [...form.tasks, task] })
-    setOpenTaskId(task.id)
     setShowPicker(false)
   }
 
   const updateTask = (id: string, patch: Partial<InterviewTask>) => {
     update({
       ...form,
-      tasks: form.tasks.map((t) => (t.id === id ? { ...t, ...patch } : t)),
+      tasks: form.tasks.map((t) => {
+        if (t.id !== id) return t
+        const nextTask = { ...t, ...patch }
+        // If screening config is updated, sync CEFR levels in criteria list
+        if (patch.screening) {
+          // If the task has criteria, check if key configuration fields changed.
+          // If so, clear criteria to require regeneration.
+          if (t.criteria && t.criteria.length > 0) {
+            const hasFieldChanges =
+              patch.screening.mode !== t.screening.mode ||
+              patch.screening.direction !== t.screening.direction ||
+              patch.screening.format !== t.screening.format ||
+              patch.screening.cefrEnabled !== t.screening.cefrEnabled ||
+              patch.screening.cefrMinLevel !== t.screening.cefrMinLevel ||
+              patch.screening.cefrPreferredLevel !== t.screening.cefrPreferredLevel
+
+            if (hasFieldChanges) {
+              nextTask.criteria = []
+            } else {
+              nextTask.criteria = syncCefrCriteria(nextTask.criteria, patch.screening, t.id)
+            }
+          }
+        }
+        return nextTask
+      }),
     })
   }
 
   const removeTask = (id: string) => {
     const remaining = form.tasks.filter((t) => t.id !== id)
     update({ ...form, tasks: remaining })
-    if (openTaskId === id) {
-      setOpenTaskId(remaining[remaining.length - 1]?.id ?? null)
-    }
-  }
-
-  const toggleTask = (id: string) => {
-    setOpenTaskId((curr) => (curr === id ? null : id))
   }
 
   // CEFR can be enabled on at most one task across the pipeline.
@@ -339,14 +361,40 @@ export function InterviewRoundsStep({
     ),
   )
 
+  const eligibleTasks = form.tasks.filter((t) => isAiRound(t))
+  const isEvaluationCompleted =
+    eligibleTasks.length > 0 &&
+    eligibleTasks.every((t) => t.criteria && t.criteria.length > 0)
+  const isAnyGenerating = Object.values(generatingTasks).some(Boolean)
+
+  const clearAllCriteria = () => {
+    update({
+      ...form,
+      tasks: form.tasks.map((t) => ({ ...t, criteria: [] })),
+    })
+  }
+
   return (
     <div className="flex flex-col gap-4">
-      <header>
-        <h2 className="text-lg font-semibold leading-tight">Interview rounds</h2>
-        <p className="mt-0.5 text-sm text-muted-foreground">
-          Build the pipeline each candidate moves through, in order. Add a task
-          to get started.
-        </p>
+      <header className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0 flex-1">
+          <h2 className="text-lg font-semibold leading-tight">Interview rounds</h2>
+          <p className="mt-0.5 text-sm text-muted-foreground">
+            Build the pipeline each candidate moves through, in order. Add a task
+            to get started.
+          </p>
+        </div>
+        {isEvaluationCompleted && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={clearAllCriteria}
+            className="self-start mt-2 sm:mt-0"
+          >
+            Edit rounds
+          </Button>
+        )}
       </header>
 
       {/* Task list */}
@@ -357,18 +405,18 @@ export function InterviewRoundsStep({
               key={task.id}
               index={i + 1}
               task={task}
-              isOpen={openTaskId === task.id}
-              onToggle={() => toggleTask(task.id)}
               onUpdate={(patch) => updateTask(task.id, patch)}
               onRemove={() => removeTask(task.id)}
               cefrLockedElsewhere={cefrTaskId !== null && cefrTaskId !== task.id}
+              isAnyGenerating={isAnyGenerating}
+              isEvaluationCompleted={isEvaluationCompleted}
             />
           ))}
         </div>
       ) : null}
 
       {/* Empty state — picker shown inline */}
-      {form.tasks.length === 0 && !showPicker ? (
+      {form.tasks.length === 0 && !showPicker && !isAnyGenerating ? (
         <TaskTypePicker
           index={1}
           title="Choose a task to add"
@@ -378,41 +426,31 @@ export function InterviewRoundsStep({
       ) : null}
 
       {/* Add-task picker / CTA */}
-      {showPicker ? (
-        <TaskTypePicker
-          index={form.tasks.length + 1}
-          title="Add a task"
-          onPick={addTask}
-          onCancel={() => setShowPicker(false)}
-          disabledTypes={disabledTypes}
-        />
-      ) : form.tasks.length > 0 ? (
-        <div className="flex justify-end">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => setShowPicker(true)}
-          >
-            <Plus className="size-3.5" />
-            Add task
-          </Button>
-        </div>
-      ) : null}
-
-      {/* Evaluation criteria — available once at least one task exists. */}
-      {form.tasks.length > 0 ? (
-        <EvaluationCriteriaSection
-          criteria={form.criteria ?? []}
-          onChange={(criteria) => update({ ...form, criteria })}
-          context={{
-            title: jobContext.title,
-            jd: jobContext.jd,
-            detailsSummary: summarizeDetails(jobContext.details),
-            tasksSummary: summarizeTasks(form.tasks),
-          }}
-        />
-      ) : null}
+      {!isEvaluationCompleted && !isAnyGenerating && (
+        <>
+          {showPicker ? (
+            <TaskTypePicker
+              index={form.tasks.length + 1}
+              title="Add a task"
+              onPick={addTask}
+              onCancel={() => setShowPicker(false)}
+              disabledTypes={disabledTypes}
+            />
+          ) : form.tasks.length > 0 ? (
+            <div className="flex justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setShowPicker(true)}
+              >
+                <Plus className="size-3.5" />
+                Add task
+              </Button>
+            </div>
+          ) : null}
+        </>
+      )}
     </div>
   )
 }
@@ -497,25 +535,29 @@ function TaskTypePicker({
 function TaskCard({
   index,
   task,
-  isOpen,
-  onToggle,
   onUpdate,
   onRemove,
   cefrLockedElsewhere,
+  isAnyGenerating,
+  isEvaluationCompleted,
 }: {
   index: number
   task: InterviewTask
-  isOpen: boolean
-  onToggle: () => void
   onUpdate: (patch: Partial<InterviewTask>) => void
   onRemove: () => void
   /** True when another task already has the CEFR add-on enabled. */
   cefrLockedElsewhere: boolean
+  isAnyGenerating?: boolean
+  isEvaluationCompleted?: boolean
 }) {
   const meta = TASK_META[task.type]
   const Icon = meta.icon
   const bodyId = `task-${task.id}-body`
   const isCallTask = CALL_TASK_TYPES.has(task.type)
+
+  const isAiRoundTask = isAiRound(task)
+  const hasCriteria = task.criteria && task.criteria.length > 0
+  const showCriteriaView = isAiRoundTask && (hasCriteria || isAnyGenerating)
   // Custom tasks show their user-given name (falling back to the label).
   const headerLabel =
     task.type === "custom" && task.title.trim()
@@ -525,13 +567,7 @@ function TaskCard({
   return (
     <section className="overflow-hidden rounded-lg border border-border bg-card shadow-card">
       <div className="flex items-center gap-3 px-4 py-3">
-        <button
-          type="button"
-          onClick={onToggle}
-          aria-expanded={isOpen}
-          aria-controls={bodyId}
-          className="flex min-w-0 flex-1 items-center gap-3 text-left"
-        >
+        <div className="flex min-w-0 flex-1 items-center gap-3 text-left">
           <Icon className="size-5 shrink-0 text-muted-foreground" />
           <span className="min-w-0">
             <span className="block truncate text-sm font-medium">
@@ -541,86 +577,106 @@ function TaskCard({
               Task {index}
             </span>
           </span>
-        </button>
+        </div>
         <ScreeningSummary task={task} />
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            render={
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon-xs"
-                aria-label="Task actions"
-              >
-                <MoreVertical className="size-3.5" />
-              </Button>
-            }
-          />
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem variant="destructive" onClick={onRemove}>
-              <Trash2 className="size-3.5" />
-              Remove task
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <button
-          type="button"
-          onClick={onToggle}
-          aria-label={isOpen ? "Collapse task" : "Expand task"}
-          className="shrink-0 text-muted-foreground"
-        >
-          <ChevronDown
-            className={cn(
-              "size-4 transition-transform duration-150",
-              !isOpen && "-rotate-90",
-            )}
-          />
-        </button>
+        {!isEvaluationCompleted && !isAnyGenerating && (
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-xs"
+                  aria-label="Task actions"
+                >
+                  <MoreVertical className="size-3.5" />
+                </Button>
+              }
+            />
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem variant="destructive" onClick={onRemove}>
+                <Trash2 className="size-3.5" />
+                Remove task
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
 
-      {isOpen ? (
-        <div
-          id={bodyId}
-          role="region"
-          className="border-t border-border p-4"
-        >
-          {isCallTask ? (
-            <ScreeningEditor
-              noun={task.type === "interview" ? "interview" : "screening"}
-              config={task.screening}
-              onChange={(screening) => onUpdate({ screening })}
-              cefrLockedElsewhere={cefrLockedElsewhere}
-            />
-          ) : task.type === "scheduling" ? (
-            <SchedulingEditor
-              config={task.screening}
-              onChange={(screening) => onUpdate({ screening })}
-            />
-          ) : (
-            // custom
-            <div className="flex flex-col gap-5">
-              <Field label="Task name">
-                <Input
-                  value={task.title}
-                  onChange={(e) => onUpdate({ title: e.target.value })}
-                  placeholder="e.g. Take-home assignment"
-                />
-              </Field>
-              <Field
-                label="Task details"
-                hint="Describe what happens in this custom step."
-              >
-                <Textarea
-                  value={task.notes}
-                  onChange={(e) => onUpdate({ notes: e.target.value })}
-                  placeholder="e.g. Take-home assignment shared over email, 48-hour turnaround."
-                  rows={4}
-                />
-              </Field>
-            </div>
-          )}
-        </div>
-      ) : null}
+      <div
+        id={bodyId}
+        role="region"
+        className="border-t border-border p-4"
+      >
+        {showCriteriaView ? (
+          <TaskCriteriaSection
+            task={task}
+            generating={!!isAnyGenerating}
+            onUpdateCriteria={(criteria) => onUpdate({ criteria })}
+          />
+        ) : isAnyGenerating ? (
+          <>
+            {isCallTask ? (
+              <HumanCallSkeleton />
+            ) : task.type === "scheduling" ? (
+              <SchedulingSkeleton />
+            ) : (
+              <CustomTaskSkeleton />
+            )}
+          </>
+        ) : isEvaluationCompleted ? (
+          <>
+            {isCallTask ? (
+              <HumanCallReadOnly
+                noun={task.type === "interview" ? "interview" : "screening"}
+                config={task.screening}
+              />
+            ) : task.type === "scheduling" ? (
+              <SchedulingReadOnly config={task.screening} />
+            ) : (
+              <CustomTaskReadOnly task={task} />
+            )}
+          </>
+        ) : (
+          <>
+            {isCallTask ? (
+              <ScreeningEditor
+                noun={task.type === "interview" ? "interview" : "screening"}
+                config={task.screening}
+                onChange={(screening) => onUpdate({ screening })}
+                cefrLockedElsewhere={cefrLockedElsewhere}
+              />
+            ) : task.type === "scheduling" ? (
+              <SchedulingEditor
+                config={task.screening}
+                onChange={(screening) => onUpdate({ screening })}
+              />
+            ) : (
+              // custom
+              <div className="flex flex-col gap-5">
+                <Field label="Task name">
+                  <Input
+                    value={task.title}
+                    onChange={(e) => onUpdate({ title: e.target.value })}
+                    placeholder="e.g. Take-home assignment"
+                  />
+                </Field>
+                <Field
+                  label="Task details"
+                  hint="Describe what happens in this custom step."
+                >
+                  <Textarea
+                    value={task.notes}
+                    onChange={(e) => onUpdate({ notes: e.target.value })}
+                    placeholder="e.g. Take-home assignment shared over email, 48-hour turnaround."
+                    rows={4}
+                  />
+                </Field>
+              </div>
+            )}
+          </>
+        )}
+      </div>
     </section>
   )
 }
@@ -834,6 +890,45 @@ function CefrAddon({
     onChange({ ...config, ...patch })
   const toggleId = React.useId()
 
+  const minIdx = config.cefrMinLevel ? CEFR_LEVELS.indexOf(config.cefrMinLevel) : -1
+  const preferredIdx = config.cefrPreferredLevel ? CEFR_LEVELS.indexOf(config.cefrPreferredLevel) : -1
+
+  const minChips: ChipTabItem<CefrLevel>[] = CEFR_LEVELS.map((l, idx) => ({
+    value: l,
+    label: CEFR_LABELS[l],
+    disabled: preferredIdx !== -1 && idx > preferredIdx,
+  }))
+
+  const preferredChips: ChipTabItem<CefrLevel>[] = CEFR_LEVELS.map((l, idx) => ({
+    value: l,
+    label: CEFR_LABELS[l],
+    disabled: minIdx !== -1 && idx < minIdx,
+  }))
+
+  const setMinLevel = (min: CefrLevel | "") => {
+    const patch: Partial<ScreeningConfig> = { cefrMinLevel: min }
+    if (min && config.cefrPreferredLevel) {
+      const minIdxVal = CEFR_LEVELS.indexOf(min)
+      const prefIdxVal = CEFR_LEVELS.indexOf(config.cefrPreferredLevel)
+      if (minIdxVal > prefIdxVal) {
+        patch.cefrPreferredLevel = min
+      }
+    }
+    set(patch)
+  }
+
+  const setPreferredLevel = (pref: CefrLevel | "") => {
+    const patch: Partial<ScreeningConfig> = { cefrPreferredLevel: pref }
+    if (pref && config.cefrMinLevel) {
+      const minIdxVal = CEFR_LEVELS.indexOf(config.cefrMinLevel)
+      const prefIdxVal = CEFR_LEVELS.indexOf(pref)
+      if (minIdxVal > prefIdxVal) {
+        patch.cefrMinLevel = pref
+      }
+    }
+    set(patch)
+  }
+
   return (
     <div className="flex flex-col gap-1.5">
       <Label className="text-sm font-medium">Add-ons</Label>
@@ -869,9 +964,9 @@ function CefrAddon({
               <ChipTabs
                 variant="choice"
                 size="sm"
-                items={CEFR_CHIPS}
+                items={minChips}
                 value={config.cefrMinLevel}
-                onValueChange={(v) => set({ cefrMinLevel: v })}
+                onValueChange={(v) => setMinLevel(v)}
                 aria-label="Minimum CEFR level"
               />
             </Field>
@@ -882,9 +977,9 @@ function CefrAddon({
               <ChipTabs
                 variant="choice"
                 size="sm"
-                items={CEFR_CHIPS}
+                items={preferredChips}
                 value={config.cefrPreferredLevel}
-                onValueChange={(v) => set({ cefrPreferredLevel: v })}
+                onValueChange={(v) => setPreferredLevel(v)}
                 aria-label="Preferred CEFR level"
               />
             </Field>
@@ -922,6 +1017,396 @@ function Field({
       <Label className="text-sm font-medium">{label}</Label>
       {children}
       {hint ? <p className="text-xs text-muted-foreground">{hint}</p> : null}
+    </div>
+  )
+}
+
+// ---- sync CEFR criteria helper ------------------------------------------
+
+export function syncCefrCriteria(
+  criteria: Criterion[],
+  screening: ScreeningConfig,
+  taskId: string
+): Criterion[] {
+  let next = (criteria ?? []).filter(
+    (c) => !c.id.includes("cefr-min") && !c.id.includes("cefr-pref")
+  )
+  if (screening.cefrEnabled) {
+    if (screening.cefrMinLevel) {
+      next = [
+        {
+          id: `crit-${taskId}-cefr-min`,
+          category: "must-have",
+          text: `Spoken English: Minimum CEFR ${screening.cefrMinLevel}`,
+        },
+        ...next,
+      ]
+    }
+    if (screening.cefrPreferredLevel) {
+      next = [
+        ...next,
+        {
+          id: `crit-${taskId}-cefr-pref`,
+          category: "good-to-have",
+          text: `Spoken English: Preferred CEFR ${screening.cefrPreferredLevel}`,
+        },
+      ]
+    }
+  }
+  return next
+}
+
+// ---- inline evaluation criteria editor ----------------------------------
+
+const CRITERIA_CATEGORIES = [
+  {
+    key: "must-have" as CriteriaCategory,
+    label: "Must-have",
+    description: "Required criteria the candidate must meet.",
+    icon: CircleCheck,
+    tone: "text-success",
+  },
+  {
+    key: "good-to-have" as CriteriaCategory,
+    label: "Good-to-have",
+    description: "Bonus criteria that strengthen a candidate.",
+    icon: Star,
+    tone: "text-warning",
+  },
+  {
+    key: "red-flag" as CriteriaCategory,
+    label: "Red flags",
+    description: "Dealbreakers — candidate is not shortlisted if unmet.",
+    icon: Flag,
+    tone: "text-destructive",
+  },
+]
+
+function InlineCategoryGroup({
+  label,
+  description,
+  Icon,
+  tone,
+  items,
+  atLimit,
+  onAdd,
+  onUpdate,
+  onRemove,
+}: {
+  label: string
+  description: string
+  Icon: LucideIcon
+  tone: string
+  items: Criterion[]
+  atLimit: boolean
+  onAdd: () => void
+  onUpdate: (id: string, text: string) => void
+  onRemove: (id: string) => void
+}) {
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center gap-2">
+        <Icon className={cn("size-3.5 shrink-0", tone)} />
+        <span className="text-xs font-semibold">{label}</span>
+        <span className="text-xs text-muted-foreground">({items.length})</span>
+      </div>
+      <p className="text-xs text-muted-foreground -mt-1">{description}</p>
+
+      {items.length > 0 ? (
+        <div className="flex flex-col gap-1.5">
+          {items.map((c) => (
+            <div key={c.id} className="flex items-center gap-1.5">
+              <Input
+                value={c.text}
+                onChange={(e) => onUpdate(c.id, e.target.value)}
+                placeholder={`Describe a ${label.toLowerCase()} criterion`}
+                className="h-8 text-xs flex-1"
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-xs"
+                aria-label="Remove criterion"
+                onClick={() => onRemove(c.id)}
+              >
+                <Trash2 className="size-3" />
+              </Button>
+            </div>
+          ))}
+        </div>
+      ) : null}
+
+      <Button
+        type="button"
+        variant="outline"
+        size="xs"
+        onClick={onAdd}
+        disabled={atLimit}
+        className="self-start h-7 text-xs"
+        title={atLimit ? `Limit of ${MAX_CRITERIA} criteria reached` : undefined}
+      >
+        <Plus className="size-3 mr-1" />
+        Add {label.toLowerCase()}
+      </Button>
+    </div>
+  )
+}
+
+let inlineCritCounter = 0
+const nextInlineCritId = (taskId: string) => {
+  inlineCritCounter++
+  return `crit-${taskId}-${inlineCritCounter}`
+}
+
+function TaskCriteriaSection({
+  task,
+  generating,
+  onUpdateCriteria,
+}: {
+  task: InterviewTask
+  generating: boolean
+  onUpdateCriteria: (criteria: Criterion[]) => void
+}) {
+  const criteria = task.criteria || []
+  const total = criteria.length
+  const atLimit = total >= MAX_CRITERIA
+  const hasCriteria = total > 0
+
+  const addCriterion = (category: CriteriaCategory) => {
+    if (atLimit) return
+    const newId = nextInlineCritId(task.id)
+    onUpdateCriteria([...criteria, { id: newId, category, text: "" }])
+  }
+
+  const updateText = (id: string, text: string) => {
+    onUpdateCriteria(criteria.map((c) => (c.id === id ? { ...c, text } : c)))
+  }
+
+  const removeCriterion = (id: string) => {
+    onUpdateCriteria(criteria.filter((c) => c.id !== id))
+  }
+
+  if (generating) {
+    return (
+      <div className="space-y-3">
+        <div className="flex items-center gap-2">
+          <Sparkles className="size-4 text-primary animate-pulse" />
+          <span className="text-sm font-semibold animate-pulse">Evaluation criteria</span>
+        </div>
+        <div className="flex flex-col gap-2 py-2">
+          <div className="h-9 w-full rounded-md bg-muted animate-pulse" />
+          <div className="h-9 w-full rounded-md bg-muted animate-pulse" />
+          <div className="h-9 w-3/4 rounded-md bg-muted animate-pulse" />
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <Sparkles className="size-4 text-primary" />
+          <span className="text-sm font-semibold">Evaluation criteria</span>
+        </div>
+      </div>
+
+      {!hasCriteria ? (
+        <div className="flex flex-col items-center justify-center gap-1.5 rounded-md border border-dashed border-border bg-muted/20 p-4 text-center">
+          <p className="text-xs text-muted-foreground">
+            No evaluation criteria yet. Generate them specifically for this round.
+          </p>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-4">
+          {CRITERIA_CATEGORIES.map((meta) => (
+            <InlineCategoryGroup
+              key={meta.key}
+              label={meta.label}
+              description={meta.description}
+              Icon={meta.icon}
+              tone={meta.tone}
+              items={criteria.filter((c) => c.category === meta.key)}
+              atLimit={atLimit}
+              onAdd={() => addCriterion(meta.key)}
+              onUpdate={updateText}
+              onRemove={removeCriterion}
+            />
+          ))}
+          <div className="flex justify-end border-t border-border pt-2 text-xs text-muted-foreground">
+            {total} / {MAX_CRITERIA} criteria
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ---- read-only views for non-AI tasks when criteria generated -----------
+
+function ReadOnlyField({
+  label,
+  value,
+}: {
+  label: string
+  value: string | React.ReactNode
+}) {
+  return (
+    <div className="flex flex-col gap-1">
+      <span className="text-overline text-muted-foreground">{label}</span>
+      {typeof value === "string" ? (
+        <span className="text-sm font-medium text-foreground whitespace-pre-wrap">
+          {value || "—"}
+        </span>
+      ) : (
+        value
+      )}
+    </div>
+  )
+}
+
+function CustomTaskReadOnly({ task }: { task: InterviewTask }) {
+  return (
+    <div className="flex flex-col gap-4">
+      <ReadOnlyField
+        label="Task name"
+        value={task.title || "Custom task"}
+      />
+      <ReadOnlyField
+        label="Task details"
+        value={task.notes || "No details provided."}
+      />
+    </div>
+  )
+}
+
+function SchedulingReadOnly({ config }: { config: ScreeningConfig }) {
+  const isAI = config.mode === "ai"
+  const isHuman = config.mode === "human"
+
+  return (
+    <div className="flex flex-col gap-4">
+      <ReadOnlyField
+        label="Scheduling type"
+        value={
+          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground">
+            {isAI ? (
+              <>
+                <Bot className="size-3.5 text-primary" />
+                AI scheduling
+              </>
+            ) : isHuman ? (
+              <>
+                <UserRound className="size-3.5 text-primary" />
+                Human scheduling
+              </>
+            ) : (
+              "Not configured"
+            )}
+          </span>
+        }
+      />
+      {isHuman && (
+        <ReadOnlyField
+          label="Task details"
+          value={config.humanNotes || "No instructions provided."}
+        />
+      )}
+      {isAI && (
+        <p className="text-xs text-muted-foreground">
+          AI scheduling is coming soon.
+        </p>
+      )}
+    </div>
+  )
+}
+
+function HumanCallReadOnly({
+  noun,
+  config,
+}: {
+  noun: string
+  config: ScreeningConfig
+}) {
+  const Noun = noun.charAt(0).toUpperCase() + noun.slice(1)
+  const isHuman = config.mode === "human"
+  const isAI = config.mode === "ai"
+
+  return (
+    <div className="flex flex-col gap-4">
+      <ReadOnlyField
+        label={`${Noun} type`}
+        value={
+          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground">
+            {isAI ? (
+              <>
+                <Bot className="size-3.5 text-primary" />
+                AI {noun}
+              </>
+            ) : isHuman ? (
+              <>
+                <UserRound className="size-3.5 text-primary" />
+                Human {noun}
+              </>
+            ) : (
+              "Not configured"
+            )}
+          </span>
+        }
+      />
+      {isHuman && (
+        <ReadOnlyField
+          label="Key questions or notes"
+          value={config.humanNotes || "No questions or notes provided."}
+        />
+      )}
+    </div>
+  )
+}
+
+// ---- skeleton loaders for non-AI tasks when criteria generating ---------
+
+function CustomTaskSkeleton() {
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-1.5">
+        <div className="h-4 w-24 rounded bg-muted animate-pulse" />
+        <div className="h-9 w-full rounded-md bg-muted animate-pulse" />
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <div className="h-4 w-24 rounded bg-muted animate-pulse" />
+        <div className="h-20 w-full rounded-md bg-muted animate-pulse" />
+      </div>
+    </div>
+  )
+}
+
+function SchedulingSkeleton() {
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-1.5">
+        <div className="h-4 w-32 rounded bg-muted animate-pulse" />
+        <div className="h-9 w-48 rounded-md bg-muted animate-pulse" />
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <div className="h-4 w-24 rounded bg-muted animate-pulse" />
+        <div className="h-20 w-full rounded-md bg-muted animate-pulse" />
+      </div>
+    </div>
+  )
+}
+
+function HumanCallSkeleton() {
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-1.5">
+        <div className="h-4 w-32 rounded bg-muted animate-pulse" />
+        <div className="h-9 w-48 rounded-md bg-muted animate-pulse" />
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <div className="h-4 w-36 rounded bg-muted animate-pulse" />
+        <div className="h-20 w-full rounded-md bg-muted animate-pulse" />
+      </div>
     </div>
   )
 }
