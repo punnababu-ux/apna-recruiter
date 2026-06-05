@@ -255,12 +255,17 @@ export function InterviewRoundsStep({
 
       {/* Empty state — picker shown inline */}
       {form.tasks.length === 0 && !showPicker ? (
-        <TaskTypePicker title="Choose a task to add" onPick={addTask} />
+        <TaskTypePicker
+          index={1}
+          title="Choose a task to add"
+          onPick={addTask}
+        />
       ) : null}
 
       {/* Add-task picker / CTA */}
       {showPicker ? (
         <TaskTypePicker
+          index={form.tasks.length + 1}
           title="Add a task"
           onPick={addTask}
           onCancel={() => setShowPicker(false)}
@@ -285,18 +290,26 @@ export function InterviewRoundsStep({
 // ---- task-type picker ---------------------------------------------------
 
 function TaskTypePicker({
+  index,
   title,
   onPick,
   onCancel,
 }: {
+  /** The task number this picker will create (1-based). */
+  index: number
   title: string
   onPick: (type: TaskType) => void
   onCancel?: () => void
 }) {
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-dashed border-border bg-muted/30 p-4">
-      <div className="flex items-center justify-between">
-        <span className="text-sm font-medium">{title}</span>
+    <div className="flex flex-col gap-3 rounded-lg border border-border bg-card p-4 shadow-card">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-2.5">
+          <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-muted-foreground">
+            {index}
+          </span>
+          <span className="text-sm font-medium">{title}</span>
+        </div>
         {onCancel ? (
           <Button type="button" variant="ghost" size="sm" onClick={onCancel}>
             Cancel
