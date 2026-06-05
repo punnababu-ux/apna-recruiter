@@ -30,6 +30,7 @@ import {
 import * as React from "react"
 
 import { Button } from "@/components/ui/button"
+import { ChipTabs, type ChipTabItem } from "@/components/ui/chip-tabs"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -45,10 +46,6 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import {
-  RadioGroup,
-  RadioGroupItem,
-} from "@/components/ui/radio-group"
 import {
   Select,
   SelectContent,
@@ -291,6 +288,26 @@ export const CLIENTS: { id: string; name: string }[] = [
   { id: "myntra", name: "Myntra" },
 ]
 
+// Single-select chip options for the segmented controls. Work type/mode
+// include "" in the value union so an unselected (required) state renders
+// with no chip highlighted.
+const EXPERIENCE_CHIPS: ChipTabItem<ExperienceRequirement>[] = [
+  { value: "any", label: "Any" },
+  { value: "experienced", label: "Experienced only" },
+  { value: "freshers", label: "Freshers only" },
+]
+const WORK_TYPE_CHIPS: ChipTabItem<WorkType | "">[] = [
+  { value: "part-time", label: "Part time" },
+  { value: "full-time", label: "Full time" },
+  { value: "both", label: "Both" },
+]
+const WORK_MODE_CHIPS: ChipTabItem<WorkMode | "">[] = [
+  { value: "wfh", label: "Work from home" },
+  { value: "wfo", label: "Work from office" },
+  { value: "field", label: "Field job" },
+  { value: "store", label: "Work from store" },
+]
+
 // ---- component ----------------------------------------------------------
 
 export function JobDetailsStep({
@@ -390,21 +407,18 @@ export function JobDetailsStep({
               }
             />
           </Field>
-          <Field label="Required experience" htmlFor="experience-type">
-            <RadioGroup
-              id="experience-type"
-              value={form.experienceType}
-              onValueChange={(v) =>
-                update("experienceType", v as ExperienceRequirement)
-              }
-              className="mt-2 grid-flow-col auto-cols-max gap-4"
-            >
-              <RadioOption value="any" label="Any" />
-              <RadioOption value="experienced" label="Experienced only" />
-              <RadioOption value="freshers" label="Freshers only" />
-            </RadioGroup>
-          </Field>
         </div>
+
+        {/* Required experience — full-width chip group below the grid so
+            the chips have room to sit on one line. */}
+        <Field label="Required experience">
+          <ChipTabs
+            items={EXPERIENCE_CHIPS}
+            value={form.experienceType}
+            onValueChange={(v) => update("experienceType", v)}
+            aria-label="Required experience"
+          />
+        </Field>
 
         {showExperiencedPersona ? (
           <Field
@@ -464,63 +478,30 @@ export function JobDetailsStep({
         isOpen={openSectionId === "schedule"}
         onToggle={() => toggle("schedule")}
       >
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field
-            label="Work type"
-            htmlFor="work-type"
-            error={showErrors && !form.workType ? "Required" : undefined}
-          >
-            <Select
-              value={form.workType}
-              onValueChange={(v) =>
-                update("workType", ((v as string) ?? "") as WorkType | "")
-              }
-            >
-              <SelectTrigger
-                id="work-type"
-                className="w-full"
-                aria-invalid={
-                  showErrors && !form.workType ? true : undefined
-                }
-              >
-                <SelectValue placeholder="Select work type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="part-time">Part time</SelectItem>
-                <SelectItem value="full-time">Full time</SelectItem>
-                <SelectItem value="both">Both</SelectItem>
-              </SelectContent>
-            </Select>
-          </Field>
-          <Field
-            label="Work mode"
-            htmlFor="work-mode"
-            error={showErrors && !form.workMode ? "Required" : undefined}
-          >
-            <Select
-              value={form.workMode}
-              onValueChange={(v) =>
-                update("workMode", ((v as string) ?? "") as WorkMode | "")
-              }
-            >
-              <SelectTrigger
-                id="work-mode"
-                className="w-full"
-                aria-invalid={
-                  showErrors && !form.workMode ? true : undefined
-                }
-              >
-                <SelectValue placeholder="Select work mode" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="wfh">Work from home</SelectItem>
-                <SelectItem value="wfo">Work from office</SelectItem>
-                <SelectItem value="field">Field job</SelectItem>
-                <SelectItem value="store">Work from store</SelectItem>
-              </SelectContent>
-            </Select>
-          </Field>
-        </div>
+        <Field
+          label="Work type"
+          error={showErrors && !form.workType ? "Required" : undefined}
+        >
+          <ChipTabs
+            items={WORK_TYPE_CHIPS}
+            value={form.workType}
+            onValueChange={(v) => update("workType", v)}
+            aria-label="Work type"
+            aria-invalid={showErrors && !form.workType ? true : undefined}
+          />
+        </Field>
+        <Field
+          label="Work mode"
+          error={showErrors && !form.workMode ? "Required" : undefined}
+        >
+          <ChipTabs
+            items={WORK_MODE_CHIPS}
+            value={form.workMode}
+            onValueChange={(v) => update("workMode", v)}
+            aria-label="Work mode"
+            aria-invalid={showErrors && !form.workMode ? true : undefined}
+          />
+        </Field>
         <Field
           label="Work schedule and shift details"
           htmlFor="schedule-details"
@@ -768,18 +749,6 @@ function Field({
       ) : hint ? (
         <p className="text-xs text-muted-foreground">{hint}</p>
       ) : null}
-    </div>
-  )
-}
-
-function RadioOption({ value, label }: { value: string; label: string }) {
-  const id = `radio-${value}`
-  return (
-    <div className="flex items-center gap-2">
-      <RadioGroupItem id={id} value={value} />
-      <Label htmlFor={id} className="cursor-pointer text-sm font-normal">
-        {label}
-      </Label>
     </div>
   )
 }

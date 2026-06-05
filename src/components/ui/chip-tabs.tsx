@@ -30,6 +30,7 @@ export function ChipTabs<V extends string = string>({
   className,
   size = "md",
   "aria-label": ariaLabel,
+  "aria-invalid": ariaInvalid,
 }: {
   items: ChipTabItem<V>[]
   value: V
@@ -37,12 +38,16 @@ export function ChipTabs<V extends string = string>({
   className?: string
   size?: "sm" | "md"
   "aria-label"?: string
+  /** When true (e.g. a required, unselected field), inactive chips gain a
+   *  destructive outline to signal a selection is needed. */
+  "aria-invalid"?: boolean
 }) {
   return (
     <div
       role="tablist"
       aria-label={ariaLabel}
-      className={cn("flex items-center gap-2", className)}
+      aria-invalid={ariaInvalid || undefined}
+      className={cn("flex flex-wrap items-center gap-2", className)}
     >
       {items.map((item) => {
         const active = value === item.value
@@ -54,11 +59,13 @@ export function ChipTabs<V extends string = string>({
             aria-selected={active}
             onClick={() => onValueChange(item.value)}
             className={cn(
-              "inline-flex items-center gap-1 rounded-full font-medium transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+              "inline-flex items-center gap-1 rounded-full border font-medium transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
               size === "sm" ? "h-7 px-2.5 text-xs" : "h-8 px-3 text-sm",
               active
-                ? "bg-secondary text-secondary-foreground"
-                : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                ? "border-transparent bg-secondary text-secondary-foreground"
+                : ariaInvalid
+                  ? "border-destructive/60 text-destructive hover:bg-destructive/10"
+                  : "border-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
             )}
           >
             {item.label}
