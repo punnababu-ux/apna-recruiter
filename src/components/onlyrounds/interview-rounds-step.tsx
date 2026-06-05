@@ -39,6 +39,7 @@ import {
 } from "lucide-react"
 import * as React from "react"
 
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ChipTabs, type ChipTabItem } from "@/components/ui/chip-tabs"
 import {
@@ -65,6 +66,8 @@ export type ScreeningConfig = {
   format: ScreeningFormat | ""
   /** CEFR language proficiency assessment add-on (+3–4 min). */
   cefrEnabled: boolean
+  /** Key questions / notes for a human-led screening. */
+  humanNotes: string
 }
 
 export type InterviewTask = {
@@ -86,6 +89,7 @@ const makeScreening = (): ScreeningConfig => ({
   direction: "",
   format: "",
   cefrEnabled: false,
+  humanNotes: "",
 })
 
 // ---- task-type metadata -------------------------------------------------
@@ -376,11 +380,11 @@ function TaskCard({
         >
           <Icon className="size-5 shrink-0 text-muted-foreground" />
           <span className="min-w-0">
-            <span className="block text-xs text-muted-foreground">
-              Task {index}
-            </span>
             <span className="block truncate text-sm font-medium">
               {meta.label}
+            </span>
+            <span className="block text-xs text-muted-foreground">
+              Task {index}
             </span>
           </span>
         </button>
@@ -484,7 +488,10 @@ function ScreeningEditor({
     onChange({ ...config, ...patch })
 
   const isAI = config.mode === "ai"
-  const isOutbound = config.direction === "outbound"
+  // Video is available for inbound only. Outbound runs as a regular phone
+  // call (audio), and "Both" includes outbound — so both disable video.
+  const videoUnavailable =
+    config.direction === "outbound" || config.direction === "both"
 
   const formatChips: ChipTabItem<ScreeningFormat>[] = [
     {
@@ -498,8 +505,7 @@ function ScreeningEditor({
     },
     {
       value: "video",
-      // Outbound runs as a regular phone call → video is not available.
-      disabled: isOutbound,
+      disabled: videoUnavailable,
       label: (
         <span className="inline-flex items-center gap-1.5">
           <Video className="size-3.5" />
@@ -522,9 +528,17 @@ function ScreeningEditor({
       </Field>
 
       {config.mode === "human" ? (
-        <p className="rounded-md border border-dashed border-border bg-muted/30 p-3 text-sm text-muted-foreground">
-          Human screening configuration is coming soon.
-        </p>
+        <Field
+          label="Key questions or notes"
+          hint="What should your team cover at this screening stage?"
+        >
+          <Textarea
+            value={config.humanNotes}
+            onChange={(e) => set({ humanNotes: e.target.value })}
+            placeholder="e.g. Confirm notice period and expected CTC, check willingness to travel, and gauge spoken English."
+            rows={4}
+          />
+        </Field>
       ) : isAI ? (
         <>
           <Field
@@ -536,10 +550,11 @@ function ScreeningEditor({
               items={DIRECTION_CHIPS}
               value={config.direction}
               onValueChange={(v) =>
-                // Switching to Outbound forces Audio — video isn't available
-                // on a regular outbound call.
+                // Outbound (and Both, which includes outbound) can't be
+                // video — fall back to Audio if Video was selected.
                 set(
-                  v === "outbound" && config.format === "video"
+                  (v === "outbound" || v === "both") &&
+                    config.format === "video"
                     ? { direction: v, format: "audio" }
                     : { direction: v },
                 )
@@ -551,9 +566,11 @@ function ScreeningEditor({
           <Field
             label="Screening format"
             hint={
-              isOutbound
+              config.direction === "outbound"
                 ? "Outbound runs as a regular call — audio only."
-                : undefined
+                : config.direction === "both"
+                  ? "“Both” includes outbound calls — video isn’t available."
+                  : undefined
             }
           >
             <ChipTabs
@@ -573,9 +590,10 @@ function ScreeningEditor({
               className="flex cursor-pointer items-start justify-between gap-3 rounded-lg border border-border p-3"
             >
               <span className="min-w-0">
-                <span className="flex items-center gap-2 text-sm font-medium">
+                <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-medium">
                   <Languages className="size-4 text-primary" />
                   CEFR language proficiency assessment
+                  <Badge variant="info">New</Badge>
                 </span>
                 <span className="mt-0.5 block text-xs text-muted-foreground">
                   Scores the candidate&apos;s spoken language level (A1–C2).
