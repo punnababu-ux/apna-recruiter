@@ -24,7 +24,7 @@ import {
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import * as React from "react"
-import { useState } from "react"
+import { useRef, useState } from "react"
 
 import {
   InterviewRoundsStep,
@@ -162,6 +162,9 @@ export function CreateJobWizard() {
   )
   const [exitDialogOpen, setExitDialogOpen] = useState(false)
   const [generatingTasks, setGeneratingTasks] = useState<Record<string, boolean>>({})
+  const [showRoundErrors, setShowRoundErrors] = useState(false)
+  /** AbortController for the current generateAllCriteria run. Aborted when the user navigates away from step 3. */
+  const generationAbortRef = useRef<AbortController | null>(null)
 
   // Load any existing draft on mount. Guarded in a useEffect so it runs
   // client-only (avoids SSR hydration mismatches when localStorage is
@@ -339,7 +342,7 @@ export function CreateJobWizard() {
     setForm((prev) => ({ ...prev, [key]: value }))
   }
 
-  const generateTaskCriteria = async (taskId: string) => {
+  const generateTaskCriteria = async (taskId: string, signal?: AbortSignal) => {
     const task = form.rounds.tasks.find((t) => t.id === taskId)
     if (!task || !CALL_TASK_TYPES.has(task.type)) return
 
@@ -347,6 +350,7 @@ export function CreateJobWizard() {
     try {
       const res = await fetch("/api/onlyrounds/generate-criteria", {
         method: "POST",
+        signal,
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           title: form.title,
@@ -405,6 +409,8 @@ export function CreateJobWizard() {
         }
       })
     } catch (err) {
+      // Ignore aborts — user navigated away intentionally.
+      if (err instanceof Error && err.name === "AbortError") return
       console.error(`Error generating criteria for task ${taskId}:`, err)
       toast.error(`Could not generate criteria for ${task.title || (task.type === "screening" ? "Screening" : "Interview")} round.`)
     } finally {
@@ -426,7 +432,14 @@ export function CreateJobWizard() {
 
     if (tasksToGenerate.length === 0) return
 
-    await Promise.all(tasksToGenerate.map((t) => generateTaskCriteria(t.id)))
+    // Abort any previous run, then create a fresh controller for this one.
+    generationAbortRef.current?.abort()
+    const controller = new AbortController()
+    generationAbortRef.current = controller
+
+    await Promise.all(
+      tasksToGenerate.map((t) => generateTaskCriteria(t.id, controller.signal))
+    )
   }
 
   const goNext = async () => {
@@ -554,6 +567,35 @@ export function CreateJobWizard() {
         })
         return
       }
+      const screeningIncomplete = form.rounds.tasks.some((t) => {
+        if (!CALL_TASK_TYPES.has(t.type)) return false
+        if (!t.screening.mode) return true
+        if (t.screening.mode === "ai") {
+          return !t.screening.direction || !t.screening.format
+        }
+        return false
+      })
+      if (screeningIncomplete) {
+        setShowRoundErrors(true)
+        toast.error("Some rounds have incomplete configuration", {
+          description:
+            "Select a type, direction, and format for every AI screening or interview round.",
+        })
+        return
+      }
+
+      const cefrMissingMin = form.rounds.tasks.some(
+        (t) => t.screening.cefrEnabled && !t.screening.cefrMinLevel,
+      )
+      if (cefrMissingMin) {
+        setShowRoundErrors(true)
+        toast.error("Minimum CEFR level is required", {
+          description:
+            "Select a minimum CEFR level for the language assessment add-on.",
+        })
+        return
+      }
+      setShowRoundErrors(false)
       if (needsCriteriaGeneration) {
         await generateAllCriteria()
         return
@@ -582,6 +624,13 @@ export function CreateJobWizard() {
       return
     }
     if (isFirst) return
+    // Leaving step 3 — cancel any in-flight criteria generation and clear errors.
+    if (activeId === "rounds") {
+      generationAbortRef.current?.abort()
+      generationAbortRef.current = null
+      setGeneratingTasks({})
+      setShowRoundErrors(false)
+    }
     setShowErrors(false)
     setActiveId(STEPS[activeIdx - 1].id)
   }
@@ -665,6 +714,7 @@ export function CreateJobWizard() {
               form={form.rounds}
               update={updateRounds}
               generatingTasks={generatingTasks}
+              showErrors={showRoundErrors}
             />
           ) : (
             <div className="rounded-lg border border-border bg-card p-6 shadow-card">

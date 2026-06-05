@@ -352,10 +352,12 @@ export function InterviewRoundsStep({
   form,
   update,
   generatingTasks = {},
+  showErrors = false,
 }: {
   form: InterviewRoundsForm
   update: (next: InterviewRoundsForm) => void
   generatingTasks?: Record<string, boolean>
+  showErrors?: boolean
 }) {
   const [showPicker, setShowPicker] = React.useState(false)
 
@@ -469,6 +471,7 @@ export function InterviewRoundsStep({
               cefrLockedElsewhere={cefrTaskId !== null && cefrTaskId !== task.id}
               isAnyGenerating={isAnyGenerating}
               isEvaluationCompleted={isEvaluationCompleted}
+              showErrors={showErrors}
             />
           ))}
         </div>
@@ -599,6 +602,7 @@ function TaskCard({
   cefrLockedElsewhere,
   isAnyGenerating,
   isEvaluationCompleted,
+  showErrors = false,
 }: {
   index: number
   task: InterviewTask
@@ -608,6 +612,7 @@ function TaskCard({
   cefrLockedElsewhere: boolean
   isAnyGenerating?: boolean
   isEvaluationCompleted?: boolean
+  showErrors?: boolean
 }) {
   const meta = TASK_META[task.type]
   const Icon = meta.icon
@@ -706,6 +711,7 @@ function TaskCard({
                 config={task.screening}
                 onChange={(screening) => onUpdate({ screening })}
                 cefrLockedElsewhere={cefrLockedElsewhere}
+                showErrors={showErrors}
               />
             ) : task.type === "scheduling" ? (
               <SchedulingEditor
@@ -844,6 +850,7 @@ function ScreeningEditor({
   config,
   onChange,
   cefrLockedElsewhere,
+  showErrors = false,
 }: {
   /** Lowercase task noun used in labels, e.g. "screening" / "interview". */
   noun: string
@@ -851,6 +858,7 @@ function ScreeningEditor({
   onChange: (next: ScreeningConfig) => void
   /** Another task already owns the CEFR add-on — hide it here. */
   cefrLockedElsewhere: boolean
+  showErrors?: boolean
 }) {
   const set = (patch: Partial<ScreeningConfig>) =>
     onChange({ ...config, ...patch })
@@ -886,7 +894,7 @@ function ScreeningEditor({
 
   return (
     <div className="flex flex-col gap-5">
-      <Field label={`${Noun} type`}>
+      <Field label={`${Noun} type`} required>
         <ChipTabs
           variant="choice"
           items={modeChips(noun)}
@@ -896,6 +904,7 @@ function ScreeningEditor({
             set(v === "human" ? { mode: v, cefrEnabled: false } : { mode: v })
           }
           aria-label={`${Noun} type`}
+          aria-invalid={showErrors && !config.mode || undefined}
         />
       </Field>
 
@@ -916,6 +925,7 @@ function ScreeningEditor({
           <Field
             label={`${Noun} direction`}
             hint="Inbound: the candidate calls in. Outbound: we call the candidate."
+            required
           >
             <ChipTabs
               variant="choice"
@@ -932,6 +942,7 @@ function ScreeningEditor({
                 )
               }
               aria-label={`${Noun} direction`}
+              aria-invalid={showErrors && !config.direction || undefined}
             />
           </Field>
 
@@ -941,9 +952,10 @@ function ScreeningEditor({
               config.direction === "outbound"
                 ? "Outbound runs as a regular call — audio only."
                 : config.direction === "both"
-                  ? "“Both” includes outbound calls — video isn’t available."
+                  ? '"Both" includes outbound calls — video isn\'t available.'
                   : undefined
             }
+            required
           >
             <ChipTabs
               variant="choice"
@@ -951,6 +963,7 @@ function ScreeningEditor({
               value={config.format}
               onValueChange={(v) => set({ format: v })}
               aria-label={`${Noun} format`}
+              aria-invalid={showErrors && !config.format || undefined}
             />
           </Field>
 
@@ -960,7 +973,7 @@ function ScreeningEditor({
               used once per pipeline.
             </p>
           ) : (
-            <CefrAddon config={config} onChange={onChange} />
+            <CefrAddon config={config} onChange={onChange} showErrors={showErrors} />
           )}
         </>
       ) : null}
@@ -973,9 +986,11 @@ function ScreeningEditor({
 function CefrAddon({
   config,
   onChange,
+  showErrors = false,
 }: {
   config: ScreeningConfig
   onChange: (next: ScreeningConfig) => void
+  showErrors?: boolean
 }) {
   const set = (patch: Partial<ScreeningConfig>) =>
     onChange({ ...config, ...patch })
@@ -1051,6 +1066,7 @@ function CefrAddon({
             <Field
               label="Minimum CEFR level"
               hint="The lowest level a candidate must reach to pass."
+              required
             >
               <ChipTabs
                 variant="choice"
@@ -1059,11 +1075,18 @@ function CefrAddon({
                 value={config.cefrMinLevel}
                 onValueChange={(v) => setMinLevel(v)}
                 aria-label="Minimum CEFR level"
+                aria-invalid={showErrors && !config.cefrMinLevel || undefined}
               />
+              {showErrors && !config.cefrMinLevel && (
+                <p className="text-xs text-destructive">
+                  Select a minimum level to enable the CEFR assessment.
+                </p>
+              )}
             </Field>
             <Field
               label="Preferred CEFR level"
-              hint="The level you’d ideally like to see."
+              hint="The level you'd ideally like to see."
+              optional
             >
               <ChipTabs
                 variant="choice"
@@ -1097,15 +1120,27 @@ function CefrAddon({
 function Field({
   label,
   hint,
+  required,
+  optional,
   children,
 }: {
   label: string
   hint?: string
+  required?: boolean
+  optional?: boolean
   children: React.ReactNode
 }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <Label className="text-sm font-medium">{label}</Label>
+      <Label className="text-sm font-medium">
+        {label}
+        {required && <span className="ml-0.5 text-destructive">*</span>}
+        {optional && (
+          <span className="ml-1 text-xs font-normal text-muted-foreground">
+            (Optional)
+          </span>
+        )}
+      </Label>
       {children}
       {hint ? <p className="text-xs text-muted-foreground">{hint}</p> : null}
     </div>
@@ -1156,7 +1191,7 @@ const CRITERIA_CATEGORIES = [
     description: "Required criteria the candidate must meet.",
     icon: CircleCheck,
     tone: "text-success",
-    surface: "border-success/30 bg-success-subtle",
+    surface: "border-border bg-muted/20",
   },
   {
     key: "good-to-have" as CriteriaCategory,
@@ -1164,7 +1199,7 @@ const CRITERIA_CATEGORIES = [
     description: "Bonus criteria that strengthen a candidate.",
     icon: Star,
     tone: "text-warning",
-    surface: "border-warning/40 bg-warning-subtle",
+    surface: "border-border bg-muted/20",
   },
   {
     key: "red-flag" as CriteriaCategory,
@@ -1172,7 +1207,7 @@ const CRITERIA_CATEGORIES = [
     description: "Dealbreakers — candidate is not shortlisted if unmet.",
     icon: Flag,
     tone: "text-destructive",
-    surface: "border-destructive/30 bg-destructive/5",
+    surface: "border-border bg-muted/20",
   },
 ]
 
@@ -1268,9 +1303,11 @@ function CriterionRow({
 
   if (locked) {
     return (
-      <div className="flex h-8 items-center gap-2 rounded-md border border-input bg-muted/40 px-3">
-        <span className="flex-1 truncate text-xs">{criterion.text}</span>
-        <Badge variant="info" className="shrink-0">
+      <div className="flex items-center gap-1.5">
+        <div className="flex h-8 flex-1 items-center rounded-md border border-input bg-card px-3">
+          <span className="flex-1 truncate text-xs">{criterion.text}</span>
+        </div>
+        <Badge variant="secondary" className="shrink-0 text-muted-foreground">
           Add-on
         </Badge>
       </div>
@@ -1307,6 +1344,7 @@ function CriterionRow({
         variant="ghost"
         size="icon-xs"
         aria-label={editing ? "Done editing" : "Edit criterion"}
+        className="hover:bg-black/8 dark:hover:bg-white/10"
         // Stop the input blurring before this click registers while editing.
         onMouseDown={editing ? (e) => e.preventDefault() : undefined}
         onClick={() => setEditing((v) => !v)}
@@ -1322,6 +1360,7 @@ function CriterionRow({
         variant="ghost"
         size="icon-xs"
         aria-label="Remove criterion"
+        className="hover:bg-black/8 dark:hover:bg-white/10"
         onClick={onRemove}
       >
         <Trash2 className="size-3" />
@@ -1370,9 +1409,9 @@ function InterviewerCard({
   const agent = AGENTS[agentId]
 
   return (
-    <div className="flex items-center gap-3 rounded-lg border border-primary/20 bg-accent/30 p-3">
-      <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
-        {agent.name.charAt(0)}
+    <div className="flex items-center gap-3 rounded-lg border border-border bg-muted/20 p-3">
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border bg-card text-muted-foreground">
+        <Bot className="size-5" />
       </span>
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1.5 text-sm font-medium">
