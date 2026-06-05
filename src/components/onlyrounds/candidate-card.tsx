@@ -46,6 +46,9 @@ export type CandidateState =
   | { kind: "no-response"; attempted: number; total: number }
   | { kind: "not-interested" }
 
+/** CEFR levels A1–C2, or "na" when the assessment hasn't run / wasn't requested. */
+export type CefrLevel = "a1" | "a2" | "b1" | "b2" | "c1" | "c2" | "na"
+
 export type Candidate = {
   id: string
   name: string
@@ -54,6 +57,7 @@ export type Candidate = {
   email?: string
   phone?: string
   state: CandidateState
+  cefrLevel?: CefrLevel
 }
 
 export function CandidateCard({

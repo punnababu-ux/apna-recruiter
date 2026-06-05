@@ -25,18 +25,24 @@
 import {
   AtSign,
   Briefcase,
+  CalendarDays,
   ChevronLeft,
   ChevronRight,
   CircleCheck,
   FileText,
   GraduationCap,
+  Mail,
   MapPin,
   MessageCircle,
   Pause,
   Pencil,
   Phone,
+  PhoneIncoming,
+  PhoneOutgoing,
   Play,
   RotateCcw,
+  ShieldAlert,
+  Voicemail,
   X,
   XCircle,
 } from "lucide-react"
@@ -112,6 +118,24 @@ export type ProfileSummary = {
   resumeUrl?: string
 }
 
+export type InterviewViolation = {
+  id: string
+  severity: "info" | "warning" | "destructive"
+  title: string
+  detail: string
+  timestamp: string
+}
+
+export type CommunicationEvent = {
+  id: string
+  channel: "call" | "sms" | "email" | "whatsapp" | "voicemail"
+  direction: "in" | "out" | "system"
+  title: string
+  detail?: string
+  timestamp: string
+  duration?: string
+}
+
 export type DrawerCandidate = {
   id: string
   name: string
@@ -128,6 +152,8 @@ export type DrawerCandidate = {
   cefr?: CefrAnalysis
   notes?: string
   profile?: ProfileSummary
+  violations?: InterviewViolation[]
+  communication?: CommunicationEvent[]
 }
 
 // ── Drawer ────────────────────────────────────────────────────────────────
@@ -343,10 +369,18 @@ function DrawerBody({
       </SheetHeader>
 
       {/* Tabs */}
-      <Tabs defaultValue="insights" className="flex flex-1 flex-col overflow-hidden">
-        <TabsList variant="line" className="shrink-0 border-b border-border px-4">
+      <Tabs
+        defaultValue="insights"
+        className="flex flex-1 flex-col overflow-hidden"
+      >
+        <TabsList
+          variant="line"
+          className="shrink-0 overflow-x-auto border-b border-border px-4"
+        >
           <TabsTrigger value="insights">AI screening insights</TabsTrigger>
           <TabsTrigger value="profile">Full profile</TabsTrigger>
+          <TabsTrigger value="violations">Violations</TabsTrigger>
+          <TabsTrigger value="timeline">Timeline</TabsTrigger>
           <TabsTrigger value="notes">Notes</TabsTrigger>
         </TabsList>
 
@@ -356,6 +390,12 @@ function DrawerBody({
           </TabsContent>
           <TabsContent value="profile" className="m-0 p-4">
             <ProfileTab candidate={candidate} />
+          </TabsContent>
+          <TabsContent value="violations" className="m-0 p-4">
+            <ViolationsTab candidate={candidate} />
+          </TabsContent>
+          <TabsContent value="timeline" className="m-0 p-4">
+            <TimelineTab candidate={candidate} />
           </TabsContent>
           <TabsContent value="notes" className="m-0 p-4">
             <NotesTab candidate={candidate} onAddNote={onAddNote} />
@@ -599,6 +639,125 @@ function ProfileTab({ candidate }: { candidate: DrawerCandidate }) {
   )
 }
 
+// ── Violations tab ────────────────────────────────────────────────────────
+
+function ViolationsTab({ candidate }: { candidate: DrawerCandidate }) {
+  const items = candidate.violations ?? []
+  if (items.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-3 py-12 text-center">
+        <CircleCheck className="size-8 text-success" />
+        <div>
+          <p className="text-sm font-medium">No violations detected</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Candidate completed the round without any flagged behaviour.
+          </p>
+        </div>
+      </div>
+    )
+  }
+  return (
+    <div className="flex flex-col gap-3">
+      <p className="text-xs text-muted-foreground">
+        Behavioural signals flagged during the AI session — review for
+        integrity concerns.
+      </p>
+      <ul className="flex flex-col gap-2">
+        {items.map((v) => (
+          <li
+            key={v.id}
+            className={cn(
+              "flex items-start gap-3 rounded-md border bg-card p-3",
+              v.severity === "destructive"
+                ? "border-destructive/30"
+                : v.severity === "warning"
+                  ? "border-warning/30"
+                  : "border-border",
+            )}
+          >
+            <ShieldAlert
+              className={cn(
+                "size-4 shrink-0",
+                v.severity === "destructive"
+                  ? "text-destructive"
+                  : v.severity === "warning"
+                    ? "text-warning"
+                    : "text-info",
+              )}
+            />
+            <div className="min-w-0 flex-1">
+              <div className="flex items-baseline justify-between gap-2">
+                <span className="text-sm font-medium">{v.title}</span>
+                <span className="shrink-0 text-xs text-muted-foreground">
+                  {v.timestamp}
+                </span>
+              </div>
+              <p className="mt-0.5 text-xs text-muted-foreground">{v.detail}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+// ── Timeline tab ──────────────────────────────────────────────────────────
+
+const CHANNEL_ICON = {
+  call: PhoneOutgoing,
+  sms: MessageCircle,
+  email: Mail,
+  whatsapp: MessageCircle,
+  voicemail: Voicemail,
+} as const
+
+function TimelineTab({ candidate }: { candidate: DrawerCandidate }) {
+  const items = candidate.communication ?? []
+  if (items.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-3 py-12 text-center">
+        <CalendarDays className="size-8 text-muted-foreground" />
+        <div>
+          <p className="text-sm font-medium">No communication yet</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Call attempts, messages, and replies will appear here.
+          </p>
+        </div>
+      </div>
+    )
+  }
+  return (
+    <ol className="relative flex flex-col gap-3 pl-5">
+      <span className="absolute top-1 bottom-1 left-1.5 w-px bg-border" />
+      {items.map((e) => {
+        let Icon = CHANNEL_ICON[e.channel]
+        if (e.channel === "call" && e.direction === "in") Icon = PhoneIncoming
+        return (
+          <li key={e.id} className="relative flex flex-col gap-0.5">
+            <span className="absolute top-0.5 -left-[18px] flex size-4 items-center justify-center rounded-full border border-border bg-card">
+              <Icon className="size-2.5 text-muted-foreground" />
+            </span>
+            <div className="flex items-baseline justify-between gap-2">
+              <span className="text-sm font-medium">{e.title}</span>
+              <span className="shrink-0 text-xs text-muted-foreground">
+                {e.timestamp}
+              </span>
+            </div>
+            {e.detail && (
+              <p className="text-xs text-muted-foreground">{e.detail}</p>
+            )}
+            {e.duration && (
+              <p className="text-2xs text-muted-foreground">
+                Duration · {e.duration}
+              </p>
+            )}
+          </li>
+        )
+      })}
+    </ol>
+  )
+}
+
 // ── Notes tab ─────────────────────────────────────────────────────────────
 
 function NotesTab({
@@ -626,25 +785,53 @@ function NotesTab({
 // ── Sub-blocks ────────────────────────────────────────────────────────────
 
 function CallPlayerStub() {
+  // Mock player — no real audio, but the time + progress advance while
+  // playing so the UI doesn't feel inert.
+  const TOTAL_SEC = 5 * 60 + 47 // 5:47 mock call
   const [playing, setPlaying] = React.useState(false)
+  const [elapsed, setElapsed] = React.useState(0)
+  React.useEffect(() => {
+    if (!playing) return
+    const id = window.setInterval(() => {
+      setElapsed((e) => {
+        if (e >= TOTAL_SEC) {
+          setPlaying(false)
+          return TOTAL_SEC
+        }
+        return e + 1
+      })
+    }, 1000)
+    return () => window.clearInterval(id)
+  }, [playing])
+
+  const pct = (elapsed / TOTAL_SEC) * 100
   return (
     <div className="flex items-center gap-3 rounded-md border border-border bg-muted/30 px-3 py-2.5">
       <button
         type="button"
         onClick={() => setPlaying((p) => !p)}
         aria-label={playing ? "Pause" : "Play"}
-        className="flex size-7 shrink-0 items-center justify-center rounded-full border border-border bg-card"
+        className="flex size-7 shrink-0 items-center justify-center rounded-full border border-border bg-card hover:bg-muted"
       >
         {playing ? <Pause className="size-3" /> : <Play className="size-3" />}
       </button>
-      <div className="h-1 flex-1 rounded-full bg-muted">
-        <div className="h-full w-0 rounded-full bg-primary" />
+      <div className="h-1 flex-1 overflow-hidden rounded-full bg-muted">
+        <div
+          className="h-full rounded-full bg-primary transition-[width]"
+          style={{ width: `${pct}%` }}
+        />
       </div>
       <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
-        0:00 / 0:00
+        {fmtMmSs(elapsed)} / {fmtMmSs(TOTAL_SEC)}
       </span>
     </div>
   )
+}
+
+function fmtMmSs(s: number) {
+  const m = Math.floor(s / 60)
+  const r = Math.floor(s % 60)
+  return `${m}:${r.toString().padStart(2, "0")}`
 }
 
 function CriteriaGroupBlock({ group }: { group: CriteriaGroup }) {

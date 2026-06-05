@@ -26,7 +26,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { Suspense, use, useState } from "react"
+import { Suspense, use, useMemo, useState } from "react"
 import { toast } from "sonner"
 
 import { BulkActionBar } from "@/components/onlyrounds/bulk-action-bar"
@@ -106,6 +106,7 @@ const CANDIDATES: Candidate[] = [
         { tone: "miss", label: "Industry domain not discussed" },
       ],
     },
+    cefrLevel: "c1",
   },
   {
     id: "sadanand",
@@ -115,6 +116,7 @@ const CANDIDATES: Candidate[] = [
     email: "buruds@gmail.com",
     phone: "+919164862614",
     state: { kind: "pending", attempted: 0, total: 5 },
+    cefrLevel: "na",
   },
   {
     id: "demo1",
@@ -122,6 +124,7 @@ const CANDIDATES: Candidate[] = [
     email: "retaker@test.co",
     phone: "+918637266290",
     state: { kind: "incomplete", attempted: 5, total: 5 },
+    cefrLevel: "na",
   },
   {
     id: "chaitra",
@@ -129,8 +132,24 @@ const CANDIDATES: Candidate[] = [
     email: "chaitra.b.ext@apna.co",
     phone: "+918971981508",
     state: { kind: "no-response", attempted: 5, total: 5 },
+    cefrLevel: "na",
   },
 ]
+
+/**
+ * Map a candidate's state to the AI Evaluation Status filter option id.
+ * Keep this in sync with the option ids in FILTERS["ai-status"].
+ */
+function aiStatusKey(c: Candidate): string {
+  if (c.state.kind === "completed") {
+    return c.state.verdict === "fit" ? "fit" : "rejected"
+  }
+  if (c.state.kind === "pending") return "pending"
+  if (c.state.kind === "incomplete") return "incomplete"
+  if (c.state.kind === "no-response") return "no-response"
+  if (c.state.kind === "not-interested") return "not-interested"
+  return "in-progress"
+}
 
 const DRAWER_DATA: Record<string, DrawerCandidate> = {
   aditi: {
@@ -349,6 +368,68 @@ const DRAWER_DATA: Record<string, DrawerCandidate> = {
       ],
       resumeUrl: "#",
     },
+    violations: [
+      {
+        id: "v1",
+        severity: "info",
+        title: "Brief background noise",
+        detail:
+          "Light traffic noise detected around 02:14. Did not affect comprehension.",
+        timestamp: "02:14",
+      },
+      {
+        id: "v2",
+        severity: "warning",
+        title: "Microphone muted mid-response",
+        detail:
+          "Candidate's mic was muted for 8 seconds at 03:42. Resumed without prompting.",
+        timestamp: "03:42",
+      },
+    ],
+    communication: [
+      {
+        id: "c1",
+        channel: "call",
+        direction: "out",
+        title: "Outbound call attempted",
+        detail: "Auto-dialler · no answer · voicemail not enabled.",
+        timestamp: "Mon, 3 Jun · 10:02",
+      },
+      {
+        id: "c2",
+        channel: "sms",
+        direction: "out",
+        title: "SMS reminder sent",
+        detail:
+          "Hi Aditi! We tried calling — please share a slot to retake the screening.",
+        timestamp: "Mon, 3 Jun · 10:15",
+      },
+      {
+        id: "c3",
+        channel: "whatsapp",
+        direction: "in",
+        title: "Replied on WhatsApp",
+        detail: "\"Sorry, was in a meeting. Free after 4pm today.\"",
+        timestamp: "Mon, 3 Jun · 14:08",
+      },
+      {
+        id: "c4",
+        channel: "call",
+        direction: "out",
+        title: "AI call completed",
+        detail: "Screening conducted by Isha. Verdict: Fit (100/100).",
+        timestamp: "Mon, 3 Jun · 16:23",
+        duration: "5:47",
+      },
+      {
+        id: "c5",
+        channel: "email",
+        direction: "out",
+        title: "Result summary emailed",
+        detail: "Recruiter recap + scored criteria sent to recruiter@apna.co.",
+        timestamp: "Mon, 3 Jun · 16:24",
+      },
+    ],
   },
 }
 
@@ -379,8 +460,50 @@ function JobDetailPageInner({ id }: { id: string }) {
   >("screening")
   const [shareOpen, setShareOpen] = useState(false)
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+
+  // Filter & search state. `filters` keys are group ids; values are the
+  // set of selected option ids within that group. When a group has zero
+  // selected options it acts as "any" (no constraint).
+  const [filters, setFilters] = useState<Record<string, Set<string>>>({})
+  const [searchQuery, setSearchQuery] = useState("")
+
+  const toggleFilter = (groupId: string, optionId: string) => {
+    setFilters((prev) => {
+      const next = { ...prev }
+      const set = new Set(next[groupId] ?? [])
+      if (set.has(optionId)) set.delete(optionId)
+      else set.add(optionId)
+      if (set.size === 0) delete next[groupId]
+      else next[groupId] = set
+      return next
+    })
+  }
+
+  const filteredCandidates = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase()
+    const aiPicked = filters["ai-status"]
+    const cefrPicked = filters["cefr"]
+    return CANDIDATES.filter((c) => {
+      if (q && !c.name.toLowerCase().includes(q)) return false
+      if (aiPicked && aiPicked.size > 0 && !aiPicked.has(aiStatusKey(c))) {
+        return false
+      }
+      if (cefrPicked && cefrPicked.size > 0) {
+        if (!c.cefrLevel || !cefrPicked.has(c.cefrLevel)) return false
+      }
+      return true
+    })
+  }, [searchQuery, filters])
+
+  const totalFilterCount = Object.values(filters).reduce(
+    (acc, set) => acc + set.size,
+    0,
+  )
+
   const hasSelection = selectedIds.size > 0
-  const allSelected = selectedIds.size === CANDIDATES.length
+  const allSelected =
+    filteredCandidates.length > 0 &&
+    filteredCandidates.every((c) => selectedIds.has(c.id))
 
   const toggleSelected = (id: string, next: boolean) => {
     setSelectedIds((prev) => {
@@ -391,7 +514,15 @@ function JobDetailPageInner({ id }: { id: string }) {
     })
   }
   const selectAll = (next: boolean) => {
-    setSelectedIds(next ? new Set(CANDIDATES.map((c) => c.id)) : new Set())
+    if (!next) {
+      setSelectedIds(new Set())
+      return
+    }
+    setSelectedIds((prev) => {
+      const out = new Set(prev)
+      filteredCandidates.forEach((c) => out.add(c.id))
+      return out
+    })
   }
   const clearSelection = () => setSelectedIds(new Set())
 
@@ -404,12 +535,13 @@ function JobDetailPageInner({ id }: { id: string }) {
   }
 
   const drawerCandidate = leadId ? DRAWER_DATA[leadId] ?? null : null
-  const drawerIndex = leadId ? CANDIDATES.findIndex((c) => c.id === leadId) : -1
-  const prev =
-    drawerIndex > 0 ? CANDIDATES[drawerIndex - 1] : null
+  const drawerIndex = leadId
+    ? filteredCandidates.findIndex((c) => c.id === leadId)
+    : -1
+  const prev = drawerIndex > 0 ? filteredCandidates[drawerIndex - 1] : null
   const next =
-    drawerIndex >= 0 && drawerIndex < CANDIDATES.length - 1
-      ? CANDIDATES[drawerIndex + 1]
+    drawerIndex >= 0 && drawerIndex < filteredCandidates.length - 1
+      ? filteredCandidates[drawerIndex + 1]
       : null
 
   return (
@@ -490,11 +622,18 @@ function JobDetailPageInner({ id }: { id: string }) {
         {/* Two-column body */}
         <div className="flex gap-4">
           <FilterPanel
-            count={0}
+            count={totalFilterCount}
             groups={FILTERS}
+            selected={filters}
+            onToggle={toggleFilter}
             extraTop={
               <div className="flex flex-col gap-2">
-                <Input placeholder="Search by candidate name" inputSize="sm" />
+                <Input
+                  placeholder="Search by candidate name"
+                  inputSize="sm"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
                 <p className="text-2xs text-muted-foreground">
                   Keywords (including name)
                 </p>
@@ -506,7 +645,7 @@ function JobDetailPageInner({ id }: { id: string }) {
             {hasSelection ? (
               <BulkActionBar
                 selectedCount={selectedIds.size}
-                totalCount={CANDIDATES.length}
+                totalCount={filteredCandidates.length}
                 allSelected={allSelected}
                 onSelectAll={selectAll}
                 onClear={clearSelection}
@@ -532,9 +671,19 @@ function JobDetailPageInner({ id }: { id: string }) {
             ) : (
               <div className="flex items-center justify-between">
                 <p className="text-sm text-muted-foreground">
-                  Showing <strong className="font-semibold text-foreground">
-                    {CANDIDATES.length}
-                  </strong>{" "}
+                  Showing{" "}
+                  <strong className="font-semibold text-foreground">
+                    {filteredCandidates.length}
+                  </strong>
+                  {filteredCandidates.length !== CANDIDATES.length && (
+                    <>
+                      {" "}
+                      of{" "}
+                      <strong className="font-semibold text-foreground">
+                        {CANDIDATES.length}
+                      </strong>
+                    </>
+                  )}{" "}
                   candidates
                 </p>
                 <Button variant="ghost" size="sm">
@@ -544,19 +693,41 @@ function JobDetailPageInner({ id }: { id: string }) {
               </div>
             )}
 
-            <div className="flex flex-col gap-3">
-              {CANDIDATES.map((c) => (
-                <CandidateCard
-                  key={c.id}
-                  candidate={c}
-                  onOpen={() => setLeadId(c.id)}
-                  onViewInsights={() => setLeadId(c.id)}
-                  selectable
-                  selected={selectedIds.has(c.id)}
-                  onSelectChange={(next) => toggleSelected(c.id, next)}
-                />
-              ))}
-            </div>
+            {filteredCandidates.length === 0 ? (
+              <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-muted/30 px-6 py-12 text-center">
+                <p className="text-sm font-medium">
+                  No candidates match your filters
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Try clearing some filters or adjusting your search.
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setFilters({})
+                    setSearchQuery("")
+                  }}
+                  className="mt-1"
+                >
+                  Clear all filters
+                </Button>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3">
+                {filteredCandidates.map((c) => (
+                  <CandidateCard
+                    key={c.id}
+                    candidate={c}
+                    onOpen={() => setLeadId(c.id)}
+                    onViewInsights={() => setLeadId(c.id)}
+                    selectable
+                    selected={selectedIds.has(c.id)}
+                    onSelectChange={(next) => toggleSelected(c.id, next)}
+                  />
+                ))}
+              </div>
+            )}
           </section>
         </div>
       </main>
