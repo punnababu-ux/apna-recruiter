@@ -123,7 +123,7 @@ export default function JobDetailPage({
         description="Simplilearn | hubli"
         tabs={
           <Tabs value={mainTab} onValueChange={(v) => setMainTab(v as typeof mainTab)}>
-            <TabsList>
+            <TabsList variant="inverted">
               <TabsTrigger value="screening">Screening (2)</TabsTrigger>
               <TabsTrigger value="selected">Selected (0)</TabsTrigger>
             </TabsList>
@@ -158,7 +158,7 @@ export default function JobDetailPage({
 
         <section className="flex min-w-0 flex-1 flex-col gap-4">
           <Tabs value={subTab} onValueChange={(v) => setSubTab(v as typeof subTab)}>
-            <TabsList className="bg-transparent p-0">
+            <TabsList variant="line">
               <TabsTrigger value="profile">Full profile</TabsTrigger>
               <TabsTrigger value="insights">AI screening insights</TabsTrigger>
               <TabsTrigger value="violations">Interview violations report</TabsTrigger>

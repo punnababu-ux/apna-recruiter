@@ -12,16 +12,10 @@
 
 import {
   Bot,
-  BriefcaseBusiness,
-  CalendarClock,
-  CircleCheck,
   ExternalLink,
-  Flag,
   Languages,
-  MapPin,
   Mic,
   Phone,
-  Star,
   User,
   Video,
 } from "lucide-react"
@@ -30,12 +24,20 @@ import * as React from "react"
 import {
   AGENTS,
   CALL_TASK_TYPES,
+  CLIENTS,
+  CRITERIA_CATEGORIES,
   LANGUAGES,
-  isAiRound,
-  type InterviewRoundsForm,
-  type InterviewTask,
-} from "@/components/onlyrounds/interview-rounds-step"
-import { CLIENTS, type JobDetailsForm } from "@/components/onlyrounds/job-details-step"
+  WORK_MODE_LABELS,
+  WORK_TYPE_LABELS,
+} from "@/lib/onlyrounds/constants"
+import { isAiRound } from "@/lib/onlyrounds/utils"
+import type {
+  InterviewRoundsForm,
+  InterviewTask,
+  JobDetailsForm,
+} from "@/types/onlyrounds"
+import { ROUTES } from "@/components/onlyrounds/create-job-wizard"
+import { DisplayField } from "@/components/onlyrounds/shared"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -71,16 +73,6 @@ function Section({
   )
 }
 
-function Field({ label, value }: { label: string; value?: string | null }) {
-  if (!value) return null
-  return (
-    <div className="flex flex-col gap-0.5">
-      <span className="text-xs text-muted-foreground">{label}</span>
-      <span className="text-sm text-foreground">{value}</span>
-    </div>
-  )
-}
-
 function FieldGrid({ children }: { children: React.ReactNode }) {
   return <div className="grid grid-cols-2 gap-x-6 gap-y-3">{children}</div>
 }
@@ -91,19 +83,9 @@ function Divider() {
 
 // ── Criteria summary ──────────────────────────────────────────────────────
 
-const CATEGORY_META = {
-  "must-have": { label: "Must-have", icon: CircleCheck, tone: "text-success" },
-  "good-to-have": { label: "Good-to-have", icon: Star, tone: "text-warning" },
-  "red-flag": { label: "Red flags", icon: Flag, tone: "text-destructive" },
-} as const
-
 function CriteriaSummary({ task }: { task: InterviewTask }) {
   const criteria = task.criteria ?? []
   if (criteria.length === 0) return null
-
-  const categories = (["must-have", "good-to-have", "red-flag"] as const).map(
-    (key) => ({ key, items: criteria.filter((c) => c.category === key) }),
-  )
 
   return (
     <div className="flex flex-col gap-3">
@@ -111,13 +93,13 @@ function CriteriaSummary({ task }: { task: InterviewTask }) {
         Evaluation criteria
       </span>
       <div className="flex flex-col gap-3">
-        {categories
-          .filter((c) => c.items.length > 0)
-          .map(({ key, items }) => {
-            const meta = CATEGORY_META[key]
+        {CRITERIA_CATEGORIES
+          .map((meta) => ({ meta, items: criteria.filter((c) => c.category === meta.key) }))
+          .filter(({ items }) => items.length > 0)
+          .map(({ meta, items }) => {
             const Icon = meta.icon
             return (
-              <div key={key} className="flex flex-col gap-1.5">
+              <div key={meta.key} className="flex flex-col gap-1.5">
                 <div className="flex items-center gap-1.5">
                   <Icon className={cn("size-3.5 shrink-0", meta.tone)} />
                   <span className="text-xs font-medium">{meta.label}</span>
@@ -321,7 +303,7 @@ export function ReviewStep({
   /** Base URL for the AI test page. Defaults to "/onlyrounds/test". */
   testBaseUrl?: string
 }) {
-  const base = testBaseUrl ?? "/onlyrounds/test"
+  const base = testBaseUrl ?? ROUTES.aiTest
 
   const expLabel =
     details.experienceType === "experienced"
@@ -336,7 +318,7 @@ export function ReviewStep({
       <Section title="Job description">
         <div className="rounded-lg border border-border bg-card p-4">
           <div className="flex flex-col gap-3">
-            <Field label="Job title" value={title} />
+            <DisplayField label="Job title" value={title} />
             {jd && (
               <div className="flex flex-col gap-0.5">
                 <span className="text-xs text-muted-foreground">Job description</span>
@@ -354,58 +336,46 @@ export function ReviewStep({
         <div className="rounded-lg border border-border bg-card p-4">
           <div className="flex flex-col gap-4">
             <FieldGrid>
-              <Field label="Client" value={details.clientId ? clientName(details.clientId) : undefined} />
-              <Field label="Location" value={[details.city, details.area].filter(Boolean).join(", ") || undefined} />
-              <Field label="Required experience" value={expLabel} />
-              <Field
+              <DisplayField label="Client" value={details.clientId ? clientName(details.clientId) : undefined} />
+              <DisplayField label="Location" value={[details.city, details.area].filter(Boolean).join(", ") || undefined} />
+              <DisplayField label="Required experience" value={expLabel} />
+              <DisplayField
                 label="Work type"
-                value={
-                  details.workType
-                    ? details.workType === "part-time"
-                      ? "Part time"
-                      : details.workType === "full-time"
-                        ? "Full time"
-                        : "Part time & Full time"
-                    : undefined
-                }
+                value={details.workType ? WORK_TYPE_LABELS[details.workType] : undefined}
               />
-              <Field
+              <DisplayField
                 label="Work mode"
-                value={
-                  details.workMode
-                    ? ({ wfh: "Work from home", wfo: "Work from office", field: "Field job", store: "Work from store" } as Record<string, string>)[details.workMode] ?? details.workMode
-                    : undefined
-                }
+                value={details.workMode ? WORK_MODE_LABELS[details.workMode] : undefined}
               />
-              <Field label="Compensation (experienced)" value={details.compExperienced || undefined} />
-              <Field label="Compensation (freshers)" value={details.compFresher || undefined} />
+              <DisplayField label="Compensation (experienced)" value={details.compExperienced || undefined} />
+              <DisplayField label="Compensation (freshers)" value={details.compFresher || undefined} />
             </FieldGrid>
 
             {details.scheduleDetails && (
               <>
                 <Divider />
-                <Field label="Work schedule" value={details.scheduleDetails} />
+                <DisplayField label="Work schedule" value={details.scheduleDetails} />
               </>
             )}
 
             {details.experiencedPersona && (
               <>
                 <Divider />
-                <Field label="Experienced candidate profile" value={details.experiencedPersona} />
+                <DisplayField label="Experienced candidate profile" value={details.experiencedPersona} />
               </>
             )}
 
             {details.fresherPersona && (
               <>
                 <Divider />
-                <Field label="Fresher candidate profile" value={details.fresherPersona} />
+                <DisplayField label="Fresher candidate profile" value={details.fresherPersona} />
               </>
             )}
 
             {details.additionalDetails && (
               <>
                 <Divider />
-                <Field label="Additional details" value={details.additionalDetails} />
+                <DisplayField label="Additional details" value={details.additionalDetails} />
               </>
             )}
           </div>

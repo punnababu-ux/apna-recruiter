@@ -25,33 +25,31 @@ import {
 import { useRouter } from "next/navigation"
 import * as React from "react"
 import { useRef, useState } from "react"
+import { useDraftPersistence } from "@/hooks/onlyrounds/use-draft-persistence"
+import { useCriteriaGeneration } from "@/hooks/onlyrounds/use-criteria-generation"
 
-import {
-  InterviewRoundsStep,
-  defaultInterviewRounds,
-  hasAiRound,
-  CALL_TASK_TYPES,
-  MAX_CRITERIA,
-  syncCefrCriteria,
-  summarizeDetails,
-  summarizeTasks,
-  type InterviewRoundsForm,
-  type CriteriaCategory,
-  type Criterion,
-} from "@/components/onlyrounds/interview-rounds-step"
+import { InterviewRoundsStep } from "@/components/onlyrounds/interview-rounds-step"
 import {
   JobDetailsStep,
+  validateJobDetails,
+  validateSection,
+} from "@/components/onlyrounds/job-details-step"
+import {
+  CALL_TASK_TYPES,
   REQUIRED_SECTION_IDS,
   SECTION_IDS,
   SECTION_LABELS,
+  defaultInterviewRounds,
   defaultJobDetails,
-  validateJobDetails,
-  validateSection,
-  type JobDetailsForm,
-  type SectionId,
-} from "@/components/onlyrounds/job-details-step"
+} from "@/lib/onlyrounds/constants"
+import { hasAiRound } from "@/lib/onlyrounds/utils"
+import type {
+  InterviewRoundsForm,
+  JobDetailsForm,
+  SectionId,
+} from "@/types/onlyrounds"
 import { ReviewStep } from "@/components/onlyrounds/review-step"
-import { Stepper, type Step, type StepStatus } from "@/components/onlyrounds/stepper"
+import { Stepper, type Step } from "@/components/onlyrounds/stepper"
 import { toast } from "sonner"
 import {
   AlertDialog,
@@ -64,6 +62,12 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
+import {
+  Field as UIField,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
@@ -83,6 +87,25 @@ type FormShape = {
   rounds: InterviewRoundsForm
 }
 
+// ── App routes ────────────────────────────────────────────────────────────
+
+export const ROUTES = {
+  jobs: "/onlyrounds/jobs",
+  jobsNew: "/onlyrounds/jobs/new",
+  aiTest: "/onlyrounds/test",
+} as const
+
+// ── Wizard constants ──────────────────────────────────────────────────────
+
+/** Minimum JD length before "Generate" switches to "clean-up" mode. */
+const JD_CLEANUP_THRESHOLD = 50
+/** Maximum JD file size accepted by the upload flow. */
+const MAX_JD_FILE_SIZE_BYTES = 5 * 1024 * 1024
+/** Simulated parse delay for plain-text / markdown uploads. */
+const MOCK_PARSE_DELAY_TXT_MS = 900
+/** Simulated parse delay for binary uploads (PDF, DOCX). */
+const MOCK_PARSE_DELAY_BINARY_MS = 1400
+
 // ── Draft persistence ─────────────────────────────────────────────────────
 // Prototype-level: persist to localStorage so the user can come back to a
 // saved draft. Production would swap this for a server-side draft API.
@@ -96,27 +119,6 @@ const emptyForm: FormShape = {
   rounds: defaultInterviewRounds,
 }
 
-function loadDraft(): FormShape | null {
-  if (typeof window === "undefined") return null
-  try {
-    const raw = window.localStorage.getItem(DRAFT_KEY)
-    if (!raw) return null
-    // Merge over defaults so drafts saved before a field existed (e.g.
-    // `rounds`) still hydrate with a valid shape.
-    return { ...emptyForm, ...(JSON.parse(raw) as Partial<FormShape>) }
-  } catch {
-    return null
-  }
-}
-
-function persistDraft(form: FormShape) {
-  if (typeof window === "undefined") return
-  try {
-    window.localStorage.setItem(DRAFT_KEY, JSON.stringify(form))
-  } catch {
-    // Quota exceeded / disabled — silently ignore for the prototype.
-  }
-}
 
 type StepId = "description" | "details" | "rounds" | "review"
 
@@ -146,7 +148,26 @@ const STEPS: { id: StepId; label: string; description: string }[] = [
 export function CreateJobWizard() {
   const router = useRouter()
   const [activeId, setActiveId] = useState<StepId>("description")
-  const [form, setForm] = useState<FormShape>(emptyForm)
+
+  const {
+    form,
+    setForm,
+    isDirty,
+    persistDraft,
+    clearDraft,
+  } = useDraftPersistence(DRAFT_KEY, emptyForm)
+
+  // A ref that always points to the latest form — used by useCriteriaGeneration
+  // so its callbacks don't go stale on every form change.
+  const formRef = useRef(form)
+  React.useEffect(() => { formRef.current = form }, [form])
+
+  const {
+    generatingTasks,
+    generateTaskCriteria: _generateTaskCriteria,
+    generateAllCriteria,
+    abortGeneration,
+  } = useCriteriaGeneration(formRef as React.RefObject<FormShape>, setForm)
 
   const [filledFromJd, setFilledFromJd] = useState(false)
   const [showErrors, setShowErrors] = useState(false)
@@ -156,35 +177,9 @@ export function CreateJobWizard() {
   const [step2OpenSection, setStep2OpenSection] = useState<SectionId | null>(
     "basics",
   )
-  // Snapshot of the form state at the last successful save. Anything that
-  // differs makes the wizard "dirty" and triggers the exit confirm dialog.
-  const [lastSavedJson, setLastSavedJson] = useState<string>(() =>
-    JSON.stringify(emptyForm),
-  )
   const [exitDialogOpen, setExitDialogOpen] = useState(false)
-  const [generatingTasks, setGeneratingTasks] = useState<Record<string, boolean>>({})
   const [showRoundErrors, setShowRoundErrors] = useState(false)
-  /** AbortController for the current generateAllCriteria run. Aborted when the user navigates away from step 3. */
-  const generationAbortRef = useRef<AbortController | null>(null)
 
-  // Load any existing draft on mount. Guarded in a useEffect so it runs
-  // client-only (avoids SSR hydration mismatches when localStorage is
-  // unavailable on the server).
-  React.useEffect(() => {
-    const draft = loadDraft()
-    if (draft) {
-      setForm(draft)
-      setLastSavedJson(JSON.stringify(draft))
-      toast.info("Loaded your saved draft", {
-        description: "Pick up where you left off.",
-      })
-    }
-  }, [])
-
-  const isDirty = React.useMemo(
-    () => JSON.stringify(form) !== lastSavedJson,
-    [form, lastSavedJson],
-  )
 
   /** Top-bar "Create new job" back link click. If there's nothing to
    *  lose, navigate immediately; otherwise open the 3-option confirm. */
@@ -193,20 +188,19 @@ export function CreateJobWizard() {
       setExitDialogOpen(true)
       return
     }
-    router.push("/onlyrounds/jobs")
+    router.push(ROUTES.jobs)
   }
 
   const handleDiscardAndExit = () => {
     setExitDialogOpen(false)
-    router.push("/onlyrounds/jobs")
+    router.push(ROUTES.jobs)
   }
 
   const handleSaveAndExit = () => {
-    persistDraft(form)
-    setLastSavedJson(JSON.stringify(form))
+    persistDraft(form) // from useDraftPersistence
     setExitDialogOpen(false)
     toast.success("Draft saved")
-    router.push("/onlyrounds/jobs")
+    router.push(ROUTES.jobs)
   }
 
   const updateDetails = <K extends keyof JobDetailsForm>(
@@ -330,7 +324,7 @@ export function CreateJobWizard() {
       step2OpenSection !== SECTION_IDS[0])
 
   const stepsForRail: Step[] = STEPS.map((s, i) => {
-    const status: StepStatus =
+    const status =
       i < activeIdx ? "completed" : i === activeIdx ? "current" : "pending"
     return {
       id: s.id,
@@ -343,105 +337,6 @@ export function CreateJobWizard() {
     setForm((prev) => ({ ...prev, [key]: value }))
   }
 
-  const generateTaskCriteria = async (taskId: string, signal?: AbortSignal) => {
-    const task = form.rounds.tasks.find((t) => t.id === taskId)
-    if (!task || !CALL_TASK_TYPES.has(task.type)) return
-
-    setGeneratingTasks((prev) => ({ ...prev, [taskId]: true }))
-    try {
-      const res = await fetch("/api/onlyrounds/generate-criteria", {
-        method: "POST",
-        signal,
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          title: form.title,
-          jd: form.jd,
-          detailsSummary: summarizeDetails(form.details),
-          tasksSummary: summarizeTasks(form.rounds.tasks),
-          taskName: task.title || (task.type === "screening" ? "Screening" : "Interview"),
-          taskType: task.type,
-        }),
-      })
-
-      if (!res.ok) {
-        throw new Error("Failed to generate")
-      }
-
-      const data = await res.json()
-      if (data.error) {
-        throw new Error(data.error)
-      }
-
-      const nextCriteria: Criterion[] = []
-      let critCounter = 0
-      const push = (category: CriteriaCategory, arr?: string[]) => {
-        for (const raw of arr ?? []) {
-          if (nextCriteria.length >= MAX_CRITERIA) break
-          const text = String(raw).trim()
-          if (text) {
-            critCounter++
-            nextCriteria.push({
-              id: `crit-${task.id}-${critCounter}`,
-              category,
-              text,
-            })
-          }
-        }
-      }
-      push("must-have", data.mustHave)
-      push("good-to-have", data.goodToHave)
-      push("red-flag", data.redFlag)
-
-      const synced = syncCefrCriteria(nextCriteria, task.screening, task.id)
-
-      setForm((prev) => {
-        const updatedTasks = prev.rounds.tasks.map((t) => {
-          if (t.id === taskId) {
-            return { ...t, criteria: synced }
-          }
-          return t
-        })
-        return {
-          ...prev,
-          rounds: {
-            ...prev.rounds,
-            tasks: updatedTasks,
-          },
-        }
-      })
-    } catch (err) {
-      // Ignore aborts — user navigated away intentionally.
-      if (err instanceof Error && err.name === "AbortError") return
-      console.error(`Error generating criteria for task ${taskId}:`, err)
-      toast.error(`Could not generate criteria for ${task.title || (task.type === "screening" ? "Screening" : "Interview")} round.`)
-    } finally {
-      setGeneratingTasks((prev) => {
-        const next = { ...prev }
-        delete next[taskId]
-        return next
-      })
-    }
-  }
-
-  const generateAllCriteria = async () => {
-    const tasksToGenerate = form.rounds.tasks.filter(
-      (t) =>
-        CALL_TASK_TYPES.has(t.type) &&
-        t.screening.mode === "ai" &&
-        (!t.criteria || t.criteria.length === 0)
-    )
-
-    if (tasksToGenerate.length === 0) return
-
-    // Abort any previous run, then create a fresh controller for this one.
-    generationAbortRef.current?.abort()
-    const controller = new AbortController()
-    generationAbortRef.current = controller
-
-    await Promise.all(
-      tasksToGenerate.map((t) => generateTaskCriteria(t.id, controller.signal))
-    )
-  }
 
   const goNext = async () => {
     // ── Step 4 (Review & Publish) — publish and navigate to jobs list ─────
@@ -449,7 +344,7 @@ export function CreateJobWizard() {
       toast.success("Job published successfully!", {
         description: `"${form.title}" is now live and accepting candidates.`,
       })
-      router.push("/onlyrounds/jobs")
+      router.push(ROUTES.jobs)
       return
     }
 
@@ -634,9 +529,7 @@ export function CreateJobWizard() {
     if (isFirst) return
     // Leaving step 3 — cancel any in-flight criteria generation and clear errors.
     if (activeId === "rounds") {
-      generationAbortRef.current?.abort()
-      generationAbortRef.current = null
-      setGeneratingTasks({})
+      abortGeneration()
       setShowRoundErrors(false)
     }
     setShowErrors(false)
@@ -858,12 +751,8 @@ function DescriptionStep({
 }) {
   return (
     <div className="flex flex-col gap-5">
-      <Field
-        label="Job title"
-        htmlFor="title"
-        hint="Shown on the candidate landing page."
-        error={showErrors && !form.title.trim() ? "Required" : undefined}
-      >
+      <UIField>
+        <FieldLabel htmlFor="title">Job title</FieldLabel>
         <Input
           id="title"
           value={form.title}
@@ -871,7 +760,12 @@ function DescriptionStep({
           placeholder="e.g. Customer Support Associate"
           aria-invalid={showErrors && !form.title.trim() ? true : undefined}
         />
-      </Field>
+        {showErrors && !form.title.trim() ? (
+          <FieldError>Required</FieldError>
+        ) : (
+          <FieldDescription>Shown on the candidate landing page.</FieldDescription>
+        )}
+      </UIField>
       <JDField
         value={form.jd}
         onChange={(next) => update("jd", next)}
@@ -907,7 +801,7 @@ function JDField({
   // "Cleanup" mode kicks in when the user has typed/pasted a meaningful
   // chunk of JD — we still send the title if they have one, but the model
   // is expected to polish the existing text rather than write from scratch.
-  const isCleanup = value.trim().length > 50
+  const isCleanup = value.trim().length > JD_CLEANUP_THRESHOLD
   const canGenerate = hasTitle || hasJd
 
   const generate = async () => {
@@ -962,7 +856,7 @@ function JDField({
       setError("Upload a .txt, .md, .pdf, .doc, or .docx file.")
       return
     }
-    if (file.size > 5 * 1024 * 1024) {
+    if (file.size > MAX_JD_FILE_SIZE_BYTES) {
       setError("File must be under 5 MB.")
       return
     }
@@ -974,9 +868,9 @@ function JDField({
       let parsed = ""
       if (/\.(txt|md)$/i.test(file.name)) {
         parsed = await file.text()
-        await new Promise((r) => setTimeout(r, 900))
+        await new Promise((r) => setTimeout(r, MOCK_PARSE_DELAY_TXT_MS))
       } else {
-        await new Promise((r) => setTimeout(r, 1400))
+        await new Promise((r) => setTimeout(r, MOCK_PARSE_DELAY_BINARY_MS))
         // Mock server-side parse: use filename stem as the role so the
         // derived title is plausible until real parsing is wired up.
         const stem = file.name
@@ -1130,43 +1024,4 @@ function deriveTitleFromJd(jd: string): string {
   const firstLine = text.split(/\n/)[0].trim()
   if (firstLine.length > 0 && firstLine.length <= 60) return firstLine
   return firstLine.split(/\s+/).slice(0, 6).join(" ")
-}
-
-function StepPlaceholder({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex min-h-40 items-center justify-center rounded-md border border-dashed border-border bg-muted/30 text-sm text-muted-foreground">
-      {children}
-    </div>
-  )
-}
-
-function Field({
-  label,
-  htmlFor,
-  hint,
-  error,
-  children,
-}: {
-  label: string
-  htmlFor: string
-  hint?: string
-  error?: string
-  children: React.ReactNode
-}) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <Label
-        htmlFor={htmlFor}
-        className={cn("text-sm font-medium", error && "text-destructive")}
-      >
-        {label}
-      </Label>
-      {children}
-      {error ? (
-        <p className="text-xs text-destructive">{error}</p>
-      ) : hint ? (
-        <p className="text-xs text-muted-foreground">{hint}</p>
-      ) : null}
-    </div>
-  )
 }

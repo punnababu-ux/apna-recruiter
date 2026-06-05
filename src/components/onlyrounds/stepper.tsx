@@ -1,3 +1,5 @@
+"use client"
+
 /**
  * Stepper — vertical wizard progress rail.
  *

@@ -1,0 +1,149 @@
+"use client"
+
+import * as React from "react"
+import type { LucideIcon } from "lucide-react"
+
+import { Label } from "@/components/ui/label"
+import { cn } from "@/lib/utils"
+
+// ── WizardField ───────────────────────────────────────────────────────────
+// Shared form-field wrapper used across all wizard steps.
+// Unifies the three previously-duplicated local Field helpers.
+
+export function WizardField({
+  label,
+  htmlFor,
+  hint,
+  error,
+  required,
+  optional,
+  children,
+}: {
+  label: string
+  htmlFor?: string
+  hint?: string
+  error?: string
+  required?: boolean
+  optional?: boolean
+  children: React.ReactNode
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <Label
+        htmlFor={htmlFor}
+        className={cn("text-sm font-medium", error && "text-destructive")}
+      >
+        {label}
+        {required && <span className="ml-0.5 text-destructive">*</span>}
+        {optional && (
+          <span className="ml-1 text-xs font-normal text-muted-foreground">
+            (Optional)
+          </span>
+        )}
+      </Label>
+      {children}
+      {error ? (
+        <p className="text-xs text-destructive">{error}</p>
+      ) : hint ? (
+        <p className="text-xs text-muted-foreground">{hint}</p>
+      ) : null}
+    </div>
+  )
+}
+
+// ── DisplayField ──────────────────────────────────────────────────────────
+// Read-only label + value pair. Returns null when value is null/undefined.
+
+export function DisplayField({
+  label,
+  value,
+}: {
+  label: string
+  value?: string | React.ReactNode | null
+}) {
+  if (value == null) return null
+  return (
+    <div className="flex flex-col gap-1">
+      <span className="text-overline text-muted-foreground">{label}</span>
+      {typeof value === "string" ? (
+        <span className="text-sm font-medium text-foreground whitespace-pre-wrap">
+          {value || "—"}
+        </span>
+      ) : (
+        value
+      )}
+    </div>
+  )
+}
+
+// ── InfoChip ──────────────────────────────────────────────────────────────
+// Icon + label inline chip. Used by ScreeningSummary (muted bg) and
+// InterviewerCard InfoPill (bordered). The variant prop selects the style.
+
+export function InfoChip({
+  icon: Icon,
+  children,
+  variant = "muted",
+}: {
+  icon: LucideIcon
+  children: React.ReactNode
+  variant?: "muted" | "outlined"
+}) {
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs text-muted-foreground",
+        variant === "outlined"
+          ? "border border-border bg-card"
+          : "bg-muted",
+      )}
+    >
+      <Icon className="size-3" />
+      {children}
+    </span>
+  )
+}
+
+// ── SelectionCard ─────────────────────────────────────────────────────────
+// Selectable card with border/background toggle and keyboard support.
+// Uses div[role=button] to allow nested interactive elements (e.g. play buttons).
+
+export function SelectionCard({
+  selected,
+  onSelect,
+  className,
+  children,
+}: {
+  selected: boolean
+  onSelect: () => void
+  className?: string
+  children: React.ReactNode
+}) {
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      aria-pressed={selected}
+      onClick={onSelect}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault()
+          onSelect()
+        }
+      }}
+      className={cn(
+        "cursor-pointer rounded-lg border p-4 text-left outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring/50",
+        selected ? "border-primary bg-accent/30" : "border-border hover:bg-muted/40",
+        className,
+      )}
+    >
+      {children}
+    </div>
+  )
+}
+
+// ── RoundsErrorContext ────────────────────────────────────────────────────
+// Carries the showErrors flag from InterviewRoundsStep down to ScreeningEditor
+// and CefrAddon without prop-drilling through TaskCard.
+
+export const RoundsErrorContext = React.createContext(false)

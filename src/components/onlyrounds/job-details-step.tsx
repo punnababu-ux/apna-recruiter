@@ -50,6 +50,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import {
+  Field as UIField,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
@@ -62,101 +68,28 @@ import {
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
+import {
+  CLIENTS,
+  REQUIRED_SECTION_IDS,
+  SECTION_IDS,
+  SECTION_LABELS,
+  WORK_MODE_LABELS,
+  WORK_TYPE_LABELS,
+} from "@/lib/onlyrounds/constants"
+import type {
+  ExperienceRequirement,
+  JobDetailsForm,
+  QAItem,
+  QuestionSection,
+  SectionId,
+  SectionStatus,
+  WorkMode,
+  WorkType,
+} from "@/types/onlyrounds"
 
-// ---- types --------------------------------------------------------------
-
-export type ExperienceRequirement = "any" | "experienced" | "freshers"
-export type WorkType = "part-time" | "full-time" | "both"
-export type WorkMode = "wfh" | "wfo" | "field" | "store"
-
-export type QAItem = { id: string; question: string; answer: string }
-
-export type QuestionSection = {
-  id: string
-  title: string
-  /** Who this section is shown to during the screening flow.
-   *  Forced to match the job-level `experienceType` when the job is
-   *  single-audience; user-selectable (with `"both"` available) when the
-   *  job is `"any"`. */
-  target: "freshers" | "experienced" | "both"
-  /** How many questions from this section each candidate gets */
-  questionsPerCandidate: number
-  /** Whether to shuffle the question order per candidate */
-  randomize: boolean
-  items: QAItem[]
-}
-
-export type JobDetailsForm = {
-  // Section 1
-  clientId: string
-  city: string
-  area: string
-  experienceType: ExperienceRequirement
-  experiencedPersona: string
-  fresherPersona: string
-
-  // Section 2
-  workType: WorkType | ""
-  workMode: WorkMode | ""
-  scheduleDetails: string
-
-  // Section 3
-  compExperienced: string
-  compFresher: string
-
-  // Section 4 — merged AI question bank + candidate FAQs
-  questionSections: QuestionSection[]
-
-  // Section 5
-  additionalDetails: string
-}
-
-export const defaultJobDetails: JobDetailsForm = {
-  clientId: "",
-  city: "",
-  area: "",
-  experienceType: "any",
-  experiencedPersona: "",
-  fresherPersona: "",
-  workType: "",
-  workMode: "",
-  scheduleDetails: "",
-  compExperienced: "",
-  compFresher: "",
-  questionSections: [],
-  additionalDetails: "",
-}
+export type { JobDetailsForm, SectionId, SectionStatus }
 
 // ── Section model ──────────────────────────────────────────────────────────
-// Step 2 renders as a single-open accordion. The wizard footer reads section
-// status to drive the adaptive Continue/Next button.
-
-export const SECTION_IDS = [
-  "basics",
-  "schedule",
-  "compensation",
-  "questions",
-  "additional",
-] as const
-export type SectionId = (typeof SECTION_IDS)[number]
-
-export const REQUIRED_SECTION_IDS: readonly SectionId[] = [
-  "basics",
-  "schedule",
-  "compensation",
-]
-export const OPTIONAL_SECTION_IDS: readonly SectionId[] = [
-  "questions",
-  "additional",
-]
-
-export const SECTION_LABELS: Record<SectionId, string> = {
-  basics: "Basic job details",
-  schedule: "Work schedule",
-  compensation: "Compensation details",
-  questions: "Question sections",
-  additional: "Additional details",
-}
 
 // Per-section icon shown in the accordion header chip (replaces the
 // numeric index).
@@ -167,12 +100,6 @@ const SECTION_ICONS: Record<SectionId, LucideIcon> = {
   questions: MessageCircleQuestion,
   additional: FileText,
 }
-
-export type SectionStatus =
-  | "untouched" // user hasn't filled anything in this section
-  | "in-progress" // some fields filled but required ones still empty
-  | "complete" // all required fields valid (or has content for optional)
-  | "invalid" // showErrors=true AND has empty required fields
 
 /**
  * Returns human-readable labels for every empty required field in the given
@@ -280,29 +207,16 @@ export function validateJobDetails(form: JobDetailsForm): string[] {
 
 const MAX_QA = 15
 
-// Module-level monotonic counter — used to mint stable keys for draft rows
-// and saved QA items without calling Date.now/Math.random during render.
-let qaIdCounter = 0
-const nextId = (prefix: string) => {
-  qaIdCounter += 1
-  return `${prefix}-${qaIdCounter}`
+/** Create a useRef-based monotonic ID generator scoped to a component instance. */
+function useIdGen(prefix: string) {
+  const counter = React.useRef(0)
+  return React.useCallback(() => {
+    counter.current += 1
+    return `${prefix}-${counter.current}`
+  }, [prefix])
 }
 
 type Draft = { key: string; question: string; answer: string }
-const makeDraft = (): Draft => ({
-  key: nextId("draft"),
-  question: "",
-  answer: "",
-})
-
-// Mock client list — the real flow would fetch from the workspace.
-export const CLIENTS: { id: string; name: string }[] = [
-  { id: "flipkart", name: "Flipkart" },
-  { id: "swiggy", name: "Swiggy" },
-  { id: "amazon", name: "Amazon" },
-  { id: "zomato", name: "Zomato" },
-  { id: "myntra", name: "Myntra" },
-]
 
 // Single-select chip options for the segmented controls. Work type/mode
 // include "" in the value union so an unselected (required) state renders
@@ -313,15 +227,15 @@ const EXPERIENCE_CHIPS: ChipTabItem<ExperienceRequirement>[] = [
   { value: "freshers", label: "Freshers only" },
 ]
 const WORK_TYPE_CHIPS: ChipTabItem<WorkType | "">[] = [
-  { value: "part-time", label: "Part time" },
-  { value: "full-time", label: "Full time" },
-  { value: "both", label: "Both" },
+  { value: "part-time", label: WORK_TYPE_LABELS["part-time"] },
+  { value: "full-time", label: WORK_TYPE_LABELS["full-time"] },
+  { value: "both", label: WORK_TYPE_LABELS["both"] },
 ]
 const WORK_MODE_CHIPS: ChipTabItem<WorkMode | "">[] = [
-  { value: "wfh", label: "Work from home" },
-  { value: "wfo", label: "Work from office" },
-  { value: "field", label: "Field job" },
-  { value: "store", label: "Work from store" },
+  { value: "wfh", label: WORK_MODE_LABELS["wfh"] },
+  { value: "wfo", label: WORK_MODE_LABELS["wfo"] },
+  { value: "field", label: WORK_MODE_LABELS["field"] },
+  { value: "store", label: WORK_MODE_LABELS["store"] },
 ]
 
 // ---- component ----------------------------------------------------------
@@ -367,11 +281,8 @@ export function JobDetailsStep({
         onToggle={() => toggle("basics")}
       >
         {/* Client — own line */}
-        <Field
-          label="Client"
-          htmlFor="client"
-          error={showErrors && !form.clientId ? "Required" : undefined}
-        >
+        <UIField>
+          <FieldLabel htmlFor="client">Client</FieldLabel>
           <Select
             value={form.clientId}
             onValueChange={(v) => update("clientId", (v as string) ?? "")}
@@ -391,15 +302,13 @@ export function JobDetailsStep({
               ))}
             </SelectContent>
           </Select>
-        </Field>
+          <FieldError>{showErrors && !form.clientId ? "Required" : undefined}</FieldError>
+        </UIField>
 
         {/* Job city + Job area — side by side */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field
-            label="Job city"
-            htmlFor="city"
-            error={showErrors && !form.city.trim() ? "Required" : undefined}
-          >
+          <UIField>
+            <FieldLabel htmlFor="city">Job city</FieldLabel>
             <Input
               id="city"
               value={form.city}
@@ -409,12 +318,10 @@ export function JobDetailsStep({
                 showErrors && !form.city.trim() ? true : undefined
               }
             />
-          </Field>
-          <Field
-            label="Job area"
-            htmlFor="area"
-            error={showErrors && !form.area.trim() ? "Required" : undefined}
-          >
+            <FieldError>{showErrors && !form.city.trim() ? "Required" : undefined}</FieldError>
+          </UIField>
+          <UIField>
+            <FieldLabel htmlFor="area">Job area</FieldLabel>
             <Input
               id="area"
               value={form.area}
@@ -424,12 +331,14 @@ export function JobDetailsStep({
                 showErrors && !form.area.trim() ? true : undefined
               }
             />
-          </Field>
+            <FieldError>{showErrors && !form.area.trim() ? "Required" : undefined}</FieldError>
+          </UIField>
         </div>
 
         {/* Required experience — full-width chip group below the grid so
             the chips have room to sit on one line. */}
-        <Field label="Required experience">
+        <UIField>
+          <FieldLabel>Required experience</FieldLabel>
           <ChipTabs
             variant="choice"
             items={EXPERIENCE_CHIPS}
@@ -437,19 +346,11 @@ export function JobDetailsStep({
             onValueChange={(v) => update("experienceType", v)}
             aria-label="Required experience"
           />
-        </Field>
+        </UIField>
 
         {showExperiencedPersona ? (
-          <Field
-            label="Who is an experienced candidate for this role?"
-            htmlFor="experienced-persona"
-            hint="Describe the kind of experienced candidate you're hoping to meet."
-            error={
-              showErrors && !form.experiencedPersona.trim()
-                ? "Required"
-                : undefined
-            }
-          >
+          <UIField>
+            <FieldLabel htmlFor="experienced-persona">Who is an experienced candidate for this role?</FieldLabel>
             <Textarea
               id="experienced-persona"
               value={form.experiencedPersona}
@@ -462,17 +363,16 @@ export function JobDetailsStep({
                   : undefined
               }
             />
-          </Field>
+            {showErrors && !form.experiencedPersona.trim() ? (
+              <FieldError>Required</FieldError>
+            ) : (
+              <FieldDescription>Describe the kind of experienced candidate you're hoping to meet.</FieldDescription>
+            )}
+          </UIField>
         ) : null}
         {showFresherPersona ? (
-          <Field
-            label="Who is a fresher candidate for this role?"
-            htmlFor="fresher-persona"
-            hint="Describe the fresher profile that fits this role."
-            error={
-              showErrors && !form.fresherPersona.trim() ? "Required" : undefined
-            }
-          >
+          <UIField>
+            <FieldLabel htmlFor="fresher-persona">Who is a fresher candidate for this role?</FieldLabel>
             <Textarea
               id="fresher-persona"
               value={form.fresherPersona}
@@ -483,7 +383,12 @@ export function JobDetailsStep({
                 showErrors && !form.fresherPersona.trim() ? true : undefined
               }
             />
-          </Field>
+            {showErrors && !form.fresherPersona.trim() ? (
+              <FieldError>Required</FieldError>
+            ) : (
+              <FieldDescription>Describe the fresher profile that fits this role.</FieldDescription>
+            )}
+          </UIField>
         ) : null}
       </Section>
 
@@ -496,10 +401,8 @@ export function JobDetailsStep({
         isOpen={openSectionId === "schedule"}
         onToggle={() => toggle("schedule")}
       >
-        <Field
-          label="Work type"
-          error={showErrors && !form.workType ? "Required" : undefined}
-        >
+        <UIField>
+          <FieldLabel>Work type</FieldLabel>
           <ChipTabs
             variant="choice"
             items={WORK_TYPE_CHIPS}
@@ -508,11 +411,10 @@ export function JobDetailsStep({
             aria-label="Work type"
             aria-invalid={showErrors && !form.workType ? true : undefined}
           />
-        </Field>
-        <Field
-          label="Work mode"
-          error={showErrors && !form.workMode ? "Required" : undefined}
-        >
+          <FieldError>{showErrors && !form.workType ? "Required" : undefined}</FieldError>
+        </UIField>
+        <UIField>
+          <FieldLabel>Work mode</FieldLabel>
           <ChipTabs
             variant="choice"
             items={WORK_MODE_CHIPS}
@@ -521,15 +423,10 @@ export function JobDetailsStep({
             aria-label="Work mode"
             aria-invalid={showErrors && !form.workMode ? true : undefined}
           />
-        </Field>
-        <Field
-          label="Work schedule and shift details"
-          htmlFor="schedule-details"
-          hint="E.g. Mon–Sat, 9am–6pm; two rotational shifts; one weekly off."
-          error={
-            showErrors && !form.scheduleDetails.trim() ? "Required" : undefined
-          }
-        >
+          <FieldError>{showErrors && !form.workMode ? "Required" : undefined}</FieldError>
+        </UIField>
+        <UIField>
+          <FieldLabel htmlFor="schedule-details">Work schedule and shift details</FieldLabel>
           <Textarea
             id="schedule-details"
             value={form.scheduleDetails}
@@ -540,7 +437,12 @@ export function JobDetailsStep({
               showErrors && !form.scheduleDetails.trim() ? true : undefined
             }
           />
-        </Field>
+          {showErrors && !form.scheduleDetails.trim() ? (
+            <FieldError>Required</FieldError>
+          ) : (
+            <FieldDescription>E.g. Mon–Sat, 9am–6pm; two rotational shifts; one weekly off.</FieldDescription>
+          )}
+        </UIField>
       </Section>
 
       {/* Section 3 — compensation */}
@@ -554,16 +456,8 @@ export function JobDetailsStep({
       >
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {showExperiencedPersona ? (
-            <Field
-              label="Compensation — experienced candidates"
-              htmlFor="comp-experienced"
-              hint="E.g. ₹4–6 LPA fixed + incentives."
-              error={
-                showErrors && !form.compExperienced.trim()
-                  ? "Required"
-                  : undefined
-              }
-            >
+            <UIField>
+              <FieldLabel htmlFor="comp-experienced">Compensation — experienced candidates</FieldLabel>
               <Input
                 id="comp-experienced"
                 value={form.compExperienced}
@@ -573,17 +467,16 @@ export function JobDetailsStep({
                   showErrors && !form.compExperienced.trim() ? true : undefined
                 }
               />
-            </Field>
+              {showErrors && !form.compExperienced.trim() ? (
+                <FieldError>Required</FieldError>
+              ) : (
+                <FieldDescription>E.g. ₹4–6 LPA fixed + incentives.</FieldDescription>
+              )}
+            </UIField>
           ) : null}
           {showFresherPersona ? (
-            <Field
-              label="Compensation — fresher candidates"
-              htmlFor="comp-fresher"
-              hint="E.g. ₹2–3 LPA fixed + incentives."
-              error={
-                showErrors && !form.compFresher.trim() ? "Required" : undefined
-              }
-            >
+            <UIField>
+              <FieldLabel htmlFor="comp-fresher">Compensation — fresher candidates</FieldLabel>
               <Input
                 id="comp-fresher"
                 value={form.compFresher}
@@ -593,7 +486,12 @@ export function JobDetailsStep({
                   showErrors && !form.compFresher.trim() ? true : undefined
                 }
               />
-            </Field>
+              {showErrors && !form.compFresher.trim() ? (
+                <FieldError>Required</FieldError>
+              ) : (
+                <FieldDescription>E.g. ₹2–3 LPA fixed + incentives.</FieldDescription>
+              )}
+            </UIField>
           ) : null}
         </div>
       </Section>
@@ -623,7 +521,8 @@ export function JobDetailsStep({
         isOpen={openSectionId === "additional"}
         onToggle={() => toggle("additional")}
       >
-        <Field label="Notes" htmlFor="additional-details">
+        <UIField>
+          <FieldLabel htmlFor="additional-details">Notes</FieldLabel>
           <Textarea
             id="additional-details"
             value={form.additionalDetails}
@@ -631,7 +530,7 @@ export function JobDetailsStep({
             placeholder="Share anything else candidates should know."
             rows={5}
           />
-        </Field>
+        </UIField>
       </Section>
     </div>
   )
@@ -709,7 +608,7 @@ function Section({
           />
         )}
         <div className="min-w-0 flex-1">
-          <h3 className="text-base font-semibold leading-tight">{title}</h3>
+          <h3 className="text-sm font-semibold leading-tight">{title}</h3>
           {description ? (
             <p className="mt-0.5 text-xs text-muted-foreground">
               {description}
@@ -735,37 +634,6 @@ function Section({
         </div>
       ) : null}
     </section>
-  )
-}
-
-function Field({
-  label,
-  htmlFor,
-  hint,
-  error,
-  children,
-}: {
-  label: string
-  htmlFor?: string
-  hint?: string
-  error?: string
-  children: React.ReactNode
-}) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <Label
-        htmlFor={htmlFor}
-        className={cn("text-sm font-medium", error && "text-destructive")}
-      >
-        {label}
-      </Label>
-      {children}
-      {error ? (
-        <p className="text-xs text-destructive">{error}</p>
-      ) : hint ? (
-        <p className="text-xs text-muted-foreground">{hint}</p>
-      ) : null}
-    </div>
   )
 }
 
@@ -796,6 +664,7 @@ function QuestionSectionsEditor({
 }) {
   const [showAddSection, setShowAddSection] = React.useState(false)
   const [addingSectionName, setAddingSectionName] = React.useState("")
+  const nextSectionId = useIdGen("qs")
   // Accordion: at most one section open at a time. Lifted here so we can
   // open a freshly-added section and close the others in one go.
   const [expandedSectionId, setExpandedSectionId] = React.useState<
@@ -821,7 +690,7 @@ function QuestionSectionsEditor({
     const trimmed = title.trim()
     if (!trimmed) return
     const newSection: QuestionSection = {
-      id: nextId("qs"),
+      id: nextSectionId(),
       title: trimmed,
       target: resolveTarget(presetTarget),
       questionsPerCandidate: 2,
@@ -1141,11 +1010,11 @@ function QuestionSectionItem({
                   openIfNeeded()
                 }}
               >
-                <Pencil className="size-3.5" />
+                <Pencil className="size-3" />
                 Rename
               </DropdownMenuItem>
               <DropdownMenuItem variant="destructive" onClick={onRemove}>
-                <Trash2 className="size-3.5" />
+                <Trash2 className="size-3" />
                 Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -1257,6 +1126,10 @@ function QuestionSectionBody({
   const [editorOpen, setEditorOpen] = React.useState(false)
   const [editingId, setEditingId] = React.useState<string | null>(null)
   const [drafts, setDrafts] = React.useState<Draft[]>([])
+  const nextDraftId = useIdGen(`draft-${sectionId}`)
+  const nextQaId = useIdGen(`qs-qa-${sectionId}`)
+  const nextCsvId = useIdGen(`qs-csv-${sectionId}`)
+  const makeDraft = (): Draft => ({ key: nextDraftId(), question: "", answer: "" })
 
   const atLimit = items.length >= MAX_QA
   const remaining = Math.max(0, MAX_QA - items.length - drafts.length)
@@ -1319,7 +1192,7 @@ function QuestionSectionBody({
       [
         ...items,
         ...filled.map((d) => ({
-          id: nextId("qs-qa"),
+          id: nextQaId(),
           question: d.question,
           answer: d.answer,
         })),
@@ -1345,7 +1218,7 @@ function QuestionSectionBody({
     const parsed = body
       .filter((r) => r.length >= 2 && (r[0].trim() || r[1].trim()))
       .map((r) => ({
-        id: nextId("qs-csv"),
+        id: nextCsvId(),
         question: r[0].trim(),
         answer: r[1].trim(),
       }))
@@ -1407,7 +1280,7 @@ function QuestionSectionBody({
                 aria-label="Edit question"
                 onClick={() => openEdit(item)}
               >
-                <Pencil className="size-3.5" />
+                <Pencil className="size-3" />
               </Button>
               <Button
                 type="button"
@@ -1416,7 +1289,7 @@ function QuestionSectionBody({
                 aria-label="Remove question"
                 onClick={() => removeAt(item.id)}
               >
-                <Trash2 className="size-3.5" />
+                <Trash2 className="size-3" />
               </Button>
             </li>
           ))}
@@ -1511,7 +1384,7 @@ function QuestionSectionBody({
                       aria-label="Remove question"
                       onClick={() => removeDraft(d.key)}
                     >
-                      <Trash2 className="size-3.5" />
+                      <Trash2 className="size-3" />
                     </Button>
                   </div>
                 ) : null}
