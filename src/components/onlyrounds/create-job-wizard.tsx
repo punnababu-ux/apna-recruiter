@@ -605,6 +605,16 @@ export function CreateJobWizard() {
         onOpenChange={setExitDialogOpen}
       >
         <AlertDialogContent>
+          {/* Close (X) — replaces the footer Cancel; dismisses the dialog
+              and stays in the wizard. */}
+          <AlertDialogCancel
+            variant="ghost"
+            size="icon-sm"
+            aria-label="Close"
+            className="absolute top-3 right-3 text-muted-foreground"
+          >
+            <X className="size-4" />
+          </AlertDialogCancel>
           <AlertDialogHeader>
             <AlertDialogTitle>Leave without saving?</AlertDialogTitle>
             <AlertDialogDescription>
@@ -613,7 +623,6 @@ export function CreateJobWizard() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               variant="ghost"
               onClick={handleDiscardAndExit}
@@ -622,7 +631,7 @@ export function CreateJobWizard() {
             </AlertDialogAction>
             <AlertDialogAction onClick={handleSaveAndExit}>
               <Save className="size-4" />
-              Save & exit
+              Save &amp; exit
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
