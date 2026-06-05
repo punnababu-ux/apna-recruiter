@@ -29,6 +29,7 @@ import { useState } from "react"
 import {
   InterviewRoundsStep,
   defaultInterviewRounds,
+  hasAiRound,
   type InterviewRoundsForm,
 } from "@/components/onlyrounds/interview-rounds-step"
 import {
@@ -277,11 +278,15 @@ export function CreateJobWizard() {
   //   • Step 2 with an invalid required section open (Continue won't move)
   //   • Step 2 about to advance step but a required section upstream is
   //     still invalid (Next can't actually advance)
+  // Step 3 requires at least one AI round before the job can be created.
+  const roundsBlocked = activeId === "rounds" && !hasAiRound(form.rounds)
+
   const ctaBlocked =
     (activeId === "description" &&
       (!form.title.trim() || !form.jd.trim())) ||
     (activeId === "details" && currentSectionInvalid) ||
-    (aboutToAdvanceStep && !step2AllRequiredValid)
+    (aboutToAdvanceStep && !step2AllRequiredValid) ||
+    roundsBlocked
 
   const ctaDisabledReason =
     activeId === "description" && (!form.title.trim() || !form.jd.trim())
@@ -290,7 +295,9 @@ export function CreateJobWizard() {
         ? `Fill the required fields in ${SECTION_LABELS[step2OpenSection]} to continue`
         : aboutToAdvanceStep && !step2AllRequiredValid
           ? "Some required sections still need to be filled"
-          : null
+          : roundsBlocked
+            ? "Add at least one AI round (AI screening or AI interview)"
+            : null
 
   // Previous (P2): step-level when at section §1 or outside Step 2;
   // section-level inside Step 2 when a non-first section is open.
@@ -431,7 +438,19 @@ export function CreateJobWizard() {
       return
     }
 
-    // ── Steps 3 & 4 — straightforward step advance ──────────────────────
+    // ── Step 3 (Interview Rounds) — require at least one AI round ────────
+    if (activeId === "rounds") {
+      if (!hasAiRound(form.rounds)) {
+        toast.error("At least one AI round needs to be added to create job", {
+          description: "Add an AI screening or AI interview task.",
+        })
+        return
+      }
+      setActiveId("review")
+      return
+    }
+
+    // ── Step 4 — straightforward step advance ───────────────────────────
     setActiveId(STEPS[activeIdx + 1].id)
   }
 
@@ -530,7 +549,15 @@ export function CreateJobWizard() {
               />
             </>
           ) : activeId === "rounds" ? (
-            <InterviewRoundsStep form={form.rounds} update={updateRounds} />
+            <InterviewRoundsStep
+              form={form.rounds}
+              update={updateRounds}
+              jobContext={{
+                title: form.title,
+                jd: form.jd,
+                details: form.details,
+              }}
+            />
           ) : (
             <div className="rounded-lg border border-border bg-card p-6 shadow-card">
               {activeId === "description" ? (

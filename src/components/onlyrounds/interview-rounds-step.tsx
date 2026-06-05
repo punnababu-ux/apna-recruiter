@@ -54,6 +54,9 @@ import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 
+import { EvaluationCriteriaSection } from "./evaluation-criteria"
+import { type JobDetailsForm } from "./job-details-step"
+
 // ---- types --------------------------------------------------------------
 
 export type TaskType = "screening" | "interview" | "scheduling" | "custom"
@@ -94,11 +97,24 @@ export type InterviewTask = {
   screening: ScreeningConfig
 }
 
-export type InterviewRoundsForm = {
-  tasks: InterviewTask[]
+export type CriteriaCategory = "must-have" | "good-to-have" | "red-flag"
+export type Criterion = {
+  id: string
+  category: CriteriaCategory
+  text: string
 }
 
-export const defaultInterviewRounds: InterviewRoundsForm = { tasks: [] }
+export const MAX_CRITERIA = 15
+
+export type InterviewRoundsForm = {
+  tasks: InterviewTask[]
+  criteria: Criterion[]
+}
+
+export const defaultInterviewRounds: InterviewRoundsForm = {
+  tasks: [],
+  criteria: [],
+}
 
 const makeScreening = (): ScreeningConfig => ({
   mode: "",
@@ -119,6 +135,13 @@ const CALL_TASK_TYPES: ReadonlySet<TaskType> = new Set([
   "screening",
   "interview",
 ])
+
+/** A task is an "AI round" when it's an AI screening or AI interview. */
+export function hasAiRound(rounds: InterviewRoundsForm): boolean {
+  return rounds.tasks.some(
+    (t) => CALL_TASK_TYPES.has(t.type) && t.screening.mode === "ai",
+  )
+}
 
 // ---- task-type metadata -------------------------------------------------
 
@@ -221,14 +244,52 @@ const DIRECTION_CHIPS: ChipTabItem<ScreeningDirection>[] = [
   { value: "both", label: "Both" },
 ]
 
+// ---- generate-context summaries -----------------------------------------
+
+function summarizeDetails(d: JobDetailsForm): string {
+  const lines: string[] = []
+  if (d.city) lines.push(`Location: ${d.city}${d.area ? `, ${d.area}` : ""}`)
+  if (d.experienceType) lines.push(`Experience required: ${d.experienceType}`)
+  if (d.experiencedPersona)
+    lines.push(`Experienced profile: ${d.experiencedPersona}`)
+  if (d.fresherPersona) lines.push(`Fresher profile: ${d.fresherPersona}`)
+  if (d.workType) lines.push(`Work type: ${d.workType}`)
+  if (d.workMode) lines.push(`Work mode: ${d.workMode}`)
+  if (d.scheduleDetails) lines.push(`Schedule: ${d.scheduleDetails}`)
+  if (d.compExperienced)
+    lines.push(`Compensation (experienced): ${d.compExperienced}`)
+  if (d.compFresher) lines.push(`Compensation (fresher): ${d.compFresher}`)
+  return lines.join("\n")
+}
+
+function summarizeTasks(tasks: InterviewTask[]): string {
+  return tasks
+    .map((t, i) => {
+      const meta = TASK_META[t.type]
+      const name =
+        t.type === "custom" && t.title.trim() ? t.title.trim() : meta.label
+      const parts: string[] = []
+      if (t.screening.mode) parts.push(t.screening.mode)
+      if (CALL_TASK_TYPES.has(t.type) && t.screening.mode === "ai") {
+        if (t.screening.direction) parts.push(t.screening.direction)
+        if (t.screening.format) parts.push(t.screening.format)
+      }
+      return `${i + 1}. ${name}${parts.length ? ` (${parts.join(", ")})` : ""}`
+    })
+    .join("\n")
+}
+
 // ---- component ----------------------------------------------------------
 
 export function InterviewRoundsStep({
   form,
   update,
+  jobContext,
 }: {
   form: InterviewRoundsForm
   update: (next: InterviewRoundsForm) => void
+  /** Read-only job context used to generate evaluation criteria. */
+  jobContext: { title: string; jd: string; details: JobDetailsForm }
 }) {
   const [showPicker, setShowPicker] = React.useState(false)
   // Single-open accordion across task cards.
@@ -244,20 +305,21 @@ export function InterviewRoundsStep({
       notes: "",
       screening: makeScreening(),
     }
-    update({ tasks: [...form.tasks, task] })
+    update({ ...form, tasks: [...form.tasks, task] })
     setOpenTaskId(task.id)
     setShowPicker(false)
   }
 
   const updateTask = (id: string, patch: Partial<InterviewTask>) => {
     update({
+      ...form,
       tasks: form.tasks.map((t) => (t.id === id ? { ...t, ...patch } : t)),
     })
   }
 
   const removeTask = (id: string) => {
     const remaining = form.tasks.filter((t) => t.id !== id)
-    update({ tasks: remaining })
+    update({ ...form, tasks: remaining })
     if (openTaskId === id) {
       setOpenTaskId(remaining[remaining.length - 1]?.id ?? null)
     }
@@ -336,6 +398,20 @@ export function InterviewRoundsStep({
             Add task
           </Button>
         </div>
+      ) : null}
+
+      {/* Evaluation criteria — available once at least one task exists. */}
+      {form.tasks.length > 0 ? (
+        <EvaluationCriteriaSection
+          criteria={form.criteria ?? []}
+          onChange={(criteria) => update({ ...form, criteria })}
+          context={{
+            title: jobContext.title,
+            jd: jobContext.jd,
+            detailsSummary: summarizeDetails(jobContext.details),
+            tasksSummary: summarizeTasks(form.tasks),
+          }}
+        />
       ) : null}
     </div>
   )
