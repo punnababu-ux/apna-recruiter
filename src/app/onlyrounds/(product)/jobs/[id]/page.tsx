@@ -27,7 +27,9 @@ import {
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Suspense, use, useState } from "react"
+import { toast } from "sonner"
 
+import { BulkActionBar } from "@/components/onlyrounds/bulk-action-bar"
 import {
   CandidateCard,
   type Candidate,
@@ -306,6 +308,47 @@ const DRAWER_DATA: Record<string, DrawerCandidate> = {
         "Build confidence in conversational English to match her high technical proficiency.",
       ],
     },
+    profile: {
+      about:
+        "Manual + API testing engineer with 3 years at Apna. Strong on test-case design, defect tracking, and Postman/CI-CD workflows. Looking for a mid-level QA role in Bengaluru.",
+      location: "Hubli, KA",
+      experienceYears: 3,
+      currentRole: "Software Engineer at Apna",
+      experience: [
+        {
+          role: "Software Engineer (QA)",
+          company: "Apna",
+          period: "Mar 2024 – Present",
+          description:
+            "Owned the API test suite for the candidate-matching service; introduced contract tests via Postman; integrated with GitHub Actions for pre-merge runs.",
+        },
+        {
+          role: "Junior QA Engineer",
+          company: "Simplilearn",
+          period: "Jan 2022 – Feb 2024",
+          description:
+            "Manual + exploratory testing for the LMS portal. Authored 400+ test cases; ran weekly defect triage with eng leads.",
+        },
+      ],
+      education: [
+        {
+          degree: "B.E. Computer Science",
+          institution: "VTU, Karnataka",
+          period: "2018 – 2022",
+        },
+      ],
+      skills: [
+        "Manual testing",
+        "Postman",
+        "API testing",
+        "Test case design",
+        "Defect tracking",
+        "CI/CD",
+        "GitHub Actions",
+        "Jira",
+      ],
+      resumeUrl: "#",
+    },
   },
 }
 
@@ -335,6 +378,22 @@ function JobDetailPageInner({ id }: { id: string }) {
     "screening" | "interview" | "selected"
   >("screening")
   const [shareOpen, setShareOpen] = useState(false)
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const hasSelection = selectedIds.size > 0
+  const allSelected = selectedIds.size === CANDIDATES.length
+
+  const toggleSelected = (id: string, next: boolean) => {
+    setSelectedIds((prev) => {
+      const out = new Set(prev)
+      if (next) out.add(id)
+      else out.delete(id)
+      return out
+    })
+  }
+  const selectAll = (next: boolean) => {
+    setSelectedIds(next ? new Set(CANDIDATES.map((c) => c.id)) : new Set())
+  }
+  const clearSelection = () => setSelectedIds(new Set())
 
   // Drawer driven by ?leadId= so the panel survives reloads.
   const setLeadId = (next: string | null) => {
@@ -444,18 +503,46 @@ function JobDetailPageInner({ id }: { id: string }) {
           />
 
           <section className="flex min-w-0 flex-1 flex-col gap-3">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-muted-foreground">
-                Showing <strong className="font-semibold text-foreground">
-                  {CANDIDATES.length}
-                </strong>{" "}
-                candidates
-              </p>
-              <Button variant="ghost" size="sm">
-                <Download className="size-3.5" />
-                Download data
-              </Button>
-            </div>
+            {hasSelection ? (
+              <BulkActionBar
+                selectedCount={selectedIds.size}
+                totalCount={CANDIDATES.length}
+                allSelected={allSelected}
+                onSelectAll={selectAll}
+                onClear={clearSelection}
+                onMoveToNextRound={() => {
+                  toast.success(
+                    `Moved ${selectedIds.size} candidate${selectedIds.size === 1 ? "" : "s"} to next round`,
+                  )
+                  clearSelection()
+                }}
+                onReject={() => {
+                  toast.success(
+                    `Rejected ${selectedIds.size} candidate${selectedIds.size === 1 ? "" : "s"}`,
+                  )
+                  clearSelection()
+                }}
+                onReTake={() => {
+                  toast.success(
+                    `Re-take queued for ${selectedIds.size} candidate${selectedIds.size === 1 ? "" : "s"}`,
+                  )
+                  clearSelection()
+                }}
+              />
+            ) : (
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-muted-foreground">
+                  Showing <strong className="font-semibold text-foreground">
+                    {CANDIDATES.length}
+                  </strong>{" "}
+                  candidates
+                </p>
+                <Button variant="ghost" size="sm">
+                  <Download className="size-3.5" />
+                  Download data
+                </Button>
+              </div>
+            )}
 
             <div className="flex flex-col gap-3">
               {CANDIDATES.map((c) => (
@@ -464,6 +551,9 @@ function JobDetailPageInner({ id }: { id: string }) {
                   candidate={c}
                   onOpen={() => setLeadId(c.id)}
                   onViewInsights={() => setLeadId(c.id)}
+                  selectable
+                  selected={selectedIds.has(c.id)}
+                  onSelectChange={(next) => toggleSelected(c.id, next)}
                 />
               ))}
             </div>

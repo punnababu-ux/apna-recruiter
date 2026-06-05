@@ -24,9 +24,13 @@
 
 import {
   AtSign,
+  Briefcase,
   ChevronLeft,
   ChevronRight,
   CircleCheck,
+  FileText,
+  GraduationCap,
+  MapPin,
   MessageCircle,
   Pause,
   Pencil,
@@ -84,6 +88,30 @@ export type CefrAnalysis = {
   areasOfImprovement: string[]
 }
 
+export type ExperienceEntry = {
+  role: string
+  company: string
+  period: string
+  description?: string
+}
+
+export type EducationEntry = {
+  degree: string
+  institution: string
+  period: string
+}
+
+export type ProfileSummary = {
+  about?: string
+  location?: string
+  experienceYears?: number
+  currentRole?: string
+  experience?: ExperienceEntry[]
+  education?: EducationEntry[]
+  skills?: string[]
+  resumeUrl?: string
+}
+
 export type DrawerCandidate = {
   id: string
   name: string
@@ -99,6 +127,7 @@ export type DrawerCandidate = {
   criteriaGroups: CriteriaGroup[]
   cefr?: CefrAnalysis
   notes?: string
+  profile?: ProfileSummary
 }
 
 // ── Drawer ────────────────────────────────────────────────────────────────
@@ -130,6 +159,30 @@ export function CandidateDrawer({
   hasPrev?: boolean
   hasNext?: boolean
 }) {
+  // Keyboard navigation: ← / → for prev/next when the drawer is open
+  // and the focused element is not a text input. Avoids hijacking typing
+  // inside the Notes textarea or any future search input.
+  React.useEffect(() => {
+    if (!open) return
+    const handler = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement | null
+      const inEditable =
+        t?.tagName === "INPUT" ||
+        t?.tagName === "TEXTAREA" ||
+        t?.isContentEditable
+      if (inEditable) return
+      if (e.key === "ArrowLeft" && hasPrev) {
+        e.preventDefault()
+        onPrev?.()
+      } else if (e.key === "ArrowRight" && hasNext) {
+        e.preventDefault()
+        onNext?.()
+      }
+    }
+    window.addEventListener("keydown", handler)
+    return () => window.removeEventListener("keydown", handler)
+  }, [open, hasPrev, hasNext, onPrev, onNext])
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
@@ -293,12 +346,16 @@ function DrawerBody({
       <Tabs defaultValue="insights" className="flex flex-1 flex-col overflow-hidden">
         <TabsList variant="line" className="shrink-0 border-b border-border px-4">
           <TabsTrigger value="insights">AI screening insights</TabsTrigger>
+          <TabsTrigger value="profile">Full profile</TabsTrigger>
           <TabsTrigger value="notes">Notes</TabsTrigger>
         </TabsList>
 
         <div className="flex-1 overflow-y-auto">
           <TabsContent value="insights" className="m-0 p-4">
             <InsightsTab candidate={candidate} />
+          </TabsContent>
+          <TabsContent value="profile" className="m-0 p-4">
+            <ProfileTab candidate={candidate} />
           </TabsContent>
           <TabsContent value="notes" className="m-0 p-4">
             <NotesTab candidate={candidate} onAddNote={onAddNote} />
@@ -400,6 +457,143 @@ function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
           </h4>
           <CefrBlock cefr={candidate.cefr} />
         </section>
+      )}
+    </div>
+  )
+}
+
+// ── Profile tab ───────────────────────────────────────────────────────────
+
+function ProfileTab({ candidate }: { candidate: DrawerCandidate }) {
+  const p = candidate.profile
+  if (!p) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-3 py-12 text-center">
+        <FileText className="size-8 text-muted-foreground" />
+        <div>
+          <p className="text-sm font-medium">No profile uploaded yet</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Candidate hasn't shared a resume or completed their profile.
+          </p>
+        </div>
+      </div>
+    )
+  }
+  return (
+    <div className="flex flex-col gap-6">
+      {/* Quick meta row */}
+      <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
+        {p.location && (
+          <span className="inline-flex items-center gap-1">
+            <MapPin className="size-3" />
+            {p.location}
+          </span>
+        )}
+        {typeof p.experienceYears === "number" && (
+          <span className="inline-flex items-center gap-1">
+            <Briefcase className="size-3" />
+            {p.experienceYears} years experience
+          </span>
+        )}
+        {p.currentRole && (
+          <span className="inline-flex items-center gap-1">
+            Currently:{" "}
+            <span className="text-foreground">{p.currentRole}</span>
+          </span>
+        )}
+      </div>
+
+      {p.about && (
+        <section className="flex flex-col gap-1.5">
+          <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            About
+          </h4>
+          <p className="text-sm">{p.about}</p>
+        </section>
+      )}
+
+      {p.experience && p.experience.length > 0 && (
+        <section className="flex flex-col gap-2">
+          <h4 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <Briefcase className="size-3" />
+            Experience
+          </h4>
+          <ol className="flex flex-col gap-3">
+            {p.experience.map((e, i) => (
+              <li
+                key={i}
+                className="flex flex-col gap-0.5 border-l-2 border-border pl-3"
+              >
+                <div className="flex items-baseline justify-between gap-2">
+                  <span className="text-sm font-medium">{e.role}</span>
+                  <span className="shrink-0 text-xs text-muted-foreground">
+                    {e.period}
+                  </span>
+                </div>
+                <span className="text-xs text-muted-foreground">
+                  {e.company}
+                </span>
+                {e.description && (
+                  <p className="mt-1 text-xs">{e.description}</p>
+                )}
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
+
+      {p.education && p.education.length > 0 && (
+        <section className="flex flex-col gap-2">
+          <h4 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <GraduationCap className="size-3" />
+            Education
+          </h4>
+          <ol className="flex flex-col gap-3">
+            {p.education.map((e, i) => (
+              <li
+                key={i}
+                className="flex flex-col gap-0.5 border-l-2 border-border pl-3"
+              >
+                <div className="flex items-baseline justify-between gap-2">
+                  <span className="text-sm font-medium">{e.degree}</span>
+                  <span className="shrink-0 text-xs text-muted-foreground">
+                    {e.period}
+                  </span>
+                </div>
+                <span className="text-xs text-muted-foreground">
+                  {e.institution}
+                </span>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
+
+      {p.skills && p.skills.length > 0 && (
+        <section className="flex flex-col gap-2">
+          <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Skills
+          </h4>
+          <div className="flex flex-wrap gap-1.5">
+            {p.skills.map((s) => (
+              <Badge key={s} variant="secondary" className="font-normal">
+                {s}
+              </Badge>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {p.resumeUrl && (
+        <Button
+          variant="outline"
+          size="sm"
+          className="self-start"
+          onClick={() => window.open(p.resumeUrl, "_blank")}
+        >
+          <FileText className="size-3.5" />
+          Open resume
+        </Button>
       )}
     </div>
   )

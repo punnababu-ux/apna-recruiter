@@ -30,6 +30,7 @@ import { ScoreGauge, type Verdict } from "@/components/onlyrounds/score-gauge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import { cn } from "@/lib/utils"
 
 export type CandidateInsight = {
@@ -63,6 +64,9 @@ export function CandidateCard({
   onReTake,
   onAddNote,
   onViewInsights,
+  selectable,
+  selected,
+  onSelectChange,
   className,
 }: {
   candidate: Candidate
@@ -72,6 +76,10 @@ export function CandidateCard({
   onReTake?: () => void
   onAddNote?: () => void
   onViewInsights?: () => void
+  /** When true, a leading checkbox is rendered. Used by bulk-select. */
+  selectable?: boolean
+  selected?: boolean
+  onSelectChange?: (next: boolean) => void
   className?: string
 }) {
   const { name, role, company, email, phone, state } = candidate
@@ -93,13 +101,28 @@ export function CandidateCard({
         }
       }}
       className={cn(
-        "rounded-lg border border-border bg-card transition-shadow",
+        "rounded-lg border bg-card transition-shadow",
+        selected
+          ? "border-primary ring-1 ring-primary/30"
+          : "border-border",
         onOpen && "cursor-pointer hover:shadow-sm focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
         className,
       )}
     >
       {/* Header: identity + contact + score/status */}
       <div className="flex items-start gap-3 px-4 py-3">
+        {selectable && (
+          <div
+            className="flex h-9 items-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Checkbox
+              checked={selected}
+              onCheckedChange={(v) => onSelectChange?.(v === true)}
+              aria-label={`Select ${name}`}
+            />
+          </div>
+        )}
         <Avatar className="size-9">
           <AvatarFallback className="bg-accent text-xs font-semibold text-accent-foreground">
             {initials(name)}
