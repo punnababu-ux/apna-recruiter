@@ -18,14 +18,20 @@
  */
 
 import {
+  Briefcase,
   Check,
   ChevronDown,
+  Clock,
   Download,
+  FileText,
+  IndianRupee,
+  MessageCircleQuestion,
   MoreVertical,
   Pencil,
   Plus,
   Trash2,
   Upload,
+  type LucideIcon,
 } from "lucide-react"
 import * as React from "react"
 
@@ -150,6 +156,16 @@ export const SECTION_LABELS: Record<SectionId, string> = {
   compensation: "Compensation details",
   questions: "Question sections",
   additional: "Additional details",
+}
+
+// Per-section icon shown in the accordion header chip (replaces the
+// numeric index).
+const SECTION_ICONS: Record<SectionId, LucideIcon> = {
+  basics: Briefcase,
+  schedule: Clock,
+  compensation: IndianRupee,
+  questions: MessageCircleQuestion,
+  additional: FileText,
 }
 
 export type SectionStatus =
@@ -344,7 +360,6 @@ export function JobDetailsStep({
       {/* Section 1 — basic job details */}
       <Section
         id="basics"
-        index={1}
         title="Basic job details"
         description="Tell us who the role is for and where it's based."
         status={getSectionStatus(form, "basics", showErrors)}
@@ -472,7 +487,6 @@ export function JobDetailsStep({
       {/* Section 2 — work schedule */}
       <Section
         id="schedule"
-        index={2}
         title="Work schedule"
         description="What kind of work is this, and when will it happen?"
         status={getSectionStatus(form, "schedule", showErrors)}
@@ -529,7 +543,6 @@ export function JobDetailsStep({
       {/* Section 3 — compensation */}
       <Section
         id="compensation"
-        index={3}
         title="Compensation details"
         description="Share what each candidate profile can expect to earn."
         status={getSectionStatus(form, "compensation", showErrors)}
@@ -585,7 +598,6 @@ export function JobDetailsStep({
       {/* Section 4 — question sections (merged AI question bank + candidate FAQs) */}
       <Section
         id="questions"
-        index={4}
         title="Question sections"
         description="Optional — add screening questions and candidate FAQs."
         status={getSectionStatus(form, "questions", showErrors)}
@@ -602,7 +614,6 @@ export function JobDetailsStep({
       {/* Section 5 — additional details */}
       <Section
         id="additional"
-        index={5}
         title="Additional details"
         description="Optional — interview process, perks, anything else worth highlighting."
         status={getSectionStatus(form, "additional", showErrors)}
@@ -655,7 +666,6 @@ function StatusPip({ status }: { status: SectionStatus }) {
 
 function Section({
   id,
-  index,
   title,
   description,
   status,
@@ -664,7 +674,6 @@ function Section({
   children,
 }: {
   id: SectionId
-  index: number
   title: string
   description?: string
   status: SectionStatus
@@ -673,6 +682,7 @@ function Section({
   children: React.ReactNode
 }) {
   const bodyId = `section-${id}-body`
+  const Icon = SECTION_ICONS[id]
   return (
     <section className="overflow-hidden rounded-lg border border-border bg-card shadow-card">
       <button
@@ -693,7 +703,11 @@ function Section({
           )}
           aria-hidden="true"
         >
-          {status === "complete" ? <Check className="size-3.5" /> : index}
+          {status === "complete" ? (
+            <Check className="size-3.5" />
+          ) : (
+            <Icon className="size-4" />
+          )}
         </span>
         <div className="min-w-0 flex-1">
           <h3 className="text-base font-semibold leading-tight">{title}</h3>
