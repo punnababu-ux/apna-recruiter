@@ -366,32 +366,35 @@ export function JobDetailsStep({
         isOpen={openSectionId === "basics"}
         onToggle={() => toggle("basics")}
       >
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field
-            label="Client"
-            htmlFor="client"
-            error={showErrors && !form.clientId ? "Required" : undefined}
+        {/* Client — own line */}
+        <Field
+          label="Client"
+          htmlFor="client"
+          error={showErrors && !form.clientId ? "Required" : undefined}
+        >
+          <Select
+            value={form.clientId}
+            onValueChange={(v) => update("clientId", (v as string) ?? "")}
           >
-            <Select
-              value={form.clientId}
-              onValueChange={(v) => update("clientId", (v as string) ?? "")}
+            <SelectTrigger
+              id="client"
+              className="w-full"
+              aria-invalid={showErrors && !form.clientId ? true : undefined}
             >
-              <SelectTrigger
-                id="client"
-                className="w-full"
-                aria-invalid={showErrors && !form.clientId ? true : undefined}
-              >
-                <SelectValue placeholder="Select the client" />
-              </SelectTrigger>
-              <SelectContent>
-                {CLIENTS.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
+              <SelectValue placeholder="Select the client" />
+            </SelectTrigger>
+            <SelectContent>
+              {CLIENTS.map((c) => (
+                <SelectItem key={c.id} value={c.id}>
+                  {c.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </Field>
+
+        {/* Job city + Job area — side by side */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field
             label="Job city"
             htmlFor="city"
