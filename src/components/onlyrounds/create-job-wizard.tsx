@@ -50,6 +50,7 @@ import {
   type JobDetailsForm,
   type SectionId,
 } from "@/components/onlyrounds/job-details-step"
+import { ReviewStep } from "@/components/onlyrounds/review-step"
 import { Stepper, type Step, type StepStatus } from "@/components/onlyrounds/stepper"
 import { toast } from "sonner"
 import {
@@ -443,7 +444,14 @@ export function CreateJobWizard() {
   }
 
   const goNext = async () => {
-    if (isLast) return
+    // ── Step 4 (Review & Publish) — publish and navigate to jobs list ─────
+    if (isLast) {
+      toast.success("Job published successfully!", {
+        description: `"${form.title}" is now live and accepting candidates.`,
+      })
+      router.push("/onlyrounds/jobs")
+      return
+    }
 
     // ── Step 1 (Job Description) — validate, AI-extract, advance ────────
     if (activeId === "description") {
@@ -726,9 +734,12 @@ export function CreateJobWizard() {
                 />
               ) : null}
               {activeId === "review" ? (
-                <StepPlaceholder>
-                  Final review panel — coming after rounds.
-                </StepPlaceholder>
+                <ReviewStep
+                  title={form.title}
+                  jd={form.jd}
+                  details={form.details}
+                  rounds={form.rounds}
+                />
               ) : null}
             </div>
           )}

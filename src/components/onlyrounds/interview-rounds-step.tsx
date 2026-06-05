@@ -1238,8 +1238,8 @@ function InlineCategoryGroup({
   return (
     <div className={cn("flex flex-col gap-2 rounded-lg border p-3", surface)}>
       <div className="flex items-center gap-2">
-        <Icon className={cn("size-3.5 shrink-0", tone)} />
-        <span className="text-xs font-semibold">{label}</span>
+        <Icon className={cn("size-4 shrink-0", tone)} />
+        <span className="text-sm font-semibold">{label}</span>
         <span className="text-xs text-muted-foreground">({items.length})</span>
       </div>
       <p className="-mt-1 text-xs text-muted-foreground">{description}</p>
