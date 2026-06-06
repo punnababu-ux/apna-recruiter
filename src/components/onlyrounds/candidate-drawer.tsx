@@ -71,6 +71,8 @@ export type CriterionScore = {
   reasoning: string
   /** When true, the criterion was a dealbreaker (must-have or red-flag). */
   dealbreaker?: boolean
+  /** Optional timestamp in the call when this criterion was assessed. */
+  atSecond?: number
 }
 
 export type CriteriaGroup = {
@@ -136,6 +138,14 @@ export type CommunicationEvent = {
   duration?: string
 }
 
+export type DrawerInsight = {
+  tone: "ok" | "miss"
+  label: string
+  /** Optional timestamp in the call recording (seconds). Drives the
+   *  per-chip "jump to moment" play button. */
+  atSecond?: number
+}
+
 export type DrawerCandidate = {
   id: string
   name: string
@@ -146,7 +156,9 @@ export type DrawerCandidate = {
   score: number
   verdict: Verdict
   cefrLevel?: string
-  insights: { tone: "ok" | "miss"; label: string }[]
+  insights: DrawerInsight[]
+  /** Total length of the call recording in seconds. Defaults to 5:47. */
+  callDuration?: number
   recommendations: string[]
   criteriaGroups: CriteriaGroup[]
   cefr?: CefrAnalysis
@@ -409,9 +421,46 @@ function DrawerBody({
 // ── Insights tab ──────────────────────────────────────────────────────────
 
 function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
+  const totalSec = candidate.callDuration ?? 5 * 60 + 47
+  const [elapsed, setElapsed] = React.useState(0)
+  const [playing, setPlaying] = React.useState(false)
+  // Reset when switching candidates.
+  React.useEffect(() => {
+    setElapsed(0)
+    setPlaying(false)
+  }, [candidate.id])
+  // Advance time when playing.
+  React.useEffect(() => {
+    if (!playing) return
+    const id = window.setInterval(() => {
+      setElapsed((e) => {
+        if (e >= totalSec) {
+          setPlaying(false)
+          return totalSec
+        }
+        return e + 1
+      })
+    }, 1000)
+    return () => window.clearInterval(id)
+  }, [playing, totalSec])
+
+  const seekTo = React.useCallback(
+    (sec: number) => {
+      setElapsed(Math.min(Math.max(0, sec), totalSec))
+      setPlaying(true)
+    },
+    [totalSec],
+  )
+
   return (
     <div className="flex flex-col gap-6">
-      <CallPlayerStub />
+      <CallPlayer
+        elapsed={elapsed}
+        totalSec={totalSec}
+        playing={playing}
+        onTogglePlay={() => setPlaying((p) => !p)}
+        onSeek={(s) => setElapsed(s)}
+      />
 
       {/* Insight chips */}
       <section className="flex flex-col gap-2">
@@ -438,9 +487,21 @@ function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
               {it.label}
               <button
                 type="button"
-                aria-label="Jump to moment in call"
-                className="ml-0.5 inline-flex size-3.5 items-center justify-center rounded-sm hover:bg-muted"
-                disabled
+                aria-label={
+                  typeof it.atSecond === "number"
+                    ? `Jump to ${fmtMmSs(it.atSecond)} in call`
+                    : "Timestamp unavailable"
+                }
+                className={cn(
+                  "ml-0.5 inline-flex size-3.5 items-center justify-center rounded-sm",
+                  typeof it.atSecond === "number"
+                    ? "hover:bg-muted"
+                    : "opacity-30",
+                )}
+                disabled={typeof it.atSecond !== "number"}
+                onClick={() =>
+                  typeof it.atSecond === "number" && seekTo(it.atSecond)
+                }
               >
                 <Play className="size-2.5" />
               </button>
@@ -484,7 +545,7 @@ function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
             Screening criteria analysis
           </h4>
           {candidate.criteriaGroups.map((g) => (
-            <CriteriaGroupBlock key={g.id} group={g} />
+            <CriteriaGroupBlock key={g.id} group={g} onSeek={seekTo} />
           ))}
         </section>
       )}
@@ -784,45 +845,55 @@ function NotesTab({
 
 // ── Sub-blocks ────────────────────────────────────────────────────────────
 
-function CallPlayerStub() {
-  // Mock player — no real audio, but the time + progress advance while
-  // playing so the UI doesn't feel inert.
-  const TOTAL_SEC = 5 * 60 + 47 // 5:47 mock call
-  const [playing, setPlaying] = React.useState(false)
-  const [elapsed, setElapsed] = React.useState(0)
-  React.useEffect(() => {
-    if (!playing) return
-    const id = window.setInterval(() => {
-      setElapsed((e) => {
-        if (e >= TOTAL_SEC) {
-          setPlaying(false)
-          return TOTAL_SEC
-        }
-        return e + 1
-      })
-    }, 1000)
-    return () => window.clearInterval(id)
-  }, [playing])
-
-  const pct = (elapsed / TOTAL_SEC) * 100
+function CallPlayer({
+  elapsed,
+  totalSec,
+  playing,
+  onTogglePlay,
+  onSeek,
+}: {
+  elapsed: number
+  totalSec: number
+  playing: boolean
+  onTogglePlay: () => void
+  onSeek: (sec: number) => void
+}) {
+  const pct = (elapsed / totalSec) * 100
+  const trackRef = React.useRef<HTMLDivElement>(null)
+  const handleClick = (e: React.MouseEvent) => {
+    const el = trackRef.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
+    onSeek(Math.round(ratio * totalSec))
+  }
   return (
     <div className="flex items-center gap-3 rounded-md border border-border bg-muted/30 px-3 py-2.5">
       <button
         type="button"
-        onClick={() => setPlaying((p) => !p)}
+        onClick={onTogglePlay}
         aria-label={playing ? "Pause" : "Play"}
         className="flex size-7 shrink-0 items-center justify-center rounded-full border border-border bg-card hover:bg-muted"
       >
         {playing ? <Pause className="size-3" /> : <Play className="size-3" />}
       </button>
-      <div className="h-1 flex-1 overflow-hidden rounded-full bg-muted">
+      <div
+        ref={trackRef}
+        role="slider"
+        aria-label="Call position"
+        aria-valuemin={0}
+        aria-valuemax={totalSec}
+        aria-valuenow={elapsed}
+        onClick={handleClick}
+        className="h-1 flex-1 cursor-pointer overflow-hidden rounded-full bg-muted"
+      >
         <div
           className="h-full rounded-full bg-primary transition-[width]"
           style={{ width: `${pct}%` }}
         />
       </div>
       <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
-        {fmtMmSs(elapsed)} / {fmtMmSs(TOTAL_SEC)}
+        {fmtMmSs(elapsed)} / {fmtMmSs(totalSec)}
       </span>
     </div>
   )
@@ -834,7 +905,13 @@ function fmtMmSs(s: number) {
   return `${m}:${r.toString().padStart(2, "0")}`
 }
 
-function CriteriaGroupBlock({ group }: { group: CriteriaGroup }) {
+function CriteriaGroupBlock({
+  group,
+  onSeek,
+}: {
+  group: CriteriaGroup
+  onSeek?: (sec: number) => void
+}) {
   return (
     <div className="flex flex-col gap-2">
       <div>
@@ -845,14 +922,20 @@ function CriteriaGroupBlock({ group }: { group: CriteriaGroup }) {
       </div>
       <div className="flex flex-col gap-2">
         {group.items.map((c) => (
-          <CriterionRow key={c.id} item={c} />
+          <CriterionRow key={c.id} item={c} onSeek={onSeek} />
         ))}
       </div>
     </div>
   )
 }
 
-function CriterionRow({ item }: { item: CriterionScore }) {
+function CriterionRow({
+  item,
+  onSeek,
+}: {
+  item: CriterionScore
+  onSeek?: (sec: number) => void
+}) {
   const [open, setOpen] = React.useState(false)
   return (
     <div className="rounded-md border border-border bg-card">
@@ -862,17 +945,32 @@ function CriterionRow({ item }: { item: CriterionScore }) {
         className="flex w-full items-start justify-between gap-3 px-3 py-2 text-left"
       >
         <span className="text-xs">{item.text}</span>
-        <span
-          className={cn(
-            "shrink-0 rounded-md px-1.5 py-0.5 text-xs font-semibold tabular-nums",
-            item.score >= 7
-              ? "bg-success/10 text-success"
-              : item.score >= 4
-                ? "bg-warning/10 text-warning"
-                : "bg-destructive/10 text-destructive",
+        <span className="flex shrink-0 items-center gap-1.5">
+          <span
+            className={cn(
+              "rounded-md px-1.5 py-0.5 text-xs font-semibold tabular-nums",
+              item.score >= 7
+                ? "bg-success/10 text-success"
+                : item.score >= 4
+                  ? "bg-warning/10 text-warning"
+                  : "bg-destructive/10 text-destructive",
+            )}
+          >
+            {item.score} / 10
+          </span>
+          {typeof item.atSecond === "number" && onSeek && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation()
+                onSeek(item.atSecond!)
+              }}
+              aria-label={`Jump to ${fmtMmSs(item.atSecond)} in call`}
+              className="inline-flex size-5 items-center justify-center rounded-sm hover:bg-muted"
+            >
+              <Play className="size-2.5" />
+            </button>
           )}
-        >
-          {item.score} / 10
         </span>
       </button>
       {open && (

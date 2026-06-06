@@ -26,6 +26,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import * as React from "react"
 import { Suspense, use, useMemo, useState } from "react"
 import { toast } from "sonner"
 
@@ -79,12 +80,17 @@ const FILTERS: FilterGroup[] = [
   },
 ]
 
-const CANDIDATES: Candidate[] = [
+type Stage = "screening" | "interview" | "selected"
+
+type CandidateRow = Candidate & { stage: Stage }
+
+const CANDIDATES: CandidateRow[] = [
   {
     id: "aditi",
     name: "Aditi Sharma",
     role: "Se Engineer",
     company: "Apna",
+    stage: "screening",
     email: "aditi@apna.co",
     phone: "+917003393362",
     state: {
@@ -117,6 +123,7 @@ const CANDIDATES: Candidate[] = [
     phone: "+919164862614",
     state: { kind: "pending", attempted: 0, total: 5 },
     cefrLevel: "na",
+    stage: "screening",
   },
   {
     id: "demo1",
@@ -125,6 +132,7 @@ const CANDIDATES: Candidate[] = [
     phone: "+918637266290",
     state: { kind: "incomplete", attempted: 5, total: 5 },
     cefrLevel: "na",
+    stage: "screening",
   },
   {
     id: "chaitra",
@@ -133,6 +141,47 @@ const CANDIDATES: Candidate[] = [
     phone: "+918971981508",
     state: { kind: "no-response", attempted: 5, total: 5 },
     cefrLevel: "na",
+    stage: "screening",
+  },
+  {
+    id: "rohit-notfit",
+    name: "Rohit Verma",
+    role: "QA Trainee",
+    company: "Independent",
+    email: "rohit.verma@test.co",
+    phone: "+919812345678",
+    state: {
+      kind: "completed",
+      score: 32,
+      verdict: "not-fit",
+      insights: [
+        { tone: "miss", label: "Below required experience" },
+        { tone: "miss", label: "Salary expectation too high" },
+        { tone: "ok", label: "Open to office work" },
+      ],
+    },
+    cefrLevel: "b1",
+    stage: "screening",
+  },
+  {
+    id: "anjali-interview",
+    name: "Anjali Mehra",
+    role: "Senior QA Engineer",
+    company: "Zomato",
+    email: "anjali@test.co",
+    phone: "+919800000111",
+    state: {
+      kind: "completed",
+      score: 86,
+      verdict: "fit",
+      insights: [
+        { tone: "ok", label: "5+ years QA experience" },
+        { tone: "ok", label: "Strong on test automation" },
+        { tone: "ok", label: "Excellent English fluency" },
+      ],
+    },
+    cefrLevel: "c2",
+    stage: "interview",
   },
 ]
 
@@ -140,6 +189,41 @@ const CANDIDATES: Candidate[] = [
  * Map a candidate's state to the AI Evaluation Status filter option id.
  * Keep this in sync with the option ids in FILTERS["ai-status"].
  */
+type RoundMeta = {
+  name: string
+  mode: "ai" | "human"
+  meta: { icon: typeof Clock; label: string }[]
+}
+
+const ROUNDS: Record<Stage, RoundMeta> = {
+  screening: {
+    name: "Screening",
+    mode: "ai",
+    meta: [
+      { icon: Clock, label: "30 mins" },
+      { icon: User, label: "Isha (Senior AI recruiter)" },
+      { icon: Globe, label: "Web" },
+      { icon: Languages, label: "English" },
+      { icon: ListChecks, label: "30 criteria" },
+    ],
+  },
+  interview: {
+    name: "Tech interview",
+    mode: "human",
+    meta: [
+      { icon: Clock, label: "45 mins" },
+      { icon: User, label: "Hiring manager" },
+      { icon: Globe, label: "Video" },
+      { icon: ListChecks, label: "12 criteria" },
+    ],
+  },
+  selected: {
+    name: "Selected",
+    mode: "human",
+    meta: [{ icon: User, label: "Ready for offer" }],
+  },
+}
+
 function aiStatusKey(c: Candidate): string {
   if (c.state.kind === "completed") {
     return c.state.verdict === "fit" ? "fit" : "rejected"
@@ -164,18 +248,19 @@ const DRAWER_DATA: Record<string, DrawerCandidate> = {
     cefrLevel: "C1",
     insights: [
       { tone: "miss", label: "Employment history not discussed" },
-      { tone: "ok", label: "Three years experience" },
-      { tone: "ok", label: "Agreed to salary budget" },
-      { tone: "ok", label: "Agreed to location and shifts" },
-      { tone: "ok", label: "15-day notice period" },
-      { tone: "ok", label: "Expert in test case design" },
-      { tone: "ok", label: "Articulate and clear communicator" },
-      { tone: "ok", label: "Exceeds minimum English level" },
-      { tone: "ok", label: "Can join in 15 days" },
-      { tone: "ok", label: "Experienced in API testing" },
-      { tone: "ok", label: "Exceeds preferred English level" },
+      { tone: "ok", label: "Three years experience", atSecond: 32 },
+      { tone: "ok", label: "Agreed to salary budget", atSecond: 78 },
+      { tone: "ok", label: "Agreed to location and shifts", atSecond: 102 },
+      { tone: "ok", label: "15-day notice period", atSecond: 124 },
+      { tone: "ok", label: "Expert in test case design", atSecond: 156 },
+      { tone: "ok", label: "Articulate and clear communicator", atSecond: 178 },
+      { tone: "ok", label: "Exceeds minimum English level", atSecond: 203 },
+      { tone: "ok", label: "Can join in 15 days", atSecond: 220 },
+      { tone: "ok", label: "Experienced in API testing", atSecond: 245 },
+      { tone: "ok", label: "Exceeds preferred English level", atSecond: 268 },
       { tone: "miss", label: "Industry domain not discussed" },
     ],
+    callDuration: 347,
     recommendations: [
       "Candidate is a strong technical and cultural fit; recommend proceeding to the technical interview round.",
       "Probe further on her experience with specific defect tracking tools like Jira, as she described the process well but didn't name a tool.",
@@ -193,6 +278,7 @@ const DRAWER_DATA: Record<string, DrawerCandidate> = {
             reasoning:
               "The candidate confirmed she has about three years of professional experience in manual testing, exceeding the minimum.",
             dealbreaker: true,
+            atSecond: 32,
           },
           {
             id: "m2",
@@ -201,6 +287,7 @@ const DRAWER_DATA: Record<string, DrawerCandidate> = {
             reasoning:
               "When asked about comfort with the specified salary budget and compensation structure, the candidate explicitly confirmed.",
             dealbreaker: true,
+            atSecond: 78,
           },
           {
             id: "m3",
@@ -209,6 +296,7 @@ const DRAWER_DATA: Record<string, DrawerCandidate> = {
             reasoning:
               "The candidate confirmed she is comfortable traveling daily to the Hubli location and accepts the shift timings.",
             dealbreaker: true,
+            atSecond: 102,
           },
           {
             id: "m4",
@@ -217,6 +305,7 @@ const DRAWER_DATA: Record<string, DrawerCandidate> = {
             reasoning:
               "The candidate communicated complex technical concepts clearly and logically; minor accent influence did not impede understanding.",
             dealbreaker: true,
+            atSecond: 178,
           },
         ],
       },
@@ -479,11 +568,16 @@ function JobDetailPageInner({ id }: { id: string }) {
     })
   }
 
+  const candidatesForStage = useMemo(
+    () => CANDIDATES.filter((c) => c.stage === mainTab),
+    [mainTab],
+  )
+
   const filteredCandidates = useMemo(() => {
     const q = searchQuery.trim().toLowerCase()
     const aiPicked = filters["ai-status"]
     const cefrPicked = filters["cefr"]
-    return CANDIDATES.filter((c) => {
+    return candidatesForStage.filter((c) => {
       if (q && !c.name.toLowerCase().includes(q)) return false
       if (aiPicked && aiPicked.size > 0 && !aiPicked.has(aiStatusKey(c))) {
         return false
@@ -493,7 +587,12 @@ function JobDetailPageInner({ id }: { id: string }) {
       }
       return true
     })
-  }, [searchQuery, filters])
+  }, [searchQuery, filters, candidatesForStage])
+
+  // Clear selection when changing stage.
+  React.useEffect(() => {
+    setSelectedIds(new Set())
+  }, [mainTab])
 
   const totalFilterCount = Object.values(filters).reduce(
     (acc, set) => acc + set.size,
@@ -564,17 +663,18 @@ function JobDetailPageInner({ id }: { id: string }) {
         }
         description="Simplilearn · Hubli"
         tabs={
-          <Tabs value={mainTab} onValueChange={(v) => setMainTab(v as typeof mainTab)}>
+          <Tabs value={mainTab} onValueChange={(v) => { setMainTab(v as Stage); setFilters({}); setSearchQuery("") }}>
             <TabsList variant="line">
-              <TabsTrigger value="screening">
-                <PhoneCall className="size-3.5" />
-                Screening (4)
-              </TabsTrigger>
-              <TabsTrigger value="interview">
-                <User className="size-3.5" />
-                Interview (0)
-              </TabsTrigger>
-              <TabsTrigger value="selected">Selected (0)</TabsTrigger>
+              {(["screening", "interview", "selected"] as Stage[]).map((s) => {
+                const count = CANDIDATES.filter((c) => c.stage === s).length
+                return (
+                  <TabsTrigger key={s} value={s}>
+                    {s === "screening" && <PhoneCall className="size-3.5" />}
+                    {s === "interview" && <User className="size-3.5" />}
+                    {ROUNDS[s].name} ({count})
+                  </TabsTrigger>
+                )
+              })}
             </TabsList>
           </Tabs>
         }
@@ -596,28 +696,26 @@ function JobDetailPageInner({ id }: { id: string }) {
       <main className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-6 py-4">
         {/* Round summary strip — what's configured for the active round */}
         <RoundSummaryStrip
-          roundName="Screening"
-          mode="ai"
-          meta={[
-            { icon: Clock, label: "30 mins" },
-            { icon: User, label: "Isha (Senior AI recruiter)" },
-            { icon: Globe, label: "Web" },
-            { icon: Languages, label: "English" },
-            { icon: ListChecks, label: "30 criteria" },
-          ]}
-          onTest={() => undefined}
+          roundName={ROUNDS[mainTab].name}
+          mode={ROUNDS[mainTab].mode}
+          meta={ROUNDS[mainTab].meta}
+          onTest={ROUNDS[mainTab].mode === "ai" ? () => undefined : undefined}
         />
 
-        {/* Round-level CTA banner */}
-        <InfoBanner
-          variant="info"
-          title="Start dialing for Screening candidates"
-          description="Candidates are ready for Screening. The interview will start when you begin dialing."
-          action={<Button size="sm">
-            <Mic className="size-4" />
-            Start Dialing
-          </Button>}
-        />
+        {/* Round-level CTA banner — only shown for AI rounds */}
+        {ROUNDS[mainTab].mode === "ai" && candidatesForStage.length > 0 && (
+          <InfoBanner
+            variant="info"
+            title={`Start dialing for ${ROUNDS[mainTab].name} candidates`}
+            description="Candidates are ready. The interview will start when you begin dialing."
+            action={
+              <Button size="sm">
+                <Mic className="size-4" />
+                Start Dialing
+              </Button>
+            }
+          />
+        )}
 
         {/* Two-column body */}
         <div className="flex gap-4">
@@ -675,12 +773,12 @@ function JobDetailPageInner({ id }: { id: string }) {
                   <strong className="font-semibold text-foreground">
                     {filteredCandidates.length}
                   </strong>
-                  {filteredCandidates.length !== CANDIDATES.length && (
+                  {filteredCandidates.length !== candidatesForStage.length && (
                     <>
                       {" "}
                       of{" "}
                       <strong className="font-semibold text-foreground">
-                        {CANDIDATES.length}
+                        {candidatesForStage.length}
                       </strong>
                     </>
                   )}{" "}
