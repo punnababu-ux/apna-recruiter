@@ -137,7 +137,7 @@ export function AttemptStatusBand({
 
       {/* Helper line */}
       {helper ? (
-        <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
+        <p className="mt-1 flex items-start gap-1.5 border-t border-border pt-3 text-xs text-muted-foreground">
           <Info className="mt-0.5 size-3 shrink-0" />
           <span>{helper}</span>
         </p>
