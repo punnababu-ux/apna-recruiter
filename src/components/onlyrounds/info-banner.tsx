@@ -8,7 +8,13 @@
  * If you need a different tone, add it to Alert — don't add it here.
  */
 
-import { AlertTriangle, CheckCircle2, Info, XCircle } from "lucide-react"
+import {
+  AlertTriangle,
+  CheckCircle2,
+  Info,
+  XCircle,
+  type LucideIcon,
+} from "lucide-react"
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { cn } from "@/lib/utils"
@@ -24,18 +30,21 @@ const ICON: Record<BannerVariant, React.ComponentType<React.SVGProps<SVGSVGEleme
 
 export function InfoBanner({
   variant = "info",
+  icon,
   title,
   description,
   action,
   className,
 }: {
   variant?: BannerVariant
+  /** Override the default variant icon (e.g. a contextual PhoneOutgoing). */
+  icon?: LucideIcon
   title: React.ReactNode
   description?: React.ReactNode
   action?: React.ReactNode
   className?: string
 }) {
-  const Icon = ICON[variant]
+  const Icon = icon ?? ICON[variant]
   return (
     <Alert
       variant={variant}

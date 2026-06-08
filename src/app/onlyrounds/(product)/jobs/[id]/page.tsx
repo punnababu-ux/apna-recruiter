@@ -23,6 +23,7 @@ import {
   Mic,
   MoreVertical,
   PhoneCall,
+  PhoneOutgoing,
   PowerOff,
   Share2,
   Upload,
@@ -732,6 +733,7 @@ function JobDetailPageInner({ id }: { id: string }) {
         {ROUNDS[mainTab].mode === "ai" && candidatesForStage.length > 0 && (
           <InfoBanner
             variant="info"
+            icon={PhoneOutgoing}
             title={`Start dialing for ${ROUNDS[mainTab].name} candidates`}
             description="Candidates are ready. The interview will start when you begin dialing."
             action={

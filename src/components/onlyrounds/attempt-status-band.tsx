@@ -78,22 +78,26 @@ export function AttemptStatusBand({
         {reason ? <span className="text-foreground">{reason}</span> : null}
       </p>
 
-      {/* Progress + counter row */}
+      {/* Progress bar */}
       {pct !== null ? (
-        <div className="flex items-center gap-3">
+        <div
+          className="h-1 w-full overflow-hidden rounded-full bg-muted"
+          role="progressbar"
+          aria-valuenow={attempted}
+          aria-valuemin={0}
+          aria-valuemax={total}
+        >
           <div
-            className="h-1 flex-1 overflow-hidden rounded-full bg-muted"
-            role="progressbar"
-            aria-valuenow={attempted}
-            aria-valuemin={0}
-            aria-valuemax={total}
-          >
-            <div
-              className={cn("h-full transition-[width]", t.progress)}
-              style={{ width: `${pct}%` }}
-            />
-          </div>
-          <span className="shrink-0 text-xs text-muted-foreground">
+            className={cn("h-full transition-[width]", t.progress)}
+            style={{ width: `${pct}%` }}
+          />
+        </div>
+      ) : null}
+
+      {/* Counter (left) + logs toggle (right), below the bar */}
+      {pct !== null ? (
+        <div className="flex items-center justify-between gap-3">
+          <span className="text-xs text-muted-foreground">
             <span className="font-semibold text-foreground">{attempted}</span>{" "}
             of <span className="font-semibold text-foreground">{total}</span>{" "}
             call attempts completed
