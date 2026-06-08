@@ -1,11 +1,15 @@
+"use client"
+
 /**
  * AttemptStatusBand — status row used inside CandidateCard for in-progress
- * states (Interview pending / Incomplete call / Rejected reason / etc).
+ * states (Interview pending / Incomplete call / No response / etc).
  *
  * Composition:
- *   coloured label · short reason text · linear progress · attempts counter
+ *   coloured label · reason text
+ *   linear progress bar
+ *   "{n} of {N} call attempts completed" · optional "Attempt Logs: View ▼" toggle
+ *   (when expanded) — chronological list of attempt log entries
  *   optional helper line below (info icon + helper text)
- *   optional "Attempt Logs: View" link on the right of the counter row
  *
  * Behaviour:
  *   - Pending → AI hasn't exhausted attempts yet. tone="info"
@@ -15,11 +19,20 @@
  * The tone drives label + progress colour; the rest of the chrome stays neutral.
  */
 
-import { Info } from "lucide-react"
+import { ChevronDown, ChevronUp, Info } from "lucide-react"
+import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
 export type AttemptTone = "info" | "warning" | "destructive" | "muted"
+
+/** A single line in the chronological attempt log. */
+export type AttemptLogEntry = {
+  /** Display text, e.g. "First Attempt: Call Started" or "Second Attempt: Call Ended (15s)". */
+  label: string
+  /** Human-readable timestamp, e.g. "Apr 08, 2026 at 07:21 PM". */
+  at: string
+}
 
 const TONE: Record<AttemptTone, { text: string; progress: string }> = {
   info: { text: "text-info", progress: "bg-info" },
@@ -35,7 +48,7 @@ export function AttemptStatusBand({
   attempted,
   total,
   helper,
-  onViewAttempts,
+  attempts,
 }: {
   tone?: AttemptTone
   /** e.g. "Interview Pending" / "Interview Incomplete" */
@@ -46,14 +59,16 @@ export function AttemptStatusBand({
   total?: number
   /** Short paragraph below the progress row, with a leading info icon. */
   helper?: string
-  /** When set, an "Attempt Logs: View" link appears next to the counter. */
-  onViewAttempts?: (e: React.MouseEvent) => void
+  /** When provided & non-empty, a "View / Hide all" toggle expands the chronological log. */
+  attempts?: AttemptLogEntry[]
 }) {
   const t = TONE[tone]
   const pct =
     typeof attempted === "number" && typeof total === "number" && total > 0
       ? Math.min(100, Math.round((attempted / total) * 100))
       : null
+  const hasLogs = attempts && attempts.length > 0
+  const [expanded, setExpanded] = React.useState(false)
 
   return (
     <div className="flex flex-col gap-2 border-t border-border px-4 py-3">
@@ -83,16 +98,37 @@ export function AttemptStatusBand({
             of <span className="font-semibold text-foreground">{total}</span>{" "}
             call attempts completed
           </span>
-          {onViewAttempts ? (
+          {hasLogs ? (
             <button
               type="button"
-              onClick={onViewAttempts}
-              className="shrink-0 text-xs font-medium text-primary hover:underline"
+              onClick={(e) => {
+                e.stopPropagation()
+                setExpanded((v) => !v)
+              }}
+              aria-expanded={expanded}
+              className="inline-flex shrink-0 items-center gap-0.5 text-xs font-medium text-primary hover:underline"
             >
-              Attempt Logs: View
+              Attempt Logs: {expanded ? "Hide all" : "View"}
+              {expanded ? (
+                <ChevronUp className="size-3" />
+              ) : (
+                <ChevronDown className="size-3" />
+              )}
             </button>
           ) : null}
         </div>
+      ) : null}
+
+      {/* Expanded log list */}
+      {hasLogs && expanded ? (
+        <ul className="mt-0.5 flex flex-col gap-1 text-xs text-muted-foreground">
+          {attempts!.map((a, i) => (
+            <li key={i} className="flex items-baseline justify-between gap-3">
+              <span>– {a.label}</span>
+              <span className="shrink-0 tabular-nums">{a.at}</span>
+            </li>
+          ))}
+        </ul>
       ) : null}
 
       {/* Helper line */}

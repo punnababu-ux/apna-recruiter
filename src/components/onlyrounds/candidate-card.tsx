@@ -25,12 +25,18 @@ import {
   RotateCcw,
 } from "lucide-react"
 
-import { AttemptStatusBand } from "@/components/onlyrounds/attempt-status-band"
+import * as React from "react"
+
+import {
+  AttemptStatusBand,
+  type AttemptLogEntry,
+} from "@/components/onlyrounds/attempt-status-band"
 import { ScoreGauge, type Verdict } from "@/components/onlyrounds/score-gauge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 
 export type CandidateInsight = {
@@ -40,10 +46,10 @@ export type CandidateInsight = {
 }
 
 export type CandidateState =
-  | { kind: "pending"; attempted: number; total: number }
-  | { kind: "incomplete"; attempted: number; total: number }
+  | { kind: "pending"; attempted: number; total: number; attempts?: AttemptLogEntry[] }
+  | { kind: "incomplete"; attempted: number; total: number; attempts?: AttemptLogEntry[] }
   | { kind: "completed"; score: number; verdict: Verdict; insights: CandidateInsight[] }
-  | { kind: "no-response"; attempted: number; total: number }
+  | { kind: "no-response"; attempted: number; total: number; attempts?: AttemptLogEntry[] }
   | { kind: "not-interested" }
 
 /** CEFR levels A1–C2, or "na" when the assessment hasn't run / wasn't requested. */
@@ -58,7 +64,11 @@ export type Candidate = {
   phone?: string
   state: CandidateState
   cefrLevel?: CefrLevel
+  /** Initial note text. Card manages its own editing state from here. */
+  note?: string
 }
+
+const NOTE_MAX_CHARS = 300
 
 export function CandidateCard({
   candidate,
@@ -199,6 +209,7 @@ export function CandidateCard({
           attempted={state.attempted}
           total={state.total}
           helper="We're trying to reach the candidate for this interview. We'll update the status once they respond."
+          attempts={state.attempts}
         />
       )}
 
@@ -210,7 +221,7 @@ export function CandidateCard({
           attempted={state.attempted}
           total={state.total}
           helper="Candidate attempted the interview but didn't complete it. We've notified the candidate to complete the interview, we'll update the status here once it's completed."
-          onViewAttempts={stop()}
+          attempts={state.attempts}
         />
       )}
 
@@ -221,6 +232,7 @@ export function CandidateCard({
           reason="Candidate did not respond after all attempts"
           attempted={state.attempted}
           total={state.total}
+          attempts={state.attempts}
         />
       )}
 
@@ -286,18 +298,125 @@ export function CandidateCard({
         </div>
       </div>
 
-      {/* Footer note action */}
-      <div className="flex items-center justify-end border-t border-border px-4 py-1.5 text-xs">
+      {/* Note section — empty / editing / view */}
+      <CandidateNote initialNote={candidate.note} onSave={onAddNote} />
+    </article>
+  )
+}
+
+// ── CandidateNote (tri-state: empty → editing → view) ─────────────────────
+
+function CandidateNote({
+  initialNote,
+  onSave,
+}: {
+  initialNote?: string
+  /** Called whenever the note is committed (blur or Enter). Receives the
+   *  trimmed value; empty string means the note was cleared. */
+  onSave?: (value: string) => void
+}) {
+  const [note, setNote] = React.useState(initialNote ?? "")
+  const [editing, setEditing] = React.useState(false)
+  const [draft, setDraft] = React.useState(note)
+  const ref = React.useRef<HTMLTextAreaElement>(null)
+
+  React.useEffect(() => {
+    if (editing) {
+      // Defer focus so the textarea is in the DOM.
+      requestAnimationFrame(() => {
+        ref.current?.focus()
+        const len = ref.current?.value.length ?? 0
+        ref.current?.setSelectionRange(len, len)
+      })
+    }
+  }, [editing])
+
+  const startEditing = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setDraft(note)
+    setEditing(true)
+  }
+
+  const commit = () => {
+    const trimmed = draft.trim()
+    setNote(trimmed)
+    setEditing(false)
+    onSave?.(trimmed)
+  }
+
+  const cancel = () => {
+    setDraft(note)
+    setEditing(false)
+  }
+
+  // ── Empty: just the right-aligned link ──────────────────────────────────
+  if (!note && !editing) {
+    return (
+      <div className="flex items-center justify-end border-t border-border px-4 py-2 text-xs">
         <button
           type="button"
-          onClick={stop(onAddNote)}
+          onClick={startEditing}
           className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground"
         >
           <Pencil className="size-3" />
           Add a note
         </button>
       </div>
-    </article>
+    )
+  }
+
+  // ── Editing: full-width textarea + char counter ────────────────────────
+  if (editing) {
+    const remaining = NOTE_MAX_CHARS - draft.length
+    return (
+      <div
+        className="flex flex-col gap-1 border-t border-border bg-muted/30 px-4 py-2"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <Textarea
+          ref={ref}
+          value={draft}
+          onChange={(e) =>
+            setDraft(e.target.value.slice(0, NOTE_MAX_CHARS))
+          }
+          onBlur={commit}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+              e.preventDefault()
+              commit()
+            } else if (e.key === "Escape") {
+              e.preventDefault()
+              cancel()
+            }
+          }}
+          placeholder="Add reason for rejection or any other notes"
+          rows={2}
+          maxLength={NOTE_MAX_CHARS}
+          className="resize-none border-0 bg-transparent p-0 text-xs shadow-none focus-visible:ring-0 focus-visible:outline-none"
+        />
+        <div className="flex justify-end text-2xs tabular-nums text-muted-foreground">
+          {draft.length}/{NOTE_MAX_CHARS}
+          <span className="sr-only">
+            {remaining} characters remaining
+          </span>
+        </div>
+      </div>
+    )
+  }
+
+  // ── View: saved note + edit pencil ─────────────────────────────────────
+  return (
+    <div className="flex items-start justify-between gap-3 border-t border-border bg-muted/30 px-4 py-2 text-xs">
+      <p className="flex-1 whitespace-pre-wrap text-foreground">{note}</p>
+      <button
+        type="button"
+        onClick={startEditing}
+        aria-label="Edit note"
+        className="shrink-0 text-muted-foreground hover:text-foreground"
+      >
+        <Pencil className="size-3.5" />
+      </button>
+    </div>
   )
 }
 
