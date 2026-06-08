@@ -719,7 +719,7 @@ function JobDetailPageInner({ id }: { id: string }) {
         }
       />
 
-      <main className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-6 py-4">
+      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-4 px-6 py-4">
         {/* Round summary strip — what's configured for the active round */}
         <RoundSummaryStrip
           roundName={ROUNDS[mainTab].name}
@@ -743,8 +743,9 @@ function JobDetailPageInner({ id }: { id: string }) {
           />
         )}
 
-        {/* Two-column body */}
-        <div className="flex gap-4">
+        {/* Two-column body — stretches to fill remaining page height so the
+            filter sidebar runs the full height of the content area. */}
+        <div className="flex flex-1 items-stretch gap-4">
           <FilterPanel
             count={totalFilterCount}
             groups={FILTERS}

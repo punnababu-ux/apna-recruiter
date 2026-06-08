@@ -29,7 +29,9 @@ const tabsListVariants = cva(
     variants: {
       variant: {
         default: "bg-muted",
-        line: "gap-6 bg-transparent",
+        // No list padding so the first tab's text aligns flush with the
+        // page title; taller (48px) row; underline indicator sits at bottom-0.
+        line: "gap-6 bg-transparent p-0 group-data-horizontal/tabs:h-12",
         /** White pill with a near-black active chip. Use on gray/tinted canvases
          *  where the default muted pill would be invisible. */
         inverted: "bg-card",

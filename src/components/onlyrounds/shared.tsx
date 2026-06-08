@@ -102,8 +102,18 @@ export function IconLabel({
 }
 
 // ── InfoChip ──────────────────────────────────────────────────────────────
-// Icon + label inline chip. Used by ScreeningSummary (muted bg) and
-// InterviewerCard InfoPill (bordered). The variant prop selects the style.
+// Icon + label inline chip.
+//
+// CONTRAST RULE — pick the variant by the SURFACE the chip sits on:
+//   • "muted"    → only on a plain white `bg-card` / `bg-background` surface.
+//   • "outlined" → on ANY tinted or coloured surface (bg-muted, bg-accent,
+//                  bg-*-subtle, etc). The white fill + border guarantees the
+//                  chip reads regardless of the backdrop. When unsure, use
+//                  "outlined" — it is always safe.
+//
+// Rationale: a `bg-muted` chip on a tinted container (e.g. bg-accent/30)
+// has near-zero contrast and visually disappears. Defaulting tinted-surface
+// chips to "outlined" prevents that class of bug.
 
 export function InfoChip({
   icon: Icon,

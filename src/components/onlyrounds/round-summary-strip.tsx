@@ -40,7 +40,7 @@ export function RoundSummaryStrip({
   return (
     <div
       className={cn(
-        "flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-accent/30 px-4 py-3",
+        "flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-muted/30 px-4 py-3",
         className,
       )}
     >
@@ -51,7 +51,9 @@ export function RoundSummaryStrip({
         </div>
         <div className="flex flex-wrap items-center gap-1.5">
           {meta.map((m, i) => (
-            <InfoChip key={i} icon={m.icon}>
+            // Outlined (white + border) chips stay visible on any tinted
+            // surface — see the contrast note in InfoChip.
+            <InfoChip key={i} icon={m.icon} variant="outlined">
               {m.label}
             </InfoChip>
           ))}
