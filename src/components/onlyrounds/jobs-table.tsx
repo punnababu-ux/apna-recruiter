@@ -22,9 +22,13 @@ import {
   CalendarDays,
   CheckCircle2,
   ChevronRight,
+  Copy,
   MapPin,
   MessagesSquare,
   MoreVertical,
+  PowerOff,
+  Share2,
+  Upload,
   User2,
   UserSearch,
 } from "lucide-react"
@@ -232,13 +236,25 @@ function RowActions({ status }: { status: JobStatus }) {
         }
       />
       <DropdownMenuContent align="end">
-        <DropdownMenuItem>Share</DropdownMenuItem>
-        {canPublish ? <DropdownMenuItem>Publish</DropdownMenuItem> : null}
-        <DropdownMenuItem>Duplicate</DropdownMenuItem>
+        <DropdownMenuItem>
+          <Share2 className="size-3.5" />
+          Share
+        </DropdownMenuItem>
+        {canPublish ? (
+          <DropdownMenuItem>
+            <Upload className="size-3.5" />
+            Publish
+          </DropdownMenuItem>
+        ) : null}
+        <DropdownMenuItem>
+          <Copy className="size-3.5" />
+          Duplicate
+        </DropdownMenuItem>
         {canDeactivate ? (
           <>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="text-destructive">
+              <PowerOff className="size-3.5" />
               Deactivate
             </DropdownMenuItem>
           </>
