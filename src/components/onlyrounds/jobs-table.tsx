@@ -34,6 +34,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 
+import { IconLabel } from "@/components/onlyrounds/shared"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -102,13 +103,15 @@ function JobRowItem({ row }: { row: JobRow }) {
               {row.title}
             </span>
             <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-              <MetaItem icon={Building2} label={row.client} />
+              <IconLabel icon={Building2}>{row.client}</IconLabel>
               <span aria-hidden>·</span>
-              <MetaItem icon={MapPin} label={row.location} />
+              <IconLabel icon={MapPin}>{row.location}</IconLabel>
               <span aria-hidden>·</span>
-              <MetaItem icon={CalendarDays} label={`Created ${row.createdAt}`} />
+              <IconLabel icon={CalendarDays}>
+                Created {row.createdAt}
+              </IconLabel>
               <span aria-hidden>·</span>
-              <MetaItem icon={User2} label={`By ${row.owner}`} />
+              <IconLabel icon={User2}>By {row.owner}</IconLabel>
             </div>
           </Link>
         </div>
@@ -175,21 +178,6 @@ function ClientLogo({ client, src }: { client: string; src?: string }) {
     <div className="flex size-9 shrink-0 items-center justify-center rounded-md border border-border bg-muted text-xs font-semibold text-muted-foreground">
       {client.slice(0, 1).toUpperCase()}
     </div>
-  )
-}
-
-function MetaItem({
-  icon: Icon,
-  label,
-}: {
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
-  label: string
-}) {
-  return (
-    <span className="inline-flex items-center gap-1">
-      <Icon className="size-3" aria-hidden />
-      {label}
-    </span>
   )
 }
 

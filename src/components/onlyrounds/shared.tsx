@@ -76,6 +76,31 @@ export function DisplayField({
   )
 }
 
+// ── IconLabel ─────────────────────────────────────────────────────────────
+// Plain inline "icon + text" pair. Used for meta lines under list rows or
+// page headers (client, location, created date, owner, etc.).
+// Inherits text size + colour from the parent — keep it light.
+
+export function IconLabel({
+  icon: Icon,
+  children,
+  iconClassName,
+  className,
+}: {
+  icon: LucideIcon
+  children: React.ReactNode
+  /** Override the icon size. Defaults to size-3.5 (good for text-sm/-xs). */
+  iconClassName?: string
+  className?: string
+}) {
+  return (
+    <span className={cn("inline-flex items-center gap-1", className)}>
+      <Icon className={cn("size-3.5 shrink-0", iconClassName)} aria-hidden />
+      {children}
+    </span>
+  )
+}
+
 // ── InfoChip ──────────────────────────────────────────────────────────────
 // Icon + label inline chip. Used by ScreeningSummary (muted bg) and
 // InterviewerCard InfoPill (bordered). The variant prop selects the style.

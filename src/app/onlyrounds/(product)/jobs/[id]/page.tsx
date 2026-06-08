@@ -12,12 +12,14 @@
  */
 
 import {
+  Building2,
   ChevronLeft,
   Clock,
   Download,
   Globe,
   Languages,
   ListChecks,
+  MapPin,
   Mic,
   PhoneCall,
   Share2,
@@ -44,6 +46,7 @@ import { InfoBanner } from "@/components/onlyrounds/info-banner"
 import { NetworkShareSheet } from "@/components/onlyrounds/network-share-sheet"
 import { PageHeader } from "@/components/onlyrounds/page-header"
 import { RoundSummaryStrip } from "@/components/onlyrounds/round-summary-strip"
+import { IconLabel } from "@/components/onlyrounds/shared"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -661,7 +664,13 @@ function JobDetailPageInner({ id }: { id: string }) {
             <Badge variant="success">Active</Badge>
           </span>
         }
-        description="Simplilearn · Hubli"
+        description={
+          <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <IconLabel icon={Building2}>Simplilearn</IconLabel>
+            <span aria-hidden>·</span>
+            <IconLabel icon={MapPin}>Hubli</IconLabel>
+          </span>
+        }
         tabs={
           <Tabs value={mainTab} onValueChange={(v) => { setMainTab(v as Stage); setFilters({}); setSearchQuery("") }}>
             <TabsList variant="line">
