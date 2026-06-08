@@ -14,23 +14,22 @@
 import {
   Building2,
   Clock,
+  Copy,
   Download,
   Globe,
   Languages,
   ListChecks,
   MapPin,
   Mic,
+  MoreVertical,
   PhoneCall,
-  Share2,
+  PowerOff,
+  Upload,
   User,
-  UserPlus,
 } from "lucide-react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import * as React from "react"
 import { Suspense, use, useMemo, useState } from "react"
-import { toast } from "sonner"
 
-import { BulkActionBar } from "@/components/onlyrounds/bulk-action-bar"
 import {
   CandidateCard,
   type Candidate,
@@ -41,12 +40,18 @@ import {
 } from "@/components/onlyrounds/candidate-drawer"
 import { FilterPanel, type FilterGroup } from "@/components/onlyrounds/filter-panel"
 import { InfoBanner } from "@/components/onlyrounds/info-banner"
-import { NetworkShareSheet } from "@/components/onlyrounds/network-share-sheet"
 import { PageHeader } from "@/components/onlyrounds/page-header"
 import { RoundSummaryStrip } from "@/components/onlyrounds/round-summary-strip"
 import { IconLabel } from "@/components/onlyrounds/shared"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
@@ -577,8 +582,6 @@ function JobDetailPageInner({ id }: { id: string }) {
   const [mainTab, setMainTab] = useState<
     "screening" | "interview" | "selected"
   >("screening")
-  const [shareOpen, setShareOpen] = useState(false)
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
 
   // Filter & search state. `filters` keys are group ids; values are the
   // set of selected option ids within that group. When a group has zero
@@ -619,41 +622,10 @@ function JobDetailPageInner({ id }: { id: string }) {
     })
   }, [searchQuery, filters, candidatesForStage])
 
-  // Clear selection when changing stage.
-  React.useEffect(() => {
-    setSelectedIds(new Set())
-  }, [mainTab])
-
   const totalFilterCount = Object.values(filters).reduce(
     (acc, set) => acc + set.size,
     0,
   )
-
-  const hasSelection = selectedIds.size > 0
-  const allSelected =
-    filteredCandidates.length > 0 &&
-    filteredCandidates.every((c) => selectedIds.has(c.id))
-
-  const toggleSelected = (id: string, next: boolean) => {
-    setSelectedIds((prev) => {
-      const out = new Set(prev)
-      if (next) out.add(id)
-      else out.delete(id)
-      return out
-    })
-  }
-  const selectAll = (next: boolean) => {
-    if (!next) {
-      setSelectedIds(new Set())
-      return
-    }
-    setSelectedIds((prev) => {
-      const out = new Set(prev)
-      filteredCandidates.forEach((c) => out.add(c.id))
-      return out
-    })
-  }
-  const clearSelection = () => setSelectedIds(new Set())
 
   // Drawer driven by ?leadId= so the panel survives reloads.
   const setLeadId = (next: string | null) => {
@@ -710,12 +682,34 @@ function JobDetailPageInner({ id }: { id: string }) {
             <Button variant="outline" size="sm">
               <Download className="size-4" /> Download
             </Button>
-            <Button variant="outline" size="sm">
-              <UserPlus className="size-4" /> Add candidates
-            </Button>
-            <Button size="sm" onClick={() => setShareOpen(true)}>
-              <Share2 className="size-4" /> Share job
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <Button
+                    variant="outline"
+                    size="icon-sm"
+                    aria-label="More job actions"
+                  >
+                    <MoreVertical className="size-4" />
+                  </Button>
+                }
+              />
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>
+                  <Upload className="size-3.5" />
+                  Publish
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Copy className="size-3.5" />
+                  Duplicate
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="text-destructive">
+                  <PowerOff className="size-3.5" />
+                  Deactivate
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </>
         }
       />
@@ -767,56 +761,28 @@ function JobDetailPageInner({ id }: { id: string }) {
           />
 
           <section className="flex min-w-0 flex-1 flex-col gap-3">
-            {hasSelection ? (
-              <BulkActionBar
-                selectedCount={selectedIds.size}
-                totalCount={filteredCandidates.length}
-                allSelected={allSelected}
-                onSelectAll={selectAll}
-                onClear={clearSelection}
-                onMoveToNextRound={() => {
-                  toast.success(
-                    `Moved ${selectedIds.size} candidate${selectedIds.size === 1 ? "" : "s"} to next round`,
-                  )
-                  clearSelection()
-                }}
-                onReject={() => {
-                  toast.success(
-                    `Rejected ${selectedIds.size} candidate${selectedIds.size === 1 ? "" : "s"}`,
-                  )
-                  clearSelection()
-                }}
-                onReTake={() => {
-                  toast.success(
-                    `Re-take queued for ${selectedIds.size} candidate${selectedIds.size === 1 ? "" : "s"}`,
-                  )
-                  clearSelection()
-                }}
-              />
-            ) : (
-              <div className="flex items-center justify-between">
-                <p className="text-sm text-muted-foreground">
-                  Showing{" "}
-                  <strong className="font-semibold text-foreground">
-                    {filteredCandidates.length}
-                  </strong>
-                  {filteredCandidates.length !== candidatesForStage.length && (
-                    <>
-                      {" "}
-                      of{" "}
-                      <strong className="font-semibold text-foreground">
-                        {candidatesForStage.length}
-                      </strong>
-                    </>
-                  )}{" "}
-                  candidates
-                </p>
-                <Button variant="ghost" size="sm">
-                  <Download className="size-3.5" />
-                  Download data
-                </Button>
-              </div>
-            )}
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-muted-foreground">
+                Showing{" "}
+                <strong className="font-semibold text-foreground">
+                  {filteredCandidates.length}
+                </strong>
+                {filteredCandidates.length !== candidatesForStage.length && (
+                  <>
+                    {" "}
+                    of{" "}
+                    <strong className="font-semibold text-foreground">
+                      {candidatesForStage.length}
+                    </strong>
+                  </>
+                )}{" "}
+                candidates
+              </p>
+              <Button variant="ghost" size="sm">
+                <Download className="size-3.5" />
+                Download data
+              </Button>
+            </div>
 
             {filteredCandidates.length === 0 ? (
               <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-muted/30 px-6 py-12 text-center">
@@ -846,9 +812,6 @@ function JobDetailPageInner({ id }: { id: string }) {
                     candidate={c}
                     onOpen={() => setLeadId(c.id)}
                     onViewInsights={() => setLeadId(c.id)}
-                    selectable
-                    selected={selectedIds.has(c.id)}
-                    onSelectChange={(next) => toggleSelected(c.id, next)}
                   />
                 ))}
               </div>
@@ -866,12 +829,6 @@ function JobDetailPageInner({ id }: { id: string }) {
         hasNext={!!next}
         onPrev={() => prev && setLeadId(prev.id)}
         onNext={() => next && setLeadId(next.id)}
-      />
-
-      <NetworkShareSheet
-        open={shareOpen}
-        onOpenChange={setShareOpen}
-        jobTitle={jobTitle}
       />
     </div>
   )
