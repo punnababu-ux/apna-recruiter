@@ -13,7 +13,6 @@
 
 import {
   Building2,
-  ChevronLeft,
   Clock,
   Download,
   Globe,
@@ -26,7 +25,6 @@ import {
   User,
   UserPlus,
 } from "lucide-react"
-import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import * as React from "react"
 import { Suspense, use, useMemo, useState } from "react"
@@ -649,15 +647,6 @@ function JobDetailPageInner({ id }: { id: string }) {
   return (
     <div className="flex min-h-svh flex-col">
       <PageHeader
-        eyebrow={
-          <Link
-            href="/onlyrounds/jobs"
-            className="inline-flex items-center gap-1 hover:text-foreground"
-          >
-            <ChevronLeft className="size-3.5" />
-            Back to jobs
-          </Link>
-        }
         title={
           <span className="inline-flex items-center gap-2">
             <span className="capitalize">{jobTitle}</span>
