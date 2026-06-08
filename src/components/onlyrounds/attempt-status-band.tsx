@@ -80,10 +80,12 @@ export function AttemptStatusBand({
           {reason ? <span className="text-foreground">{reason}</span> : null}
         </p>
 
-        {/* Progress bar */}
+        {/* Progress bar — empty track uses a soft grey (muted-foreground/20)
+            so it stays visible on the grey container and matches the grey
+            of the no-response state. */}
         {pct !== null ? (
           <div
-            className="h-1 w-full overflow-hidden rounded-full bg-background"
+            className="h-1 w-full overflow-hidden rounded-full bg-muted-foreground/20"
             role="progressbar"
             aria-valuenow={attempted}
             aria-valuemin={0}
