@@ -651,6 +651,9 @@ function JobDetailPageInner({ id }: { id: string }) {
   return (
     <div className="flex min-h-svh flex-col">
       <PageHeader
+        // Sticks directly beneath the 64px ProductTopBar so the job
+        // title + round tabs stay in view while the candidate list scrolls.
+        className="sticky top-16 z-20"
         title={
           <span className="inline-flex items-center gap-2">
             <span className="capitalize">{jobTitle}</span>
