@@ -133,6 +133,10 @@ const CANDIDATES: CandidateRow[] = [
     state: { kind: "pending", attempted: 0, total: 5 },
     cefrLevel: "na",
     stage: "screening",
+    retakeHistory: [
+      { label: "First Attempt: Candidate was a fit", at: "May 14, 2026 at 11:30 AM" },
+      { label: "Second Attempt: Interview pending", at: "Jun 8, 2026 at 02:22 PM" },
+    ],
   },
   {
     id: "demo1",

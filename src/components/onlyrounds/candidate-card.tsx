@@ -16,7 +16,10 @@
 
 import {
   AtSign,
+  ChevronDown,
   ChevronRight,
+  ChevronUp,
+  History,
   MessageCircle,
   Phone,
   Pencil,
@@ -65,6 +68,9 @@ export type Candidate = {
   cefrLevel?: CefrLevel
   /** Initial note text. Card manages its own editing state from here. */
   note?: string
+  /** Chronological log of prior re-take attempts. When present, a history
+   *  toggle appears next to the Re-take button. */
+  retakeHistory?: AttemptLogEntry[]
 }
 
 const NOTE_MAX_CHARS = 300
@@ -88,7 +94,9 @@ export function CandidateCard({
   onViewInsights?: () => void
   className?: string
 }) {
-  const { name, role, company, email, phone, state } = candidate
+  const { name, role, company, email, phone, state, retakeHistory } = candidate
+  const hasRetakeHistory = retakeHistory && retakeHistory.length > 0
+  const [historyOpen, setHistoryOpen] = React.useState(false)
 
   const stop = (fn?: () => void) => (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -249,15 +257,36 @@ export function CandidateCard({
 
       {/* Action bar */}
       <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-2.5">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={stop(onReTake)}
-          className="h-8"
-        >
-          <RotateCcw className="size-3.5" />
-          Re-take
-        </Button>
+        <div className="flex items-center gap-1.5">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={stop(onReTake)}
+            className="h-8"
+          >
+            <RotateCcw className="size-3.5" />
+            Re-take
+          </Button>
+          {hasRetakeHistory ? (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={stop(() => setHistoryOpen((v) => !v))}
+              aria-expanded={historyOpen}
+              aria-label={
+                historyOpen ? "Hide re-take history" : "Show re-take history"
+              }
+              className="h-8 px-2"
+            >
+              <History className="size-3.5" />
+              {historyOpen ? (
+                <ChevronUp className="size-3" />
+              ) : (
+                <ChevronDown className="size-3" />
+              )}
+            </Button>
+          ) : null}
+        </div>
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
@@ -274,6 +303,26 @@ export function CandidateCard({
           </Button>
         </div>
       </div>
+
+      {/* Re-take history (expanded) */}
+      {hasRetakeHistory && historyOpen ? (
+        <div className="border-t border-border px-4 py-3">
+          <div className="flex flex-col gap-2 rounded-md bg-muted/50 px-3 py-2.5">
+            <p className="text-xs font-semibold">Re-Take History</p>
+            <ul className="flex flex-col gap-1 text-xs text-muted-foreground">
+              {retakeHistory!.map((h, i) => (
+                <li
+                  key={i}
+                  className="flex items-baseline justify-between gap-3"
+                >
+                  <span>– {h.label}</span>
+                  <span className="shrink-0 tabular-nums">{h.at}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      ) : null}
 
       {/* Note section — empty / editing / view */}
       <CandidateNote initialNote={candidate.note} onSave={onAddNote} />
