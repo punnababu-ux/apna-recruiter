@@ -748,9 +748,9 @@ function JobDetailPageInner({ id }: { id: string }) {
           />
         )}
 
-        {/* Two-column body — stretches to fill remaining page height so the
-            filter sidebar runs the full height of the content area. */}
-        <div className="flex flex-1 items-stretch gap-4">
+        {/* Two-column body — items-start so the filter sidebar hugs its
+            content height instead of stretching to the page height. */}
+        <div className="flex flex-1 items-start gap-4">
           <FilterPanel
             count={totalFilterCount}
             groups={FILTERS}
