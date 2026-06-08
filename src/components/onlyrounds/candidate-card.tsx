@@ -20,9 +20,9 @@ import {
   ChevronRight,
   ChevronUp,
   History,
-  MessageCircle,
   Phone,
   Pencil,
+  QrCode,
   XCircle,
   CircleCheck,
   RotateCcw,
@@ -38,6 +38,11 @@ import { ScoreGauge, type Verdict } from "@/components/onlyrounds/score-gauge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 
@@ -147,20 +152,11 @@ export function CandidateCard({
               </span>
             )}
             {phone && (
-              <span className="inline-flex items-center gap-1">
+              <span className="inline-flex items-center gap-1.5">
                 <Phone className="size-3" />
                 {phone}
+                <ContactActions phone={phone} name={name} onStop={stop} />
               </span>
-            )}
-            {phone && (
-              <button
-                type="button"
-                onClick={stop()}
-                aria-label="Message on WhatsApp"
-                className="inline-flex size-4 items-center justify-center text-muted-foreground hover:text-foreground"
-              >
-                <MessageCircle className="size-3" />
-              </button>
             )}
           </div>
         </div>
@@ -188,7 +184,7 @@ export function CandidateCard({
       {/* State-specific body */}
       {state.kind === "pending" && (
         <AttemptStatusBand
-          tone="info"
+          tone="warning"
           label="Interview Pending"
           reason="Call not connected, Rescheduled for completion"
           attempted={state.attempted}
@@ -443,6 +439,90 @@ function CandidateNote({
         <Pencil className="size-3.5" />
       </button>
     </div>
+  )
+}
+
+// ── Contact actions (WhatsApp · QR) ───────────────────────────────────────
+
+/** WhatsApp brand glyph (lucide has no official WhatsApp icon). */
+function WhatsAppIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.51 5.26l-.999 3.648 3.978-1.607zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
+    </svg>
+  )
+}
+
+function ContactActions({
+  phone,
+  name,
+  onStop,
+}: {
+  phone: string
+  name: string
+  /** Card's stopPropagation wrapper so clicks don't open the drawer. */
+  onStop: (fn?: () => void) => (e: React.MouseEvent) => void
+}) {
+  // Digits only for tel:/wa.me links.
+  const digits = phone.replace(/[^\d]/g, "")
+  const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(
+    `tel:+${digits}`,
+  )}`
+
+  return (
+    <span className="inline-flex items-center gap-1">
+      {/* WhatsApp */}
+      <button
+        type="button"
+        aria-label={`Message ${name} on WhatsApp`}
+        onClick={onStop(() => {
+          window.open(`https://wa.me/${digits}`, "_blank", "noopener,noreferrer")
+        })}
+        className="inline-flex size-5 items-center justify-center rounded text-[#25D366] hover:bg-muted"
+      >
+        <WhatsAppIcon className="size-3.5" />
+      </button>
+
+      {/* QR — popover with a scannable tel: code */}
+      <Popover>
+        <PopoverTrigger
+          render={
+            <button
+              type="button"
+              aria-label={`Show call QR for ${name}`}
+              onClick={(e) => e.stopPropagation()}
+              className="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
+            >
+              <QrCode className="size-3.5" />
+            </button>
+          }
+        />
+        <PopoverContent
+          align="start"
+          className="w-auto p-3"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex flex-col items-center gap-2">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={qrSrc}
+              alt={`QR code to call ${name}`}
+              width={180}
+              height={180}
+              className="rounded-md border border-border"
+            />
+            <p className="text-xs text-muted-foreground">
+              Scan to call <span className="font-medium text-foreground">+{digits}</span>
+            </p>
+          </div>
+        </PopoverContent>
+      </Popover>
+    </span>
   )
 }
 
