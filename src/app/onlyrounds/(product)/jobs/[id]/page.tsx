@@ -24,8 +24,10 @@ import {
   MoreVertical,
   PhoneCall,
   PowerOff,
+  Share2,
   Upload,
   User,
+  UserPlus,
 } from "lucide-react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Suspense, use, useMemo, useState } from "react"
@@ -680,7 +682,10 @@ function JobDetailPageInner({ id }: { id: string }) {
         actions={
           <>
             <Button variant="outline" size="sm">
-              <Download className="size-4" /> Download
+              <UserPlus className="size-4" /> Add candidates
+            </Button>
+            <Button variant="outline" size="sm">
+              <Share2 className="size-4" /> Share job
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger
@@ -761,7 +766,7 @@ function JobDetailPageInner({ id }: { id: string }) {
           />
 
           <section className="flex min-w-0 flex-1 flex-col gap-3">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between rounded-lg border border-border bg-card px-4 py-2.5">
               <p className="text-sm text-muted-foreground">
                 Showing{" "}
                 <strong className="font-semibold text-foreground">

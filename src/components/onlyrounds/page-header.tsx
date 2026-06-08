@@ -73,7 +73,7 @@ export function PageHeader({
     )
   }
 
-  // ── Has tabs: stacked layout (title above, tabs + actions below) ────────
+  // ── Has tabs: title + actions on the top row, tabs on their own row ─────
   return (
     <header
       className={cn(
@@ -84,40 +84,43 @@ export function PageHeader({
         className,
       )}
     >
-      {hasTitleBlock ? (
+      {hasTitleBlock || actions ? (
         <div
           className={cn(
+            "flex items-start justify-between gap-4",
             isDefault && "mx-auto w-full max-w-6xl px-6 pt-5 pb-3",
           )}
         >
-          {eyebrow ? (
-            <div className="mb-1 flex items-center gap-2 text-xs text-muted-foreground">
-              {eyebrow}
-            </div>
-          ) : null}
-          {title ? (
-            <h1 className="text-xl font-semibold leading-tight">{title}</h1>
-          ) : null}
-          {description ? (
-            <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+          <div className="min-w-0 flex-1">
+            {eyebrow ? (
+              <div className="mb-1 flex items-center gap-2 text-xs text-muted-foreground">
+                {eyebrow}
+              </div>
+            ) : null}
+            {title ? (
+              <h1 className="text-xl font-semibold leading-tight">{title}</h1>
+            ) : null}
+            {description ? (
+              <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+            ) : null}
+          </div>
+          {actions ? (
+            <div className="flex shrink-0 items-center gap-2">{actions}</div>
           ) : null}
         </div>
       ) : null}
 
-      {tabs || actions ? (
+      {tabs ? (
         <div
           className={cn(
-            "flex flex-wrap items-center justify-between gap-4",
-            // pt-3 + pb-0: the underline indicator of variant="line" tabs sits
-            // at bottom-0 of the trigger, which now lands flush against the
+            "flex flex-wrap items-center",
+            // pt-0 + pb-0: the underline indicator of variant="line" tabs sits
+            // at bottom-0 of the trigger, which lands flush against the
             // header's border-b line.
-            isDefault && "mx-auto w-full max-w-6xl px-6 pt-3 pb-0",
+            isDefault && "mx-auto w-full max-w-6xl px-6",
           )}
         >
-          {tabs ? <div className="min-w-0 flex-1">{tabs}</div> : <div />}
-          {actions ? (
-            <div className="flex shrink-0 items-center gap-2">{actions}</div>
-          ) : null}
+          <div className="min-w-0 flex-1">{tabs}</div>
         </div>
       ) : null}
     </header>
