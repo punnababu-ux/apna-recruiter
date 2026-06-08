@@ -71,73 +71,76 @@ export function AttemptStatusBand({
   const [expanded, setExpanded] = React.useState(false)
 
   return (
-    <div className="flex flex-col gap-2 border-t border-border px-4 py-3">
-      {/* Label + reason */}
-      <p className="text-xs">
-        <span className={cn("font-semibold", t.text)}>{label}:</span>{" "}
-        {reason ? <span className="text-foreground">{reason}</span> : null}
-      </p>
+    <div className="flex flex-col gap-3 border-t border-border px-4 py-3">
+      {/* Grey container: status label · progress · attempts · logs */}
+      <div className="flex flex-col gap-2 rounded-md bg-muted/50 px-3 py-2.5">
+        {/* Label + reason */}
+        <p className="text-xs">
+          <span className={cn("font-semibold", t.text)}>{label}:</span>{" "}
+          {reason ? <span className="text-foreground">{reason}</span> : null}
+        </p>
 
-      {/* Progress bar */}
-      {pct !== null ? (
-        <div
-          className="h-1 w-full overflow-hidden rounded-full bg-muted"
-          role="progressbar"
-          aria-valuenow={attempted}
-          aria-valuemin={0}
-          aria-valuemax={total}
-        >
+        {/* Progress bar */}
+        {pct !== null ? (
           <div
-            className={cn("h-full transition-[width]", t.progress)}
-            style={{ width: `${pct}%` }}
-          />
-        </div>
-      ) : null}
+            className="h-1 w-full overflow-hidden rounded-full bg-background"
+            role="progressbar"
+            aria-valuenow={attempted}
+            aria-valuemin={0}
+            aria-valuemax={total}
+          >
+            <div
+              className={cn("h-full transition-[width]", t.progress)}
+              style={{ width: `${pct}%` }}
+            />
+          </div>
+        ) : null}
 
-      {/* Counter (left) + logs toggle (right), below the bar */}
-      {pct !== null ? (
-        <div className="flex items-center justify-between gap-3">
-          <span className="text-xs text-muted-foreground">
-            <span className="font-semibold text-foreground">{attempted}</span>{" "}
-            of <span className="font-semibold text-foreground">{total}</span>{" "}
-            call attempts completed
-          </span>
-          {hasLogs ? (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation()
-                setExpanded((v) => !v)
-              }}
-              aria-expanded={expanded}
-              className="inline-flex shrink-0 items-center gap-0.5 text-xs font-medium text-primary hover:underline"
-            >
-              Attempt Logs: {expanded ? "Hide all" : "View"}
-              {expanded ? (
-                <ChevronUp className="size-3" />
-              ) : (
-                <ChevronDown className="size-3" />
-              )}
-            </button>
-          ) : null}
-        </div>
-      ) : null}
+        {/* Counter (left) + logs toggle (right), below the bar */}
+        {pct !== null ? (
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-xs text-muted-foreground">
+              <span className="font-semibold text-foreground">{attempted}</span>{" "}
+              of <span className="font-semibold text-foreground">{total}</span>{" "}
+              call attempts completed
+            </span>
+            {hasLogs ? (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setExpanded((v) => !v)
+                }}
+                aria-expanded={expanded}
+                className="inline-flex shrink-0 items-center gap-0.5 text-xs font-medium text-primary hover:underline"
+              >
+                Attempt Logs: {expanded ? "Hide all" : "View"}
+                {expanded ? (
+                  <ChevronUp className="size-3" />
+                ) : (
+                  <ChevronDown className="size-3" />
+                )}
+              </button>
+            ) : null}
+          </div>
+        ) : null}
 
-      {/* Expanded log list */}
-      {hasLogs && expanded ? (
-        <ul className="mt-0.5 flex flex-col gap-1 text-xs text-muted-foreground">
-          {attempts!.map((a, i) => (
-            <li key={i} className="flex items-baseline justify-between gap-3">
-              <span>– {a.label}</span>
-              <span className="shrink-0 tabular-nums">{a.at}</span>
-            </li>
-          ))}
-        </ul>
-      ) : null}
+        {/* Expanded log list */}
+        {hasLogs && expanded ? (
+          <ul className="mt-0.5 flex flex-col gap-1 border-t border-border pt-2 text-xs text-muted-foreground">
+            {attempts!.map((a, i) => (
+              <li key={i} className="flex items-baseline justify-between gap-3">
+                <span>– {a.label}</span>
+                <span className="shrink-0 tabular-nums">{a.at}</span>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </div>
 
-      {/* Helper line */}
+      {/* Helper line (outside the grey box) */}
       {helper ? (
-        <p className="mt-1 flex items-start gap-1.5 border-t border-border pt-3 text-xs text-muted-foreground">
+        <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
           <Info className="mt-0.5 size-3 shrink-0" />
           <span>{helper}</span>
         </p>
