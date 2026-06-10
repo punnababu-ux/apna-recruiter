@@ -642,8 +642,8 @@ export function CreateJobWizard() {
       </div>
 
       {/* Sticky bottom — consistent across all steps */}
-      <div className="sticky bottom-0 z-10 border-t border-border bg-card">
-        <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-3 px-6 py-3">
+      <div className="sticky bottom-0 z-10 border-t border-border bg-card px-6">
+        <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-3 py-3">
           {/* Left — Previous (chevron; the back arrow lives in the top
               bar, so the footer uses a chevron to stay distinct). base-ui's
               TooltipTrigger uses `render={...}` (not Radix's `asChild`). */}

@@ -101,6 +101,31 @@ function Divider() {
   return <div className="h-px bg-border" />
 }
 
+function CollapsibleJd({ jd }: { jd: string }) {
+  const [expanded, setExpanded] = React.useState(false)
+  const lines = jd.split("\n")
+  const needsCollapse = lines.length > 6 || jd.length > 350
+
+  if (!needsCollapse) {
+    return <p className="whitespace-pre-wrap text-sm text-foreground">{jd}</p>
+  }
+
+  return (
+    <div className="flex flex-col gap-1.5">
+      <p className={cn("whitespace-pre-wrap text-sm text-foreground", !expanded && "line-clamp-6")}>
+        {jd}
+      </p>
+      <button
+        type="button"
+        onClick={() => setExpanded(!expanded)}
+        className="self-start text-xs font-semibold text-primary underline-offset-2 hover:underline focus-visible:outline-none"
+      >
+        {expanded ? "Show less" : "Show more"}
+      </button>
+    </div>
+  )
+}
+
 // ── Criteria summary ──────────────────────────────────────────────────────
 
 function CriteriaSummary({ task }: { task: InterviewTask }) {
@@ -362,11 +387,7 @@ export function ReviewStep({
               <DisplayField
                 label="Job description"
                 icon={FileText}
-                value={
-                  <p className="whitespace-pre-wrap text-sm text-foreground line-clamp-6">
-                    {jd}
-                  </p>
-                }
+                value={<CollapsibleJd jd={jd} />}
               />
             )}
           </div>
