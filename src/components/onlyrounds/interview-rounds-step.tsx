@@ -326,7 +326,7 @@ export function InterviewRoundsStep({
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       <header className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0 flex-1">
           <h2 className="text-lg font-semibold leading-tight">Interview rounds</h2>
@@ -351,7 +351,7 @@ export function InterviewRoundsStep({
       {/* Task list — RoundsErrorContext removes the need to prop-drill showErrors */}
       {form.tasks.length > 0 ? (
         <RoundsErrorContext.Provider value={showErrors}>
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4">
             {form.tasks.map((task, i) => (
               <TaskCard
                 key={task.id}
@@ -693,7 +693,7 @@ function SchedulingEditor({
     onChange({ ...config, ...patch })
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       <UIField>
         <FieldLabel icon={CalendarClock}>Scheduling type</FieldLabel>
         <ChipTabs
@@ -774,7 +774,7 @@ function ScreeningEditor({
   ]
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       <UIField>
         <FieldLabel icon={Wrench}>{Noun} type<span className="ml-0.5 text-destructive">*</span></FieldLabel>
         <ChipTabs

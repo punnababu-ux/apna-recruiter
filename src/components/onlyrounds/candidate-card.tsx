@@ -34,9 +34,10 @@ import {
   AttemptStatusBand,
   type AttemptLogEntry,
 } from "@/components/onlyrounds/attempt-status-band"
+import { CandidateStatusBadge } from "@/components/onlyrounds/shared"
 import type { Verdict } from "@/components/onlyrounds/score-gauge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
+import { badgeVariants } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Popover,
@@ -45,6 +46,11 @@ import {
 } from "@/components/ui/popover"
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 export type CandidateInsight = {
   /** "ok" = positive finding, "miss" = topic not covered. */
@@ -78,6 +84,7 @@ export type Candidate = {
   retakeHistory?: AttemptLogEntry[]
   resumeFile?: File
   source?: "applied" | "sourced"
+  sourceDetail?: string
 }
 
 const NOTE_MAX_CHARS = 300
@@ -101,7 +108,7 @@ export function CandidateCard({
   onViewInsights?: () => void
   className?: string
 }) {
-  const { name, role, company, email, phone, state, retakeHistory, source } = candidate
+  const { name, role, company, email, phone, state, retakeHistory, source, sourceDetail } = candidate
   const hasRetakeHistory = retakeHistory && retakeHistory.length > 0
   const [historyOpen, setHistoryOpen] = React.useState(false)
 
@@ -137,9 +144,16 @@ export function CandidateCard({
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
             <h3 className="truncate text-sm font-semibold">{name}</h3>
-            <Badge variant="outline" className="text-2xs text-muted-foreground font-semibold">
-              {source === "sourced" ? "Sourced" : "Applied"}
-            </Badge>
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <span className={cn(badgeVariants({ variant: "outline" }), "text-2xs leading-none text-muted-foreground font-semibold")}>{source === "sourced" ? "Sourced" : "Applied"}</span>
+                }
+              />
+              <TooltipContent>
+                {source === "sourced" ? (sourceDetail || "Sourced candidate") : "Applied directly"}
+              </TooltipContent>
+            </Tooltip>
             <ChevronRight className="size-3.5 text-muted-foreground" />
           </div>
           {(role || company) && (
@@ -168,31 +182,7 @@ export function CandidateCard({
 
         {/* Right-edge status indicator */}
         <div className="flex shrink-0 items-center">
-          {state.kind === "completed" && (
-            <>
-              {state.verdict === "fit" && (
-                <Badge variant="success" className="border border-success/30 font-semibold">Fit · {state.score}</Badge>
-              )}
-              {state.verdict === "not-fit" && (
-                <Badge variant="destructive" className="border border-destructive/30 font-semibold">Not fit · {state.score}</Badge>
-              )}
-              {state.verdict === "review" && (
-                <Badge variant="warning" className="border border-warning/30 font-semibold">Review · {state.score}</Badge>
-              )}
-            </>
-          )}
-          {state.kind === "pending" && (
-            <Badge variant="warning" className="border border-warning/30 font-semibold">Interview pending</Badge>
-          )}
-          {state.kind === "incomplete" && (
-            <Badge variant="warning" className="border border-warning/30 font-semibold">Incomplete call</Badge>
-          )}
-          {state.kind === "no-response" && (
-            <Badge variant="secondary" className="border border-border font-semibold">No response</Badge>
-          )}
-          {state.kind === "not-interested" && (
-            <Badge variant="secondary" className="border border-border font-semibold">Not interested</Badge>
-          )}
+          <CandidateStatusBadge state={state} />
         </div>
       </div>
 
@@ -303,7 +293,7 @@ export function CandidateCard({
             variant="outline"
             size="sm"
             onClick={stop(onReject)}
-            className="h-8 text-destructive hover:text-destructive"
+            className="h-8"
           >
             <XCircle className="size-3.5" />
             Reject
@@ -555,10 +545,10 @@ function InsightChip({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs",
+        "inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs bg-card",
         tone === "ok"
-          ? "border-success/40 bg-success/5 text-success-foreground"
-          : "border-destructive/40 bg-destructive/5 text-destructive",
+          ? "border-success/40 text-success-foreground"
+          : "border-destructive/40 text-destructive",
       )}
     >
       {tone === "ok" ? (

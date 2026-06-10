@@ -17,6 +17,7 @@ import {
   Copy,
   Download,
   Globe,
+  LayoutList,
   Languages,
   ListChecks,
   MapPin,
@@ -24,6 +25,7 @@ import {
   PhoneCall,
   PowerOff,
   Share2,
+  Table2,
   Upload,
   User,
   UserPlus,
@@ -40,13 +42,11 @@ import {
   CandidateDrawer,
   type DrawerCandidate,
 } from "@/components/onlyrounds/candidate-drawer"
-import { SearchFilterBar } from "@/components/onlyrounds/search-filter-bar"
 
-import { PageHeader } from "@/components/onlyrounds/page-header"
+import { SearchFilterBar } from "@/components/onlyrounds/search-filter-bar"
 import { RoundSummaryStrip } from "@/components/onlyrounds/round-summary-strip"
-import { IconLabel } from "@/components/onlyrounds/shared"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { PageHeader } from "@/components/onlyrounds/page-header"
+import { CandidateTable } from "@/components/onlyrounds/candidate-table"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -54,7 +54,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { IconLabel } from "@/components/onlyrounds/shared"
+import { Badge } from "@/components/ui/badge"
+import { BackButton } from "@/components/ui/back-button"
+import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { cn } from "@/lib/utils"
 
 // ── Mock data ─────────────────────────────────────────────────────────────
 
@@ -85,14 +91,7 @@ const FILTERS = [
       { id: "na", label: "Not available", count: 3 },
     ],
   },
-  {
-    id: "source",
-    label: "Candidate Source",
-    options: [
-      { id: "applied", label: "Applied", count: 3 },
-      { id: "sourced", label: "Sourced", count: 3 },
-    ],
-  },
+  // Note: "source" filter is computed dynamically from candidates state
 ]
 
 type Stage = "screening" | "interview" | "selected"
@@ -138,6 +137,7 @@ const CANDIDATES: CandidateRow[] = [
     email: "buruds@gmail.com",
     phone: "+919164862614",
     source: "sourced",
+    sourceDetail: "manually added",
     state: { kind: "pending", attempted: 0, total: 5 },
     cefrLevel: "na",
     stage: "screening",
@@ -154,6 +154,7 @@ const CANDIDATES: CandidateRow[] = [
     email: "karan.jain@apna.co",
     phone: "+918601250243",
     source: "sourced",
+    sourceDetail: "candidates_export.csv",
     state: {
       kind: "incomplete",
       attempted: 2,
@@ -224,6 +225,7 @@ const CANDIDATES: CandidateRow[] = [
     email: "anjali@test.co",
     phone: "+919800000111",
     source: "sourced",
+    sourceDetail: "manually added",
     state: {
       kind: "completed",
       score: 86,
@@ -609,6 +611,7 @@ function JobDetailPageInner({ id }: { id: string }) {
   const [filters, setFilters] = useState<Record<string, Set<string>>>({})
   const [searchQuery, setSearchQuery] = useState("")
   const [isDialing, setIsDialing] = useState(false)
+  const [viewMode, setViewMode] = useState<"card" | "table">("card")
 
   const toggleFilter = (groupId: string, optionId: string) => {
     setFilters((prev) => {
@@ -635,6 +638,7 @@ function JobDetailPageInner({ id }: { id: string }) {
       cefrLevel: "na" as const,
       resumeFile: c.resumeFile,
       source: "sourced" as const,
+      sourceDetail: c.sourceDetail,
     }))
     setCandidates((prev) => [...prev, ...newRows])
   }
@@ -648,6 +652,7 @@ function JobDetailPageInner({ id }: { id: string }) {
     const q = searchQuery.trim().toLowerCase()
     const aiPicked = filters["ai-status"]
     const cefrPicked = filters["cefr"]
+    const sourcePicked = filters["source"]
     return candidatesForStage.filter((c) => {
       if (q && !c.name.toLowerCase().includes(q)) return false
       if (aiPicked && aiPicked.size > 0 && !aiPicked.has(aiStatusKey(c))) {
@@ -656,32 +661,64 @@ function JobDetailPageInner({ id }: { id: string }) {
       if (cefrPicked && cefrPicked.size > 0) {
         if (!c.cefrLevel || !cefrPicked.has(c.cefrLevel)) return false
       }
-      const sourcePicked = filters["source"]
       if (sourcePicked && sourcePicked.size > 0) {
-        const candSource = c.source || "applied"
-        if (!sourcePicked.has(candSource)) return false
+        // Each option key is either "applied" (for applied candidates) or
+        // the sourceDetail string (e.g. "manually added", "candidates_export.csv").
+        const candKey =
+          c.source === "sourced"
+            ? (c.sourceDetail ?? "sourced")
+            : "applied"
+        if (!sourcePicked.has(candKey)) return false
       }
       return true
     })
   }, [searchQuery, filters, candidatesForStage])
 
-  const filterGroups = useMemo(() => {
-    return FILTERS.map((group) => {
-      return {
-        label: group.label,
-        options: group.options.map((o) => o.label),
-        selected: group.options
-          .filter((o) => filters[group.id]?.has(o.id))
-          .map((o) => o.label),
-        onToggle: (label: string) => {
-          const opt = group.options.find((o) => o.label === label)
-          if (opt) {
-            toggleFilter(group.id, opt.id)
-          }
-        },
+  // Compute the source filter options dynamically from the current candidates list.
+  // Each applied candidate contributes an "applied" key; each sourced candidate
+  // contributes its sourceDetail string (or "sourced" as fallback) as a unique key.
+  const sourceFilterGroup = useMemo(() => {
+    const optionMap = new Map<string, { id: string; label: string }>()
+    for (const c of candidates) {
+      if (c.source === "sourced") {
+        const key = c.sourceDetail ?? "sourced"
+        // Capitalise "manually added" for display, keep file names as-is
+        const label =
+          key === "manually added" ? "Manually added" : key
+        if (!optionMap.has(key)) optionMap.set(key, { id: key, label })
+      } else {
+        if (!optionMap.has("applied"))
+          optionMap.set("applied", { id: "applied", label: "Applied directly" })
       }
-    })
-  }, [filters])
+    }
+    const opts = Array.from(optionMap.values())
+    return {
+      label: "Candidate Source",
+      options: opts.map((o) => o.label),
+      selected: opts
+        .filter((o) => filters["source"]?.has(o.id))
+        .map((o) => o.label),
+      onToggle: (label: string) => {
+        const opt = opts.find((o) => o.label === label)
+        if (opt) toggleFilter("source", opt.id)
+      },
+    }
+  }, [candidates, filters])
+
+  const filterGroups = useMemo(() => {
+    const staticGroups = FILTERS.map((group) => ({
+      label: group.label,
+      options: group.options.map((o) => o.label),
+      selected: group.options
+        .filter((o) => filters[group.id]?.has(o.id))
+        .map((o) => o.label),
+      onToggle: (label: string) => {
+        const opt = group.options.find((o) => o.label === label)
+        if (opt) toggleFilter(group.id, opt.id)
+      },
+    }))
+    return [...staticGroups, sourceFilterGroup]
+  }, [filters, sourceFilterGroup])
 
   const handleClearFilters = () => {
     setFilters({})
@@ -744,33 +781,66 @@ function JobDetailPageInner({ id }: { id: string }) {
         // title + round tabs stay in view while the candidate list scrolls.
         className="sticky top-16 z-20"
         title={
-          <span className="inline-flex items-center gap-2">
-            <span className="capitalize">{jobTitle}</span>
-            <Badge variant="success">Active</Badge>
-          </span>
+          <div className="flex items-start gap-3">
+            <BackButton className="mt-0.5" />
+            <div className="flex flex-col gap-1.5 min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-semibold leading-tight capitalize">{jobTitle}</span>
+                <Badge variant="success">Active</Badge>
+              </div>
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+                <IconLabel icon={Building2}>Simplilearn</IconLabel>
+                <span aria-hidden>·</span>
+                <IconLabel icon={MapPin}>Hubli</IconLabel>
+              </div>
+            </div>
+          </div>
         }
-        description={
-          <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
-            <IconLabel icon={Building2}>Simplilearn</IconLabel>
-            <span aria-hidden>·</span>
-            <IconLabel icon={MapPin}>Hubli</IconLabel>
-          </span>
-        }
+        description={null}
         tabs={
-          <Tabs value={mainTab} onValueChange={(v) => { setMainTab(v as Stage); setFilters({}); setSearchQuery(""); setIsDialing(false) }}>
-            <TabsList variant="line">
-              {(["screening", "interview", "selected"] as Stage[]).map((s) => {
-                const count = candidates.filter((c) => c.stage === s).length
-                return (
-                  <TabsTrigger key={s} value={s}>
-                    {s === "screening" && <PhoneCall className="size-3.5" />}
-                    {s === "interview" && <User className="size-3.5" />}
-                    {ROUNDS[s].name} ({count})
-                  </TabsTrigger>
-                )
-              })}
-            </TabsList>
-          </Tabs>
+          <div className="flex items-center justify-between">
+            <Tabs value={mainTab} onValueChange={(v) => { setMainTab(v as Stage); setFilters({}); setSearchQuery(""); setIsDialing(false) }}>
+              <TabsList variant="line">
+                {(["screening", "interview", "selected"] as Stage[]).map((s) => {
+                  const count = candidates.filter((c) => c.stage === s).length
+                  return (
+                    <TabsTrigger key={s} value={s}>
+                      {s === "screening" && <PhoneCall className="size-3.5" />}
+                      {s === "interview" && <User className="size-3.5" />}
+                      {ROUNDS[s].name} ({count})
+                    </TabsTrigger>
+                  )
+                })}
+              </TabsList>
+            </Tabs>
+
+            {/* View toggle + download — lives at the far-right of the tab row */}
+            <div className="flex items-center gap-1.5 pb-1">
+              <ButtonGroup>
+                <Button
+                  variant="outline"
+                  size="icon-sm"
+                  onClick={() => setViewMode("card")}
+                  className={cn(viewMode === "card" && "bg-muted")}
+                  aria-label="Card view"
+                >
+                  <LayoutList className="size-3.5" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon-sm"
+                  onClick={() => setViewMode("table")}
+                  className={cn(viewMode === "table" && "bg-muted")}
+                  aria-label="Table view"
+                >
+                  <Table2 className="size-3.5" />
+                </Button>
+              </ButtonGroup>
+              <Button variant="ghost" size="icon-sm" aria-label="Download data">
+                <Download className="size-4" />
+              </Button>
+            </div>
+          </div>
         }
         actions={
           <>
@@ -828,6 +898,7 @@ function JobDetailPageInner({ id }: { id: string }) {
           onStopDialing={() => setIsDialing(false)}
         />
 
+        {/* ── Search + filters ── */}
         <SearchFilterBar
           placeholder="Search by candidate name, email, or phone…"
           value={searchQuery}
@@ -836,65 +907,43 @@ function JobDetailPageInner({ id }: { id: string }) {
           onClearFilters={handleClearFilters}
         />
 
-        <div className="flex flex-1 items-start gap-4">
-          <section className="flex min-w-0 flex-1 flex-col gap-3">
-            <div className="flex items-center justify-between rounded-lg border border-border bg-card px-4 py-2.5">
-              <p className="text-sm text-muted-foreground">
-                Showing{" "}
-                <strong className="font-semibold text-foreground">
-                  {filteredCandidates.length}
-                </strong>
-                {filteredCandidates.length !== candidatesForStage.length && (
-                  <>
-                    {" "}
-                    of{" "}
-                    <strong className="font-semibold text-foreground">
-                      {candidatesForStage.length}
-                    </strong>
-                  </>
-                )}{" "}
-                candidates
-              </p>
-              <Button variant="ghost" size="sm">
-                <Download className="size-3.5" />
-                Download data
-              </Button>
-            </div>
-
-            {filteredCandidates.length === 0 ? (
-              <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-muted/30 px-6 py-12 text-center">
-                <p className="text-sm font-medium">
-                  No candidates match your filters
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Try clearing some filters or adjusting your search.
-                </p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setFilters({})
-                    setSearchQuery("")
-                  }}
-                  className="mt-1"
-                >
-                  Clear all filters
-                </Button>
-              </div>
-            ) : (
-              <div className="flex flex-col gap-3">
-                {filteredCandidates.map((c) => (
-                  <CandidateCard
-                    key={c.id}
-                    candidate={c}
-                    onOpen={() => setLeadId(c.id)}
-                    onViewInsights={() => setLeadId(c.id)}
-                  />
-                ))}
-              </div>
-            )}
-          </section>
-        </div>
+        {filteredCandidates.length === 0 ? (
+          <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-muted/30 px-6 py-12 text-center">
+            <p className="text-sm font-medium">
+              No candidates match your filters
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Try clearing some filters or adjusting your search.
+            </p>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setFilters({})
+                setSearchQuery("")
+              }}
+              className="mt-1"
+            >
+              Clear all filters
+            </Button>
+          </div>
+        ) : viewMode === "card" ? (
+          <div className="flex flex-col gap-3">
+            {filteredCandidates.map((c) => (
+              <CandidateCard
+                key={c.id}
+                candidate={c}
+                onOpen={() => setLeadId(c.id)}
+                onViewInsights={() => setLeadId(c.id)}
+              />
+            ))}
+          </div>
+        ) : (
+          <CandidateTable
+            candidates={filteredCandidates}
+            onOpen={(id) => setLeadId(id)}
+          />
+        )}
       </main>
 
       <CandidateDrawer

@@ -14,7 +14,6 @@
  */
 
 import {
-  ArrowLeft,
   Briefcase,
   ChevronLeft,
   ChevronRight,
@@ -63,6 +62,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { BackButton } from "@/components/ui/back-button"
 import { Button } from "@/components/ui/button"
 import {
   Field as UIField,
@@ -545,17 +545,15 @@ export function CreateJobWizard() {
         {/* Title row — back/title on the left, Save & exit on the right */}
         <div className="border-b border-border px-6 py-3">
           <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-3">
-            <button
-              type="button"
-              onClick={handleExitAttempt}
-              aria-label="Back to jobs"
-              className="group inline-flex items-center gap-2 text-base font-semibold text-foreground"
-            >
-              <span className="flex size-7 items-center justify-center rounded-md border border-border bg-card text-muted-foreground transition-colors group-hover:bg-muted group-hover:text-foreground">
-                <ArrowLeft className="size-4" />
+            <div className="flex items-center gap-3">
+              <BackButton
+                onClick={handleExitAttempt}
+                aria-label="Back to jobs"
+              />
+              <span className="text-base font-semibold text-foreground">
+                Create new job
               </span>
-              Create new job
-            </button>
+            </div>
             <Button
               type="button"
               variant="outline"
@@ -584,7 +582,7 @@ export function CreateJobWizard() {
 
       {/* Scrollable body — between sticky top and sticky bottom */}
       <div className="flex-1 px-6 py-6 pb-24">
-        <section className="mx-auto flex w-full max-w-3xl min-w-0 flex-col gap-6">
+        <section className="mx-auto flex w-full max-w-3xl min-w-0 flex-col gap-4">
           {activeId === "details" ? (
             <>
               {filledFromJd ? (
@@ -752,7 +750,7 @@ function DescriptionStep({
   showErrors: boolean
 }) {
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-4">
       <UIField>
         <FieldLabel htmlFor="title" icon={Briefcase}>Job title</FieldLabel>
         <Input

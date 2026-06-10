@@ -34,7 +34,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 
-import { IconLabel } from "@/components/onlyrounds/shared"
+import { IconLabel, ClientLogo } from "@/components/onlyrounds/shared"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -95,7 +95,7 @@ function JobRowItem({ row }: { row: JobRow }) {
   return (
     <div className="rounded-xl border border-border/60 bg-card px-5 py-4 shadow-card transition-shadow hover:shadow-elevated">
       <div className="flex items-start gap-4">
-        <ClientLogo client={row.client} src={row.clientLogo} />
+        <ClientLogo name={row.client} src={row.clientLogo} size="md" />
 
         <div className="min-w-0 flex-1">
           <Link href={`/onlyrounds/jobs/${row.id}`} className="group block">
@@ -164,22 +164,7 @@ function JobRowItem({ row }: { row: JobRow }) {
   )
 }
 
-function ClientLogo({ client, src }: { client: string; src?: string }) {
-  if (src) {
-    return (
-      <img
-        src={src}
-        alt={`${client} logo`}
-        className="size-9 shrink-0 rounded-md border border-border bg-background object-contain p-1"
-      />
-    )
-  }
-  return (
-    <div className="flex size-9 shrink-0 items-center justify-center rounded-md border border-border bg-muted text-xs font-semibold text-muted-foreground">
-      {client.slice(0, 1).toUpperCase()}
-    </div>
-  )
-}
+
 
 function RoundPill({
   href,

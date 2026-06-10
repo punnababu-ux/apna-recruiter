@@ -39,6 +39,7 @@ export type NewCandidateData = {
   phone: string
   email: string
   resumeFile?: File
+  sourceDetail?: string
 }
 
 type Step = "select" | "bulk" | "manual"
@@ -231,7 +232,7 @@ function BulkStep({
           setProcessing(false)
           return
         }
-        results.push({ name, phone, email })
+        results.push({ name, phone, email, sourceDetail: file.name })
       }
 
       // Simulate a small processing transition so it matches visual system aesthetics
@@ -409,6 +410,7 @@ function ManualStep({
       phone: phone.trim(),
       email: email.trim(),
       resumeFile: resumeFile || undefined,
+      sourceDetail: "manually added",
     })
     setIsSubmitting(false)
   }

@@ -3,6 +3,8 @@
 import * as React from "react"
 import type { LucideIcon } from "lucide-react"
 
+import type { CandidateState } from "@/components/onlyrounds/candidate-card"
+import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 
@@ -184,3 +186,91 @@ export function SelectionCard({
 // and CefrAddon without prop-drilling through TaskCard.
 
 export const RoundsErrorContext = React.createContext(false)
+
+// ── ClientLogo ────────────────────────────────────────────────────────────
+// Shared client/company logo helper.
+export function ClientLogo({
+  name,
+  src,
+  size = "sm",
+}: {
+  name: string
+  src?: string
+  size?: "sm" | "md"
+}) {
+  const sizeClass = size === "sm" ? "size-8" : "size-9"
+  if (src) {
+    return (
+      <img
+        src={src}
+        alt={`${name} logo`}
+        className={cn(
+          sizeClass,
+          "shrink-0 rounded-md border border-border bg-background object-contain p-1"
+        )}
+      />
+    )
+  }
+  return (
+    <div
+      className={cn(
+        sizeClass,
+        "flex shrink-0 items-center justify-center rounded-md border border-border bg-muted text-xs font-semibold text-muted-foreground"
+      )}
+    >
+      {name.slice(0, 1).toUpperCase()}
+    </div>
+  )
+}
+
+// ── CandidateStatusBadge ──────────────────────────────────────────────────
+// Shared fit/status badge rendering logic.
+export function CandidateStatusBadge({ state }: { state: CandidateState }) {
+  if (state.kind === "completed") {
+    if (state.verdict === "fit") {
+      return (
+        <Badge variant="success" className="border border-success/30 font-semibold">
+          Fit · {state.score}
+        </Badge>
+      )
+    } else if (state.verdict === "not-fit") {
+      return (
+        <Badge variant="destructive" className="border border-destructive/30 font-semibold">
+          Not fit · {state.score}
+        </Badge>
+      )
+    } else {
+      return (
+        <Badge variant="warning" className="border border-warning/30 font-semibold">
+          Review · {state.score}
+        </Badge>
+      )
+    }
+  }
+  if (state.kind === "pending") {
+    return (
+      <Badge variant="warning" className="border border-warning/30 font-semibold">
+        Interview pending
+      </Badge>
+    )
+  }
+  if (state.kind === "incomplete") {
+    return (
+      <Badge variant="warning" className="border border-warning/30 font-semibold">
+        Incomplete call
+      </Badge>
+    )
+  }
+  if (state.kind === "no-response") {
+    return (
+      <Badge variant="secondary" className="border border-border font-semibold">
+        No response
+      </Badge>
+    )
+  }
+  return (
+    <Badge variant="secondary" className="border border-border font-semibold">
+      Not interested
+    </Badge>
+  )
+}

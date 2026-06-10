@@ -280,7 +280,7 @@ export function JobDetailsStep({
     onSectionChange(openSectionId === id ? null : id)
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       {/* Section 1 — basic job details */}
       <Section
         id="basics"
@@ -639,7 +639,7 @@ function Section({
         <div
           id={bodyId}
           role="region"
-          className="flex flex-col gap-6 border-t border-border bg-card p-5"
+          className="flex flex-col gap-4 border-t border-border bg-card p-5"
         >
           {children}
         </div>

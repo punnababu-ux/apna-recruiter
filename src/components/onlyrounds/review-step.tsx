@@ -83,7 +83,7 @@ function Section({
   children: React.ReactNode
 }) {
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-3">
       <h3 className="text-sm font-semibold text-foreground inline-flex items-center leading-none gap-2">
         {Icon && <Icon className="size-4 text-muted-foreground shrink-0" />}
         {title}
@@ -194,7 +194,7 @@ function TaskReviewCard({
       : undefined
 
   return (
-    <div className="flex flex-col gap-5 rounded-lg border border-border bg-card p-4">
+    <div className="flex flex-col gap-4 rounded-lg border border-border bg-card p-4">
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-col gap-0.5">
@@ -377,7 +377,7 @@ export function ReviewStep({
         : "Any"
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-4">
       {/* ── Job description ─────────────────────────────────────── */}
       <Section title="Job description" icon={FileText}>
         <div className="rounded-lg border border-border bg-card p-4">
@@ -397,7 +397,7 @@ export function ReviewStep({
       {/* ── Job details ─────────────────────────────────────────── */}
       <Section title="Job details" icon={Briefcase}>
         <div className="rounded-lg border border-border bg-card p-4">
-          <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-4">
             <FieldGrid>
               <DisplayField label="Client" value={details.clientId ? clientName(details.clientId) : undefined} icon={Building2} />
               <DisplayField label="Location" value={[details.city, details.area].filter(Boolean).join(", ") || undefined} icon={MapPin} />
@@ -450,7 +450,7 @@ export function ReviewStep({
       {/* ── Interview rounds ─────────────────────────────────────── */}
       {rounds.tasks.length > 0 && (
         <Section title="Interview rounds" icon={ListTodo}>
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-4">
             {rounds.tasks.map((task, i) => (
               <TaskReviewCard
                 key={task.id}

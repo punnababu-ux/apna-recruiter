@@ -57,7 +57,7 @@ import * as React from "react"
 import type { Verdict } from "@/components/onlyrounds/score-gauge"
 import type { Candidate } from "@/components/onlyrounds/candidate-card"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
+import { Badge, badgeVariants } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -67,7 +67,9 @@ import {
 } from "@/components/ui/sheet"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { CandidateStatusBadge } from "@/components/onlyrounds/shared"
 import { cn } from "@/lib/utils"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 
 // ── Data types ────────────────────────────────────────────────────────────
 
@@ -165,6 +167,7 @@ export type DrawerCandidate = {
   verdict: Verdict
   state?: Candidate["state"]
   source?: "applied" | "sourced"
+  sourceDetail?: string
   cefrLevel?: string
   insights: DrawerInsight[]
   /** Total length of the call recording in seconds. Defaults to 5:47. */
@@ -373,42 +376,26 @@ function DrawerBody({
                   <SheetTitle className="truncate text-base">
                     {candidate.name}
                   </SheetTitle>
-                  <Badge variant="outline" className="text-2xs text-muted-foreground font-semibold">
-                    {candidate.source === "sourced" ? "Sourced" : "Applied"}
-                  </Badge>
+                  <Tooltip>
+                    <TooltipTrigger
+                      render={
+                        <span className={cn(badgeVariants({ variant: "outline" }), "text-2xs leading-none text-muted-foreground font-semibold")}>{candidate.source === "sourced" ? "Sourced" : "Applied"}</span>
+                      }
+                    />
+                    <TooltipContent>
+                      {candidate.source === "sourced" ? (candidate.sourceDetail || "Sourced candidate") : "Applied directly"}
+                    </TooltipContent>
+                  </Tooltip>
                   {(() => {
                     const state = candidate.state || {
                       kind: "completed" as const,
                       score: candidate.score,
                       verdict: candidate.verdict,
+                      insights: [],
                     }
                     return (
                       <div className="flex shrink-0 items-center">
-                        {state.kind === "completed" && (
-                          <>
-                            {state.verdict === "fit" && (
-                              <Badge variant="success" className="border border-success/30 font-semibold">Fit · {state.score}</Badge>
-                            )}
-                            {state.verdict === "not-fit" && (
-                              <Badge variant="destructive" className="border border-destructive/30 font-semibold">Not fit · {state.score}</Badge>
-                            )}
-                            {state.verdict === "review" && (
-                              <Badge variant="warning" className="border border-warning/30 font-semibold">Review · {state.score}</Badge>
-                            )}
-                          </>
-                        )}
-                        {state.kind === "pending" && (
-                          <Badge variant="warning" className="border border-warning/30 font-semibold">Interview pending</Badge>
-                        )}
-                        {state.kind === "incomplete" && (
-                          <Badge variant="warning" className="border border-warning/30 font-semibold">Incomplete call</Badge>
-                        )}
-                        {state.kind === "no-response" && (
-                          <Badge variant="secondary" className="border border-border font-semibold">No response</Badge>
-                        )}
-                        {state.kind === "not-interested" && (
-                          <Badge variant="secondary" className="border border-border font-semibold">Not interested</Badge>
-                        )}
+                        <CandidateStatusBadge state={state} />
                       </div>
                     )
                   })()}
@@ -560,7 +547,7 @@ function DrawerBody({
               variant="outline"
               size="sm"
               onClick={onReject}
-              className="h-8 text-destructive hover:text-destructive bg-card"
+              className="h-8 bg-card"
             >
               <XCircle className="size-3.5" />
               Reject
@@ -679,10 +666,10 @@ function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
                 <span
                   key={i}
                   className={cn(
-                    "inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs shadow-2xs transition-colors",
+                    "inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs shadow-2xs transition-colors bg-card",
                     it.tone === "ok"
-                      ? "border-success/40 bg-success/5 text-success-foreground"
-                      : "border-destructive/40 bg-destructive/5 text-destructive"
+                      ? "border-success/40 text-success-foreground"
+                      : "border-destructive/40 text-destructive"
                   )}
                 >
                   {it.tone === "ok" ? (
