@@ -32,6 +32,7 @@ import {
 } from "lucide-react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Suspense, use, useMemo, useState } from "react"
+import confetti from "canvas-confetti"
 import { AddCandidateDialog, type NewCandidateData } from "@/components/onlyrounds/add-candidate-dialog"
 
 import {
@@ -1028,6 +1029,59 @@ function JobDetailPageInner({ id }: { id: string }) {
   const [viewMode, setViewMode] = useState<"card" | "table">("card")
   const [candidateToMove, setCandidateToMove] = useState<string | null>(null)
 
+  const candidateObjectToMove = useMemo(() => {
+    if (!candidateToMove) return null
+    return candidates.find((c) => c.id === candidateToMove)
+  }, [candidateToMove, candidates])
+
+  const moveDialogText = useMemo(() => {
+    if (!candidateObjectToMove) return null
+    const name = candidateObjectToMove.name
+    const isMovingToSelected = candidateObjectToMove.stage === "interview"
+    
+    if (isMovingToSelected) {
+      return {
+        title: `🎉 Select ${name} for this Role?`,
+        description: `Are you sure you want to move ${name} to the Selected stage? Congratulations on finding a match for the ${jobTitle} position!`,
+        actionLabel: "Yes, Select Candidate! 🎉",
+      }
+    } else {
+      return {
+        title: "Move Candidate to Next Round?",
+        description: `Are you sure you want to move ${name} to the Tech Interview round? They will progress to the next stage in the pipeline.`,
+        actionLabel: "Move to Interview",
+      }
+    }
+  }, [candidateObjectToMove, jobTitle])
+
+  const triggerConfetti = () => {
+    // Center pop
+    confetti({
+      particleCount: 150,
+      spread: 80,
+      origin: { y: 0.6 }
+    })
+    
+    // Side bursts
+    setTimeout(() => {
+      confetti({
+        particleCount: 100,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 }
+      })
+    }, 200)
+    
+    setTimeout(() => {
+      confetti({
+        particleCount: 100,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 }
+      })
+    }, 350)
+  }
+
   const toggleFilter = (groupId: string, optionId: string) => {
     setFilters((prev) => {
       const next = { ...prev }
@@ -1455,9 +1509,9 @@ function JobDetailPageInner({ id }: { id: string }) {
       <AlertDialog open={!!candidateToMove} onOpenChange={(open) => !open && setCandidateToMove(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Move Candidate to Next Round?</AlertDialogTitle>
+            <AlertDialogTitle>{moveDialogText?.title || "Move Candidate to Next Round?"}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to move this candidate to the next round? They will progress to the next stage in the pipeline.
+              {moveDialogText?.description || "Are you sure you want to move this candidate to the next round?"}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -1465,12 +1519,16 @@ function JobDetailPageInner({ id }: { id: string }) {
             <AlertDialogAction
               onClick={() => {
                 if (candidateToMove) {
+                  const isMovingToSelected = candidateObjectToMove?.stage === "interview"
                   handleMoveToNextRound(candidateToMove)
                   setCandidateToMove(null)
+                  if (isMovingToSelected) {
+                    triggerConfetti()
+                  }
                 }
               }}
             >
-              Confirm
+              {moveDialogText?.actionLabel || "Confirm"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
