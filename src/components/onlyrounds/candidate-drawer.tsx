@@ -383,27 +383,27 @@ function DrawerBody({
                         {state.kind === "completed" && (
                           <>
                             {state.verdict === "fit" && (
-                              <Badge variant="success">Fit · {state.score}</Badge>
+                              <Badge variant="success" className="border border-success/30 font-semibold">Fit · {state.score}</Badge>
                             )}
                             {state.verdict === "not-fit" && (
-                              <Badge variant="destructive">Not fit · {state.score}</Badge>
+                              <Badge variant="destructive" className="border border-destructive/30 font-semibold">Not fit · {state.score}</Badge>
                             )}
                             {state.verdict === "review" && (
-                              <Badge variant="warning">Review · {state.score}</Badge>
+                              <Badge variant="warning" className="border border-warning/30 font-semibold">Review · {state.score}</Badge>
                             )}
                           </>
                         )}
                         {state.kind === "pending" && (
-                          <Badge variant="warning">Interview pending</Badge>
+                          <Badge variant="warning" className="border border-warning/30 font-semibold">Interview pending</Badge>
                         )}
                         {state.kind === "incomplete" && (
-                          <Badge variant="warning">Incomplete call</Badge>
+                          <Badge variant="warning" className="border border-warning/30 font-semibold">Incomplete call</Badge>
                         )}
                         {state.kind === "no-response" && (
-                          <Badge variant="secondary">No response</Badge>
+                          <Badge variant="secondary" className="border border-border font-semibold">No response</Badge>
                         )}
                         {state.kind === "not-interested" && (
-                          <Badge variant="secondary">Not interested</Badge>
+                          <Badge variant="secondary" className="border border-border font-semibold">Not interested</Badge>
                         )}
                       </div>
                     )
