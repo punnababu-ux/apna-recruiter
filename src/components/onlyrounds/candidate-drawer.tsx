@@ -1431,16 +1431,11 @@ function CefrBlock({ cefr }: { cefr: CefrAnalysis }) {
       <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground mb-1">
         <span className="flex items-center gap-1.5">
           <span>Directional CEFR Level:</span>
-          <span className="inline-flex items-center rounded bg-info/10 px-1.5 py-0.5 font-bold text-info">
-            {cefr.level}
-          </span>
+          <Badge variant="info">{cefr.level}</Badge>
         </span>
         <span className="flex items-center gap-1.5">
           <span>Recommended for:</span>
-          {/* token-lint-ignore: purple-cefr-badge */}
-          <span className="inline-flex items-center rounded bg-purple-50 text-purple-600 dark:bg-purple-950/30 dark:text-purple-300 px-1.5 py-0.5 font-semibold">
-            {cefr.recommendedFor}
-          </span>
+          <Badge variant="success">{cefr.recommendedFor}</Badge>
         </span>
       </div>
 
