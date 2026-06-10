@@ -70,7 +70,7 @@ export function RoundSummaryStrip({
       </div>
 
       <div className="flex items-center gap-2 shrink-0">
-        {onTest && !isDialing && (
+        {onTest && (
           <Button
             variant="outline"
             size="sm"
