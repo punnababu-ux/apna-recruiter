@@ -896,10 +896,17 @@ function AudioPlayer({
 
   return (
     <div className={cn(
-      "-mx-4 bg-card border-b border-border transition-shadow",
-      playing ? "sticky top-0 z-10 shadow-sm" : "relative",
+      "transition-all duration-200",
+      playing
+        /* Playing → full-bleed sticky strip below the tab bar */
+        ? "-mx-4 sticky top-0 z-10 bg-card border-b border-border shadow-sm"
+        /* At rest → normal rounded card, same style as other insight cards */
+        : "rounded-lg border border-border bg-card",
     )}>
-      <div className="px-4 py-3 flex items-center gap-3">
+      <div className={cn(
+        "flex items-center gap-3",
+        playing ? "px-4 py-3" : "p-3",
+      )}>
         {/* Icon + label */}
         <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10 border border-primary/20">
           <Mic className="size-4 text-primary" />
