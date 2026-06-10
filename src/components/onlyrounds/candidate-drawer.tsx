@@ -56,7 +56,7 @@ import * as React from "react"
 import type { Verdict } from "@/components/onlyrounds/score-gauge"
 import type { Candidate } from "@/components/onlyrounds/candidate-card"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Badge, badgeVariants } from "@/components/ui/badge"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import {
@@ -427,16 +427,6 @@ function DrawerBody({
                   <SheetTitle className="truncate text-base">
                     {candidate.name}
                   </SheetTitle>
-                  <Tooltip>
-                    <TooltipTrigger
-                      render={
-                        <span className={cn(badgeVariants({ variant: "outline" }), "text-2xs leading-none text-muted-foreground font-semibold")}>{candidate.source === "sourced" ? "Sourced" : "Applied"}</span>
-                      }
-                    />
-                    <TooltipContent>
-                      {candidate.source === "sourced" ? (candidate.sourceDetail || "Sourced candidate") : "Applied directly"}
-                    </TooltipContent>
-                  </Tooltip>
                   {(() => {
                     const state = candidate.state || {
                       kind: "completed" as const,
@@ -451,11 +441,28 @@ function DrawerBody({
                     )
                   })()}
                 </div>
-                {(candidate.role || candidate.company) && (
-                  <p className="mt-0.5 truncate text-xs text-muted-foreground">
-                    {[candidate.role, candidate.company].filter(Boolean).join(" @ ")}
-                  </p>
-                )}
+                <div className="flex flex-wrap items-center gap-1.5 mt-0.5 text-xs text-muted-foreground">
+                  {candidate.role || candidate.company ? (
+                    <span className="truncate">
+                      {[candidate.role, candidate.company].filter(Boolean).join(" @ ")}
+                    </span>
+                  ) : null}
+                  {(candidate.role || candidate.company) && (
+                    <span className="text-muted-foreground/30 select-none">•</span>
+                  )}
+                  <Tooltip>
+                    <TooltipTrigger
+                      render={
+                        <span className="cursor-help hover:text-foreground underline decoration-dotted decoration-muted-foreground/50 transition-colors">
+                          {candidate.source === "sourced" ? "Sourced" : "Applied"}
+                        </span>
+                      }
+                    />
+                    <TooltipContent>
+                      {candidate.source === "sourced" ? (candidate.sourceDetail || "Sourced candidate") : "Applied directly"}
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
                 {/* Contact info: aligned with name and job details */}
                 <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
                   {candidate.email && (
@@ -477,7 +484,18 @@ function DrawerBody({
 
             {/* Top-Right sticky header actions */}
             <div className="flex items-center gap-1.5 shrink-0 -mt-1">
-              <div className="flex items-center gap-0.5 mr-1 border-r border-border pr-2">
+              {candidate.profile?.resumeUrl && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 bg-card gap-1.5 text-xs font-semibold text-foreground border-border hover:bg-muted"
+                  onClick={() => window.open(candidate.profile!.resumeUrl, "_blank")}
+                >
+                  <FileText className="size-3.5" />
+                  Resume
+                </Button>
+              )}
+              <div className="flex items-center gap-0.5 border-l border-r border-border px-1.5 mx-1">
                 <Button
                   variant="ghost"
                   size="icon-sm"
@@ -497,17 +515,6 @@ function DrawerBody({
                   <ChevronRight className="size-4" />
                 </Button>
               </div>
-              {candidate.profile?.resumeUrl && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-8 bg-card gap-1.5 text-xs font-semibold text-foreground border-border hover:bg-muted"
-                  onClick={() => window.open(candidate.profile!.resumeUrl, "_blank")}
-                >
-                  <FileText className="size-3.5" />
-                  Resume
-                </Button>
-              )}
               <Button
                 variant="ghost"
                 size="icon-sm"
@@ -522,45 +529,42 @@ function DrawerBody({
         </div>
 
         {/* Pipeline Stepper Subheader */}
-        <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-2 bg-muted/10">
-          <div className="flex items-center gap-1.5">
-            <span className="text-xs text-muted-foreground font-medium">Pipeline:</span>
-            {/* Horizontal breadcrumb pipeline stepper */}
-            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-2xs">
-              {STAGES.map((s, idx) => {
-                const isCompleted = isStageCompleted(currentStage, s.key)
-                const isActive = currentStage === s.key
-                return (
-                  <React.Fragment key={s.key}>
-                    {idx > 0 && (
-                      <span className="text-muted-foreground/30 font-medium">/</span>
-                    )}
-                    <div className="flex items-center gap-1">
-                      <span
-                        className={cn(
-                          "flex size-4 items-center justify-center rounded-full text-3xs font-semibold font-mono border",
-                          isActive && "bg-primary border-primary text-primary-foreground",
-                          isCompleted && !isActive && "bg-success-subtle border-success/30 text-success",
-                          !isCompleted && !isActive && "bg-muted border-border text-muted-foreground"
-                        )}
-                      >
-                        {s.number}
-                      </span>
-                      <span
-                        className={cn(
-                          "font-medium",
-                          isActive && "text-foreground font-semibold",
-                          isCompleted && !isActive && "text-muted-foreground",
-                          !isCompleted && !isActive && "text-muted-foreground/60"
-                        )}
-                      >
-                        {s.label}
-                      </span>
-                    </div>
-                  </React.Fragment>
-                )
-              })}
-            </div>
+        <div className="flex items-center border-t border-border px-4 py-2 bg-muted/10">
+          {/* Horizontal breadcrumb pipeline stepper */}
+          <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-2xs">
+            {STAGES.map((s, idx) => {
+              const isCompleted = isStageCompleted(currentStage, s.key)
+              const isActive = currentStage === s.key
+              return (
+                <React.Fragment key={s.key}>
+                  {idx > 0 && (
+                    <span className="text-muted-foreground/30 font-medium">/</span>
+                  )}
+                  <div className="flex items-center gap-1">
+                    <span
+                      className={cn(
+                        "flex size-4 items-center justify-center rounded-full text-3xs font-semibold font-mono border",
+                        isActive && "bg-primary border-primary text-primary-foreground",
+                        isCompleted && !isActive && "bg-success-subtle border-success/30 text-success",
+                        !isCompleted && !isActive && "bg-muted border-border text-muted-foreground"
+                      )}
+                    >
+                      {s.number}
+                    </span>
+                    <span
+                      className={cn(
+                        "font-medium",
+                        isActive && "text-foreground font-semibold",
+                        isCompleted && !isActive && "text-muted-foreground",
+                        !isCompleted && !isActive && "text-muted-foreground/60"
+                      )}
+                    >
+                      {s.label}
+                    </span>
+                  </div>
+                </React.Fragment>
+              )
+            })}
           </div>
         </div>
 
@@ -1002,7 +1006,7 @@ function ProfileTab({ candidate }: { candidate: DrawerCandidate }) {
       )}
 
       {p.experience && p.experience.length > 0 && (
-        <section className="flex flex-col gap-2">
+        <section className="flex flex-col gap-3.5">
           <h4 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             <Briefcase className="size-3" />
             Experience
@@ -1011,19 +1015,19 @@ function ProfileTab({ candidate }: { candidate: DrawerCandidate }) {
             {p.experience.map((e, i) => (
               <li
                 key={i}
-                className="flex flex-col gap-0.5 border-l-2 border-border pl-3"
+                className="flex flex-col gap-1 border border-border bg-muted/10 rounded-lg p-3"
               >
                 <div className="flex items-baseline justify-between gap-2">
-                  <span className="text-sm font-medium">{e.role}</span>
-                  <span className="shrink-0 text-xs text-muted-foreground">
+                  <span className="text-sm font-semibold text-foreground">{e.role}</span>
+                  <span className="shrink-0 text-xs text-muted-foreground font-medium">
                     {e.period}
                   </span>
                 </div>
-                <span className="text-xs text-muted-foreground">
+                <span className="text-xs font-medium text-muted-foreground">
                   {e.company}
                 </span>
                 {e.description && (
-                  <p className="mt-1 text-xs">{e.description}</p>
+                  <p className="mt-1.5 text-xs text-muted-foreground leading-relaxed whitespace-pre-wrap">{e.description}</p>
                 )}
               </li>
             ))}
@@ -1032,7 +1036,7 @@ function ProfileTab({ candidate }: { candidate: DrawerCandidate }) {
       )}
 
       {p.education && p.education.length > 0 && (
-        <section className="flex flex-col gap-2">
+        <section className="flex flex-col gap-3.5">
           <h4 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             <GraduationCap className="size-3" />
             Education
@@ -1041,15 +1045,15 @@ function ProfileTab({ candidate }: { candidate: DrawerCandidate }) {
             {p.education.map((e, i) => (
               <li
                 key={i}
-                className="flex flex-col gap-0.5 border-l-2 border-border pl-3"
+                className="flex flex-col gap-1 border border-border bg-muted/10 rounded-lg p-3"
               >
                 <div className="flex items-baseline justify-between gap-2">
-                  <span className="text-sm font-medium">{e.degree}</span>
-                  <span className="shrink-0 text-xs text-muted-foreground">
+                  <span className="text-sm font-semibold text-foreground">{e.degree}</span>
+                  <span className="shrink-0 text-xs text-muted-foreground font-medium">
                     {e.period}
                   </span>
                 </div>
-                <span className="text-xs text-muted-foreground">
+                <span className="text-xs font-medium text-muted-foreground">
                   {e.institution}
                 </span>
               </li>
