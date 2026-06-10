@@ -134,7 +134,7 @@ function JobsPageInner() {
   })
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col">
+    <div className="mx-auto flex w-full max-w-7xl flex-col">
       <PageHeader
         variant="transparent"
         className="px-6 pt-4"

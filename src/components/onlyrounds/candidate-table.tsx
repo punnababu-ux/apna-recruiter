@@ -16,12 +16,14 @@ import { CandidateStatusBadge } from "@/components/onlyrounds/shared"
 import { badgeVariants } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
+  SortableTableHead,
   Table,
   TableBody,
   TableCell,
   TableHead,
-  TableHeader,
   TableRow,
+  TableHeader,
+  type SortDirection,
 } from "@/components/ui/table"
 import {
   Tooltip,
@@ -29,6 +31,19 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
+
+type SortKey = "name" | "phone" | "resume" | "state" | "actions"
+
+type ColumnWidths = Record<SortKey, number>
+
+const MIN_WIDTH = 60
+const DEFAULT_WIDTHS: ColumnWidths = {
+  name: 280,
+  phone: 180,
+  resume: 160,
+  state: 160,
+  actions: 280,
+}
 
 export function CandidateTable({
   candidates,
@@ -43,20 +58,99 @@ export function CandidateTable({
   onReject?: (id: string) => void
   onMoveToNextRound?: (id: string) => void
 }) {
+  const [sortKey, setSortKey] = React.useState<SortKey | null>(null)
+  const [sortDir, setSortDir] = React.useState<SortDirection>(null)
+  const [widths, setWidths] = React.useState<ColumnWidths>(DEFAULT_WIDTHS)
+
+  const sorted = React.useMemo(() => {
+    if (!sortKey || !sortDir) return candidates
+    const copy = [...candidates]
+    copy.sort((a, b) => {
+      let av = a[sortKey as keyof Candidate] ?? ""
+      let bv = b[sortKey as keyof Candidate] ?? ""
+
+      if (typeof av === "string" && typeof bv === "string") {
+        av = av.toLowerCase()
+        bv = bv.toLowerCase()
+      }
+
+      if (av < bv) return sortDir === "asc" ? -1 : 1
+      if (av > bv) return sortDir === "asc" ? 1 : -1
+      return 0
+    })
+    return copy
+  }, [candidates, sortKey, sortDir])
+
+  const setSort = (key: SortKey) => (next: SortDirection) => {
+    if (!next) {
+      setSortKey(null)
+      setSortDir(null)
+      return
+    }
+    setSortKey(key)
+    setSortDir(next)
+  }
+
+  const resize = (key: SortKey) => (delta: number) => {
+    setWidths((prev) => ({
+      ...prev,
+      [key]: Math.max(MIN_WIDTH, prev[key] + delta),
+    }))
+  }
+
+  const sortFor = (key: SortKey): SortDirection =>
+    sortKey === key ? sortDir : null
+
   return (
     <div className="rounded-lg border border-border bg-card overflow-hidden">
-      <Table>
+      <Table className="table-fixed">
+        <colgroup>
+          <col style={{ width: widths.name }} />
+          <col style={{ width: widths.phone }} />
+          <col style={{ width: widths.resume }} />
+          <col style={{ width: widths.state }} />
+          <col style={{ width: widths.actions }} />
+        </colgroup>
         <TableHeader>
           <TableRow>
-            <TableHead className="pl-4 w-64">Candidate</TableHead>
-            <TableHead>Phone</TableHead>
-            <TableHead>Resume</TableHead>
-            <TableHead>AI Score</TableHead>
+            <SortableTableHead
+              sort={sortFor("name")}
+              onSortChange={setSort("name")}
+              resizable
+              onResize={resize("name")}
+              className="pl-4"
+            >
+              Candidate
+            </SortableTableHead>
+            <SortableTableHead
+              sort={sortFor("phone")}
+              onSortChange={setSort("phone")}
+              resizable
+              onResize={resize("phone")}
+            >
+              Phone
+            </SortableTableHead>
+            <SortableTableHead
+              sort={sortFor("resume")}
+              onSortChange={setSort("resume")}
+              resizable
+              onResize={resize("resume")}
+            >
+              Resume
+            </SortableTableHead>
+            <SortableTableHead
+              sort={sortFor("state")}
+              onSortChange={setSort("state")}
+              resizable
+              onResize={resize("state")}
+            >
+              AI Score
+            </SortableTableHead>
             <TableHead className="text-right pr-4">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {candidates.map((c) => {
+          {sorted.map((c) => {
             const state = c.state
             // Derive verdict chip
             const scoreChip = <CandidateStatusBadge state={state} />
@@ -68,14 +162,14 @@ export function CandidateTable({
                 onClick={() => onOpen(c.id)}
               >
                 {/* Candidate identity + source chip */}
-                <TableCell className="pl-4">
+                <TableCell className="pl-4 truncate">
                   <div className="flex flex-col gap-0.5">
                     <div className="flex items-center gap-1.5">
-                      <span className="font-semibold text-sm text-foreground">{c.name}</span>
+                      <span className="font-semibold text-sm text-foreground truncate">{c.name}</span>
                       <Tooltip>
                         <TooltipTrigger
                           render={
-                            <span className={cn(badgeVariants({ variant: "outline" }), "text-2xs leading-none text-muted-foreground font-semibold")}>
+                            <span className={cn(badgeVariants({ variant: "outline" }), "text-2xs leading-none text-muted-foreground font-semibold shrink-0")}>
                               {c.source === "sourced" ? "Sourced" : "Applied"}
                             </span>
                           }
@@ -90,7 +184,7 @@ export function CandidateTable({
                       </Tooltip>
                     </div>
                     {(c.role || c.company) && (
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-xs text-muted-foreground truncate">
                         {c.role}{c.role && c.company ? " @ " : ""}{c.company}
                       </span>
                     )}
@@ -98,12 +192,12 @@ export function CandidateTable({
                 </TableCell>
 
                 {/* Phone */}
-                <TableCell>
+                <TableCell className="truncate">
                   <span className="text-sm text-muted-foreground">{c.phone ?? "—"}</span>
                 </TableCell>
 
                 {/* Resume */}
-                <TableCell>
+                <TableCell className="truncate">
                   {c.resumeFile || c.resumeUrl ? (
                     <button
                       type="button"
@@ -116,7 +210,7 @@ export function CandidateTable({
                       }}
                       className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
                     >
-                      <FileText className="size-3.5" />
+                      <FileText className="size-3.5 shrink-0" />
                       View resume
                     </button>
                   ) : (
@@ -125,10 +219,10 @@ export function CandidateTable({
                 </TableCell>
 
                 {/* AI Score */}
-                <TableCell>{scoreChip}</TableCell>
+                <TableCell className="truncate">{scoreChip}</TableCell>
 
                 {/* Actions */}
-                <TableCell className="pr-4">
+                <TableCell className="pr-4 truncate">
                   {c.stage !== "selected" ? (
                     <div
                       className="flex items-center justify-end gap-1"
@@ -137,7 +231,7 @@ export function CandidateTable({
                       <Button
                         variant="outline"
                         size="sm"
-                        className="h-7 text-xs"
+                        className="h-7 text-xs shrink-0"
                         onClick={() => onReTake?.(c.id)}
                         title="Re-take"
                       >
@@ -147,7 +241,7 @@ export function CandidateTable({
                       <Button
                         variant="outline"
                         size="sm"
-                        className="h-7 text-xs"
+                        className="h-7 text-xs shrink-0"
                         onClick={() => onReject?.(c.id)}
                         title="Reject"
                       >
@@ -156,7 +250,7 @@ export function CandidateTable({
                       </Button>
                       <Button
                         size="sm"
-                        className="h-7 text-xs"
+                        className="h-7 text-xs shrink-0"
                         onClick={() => onMoveToNextRound?.(c.id)}
                         title="Move to next round"
                       >

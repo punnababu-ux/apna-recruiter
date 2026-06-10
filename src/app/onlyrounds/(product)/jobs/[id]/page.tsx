@@ -1473,7 +1473,7 @@ function JobDetailPageInner({ id }: { id: string }) {
         }
       />
 
-      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-4 px-6 py-4">
+      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-4 px-6 py-4">
         {/* Round summary strip — what's configured for the active round */}
         <RoundSummaryStrip
           roundName={ROUNDS[mainTab].name}

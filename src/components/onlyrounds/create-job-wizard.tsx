@@ -542,7 +542,7 @@ export function CreateJobWizard() {
       <div className="sticky top-0 z-10 border-b border-border bg-card">
         {/* Title row — back/title on the left, Save & exit on the right */}
         <div className="border-b border-border px-6 py-3">
-          <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-3">
+          <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <BackButton
                 onClick={handleExitAttempt}
@@ -565,7 +565,7 @@ export function CreateJobWizard() {
         </div>
         {/* Stepper row */}
         <div className="px-6 py-3">
-          <div className="mx-auto w-full max-w-3xl">
+          <div className="mx-auto w-full max-w-5xl">
             <Stepper
               orientation="horizontal"
               steps={stepsForRail}
@@ -580,7 +580,7 @@ export function CreateJobWizard() {
 
       {/* Scrollable body — between sticky top and sticky bottom */}
       <div className="flex-1 px-6 py-6 pb-24">
-        <section className="mx-auto flex w-full max-w-3xl min-w-0 flex-col gap-4">
+        <section className="mx-auto flex w-full max-w-5xl min-w-0 flex-col gap-4">
           {activeId === "details" ? (
             <>
               {filledFromJd ? (
@@ -639,7 +639,7 @@ export function CreateJobWizard() {
 
       {/* Sticky bottom — consistent across all steps */}
       <div className="sticky bottom-0 z-10 border-t border-border bg-card px-6">
-        <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-3 py-3">
+        <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 py-3">
           {/* Left — Previous (chevron; the back arrow lives in the top
               bar, so the footer uses a chevron to stay distinct). base-ui's
               TooltipTrigger uses `render={...}` (not Radix's `asChild`). */}

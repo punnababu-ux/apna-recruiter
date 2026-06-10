@@ -49,7 +49,7 @@ export function PageHeader({
             "flex items-center justify-between gap-4",
             // Default: full-bleed band, but constrain inner content to the same
             // max-width the page body uses so the title aligns with body content.
-            isDefault && "mx-auto w-full max-w-6xl px-6 py-4",
+            isDefault && "mx-auto w-full max-w-7xl px-6 py-4",
           )}
         >
           <div className="min-w-0 flex-1">
@@ -87,8 +87,8 @@ export function PageHeader({
       {hasTitleBlock || actions ? (
         <div
           className={cn(
-            "flex items-start justify-between gap-4",
-            isDefault && "mx-auto w-full max-w-6xl px-6 pt-5 pb-3",
+            "flex items-center justify-between gap-4",
+            isDefault && "mx-auto w-full max-w-7xl px-6 pt-5 pb-3",
           )}
         >
           <div className="min-w-0 flex-1">
@@ -117,7 +117,7 @@ export function PageHeader({
             // pt-0 + pb-0: the underline indicator of variant="line" tabs sits
             // at bottom-0 of the trigger, which lands flush against the
             // header's border-b line.
-            isDefault && "mx-auto w-full max-w-6xl px-6",
+            isDefault && "mx-auto w-full max-w-7xl px-6",
           )}
         >
           <div className="min-w-0 flex-1">{tabs}</div>

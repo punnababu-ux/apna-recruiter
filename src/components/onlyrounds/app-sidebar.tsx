@@ -28,7 +28,6 @@ import {
   ChevronsUpDown,
   CreditCard,
   HelpCircle,
-  History,
   Settings,
   Users,
 } from "lucide-react"
@@ -66,7 +65,6 @@ type NavItem = {
 const NAV: NavItem[] = [
   { href: "/onlyrounds/jobs",     label: "Jobs",     icon: Briefcase },
   { href: "/onlyrounds/clients",  label: "Clients",  icon: Users },
-  { href: "/onlyrounds/history",  label: "History",  icon: History },
   { href: "/onlyrounds/credits",  label: "Credits",  icon: CreditCard },
 ]
 
