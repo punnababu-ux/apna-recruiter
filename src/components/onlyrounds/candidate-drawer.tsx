@@ -49,7 +49,6 @@ import {
   Flag,
   Download,
   QrCode,
-  Clock,
   Sparkles,
   Footprints,
 } from "lucide-react"
@@ -646,18 +645,18 @@ function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
                 <span
                   key={i}
                   className={cn(
-                    "inline-flex items-center gap-1.5 rounded-full border bg-card px-3 py-1 text-xs shadow-2xs transition-colors",
+                    "inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs shadow-2xs transition-colors",
                     it.tone === "ok"
-                      ? "border-success/30 text-success-foreground"
-                      : "border-warning/30 text-warning-foreground"
+                      ? "border-success/40 bg-success/5 text-success-foreground"
+                      : "border-destructive/40 bg-destructive/5 text-destructive"
                   )}
                 >
                   {it.tone === "ok" ? (
-                    <CircleCheck className="size-3.5 text-success shrink-0" />
+                    <CircleCheck className="size-3 text-success shrink-0" />
                   ) : (
-                    <Clock className="size-3.5 text-warning shrink-0" />
+                    <XCircle className="size-3 text-destructive shrink-0" />
                   )}
-                  <span className="text-foreground font-medium">{it.label}</span>
+                  <span className="text-foreground">{it.label}</span>
                   {hasAtSecond && (
                     <button
                       type="button"

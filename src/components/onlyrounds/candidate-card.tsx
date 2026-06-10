@@ -552,7 +552,7 @@ function InsightChip({
       ) : (
         <XCircle className="size-3" />
       )}
-      <span className={tone === "ok" ? "text-foreground" : undefined}>
+      <span className="text-foreground">
         {children}
       </span>
     </span>
