@@ -80,8 +80,6 @@ import { cn } from "@/lib/utils"
 import {
   CLIENTS,
   REQUIRED_SECTION_IDS,
-  SECTION_IDS,
-  SECTION_LABELS,
   WORK_MODE_LABELS,
   WORK_TYPE_LABELS,
 } from "@/lib/onlyrounds/constants"

@@ -26,7 +26,6 @@ import {
   Check,
   CircleCheck,
   Compass,
-  Flag,
   HelpCircle,
   Languages,
   Layout,
@@ -44,7 +43,6 @@ import {
   Plus,
   Puzzle,
   Sparkles,
-  Star,
   Trash2,
   UserRound,
   Users,
@@ -88,7 +86,6 @@ import {
   InfoChip,
   RoundsErrorContext,
   SelectionCard,
-  WizardField,
 } from "@/components/onlyrounds/shared"
 import {
   AGENTS,

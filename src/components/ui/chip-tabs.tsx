@@ -58,7 +58,6 @@ export function ChipTabs<V extends string = string>({
     <div
       role="tablist"
       aria-label={ariaLabel}
-      aria-invalid={ariaInvalid || undefined}
       className={cn("flex flex-wrap items-center gap-2", className)}
     >
       {items.map((item) => {

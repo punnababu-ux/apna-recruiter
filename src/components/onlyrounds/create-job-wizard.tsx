@@ -156,7 +156,6 @@ export function CreateJobWizard() {
     setForm,
     isDirty,
     persistDraft,
-    clearDraft,
   } = useDraftPersistence(DRAFT_KEY, emptyForm)
 
   // A ref that always points to the latest form — used by useCriteriaGeneration
@@ -166,7 +165,6 @@ export function CreateJobWizard() {
 
   const {
     generatingTasks,
-    generateTaskCriteria: _generateTaskCriteria,
     generateAllCriteria,
     abortGeneration,
   } = useCriteriaGeneration(formRef as React.RefObject<FormShape>, setForm)
