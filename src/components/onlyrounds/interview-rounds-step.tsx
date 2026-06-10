@@ -326,7 +326,7 @@ export function InterviewRoundsStep({
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0 flex-1">
           <h2 className="text-lg font-semibold leading-tight">Interview rounds</h2>
@@ -351,7 +351,7 @@ export function InterviewRoundsStep({
       {/* Task list — RoundsErrorContext removes the need to prop-drill showErrors */}
       {form.tasks.length > 0 ? (
         <RoundsErrorContext.Provider value={showErrors}>
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-6">
             {form.tasks.map((task, i) => (
               <TaskCard
                 key={task.id}
@@ -693,7 +693,7 @@ function SchedulingEditor({
     onChange({ ...config, ...patch })
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-6">
       <UIField>
         <FieldLabel icon={CalendarClock}>Scheduling type</FieldLabel>
         <ChipTabs
@@ -774,7 +774,7 @@ function ScreeningEditor({
   ]
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-6">
       <UIField>
         <FieldLabel icon={Wrench}>{Noun} type<span className="ml-0.5 text-destructive">*</span></FieldLabel>
         <ChipTabs
@@ -941,7 +941,7 @@ function CefrAddon({
         </label>
 
         {config.cefrEnabled ? (
-          <div className="flex flex-col gap-4 border-t border-border p-3">
+          <div className="flex flex-col gap-6 border-t border-border p-3">
             <UIField>
               <FieldLabel icon={Languages}>Minimum CEFR level<span className="ml-0.5 text-destructive">*</span></FieldLabel>
               <ChipTabs
@@ -1246,9 +1246,9 @@ function InterviewerEditDialog({
           <DialogTitle>Edit round {index} configuration</DialogTitle>
         </DialogHeader>
 
-        <div className="flex flex-col gap-5 py-1">
+        <div className="flex flex-col gap-6 py-1">
           {/* Language */}
-          <section className="flex flex-col gap-3">
+          <section className="flex flex-col gap-4">
             <header className="flex items-start gap-2.5">
               <Languages className="mt-0.5 size-5 shrink-0 text-muted-foreground" />
               <div>
@@ -1262,7 +1262,7 @@ function InterviewerEditDialog({
                 </p>
               </div>
             </header>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {(Object.keys(LANGUAGES) as InterviewLanguage[]).map((lang) => (
                 <LanguageOption
                   key={lang}
@@ -1278,7 +1278,7 @@ function InterviewerEditDialog({
           </section>
 
           {/* AI recruiter */}
-          <section className="flex flex-col gap-3 border-t border-border pt-5">
+          <section className="flex flex-col gap-4 border-t border-border pt-5">
             <header className="flex items-start gap-2.5">
               <Mic className="mt-0.5 size-5 shrink-0 text-muted-foreground" />
               <div>
@@ -1291,7 +1291,7 @@ function InterviewerEditDialog({
                 </p>
               </div>
             </header>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {(Object.keys(AGENTS) as AgentId[]).map((id) => (
                 <AgentOption
                   key={id}
@@ -1516,7 +1516,7 @@ function TaskCriteriaSection({
           </p>
         </div>
       ) : (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-6">
           {CRITERIA_CATEGORIES.map((meta) => (
             <InlineCategoryGroup
               key={meta.key}

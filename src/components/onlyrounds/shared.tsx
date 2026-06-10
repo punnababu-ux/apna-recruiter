@@ -63,8 +63,8 @@ export function DisplayField({
   if (value == null) return null
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-overline text-muted-foreground inline-flex items-center gap-1.5">
-        {Icon && <Icon className="size-3.5 text-muted-foreground shrink-0" aria-hidden />}
+      <span className="text-overline text-muted-foreground inline-flex items-center leading-none gap-1.5">
+        {Icon && <Icon className="size-3 text-muted-foreground shrink-0" aria-hidden />}
         {label}
       </span>
       {typeof value === "string" ? (

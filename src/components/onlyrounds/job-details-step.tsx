@@ -279,7 +279,7 @@ export function JobDetailsStep({
     onSectionChange(openSectionId === id ? null : id)
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-6">
       {/* Section 1 — basic job details */}
       <Section
         id="basics"
@@ -315,7 +315,7 @@ export function JobDetailsStep({
         </UIField>
 
         {/* Job city + Job area — side by side */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <UIField>
             <FieldLabel htmlFor="city" icon={MapPin}>Job city</FieldLabel>
             <Input
@@ -463,7 +463,7 @@ export function JobDetailsStep({
         isOpen={openSectionId === "compensation"}
         onToggle={() => toggle("compensation")}
       >
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {showExperiencedPersona ? (
             <UIField>
               <FieldLabel htmlFor="comp-experienced" icon={IndianRupee}>Compensation — experienced candidates</FieldLabel>
@@ -637,7 +637,7 @@ function Section({
         <div
           id={bodyId}
           role="region"
-          className="flex flex-col gap-4 border-t border-border bg-card p-5"
+          className="flex flex-col gap-6 border-t border-border bg-card p-5"
         >
           {children}
         </div>

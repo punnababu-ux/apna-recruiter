@@ -15,6 +15,7 @@ import {
   Briefcase,
   Building2,
   CalendarDays,
+  CircleCheck,
   Clock,
   ExternalLink,
   FileText,
@@ -22,7 +23,9 @@ import {
   IndianRupee,
   Languages,
   Laptop,
+  ListTodo,
   MapPin,
+  MessageCircleQuestion,
   Mic,
   Phone,
   StickyNote,
@@ -72,21 +75,26 @@ function taskLabel(task: InterviewTask): string {
 
 function Section({
   title,
+  icon: Icon,
   children,
 }: {
   title: string
+  icon?: React.ComponentType<{ className?: string }>
   children: React.ReactNode
 }) {
   return (
-    <div className="flex flex-col gap-3">
-      <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+    <div className="flex flex-col gap-5">
+      <h3 className="text-sm font-semibold text-foreground inline-flex items-center leading-none gap-2">
+        {Icon && <Icon className="size-4 text-muted-foreground shrink-0" />}
+        {title}
+      </h3>
       {children}
     </div>
   )
 }
 
 function FieldGrid({ children }: { children: React.ReactNode }) {
-  return <div className="grid grid-cols-2 gap-x-6 gap-y-3">{children}</div>
+  return <div className="grid grid-cols-2 gap-x-6 gap-y-6">{children}</div>
 }
 
 function Divider() {
@@ -101,7 +109,8 @@ function CriteriaSummary({ task }: { task: InterviewTask }) {
 
   return (
     <div className="flex flex-col gap-3">
-      <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+      <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide inline-flex items-center leading-none gap-1.5">
+        <CircleCheck className="size-3 text-muted-foreground shrink-0" />
         Evaluation criteria
       </span>
       <div className="flex flex-col gap-3">
@@ -160,7 +169,7 @@ function TaskReviewCard({
       : undefined
 
   return (
-    <div className="flex flex-col gap-4 rounded-lg border border-border bg-card p-4">
+    <div className="flex flex-col gap-5 rounded-lg border border-border bg-card p-4">
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-col gap-0.5">
@@ -188,7 +197,7 @@ function TaskReviewCard({
       {isCallTask && mode && (
         <>
           <Divider />
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-4">
             <div className="flex flex-wrap gap-2">
               {/* Mode */}
               <Badge variant="secondary" className="gap-1 font-normal">
@@ -245,7 +254,10 @@ function TaskReviewCard({
             {/* CEFR */}
             {cefrEnabled && (cefrMinLevel || cefrPreferredLevel) && (
               <div className="flex flex-col gap-0.5">
-                <span className="text-xs text-muted-foreground">CEFR language assessment</span>
+                <span className="text-xs text-muted-foreground inline-flex items-center leading-none gap-1.5">
+                  <Languages className="size-3 text-muted-foreground shrink-0" />
+                  CEFR language assessment
+                </span>
                 <div className="flex flex-wrap gap-2">
                   {cefrMinLevel && (
                     <span className="text-xs">
@@ -263,7 +275,13 @@ function TaskReviewCard({
 
             {/* Human notes */}
             {mode === "human" && humanNotes && (
-              <p className="text-xs text-muted-foreground">{humanNotes}</p>
+              <div className="flex flex-col gap-1">
+                <span className="text-xs text-muted-foreground inline-flex items-center leading-none gap-1.5">
+                  <MessageCircleQuestion className="size-3 text-muted-foreground shrink-0" />
+                  Key questions or notes
+                </span>
+                <p className="text-xs text-muted-foreground">{humanNotes}</p>
+              </div>
             )}
           </div>
         </>
@@ -273,7 +291,13 @@ function TaskReviewCard({
       {task.type === "scheduling" && humanNotes && (
         <>
           <Divider />
-          <p className="text-xs text-muted-foreground">{humanNotes}</p>
+          <div className="flex flex-col gap-1">
+            <span className="text-xs text-muted-foreground inline-flex items-center leading-none gap-1.5">
+              <ListTodo className="size-3 text-muted-foreground shrink-0" />
+              Task details
+            </span>
+            <p className="text-xs text-muted-foreground">{humanNotes}</p>
+          </div>
         </>
       )}
 
@@ -281,8 +305,11 @@ function TaskReviewCard({
       {task.type === "custom" && task.notes?.trim() && (
         <>
           <Divider />
-          <div className="flex flex-col gap-0.5">
-            <span className="text-xs text-muted-foreground">Task details</span>
+          <div className="flex flex-col gap-1">
+            <span className="text-xs text-muted-foreground inline-flex items-center leading-none gap-1.5">
+              <ListTodo className="size-3 text-muted-foreground shrink-0" />
+              Task details
+            </span>
             <p className="text-sm text-foreground whitespace-pre-wrap">{task.notes}</p>
           </div>
         </>
@@ -325,11 +352,11 @@ export function ReviewStep({
         : "Any"
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-8">
       {/* ── Job description ─────────────────────────────────────── */}
-      <Section title="Job description">
+      <Section title="Job description" icon={FileText}>
         <div className="rounded-lg border border-border bg-card p-4">
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-5">
             <DisplayField label="Job title" value={title} icon={Briefcase} />
             {jd && (
               <DisplayField
@@ -347,9 +374,9 @@ export function ReviewStep({
       </Section>
 
       {/* ── Job details ─────────────────────────────────────────── */}
-      <Section title="Job details">
+      <Section title="Job details" icon={Briefcase}>
         <div className="rounded-lg border border-border bg-card p-4">
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-8">
             <FieldGrid>
               <DisplayField label="Client" value={details.clientId ? clientName(details.clientId) : undefined} icon={Building2} />
               <DisplayField label="Location" value={[details.city, details.area].filter(Boolean).join(", ") || undefined} icon={MapPin} />
@@ -401,8 +428,8 @@ export function ReviewStep({
 
       {/* ── Interview rounds ─────────────────────────────────────── */}
       {rounds.tasks.length > 0 && (
-        <Section title="Interview rounds">
-          <div className="flex flex-col gap-3">
+        <Section title="Interview rounds" icon={ListTodo}>
+          <div className="flex flex-col gap-5">
             {rounds.tasks.map((task, i) => (
               <TaskReviewCard
                 key={task.id}

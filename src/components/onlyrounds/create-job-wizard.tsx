@@ -752,7 +752,7 @@ function DescriptionStep({
   showErrors: boolean
 }) {
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-8">
       <UIField>
         <FieldLabel htmlFor="title" icon={Briefcase}>Job title</FieldLabel>
         <Input
@@ -905,11 +905,11 @@ function JDField({
   const jdMissing = showErrors && !value.trim()
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-3">
         <Label
           htmlFor="jd"
-          className={cn("text-sm font-medium inline-flex items-center gap-2", jdMissing && "text-destructive")}
+          className={cn("text-sm font-medium inline-flex items-center leading-none gap-2", jdMissing && "text-destructive")}
         >
           <FileText className="size-4 text-muted-foreground shrink-0" />
           Job description
