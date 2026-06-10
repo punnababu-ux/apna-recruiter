@@ -181,6 +181,7 @@ export type DrawerCandidate = {
   violations?: InterviewViolation[]
   communication?: CommunicationEvent[]
   stage?: string
+  retakeHistory?: Candidate["retakeHistory"]
 }
 
 // ── Drawer ────────────────────────────────────────────────────────────────
@@ -695,6 +696,29 @@ function DrawerBody({
 
 // ── Insights tab ──────────────────────────────────────────────────────────
 
+function RetakeHistoryBlock({ history }: { history: NonNullable<Candidate["retakeHistory"]> }) {
+  return (
+    <section className="flex flex-col gap-2">
+      <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+        <RotateCcw className="size-3.5 text-muted-foreground shrink-0" />
+        Re-Take History
+      </div>
+      <div className="rounded-lg border border-border bg-muted/50 p-4">
+        <ul className="flex flex-col gap-2.5 text-xs text-muted-foreground">
+          {history.map((h, i) => (
+            <li key={i} className="flex items-start justify-between gap-3">
+              <span className="leading-relaxed">– {h.label}</span>
+              <span className="shrink-0 font-medium font-mono text-2xs tabular-nums text-muted-foreground/80 mt-0.5">
+                {h.at}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
 function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
   const totalSec = candidate.callDuration ?? 5 * 60 + 47
   const [elapsed, setElapsed] = React.useState(0)
@@ -769,6 +793,9 @@ function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
             label="Not Interested"
             reason="Candidate declared not interested in this opportunity"
           />
+        )}
+        {candidate.retakeHistory && candidate.retakeHistory.length > 0 && (
+          <RetakeHistoryBlock history={candidate.retakeHistory} />
         )}
       </div>
     )
@@ -934,6 +961,9 @@ function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
           </div>
           <CefrBlock cefr={candidate.cefr} />
         </section>
+      )}
+      {candidate.retakeHistory && candidate.retakeHistory.length > 0 && (
+        <RetakeHistoryBlock history={candidate.retakeHistory} />
       )}
     </div>
   )
