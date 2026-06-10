@@ -464,18 +464,7 @@ function DrawerBody({
 
             {/* Top-Right sticky header actions */}
             <div className="flex items-center gap-1.5 shrink-0 -mt-1">
-              {candidate.profile?.resumeUrl && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-8 bg-card gap-1.5 text-xs font-semibold text-foreground border-border hover:bg-muted"
-                  onClick={() => window.open(candidate.profile!.resumeUrl, "_blank")}
-                >
-                  <FileText className="size-3.5" />
-                  Resume
-                </Button>
-              )}
-              <div className="flex items-center gap-0.5 border-l border-r border-border px-1.5 mx-1">
+              <div className="flex items-center gap-0.5 border-r border-border pr-1.5 mr-1">
                 <Button
                   variant="ghost"
                   size="icon-sm"
