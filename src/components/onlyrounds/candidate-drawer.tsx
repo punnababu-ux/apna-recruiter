@@ -54,7 +54,8 @@ import {
 } from "lucide-react"
 import * as React from "react"
 
-import { ScoreGauge, type Verdict } from "@/components/onlyrounds/score-gauge"
+import type { Verdict } from "@/components/onlyrounds/score-gauge"
+import type { Candidate } from "@/components/onlyrounds/candidate-card"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -162,6 +163,7 @@ export type DrawerCandidate = {
   phone?: string
   score: number
   verdict: Verdict
+  state?: Candidate["state"]
   cefrLevel?: string
   insights: DrawerInsight[]
   /** Total length of the call recording in seconds. Defaults to 5:47. */
@@ -370,14 +372,42 @@ function DrawerBody({
                   <SheetTitle className="truncate text-base">
                     {candidate.name}
                   </SheetTitle>
-                  <ScoreGauge
-                    score={candidate.score}
-                    verdict={candidate.verdict}
-                    layout="row"
-                    size="sm"
-                    label={candidate.verdict}
-                    className="shrink-0"
-                  />
+                  {(() => {
+                    const state = candidate.state || {
+                      kind: "completed" as const,
+                      score: candidate.score,
+                      verdict: candidate.verdict,
+                    }
+                    return (
+                      <div className="flex shrink-0 items-center">
+                        {state.kind === "completed" && (
+                          <>
+                            {state.verdict === "fit" && (
+                              <Badge variant="success">Fit · {state.score}</Badge>
+                            )}
+                            {state.verdict === "not-fit" && (
+                              <Badge variant="destructive">Not fit · {state.score}</Badge>
+                            )}
+                            {state.verdict === "review" && (
+                              <Badge variant="warning">Review · {state.score}</Badge>
+                            )}
+                          </>
+                        )}
+                        {state.kind === "pending" && (
+                          <Badge variant="warning">Interview pending</Badge>
+                        )}
+                        {state.kind === "incomplete" && (
+                          <Badge variant="warning">Incomplete call</Badge>
+                        )}
+                        {state.kind === "no-response" && (
+                          <Badge variant="secondary">No response</Badge>
+                        )}
+                        {state.kind === "not-interested" && (
+                          <Badge variant="secondary">Not interested</Badge>
+                        )}
+                      </div>
+                    )
+                  })()}
                 </div>
                 {(candidate.role || candidate.company) && (
                   <p className="mt-0.5 truncate text-xs text-muted-foreground">

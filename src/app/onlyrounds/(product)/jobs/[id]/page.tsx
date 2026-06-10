@@ -22,7 +22,6 @@ import {
   MapPin,
   MoreVertical,
   PhoneCall,
-  PhoneOutgoing,
   PowerOff,
   Share2,
   Upload,
@@ -41,8 +40,8 @@ import {
   CandidateDrawer,
   type DrawerCandidate,
 } from "@/components/onlyrounds/candidate-drawer"
-import { FilterPanel, type FilterGroup } from "@/components/onlyrounds/filter-panel"
-import { InfoBanner } from "@/components/onlyrounds/info-banner"
+import { SearchFilterBar } from "@/components/onlyrounds/search-filter-bar"
+
 import { PageHeader } from "@/components/onlyrounds/page-header"
 import { RoundSummaryStrip } from "@/components/onlyrounds/round-summary-strip"
 import { IconLabel } from "@/components/onlyrounds/shared"
@@ -55,12 +54,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 // ── Mock data ─────────────────────────────────────────────────────────────
 
-const FILTERS: FilterGroup[] = [
+const FILTERS = [
   {
     id: "ai-status",
     label: "AI Evaluation Status",
@@ -595,6 +593,7 @@ function JobDetailPageInner({ id }: { id: string }) {
 
   const [filters, setFilters] = useState<Record<string, Set<string>>>({})
   const [searchQuery, setSearchQuery] = useState("")
+  const [isDialing, setIsDialing] = useState(false)
 
   const toggleFilter = (groupId: string, optionId: string) => {
     setFilters((prev) => {
@@ -645,10 +644,27 @@ function JobDetailPageInner({ id }: { id: string }) {
     })
   }, [searchQuery, filters, candidatesForStage])
 
-  const totalFilterCount = Object.values(filters).reduce(
-    (acc, set) => acc + set.size,
-    0,
-  )
+  const filterGroups = useMemo(() => {
+    return FILTERS.map((group) => {
+      return {
+        label: group.label,
+        options: group.options.map((o) => o.label),
+        selected: group.options
+          .filter((o) => filters[group.id]?.has(o.id))
+          .map((o) => o.label),
+        onToggle: (label: string) => {
+          const opt = group.options.find((o) => o.label === label)
+          if (opt) {
+            toggleFilter(group.id, opt.id)
+          }
+        },
+      }
+    })
+  }, [filters])
+
+  const handleClearFilters = () => {
+    setFilters({})
+  }
 
   // Drawer driven by ?leadId= so the panel survives reloads.
   const setLeadId = (next: string | null) => {
@@ -674,6 +690,7 @@ function JobDetailPageInner({ id }: { id: string }) {
       phone: cand.phone || "",
       score: 0,
       verdict: "fit" as const,
+      state: cand.state,
       cefrLevel: cand.cefrLevel || "na",
       insights: [],
       callDuration: 0,
@@ -718,7 +735,7 @@ function JobDetailPageInner({ id }: { id: string }) {
           </span>
         }
         tabs={
-          <Tabs value={mainTab} onValueChange={(v) => { setMainTab(v as Stage); setFilters({}); setSearchQuery("") }}>
+          <Tabs value={mainTab} onValueChange={(v) => { setMainTab(v as Stage); setFilters({}); setSearchQuery(""); setIsDialing(false) }}>
             <TabsList variant="line">
               {(["screening", "interview", "selected"] as Stage[]).map((s) => {
                 const count = candidates.filter((c) => c.stage === s).length
@@ -780,47 +797,24 @@ function JobDetailPageInner({ id }: { id: string }) {
           mode={ROUNDS[mainTab].mode}
           meta={ROUNDS[mainTab].meta}
           onTest={ROUNDS[mainTab].mode === "ai" ? () => undefined : undefined}
+          isDialing={isDialing}
+          onStartDialing={
+            ROUNDS[mainTab].mode === "ai" && candidatesForStage.length > 0
+              ? () => setIsDialing(true)
+              : undefined
+          }
+          onStopDialing={() => setIsDialing(false)}
         />
 
-        {/* Round-level CTA banner — only shown for AI rounds */}
-        {ROUNDS[mainTab].mode === "ai" && candidatesForStage.length > 0 && (
-          <InfoBanner
-            variant="info"
-            icon={PhoneOutgoing}
-            title={`Start dialing for ${ROUNDS[mainTab].name} candidates`}
-            description="Candidates are ready. The interview will start when you begin dialing."
-            action={
-              <Button size="sm">
-                <PhoneOutgoing className="size-4" />
-                Start Dialing
-              </Button>
-            }
-          />
-        )}
+        <SearchFilterBar
+          placeholder="Search by candidate name, email, or phone…"
+          value={searchQuery}
+          onChange={setSearchQuery}
+          filterGroups={filterGroups}
+          onClearFilters={handleClearFilters}
+        />
 
-        {/* Two-column body — items-start so the filter sidebar hugs its
-            content height instead of stretching to the page height. */}
         <div className="flex flex-1 items-start gap-4">
-          <FilterPanel
-            count={totalFilterCount}
-            groups={FILTERS}
-            selected={filters}
-            onToggle={toggleFilter}
-            extraTop={
-              <div className="flex flex-col gap-2">
-                <Input
-                  placeholder="Search by candidate name"
-                  inputSize="sm"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <p className="text-2xs text-muted-foreground">
-                  Keywords (including name)
-                </p>
-              </div>
-            }
-          />
-
           <section className="flex min-w-0 flex-1 flex-col gap-3">
             <div className="flex items-center justify-between rounded-lg border border-border bg-card px-4 py-2.5">
               <p className="text-sm text-muted-foreground">

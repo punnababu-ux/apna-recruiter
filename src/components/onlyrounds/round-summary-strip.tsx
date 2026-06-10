@@ -1,18 +1,15 @@
 /**
  * RoundSummaryStrip — at-a-glance summary of the active round's configuration.
  *
- * Sits between the page tabs and the candidate list. Shows the round name +
- * mode on the left, key meta as InfoChips, and a "Test" CTA on the right
- * (used to manually trigger the AI round as the recruiter).
- *
- * The meta items are user-supplied; pass whichever subset is relevant for
- * the round type (AI screening shows duration + agent + format + language +
- * criteria count; a human round might show duration + interviewer only).
+ * Shows the round name + mode on the left, key meta as InfoChips, and actions
+ * on the right. If dialing is active, it hides setup options (Test call) and
+ * shows a pulsing active status and a "Stop Dialing" button.
  */
 
-import { Bot, FlaskConical, type LucideIcon } from "lucide-react"
+import { Bot, FlaskConical, PhoneOutgoing, PhoneOff, type LucideIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { InfoChip } from "@/components/onlyrounds/shared"
 import { cn } from "@/lib/utils"
 
@@ -26,6 +23,9 @@ export function RoundSummaryStrip({
   mode = "ai",
   meta = [],
   onTest,
+  onStartDialing,
+  onStopDialing,
+  isDialing = false,
   className,
 }: {
   /** e.g. "Screening", "Tech interview" */
@@ -35,6 +35,12 @@ export function RoundSummaryStrip({
   meta?: RoundMetaItem[]
   /** Click handler for the Test CTA. Hidden when not provided. */
   onTest?: () => void
+  /** Click handler for starting dialing. Hidden when not provided. */
+  onStartDialing?: () => void
+  /** Click handler for stopping dialing. Hidden when not provided. */
+  onStopDialing?: () => void
+  /** Whether dialing is currently active. */
+  isDialing?: boolean
   className?: string
 }) {
   return (
@@ -48,10 +54,14 @@ export function RoundSummaryStrip({
         <div className="inline-flex items-center gap-2 text-sm font-semibold">
           <Bot className="size-4 text-primary" />
           {roundName} · {mode === "ai" ? "AI" : "Human"}
+          {isDialing && (
+            <Badge variant="success" className="animate-pulse ml-2 h-5">
+              Dialing active
+            </Badge>
+          )}
         </div>
         <div className="flex flex-wrap items-center gap-1.5">
           {meta.map((m, i) => (
-            // White-card surface → muted (gray) chips read clearly.
             <InfoChip key={i} icon={m.icon}>
               {m.label}
             </InfoChip>
@@ -59,17 +69,38 @@ export function RoundSummaryStrip({
         </div>
       </div>
 
-      {onTest ? (
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onTest}
-          className="shrink-0 bg-card"
-        >
-          <FlaskConical className="size-3.5" />
-          Test
-        </Button>
-      ) : null}
+      <div className="flex items-center gap-2 shrink-0">
+        {onTest && !isDialing && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onTest}
+            className="bg-card"
+          >
+            <FlaskConical className="size-3.5" />
+            Test
+          </Button>
+        )}
+        {onStopDialing && isDialing && (
+          <Button
+            size="sm"
+            variant="destructive"
+            onClick={onStopDialing}
+          >
+            <PhoneOff className="size-3.5" />
+            Stop Dialing
+          </Button>
+        )}
+        {onStartDialing && !isDialing && (
+          <Button
+            size="sm"
+            onClick={onStartDialing}
+          >
+            <PhoneOutgoing className="size-3.5" />
+            Start Dialing
+          </Button>
+        )}
+      </div>
     </div>
   )
 }
