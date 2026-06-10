@@ -895,7 +895,10 @@ function AudioPlayer({
   }
 
   return (
-    <div className="sticky top-0 z-10 -mx-4 bg-card border-b border-border shadow-sm">
+    <div className={cn(
+      "-mx-4 bg-card border-b border-border transition-shadow",
+      playing ? "sticky top-0 z-10 shadow-sm" : "relative",
+    )}>
       <div className="px-4 py-3 flex items-center gap-3">
         {/* Icon + label */}
         <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10 border border-primary/20">
