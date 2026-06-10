@@ -774,23 +774,23 @@ function VideoPopup({
 
   return ReactDOM.createPortal(
     <div
-      className="fixed z-50 animate-in fade-in slide-in-from-bottom-4 duration-200"
-      style={{ left: "16px", bottom: "24px" }}
+      className="fixed z-50 animate-in fade-in slide-in-from-right-4 duration-200"
+      style={{ top: "16px", right: "calc(56rem + 12px)" }}
     >
-      <div className="w-80 overflow-hidden rounded-xl border border-border bg-card shadow-2xl">
+      <div className="w-full max-w-lg overflow-hidden rounded-xl border border-border bg-card shadow-2xl">
         {/* Header */}
-        <div className="flex items-center gap-2 border-b border-border px-3 py-2">
-          <Video className="size-3.5 shrink-0 text-muted-foreground" />
-          <span className="flex-1 truncate text-xs font-semibold text-foreground">
+        <div className="flex items-center gap-2 border-b border-border px-4 py-2.5">
+          <Video className="size-4 shrink-0 text-muted-foreground" />
+          <span className="flex-1 truncate text-sm font-semibold text-foreground">
             {candidateName} — Interview recording
           </span>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close video"
-            className="flex size-5 shrink-0 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+            className="flex size-6 shrink-0 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
           >
-            <X className="size-3.5" />
+            <X className="size-4" />
           </button>
         </div>
 
@@ -807,13 +807,13 @@ function VideoPopup({
         </div>
 
         {/* Hint footer */}
-        <div className="border-t border-border bg-muted/30 px-3 py-2">
-          <p className="text-2xs text-muted-foreground">
+        <div className="border-t border-border bg-muted/30 px-4 py-2.5">
+          <p className="text-xs text-muted-foreground">
             Click{" "}
-            <span className="inline-flex size-3 items-center justify-center rounded-full bg-success/10 border border-success/30">
-              <Play className="size-1.5 fill-success text-success ml-px" />
+            <span className="inline-flex size-3.5 items-center justify-center rounded-full bg-success/10 border border-success/30">
+              <Play className="size-2 fill-success text-success ml-px" />
             </span>{" "}
-            on any criteria below to jump to that moment
+            on any criteria below to jump to that moment in the recording
           </p>
         </div>
       </div>
