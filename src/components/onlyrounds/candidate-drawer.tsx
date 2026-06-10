@@ -54,6 +54,7 @@ import {
   Sparkles,
   Footprints,
 } from "lucide-react"
+import * as ReactDOM from "react-dom"
 import * as React from "react"
 
 import type { Verdict } from "@/components/onlyrounds/score-gauge"
@@ -736,135 +737,88 @@ function RetakeHistoryBlock({ history }: { history: NonNullable<Candidate["retak
 
 // ── Video player (inline sticky) ─────────────────────────────────────────
 
-function VideoPlayer({
+// ── Video popup (portal, YouTube iframe) ────────────────────────────────
+
+const DEMO_VIDEO_ID = "Ks-_Mh1QhMc" // Andrew Ng — demo interview recording
+
+function VideoPopup({
   candidateName,
-  elapsed,
-  totalSec,
-  playing,
-  onTogglePlay,
-  onSeek,
   onClose,
+  seekRef,
 }: {
   candidateName: string
-  elapsed: number
-  totalSec: number
-  playing: boolean
-  onTogglePlay: () => void
-  onSeek: (sec: number) => void
   onClose: () => void
+  /** Parent passes a mutable ref; VideoPopup stores its seek fn here. */
+  seekRef: React.MutableRefObject<((sec: number) => void) | null>
 }) {
-  const pct = totalSec > 0 ? (elapsed / totalSec) * 100 : 0
-  const trackRef = React.useRef<HTMLDivElement>(null)
+  const iframeRef = React.useRef<HTMLIFrameElement>(null)
 
-  const handleTrackClick = (e: React.MouseEvent) => {
-    const el = trackRef.current
-    if (!el) return
-    const rect = el.getBoundingClientRect()
-    const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
-    onSeek(Math.round(ratio * totalSec))
-  }
+  // Register the YouTube seek fn so InsightsTab can call it
+  React.useEffect(() => {
+    seekRef.current = (sec: number) => {
+      const win = iframeRef.current?.contentWindow
+      if (!win) return
+      win.postMessage(
+        JSON.stringify({ event: "command", func: "seekTo", args: [sec, true] }),
+        "*",
+      )
+      win.postMessage(
+        JSON.stringify({ event: "command", func: "playVideo", args: [] }),
+        "*",
+      )
+    }
+    return () => { seekRef.current = null }
+  }, [seekRef])
 
-  // Decorative waveform bars — proportional to elapsed
-  const barCount = 40
-  const bars = Array.from({ length: barCount }, (_, i) => {
-    const h = 20 + Math.round(Math.sin(i * 0.7 + 1.3) * 12 + Math.cos(i * 1.1) * 8)
-    const filled = (i / barCount) * 100 <= pct
-    return { h, filled }
-  })
+  if (typeof document === "undefined") return null
 
-  return (
-    <div className="sticky top-0 z-10 -mx-4 animate-in fade-in slide-in-from-top-2 duration-200">
-      <div className="bg-card border-b border-border shadow-sm">
-        {/* Simulated video screen */}
-        <div className="relative bg-muted h-36 flex items-center justify-center overflow-hidden">
-          <div className="relative flex flex-col items-center gap-3">
-            <Avatar className="size-12 border-2 border-border">
-              <AvatarFallback className="bg-muted-foreground/20 text-foreground font-semibold text-sm">
-                {initials(candidateName)}
-              </AvatarFallback>
-            </Avatar>
-            {playing ? (
-              /* Animated playback indicator */
-              <div className="flex items-end gap-0.5 h-5">
-                {[4, 7, 5, 9, 6, 8, 4, 7, 5].map((h, i) => (
-                  <span
-                    key={i}
-                    className="inline-block w-1 rounded-sm bg-primary animate-bounce"
-                    style={{
-                      height: `${h * 2}px`,
-                      animationDelay: `${(i % 3) * 0.12}s`,
-                      animationDuration: "0.7s",
-                    }}
-                  />
-                ))}
-              </div>
-            ) : (
-              <button
-                type="button"
-                onClick={onTogglePlay}
-                aria-label="Play video"
-                className="flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md hover:opacity-90 transition-opacity"
-              >
-                <Play className="size-4 fill-primary-foreground ml-0.5" />
-              </button>
-            )}
-          </div>
-          {/* Duration badge */}
-          <div className="absolute bottom-2 right-3 rounded bg-card/80 backdrop-blur-sm px-1.5 py-0.5 text-2xs font-mono text-foreground border border-border">
-            {fmtMmSs(totalSec)}
-          </div>
-          {/* Close */}
+  return ReactDOM.createPortal(
+    <div
+      className="fixed z-50 animate-in fade-in slide-in-from-bottom-4 duration-200"
+      style={{ left: "16px", bottom: "24px" }}
+    >
+      <div className="w-80 overflow-hidden rounded-xl border border-border bg-card shadow-2xl">
+        {/* Header */}
+        <div className="flex items-center gap-2 border-b border-border px-3 py-2">
+          <Video className="size-3.5 shrink-0 text-muted-foreground" />
+          <span className="flex-1 truncate text-xs font-semibold text-foreground">
+            {candidateName} — Interview recording
+          </span>
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close video player"
-            className="absolute top-2 right-3 flex size-6 items-center justify-center rounded-full bg-card/80 backdrop-blur-sm border border-border text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Close video"
+            className="flex size-5 shrink-0 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
           >
             <X className="size-3.5" />
           </button>
         </div>
 
-        {/* Controls bar */}
-        <div className="px-4 pb-3 pt-2 flex flex-col gap-2">
-          {/* Waveform progress track */}
-          <div
-            ref={trackRef}
-            role="slider"
-            aria-label="Video position"
-            aria-valuemin={0}
-            aria-valuemax={totalSec}
-            aria-valuenow={elapsed}
-            onClick={handleTrackClick}
-            className="flex items-end gap-px h-6 cursor-pointer"
-          >
-            {bars.map((b, i) => (
-              <div
-                key={i}
-                className={cn(
-                  "flex-1 rounded-sm transition-colors",
-                  b.filled ? "bg-primary" : "bg-muted-foreground/20",
-                )}
-                style={{ height: `${b.h}px` }}
-              />
-            ))}
-          </div>
-          {/* Play/pause + time */}
-          <div className="flex items-center justify-between">
-            <button
-              type="button"
-              onClick={onTogglePlay}
-              aria-label={playing ? "Pause" : "Play"}
-              className="flex size-7 shrink-0 items-center justify-center rounded-full border border-border bg-muted hover:bg-muted/70 transition-colors"
-            >
-              {playing ? <Pause className="size-3" /> : <Play className="size-3 ml-0.5" />}
-            </button>
-            <span className="text-xs tabular-nums text-muted-foreground font-mono">
-              {fmtMmSs(elapsed)} / {fmtMmSs(totalSec)}
-            </span>
-          </div>
+        {/* YouTube iframe (16:9) */}
+        <div className="aspect-video w-full bg-muted">
+          <iframe
+            ref={iframeRef}
+            src={`https://www.youtube.com/embed/${DEMO_VIDEO_ID}?enablejsapi=1&rel=0&modestbranding=1`}
+            title={`${candidateName} interview recording`}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="size-full border-0"
+          />
+        </div>
+
+        {/* Hint footer */}
+        <div className="border-t border-border bg-muted/30 px-3 py-2">
+          <p className="text-2xs text-muted-foreground">
+            Click{" "}
+            <span className="inline-flex size-3 items-center justify-center rounded-full bg-success/10 border border-success/30">
+              <Play className="size-1.5 fill-success text-success ml-px" />
+            </span>{" "}
+            on any criteria below to jump to that moment
+          </p>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }
 
@@ -959,7 +913,10 @@ function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
   // For video mode: whether the floating video panel is open
   const [videoOpen, setVideoOpen] = React.useState(false)
 
-  // Reset when switching candidates.
+  // Ref that VideoPopup registers its YouTube seek fn into
+  const videoSeekRef = React.useRef<((sec: number) => void) | null>(null)
+
+  // Reset when switching candidates
   React.useEffect(() => {
     setElapsed(0)
     setPlaying(false)
@@ -983,10 +940,16 @@ function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
 
   const seekTo = React.useCallback(
     (sec: number) => {
-      setElapsed(Math.min(Math.max(0, sec), totalSec))
-      setPlaying(true)
-      // For video: open the panel if it isn't already
-      if (mediaType === "video") setVideoOpen(true)
+      const clamped = Math.min(Math.max(0, sec), totalSec)
+      if (mediaType === "video") {
+        // Open the popup and forward the seek to the YouTube iframe
+        setVideoOpen(true)
+        // Small delay so the iframe has time to mount before seeking
+        setTimeout(() => videoSeekRef.current?.(clamped), 300)
+      } else {
+        setElapsed(clamped)
+        setPlaying(true)
+      }
     },
     [totalSec, mediaType],
   )
@@ -1118,22 +1081,12 @@ function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
             </Button>
           </div>
 
-          {/* Inline sticky video player */}
+          {/* Video popup portal */}
           {videoOpen && (
-            <VideoPlayer
+            <VideoPopup
               candidateName={candidate.name}
-              elapsed={elapsed}
-              totalSec={totalSec}
-              playing={playing}
-              onTogglePlay={() => setPlaying((p) => !p)}
-              onSeek={(s) => {
-                setElapsed(s)
-                setPlaying(true)
-              }}
-              onClose={() => {
-                setVideoOpen(false)
-                setPlaying(false)
-              }}
+              seekRef={videoSeekRef}
+              onClose={() => setVideoOpen(false)}
             />
           )}
         </>
