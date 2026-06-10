@@ -913,7 +913,10 @@ function CefrAddon({
 
   return (
     <div className="flex flex-col gap-1.5">
-      <Label className="text-sm font-medium">Add-ons</Label>
+      <Label className="text-sm font-medium inline-flex items-center gap-2">
+        <Puzzle className="size-4 text-muted-foreground shrink-0" />
+        Add-ons
+      </Label>
       <div className="overflow-hidden rounded-lg border border-border">
         <label
           htmlFor={toggleId}

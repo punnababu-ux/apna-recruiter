@@ -12,11 +12,23 @@
 
 import {
   Bot,
+  Briefcase,
+  Building2,
+  CalendarDays,
+  Clock,
   ExternalLink,
+  FileText,
+  GraduationCap,
+  IndianRupee,
   Languages,
+  Laptop,
+  MapPin,
   Mic,
   Phone,
+  StickyNote,
   User,
+  UserCheck,
+  UserPlus,
   Video,
 } from "lucide-react"
 import * as React from "react"
@@ -318,14 +330,17 @@ export function ReviewStep({
       <Section title="Job description">
         <div className="rounded-lg border border-border bg-card p-4">
           <div className="flex flex-col gap-3">
-            <DisplayField label="Job title" value={title} />
+            <DisplayField label="Job title" value={title} icon={Briefcase} />
             {jd && (
-              <div className="flex flex-col gap-0.5">
-                <span className="text-xs text-muted-foreground">Job description</span>
-                <p className="whitespace-pre-wrap text-sm text-foreground line-clamp-6">
-                  {jd}
-                </p>
-              </div>
+              <DisplayField
+                label="Job description"
+                icon={FileText}
+                value={
+                  <p className="whitespace-pre-wrap text-sm text-foreground line-clamp-6">
+                    {jd}
+                  </p>
+                }
+              />
             )}
           </div>
         </div>
@@ -336,46 +351,48 @@ export function ReviewStep({
         <div className="rounded-lg border border-border bg-card p-4">
           <div className="flex flex-col gap-4">
             <FieldGrid>
-              <DisplayField label="Client" value={details.clientId ? clientName(details.clientId) : undefined} />
-              <DisplayField label="Location" value={[details.city, details.area].filter(Boolean).join(", ") || undefined} />
-              <DisplayField label="Required experience" value={expLabel} />
+              <DisplayField label="Client" value={details.clientId ? clientName(details.clientId) : undefined} icon={Building2} />
+              <DisplayField label="Location" value={[details.city, details.area].filter(Boolean).join(", ") || undefined} icon={MapPin} />
+              <DisplayField label="Required experience" value={expLabel} icon={GraduationCap} />
               <DisplayField
                 label="Work type"
                 value={details.workType ? WORK_TYPE_LABELS[details.workType] : undefined}
+                icon={CalendarDays}
               />
               <DisplayField
                 label="Work mode"
                 value={details.workMode ? WORK_MODE_LABELS[details.workMode] : undefined}
+                icon={Laptop}
               />
-              <DisplayField label="Compensation (experienced)" value={details.compExperienced || undefined} />
-              <DisplayField label="Compensation (freshers)" value={details.compFresher || undefined} />
+              <DisplayField label="Compensation (experienced)" value={details.compExperienced || undefined} icon={IndianRupee} />
+              <DisplayField label="Compensation (freshers)" value={details.compFresher || undefined} icon={IndianRupee} />
             </FieldGrid>
 
             {details.scheduleDetails && (
               <>
                 <Divider />
-                <DisplayField label="Work schedule" value={details.scheduleDetails} />
+                <DisplayField label="Work schedule" value={details.scheduleDetails} icon={Clock} />
               </>
             )}
 
             {details.experiencedPersona && (
               <>
                 <Divider />
-                <DisplayField label="Experienced candidate profile" value={details.experiencedPersona} />
+                <DisplayField label="Experienced candidate profile" value={details.experiencedPersona} icon={UserCheck} />
               </>
             )}
 
             {details.fresherPersona && (
               <>
                 <Divider />
-                <DisplayField label="Fresher candidate profile" value={details.fresherPersona} />
+                <DisplayField label="Fresher candidate profile" value={details.fresherPersona} icon={UserPlus} />
               </>
             )}
 
             {details.additionalDetails && (
               <>
                 <Divider />
-                <DisplayField label="Additional details" value={details.additionalDetails} />
+                <DisplayField label="Additional details" value={details.additionalDetails} icon={StickyNote} />
               </>
             )}
           </div>

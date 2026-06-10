@@ -51,20 +51,22 @@ export function WizardField({
   )
 }
 
-// ── DisplayField ──────────────────────────────────────────────────────────
-// Read-only label + value pair. Returns null when value is null/undefined.
-
 export function DisplayField({
   label,
   value,
+  icon: Icon,
 }: {
   label: string
   value?: string | React.ReactNode | null
+  icon?: LucideIcon
 }) {
   if (value == null) return null
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-overline text-muted-foreground">{label}</span>
+      <span className="text-overline text-muted-foreground inline-flex items-center gap-1.5">
+        {Icon && <Icon className="size-3.5 text-muted-foreground shrink-0" aria-hidden />}
+        {label}
+      </span>
       {typeof value === "string" ? (
         <span className="text-sm font-medium text-foreground whitespace-pre-wrap">
           {value || "—"}
