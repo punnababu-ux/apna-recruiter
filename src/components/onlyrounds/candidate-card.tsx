@@ -387,12 +387,12 @@ function CandidateNote({
     )
   }
 
-  // ── Editing: full-width textarea + char counter ────────────────────────
+  // ── Editing: bordered textarea + char counter ─────────────────────────
   if (editing) {
     const remaining = NOTE_MAX_CHARS - draft.length
     return (
       <div
-        className="flex flex-col gap-1 border-t border-border bg-muted/30 px-4 py-2"
+        className="flex flex-col gap-1 border-t border-border bg-muted/30 px-4 py-3"
         onClick={(e) => e.stopPropagation()}
       >
         <Textarea
@@ -403,7 +403,8 @@ function CandidateNote({
           }
           onBlur={commit}
           onKeyDown={(e) => {
-            if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+            // Plain Enter commits; Shift+Enter inserts a newline.
+            if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault()
               commit()
             } else if (e.key === "Escape") {
@@ -414,7 +415,8 @@ function CandidateNote({
           placeholder="Add reason for rejection or any other notes"
           rows={2}
           maxLength={NOTE_MAX_CHARS}
-          className="resize-none border-0 bg-transparent p-0 text-xs shadow-none focus-visible:ring-0 focus-visible:outline-none"
+          inputSize="sm"
+          className="resize-none bg-card text-xs"
         />
         <div className="flex justify-end text-2xs tabular-nums text-muted-foreground">
           {draft.length}/{NOTE_MAX_CHARS}

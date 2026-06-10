@@ -20,7 +20,6 @@ import {
   Languages,
   ListChecks,
   MapPin,
-  Mic,
   MoreVertical,
   PhoneCall,
   PhoneOutgoing,
@@ -745,7 +744,7 @@ function JobDetailPageInner({ id }: { id: string }) {
             description="Candidates are ready. The interview will start when you begin dialing."
             action={
               <Button size="sm">
-                <Mic className="size-4" />
+                <PhoneOutgoing className="size-4" />
                 Start Dialing
               </Button>
             }
