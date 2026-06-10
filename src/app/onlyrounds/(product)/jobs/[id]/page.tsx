@@ -31,6 +31,7 @@ import {
 } from "lucide-react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Suspense, use, useMemo, useState } from "react"
+import { AddCandidateDialog, type NewCandidateData } from "@/components/onlyrounds/add-candidate-dialog"
 
 import {
   CandidateCard,
@@ -585,13 +586,13 @@ function JobDetailPageInner({ id }: { id: string }) {
   const leadId = searchParams.get("leadId")
 
   const jobTitle = decodeURIComponent(id).replace(/-/g, " ")
+  const [candidates, setCandidates] = useState<CandidateRow[]>(CANDIDATES)
+  const [addDialogOpen, setAddDialogOpen] = useState(false)
+
   const [mainTab, setMainTab] = useState<
     "screening" | "interview" | "selected"
   >("screening")
 
-  // Filter & search state. `filters` keys are group ids; values are the
-  // set of selected option ids within that group. When a group has zero
-  // selected options it acts as "any" (no constraint).
   const [filters, setFilters] = useState<Record<string, Set<string>>>({})
   const [searchQuery, setSearchQuery] = useState("")
 
@@ -607,9 +608,25 @@ function JobDetailPageInner({ id }: { id: string }) {
     })
   }
 
+  const handleAddCandidates = (newCands: NewCandidateData[]) => {
+    const newRows: CandidateRow[] = newCands.map((c) => ({
+      id: `cand-${Math.random().toString(36).substring(2, 11)}`,
+      name: c.name,
+      email: c.email,
+      phone: c.phone,
+      role: jobTitle,
+      company: "Independent",
+      stage: "screening" as const,
+      state: { kind: "pending" as const, attempted: 0, total: 5 },
+      cefrLevel: "na" as const,
+      resumeFile: c.resumeFile,
+    }))
+    setCandidates((prev) => [...prev, ...newRows])
+  }
+
   const candidatesForStage = useMemo(
-    () => CANDIDATES.filter((c) => c.stage === mainTab),
-    [mainTab],
+    () => candidates.filter((c) => c.stage === mainTab),
+    [mainTab, candidates],
   )
 
   const filteredCandidates = useMemo(() => {
@@ -641,7 +658,37 @@ function JobDetailPageInner({ id }: { id: string }) {
     router.replace(`${pathname}?${params.toString()}`, { scroll: false })
   }
 
-  const drawerCandidate = leadId ? DRAWER_DATA[leadId] ?? null : null
+  const drawerCandidate = useMemo(() => {
+    if (!leadId) return null
+    if (DRAWER_DATA[leadId]) return DRAWER_DATA[leadId]
+
+    const cand = candidates.find((c) => c.id === leadId)
+    if (!cand) return null
+
+    return {
+      id: cand.id,
+      name: cand.name,
+      role: cand.role || jobTitle,
+      company: cand.company || "Independent",
+      email: cand.email || "",
+      phone: cand.phone || "",
+      score: 0,
+      verdict: "fit" as const,
+      cefrLevel: cand.cefrLevel || "na",
+      insights: [],
+      callDuration: 0,
+      recommendations: [
+        "No calls placed yet. Sourced lead awaiting initial contact.",
+        "Candidate is ready to receive an automated AI screening call.",
+      ],
+      criteriaGroups: [],
+      profile: {
+        about: "Sourced candidate. Resume details and work history will populate once automated screening is completed.",
+        location: "Sourced",
+        resumeUrl: cand.resumeFile ? URL.createObjectURL(cand.resumeFile) : undefined,
+      },
+    }
+  }, [leadId, candidates, jobTitle])
   const drawerIndex = leadId
     ? filteredCandidates.findIndex((c) => c.id === leadId)
     : -1
@@ -674,7 +721,7 @@ function JobDetailPageInner({ id }: { id: string }) {
           <Tabs value={mainTab} onValueChange={(v) => { setMainTab(v as Stage); setFilters({}); setSearchQuery("") }}>
             <TabsList variant="line">
               {(["screening", "interview", "selected"] as Stage[]).map((s) => {
-                const count = CANDIDATES.filter((c) => c.stage === s).length
+                const count = candidates.filter((c) => c.stage === s).length
                 return (
                   <TabsTrigger key={s} value={s}>
                     {s === "screening" && <PhoneCall className="size-3.5" />}
@@ -688,7 +735,7 @@ function JobDetailPageInner({ id }: { id: string }) {
         }
         actions={
           <>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" onClick={() => setAddDialogOpen(true)}>
               <UserPlus className="size-4" /> Add candidates
             </Button>
             <Button variant="outline" size="sm">
@@ -843,6 +890,12 @@ function JobDetailPageInner({ id }: { id: string }) {
         hasNext={!!next}
         onPrev={() => prev && setLeadId(prev.id)}
         onNext={() => next && setLeadId(next.id)}
+      />
+
+      <AddCandidateDialog
+        open={addDialogOpen}
+        onOpenChange={setAddDialogOpen}
+        onAddCandidates={handleAddCandidates}
       />
     </div>
   )

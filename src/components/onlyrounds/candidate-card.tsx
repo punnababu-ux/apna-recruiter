@@ -76,6 +76,7 @@ export type Candidate = {
   /** Chronological log of prior re-take attempts. When present, a history
    *  toggle appears next to the Re-take button. */
   retakeHistory?: AttemptLogEntry[]
+  resumeFile?: File
 }
 
 const NOTE_MAX_CHARS = 300
