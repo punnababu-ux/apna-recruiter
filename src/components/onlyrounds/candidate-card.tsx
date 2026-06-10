@@ -85,6 +85,7 @@ export type Candidate = {
   resumeFile?: File
   source?: "applied" | "sourced"
   sourceDetail?: string
+  stage?: "screening" | "interview" | "selected"
 }
 
 const NOTE_MAX_CHARS = 300
@@ -104,7 +105,7 @@ export function CandidateCard({
   onMoveToNextRound?: () => void
   onReject?: () => void
   onReTake?: () => void
-  onAddNote?: () => void
+  onAddNote?: (note: string) => void
   onViewInsights?: () => void
   className?: string
 }) {
@@ -257,53 +258,55 @@ export function CandidateCard({
       )}
 
       {/* Action bar */}
-      <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-2.5">
-        <div className="flex items-center gap-1.5">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={stop(onReTake)}
-            className="h-8"
-          >
-            <RotateCcw className="size-3.5" />
-            Re-take
-          </Button>
-          {hasRetakeHistory ? (
+      {candidate.stage !== "selected" && (
+        <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-2.5">
+          <div className="flex items-center gap-1.5">
             <Button
               variant="outline"
               size="sm"
-              onClick={stop(() => setHistoryOpen((v) => !v))}
-              aria-expanded={historyOpen}
-              aria-label={
-                historyOpen ? "Hide re-take history" : "Show re-take history"
-              }
-              className="h-8 px-2"
+              onClick={stop(onReTake)}
+              className="h-8"
             >
-              <History className="size-3.5" />
-              {historyOpen ? (
-                <ChevronUp className="size-3" />
-              ) : (
-                <ChevronDown className="size-3" />
-              )}
+              <RotateCcw className="size-3.5" />
+              Re-take
             </Button>
-          ) : null}
+            {hasRetakeHistory ? (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={stop(() => setHistoryOpen((v) => !v))}
+                aria-expanded={historyOpen}
+                aria-label={
+                  historyOpen ? "Hide re-take history" : "Show re-take history"
+                }
+                className="h-8 px-2"
+              >
+                <History className="size-3.5" />
+                {historyOpen ? (
+                  <ChevronUp className="size-3" />
+                ) : (
+                  <ChevronDown className="size-3" />
+                )}
+              </Button>
+            ) : null}
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={stop(onReject)}
+              className="h-8"
+            >
+              <XCircle className="size-3.5" />
+              Reject
+            </Button>
+            <Button size="sm" onClick={stop(onMoveToNextRound)} className="h-8">
+              <CircleCheck className="size-3.5" />
+              Move to next round
+            </Button>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={stop(onReject)}
-            className="h-8"
-          >
-            <XCircle className="size-3.5" />
-            Reject
-          </Button>
-          <Button size="sm" onClick={stop(onMoveToNextRound)} className="h-8">
-            <CircleCheck className="size-3.5" />
-            Move to next round
-          </Button>
-        </div>
-      </div>
+      )}
 
       {/* Re-take history (expanded) */}
       {hasRetakeHistory && historyOpen ? (

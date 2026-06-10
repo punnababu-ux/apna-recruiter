@@ -33,9 +33,15 @@ import { cn } from "@/lib/utils"
 export function CandidateTable({
   candidates,
   onOpen,
+  onReTake,
+  onReject,
+  onMoveToNextRound,
 }: {
   candidates: (Candidate & { stage: string })[]
   onOpen: (id: string) => void
+  onReTake?: (id: string) => void
+  onReject?: (id: string) => void
+  onMoveToNextRound?: (id: string) => void
 }) {
   return (
     <div className="rounded-lg border border-border bg-card overflow-hidden">
@@ -120,40 +126,44 @@ export function CandidateTable({
 
                 {/* Actions */}
                 <TableCell className="pr-4">
-                  <div
-                    className="flex items-center justify-end gap-1"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-7 text-xs"
-                      onClick={() => onOpen(c.id)}
-                      title="Re-take"
+                  {c.stage !== "selected" ? (
+                    <div
+                      className="flex items-center justify-end gap-1"
+                      onClick={(e) => e.stopPropagation()}
                     >
-                      <RotateCcw className="size-3" />
-                      Re-take
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-7 text-xs"
-                      onClick={() => onOpen(c.id)}
-                      title="Reject"
-                    >
-                      <XCircle className="size-3" />
-                      Reject
-                    </Button>
-                    <Button
-                      size="sm"
-                      className="h-7 text-xs"
-                      onClick={() => onOpen(c.id)}
-                      title="Move to next round"
-                    >
-                      <CircleCheck className="size-3" />
-                      Move to next round
-                    </Button>
-                  </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-7 text-xs"
+                        onClick={() => onReTake?.(c.id)}
+                        title="Re-take"
+                      >
+                        <RotateCcw className="size-3" />
+                        Re-take
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-7 text-xs"
+                        onClick={() => onReject?.(c.id)}
+                        title="Reject"
+                      >
+                        <XCircle className="size-3" />
+                        Reject
+                      </Button>
+                      <Button
+                        size="sm"
+                        className="h-7 text-xs"
+                        onClick={() => onMoveToNextRound?.(c.id)}
+                        title="Move to next round"
+                      >
+                        <CircleCheck className="size-3" />
+                        Move to next round
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="text-right text-xs text-muted-foreground">—</div>
+                  )}
                 </TableCell>
               </TableRow>
             )

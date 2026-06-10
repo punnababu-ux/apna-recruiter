@@ -54,6 +54,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { IconLabel } from "@/components/onlyrounds/shared"
 import { Badge } from "@/components/ui/badge"
 import { BackButton } from "@/components/ui/back-button"
@@ -612,6 +622,7 @@ function JobDetailPageInner({ id }: { id: string }) {
   const [searchQuery, setSearchQuery] = useState("")
   const [isDialing, setIsDialing] = useState(false)
   const [viewMode, setViewMode] = useState<"card" | "table">("card")
+  const [candidateToMove, setCandidateToMove] = useState<string | null>(null)
 
   const toggleFilter = (groupId: string, optionId: string) => {
     setFilters((prev) => {
@@ -641,6 +652,62 @@ function JobDetailPageInner({ id }: { id: string }) {
       sourceDetail: c.sourceDetail,
     }))
     setCandidates((prev) => [...prev, ...newRows])
+  }
+
+  const handleReTake = (id: string) => {
+    setCandidates((prev) =>
+      prev.map((c) =>
+        c.id === id
+          ? {
+              ...c,
+              state: {
+                kind: "pending" as const,
+                attempted: 0,
+                total: 5,
+              },
+            }
+          : c
+      )
+    )
+  }
+
+  const handleReject = (id: string) => {
+    setCandidates((prev) =>
+      prev.map((c) => {
+        if (c.id !== id) return c
+        const currentScore = c.state.kind === "completed" ? c.state.score : 30
+        return {
+          ...c,
+          state: {
+            kind: "completed" as const,
+            score: currentScore,
+            verdict: "not-fit" as const,
+            insights: c.state.kind === "completed" ? c.state.insights : [],
+          },
+        }
+      })
+    )
+  }
+
+  const handleMoveToNextRound = (id: string) => {
+    setCandidates((prev) =>
+      prev.map((c) => {
+        if (c.id !== id) return c
+        let nextStage = c.stage
+        if (c.stage === "screening") nextStage = "interview"
+        else if (c.stage === "interview") nextStage = "selected"
+        return {
+          ...c,
+          stage: nextStage,
+        }
+      })
+    )
+  }
+
+  const handleUpdateNote = (id: string, note: string) => {
+    setCandidates((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, note } : c))
+    )
   }
 
   const candidatesForStage = useMemo(
@@ -734,12 +801,10 @@ function JobDetailPageInner({ id }: { id: string }) {
 
   const drawerCandidate = useMemo(() => {
     if (!leadId) return null
-    if (DRAWER_DATA[leadId]) return DRAWER_DATA[leadId]
-
     const cand = candidates.find((c) => c.id === leadId)
     if (!cand) return null
 
-    return {
+    const baseDrawer = DRAWER_DATA[leadId] || {
       id: cand.id,
       name: cand.name,
       role: cand.role || jobTitle,
@@ -763,6 +828,15 @@ function JobDetailPageInner({ id }: { id: string }) {
         location: "Sourced",
         resumeUrl: cand.resumeFile ? URL.createObjectURL(cand.resumeFile) : undefined,
       },
+    }
+
+    return {
+      ...baseDrawer,
+      notes: cand.note || baseDrawer.notes || "",
+      state: cand.state,
+      stage: cand.stage,
+      score: cand.state.kind === "completed" ? cand.state.score : baseDrawer.score,
+      verdict: cand.state.kind === "completed" ? cand.state.verdict : baseDrawer.verdict,
     }
   }, [leadId, candidates, jobTitle])
   const drawerIndex = leadId
@@ -814,7 +888,7 @@ function JobDetailPageInner({ id }: { id: string }) {
               </TabsList>
             </Tabs>
 
-            {/* View toggle + download — lives at the far-right of the tab row */}
+            {/* View toggle — lives at the far-right of the tab row */}
             <div className="flex items-center gap-1.5 pb-1">
               <ButtonGroup>
                 <Button
@@ -836,9 +910,6 @@ function JobDetailPageInner({ id }: { id: string }) {
                   <Table2 className="size-3.5" />
                 </Button>
               </ButtonGroup>
-              <Button variant="ghost" size="icon-sm" aria-label="Download data">
-                <Download className="size-4" />
-              </Button>
             </div>
           </div>
         }
@@ -847,15 +918,18 @@ function JobDetailPageInner({ id }: { id: string }) {
             <Button variant="outline" size="sm" onClick={() => setAddDialogOpen(true)}>
               <UserPlus className="size-4" /> Add candidates
             </Button>
-            <Button variant="outline" size="sm">
-              <Share2 className="size-4" /> Share job
+            <Button variant="outline" size="icon" aria-label="Download data">
+              <Download className="size-4" />
+            </Button>
+            <Button variant="outline" size="icon" aria-label="Share job">
+              <Share2 className="size-4" />
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger
                 render={
                   <Button
                     variant="outline"
-                    size="icon-sm"
+                    size="icon"
                     aria-label="More job actions"
                   >
                     <MoreVertical className="size-4" />
@@ -935,6 +1009,10 @@ function JobDetailPageInner({ id }: { id: string }) {
                 candidate={c}
                 onOpen={() => setLeadId(c.id)}
                 onViewInsights={() => setLeadId(c.id)}
+                onReTake={() => handleReTake(c.id)}
+                onReject={() => handleReject(c.id)}
+                onMoveToNextRound={() => setCandidateToMove(c.id)}
+                onAddNote={(note) => handleUpdateNote(c.id, note)}
               />
             ))}
           </div>
@@ -942,6 +1020,9 @@ function JobDetailPageInner({ id }: { id: string }) {
           <CandidateTable
             candidates={filteredCandidates}
             onOpen={(id) => setLeadId(id)}
+            onReTake={handleReTake}
+            onReject={handleReject}
+            onMoveToNextRound={setCandidateToMove}
           />
         )}
       </main>
@@ -950,11 +1031,14 @@ function JobDetailPageInner({ id }: { id: string }) {
         open={!!drawerCandidate}
         onOpenChange={(o) => !o && setLeadId(null)}
         candidate={drawerCandidate}
-        roundName="Screening"
         hasPrev={!!prev}
         hasNext={!!next}
         onPrev={() => prev && setLeadId(prev.id)}
         onNext={() => next && setLeadId(next.id)}
+        onReTake={() => drawerCandidate && handleReTake(drawerCandidate.id)}
+        onReject={() => drawerCandidate && handleReject(drawerCandidate.id)}
+        onMoveToNextRound={() => drawerCandidate && setCandidateToMove(drawerCandidate.id)}
+        onAddNote={(note) => drawerCandidate && handleUpdateNote(drawerCandidate.id, note)}
       />
 
       <AddCandidateDialog
@@ -962,6 +1046,30 @@ function JobDetailPageInner({ id }: { id: string }) {
         onOpenChange={setAddDialogOpen}
         onAddCandidates={handleAddCandidates}
       />
+
+      <AlertDialog open={!!candidateToMove} onOpenChange={(open) => !open && setCandidateToMove(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Move Candidate to Next Round?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to move this candidate to the next round? They will progress to the next stage in the pipeline.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (candidateToMove) {
+                  handleMoveToNextRound(candidateToMove)
+                  setCandidateToMove(null)
+                }
+              }}
+            >
+              Confirm
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

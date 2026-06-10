@@ -47,7 +47,6 @@ import {
   XCircle,
   Star,
   Flag,
-  Download,
   QrCode,
   Sparkles,
   Footprints,
@@ -59,6 +58,7 @@ import type { Candidate } from "@/components/onlyrounds/candidate-card"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge, badgeVariants } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
 import {
   Sheet,
   SheetContent,
@@ -68,6 +68,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { CandidateStatusBadge } from "@/components/onlyrounds/shared"
+import { AttemptStatusBand } from "@/components/onlyrounds/attempt-status-band"
 import { cn } from "@/lib/utils"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 
@@ -179,6 +180,7 @@ export type DrawerCandidate = {
   profile?: ProfileSummary
   violations?: InterviewViolation[]
   communication?: CommunicationEvent[]
+  stage?: string
 }
 
 // ── Drawer ────────────────────────────────────────────────────────────────
@@ -187,7 +189,6 @@ export function CandidateDrawer({
   open,
   onOpenChange,
   candidate,
-  roundName = "Screening",
   onMoveToNextRound,
   onReject,
   onReTake,
@@ -200,11 +201,10 @@ export function CandidateDrawer({
   open: boolean
   onOpenChange: (open: boolean) => void
   candidate: DrawerCandidate | null
-  roundName?: string
   onMoveToNextRound?: () => void
   onReject?: () => void
   onReTake?: () => void
-  onAddNote?: () => void
+  onAddNote?: (note: string) => void
   onPrev?: () => void
   onNext?: () => void
   hasPrev?: boolean
@@ -244,7 +244,6 @@ export function CandidateDrawer({
         {candidate ? (
           <DrawerBody
             candidate={candidate}
-            roundName={roundName}
             onMoveToNextRound={onMoveToNextRound}
             onReject={onReject}
             onReTake={onReTake}
@@ -303,7 +302,7 @@ function ContactActions({ phone, name }: { phone: string; name: string }) {
             <button
               type="button"
               aria-label={`Show call QR for ${name}`}
-              className="inline-flex size-5 items-center justify-center rounded text-primary hover:bg-muted"
+              className="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
             >
               <QrCode className="size-3.5" />
             </button>
@@ -333,9 +332,24 @@ function ContactActions({ phone, name }: { phone: string; name: string }) {
 }
 
 
+type Stage = "screening" | "interview" | "selected"
+
+const STAGES: { key: Stage; label: string; number: number }[] = [
+  { key: "screening", label: "Screening", number: 1 },
+  { key: "interview", label: "Tech Interview", number: 2 },
+  { key: "selected", label: "Selected", number: 3 },
+]
+
+const STAGE_ORDER: Stage[] = ["screening", "interview", "selected"]
+
+const isStageCompleted = (currentStage: Stage, stepStage: Stage) => {
+  const currentIndex = STAGE_ORDER.indexOf(currentStage)
+  const stepIndex = STAGE_ORDER.indexOf(stepStage)
+  return currentIndex >= stepIndex
+}
+
 function DrawerBody({
   candidate,
-  roundName,
   onMoveToNextRound,
   onReject,
   onReTake,
@@ -347,25 +361,62 @@ function DrawerBody({
   onClose,
 }: {
   candidate: DrawerCandidate
-  roundName: string
   onMoveToNextRound?: () => void
   onReject?: () => void
   onReTake?: () => void
-  onAddNote?: () => void
+  onAddNote?: (note: string) => void
   onPrev?: () => void
   onNext?: () => void
   hasPrev?: boolean
   hasNext?: boolean
   onClose: () => void
 }) {
+  const [isEditing, setIsEditing] = React.useState(false)
+  const [noteText, setNoteText] = React.useState(candidate.notes || "")
+  const textareaRef = React.useRef<HTMLTextAreaElement>(null)
+  const lastCandidateIdRef = React.useRef(candidate.id)
+
+  React.useEffect(() => {
+    if (lastCandidateIdRef.current !== candidate.id) {
+      lastCandidateIdRef.current = candidate.id
+      setNoteText(candidate.notes || "")
+      setIsEditing(false)
+    } else if (!isEditing) {
+      setNoteText(candidate.notes || "")
+    }
+  }, [candidate.id, candidate.notes, isEditing])
+
+  React.useEffect(() => {
+    if (isEditing) {
+      requestAnimationFrame(() => {
+        textareaRef.current?.focus()
+        const len = textareaRef.current?.value.length ?? 0
+        textareaRef.current?.setSelectionRange(len, len)
+      })
+    }
+  }, [isEditing])
+
+  const commitNote = () => {
+    const trimmed = noteText.trim()
+    setIsEditing(false)
+    onAddNote?.(trimmed)
+  }
+
+  const cancelNote = () => {
+    setNoteText(candidate.notes || "")
+    setIsEditing(false)
+  }
+
+  const currentStage = (candidate.stage as Stage) || "screening"
+
   return (
     <div className="flex h-full flex-col">
       {/* Sticky header */}
       <SheetHeader className="p-0 border-b border-border">
         <div className="p-4 flex flex-col gap-3">
-          {/* Top row: Avatar + Name & Verdict + Close */}
+          {/* Top row: Avatar + Name & Details + Top-Right Actions */}
           <div className="flex items-start justify-between gap-3">
-            <div className="flex items-center gap-3 min-w-0 flex-1">
+            <div className="flex items-start gap-3 min-w-0 flex-1">
               <Avatar className="size-10 shrink-0">
                 <AvatarFallback className="bg-accent text-sm font-semibold text-accent-foreground">
                   {initials(candidate.name)}
@@ -405,80 +456,111 @@ function DrawerBody({
                     {[candidate.role, candidate.company].filter(Boolean).join(" @ ")}
                   </p>
                 )}
+                {/* Contact info: aligned with name and job details */}
+                <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                  {candidate.email && (
+                    <span className="inline-flex items-center gap-1">
+                      <AtSign className="size-3.5" />
+                      {candidate.email}
+                    </span>
+                  )}
+                  {candidate.phone && (
+                    <span className="inline-flex items-center gap-1.5">
+                      <Phone className="size-3.5" />
+                      {candidate.phone}
+                      <ContactActions phone={candidate.phone} name={candidate.name} />
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={onClose}
-              aria-label="Close drawer"
-              className="shrink-0 -mt-1"
-            >
-              <X className="size-4" />
-            </Button>
-          </div>
 
-          {/* Bottom row: Contact info & actions */}
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
-            {candidate.email && (
-              <span className="inline-flex items-center gap-1">
-                <AtSign className="size-3.5" />
-                {candidate.email}
-              </span>
-            )}
-            {candidate.phone && (
-              <span className="inline-flex items-center gap-1.5">
-                <Phone className="size-3.5" />
-                {candidate.phone}
-                <ContactActions phone={candidate.phone} name={candidate.name} />
-              </span>
-            )}
+            {/* Top-Right sticky header actions */}
+            <div className="flex items-center gap-1.5 shrink-0 -mt-1">
+              <div className="flex items-center gap-0.5 mr-1 border-r border-border pr-2">
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={onPrev}
+                  disabled={!hasPrev}
+                  aria-label="Previous candidate"
+                >
+                  <ChevronLeft className="size-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={onNext}
+                  disabled={!hasNext}
+                  aria-label="Next candidate"
+                >
+                  <ChevronRight className="size-4" />
+                </Button>
+              </div>
+              {candidate.profile?.resumeUrl && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 bg-card gap-1.5 text-xs font-semibold text-foreground border-border hover:bg-muted"
+                  onClick={() => window.open(candidate.profile!.resumeUrl, "_blank")}
+                >
+                  <FileText className="size-3.5" />
+                  Resume
+                </Button>
+              )}
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                onClick={onClose}
+                aria-label="Close drawer"
+                className="shrink-0"
+              >
+                <X className="size-4" />
+              </Button>
+            </div>
           </div>
         </div>
 
-        {/* Round indicator + Profile + Navigation */}
+        {/* Pipeline Stepper Subheader */}
         <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-2 bg-muted/10">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1.5">
-              <span className="text-xs text-muted-foreground font-medium">Round:</span>
-              <span className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-2.5 py-1 text-xs font-medium">
-                <span className="flex size-4 items-center justify-center rounded-full bg-primary text-2xs font-semibold text-primary-foreground font-mono">
-                  1
-                </span>
-                {roundName}
-              </span>
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs text-muted-foreground font-medium">Pipeline:</span>
+            {/* Horizontal breadcrumb pipeline stepper */}
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-2xs">
+              {STAGES.map((s, idx) => {
+                const isCompleted = isStageCompleted(currentStage, s.key)
+                const isActive = currentStage === s.key
+                return (
+                  <React.Fragment key={s.key}>
+                    {idx > 0 && (
+                      <span className="text-muted-foreground/30 font-medium">/</span>
+                    )}
+                    <div className="flex items-center gap-1">
+                      <span
+                        className={cn(
+                          "flex size-4 items-center justify-center rounded-full text-3xs font-semibold font-mono border",
+                          isActive && "bg-primary border-primary text-primary-foreground",
+                          isCompleted && !isActive && "bg-success-subtle border-success/30 text-success",
+                          !isCompleted && !isActive && "bg-muted border-border text-muted-foreground"
+                        )}
+                      >
+                        {s.number}
+                      </span>
+                      <span
+                        className={cn(
+                          "font-medium",
+                          isActive && "text-foreground font-semibold",
+                          isCompleted && !isActive && "text-muted-foreground",
+                          !isCompleted && !isActive && "text-muted-foreground/60"
+                        )}
+                      >
+                        {s.label}
+                      </span>
+                    </div>
+                  </React.Fragment>
+                )
+              })}
             </div>
-            {candidate.profile?.resumeUrl && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-8 bg-card gap-1.5 text-xs"
-                onClick={() => window.open(candidate.profile!.resumeUrl, "_blank")}
-              >
-                <Download className="size-3.5" />
-                Profile
-              </Button>
-            )}
-          </div>
-          <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={onPrev}
-              disabled={!hasPrev}
-              aria-label="Previous candidate"
-            >
-              <ChevronLeft className="size-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={onNext}
-              disabled={!hasNext}
-              aria-label="Next candidate"
-            >
-              <ChevronRight className="size-4" />
-            </Button>
           </div>
         </div>
 
@@ -522,42 +604,102 @@ function DrawerBody({
         {/* Notes */}
         <div className="p-4 pb-2.5">
           <h4 className="text-xs font-semibold text-muted-foreground mb-2">Notes</h4>
-          <button
-            type="button"
-            onClick={onAddNote}
-            className="flex w-full items-center justify-between rounded-lg border border-border bg-muted/20 px-3.5 py-2.5 text-left text-sm hover:bg-muted/40 transition-colors"
-          >
-            {candidate.notes ? (
-              <span className="text-foreground whitespace-pre-wrap">{candidate.notes}</span>
-            ) : (
-              <span className="text-muted-foreground">No note added</span>
-            )}
-            <Pencil className="size-3.5 text-muted-foreground shrink-0 ml-2" />
-          </button>
+          {isEditing ? (
+            <div
+              className="flex flex-col gap-1.5 bg-muted/30 p-2 rounded-lg border border-border"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Textarea
+                ref={textareaRef}
+                value={noteText}
+                onChange={(e) => setNoteText(e.target.value.slice(0, 300))}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault()
+                    commitNote()
+                  } else if (e.key === "Escape") {
+                    e.preventDefault()
+                    cancelNote()
+                  }
+                }}
+                placeholder="Add reason for rejection or any other notes"
+                rows={2}
+                maxLength={300}
+                inputSize="sm"
+                className="resize-none bg-card text-xs"
+              />
+              <div className="flex items-center justify-between text-2xs">
+                <span className="tabular-nums text-muted-foreground">
+                  {noteText.length}/300
+                </span>
+                <div className="flex items-center gap-1.5">
+                  <Button
+                    variant="outline"
+                    size="xs"
+                    className="h-6 px-2 text-2xs"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      cancelNote()
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    size="xs"
+                    className="h-6 px-2 text-2xs bg-primary text-primary-foreground"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      commitNote()
+                    }}
+                  >
+                    Save
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation()
+                setIsEditing(true)
+              }}
+              className="flex w-full items-center justify-between rounded-lg border border-border bg-muted/20 px-3.5 py-2.5 text-left text-sm hover:bg-muted/40 transition-colors"
+            >
+              {noteText ? (
+                <span className="text-foreground whitespace-pre-wrap">{noteText}</span>
+              ) : (
+                <span className="text-muted-foreground">No note added</span>
+              )}
+              <Pencil className="size-3.5 text-muted-foreground shrink-0 ml-2" />
+            </button>
+          )}
         </div>
 
         {/* Action bar below Notes */}
-        <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-3 bg-muted/10">
-          <Button variant="outline" size="sm" onClick={onReTake} className="h-8 bg-card">
-            <RotateCcw className="size-3.5" />
-            Re-take
-          </Button>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onReject}
-              className="h-8 bg-card"
-            >
-              <XCircle className="size-3.5" />
-              Reject
+        {candidate.stage !== "selected" && (
+          <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-3 bg-muted/10">
+            <Button variant="outline" size="sm" onClick={onReTake} className="h-8 bg-card">
+              <RotateCcw className="size-3.5" />
+              Re-take
             </Button>
-            <Button size="sm" onClick={onMoveToNextRound} className="h-8">
-              <CircleCheck className="size-3.5" />
-              Move to next round
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onReject}
+                className="h-8 bg-card"
+              >
+                <XCircle className="size-3.5" />
+                Reject
+              </Button>
+              <Button size="sm" onClick={onMoveToNextRound} className="h-8">
+                <CircleCheck className="size-3.5" />
+                Move to next round
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   )
@@ -596,6 +738,53 @@ function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
     },
     [totalSec],
   )
+
+  const state = candidate.state
+  if (state && state.kind !== "completed") {
+    return (
+      <div className="flex flex-col gap-6">
+        {state.kind === "pending" && (
+          <AttemptStatusBand
+            tone="warning"
+            label="Interview Pending"
+            reason="Call not connected, Rescheduled for completion"
+            attempted={state.attempted}
+            total={state.total}
+            helper="We're trying to reach the candidate for this interview. We'll update the status once they respond."
+            attempts={state.attempts}
+          />
+        )}
+        {state.kind === "incomplete" && (
+          <AttemptStatusBand
+            tone="warning"
+            label="Interview Incomplete"
+            reason="Candidate left early, Rescheduled for completion"
+            attempted={state.attempted}
+            total={state.total}
+            helper="Candidate attempted the interview but didn't complete it. We've notified the candidate to complete the interview, we'll update the status here once it's completed."
+            attempts={state.attempts}
+          />
+        )}
+        {state.kind === "no-response" && (
+          <AttemptStatusBand
+            tone="muted"
+            label="No Response"
+            reason="Candidate did not respond after all attempts"
+            attempted={state.attempted}
+            total={state.total}
+            attempts={state.attempts}
+          />
+        )}
+        {state.kind === "not-interested" && (
+          <AttemptStatusBand
+            tone="muted"
+            label="Not Interested"
+            reason="Candidate declared not interested in this opportunity"
+          />
+        )}
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col gap-6">
