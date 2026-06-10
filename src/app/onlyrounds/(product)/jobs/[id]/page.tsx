@@ -85,6 +85,14 @@ const FILTERS = [
       { id: "na", label: "Not available", count: 3 },
     ],
   },
+  {
+    id: "source",
+    label: "Candidate Source",
+    options: [
+      { id: "applied", label: "Applied", count: 3 },
+      { id: "sourced", label: "Sourced", count: 3 },
+    ],
+  },
 ]
 
 type Stage = "screening" | "interview" | "selected"
@@ -100,6 +108,7 @@ const CANDIDATES: CandidateRow[] = [
     stage: "screening",
     email: "aditi@apna.co",
     phone: "+917003393362",
+    source: "applied",
     state: {
       kind: "completed",
       score: 100,
@@ -128,6 +137,7 @@ const CANDIDATES: CandidateRow[] = [
     company: "Apna",
     email: "buruds@gmail.com",
     phone: "+919164862614",
+    source: "sourced",
     state: { kind: "pending", attempted: 0, total: 5 },
     cefrLevel: "na",
     stage: "screening",
@@ -143,6 +153,7 @@ const CANDIDATES: CandidateRow[] = [
     company: "Apna",
     email: "karan.jain@apna.co",
     phone: "+918601250243",
+    source: "sourced",
     state: {
       kind: "incomplete",
       attempted: 2,
@@ -163,6 +174,7 @@ const CANDIDATES: CandidateRow[] = [
     name: "chaitra",
     email: "chaitra.b.ext@apna.co",
     phone: "+918971981508",
+    source: "applied",
     state: {
       kind: "no-response",
       attempted: 5,
@@ -190,6 +202,7 @@ const CANDIDATES: CandidateRow[] = [
     company: "Independent",
     email: "rohit.verma@test.co",
     phone: "+919812345678",
+    source: "applied",
     state: {
       kind: "completed",
       score: 32,
@@ -210,6 +223,7 @@ const CANDIDATES: CandidateRow[] = [
     company: "Zomato",
     email: "anjali@test.co",
     phone: "+919800000111",
+    source: "sourced",
     state: {
       kind: "completed",
       score: 86,
@@ -285,6 +299,7 @@ const DRAWER_DATA: Record<string, DrawerCandidate> = {
     phone: "+917003393362",
     score: 100,
     verdict: "fit",
+    source: "applied",
     cefrLevel: "C1",
     insights: [
       { tone: "miss", label: "Employment history not discussed" },
@@ -619,6 +634,7 @@ function JobDetailPageInner({ id }: { id: string }) {
       state: { kind: "pending" as const, attempted: 0, total: 5 },
       cefrLevel: "na" as const,
       resumeFile: c.resumeFile,
+      source: "sourced" as const,
     }))
     setCandidates((prev) => [...prev, ...newRows])
   }
@@ -639,6 +655,11 @@ function JobDetailPageInner({ id }: { id: string }) {
       }
       if (cefrPicked && cefrPicked.size > 0) {
         if (!c.cefrLevel || !cefrPicked.has(c.cefrLevel)) return false
+      }
+      const sourcePicked = filters["source"]
+      if (sourcePicked && sourcePicked.size > 0) {
+        const candSource = c.source || "applied"
+        if (!sourcePicked.has(candSource)) return false
       }
       return true
     })
@@ -691,6 +712,7 @@ function JobDetailPageInner({ id }: { id: string }) {
       score: 0,
       verdict: "fit" as const,
       state: cand.state,
+      source: cand.source || "applied",
       cefrLevel: cand.cefrLevel || "na",
       insights: [],
       callDuration: 0,

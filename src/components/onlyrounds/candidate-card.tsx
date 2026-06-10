@@ -77,6 +77,7 @@ export type Candidate = {
    *  toggle appears next to the Re-take button. */
   retakeHistory?: AttemptLogEntry[]
   resumeFile?: File
+  source?: "applied" | "sourced"
 }
 
 const NOTE_MAX_CHARS = 300
@@ -100,7 +101,7 @@ export function CandidateCard({
   onViewInsights?: () => void
   className?: string
 }) {
-  const { name, role, company, email, phone, state, retakeHistory } = candidate
+  const { name, role, company, email, phone, state, retakeHistory, source } = candidate
   const hasRetakeHistory = retakeHistory && retakeHistory.length > 0
   const [historyOpen, setHistoryOpen] = React.useState(false)
 
@@ -136,6 +137,9 @@ export function CandidateCard({
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
             <h3 className="truncate text-sm font-semibold">{name}</h3>
+            <Badge variant="outline" className="text-2xs text-muted-foreground font-semibold">
+              {source === "sourced" ? "Sourced" : "Applied"}
+            </Badge>
             <ChevronRight className="size-3.5 text-muted-foreground" />
           </div>
           {(role || company) && (

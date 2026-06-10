@@ -164,6 +164,7 @@ export type DrawerCandidate = {
   score: number
   verdict: Verdict
   state?: Candidate["state"]
+  source?: "applied" | "sourced"
   cefrLevel?: string
   insights: DrawerInsight[]
   /** Total length of the call recording in seconds. Defaults to 5:47. */
@@ -372,6 +373,9 @@ function DrawerBody({
                   <SheetTitle className="truncate text-base">
                     {candidate.name}
                   </SheetTitle>
+                  <Badge variant="outline" className="text-2xs text-muted-foreground font-semibold">
+                    {candidate.source === "sourced" ? "Sourced" : "Applied"}
+                  </Badge>
                   {(() => {
                     const state = candidate.state || {
                       kind: "completed" as const,
