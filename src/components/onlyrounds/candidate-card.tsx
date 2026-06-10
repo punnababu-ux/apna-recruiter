@@ -483,7 +483,7 @@ function ContactActions({
         onClick={onStop(() => {
           window.open(`https://wa.me/${digits}`, "_blank", "noopener,noreferrer")
         })}
-        className="inline-flex size-5 items-center justify-center rounded text-[#25D366] hover:bg-muted"
+        className="inline-flex size-5 items-center justify-center rounded text-[#25D366] hover:bg-muted" // token-lint-ignore: whatsapp-brand-color
       >
         <WhatsAppIcon className="size-3.5" />
       </button>

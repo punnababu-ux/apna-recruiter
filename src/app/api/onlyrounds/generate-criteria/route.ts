@@ -162,7 +162,10 @@ export async function POST(req: NextRequest) {
     const raw = String((err as { message?: unknown })?.message ?? err ?? "")
     console.error("[generate-criteria]", raw)
     let error = "Couldn't generate criteria. Try again in a moment."
-    if (/rate.?limit|quota|RESOURCE_EXHAUSTED|429/i.test(raw)) {
+    if (/prepayment|billing|depleted|credits/i.test(raw)) {
+      error =
+        "Your Gemini API prepayment credits are depleted. Please check billing or top up credits in Google AI Studio."
+    } else if (/rate.?limit|quota|RESOURCE_EXHAUSTED|429/i.test(raw)) {
       error = "Rate limit reached on Gemini's free tier. Wait ~30s and retry."
     } else if (/401|403|unauthorized|api.?key/i.test(raw)) {
       error =

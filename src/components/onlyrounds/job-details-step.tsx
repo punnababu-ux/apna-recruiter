@@ -366,7 +366,7 @@ export function JobDetailsStep({
             {showErrors && !form.experiencedPersona.trim() ? (
               <FieldError>Required</FieldError>
             ) : (
-              <FieldDescription>Describe the kind of experienced candidate you're hoping to meet.</FieldDescription>
+              <FieldDescription>Describe the kind of experienced candidate you&apos;re hoping to meet.</FieldDescription>
             )}
           </UIField>
         ) : null}

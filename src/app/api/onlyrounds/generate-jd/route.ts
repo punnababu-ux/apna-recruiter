@@ -229,7 +229,10 @@ export async function POST(req: NextRequest) {
     console.error("[generate-jd]", raw)
 
     let error = "Couldn't reach the generator. Try again in a moment."
-    if (/rate.?limit|quota|RESOURCE_EXHAUSTED|429/i.test(raw)) {
+    if (/prepayment|billing|depleted|credits/i.test(raw)) {
+      error =
+        "Your Gemini API prepayment credits are depleted. Please check billing or top up credits in Google AI Studio."
+    } else if (/rate.?limit|quota|RESOURCE_EXHAUSTED|429/i.test(raw)) {
       error =
         "Rate limit reached on Gemini's free tier (20 req/min). Wait ~30 seconds and try again."
     } else if (

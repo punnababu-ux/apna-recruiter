@@ -260,7 +260,14 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(cleaned)
   } catch (err) {
-    console.error("[extract-jd]", err)
+    const raw = String((err as { message?: unknown })?.message ?? err ?? "")
+    if (/prepayment|billing|depleted|credits/i.test(raw)) {
+      console.error(
+        "[extract-jd] Prepayment credits depleted. Please check billing or top up credits in Google AI Studio."
+      )
+    } else {
+      console.error("[extract-jd]", err)
+    }
     // Return an empty object so the wizard can continue even if extraction
     // fails — the user can fill Step 2 manually.
     return NextResponse.json({}, { status: 200 })

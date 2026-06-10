@@ -13,7 +13,14 @@ import type {
   InterviewTask,
 } from "@/types/onlyrounds"
 
-type SetFormFn = (updater: (prev: { title: string; jd: string; details: Parameters<typeof summarizeDetails>[0]; rounds: InterviewRoundsForm }) => any) => void
+export interface FormShape {
+  title: string
+  jd: string
+  details: Parameters<typeof summarizeDetails>[0]
+  rounds: InterviewRoundsForm
+}
+
+export type SetFormFn = (updater: (prev: FormShape) => FormShape) => void
 
 /**
  * Encapsulates all AI criteria-generation state and logic.
@@ -81,7 +88,7 @@ export function useCriteriaGeneration(
 
         const synced = syncCefrCriteria(nextCriteria, task.screening, task.id)
 
-        setForm((prev: any) => ({
+        setForm((prev) => ({
           ...prev,
           rounds: {
             ...prev.rounds,

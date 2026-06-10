@@ -1341,7 +1341,7 @@ export default function Home() {
               <div className="flex flex-col gap-6 w-full">
                 {/* default — muted background, white active pill */}
                 <div className="flex flex-col gap-2">
-                  <p className="text-xs text-muted-foreground font-mono">variant="default"</p>
+                  <p className="text-xs text-muted-foreground font-mono">variant=&quot;default&quot;</p>
                   <Tabs defaultValue="account" className="w-full">
                     <TabsList>
                       <TabsTrigger value="account">Account</TabsTrigger>
@@ -1362,7 +1362,7 @@ export default function Home() {
 
                 {/* inverted — white/card background, near-black active pill. Use on tinted/gray canvases. */}
                 <div className="flex flex-col gap-2 rounded-lg bg-muted p-4">
-                  <p className="text-xs text-muted-foreground font-mono">variant="inverted"</p>
+                  <p className="text-xs text-muted-foreground font-mono">variant=&quot;inverted&quot;</p>
                   <Tabs defaultValue="account" className="w-full">
                     <TabsList variant="inverted">
                       <TabsTrigger value="account">Account</TabsTrigger>
@@ -1383,7 +1383,7 @@ export default function Home() {
 
                 {/* line — underline indicator, transparent background */}
                 <div className="flex flex-col gap-2">
-                  <p className="text-xs text-muted-foreground font-mono">variant="line"</p>
+                  <p className="text-xs text-muted-foreground font-mono">variant=&quot;line&quot;</p>
                   <Tabs defaultValue="account" className="w-full">
                     <TabsList variant="line">
                       <TabsTrigger value="account">Account</TabsTrigger>

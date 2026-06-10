@@ -45,6 +45,13 @@ import {
   Voicemail,
   X,
   XCircle,
+  Star,
+  Flag,
+  Download,
+  QrCode,
+  Clock,
+  Sparkles,
+  Footprints,
 } from "lucide-react"
 import * as React from "react"
 
@@ -59,6 +66,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
 
 // ── Data types ────────────────────────────────────────────────────────────
@@ -225,7 +233,8 @@ export function CandidateDrawer({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="w-full p-0 sm:max-w-[480px]"
+        showCloseButton={false}
+        className="w-full p-0 data-[side=right]:sm:max-w-4xl"
       >
         {candidate ? (
           <DrawerBody
@@ -248,6 +257,76 @@ export function CandidateDrawer({
 }
 
 // ── Body ──────────────────────────────────────────────────────────────────
+
+function WhatsAppIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.51 5.26l-.999 3.648 3.978-1.607zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
+    </svg>
+  )
+}
+
+function ContactActions({ phone, name }: { phone: string; name: string }) {
+  const digits = phone.replace(/[^\d]/g, "")
+  const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(
+    `tel:+${digits}`
+  )}`
+
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      {/* WhatsApp */}
+      <button
+        type="button"
+        aria-label={`Message ${name} on WhatsApp`}
+        onClick={() => {
+          window.open(`https://wa.me/${digits}`, "_blank", "noopener,noreferrer")
+        }}
+        className="inline-flex size-5 items-center justify-center rounded text-[#25D366] hover:bg-muted" // token-lint-ignore: whatsapp-brand-color
+      >
+        <WhatsAppIcon className="size-3.5" />
+      </button>
+
+      {/* QR Code */}
+      <Popover>
+        <PopoverTrigger
+          render={
+            <button
+              type="button"
+              aria-label={`Show call QR for ${name}`}
+              className="inline-flex size-5 items-center justify-center rounded text-primary hover:bg-muted"
+            >
+              <QrCode className="size-3.5" />
+            </button>
+          }
+        />
+        <PopoverContent
+          align="start"
+          className="w-auto p-3 z-50 bg-popover border border-border rounded-lg shadow-md"
+        >
+          <div className="flex flex-col items-center gap-2">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={qrSrc}
+              alt={`QR code to call ${name}`}
+              width={180}
+              height={180}
+              className="rounded-md border border-border"
+            />
+            <p className="text-xs text-muted-foreground">
+              Scan to call <span className="font-medium text-foreground">+{digits}</span>
+            </p>
+          </div>
+        </PopoverContent>
+      </Popover>
+    </span>
+  )
+}
+
 
 function DrawerBody({
   candidate,
@@ -277,62 +356,89 @@ function DrawerBody({
   return (
     <div className="flex h-full flex-col">
       {/* Sticky header */}
-      <SheetHeader className="border-b border-border p-0">
-        <div className="flex items-start justify-between gap-3 p-4">
-          <div className="flex min-w-0 flex-1 items-start gap-3">
-            <Avatar className="size-10 shrink-0">
-              <AvatarFallback className="bg-accent text-sm font-semibold text-accent-foreground">
-                {initials(candidate.name)}
-              </AvatarFallback>
-            </Avatar>
-            <div className="min-w-0 flex-1">
-              <SheetTitle className="truncate text-base">
-                {candidate.name}
-              </SheetTitle>
-              <p className="mt-0.5 truncate text-xs text-muted-foreground">
-                {[candidate.role, candidate.company].filter(Boolean).join(" @ ")}
-              </p>
-              <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-                {candidate.email && (
-                  <span className="inline-flex items-center gap-1">
-                    <AtSign className="size-3" />
-                    {candidate.email}
-                  </span>
-                )}
-                {candidate.phone && (
-                  <span className="inline-flex items-center gap-1">
-                    <Phone className="size-3" />
-                    {candidate.phone}
-                  </span>
-                )}
-                {candidate.phone && (
-                  <MessageCircle className="size-3 text-muted-foreground" />
+      <SheetHeader className="p-0 border-b border-border">
+        <div className="p-4 flex flex-col gap-3">
+          {/* Top row: Avatar + Name & Verdict + Close */}
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              <Avatar className="size-10 shrink-0">
+                <AvatarFallback className="bg-accent text-sm font-semibold text-accent-foreground">
+                  {initials(candidate.name)}
+                </AvatarFallback>
+              </Avatar>
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <SheetTitle className="truncate text-base">
+                    {candidate.name}
+                  </SheetTitle>
+                  <ScoreGauge
+                    score={candidate.score}
+                    verdict={candidate.verdict}
+                    layout="row"
+                    size="sm"
+                    label={candidate.verdict}
+                    className="shrink-0"
+                  />
+                </div>
+                {(candidate.role || candidate.company) && (
+                  <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                    {[candidate.role, candidate.company].filter(Boolean).join(" @ ")}
+                  </p>
                 )}
               </div>
             </div>
-          </div>
-          <div className="flex shrink-0 flex-col items-end gap-2">
             <Button
               variant="ghost"
               size="icon-sm"
               onClick={onClose}
               aria-label="Close drawer"
+              className="shrink-0 -mt-1"
             >
               <X className="size-4" />
             </Button>
-            <ScoreGauge
-              score={candidate.score}
-              verdict={candidate.verdict}
-              layout="row"
-            />
+          </div>
+
+          {/* Bottom row: Contact info & actions */}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
+            {candidate.email && (
+              <span className="inline-flex items-center gap-1">
+                <AtSign className="size-3.5" />
+                {candidate.email}
+              </span>
+            )}
+            {candidate.phone && (
+              <span className="inline-flex items-center gap-1.5">
+                <Phone className="size-3.5" />
+                {candidate.phone}
+                <ContactActions phone={candidate.phone} name={candidate.name} />
+              </span>
+            )}
           </div>
         </div>
 
-        {/* Round badge + prev/next */}
-        <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-2">
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground">Round</span>
-            <Badge variant="secondary">{roundName}</Badge>
+        {/* Round indicator + Profile + Navigation */}
+        <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-2 bg-muted/10">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs text-muted-foreground font-medium">Round:</span>
+              <span className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-2.5 py-1 text-xs font-medium">
+                <span className="flex size-4 items-center justify-center rounded-full bg-primary text-2xs font-semibold text-primary-foreground font-mono">
+                  1
+                </span>
+                {roundName}
+              </span>
+            </div>
+            {candidate.profile?.resumeUrl && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 bg-card gap-1.5 text-xs"
+                onClick={() => window.open(candidate.profile!.resumeUrl, "_blank")}
+              >
+                <Download className="size-3.5" />
+                Profile
+              </Button>
+            )}
           </div>
           <div className="flex items-center gap-1">
             <Button
@@ -356,9 +462,63 @@ function DrawerBody({
           </div>
         </div>
 
-        {/* Primary action bar */}
-        <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-2.5">
-          <Button variant="outline" size="sm" onClick={onReTake} className="h-8">
+      </SheetHeader>
+
+      {/* Tabs */}
+      <Tabs
+        defaultValue="profile"
+        className="flex flex-1 flex-col overflow-hidden"
+      >
+        <div className="w-full shrink-0 overflow-x-auto border-b border-border">
+          <TabsList
+            variant="line"
+            className="px-4 gap-4"
+          >
+            <TabsTrigger value="profile">Full profile</TabsTrigger>
+            <TabsTrigger value="insights">AI screening insights</TabsTrigger>
+            <TabsTrigger value="violations">Interview violations report</TabsTrigger>
+            <TabsTrigger value="timeline">Communication timelines</TabsTrigger>
+          </TabsList>
+        </div>
+
+        <div className="flex-1 overflow-y-auto">
+          <TabsContent value="profile" className="m-0 p-4">
+            <ProfileTab candidate={candidate} />
+          </TabsContent>
+          <TabsContent value="insights" className="m-0 p-4">
+            <InsightsTab candidate={candidate} />
+          </TabsContent>
+          <TabsContent value="violations" className="m-0 p-4">
+            <ViolationsTab candidate={candidate} />
+          </TabsContent>
+          <TabsContent value="timeline" className="m-0 p-4">
+            <TimelineTab candidate={candidate} />
+          </TabsContent>
+        </div>
+      </Tabs>
+
+      {/* Combined Notes & Actions Sticky Footer */}
+      <div className="border-t border-border bg-card flex flex-col shrink-0">
+        {/* Notes */}
+        <div className="p-4 pb-2.5">
+          <h4 className="text-xs font-semibold text-muted-foreground mb-2">Notes</h4>
+          <button
+            type="button"
+            onClick={onAddNote}
+            className="flex w-full items-center justify-between rounded-lg border border-border bg-muted/20 px-3.5 py-2.5 text-left text-sm hover:bg-muted/40 transition-colors"
+          >
+            {candidate.notes ? (
+              <span className="text-foreground whitespace-pre-wrap">{candidate.notes}</span>
+            ) : (
+              <span className="text-muted-foreground">No note added</span>
+            )}
+            <Pencil className="size-3.5 text-muted-foreground shrink-0 ml-2" />
+          </button>
+        </div>
+
+        {/* Action bar below Notes */}
+        <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-3 bg-muted/10">
+          <Button variant="outline" size="sm" onClick={onReTake} className="h-8 bg-card">
             <RotateCcw className="size-3.5" />
             Re-take
           </Button>
@@ -367,7 +527,7 @@ function DrawerBody({
               variant="outline"
               size="sm"
               onClick={onReject}
-              className="h-8 text-destructive hover:text-destructive"
+              className="h-8 text-destructive hover:text-destructive bg-card"
             >
               <XCircle className="size-3.5" />
               Reject
@@ -378,42 +538,7 @@ function DrawerBody({
             </Button>
           </div>
         </div>
-      </SheetHeader>
-
-      {/* Tabs */}
-      <Tabs
-        defaultValue="insights"
-        className="flex flex-1 flex-col overflow-hidden"
-      >
-        <TabsList
-          variant="line"
-          className="shrink-0 overflow-x-auto border-b border-border px-4"
-        >
-          <TabsTrigger value="insights">AI screening insights</TabsTrigger>
-          <TabsTrigger value="profile">Full profile</TabsTrigger>
-          <TabsTrigger value="violations">Violations</TabsTrigger>
-          <TabsTrigger value="timeline">Timeline</TabsTrigger>
-          <TabsTrigger value="notes">Notes</TabsTrigger>
-        </TabsList>
-
-        <div className="flex-1 overflow-y-auto">
-          <TabsContent value="insights" className="m-0 p-4">
-            <InsightsTab candidate={candidate} />
-          </TabsContent>
-          <TabsContent value="profile" className="m-0 p-4">
-            <ProfileTab candidate={candidate} />
-          </TabsContent>
-          <TabsContent value="violations" className="m-0 p-4">
-            <ViolationsTab candidate={candidate} />
-          </TabsContent>
-          <TabsContent value="timeline" className="m-0 p-4">
-            <TimelineTab candidate={candidate} />
-          </TabsContent>
-          <TabsContent value="notes" className="m-0 p-4">
-            <NotesTab candidate={candidate} onAddNote={onAddNote} />
-          </TabsContent>
-        </div>
-      </Tabs>
+      </div>
     </div>
   )
 }
@@ -454,67 +579,110 @@ function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <CallPlayer
-        elapsed={elapsed}
-        totalSec={totalSec}
-        playing={playing}
-        onTogglePlay={() => setPlaying((p) => !p)}
-        onSeek={(s) => setElapsed(s)}
-      />
+      {/* Video Recording Banner */}
+      <div className="bg-muted/30 p-3 rounded-lg flex items-center justify-between gap-3 border border-border">
+        <div className="flex items-center gap-3">
+          <div className="relative w-20 h-12 rounded-md border border-border bg-accent/20 flex items-center justify-center overflow-hidden shrink-0">
+            <Avatar className="size-8">
+              <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
+                {initials(candidate.name)}
+              </AvatarFallback>
+            </Avatar>
+            <div className="absolute inset-0 bg-black/10 flex items-center justify-center">
+              <Play className="size-3 text-white fill-white/80" />
+            </div>
+            <div className="absolute bottom-0.5 right-0.5 bg-black/60 px-1 rounded-sm text-white font-mono text-2xs scale-90 origin-bottom-right">
+              {fmtMmSs(totalSec)}
+            </div>
+          </div>
+          <div>
+            <h5 className="text-sm font-semibold text-foreground">
+              Interview video call recording
+            </h5>
+          </div>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          className="bg-card text-xs gap-1.5 h-8 font-medium text-foreground border-border hover:bg-muted"
+          onClick={() => setPlaying((p) => !p)}
+        >
+          {playing ? (
+            <Pause className="size-3.5 text-success fill-success" />
+          ) : (
+            <Play className="size-3.5 text-success fill-success" />
+          )}
+          {playing ? "Pause Video" : "Watch Video"}
+        </Button>
+      </div>
+
+      {/* Conditionally reveal the player controls when playing or active */}
+      {playing && (
+        <div className="animate-in fade-in slide-in-from-top-1 duration-200">
+          <CallPlayer
+            elapsed={elapsed}
+            totalSec={totalSec}
+            playing={playing}
+            onTogglePlay={() => setPlaying((p) => !p)}
+            onSeek={(s) => setElapsed(s)}
+          />
+        </div>
+      )}
 
       {/* Insight chips */}
-      <section className="flex flex-col gap-2">
-        <h4 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          <span className="size-1.5 rounded-full bg-primary" />
-          AI call insights
-        </h4>
-        <div className="flex flex-wrap gap-1.5">
-          {candidate.insights.map((it, i) => (
-            <span
-              key={i}
-              className={cn(
-                "inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs",
-                it.tone === "ok"
-                  ? "border-success/40 bg-success/5"
-                  : "border-destructive/40 bg-destructive/5 text-destructive",
-              )}
-            >
-              {it.tone === "ok" ? (
-                <CircleCheck className="size-3 text-success" />
-              ) : (
-                <XCircle className="size-3" />
-              )}
-              {it.label}
-              <button
-                type="button"
-                aria-label={
-                  typeof it.atSecond === "number"
-                    ? `Jump to ${fmtMmSs(it.atSecond)} in call`
-                    : "Timestamp unavailable"
-                }
-                className={cn(
-                  "ml-0.5 inline-flex size-3.5 items-center justify-center rounded-sm",
-                  typeof it.atSecond === "number"
-                    ? "hover:bg-muted"
-                    : "opacity-30",
-                )}
-                disabled={typeof it.atSecond !== "number"}
-                onClick={() =>
-                  typeof it.atSecond === "number" && seekTo(it.atSecond)
-                }
-              >
-                <Play className="size-2.5" />
-              </button>
-            </span>
-          ))}
+      <section className="flex flex-col gap-3">
+        {/* token-lint-ignore: purple-insights-box */}
+        <div className="border border-indigo-100 bg-indigo-50/30 dark:border-indigo-950/50 dark:bg-indigo-950/20 p-4 rounded-lg flex flex-col gap-3">
+          <div className="flex items-center gap-2">
+            <Sparkles className="size-4 text-purple-500 shrink-0" /> {/* token-lint-ignore: purple-sparkles-icon */}
+            <h4 className="text-sm font-bold text-foreground">
+              AI call insights for {candidate.name}
+            </h4>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {candidate.insights.map((it, i) => {
+              const hasAtSecond = typeof it.atSecond === "number"
+              return (
+                <span
+                  key={i}
+                  className={cn(
+                    "inline-flex items-center gap-1.5 rounded-full border bg-card px-3 py-1 text-xs shadow-2xs transition-colors",
+                    it.tone === "ok"
+                      ? "border-success/30 text-success-foreground"
+                      : "border-warning/30 text-warning-foreground"
+                  )}
+                >
+                  {it.tone === "ok" ? (
+                    <CircleCheck className="size-3.5 text-success shrink-0" />
+                  ) : (
+                    <Clock className="size-3.5 text-warning shrink-0" />
+                  )}
+                  <span className="text-foreground font-medium">{it.label}</span>
+                  {hasAtSecond && (
+                    <button
+                      type="button"
+                      onClick={() => seekTo(it.atSecond!)}
+                      aria-label={`Play at ${fmtMmSs(it.atSecond!)}`}
+                      className="ml-1 inline-flex size-4 items-center justify-center rounded-full border border-border bg-muted/40 hover:bg-muted transition-colors cursor-pointer"
+                    >
+                      <Play className="size-2 text-muted-foreground fill-muted-foreground ml-0.5" />
+                    </button>
+                  )}
+                </span>
+              )
+            })}
+          </div>
         </div>
+
         {candidate.cefrLevel && (
-          <div className="mt-1 flex items-center justify-between rounded-md border border-border bg-muted/30 px-3 py-2 text-xs">
-            <span>
-              Directional CEFR Level:{" "}
-              <strong className="font-semibold">{candidate.cefrLevel}</strong>
+          <div className="mt-1 flex items-center justify-between rounded-md border border-border bg-muted/20 px-3 py-2 text-xs">
+            <span className="flex items-center gap-2">
+              <span className="text-muted-foreground">Directional CEFR Level:</span>
+              <span className="inline-flex items-center rounded bg-info/10 px-1.5 py-0.5 font-bold text-info">
+                {candidate.cefrLevel}
+              </span>
             </span>
-            <a href="#cefr" className="text-primary hover:underline">
+            <a href="#cefr" className="text-primary hover:underline font-semibold">
               See detailed analysis
             </a>
           </div>
@@ -523,25 +691,31 @@ function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
 
       {/* Recommendations */}
       {candidate.recommendations.length > 0 && (
-        <section className="rounded-lg border border-border bg-muted/20 p-3">
-          <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Next step for you · Recommended
-          </h4>
-          <ul className="flex flex-col gap-1.5 text-sm">
-            {candidate.recommendations.map((r, i) => (
-              <li key={i} className="flex items-start gap-2">
-                <span className="mt-1.5 size-1 shrink-0 rounded-full bg-foreground/50" />
-                <span>{r}</span>
-              </li>
-            ))}
-          </ul>
+        <section className="flex flex-col gap-2">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+            <Footprints className="size-4 text-info shrink-0" />
+            Next step for you
+          </div>
+          <div className="rounded-lg border border-info/20 bg-info/5 p-4">
+            <h5 className="text-sm font-bold text-foreground mb-3">
+              Candidate is a strong fit. Proceed with next steps.
+            </h5>
+            <ul className="flex flex-col gap-2 text-xs text-muted-foreground">
+              {candidate.recommendations.map((r, i) => (
+                <li key={i} className="flex items-start gap-2">
+                  <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-info/70" />
+                  <span className="leading-relaxed">{r}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </section>
       )}
 
       {/* Criteria analysis */}
       {candidate.criteriaGroups.length > 0 && (
         <section className="flex flex-col gap-4">
-          <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          <h4 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
             Screening criteria analysis
           </h4>
           {candidate.criteriaGroups.map((g) => (
@@ -553,9 +727,14 @@ function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
       {/* CEFR */}
       {candidate.cefr && (
         <section id="cefr" className="flex flex-col gap-3">
-          <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            English communication detailed analysis
-          </h4>
+          <div className="flex items-center justify-between gap-2 border-b border-border pb-1">
+            <h4 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+              English communication detailed analysis
+            </h4>
+            <span className="inline-flex items-center rounded-full bg-success px-2.5 py-0.5 text-2xs font-semibold text-success-foreground">
+              Overall: {candidate.cefr.overall.toFixed(3)}/10
+            </span>
+          </div>
           <CefrBlock cefr={candidate.cefr} />
         </section>
       )}
@@ -574,7 +753,7 @@ function ProfileTab({ candidate }: { candidate: DrawerCandidate }) {
         <div>
           <p className="text-sm font-medium">No profile uploaded yet</p>
           <p className="mt-1 text-xs text-muted-foreground">
-            Candidate hasn't shared a resume or completed their profile.
+            Candidate hasn&apos;t shared a resume or completed their profile.
           </p>
         </div>
       </div>
@@ -795,7 +974,7 @@ function TimelineTab({ candidate }: { candidate: DrawerCandidate }) {
         if (e.channel === "call" && e.direction === "in") Icon = PhoneIncoming
         return (
           <li key={e.id} className="relative flex flex-col gap-0.5">
-            <span className="absolute top-0.5 -left-[18px] flex size-4 items-center justify-center rounded-full border border-border bg-card">
+            <span className="absolute top-0.5 -left-[18px] flex size-4 items-center justify-center rounded-full border border-border bg-card"> {/* token-lint-ignore: timeline-icon-alignment */}
               <Icon className="size-2.5 text-muted-foreground" />
             </span>
             <div className="flex items-baseline justify-between gap-2">
@@ -819,29 +998,6 @@ function TimelineTab({ candidate }: { candidate: DrawerCandidate }) {
   )
 }
 
-// ── Notes tab ─────────────────────────────────────────────────────────────
-
-function NotesTab({
-  candidate,
-  onAddNote,
-}: {
-  candidate: DrawerCandidate
-  onAddNote?: () => void
-}) {
-  return (
-    <div className="flex flex-col gap-3">
-      {candidate.notes ? (
-        <p className="text-sm whitespace-pre-wrap">{candidate.notes}</p>
-      ) : (
-        <p className="text-sm text-muted-foreground">No note added yet.</p>
-      )}
-      <Button variant="outline" size="sm" onClick={onAddNote} className="self-start">
-        <Pencil className="size-3.5" />
-        {candidate.notes ? "Edit note" : "Add a note"}
-      </Button>
-    </div>
-  )
-}
 
 // ── Sub-blocks ────────────────────────────────────────────────────────────
 
@@ -905,6 +1061,30 @@ function fmtMmSs(s: number) {
   return `${m}:${r.toString().padStart(2, "0")}`
 }
 
+function getGroupHeaderInfo(id: string, label: string) {
+  const normId = id.toLowerCase()
+  const normLabel = label.toLowerCase()
+  if (normId.includes("must") || normLabel.includes("must")) {
+    return {
+      Icon: CircleCheck,
+      iconClass: "text-success",
+      labelText: "Must have criteria",
+    }
+  }
+  if (normId.includes("preferred") || normLabel.includes("preferred")) {
+    return {
+      Icon: Star,
+      iconClass: "text-info fill-info/20",
+      labelText: "Preferred criteria",
+    }
+  }
+  return {
+    Icon: Flag,
+    iconClass: "text-destructive fill-destructive/20",
+    labelText: "Red flag criteria",
+  }
+}
+
 function CriteriaGroupBlock({
   group,
   onSeek,
@@ -912,15 +1092,20 @@ function CriteriaGroupBlock({
   group: CriteriaGroup
   onSeek?: (sec: number) => void
 }) {
+  const { Icon, iconClass, labelText } = getGroupHeaderInfo(group.id, group.label)
+
   return (
-    <div className="flex flex-col gap-2">
-      <div>
-        <h5 className="text-sm font-semibold">{group.label}</h5>
-        {group.description && (
-          <p className="text-xs text-muted-foreground">{group.description}</p>
-        )}
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Icon className={cn("size-4 shrink-0", iconClass)} />
+          <span className="text-xs font-bold uppercase tracking-wide text-foreground">
+            {labelText}
+          </span>
+        </div>
+        <div className="h-px bg-border flex-1 ml-3" />
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3">
         {group.items.map((c) => (
           <CriterionRow key={c.id} item={c} onSeek={onSeek} />
         ))}
@@ -936,87 +1121,119 @@ function CriterionRow({
   item: CriterionScore
   onSeek?: (sec: number) => void
 }) {
-  const [open, setOpen] = React.useState(false)
+  const isHigh = item.score >= 7
+  const isMid = item.score >= 4 && item.score < 7
+
   return (
-    <div className="rounded-md border border-border bg-card">
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-start justify-between gap-3 px-3 py-2 text-left"
+    <div className="rounded-lg border border-border bg-card overflow-hidden">
+      {/* Card Header */}
+      <div
+        className={cn(
+          "flex items-center justify-between gap-3 border-b border-border px-3 py-2 text-xs font-semibold",
+          isHigh
+            ? "bg-success/5"
+            : isMid
+              ? "bg-warning/5"
+              : "bg-destructive/5"
+        )}
       >
-        <span className="text-xs">{item.text}</span>
-        <span className="flex shrink-0 items-center gap-1.5">
-          <span
-            className={cn(
-              "rounded-md px-1.5 py-0.5 text-xs font-semibold tabular-nums",
-              item.score >= 7
-                ? "bg-success/10 text-success"
-                : item.score >= 4
-                  ? "bg-warning/10 text-warning"
-                  : "bg-destructive/10 text-destructive",
-            )}
-          >
-            {item.score} / 10
-          </span>
-          {typeof item.atSecond === "number" && onSeek && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation()
-                onSeek(item.atSecond!)
-              }}
-              aria-label={`Jump to ${fmtMmSs(item.atSecond)} in call`}
-              className="inline-flex size-5 items-center justify-center rounded-sm hover:bg-muted"
-            >
-              <Play className="size-2.5" />
-            </button>
-          )}
+        <span className="text-foreground font-medium">{item.text}</span>
+        <span className="shrink-0 text-muted-foreground font-mono">
+          {item.score} / 10
         </span>
-      </button>
-      {open && (
-        <div className="border-t border-border bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
+      </div>
+
+      {/* Card Body */}
+      <div className="flex items-center justify-between gap-4 p-3 bg-card">
+        <p className="text-xs text-muted-foreground leading-relaxed flex-1">
           {item.reasoning}
-        </div>
+        </p>
+        <button
+          type="button"
+          onClick={() => onSeek?.(item.atSecond ?? 0)}
+          aria-label={
+            typeof item.atSecond === "number"
+              ? `Jump to ${fmtMmSs(item.atSecond)} in call`
+              : "Play audio"
+          }
+          className="flex size-6 shrink-0 items-center justify-center rounded-full border border-success/30 bg-success/5 text-success hover:bg-success/15 hover:scale-105 transition-all cursor-pointer"
+        >
+          <Play className="size-2.5 fill-success text-success ml-0.5" />
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function CefrDimensionCard({ dimension }: { dimension: CefrDimension }) {
+  const isMti =
+    dimension.label.toLowerCase().includes("mother") ||
+    dimension.label.toLowerCase().includes("influence")
+  const isHigh = dimension.score >= 7 && !isMti
+
+  return (
+    <div
+      className={cn(
+        "rounded-lg border bg-card overflow-hidden",
+        isHigh ? "border-border" : "border-warning/30"
       )}
+    >
+      <div
+        className={cn(
+          "flex items-center justify-between border-b border-border px-3 py-2 text-xs font-semibold",
+          isHigh ? "bg-success/5" : "bg-warning/5"
+        )}
+      >
+        <span className="text-foreground font-medium">{dimension.label}</span>
+        <span className="shrink-0 text-muted-foreground font-mono">
+          {dimension.score} / 10
+        </span>
+      </div>
+      <div className="p-3 bg-card">
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          {dimension.description}
+        </p>
+      </div>
     </div>
   )
 }
 
 function CefrBlock({ cefr }: { cefr: CefrAnalysis }) {
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-border p-3">
-      <div className="flex flex-wrap gap-4 text-xs">
-        <span>
-          Overall: <strong className="font-semibold">{cefr.overall.toFixed(2)} / 10</strong>
+    <div className="flex flex-col gap-3">
+      {/* Sub-header row */}
+      <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground mb-1">
+        <span className="flex items-center gap-1.5">
+          <span>Directional CEFR Level:</span>
+          <span className="inline-flex items-center rounded bg-info/10 px-1.5 py-0.5 font-bold text-info">
+            {cefr.level}
+          </span>
         </span>
-        <span>
-          CEFR: <strong className="font-semibold">{cefr.level}</strong>
-        </span>
-        <span>
-          Recommended for: <strong className="font-semibold">{cefr.recommendedFor}</strong>
+        <span className="flex items-center gap-1.5">
+          <span>Recommended for:</span>
+          {/* token-lint-ignore: purple-cefr-badge */}
+          <span className="inline-flex items-center rounded bg-purple-50 text-purple-600 dark:bg-purple-950/30 dark:text-purple-300 px-1.5 py-0.5 font-semibold">
+            {cefr.recommendedFor}
+          </span>
         </span>
       </div>
-      <div className="flex flex-col gap-2">
+
+      {/* Grid of Dimension Cards */}
+      <div className="flex flex-col gap-3">
         {cefr.dimensions.map((d) => (
-          <div key={d.label} className="flex flex-col gap-0.5">
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-medium">{d.label}</span>
-              <span className="font-semibold tabular-nums">
-                {d.score} / 10
-              </span>
-            </div>
-            <p className="text-xs text-muted-foreground">{d.description}</p>
-          </div>
+          <CefrDimensionCard key={d.label} dimension={d} />
         ))}
       </div>
+
+      {/* Areas of Improvement */}
       {cefr.areasOfImprovement.length > 0 && (
-        <div className="flex flex-col gap-1.5">
-          <h5 className="text-xs font-semibold">Areas of improvement</h5>
-          <ul className="flex flex-col gap-1 text-xs text-muted-foreground">
+        <div className="rounded-lg border border-border bg-muted/10 p-3 mt-1">
+          <h5 className="text-xs font-bold text-foreground mb-2">Areas of improvement</h5>
+          <ul className="flex flex-col gap-2 text-xs text-muted-foreground">
             {cefr.areasOfImprovement.map((a, i) => (
               <li key={i} className="flex items-start gap-2">
-                <span className="mt-1 size-1 shrink-0 rounded-full bg-muted-foreground/50" />
-                <span>{a}</span>
+                <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-muted-foreground/50" />
+                <span className="leading-relaxed">{a}</span>
               </li>
             ))}
           </ul>
