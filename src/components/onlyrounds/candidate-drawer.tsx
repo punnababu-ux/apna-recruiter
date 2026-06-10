@@ -56,7 +56,7 @@ import * as React from "react"
 import type { Verdict } from "@/components/onlyrounds/score-gauge"
 import type { Candidate } from "@/components/onlyrounds/candidate-card"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
+import { Badge, badgeVariants } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import {
@@ -427,35 +427,10 @@ function DrawerBody({
                   <SheetTitle className="truncate text-base">
                     {candidate.name}
                   </SheetTitle>
-                  {(() => {
-                    const state = candidate.state || {
-                      kind: "completed" as const,
-                      score: candidate.score,
-                      verdict: candidate.verdict,
-                      insights: [],
-                    }
-                    return (
-                      <div className="flex shrink-0 items-center">
-                        <CandidateStatusBadge state={state} />
-                      </div>
-                    )
-                  })()}
-                </div>
-                <div className="flex flex-wrap items-center gap-1.5 mt-0.5 text-xs text-muted-foreground">
-                  {candidate.role || candidate.company ? (
-                    <span className="truncate">
-                      {[candidate.role, candidate.company].filter(Boolean).join(" @ ")}
-                    </span>
-                  ) : null}
-                  {(candidate.role || candidate.company) && (
-                    <span className="text-muted-foreground/30 select-none">•</span>
-                  )}
                   <Tooltip>
                     <TooltipTrigger
                       render={
-                        <span className="cursor-help hover:text-foreground underline decoration-dotted decoration-muted-foreground/50 transition-colors">
-                          {candidate.source === "sourced" ? "Sourced" : "Applied"}
-                        </span>
+                        <span className={cn(badgeVariants({ variant: "outline" }), "text-2xs leading-none text-muted-foreground font-semibold")}>{candidate.source === "sourced" ? "Sourced" : "Applied"}</span>
                       }
                     />
                     <TooltipContent>
@@ -463,6 +438,11 @@ function DrawerBody({
                     </TooltipContent>
                   </Tooltip>
                 </div>
+                {(candidate.role || candidate.company) && (
+                  <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                    {[candidate.role, candidate.company].filter(Boolean).join(" @ ")}
+                  </p>
+                )}
                 {/* Contact info: aligned with name and job details */}
                 <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
                   {candidate.email && (
@@ -529,7 +509,7 @@ function DrawerBody({
         </div>
 
         {/* Pipeline Stepper Subheader */}
-        <div className="flex items-center border-t border-border px-4 py-2 bg-muted/10">
+        <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-2 bg-muted/10">
           {/* Horizontal breadcrumb pipeline stepper */}
           <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-2xs">
             {STAGES.map((s, idx) => {
@@ -566,6 +546,21 @@ function DrawerBody({
               )
             })}
           </div>
+
+          {/* Candidate status badge opposite to the pipeline steps */}
+          {(() => {
+            const state = candidate.state || {
+              kind: "completed" as const,
+              score: candidate.score,
+              verdict: candidate.verdict,
+              insights: [],
+            }
+            return (
+              <div className="flex shrink-0 items-center">
+                <CandidateStatusBadge state={state} />
+              </div>
+            )
+          })()}
         </div>
 
       </SheetHeader>
