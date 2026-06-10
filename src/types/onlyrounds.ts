@@ -84,6 +84,11 @@ export type QuestionSection = {
   items: QAItem[]
 }
 
+export type QuestionSectionPreset = {
+  title: string
+  target: "freshers" | "experienced" | "both"
+}
+
 export type JobDetailsForm = {
   // Section 1
   clientId: string
@@ -104,6 +109,7 @@ export type JobDetailsForm = {
 
   // Section 4 — merged AI question bank + candidate FAQs
   questionSections: QuestionSection[]
+  suggestedPresets?: QuestionSectionPreset[]
 
   // Section 5
   additionalDetails: string

@@ -114,6 +114,15 @@ export const ExtractionSchema = z.object({
         "E.g. '₹2–3 LPA fixed + incentives'. " +
         "Only fill when experienceType is 'freshers' or 'any'.",
     ),
+  suggestedPresets: z
+    .array(
+      z.object({
+        title: z.string().describe("Title of the question section, e.g. 'English Speaking', 'Technical Troubleshooting'."),
+        target: z.enum(["both", "experienced", "freshers"]).describe("Audience target for this section."),
+      })
+    )
+    .optional()
+    .describe("3-5 suggested question sections (quick add suggestions) tailored specifically to this job role based on the JD. Make them highly relevant to the duties mentioned."),
 })
 
 export type ExtractionResult = z.infer<typeof ExtractionSchema>
@@ -200,6 +209,35 @@ function buildDummyResponse(title: string, jd: string): ExtractionResult {
         ? "experienced"
         : "any"
 
+  // Suggested presets based on job category
+  const suggestedPresets: ExtractionResult["suggestedPresets"] = [
+    { title: "English Speaking", target: "both" },
+  ]
+  if (text.includes("sales") || text.includes("bd") || text.includes("business development")) {
+    suggestedPresets.push(
+      { title: "Field Sales Capability", target: "both" },
+      { title: "Customer Interaction", target: "both" },
+      { title: "Negotiation", target: "experienced" }
+    )
+  } else if (text.includes("tech") || text.includes("developer") || text.includes("engineer") || text.includes("software")) {
+    suggestedPresets.push(
+      { title: "Technical Skills", target: "experienced" },
+      { title: "Coding & Logic", target: "both" },
+      { title: "System Troubleshooting", target: "experienced" }
+    )
+  } else if (text.includes("support") || text.includes("customer service") || text.includes("helpdesk")) {
+    suggestedPresets.push(
+      { title: "Customer Empathy", target: "both" },
+      { title: "Problem Resolution", target: "both" },
+      { title: "Escalation Handling", target: "experienced" }
+    )
+  } else {
+    suggestedPresets.push(
+      { title: "Freshers Assessment", target: "freshers" },
+      { title: "Experienced Competency", target: "experienced" }
+    )
+  }
+
   return {
     clientId,
     city,
@@ -218,6 +256,7 @@ function buildDummyResponse(title: string, jd: string): ExtractionResult {
     workType,
     workMode,
     scheduleDetails: "Mon–Sat, 9 am–6 pm; one rotational weekly off.",
+    suggestedPresets,
   }
 }
 

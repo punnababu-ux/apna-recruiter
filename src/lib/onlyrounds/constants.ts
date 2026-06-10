@@ -118,6 +118,7 @@ export const defaultJobDetails: JobDetailsForm = {
   compExperienced: "",
   compFresher: "",
   questionSections: [],
+  suggestedPresets: [],
   additionalDetails: "",
 }
 

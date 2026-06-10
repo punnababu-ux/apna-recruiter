@@ -90,6 +90,7 @@ import type {
   JobDetailsForm,
   QAItem,
   QuestionSection,
+  QuestionSectionPreset,
   SectionId,
   SectionStatus,
   WorkMode,
@@ -518,6 +519,7 @@ export function JobDetailsStep({
           sections={form.questionSections}
           onChange={(next) => update("questionSections", next)}
           experienceType={form.experienceType}
+          suggestedPresets={form.suggestedPresets}
         />
       </Section>
 
@@ -651,10 +653,7 @@ function Section({
 // Each preset hints its preferred target. When the job is single-audience
 // the hint is ignored and the audience is forced to match the job-level
 // setting.
-const QUESTION_SECTION_PRESETS: {
-  title: string
-  target: QuestionSection["target"]
-}[] = [
+const QUESTION_SECTION_PRESETS: QuestionSectionPreset[] = [
   { title: "English Speaking", target: "both" },
   { title: "Field Sales Capability", target: "both" },
   { title: "Technical Skills", target: "experienced" },
@@ -666,10 +665,12 @@ function QuestionSectionsEditor({
   sections,
   onChange,
   experienceType,
+  suggestedPresets,
 }: {
   sections: QuestionSection[]
   onChange: (next: QuestionSection[]) => void
   experienceType: ExperienceRequirement
+  suggestedPresets?: QuestionSectionPreset[]
 }) {
   const [showAddSection, setShowAddSection] = React.useState(false)
   const [addingSectionName, setAddingSectionName] = React.useState("")
@@ -734,7 +735,11 @@ function QuestionSectionsEditor({
     setExpandedSectionId((curr) => (curr === id ? null : id))
   }
 
-  const unusedPresets = QUESTION_SECTION_PRESETS.filter(
+  const presetsToUse = suggestedPresets && suggestedPresets.length > 0
+    ? suggestedPresets
+    : QUESTION_SECTION_PRESETS
+
+  const unusedPresets = presetsToUse.filter(
     (p) => !sections.some((s) => s.title.toLowerCase() === p.title.toLowerCase()),
   )
 
