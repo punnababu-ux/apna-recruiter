@@ -855,10 +855,9 @@ function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
 
       {/* Insight chips */}
       <section className="flex flex-col gap-3">
-        {/* token-lint-ignore: purple-insights-box */}
-        <div className="border border-indigo-100 bg-indigo-50/30 dark:border-indigo-950/50 dark:bg-indigo-950/20 p-4 rounded-lg flex flex-col gap-3">
+        <div className="border border-border bg-muted/10 p-4 rounded-lg flex flex-col gap-3">
           <div className="flex items-center gap-2">
-            <Sparkles className="size-4 text-purple-500 shrink-0" /> {/* token-lint-ignore: purple-sparkles-icon */}
+            <Sparkles className="size-4 text-primary shrink-0" />
             <h4 className="text-sm font-bold text-foreground">
               AI call insights for {candidate.name}
             </h4>
