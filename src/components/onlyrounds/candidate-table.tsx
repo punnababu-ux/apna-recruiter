@@ -104,17 +104,20 @@ export function CandidateTable({
 
                 {/* Resume */}
                 <TableCell>
-                  {c.resumeFile ? (
+                  {c.resumeFile || c.resumeUrl ? (
                     <button
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation()
-                        window.open(URL.createObjectURL(c.resumeFile!), "_blank", "noopener,noreferrer")
+                        const url = c.resumeFile
+                          ? URL.createObjectURL(c.resumeFile)
+                          : c.resumeUrl!
+                        window.open(url, "_blank", "noopener,noreferrer")
                       }}
                       className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
                     >
                       <FileText className="size-3.5" />
-                      View
+                      View resume
                     </button>
                   ) : (
                     <span className="text-xs text-muted-foreground">—</span>

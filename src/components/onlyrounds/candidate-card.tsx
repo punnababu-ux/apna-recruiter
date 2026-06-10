@@ -83,6 +83,8 @@ export type Candidate = {
    *  toggle appears next to the Re-take button. */
   retakeHistory?: AttemptLogEntry[]
   resumeFile?: File
+  /** Static URL for demo/sourced resumes (shown when resumeFile absent). */
+  resumeUrl?: string
   source?: "applied" | "sourced"
   sourceDetail?: string
   stage?: "screening" | "interview" | "selected"

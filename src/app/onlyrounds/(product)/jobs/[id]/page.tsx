@@ -119,6 +119,7 @@ const CANDIDATES: CandidateRow[] = [
     email: "aditi@apna.co",
     phone: "+917003393362",
     source: "applied",
+    resumeUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
     state: {
       kind: "completed",
       score: 100,
@@ -237,6 +238,7 @@ const CANDIDATES: CandidateRow[] = [
     phone: "+919800000111",
     source: "sourced",
     sourceDetail: "manually added",
+    resumeUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
     state: {
       kind: "completed",
       score: 86,
@@ -670,11 +672,60 @@ const DRAWER_DATA: Record<string, DrawerCandidate> = {
     insights: [],
     callDuration: 18,
     mediaType: "audio",
-    recommendations: [
-      "Interview incomplete. Candidate dropped off after 15 seconds on the first call and 3 seconds on the second call.",
-      "Requires manual follow-up to check if there are connectivity or audio interface issues.",
+    recommendations: [],
+    criteriaGroups: [
+      {
+        id: "must-partial",
+        label: "Must-have criteria (partial)",
+        items: [
+          {
+            id: "exp-partial",
+            text: "Minimum 2 years of relevant engineering experience",
+            score: 6,
+            reasoning:
+              "Candidate briefly mentioned working at Apna for over a year before the call dropped. Could not confirm full duration or role depth.",
+            dealbreaker: true,
+            atSecond: 5,
+          },
+          {
+            id: "notice-partial",
+            text: "Notice period of 30 days or less",
+            score: 0,
+            reasoning:
+              "Call ended before this was discussed. Could not assess.",
+            dealbreaker: true,
+          },
+        ],
+      },
     ],
-    criteriaGroups: [],
+    cefr: {
+      overall: 5.2,
+      level: "B1",
+      recommendedFor: "Inconclusive — call ended too early for full assessment",
+      dimensions: [
+        {
+          label: "Pronunciation",
+          score: 5.5,
+          description:
+            "Speech was clear in the brief window captured. Accent mild.",
+        },
+        {
+          label: "Fluency",
+          score: 5,
+          description:
+            "Limited sample — only a short greeting and partial answer were recorded.",
+        },
+        {
+          label: "Grammar",
+          score: 5,
+          description:
+            "No grammatical errors in the fragment captured, but sample is too small to conclude.",
+        },
+      ],
+      areasOfImprovement: [
+        "Insufficient data — complete the full interview for a reliable assessment.",
+      ],
+    },
     profile: {
       about: "Sourced candidate. Work history and technical details are pending successful completion of the screening call.",
       location: "Mumbai, MH",

@@ -53,6 +53,7 @@ import {
   QrCode,
   Sparkles,
   Footprints,
+  Download,
 } from "lucide-react"
 import * as ReactDOM from "react-dom"
 import * as React from "react"
@@ -553,7 +554,7 @@ function DrawerBody({
             })}
           </div>
 
-          {/* Candidate status badge opposite to the pipeline steps */}
+          {/* Verdict badge + download report (completed only) */}
           {(() => {
             const state = candidate.state || {
               kind: "completed" as const,
@@ -561,9 +562,64 @@ function DrawerBody({
               verdict: candidate.verdict,
               insights: [],
             }
+            const isCompleted = state.kind === "completed"
             return (
-              <div className="flex shrink-0 items-center">
+              <div className="flex shrink-0 items-center gap-2">
                 <CandidateStatusBadge state={state} />
+                {isCompleted && (
+                  <Button
+                    variant="outline"
+                    size="icon-sm"
+                    title="Download AI assessment report"
+                    aria-label="Download AI assessment report"
+                    onClick={() => {
+                      const lines = [
+                        `AI Interview Assessment Report`,
+                        `================================`,
+                        `Candidate : ${candidate.name}`,
+                        `Role      : ${candidate.role}`,
+                        `Company   : ${candidate.company}`,
+                        `Score     : ${candidate.score ?? "N/A"} / 100`,
+                        `Verdict   : ${
+                          candidate.verdict === "fit"
+                            ? "Fit"
+                            : candidate.verdict === "not-fit"
+                              ? "Not Fit"
+                              : "Under Review"
+                        }`,
+                        `CEFR Level: ${candidate.cefrLevel ?? "N/A"}`,
+                        ``,
+                        `AI Recommendations`,
+                        `------------------`,
+                        ...(candidate.recommendations ?? []).map(
+                          (r, i) => `${i + 1}. ${r}`,
+                        ),
+                        ``,
+                        `Criteria Analysis`,
+                        `-----------------`,
+                        ...(candidate.criteriaGroups ?? []).flatMap((g) => [
+                          ``,
+                          `[${g.label}]`,
+                          ...g.items.map(
+                            (item) =>
+                              `  • (${item.score}/10) ${item.text}\n    → ${item.reasoning}`,
+                          ),
+                        ]),
+                      ]
+                      const blob = new Blob([lines.join("\n")], {
+                        type: "text/plain",
+                      })
+                      const url = URL.createObjectURL(blob)
+                      const a = document.createElement("a")
+                      a.href = url
+                      a.download = `AI_Report_${candidate.name.replace(/\s+/g, "_")}.txt`
+                      a.click()
+                      URL.revokeObjectURL(url)
+                    }}
+                  >
+                    <Download className="size-3.5" />
+                  </Button>
+                )}
               </div>
             )
           })()}
@@ -955,6 +1011,95 @@ function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
   )
 
   const state = candidate.state
+
+  // Incomplete: show status band + partial insights (criteria + CEFR)
+  if (state && state.kind === "incomplete") {
+    const hasPartialData =
+      candidate.criteriaGroups.length > 0 || !!candidate.cefr
+    return (
+      <div className="flex flex-col gap-6">
+        {/* Status band */}
+        <AttemptStatusBand
+          tone="warning"
+          label="Interview Incomplete"
+          reason="Candidate left early, Rescheduled for completion"
+          attempted={state.attempted}
+          total={state.total}
+          helper="Candidate attempted the interview but didn't complete it. We've notified them to complete it — status will update once done."
+          attempts={state.attempts}
+          flush
+        />
+
+        {hasPartialData && (
+          <>
+            {/* Audio player for partial recording */}
+            {(candidate.callDuration ?? 0) > 0 && mediaType === "audio" && (
+              <AudioPlayer
+                elapsed={elapsed}
+                totalSec={totalSec}
+                playing={playing}
+                onTogglePlay={() => setPlaying((p) => !p)}
+                onSeek={(s) => { setElapsed(s); setPlaying(true) }}
+              />
+            )}
+
+            {/* Partial assessment banner */}
+            <div className="rounded-lg border border-warning/40 bg-warning/5 px-4 py-3 flex items-start gap-3">
+              <ShieldAlert className="size-4 text-warning shrink-0 mt-0.5" />
+              <div className="flex flex-col gap-0.5">
+                <p className="text-xs font-semibold text-foreground">
+                  Partial assessment — no conclusion drawn
+                </p>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  The interview ended early. The criteria and language scores
+                  below reflect only what the AI captured before the call
+                  disconnected. No overall fit verdict has been assigned.
+                </p>
+              </div>
+            </div>
+
+            {/* Partial criteria */}
+            {candidate.criteriaGroups.length > 0 && (
+              <section className="flex flex-col gap-4">
+                <h4 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                  Partial screening criteria
+                </h4>
+                {candidate.criteriaGroups.map((g) => (
+                  <CriteriaGroupBlock
+                    key={g.id}
+                    group={g}
+                    onSeek={seekTo}
+                    mediaType={mediaType}
+                  />
+                ))}
+              </section>
+            )}
+
+            {/* Partial CEFR */}
+            {candidate.cefr && (
+              <section id="cefr" className="flex flex-col gap-3">
+                <div className="flex items-center justify-between gap-2 border-b border-border pb-1">
+                  <h4 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                    English communication — partial assessment
+                  </h4>
+                  <span className="inline-flex items-center rounded-full bg-warning/15 px-2.5 py-0.5 text-2xs font-semibold text-warning">
+                    Partial · {candidate.cefr.level}
+                  </span>
+                </div>
+                <CefrBlock cefr={candidate.cefr} />
+              </section>
+            )}
+          </>
+        )}
+
+        {candidate.retakeHistory && candidate.retakeHistory.length > 0 && (
+          <RetakeHistoryBlock history={candidate.retakeHistory} />
+        )}
+      </div>
+    )
+  }
+
+  // Pending / no-response / not-interested: status band only
   if (state && state.kind !== "completed") {
     return (
       <div className="flex flex-col gap-6">
@@ -966,18 +1111,6 @@ function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
             attempted={state.attempted}
             total={state.total}
             helper="We're trying to reach the candidate for this interview. We'll update the status once they respond."
-            attempts={state.attempts}
-            flush
-          />
-        )}
-        {state.kind === "incomplete" && (
-          <AttemptStatusBand
-            tone="warning"
-            label="Interview Incomplete"
-            reason="Candidate left early, Rescheduled for completion"
-            attempted={state.attempted}
-            total={state.total}
-            helper="Candidate attempted the interview but didn't complete it. We've notified the candidate to complete the interview, we'll update the status here once it's completed."
             attempts={state.attempts}
             flush
           />
