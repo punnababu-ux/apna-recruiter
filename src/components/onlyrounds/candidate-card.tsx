@@ -34,7 +34,7 @@ import {
   AttemptStatusBand,
   type AttemptLogEntry,
 } from "@/components/onlyrounds/attempt-status-band"
-import { ScoreGauge, type Verdict } from "@/components/onlyrounds/score-gauge"
+import type { Verdict } from "@/components/onlyrounds/score-gauge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -165,7 +165,17 @@ export function CandidateCard({
         {/* Right-edge status indicator */}
         <div className="flex shrink-0 items-center">
           {state.kind === "completed" && (
-            <ScoreGauge score={state.score} verdict={state.verdict} layout="row" />
+            <>
+              {state.verdict === "fit" && (
+                <Badge variant="success">Fit · {state.score}</Badge>
+              )}
+              {state.verdict === "not-fit" && (
+                <Badge variant="destructive">Not fit · {state.score}</Badge>
+              )}
+              {state.verdict === "review" && (
+                <Badge variant="warning">Review · {state.score}</Badge>
+              )}
+            </>
           )}
           {state.kind === "pending" && (
             <Badge variant="warning">Interview pending</Badge>
