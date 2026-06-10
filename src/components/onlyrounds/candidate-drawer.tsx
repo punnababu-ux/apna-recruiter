@@ -34,6 +34,7 @@ import {
   Mail,
   MapPin,
   MessageCircle,
+  Mic,
   Pause,
   Pencil,
   Phone,
@@ -42,6 +43,8 @@ import {
   Play,
   RotateCcw,
   ShieldAlert,
+  Video,
+  VideoOff,
   Voicemail,
   X,
   XCircle,
@@ -173,6 +176,18 @@ export type DrawerCandidate = {
   insights: DrawerInsight[]
   /** Total length of the call recording in seconds. Defaults to 5:47. */
   callDuration?: number
+  /**
+   * Whether the screening was conducted as an outbound audio call or a video
+   * interview. Only one medium is present per candidate — they are mutually
+   * exclusive.
+   *
+   * - "audio" → outbound phone call; shows an inline audio player bar.
+   * - "video" → video interview; shows a floating video panel that opens
+   *             alongside the drawer when the user clicks "Watch Video".
+   *
+   * Defaults to "audio" when omitted.
+   */
+  mediaType?: "audio" | "video"
   recommendations: string[]
   criteriaGroups: CriteriaGroup[]
   cefr?: CefrAnalysis
@@ -719,15 +734,228 @@ function RetakeHistoryBlock({ history }: { history: NonNullable<Candidate["retak
   )
 }
 
+// ── Video player (inline sticky) ─────────────────────────────────────────
+
+function VideoPlayer({
+  candidateName,
+  elapsed,
+  totalSec,
+  playing,
+  onTogglePlay,
+  onSeek,
+  onClose,
+}: {
+  candidateName: string
+  elapsed: number
+  totalSec: number
+  playing: boolean
+  onTogglePlay: () => void
+  onSeek: (sec: number) => void
+  onClose: () => void
+}) {
+  const pct = totalSec > 0 ? (elapsed / totalSec) * 100 : 0
+  const trackRef = React.useRef<HTMLDivElement>(null)
+
+  const handleTrackClick = (e: React.MouseEvent) => {
+    const el = trackRef.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
+    onSeek(Math.round(ratio * totalSec))
+  }
+
+  // Decorative waveform bars — proportional to elapsed
+  const barCount = 40
+  const bars = Array.from({ length: barCount }, (_, i) => {
+    const h = 20 + Math.round(Math.sin(i * 0.7 + 1.3) * 12 + Math.cos(i * 1.1) * 8)
+    const filled = (i / barCount) * 100 <= pct
+    return { h, filled }
+  })
+
+  return (
+    <div className="sticky top-0 z-10 -mx-4 animate-in fade-in slide-in-from-top-2 duration-200">
+      <div className="bg-card border-b border-border shadow-sm">
+        {/* Simulated video screen */}
+        <div className="relative bg-muted h-36 flex items-center justify-center overflow-hidden">
+          <div className="relative flex flex-col items-center gap-3">
+            <Avatar className="size-12 border-2 border-border">
+              <AvatarFallback className="bg-muted-foreground/20 text-foreground font-semibold text-sm">
+                {initials(candidateName)}
+              </AvatarFallback>
+            </Avatar>
+            {playing ? (
+              /* Animated playback indicator */
+              <div className="flex items-end gap-0.5 h-5">
+                {[4, 7, 5, 9, 6, 8, 4, 7, 5].map((h, i) => (
+                  <span
+                    key={i}
+                    className="inline-block w-1 rounded-sm bg-primary animate-bounce"
+                    style={{
+                      height: `${h * 2}px`,
+                      animationDelay: `${(i % 3) * 0.12}s`,
+                      animationDuration: "0.7s",
+                    }}
+                  />
+                ))}
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={onTogglePlay}
+                aria-label="Play video"
+                className="flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md hover:opacity-90 transition-opacity"
+              >
+                <Play className="size-4 fill-primary-foreground ml-0.5" />
+              </button>
+            )}
+          </div>
+          {/* Duration badge */}
+          <div className="absolute bottom-2 right-3 rounded bg-card/80 backdrop-blur-sm px-1.5 py-0.5 text-2xs font-mono text-foreground border border-border">
+            {fmtMmSs(totalSec)}
+          </div>
+          {/* Close */}
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close video player"
+            className="absolute top-2 right-3 flex size-6 items-center justify-center rounded-full bg-card/80 backdrop-blur-sm border border-border text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <X className="size-3.5" />
+          </button>
+        </div>
+
+        {/* Controls bar */}
+        <div className="px-4 pb-3 pt-2 flex flex-col gap-2">
+          {/* Waveform progress track */}
+          <div
+            ref={trackRef}
+            role="slider"
+            aria-label="Video position"
+            aria-valuemin={0}
+            aria-valuemax={totalSec}
+            aria-valuenow={elapsed}
+            onClick={handleTrackClick}
+            className="flex items-end gap-px h-6 cursor-pointer"
+          >
+            {bars.map((b, i) => (
+              <div
+                key={i}
+                className={cn(
+                  "flex-1 rounded-sm transition-colors",
+                  b.filled ? "bg-primary" : "bg-muted-foreground/20",
+                )}
+                style={{ height: `${b.h}px` }}
+              />
+            ))}
+          </div>
+          {/* Play/pause + time */}
+          <div className="flex items-center justify-between">
+            <button
+              type="button"
+              onClick={onTogglePlay}
+              aria-label={playing ? "Pause" : "Play"}
+              className="flex size-7 shrink-0 items-center justify-center rounded-full border border-border bg-muted hover:bg-muted/70 transition-colors"
+            >
+              {playing ? <Pause className="size-3" /> : <Play className="size-3 ml-0.5" />}
+            </button>
+            <span className="text-xs tabular-nums text-muted-foreground font-mono">
+              {fmtMmSs(elapsed)} / {fmtMmSs(totalSec)}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ── Audio player (sticky seek bar) ────────────────────────────────────────
+
+function AudioPlayer({
+  elapsed,
+  totalSec,
+  playing,
+  onTogglePlay,
+  onSeek,
+}: {
+  elapsed: number
+  totalSec: number
+  playing: boolean
+  onTogglePlay: () => void
+  onSeek: (sec: number) => void
+}) {
+  const pct = totalSec > 0 ? (elapsed / totalSec) * 100 : 0
+  const trackRef = React.useRef<HTMLDivElement>(null)
+
+  const handleTrackClick = (e: React.MouseEvent) => {
+    const el = trackRef.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
+    onSeek(Math.round(ratio * totalSec))
+  }
+
+  return (
+    <div className="sticky top-0 z-10 -mx-4 bg-card border-b border-border shadow-sm">
+      <div className="px-4 py-3 flex items-center gap-3">
+        {/* Icon + label */}
+        <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10 border border-primary/20">
+          <Mic className="size-4 text-primary" />
+        </div>
+        <div className="min-w-0 flex-1 flex flex-col gap-1.5">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-xs font-semibold text-foreground">Outbound call recording</span>
+            <span className="text-2xs tabular-nums text-muted-foreground font-mono shrink-0">
+              {fmtMmSs(elapsed)} / {fmtMmSs(totalSec)}
+            </span>
+          </div>
+          {/* Seek bar */}
+          <div
+            ref={trackRef}
+            role="slider"
+            aria-label="Audio position"
+            aria-valuemin={0}
+            aria-valuemax={totalSec}
+            aria-valuenow={elapsed}
+            onClick={handleTrackClick}
+            className="h-1.5 w-full cursor-pointer rounded-full bg-muted overflow-hidden"
+          >
+            <div
+              className="h-full rounded-full bg-primary transition-[width] duration-150"
+              style={{ width: `${pct}%` }}
+            />
+          </div>
+        </div>
+        {/* Play / Pause */}
+        <button
+          type="button"
+          onClick={onTogglePlay}
+          aria-label={playing ? "Pause audio" : "Play audio"}
+          className="flex size-8 shrink-0 items-center justify-center rounded-full border border-border bg-muted hover:bg-muted/70 transition-colors"
+        >
+          {playing ? <Pause className="size-3.5" /> : <Play className="size-3.5 ml-0.5" />}
+        </button>
+      </div>
+    </div>
+  )
+}
+
+// ── InsightsTab ───────────────────────────────────────────────────────────
+
 function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
   const totalSec = candidate.callDuration ?? 5 * 60 + 47
+  const mediaType = candidate.mediaType ?? "audio"
   const [elapsed, setElapsed] = React.useState(0)
   const [playing, setPlaying] = React.useState(false)
+  // For video mode: whether the floating video panel is open
+  const [videoOpen, setVideoOpen] = React.useState(false)
+
   // Reset when switching candidates.
   React.useEffect(() => {
     setElapsed(0)
     setPlaying(false)
+    setVideoOpen(false)
   }, [candidate.id])
+
   // Advance time when playing.
   React.useEffect(() => {
     if (!playing) return
@@ -747,8 +975,10 @@ function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
     (sec: number) => {
       setElapsed(Math.min(Math.max(0, sec), totalSec))
       setPlaying(true)
+      // For video: open the panel if it isn't already
+      if (mediaType === "video") setVideoOpen(true)
     },
-    [totalSec],
+    [totalSec, mediaType],
   )
 
   const state = candidate.state
@@ -764,6 +994,7 @@ function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
             total={state.total}
             helper="We're trying to reach the candidate for this interview. We'll update the status once they respond."
             attempts={state.attempts}
+            flush
           />
         )}
         {state.kind === "incomplete" && (
@@ -775,6 +1006,7 @@ function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
             total={state.total}
             helper="Candidate attempted the interview but didn't complete it. We've notified the candidate to complete the interview, we'll update the status here once it's completed."
             attempts={state.attempts}
+            flush
           />
         )}
         {state.kind === "no-response" && (
@@ -785,6 +1017,7 @@ function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
             attempted={state.attempted}
             total={state.total}
             attempts={state.attempts}
+            flush
           />
         )}
         {state.kind === "not-interested" && (
@@ -792,6 +1025,7 @@ function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
             tone="muted"
             label="Not Interested"
             reason="Candidate declared not interested in this opportunity"
+            flush
           />
         )}
         {candidate.retakeHistory && candidate.retakeHistory.length > 0 && (
@@ -803,54 +1037,96 @@ function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Video Recording Banner */}
-      <div className="bg-muted/30 p-3 rounded-lg flex items-center justify-between gap-3 border border-border">
-        <div className="flex items-center gap-3">
-          <div className="relative w-20 h-12 rounded-md border border-border bg-accent/20 flex items-center justify-center overflow-hidden shrink-0">
-            <Avatar className="size-8">
-              <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
-                {initials(candidate.name)}
-              </AvatarFallback>
-            </Avatar>
-            <div className="absolute inset-0 bg-black/10 flex items-center justify-center">
-              <Play className="size-3 text-white fill-white/80" />
-            </div>
-            <div className="absolute bottom-0.5 right-0.5 bg-black/60 px-1 rounded-sm text-white font-mono text-2xs scale-90 origin-bottom-right">
-              {fmtMmSs(totalSec)}
-            </div>
-          </div>
-          <div>
-            <h5 className="text-sm font-semibold text-foreground">
-              Interview video call recording
-            </h5>
-          </div>
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          className="bg-card text-xs gap-1.5 h-8 font-medium text-foreground border-border hover:bg-muted"
-          onClick={() => setPlaying((p) => !p)}
-        >
-          {playing ? (
-            <Pause className="size-3.5 text-success fill-success" />
-          ) : (
-            <Play className="size-3.5 text-success fill-success" />
-          )}
-          {playing ? "Pause Video" : "Watch Video"}
-        </Button>
-      </div>
 
-      {/* Conditionally reveal the player controls when playing or active */}
-      {playing && (
-        <div className="animate-in fade-in slide-in-from-top-1 duration-200">
-          <CallPlayer
-            elapsed={elapsed}
-            totalSec={totalSec}
-            playing={playing}
-            onTogglePlay={() => setPlaying((p) => !p)}
-            onSeek={(s) => setElapsed(s)}
-          />
-        </div>
+      {/* ── Media player (sticky) ───────────────────────────────── */}
+      {mediaType === "audio" ? (
+        <AudioPlayer
+          elapsed={elapsed}
+          totalSec={totalSec}
+          playing={playing}
+          onTogglePlay={() => setPlaying((p) => !p)}
+          onSeek={(s) => {
+            setElapsed(s)
+            setPlaying(true)
+          }}
+        />
+      ) : (
+        /* Video: thumbnail card + floating panel */
+        <>
+          <div className="bg-muted/30 p-3 rounded-lg flex items-center justify-between gap-3 border border-border">
+            <div className="flex items-center gap-3">
+              {/* Thumbnail */}
+              <div className="relative w-20 h-12 rounded-md border border-border bg-accent/20 flex items-center justify-center overflow-hidden shrink-0">
+                <Avatar className="size-8">
+                  <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
+                    {initials(candidate.name)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                  {videoOpen ? (
+                    <VideoOff className="size-3 text-white" />
+                  ) : (
+                    <Play className="size-3 text-white fill-white/80" />
+                  )}
+                </div>
+                <div className="absolute bottom-0.5 right-0.5 bg-black/60 px-1 rounded-sm text-white font-mono text-2xs scale-90 origin-bottom-right">
+                  {fmtMmSs(totalSec)}
+                </div>
+              </div>
+              <div>
+                <h5 className="text-sm font-semibold text-foreground">Video interview recording</h5>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Click any{" "}
+                  <span className="inline-flex size-3 items-center justify-center rounded-full bg-success/10 border border-success/30">
+                    <Play className="size-1.5 fill-success text-success ml-px" />
+                  </span>{" "}
+                  below to jump to that moment
+                </p>
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              className="bg-card text-xs gap-1.5 h-8 font-medium text-foreground border-border hover:bg-muted shrink-0"
+              onClick={() => {
+                setVideoOpen((o) => !o)
+                if (!videoOpen) setPlaying(true)
+                else setPlaying(false)
+              }}
+            >
+              {videoOpen ? (
+                <>
+                  <VideoOff className="size-3.5" />
+                  Close video
+                </>
+              ) : (
+                <>
+                  <Video className="size-3.5" />
+                  Watch video
+                </>
+              )}
+            </Button>
+          </div>
+
+          {/* Inline sticky video player */}
+          {videoOpen && (
+            <VideoPlayer
+              candidateName={candidate.name}
+              elapsed={elapsed}
+              totalSec={totalSec}
+              playing={playing}
+              onTogglePlay={() => setPlaying((p) => !p)}
+              onSeek={(s) => {
+                setElapsed(s)
+                setPlaying(true)
+              }}
+              onClose={() => {
+                setVideoOpen(false)
+                setPlaying(false)
+              }}
+            />
+          )}
+        </>
       )}
 
       {/* Insight chips */}
@@ -885,7 +1161,7 @@ function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
                     <button
                       type="button"
                       onClick={() => seekTo(it.atSecond!)}
-                      aria-label={`Play at ${fmtMmSs(it.atSecond!)}`}
+                      aria-label={`Jump to ${fmtMmSs(it.atSecond!)} in ${mediaType}`}
                       className="ml-1 inline-flex size-4 items-center justify-center rounded-full border border-border bg-muted/40 hover:bg-muted transition-colors cursor-pointer"
                     >
                       <Play className="size-2 text-muted-foreground fill-muted-foreground ml-0.5" />
@@ -942,7 +1218,7 @@ function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
             Screening criteria analysis
           </h4>
           {candidate.criteriaGroups.map((g) => (
-            <CriteriaGroupBlock key={g.id} group={g} onSeek={seekTo} />
+            <CriteriaGroupBlock key={g.id} group={g} onSeek={seekTo} mediaType={mediaType} />
           ))}
         </section>
       )}
@@ -1225,61 +1501,7 @@ function TimelineTab({ candidate }: { candidate: DrawerCandidate }) {
 }
 
 
-// ── Sub-blocks ────────────────────────────────────────────────────────────
-
-function CallPlayer({
-  elapsed,
-  totalSec,
-  playing,
-  onTogglePlay,
-  onSeek,
-}: {
-  elapsed: number
-  totalSec: number
-  playing: boolean
-  onTogglePlay: () => void
-  onSeek: (sec: number) => void
-}) {
-  const pct = (elapsed / totalSec) * 100
-  const trackRef = React.useRef<HTMLDivElement>(null)
-  const handleClick = (e: React.MouseEvent) => {
-    const el = trackRef.current
-    if (!el) return
-    const rect = el.getBoundingClientRect()
-    const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
-    onSeek(Math.round(ratio * totalSec))
-  }
-  return (
-    <div className="flex items-center gap-3 rounded-md border border-border bg-muted/30 px-3 py-2.5">
-      <button
-        type="button"
-        onClick={onTogglePlay}
-        aria-label={playing ? "Pause" : "Play"}
-        className="flex size-7 shrink-0 items-center justify-center rounded-full border border-border bg-card hover:bg-muted"
-      >
-        {playing ? <Pause className="size-3" /> : <Play className="size-3" />}
-      </button>
-      <div
-        ref={trackRef}
-        role="slider"
-        aria-label="Call position"
-        aria-valuemin={0}
-        aria-valuemax={totalSec}
-        aria-valuenow={elapsed}
-        onClick={handleClick}
-        className="h-1 flex-1 cursor-pointer overflow-hidden rounded-full bg-muted"
-      >
-        <div
-          className="h-full rounded-full bg-primary transition-[width]"
-          style={{ width: `${pct}%` }}
-        />
-      </div>
-      <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
-        {fmtMmSs(elapsed)} / {fmtMmSs(totalSec)}
-      </span>
-    </div>
-  )
-}
+// ── Criterion sub-blocks ──────────────────────────────────────────────────
 
 function fmtMmSs(s: number) {
   const m = Math.floor(s / 60)
@@ -1314,9 +1536,11 @@ function getGroupHeaderInfo(id: string, label: string) {
 function CriteriaGroupBlock({
   group,
   onSeek,
+  mediaType,
 }: {
   group: CriteriaGroup
   onSeek?: (sec: number) => void
+  mediaType?: "audio" | "video"
 }) {
   const { Icon, iconClass, labelText } = getGroupHeaderInfo(group.id, group.label)
 
@@ -1333,7 +1557,7 @@ function CriteriaGroupBlock({
       </div>
       <div className="flex flex-col gap-3">
         {group.items.map((c) => (
-          <CriterionRow key={c.id} item={c} onSeek={onSeek} />
+          <CriterionRow key={c.id} item={c} onSeek={onSeek} mediaType={mediaType} />
         ))}
       </div>
     </div>
@@ -1343,12 +1567,15 @@ function CriteriaGroupBlock({
 function CriterionRow({
   item,
   onSeek,
+  mediaType = "audio",
 }: {
   item: CriterionScore
   onSeek?: (sec: number) => void
+  mediaType?: "audio" | "video"
 }) {
   const isHigh = item.score >= 7
   const isMid = item.score >= 4 && item.score < 7
+  const hasTimestamp = typeof item.atSecond === "number"
 
   return (
     <div className="rounded-lg border border-border bg-card overflow-hidden">
@@ -1374,18 +1601,29 @@ function CriterionRow({
         <p className="text-xs text-muted-foreground leading-relaxed flex-1">
           {item.reasoning}
         </p>
-        <button
-          type="button"
-          onClick={() => onSeek?.(item.atSecond ?? 0)}
-          aria-label={
-            typeof item.atSecond === "number"
-              ? `Jump to ${fmtMmSs(item.atSecond)} in call`
-              : "Play audio"
-          }
-          className="flex size-6 shrink-0 items-center justify-center rounded-full border border-success/30 bg-success/5 text-success hover:bg-success/15 hover:scale-105 transition-all cursor-pointer"
-        >
-          <Play className="size-2.5 fill-success text-success ml-0.5" />
-        </button>
+        <Tooltip>
+          <TooltipTrigger
+            render={
+              <button
+                type="button"
+                onClick={() => onSeek?.(item.atSecond ?? 0)}
+                aria-label={
+                  hasTimestamp
+                    ? `Jump to ${fmtMmSs(item.atSecond!)} in ${mediaType}`
+                    : `Play from start in ${mediaType}`
+                }
+                className="flex size-6 shrink-0 items-center justify-center rounded-full border border-success/30 bg-success/5 text-success hover:bg-success/15 hover:scale-105 transition-all cursor-pointer"
+              >
+                <Play className="size-2.5 fill-success text-success ml-0.5" />
+              </button>
+            }
+          />
+          <TooltipContent side="left">
+            {hasTimestamp
+              ? `Jump to ${fmtMmSs(item.atSecond!)} in ${mediaType === "video" ? "video" : "audio"}`
+              : `Play ${mediaType === "video" ? "video" : "audio"} from start`}
+          </TooltipContent>
+        </Tooltip>
       </div>
     </div>
   )

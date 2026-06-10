@@ -351,6 +351,7 @@ const DRAWER_DATA: Record<string, DrawerCandidate> = {
       { tone: "miss", label: "Industry domain not discussed" },
     ],
     callDuration: 347,
+    mediaType: "audio",
     recommendations: [
       "Candidate is a strong technical and cultural fit; recommend proceeding to the technical interview round.",
       "Probe further on her experience with specific defect tracking tools like Jira, as she described the process well but didn't name a tool.",
@@ -624,6 +625,7 @@ const DRAWER_DATA: Record<string, DrawerCandidate> = {
     cefrLevel: "na",
     insights: [],
     callDuration: 0,
+    mediaType: "audio",
     recommendations: [
       "No calls successfully completed yet.",
       "The candidate missed two call attempts. Rescheduled for a third attempt.",
@@ -667,6 +669,7 @@ const DRAWER_DATA: Record<string, DrawerCandidate> = {
     cefrLevel: "na",
     insights: [],
     callDuration: 18,
+    mediaType: "audio",
     recommendations: [
       "Interview incomplete. Candidate dropped off after 15 seconds on the first call and 3 seconds on the second call.",
       "Requires manual follow-up to check if there are connectivity or audio interface issues.",
@@ -727,6 +730,7 @@ const DRAWER_DATA: Record<string, DrawerCandidate> = {
     cefrLevel: "na",
     insights: [],
     callDuration: 0,
+    mediaType: "audio",
     recommendations: [
       "All 5 call attempts exhausted. Candidate failed to connect or answer any screening requests.",
       "Status is locked as No Response. Reach out manually if you wish to extend more attempts.",
@@ -792,6 +796,7 @@ const DRAWER_DATA: Record<string, DrawerCandidate> = {
       { tone: "ok", label: "Open to office work", atSecond: 135 },
     ],
     callDuration: 210,
+    mediaType: "audio",
     recommendations: [
       "Candidate does not meet the minimum experience requirements (has <1 year, requirement is 3+ years).",
       "Salary expectations (exceeds budget by 40%) act as a direct dealbreaker.",
@@ -868,6 +873,7 @@ const DRAWER_DATA: Record<string, DrawerCandidate> = {
       { tone: "ok", label: "Excellent English fluency", atSecond: 180 },
     ],
     callDuration: 320,
+    mediaType: "video",
     recommendations: [
       "Highly experienced candidate with solid automation background. Passed screening with 86/100.",
       "Moved to Technical Interview stage. Hiring manager should focus on her system architectural understanding and leadership skills.",
@@ -933,6 +939,7 @@ const DRAWER_DATA: Record<string, DrawerCandidate> = {
       { tone: "ok", label: "Good API testing knowledge", atSecond: 165 },
     ],
     callDuration: 280,
+    mediaType: "video",
     recommendations: [
       "Overall solid technical answers, but notice period is 60 days which violates preferred threshold.",
       "Check if his notice period is negotiable down to 30 days before proceeding to tech rounds.",

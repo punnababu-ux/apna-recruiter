@@ -49,6 +49,7 @@ export function AttemptStatusBand({
   total,
   helper,
   attempts,
+  flush = false,
 }: {
   tone?: AttemptTone
   /** e.g. "Interview Pending" / "Interview Incomplete" */
@@ -61,6 +62,8 @@ export function AttemptStatusBand({
   helper?: string
   /** When provided & non-empty, a "View / Hide all" toggle expands the chronological log. */
   attempts?: AttemptLogEntry[]
+  /** When true, removes external borders and padding to sit flush inside containers. */
+  flush?: boolean
 }) {
   const t = TONE[tone]
   const pct =
@@ -71,7 +74,7 @@ export function AttemptStatusBand({
   const [expanded, setExpanded] = React.useState(false)
 
   return (
-    <div className="flex flex-col gap-3 border-t border-border px-4 py-3">
+    <div className={cn("flex flex-col gap-3", !flush && "border-t border-border px-4 py-3")}>
       {/* Grey container: status label · progress · attempts · logs */}
       <div className="flex flex-col gap-2 rounded-md bg-muted/50 px-3 py-2.5">
         {/* Label + reason */}
