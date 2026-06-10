@@ -20,13 +20,19 @@
  */
 
 import {
+  Bookmark,
   Bot,
   CalendarClock,
   Check,
   CircleCheck,
+  Compass,
   Flag,
+  HelpCircle,
   Languages,
+  Layout,
+  ListTodo,
   Mars,
+  MessageCircleQuestion,
   Mic,
   MoreVertical,
   Pause,
@@ -44,6 +50,7 @@ import {
   Users,
   Venus,
   Video,
+  Wrench,
   type LucideIcon,
 } from "lucide-react"
 import * as React from "react"
@@ -603,7 +610,7 @@ function TaskCard({
               // custom
               <div className="flex flex-col gap-5">
                 <UIField>
-                  <FieldLabel>Task name</FieldLabel>
+                  <FieldLabel icon={Bookmark}>Task name</FieldLabel>
                   <Input
                     value={task.title}
                     onChange={(e) => onUpdate({ title: e.target.value })}
@@ -611,7 +618,7 @@ function TaskCard({
                   />
                 </UIField>
                 <UIField>
-                  <FieldLabel>Task details</FieldLabel>
+                  <FieldLabel icon={ListTodo}>Task details</FieldLabel>
                   <Textarea
                     value={task.notes}
                     onChange={(e) => onUpdate({ notes: e.target.value })}
@@ -688,7 +695,7 @@ function SchedulingEditor({
   return (
     <div className="flex flex-col gap-5">
       <UIField>
-        <FieldLabel>Scheduling type</FieldLabel>
+        <FieldLabel icon={CalendarClock}>Scheduling type</FieldLabel>
         <ChipTabs
           variant="choice"
           items={modeChips("scheduling")}
@@ -704,7 +711,7 @@ function SchedulingEditor({
         </p>
       ) : config.mode === "human" ? (
         <UIField>
-          <FieldLabel>Task details</FieldLabel>
+          <FieldLabel icon={ListTodo}>Task details</FieldLabel>
           <Textarea
             value={config.humanNotes}
             onChange={(e) => set({ humanNotes: e.target.value })}
@@ -769,7 +776,7 @@ function ScreeningEditor({
   return (
     <div className="flex flex-col gap-5">
       <UIField>
-        <FieldLabel>{Noun} type<span className="ml-0.5 text-destructive">*</span></FieldLabel>
+        <FieldLabel icon={Wrench}>{Noun} type<span className="ml-0.5 text-destructive">*</span></FieldLabel>
         <ChipTabs
           variant="choice"
           items={modeChips(noun)}
@@ -785,7 +792,7 @@ function ScreeningEditor({
 
       {config.mode === "human" ? (
         <UIField>
-          <FieldLabel>Key questions or notes</FieldLabel>
+          <FieldLabel icon={MessageCircleQuestion}>Key questions or notes</FieldLabel>
           <Textarea
             value={config.humanNotes}
             onChange={(e) => set({ humanNotes: e.target.value })}
@@ -797,7 +804,7 @@ function ScreeningEditor({
       ) : isAI ? (
         <>
           <UIField>
-            <FieldLabel>{Noun} direction<span className="ml-0.5 text-destructive">*</span></FieldLabel>
+            <FieldLabel icon={Compass}>{Noun} direction<span className="ml-0.5 text-destructive">*</span></FieldLabel>
             <ChipTabs
               variant="choice"
               items={DIRECTION_CHIPS}
@@ -819,7 +826,7 @@ function ScreeningEditor({
           </UIField>
 
           <UIField>
-            <FieldLabel>{Noun} format<span className="ml-0.5 text-destructive">*</span></FieldLabel>
+            <FieldLabel icon={Layout}>{Noun} format<span className="ml-0.5 text-destructive">*</span></FieldLabel>
             <ChipTabs
               variant="choice"
               items={formatChips}
@@ -933,7 +940,7 @@ function CefrAddon({
         {config.cefrEnabled ? (
           <div className="flex flex-col gap-4 border-t border-border p-3">
             <UIField>
-              <FieldLabel>Minimum CEFR level<span className="ml-0.5 text-destructive">*</span></FieldLabel>
+              <FieldLabel icon={Languages}>Minimum CEFR level<span className="ml-0.5 text-destructive">*</span></FieldLabel>
               <ChipTabs
                 variant="choice"
                 size="sm"
@@ -949,7 +956,7 @@ function CefrAddon({
               <FieldDescription>The lowest level a candidate must reach to pass.</FieldDescription>
             </UIField>
             <UIField>
-              <FieldLabel>Preferred CEFR level<span className="ml-1 text-xs font-normal text-muted-foreground">(Optional)</span></FieldLabel>
+              <FieldLabel icon={Languages}>Preferred CEFR level<span className="ml-1 text-xs font-normal text-muted-foreground">(Optional)</span></FieldLabel>
               <ChipTabs
                 variant="choice"
                 size="sm"
@@ -961,7 +968,7 @@ function CefrAddon({
               <FieldDescription>The level you&apos;d ideally like to see.</FieldDescription>
             </UIField>
             <UIField>
-              <FieldLabel>Specific questions</FieldLabel>
+              <FieldLabel icon={HelpCircle}>Specific questions</FieldLabel>
               <Textarea
                 value={config.cefrQuestions}
                 onChange={(e) => set({ cefrQuestions: e.target.value })}

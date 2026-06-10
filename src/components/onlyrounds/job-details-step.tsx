@@ -19,18 +19,27 @@
 
 import {
   Briefcase,
+  Building2,
+  CalendarDays,
   Check,
   ChevronDown,
   Clock,
+  Compass,
   Download,
   FileText,
+  GraduationCap,
   IndianRupee,
+  Laptop,
+  MapPin,
   MessageCircleQuestion,
   MoreVertical,
   Pencil,
   Plus,
+  StickyNote,
   Trash2,
   Upload,
+  UserCheck,
+  UserPlus,
   type LucideIcon,
 } from "lucide-react"
 import * as React from "react"
@@ -282,7 +291,7 @@ export function JobDetailsStep({
       >
         {/* Client — own line */}
         <UIField>
-          <FieldLabel htmlFor="client">Client</FieldLabel>
+          <FieldLabel htmlFor="client" icon={Building2}>Client</FieldLabel>
           <Select
             value={form.clientId}
             onValueChange={(v) => update("clientId", (v as string) ?? "")}
@@ -308,7 +317,7 @@ export function JobDetailsStep({
         {/* Job city + Job area — side by side */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <UIField>
-            <FieldLabel htmlFor="city">Job city</FieldLabel>
+            <FieldLabel htmlFor="city" icon={MapPin}>Job city</FieldLabel>
             <Input
               id="city"
               value={form.city}
@@ -321,7 +330,7 @@ export function JobDetailsStep({
             <FieldError>{showErrors && !form.city.trim() ? "Required" : undefined}</FieldError>
           </UIField>
           <UIField>
-            <FieldLabel htmlFor="area">Job area</FieldLabel>
+            <FieldLabel htmlFor="area" icon={Compass}>Job area</FieldLabel>
             <Input
               id="area"
               value={form.area}
@@ -338,7 +347,7 @@ export function JobDetailsStep({
         {/* Required experience — full-width chip group below the grid so
             the chips have room to sit on one line. */}
         <UIField>
-          <FieldLabel>Required experience</FieldLabel>
+          <FieldLabel icon={GraduationCap}>Required experience</FieldLabel>
           <ChipTabs
             variant="choice"
             items={EXPERIENCE_CHIPS}
@@ -350,7 +359,7 @@ export function JobDetailsStep({
 
         {showExperiencedPersona ? (
           <UIField>
-            <FieldLabel htmlFor="experienced-persona">Who is an experienced candidate for this role?</FieldLabel>
+            <FieldLabel htmlFor="experienced-persona" icon={UserCheck}>Who is an experienced candidate for this role?</FieldLabel>
             <Textarea
               id="experienced-persona"
               value={form.experiencedPersona}
@@ -372,7 +381,7 @@ export function JobDetailsStep({
         ) : null}
         {showFresherPersona ? (
           <UIField>
-            <FieldLabel htmlFor="fresher-persona">Who is a fresher candidate for this role?</FieldLabel>
+            <FieldLabel htmlFor="fresher-persona" icon={UserPlus}>Who is a fresher candidate for this role?</FieldLabel>
             <Textarea
               id="fresher-persona"
               value={form.fresherPersona}
@@ -402,7 +411,7 @@ export function JobDetailsStep({
         onToggle={() => toggle("schedule")}
       >
         <UIField>
-          <FieldLabel>Work type</FieldLabel>
+          <FieldLabel icon={CalendarDays}>Work type</FieldLabel>
           <ChipTabs
             variant="choice"
             items={WORK_TYPE_CHIPS}
@@ -414,7 +423,7 @@ export function JobDetailsStep({
           <FieldError>{showErrors && !form.workType ? "Required" : undefined}</FieldError>
         </UIField>
         <UIField>
-          <FieldLabel>Work mode</FieldLabel>
+          <FieldLabel icon={Laptop}>Work mode</FieldLabel>
           <ChipTabs
             variant="choice"
             items={WORK_MODE_CHIPS}
@@ -426,7 +435,7 @@ export function JobDetailsStep({
           <FieldError>{showErrors && !form.workMode ? "Required" : undefined}</FieldError>
         </UIField>
         <UIField>
-          <FieldLabel htmlFor="schedule-details">Work schedule and shift details</FieldLabel>
+          <FieldLabel htmlFor="schedule-details" icon={Clock}>Work schedule and shift details</FieldLabel>
           <Textarea
             id="schedule-details"
             value={form.scheduleDetails}
@@ -457,7 +466,7 @@ export function JobDetailsStep({
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {showExperiencedPersona ? (
             <UIField>
-              <FieldLabel htmlFor="comp-experienced">Compensation — experienced candidates</FieldLabel>
+              <FieldLabel htmlFor="comp-experienced" icon={IndianRupee}>Compensation — experienced candidates</FieldLabel>
               <Input
                 id="comp-experienced"
                 value={form.compExperienced}
@@ -476,7 +485,7 @@ export function JobDetailsStep({
           ) : null}
           {showFresherPersona ? (
             <UIField>
-              <FieldLabel htmlFor="comp-fresher">Compensation — fresher candidates</FieldLabel>
+              <FieldLabel htmlFor="comp-fresher" icon={IndianRupee}>Compensation — fresher candidates</FieldLabel>
               <Input
                 id="comp-fresher"
                 value={form.compFresher}
@@ -522,7 +531,7 @@ export function JobDetailsStep({
         onToggle={() => toggle("additional")}
       >
         <UIField>
-          <FieldLabel htmlFor="additional-details">Notes</FieldLabel>
+          <FieldLabel htmlFor="additional-details" icon={StickyNote}>Notes</FieldLabel>
           <Textarea
             id="additional-details"
             value={form.additionalDetails}

@@ -15,8 +15,10 @@
 
 import {
   ArrowLeft,
+  Briefcase,
   ChevronLeft,
   ChevronRight,
+  FileText,
   Save,
   Sparkles,
   Upload,
@@ -752,7 +754,7 @@ function DescriptionStep({
   return (
     <div className="flex flex-col gap-5">
       <UIField>
-        <FieldLabel htmlFor="title">Job title</FieldLabel>
+        <FieldLabel htmlFor="title" icon={Briefcase}>Job title</FieldLabel>
         <Input
           id="title"
           value={form.title}
@@ -907,8 +909,9 @@ function JDField({
       <div className="flex items-center justify-between gap-3">
         <Label
           htmlFor="jd"
-          className={cn("text-sm font-medium", jdMissing && "text-destructive")}
+          className={cn("text-sm font-medium inline-flex items-center gap-2", jdMissing && "text-destructive")}
         >
+          <FileText className="size-4 text-muted-foreground shrink-0" />
           Job description
         </Label>
         <div className="flex items-center gap-2">
