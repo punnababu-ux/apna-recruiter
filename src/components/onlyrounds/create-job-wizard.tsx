@@ -1074,8 +1074,14 @@ function DescriptionStep({
         /* Initial State: Unified AI Command Bar Card */
         <div className="rounded-lg border border-border bg-card p-6 shadow-sm w-full animate-in fade-in zoom-in-95 duration-200">
           <div className="flex flex-col items-center text-center gap-2 mb-6">
-            <div className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary">
-              <Sparkles className="size-5" />
+            <div className={cn(
+              "flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary transition-all duration-300",
+              !generating && !processing && "animate-ai-glow-pulse"
+            )}>
+              <Sparkles className={cn(
+                "size-5 transition-all duration-300",
+                !generating && !processing && "animate-ai-sparkle-breathe"
+              )} />
             </div>
             <h3 className="text-lg font-semibold">What is your hiring requirement?</h3>
           </div>
