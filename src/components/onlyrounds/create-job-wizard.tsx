@@ -901,24 +901,24 @@ function DescriptionStep({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
           {/* Left Column: Prompt / File Summary */}
           <div className="md:col-span-1">
-            <div className="rounded-lg border border-border bg-muted/20 p-4 flex flex-col gap-3 h-fit shadow-xs">
+            <div className="rounded-lg border border-border bg-card p-4 flex flex-col gap-4 h-fit shadow-sm">
               <div>
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
                   Your Input
                 </h4>
                 {form.attachedFileName ? (
-                  <div className="flex items-center gap-1.5 text-sm font-medium text-foreground p-2 rounded-md bg-background border border-border">
+                  <div className="flex items-center gap-1.5 text-sm font-medium text-foreground p-2 rounded-md bg-muted/30 border border-border">
                     <Paperclip className="size-3.5 text-primary shrink-0" />
                     <span className="truncate flex-1">{form.attachedFileName}</span>
                   </div>
                 ) : form.promptText ? (
-                  <div className="text-sm font-medium text-foreground bg-background p-3 rounded-md border border-border italic whitespace-pre-wrap">
+                  <p className="text-sm font-medium text-foreground italic whitespace-pre-wrap leading-relaxed">
                     &ldquo;{form.promptText}&rdquo;
-                  </div>
+                  </p>
                 ) : (
-                  <div className="text-xs text-muted-foreground italic bg-background p-2 rounded-md border border-border">
+                  <p className="text-xs text-muted-foreground italic">
                     Custom details entered manually.
-                  </div>
+                  </p>
                 )}
               </div>
               
@@ -927,7 +927,7 @@ function DescriptionStep({
                 variant="outline"
                 size="sm"
                 onClick={handleReset}
-                className="w-full text-xs gap-1.5 cursor-pointer mt-1"
+                className="w-full text-xs gap-1.5 cursor-pointer"
               >
                 <RotateCcw className="size-3.5" />
                 Rewrite Prompt
