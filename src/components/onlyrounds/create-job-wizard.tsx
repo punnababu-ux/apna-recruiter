@@ -1016,7 +1016,7 @@ function DescriptionStep({
               <Sparkles className="size-5" />
             </div>
             <h3 className="text-base font-semibold">What is your hiring requirement?</h3>
-            <p className="text-xs text-muted-foreground max-w-md">
+            <p className="text-xs text-muted-foreground">
               Tell the AI what role you&apos;re looking for, paste a description, or upload a document to get started.
             </p>
           </div>
