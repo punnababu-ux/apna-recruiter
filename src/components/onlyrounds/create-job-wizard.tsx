@@ -744,6 +744,14 @@ export function CreateJobWizard() {
   )
 }
 
+const PLACEHOLDERS = [
+  "e.g. 'Senior React Developer with 3+ years experience, remotely from India' or paste description...",
+  "e.g. 'Customer Support Associate (English & Hindi speaking)' or paste description...",
+  "e.g. 'Field Sales Executive with own bike in Bengaluru' or paste description...",
+  "e.g. 'Manual Tester with experience in UI and API testing' or paste description...",
+  "e.g. 'Product Manager to own roadmap and ship features' or paste description...",
+]
+
 function DescriptionStep({
   form,
   update,
@@ -759,6 +767,40 @@ function DescriptionStep({
   const [generating, setGenerating] = React.useState(false)
   const [processing, setProcessing] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
+
+  const [displayedPlaceholder, setDisplayedPlaceholder] = React.useState("")
+  const [placeholderIndex, setPlaceholderIndex] = React.useState(0)
+
+  React.useEffect(() => {
+    if (generating || processing || promptVal.trim() !== "") {
+      setDisplayedPlaceholder("")
+      return
+    }
+
+    let charIdx = 0
+    let currentText = ""
+    const fullText = PLACEHOLDERS[placeholderIndex]
+    
+    const typingInterval = setInterval(() => {
+      if (charIdx < fullText.length) {
+        currentText += fullText[charIdx]
+        setDisplayedPlaceholder(currentText)
+        charIdx++
+      } else {
+        clearInterval(typingInterval)
+        
+        const delayTimeout = setTimeout(() => {
+          setPlaceholderIndex((prev) => (prev + 1) % PLACEHOLDERS.length)
+        }, 4000)
+        
+        return () => clearTimeout(delayTimeout)
+      }
+    }, 35)
+
+    return () => {
+      clearInterval(typingInterval)
+    }
+  }, [placeholderIndex, generating, processing, promptVal])
 
   const hasResults = form.title.trim().length > 0 && form.jd.trim().length > 0
 
@@ -1022,7 +1064,7 @@ function DescriptionStep({
             <Textarea
               value={promptVal}
               onChange={(e) => setPromptVal(e.target.value)}
-              placeholder={generating || processing ? "" : "e.g. 'Senior React Developer with 3+ years experience, remotely from India' or paste description..."}
+              placeholder={generating || processing ? "" : displayedPlaceholder}
               className="w-full min-h-32 resize-none border-0 bg-transparent p-4 pb-14 text-sm focus-visible:ring-0 focus-visible:outline-hidden"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
