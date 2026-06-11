@@ -173,6 +173,7 @@ export function CreateJobWizard() {
   } = useCriteriaGeneration(formRef as React.RefObject<FormShape>, setForm)
 
   const [filledFromJd, setFilledFromJd] = useState(false)
+  const hasResults = form.title.trim().length > 0 && form.jd.trim().length > 0
   const [showErrors, setShowErrors] = useState(false)
   const [extracting, setExtracting] = useState(false)
   // Step 2 single-open accordion — lifted here so the sticky footer can
@@ -582,8 +583,14 @@ export function CreateJobWizard() {
       </div>
 
       {/* Scrollable body — between sticky top and sticky bottom */}
-      <div className="flex-1 px-6 py-6 pb-24">
-        <section className="mx-auto flex w-full max-w-5xl min-w-0 flex-col gap-4">
+      <div className={cn(
+        "flex-1 px-6 py-6 pb-24 flex flex-col",
+        activeId === "description" && !hasResults ? "justify-center" : ""
+      )}>
+        <section className={cn(
+          "mx-auto flex w-full max-w-5xl min-w-0 flex-col gap-4",
+          activeId === "description" && !hasResults ? "flex-1 justify-center" : ""
+        )}>
           {activeId === "details" ? (
             <>
               {filledFromJd ? (
@@ -1003,7 +1010,7 @@ function DescriptionStep({
         </div>
       ) : (
         /* Initial State: Unified AI Command Bar Card */
-        <div className="rounded-lg border border-border bg-card p-6 shadow-sm max-w-2xl mx-auto w-full animate-in fade-in zoom-in-95 duration-200">
+        <div className="rounded-lg border border-border bg-card p-6 shadow-sm w-full animate-in fade-in zoom-in-95 duration-200">
           <div className="flex flex-col items-center text-center gap-2 mb-6">
             <div className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary">
               <Sparkles className="size-5" />
