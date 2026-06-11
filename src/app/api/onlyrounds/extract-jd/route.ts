@@ -118,7 +118,7 @@ export const ExtractionSchema = z.object({
     .array(
       z.object({
         title: z.string().describe("Title of the question section, e.g. 'English Speaking', 'Technical Troubleshooting'."),
-        target: z.enum(["both", "experienced", "freshers"]).describe("Audience target for this section."),
+        target: z.enum(["experienced", "freshers"]).describe("Audience target for this section."),
       })
     )
     .optional()
@@ -211,24 +211,24 @@ function buildDummyResponse(title: string, jd: string): ExtractionResult {
 
   // Suggested presets based on job category
   const suggestedPresets: ExtractionResult["suggestedPresets"] = [
-    { title: "English Speaking", target: "both" },
+    { title: "English Speaking", target: "freshers" },
   ]
   if (text.includes("sales") || text.includes("bd") || text.includes("business development")) {
     suggestedPresets.push(
-      { title: "Field Sales Capability", target: "both" },
-      { title: "Customer Interaction", target: "both" },
+      { title: "Field Sales Capability", target: "experienced" },
+      { title: "Customer Interaction", target: "freshers" },
       { title: "Negotiation", target: "experienced" }
     )
   } else if (text.includes("tech") || text.includes("developer") || text.includes("engineer") || text.includes("software")) {
     suggestedPresets.push(
       { title: "Technical Skills", target: "experienced" },
-      { title: "Coding & Logic", target: "both" },
+      { title: "Coding & Logic", target: "experienced" },
       { title: "System Troubleshooting", target: "experienced" }
     )
   } else if (text.includes("support") || text.includes("customer service") || text.includes("helpdesk")) {
     suggestedPresets.push(
-      { title: "Customer Empathy", target: "both" },
-      { title: "Problem Resolution", target: "both" },
+      { title: "Customer Empathy", target: "freshers" },
+      { title: "Problem Resolution", target: "experienced" },
       { title: "Escalation Handling", target: "experienced" }
     )
   } else {

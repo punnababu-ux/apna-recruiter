@@ -76,7 +76,7 @@ export type QuestionSection = {
   id: string
   title: string
   /** Who this section is shown to during the screening flow. */
-  target: "freshers" | "experienced" | "both"
+  target: "freshers" | "experienced"
   /** How many questions from this section each candidate gets */
   questionsPerCandidate: number
   /** Whether to shuffle the question order per candidate */
@@ -86,7 +86,7 @@ export type QuestionSection = {
 
 export type QuestionSectionPreset = {
   title: string
-  target: "freshers" | "experienced" | "both"
+  target: "freshers" | "experienced"
 }
 
 export type JobDetailsForm = {

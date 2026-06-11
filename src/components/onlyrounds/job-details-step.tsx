@@ -660,8 +660,8 @@ function Section({
 // the hint is ignored and the audience is forced to match the job-level
 // setting.
 const QUESTION_SECTION_PRESETS: QuestionSectionPreset[] = [
-  { title: "English Speaking", target: "both" },
-  { title: "Field Sales Capability", target: "both" },
+  { title: "English Speaking", target: "freshers" },
+  { title: "Field Sales Capability", target: "experienced" },
   { title: "Technical Skills", target: "experienced" },
   { title: "Freshers", target: "freshers" },
   { title: "Experienced", target: "experienced" },
@@ -700,7 +700,7 @@ function QuestionSectionsEditor({
   ): QuestionSection["target"] => {
     if (experienceType === "experienced") return "experienced"
     if (experienceType === "freshers") return "freshers"
-    return presetTarget ?? "both"
+    return presetTarget ?? "experienced"
   }
 
   const addSection = (
@@ -958,7 +958,6 @@ function QuestionSectionItem({
 
 
   const TARGET_LABELS: Record<QuestionSection["target"], string> = {
-    both: "Both",
     freshers: "Freshers only",
     experienced: "Experienced only",
   }
@@ -1134,7 +1133,6 @@ function QuestionSectionItem({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="both">Both</SelectItem>
                     <SelectItem value="freshers">Freshers only</SelectItem>
                     <SelectItem value="experienced">
                       Experienced only
