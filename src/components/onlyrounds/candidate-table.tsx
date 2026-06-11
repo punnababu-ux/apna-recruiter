@@ -42,7 +42,7 @@ const DEFAULT_WIDTHS: ColumnWidths = {
   phone: 180,
   resume: 160,
   state: 160,
-  actions: 280,
+  actions: 360,
 }
 
 export function CandidateTable({
@@ -222,7 +222,7 @@ export function CandidateTable({
                 <TableCell className="truncate">{scoreChip}</TableCell>
 
                 {/* Actions */}
-                <TableCell className="pr-4 truncate">
+                <TableCell className="pr-4">
                   {c.stage !== "selected" ? (
                     <div
                       className="flex items-center justify-end gap-1"
