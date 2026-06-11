@@ -843,8 +843,7 @@ function ScreeningEditor({
 
           {cefrLockedElsewhere ? (
             <p className="rounded-md border border-dashed border-border bg-muted/30 p-3 text-xs text-muted-foreground">
-              The CEFR language assessment is enabled on another task. It can be
-              used once per pipeline.
+              CEFR language proficiency assessment can only be enabled in one task.
             </p>
           ) : (
             <CefrAddon config={config} onChange={onChange} />

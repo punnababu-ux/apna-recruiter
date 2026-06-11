@@ -503,6 +503,16 @@ export function CreateJobWizard() {
         })
         return
       }
+
+      const cefrTasksCount = form.rounds.tasks.filter((t) => t.screening.cefrEnabled).length
+      if (cefrTasksCount > 1) {
+        setShowRoundErrors(true)
+        toast.error("Multiple CEFR language assessments enabled", {
+          description: "CEFR language proficiency assessment can only be enabled in one task.",
+        })
+        return
+      }
+
       setShowRoundErrors(false)
       if (needsCriteriaGeneration) {
         await generateAllCriteria()
@@ -1101,7 +1111,7 @@ function DescriptionStep({
               <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-md bg-background z-10">
                 <Skeleton variant="ai" className="absolute inset-0 rounded-none" aria-hidden="true" />
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium shadow-sm">
+                  <div className="flex items-center gap-2 text-sm font-medium text-foreground">
                     <Sparkles className="size-4 animate-pulse text-primary" />
                     <span>
                       {processing ? "Processing document…" : "Writing with AI…"}
