@@ -1015,10 +1015,7 @@ function DescriptionStep({
             <div className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary">
               <Sparkles className="size-5" />
             </div>
-            <h3 className="text-base font-semibold">What is your hiring requirement?</h3>
-            <p className="text-xs text-muted-foreground">
-              Tell the AI what role you&apos;re looking for, paste a description, or upload a document to get started.
-            </p>
+            <h3 className="text-lg font-semibold">What is your hiring requirement?</h3>
           </div>
 
           <div className="relative rounded-lg border border-border bg-background shadow-xs focus-within:ring-2 focus-within:ring-ring focus-within:border-transparent transition-all">
