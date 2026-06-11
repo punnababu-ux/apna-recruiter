@@ -23,6 +23,7 @@ import {
   X,
   Paperclip,
   RotateCcw,
+  ArrowRight,
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import * as React from "react"
@@ -1157,13 +1158,13 @@ function DescriptionStep({
 
                 <Button
                   type="button"
-                  size="sm"
+                  size="icon-sm"
                   disabled={(!promptVal.trim() && !attachedFile) || generating || processing}
                   onClick={() => handleGenerate()}
-                  className="gap-1.5 cursor-pointer font-medium"
+                  title="Generate JD"
+                  className="cursor-pointer"
                 >
-                  <Sparkles className="size-3.5" />
-                  Generate JD
+                  <ArrowRight className="size-4" />
                 </Button>
               </div>
             ) : null}
