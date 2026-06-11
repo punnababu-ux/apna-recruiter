@@ -428,10 +428,10 @@
 
 @keyframes ai-sparkle-breathe {
   0%, 100% {
-    transform: rotate(0deg) scale(0.95);
+    transform: scale(0.92);
   }
   50% {
-    transform: rotate(180deg) scale(1.08);
+    transform: scale(1.08);
   }
 }
 
@@ -441,6 +441,28 @@
 
 @utility animate-ai-sparkle-breathe {
   animation: ai-sparkle-breathe 6s ease-in-out infinite;
+}
+
+@utility animate-ai-container-glow-shimmer {
+  background-image: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-apna-green-100) 70%, transparent),
+    color-mix(in srgb, var(--color-apna-gold-200) 70%, transparent),
+    color-mix(in srgb, var(--color-apna-green-200) 70%, transparent),
+    color-mix(in srgb, var(--color-apna-green-100) 70%, transparent)
+  );
+  background-size: 200% 100%;
+  animation: ai-shimmer 2.4s ease-in-out infinite, ai-glow-pulse 4s ease-in-out infinite;
+}
+
+.dark .animate-ai-container-glow-shimmer {
+  background-image: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-apna-green-900) 70%, transparent),
+    color-mix(in srgb, var(--color-apna-gold-800) 70%, transparent),
+    color-mix(in srgb, var(--color-apna-green-800) 70%, transparent),
+    color-mix(in srgb, var(--color-apna-green-900) 70%, transparent)
+  );
 }
 
 /* ----------------------------------------------------------------------------
