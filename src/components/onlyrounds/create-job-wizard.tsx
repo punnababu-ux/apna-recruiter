@@ -972,7 +972,7 @@ function DescriptionStep({
                   disabled={generating || !form.jd.trim()}
                   className="h-7 text-xs gap-1 cursor-pointer"
                 >
-                  <Sparkles className="size-3 text-primary" />
+                  {!generating && <Sparkles className="size-3 text-primary" />}
                   Polish with AI
                 </Button>
               </div>
