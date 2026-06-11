@@ -71,7 +71,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Skeleton } from "@/components/ui/skeleton"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import {
@@ -1477,9 +1476,9 @@ function TaskCriteriaSection({
           <span className="text-sm font-semibold animate-pulse">Evaluation criteria</span>
         </div>
         <div className="flex flex-col gap-2 py-2">
-          <div className="h-9 w-full rounded-md bg-muted animate-pulse" />
-          <div className="h-9 w-full rounded-md bg-muted animate-pulse" />
-          <div className="h-9 w-3/4 rounded-md bg-muted animate-pulse" />
+          <div className="h-9 w-full rounded-md animate-ai-shimmer" />
+          <div className="h-9 w-full rounded-md animate-ai-shimmer" />
+          <div className="h-9 w-3/4 rounded-md animate-ai-shimmer" />
         </div>
       </div>
     )
@@ -1646,12 +1645,12 @@ function TaskBodySkeleton() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-1.5">
-        <Skeleton className="h-4 w-28" />
-        <Skeleton className="h-9 w-48" />
+        <div className="h-4 w-28 rounded-md animate-ai-shimmer" />
+        <div className="h-9 w-48 rounded-md animate-ai-shimmer" />
       </div>
       <div className="flex flex-col gap-1.5">
-        <Skeleton className="h-4 w-24" />
-        <Skeleton className="h-20 w-full" />
+        <div className="h-4 w-24 rounded-md animate-ai-shimmer" />
+        <div className="h-20 w-full rounded-md animate-ai-shimmer" />
       </div>
     </div>
   )

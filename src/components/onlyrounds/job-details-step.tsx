@@ -35,6 +35,7 @@ import {
   MoreVertical,
   Pencil,
   Plus,
+  Sparkles,
   StickyNote,
   Trash2,
   Upload,
@@ -254,6 +255,8 @@ export function JobDetailsStep({
   showErrors = false,
   openSectionId,
   onSectionChange,
+  jobTitle = "",
+  jobJd = "",
 }: {
   form: JobDetailsForm
   update: <K extends keyof JobDetailsForm>(
@@ -265,6 +268,8 @@ export function JobDetailsStep({
    *  wizard so its footer can drive section navigation. */
   openSectionId: SectionId | null
   onSectionChange: (id: SectionId | null) => void
+  jobTitle?: string
+  jobJd?: string
 }) {
   const showExperiencedPersona =
     form.experienceType === "any" || form.experienceType === "experienced"
@@ -518,6 +523,8 @@ export function JobDetailsStep({
           onChange={(next) => update("questionSections", next)}
           experienceType={form.experienceType}
           suggestedPresets={form.suggestedPresets}
+          jobTitle={jobTitle}
+          jobJd={jobJd}
         />
       </Section>
 
@@ -664,11 +671,15 @@ function QuestionSectionsEditor({
   onChange,
   experienceType,
   suggestedPresets,
+  jobTitle = "",
+  jobJd = "",
 }: {
   sections: QuestionSection[]
   onChange: (next: QuestionSection[]) => void
   experienceType: ExperienceRequirement
   suggestedPresets?: QuestionSectionPreset[]
+  jobTitle?: string
+  jobJd?: string
 }) {
   const [showAddSection, setShowAddSection] = React.useState(false)
   const [addingSectionName, setAddingSectionName] = React.useState("")
@@ -733,6 +744,27 @@ function QuestionSectionsEditor({
     setExpandedSectionId((curr) => (curr === id ? null : id))
   }
 
+  const downloadSampleCsv = () => {
+    const rows = [
+      ["Question text", "Expected response / ideal answer outline"],
+      [
+        "How many years of experience do you have with React?",
+        "Must mention 2+ years of production experience and key projects.",
+      ],
+      [
+        "Do you have your own two-wheeler?",
+        "Yes, I have a bike.",
+      ],
+    ]
+    const blob = new Blob([rows.join("\n")], { type: "text/csv" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = "sample-questions.csv"
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   const presetsToUse = suggestedPresets && suggestedPresets.length > 0
     ? suggestedPresets
     : QUESTION_SECTION_PRESETS
@@ -755,6 +787,8 @@ function QuestionSectionsEditor({
               experienceType={experienceType}
               isOpen={expandedSectionId === section.id}
               onToggle={() => toggleSection(section.id)}
+              jobTitle={jobTitle}
+              jobJd={jobJd}
             />
           ))}
         </div>
@@ -776,6 +810,14 @@ function QuestionSectionsEditor({
             <Plus className="size-3.5" />
             Add section
           </Button>
+          <button
+            type="button"
+            onClick={downloadSampleCsv}
+            className="inline-flex items-center gap-1 text-xs font-medium text-primary underline-offset-2 hover:underline mt-1"
+          >
+            <Download className="size-3" />
+            Sample CSV
+          </button>
         </div>
       ) : null}
 
@@ -802,11 +844,11 @@ function QuestionSectionsEditor({
                   setAddingSectionName("")
                 }
               }}
-              className="flex-1"
+              className="flex-1 bg-background"
             />
             <Button
               type="button"
-              size="sm"
+              size="lg"
               onClick={() => addSection(addingSectionName)}
               disabled={!addingSectionName.trim()}
             >
@@ -814,8 +856,8 @@ function QuestionSectionsEditor({
             </Button>
             <Button
               type="button"
-              variant="ghost"
-              size="sm"
+              variant="outline"
+              size="lg"
               onClick={() => {
                 setShowAddSection(false)
                 setAddingSectionName("")
@@ -826,7 +868,10 @@ function QuestionSectionsEditor({
           </div>
           {unusedPresets.length > 0 ? (
             <div className="flex flex-wrap items-center gap-1.5 pt-1">
-              <span className="text-xs text-muted-foreground">Quick add:</span>
+              <span className="text-xs text-muted-foreground flex items-center gap-1">
+                <Sparkles className="size-3 text-primary" />
+                Suggestions:
+              </span>
               {unusedPresets.map((preset) => (
                 <button
                   key={preset.title}
@@ -845,7 +890,16 @@ function QuestionSectionsEditor({
       {/* Bottom-right Add section CTA — only when at least one section
           exists and the add form is not already open. */}
       {sections.length > 0 && !showAddSection ? (
-        <div className="flex justify-end">
+        <div className="flex items-center justify-end gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={downloadSampleCsv}
+          >
+            <Download className="size-3.5" />
+            Sample CSV
+          </Button>
           <Button
             type="button"
             variant="outline"
@@ -868,6 +922,8 @@ function QuestionSectionItem({
   experienceType,
   isOpen,
   onToggle,
+  jobTitle = "",
+  jobJd = "",
 }: {
   section: QuestionSection
   onUpdate: (patch: Partial<QuestionSection>) => void
@@ -877,6 +933,8 @@ function QuestionSectionItem({
    *  open at a time. Lifted to QuestionSectionsEditor. */
   isOpen: boolean
   onToggle: () => void
+  jobTitle?: string
+  jobJd?: string
 }) {
   const [editingTitle, setEditingTitle] = React.useState(false)
   const [titleDraft, setTitleDraft] = React.useState(section.title)
@@ -892,6 +950,8 @@ function QuestionSectionItem({
     else setTitleDraft(section.title)
     setEditingTitle(false)
   }
+
+
 
   const TARGET_LABELS: Record<QuestionSection["target"], string> = {
     both: "Both",
@@ -1001,36 +1061,49 @@ function QuestionSectionItem({
             <Check className="size-3.5" />
           </Button>
         ) : (
-          // Idle: a single three-dot menu with Rename + Delete.
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon-xs"
-                  aria-label="Section actions"
+          // Idle: Randomize questions switch + three-dot menu.
+          <div className="flex items-center gap-3 shrink-0">
+            <label
+              htmlFor={`rand-${section.id}`}
+              className="flex cursor-pointer items-center gap-1.5 text-xs text-muted-foreground select-none"
+            >
+              <Switch
+                id={`rand-${section.id}`}
+                checked={section.randomize}
+                onCheckedChange={(checked) => onUpdate({ randomize: checked })}
+              />
+              Randomize questions
+            </label>
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-xs"
+                    aria-label="Section actions"
+                  >
+                    <MoreVertical className="size-3.5" />
+                  </Button>
+                }
+              />
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  onClick={() => {
+                    setEditingTitle(true)
+                    openIfNeeded()
+                  }}
                 >
-                  <MoreVertical className="size-3.5" />
-                </Button>
-              }
-            />
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                onClick={() => {
-                  setEditingTitle(true)
-                  openIfNeeded()
-                }}
-              >
-                <Pencil className="size-3" />
-                Rename
-              </DropdownMenuItem>
-              <DropdownMenuItem variant="destructive" onClick={onRemove}>
-                <Trash2 className="size-3" />
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                  <Pencil className="size-3" />
+                  Rename
+                </DropdownMenuItem>
+                <DropdownMenuItem variant="destructive" onClick={onRemove}>
+                  <Trash2 className="size-3" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         )}
       </div>
 
@@ -1038,17 +1111,22 @@ function QuestionSectionItem({
       {isOpen ? (
         <div className="border-t border-border">
           {/* settings row */}
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 px-3 py-2.5">
-            {showTargetSelect ? (
-              <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                For
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 px-3 py-3">
+            <UIField>
+              <FieldLabel htmlFor={`target-${section.id}`} icon={GraduationCap}>
+                Target audience
+              </FieldLabel>
+              {showTargetSelect ? (
                 <Select
                   value={section.target}
                   onValueChange={(v) =>
                     onUpdate({ target: v as QuestionSection["target"] })
                   }
                 >
-                  <SelectTrigger className="h-7 w-auto gap-1 border border-border bg-background px-2 text-xs font-medium text-foreground shadow-none">
+                  <SelectTrigger
+                    id={`target-${section.id}`}
+                    className="w-full bg-background"
+                  >
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -1059,24 +1137,20 @@ function QuestionSectionItem({
                     </SelectItem>
                   </SelectContent>
                 </Select>
-              </label>
-            ) : (
-              <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                For
-                {/* Mirrors the SelectTrigger's visual weight so the single-
-                    audience read-only badge sits at the same height as the
-                    other controls (h-7, same border/bg/padding). */}
-                <span className="inline-flex h-7 items-center rounded-md border border-border bg-background px-2 text-xs font-medium text-foreground">
-                  {TARGET_LABELS[section.target]}
-                </span>
-              </span>
-            )}
+              ) : (
+                <Input
+                  id={`target-${section.id}`}
+                  readOnly
+                  value={TARGET_LABELS[section.target]}
+                  className="w-full bg-muted text-muted-foreground cursor-not-allowed"
+                />
+              )}
+            </UIField>
 
-            <label
-              htmlFor={`qpc-${section.id}`}
-              className="flex items-center gap-1.5 text-xs text-muted-foreground"
-            >
-              Per candidate
+            <UIField>
+              <FieldLabel htmlFor={`qpc-${section.id}`} icon={MessageCircleQuestion}>
+                Questions per candidate
+              </FieldLabel>
               <Input
                 id={`qpc-${section.id}`}
                 type="number"
@@ -1091,31 +1165,21 @@ function QuestionSectionItem({
                     ),
                   })
                 }
-                className="h-7 w-16 text-center text-xs"
+                className="w-full bg-background"
               />
-            </label>
-
-            <label
-              htmlFor={`rand-${section.id}`}
-              className="flex cursor-pointer items-center gap-1.5 text-xs text-muted-foreground"
-            >
-              <Switch
-                id={`rand-${section.id}`}
-                checked={section.randomize}
-                onCheckedChange={(checked) =>
-                  onUpdate({ randomize: checked === true })
-                }
-              />
-              Randomize questions
-            </label>
+            </UIField>
           </div>
 
           {/* Q&A list */}
           <div className="px-3 pb-3 pt-0">
             <QuestionSectionBody
               sectionId={section.id}
+              sectionTitle={section.title}
+              sectionTarget={section.target}
               items={section.items}
               onChange={(items) => onUpdate({ items })}
+              jobTitle={jobTitle}
+              jobJd={jobJd}
             />
           </div>
         </div>
@@ -1126,12 +1190,20 @@ function QuestionSectionItem({
 
 function QuestionSectionBody({
   sectionId,
+  sectionTitle,
+  sectionTarget,
   items,
   onChange,
+  jobTitle = "",
+  jobJd = "",
 }: {
   sectionId: string
+  sectionTitle: string
+  sectionTarget: QuestionSection["target"]
   items: QAItem[]
   onChange: (next: QAItem[]) => void
+  jobTitle?: string
+  jobJd?: string
 }) {
   const fileRef = React.useRef<HTMLInputElement>(null)
   const [csvError, setCsvError] = React.useState<string | null>(null)
@@ -1142,6 +1214,52 @@ function QuestionSectionBody({
   const nextQaId = useIdGen(`qs-qa-${sectionId}`)
   const nextCsvId = useIdGen(`qs-csv-${sectionId}`)
   const makeDraft = (): Draft => ({ key: nextDraftId(), question: "", answer: "" })
+
+  const [suggestions, setSuggestions] = React.useState<{ question: string; answer: string }[] | null>(null)
+  const [loadingSuggestions, setLoadingSuggestions] = React.useState(false)
+  const [suggestError, setSuggestError] = React.useState<string | null>(null)
+
+  const visibleSuggestions = React.useMemo(() => {
+    if (!suggestions) return []
+    return suggestions.filter(
+      (s) =>
+        !items.some(
+          (item) =>
+            item.question.toLowerCase().trim() ===
+            s.question.toLowerCase().trim(),
+        ),
+    )
+  }, [suggestions, items])
+
+  const fetchSuggestions = async () => {
+    setLoadingSuggestions(true)
+    setSuggestError(null)
+    try {
+      const res = await fetch("/api/onlyrounds/generate-questions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          jobTitle,
+          jd: jobJd,
+          sectionTitle,
+          targetAudience: sectionTarget,
+          existingQuestions: items.map((it) => it.question),
+        }),
+      })
+      if (!res.ok) throw new Error("Failed to fetch suggested questions.")
+      const data = await res.json()
+      if (data.error) {
+        setSuggestError(data.error)
+      } else {
+        setSuggestions(data.questions || [])
+      }
+    } catch (err) {
+      console.error("[fetchSuggestions]", err)
+      setSuggestError("Something went wrong while generating suggestions.")
+    } finally {
+      setLoadingSuggestions(false)
+    }
+  }
 
   const atLimit = items.length >= MAX_QA
   const remaining = Math.max(0, MAX_QA - items.length - drafts.length)
@@ -1243,20 +1361,7 @@ function QuestionSectionBody({
     onChange([...items, ...parsed].slice(0, MAX_QA))
   }
 
-  const downloadSample = () => {
-    const rows = [
-      "question,answer",
-      `"What are the working hours?","Mon–Sat, 9am–6pm with rotational weekly offs."`,
-      `"Do you have your own two-wheeler?","Yes, I have a bike."`,
-    ]
-    const blob = new Blob([rows.join("\n")], { type: "text/csv" })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = `${sectionId}-questions.csv`
-    a.click()
-    URL.revokeObjectURL(url)
-  }
+
 
   return (
     <div className="flex flex-col gap-3">
@@ -1307,9 +1412,11 @@ function QuestionSectionBody({
           ))}
         </ul>
       ) : (
-        <p className="text-xs text-muted-foreground">
-          No questions in this section yet.
-        </p>
+        <div className="flex flex-col gap-3 items-start p-4 rounded-md border border-dashed border-border bg-muted/10">
+          <p className="text-xs text-muted-foreground">
+            No questions in this section yet. Add a question manually, upload a CSV, or let AI suggest questions tailored to your job description.
+          </p>
+        </div>
       )}
 
       <div className="flex flex-wrap items-center gap-2">
@@ -1333,6 +1440,17 @@ function QuestionSectionBody({
           <Upload className="size-3.5" />
           Upload CSV
         </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          loading={loadingSuggestions}
+          onClick={fetchSuggestions}
+          disabled={atLimit}
+        >
+          {!loadingSuggestions && <Sparkles className="size-3.5 text-primary" />}
+          Suggest questions
+        </Button>
         <input
           ref={fileRef}
           type="file"
@@ -1344,14 +1462,6 @@ function QuestionSectionBody({
             e.currentTarget.value = ""
           }}
         />
-        <button
-          type="button"
-          onClick={downloadSample}
-          className="inline-flex items-center gap-1 text-xs font-medium text-primary underline-offset-2 hover:underline"
-        >
-          <Download className="size-3" />
-          Sample CSV
-        </button>
         <span
           className={cn(
             "ml-auto text-xs text-muted-foreground",
@@ -1364,6 +1474,74 @@ function QuestionSectionBody({
 
       {csvError ? (
         <p className="text-xs text-destructive">{csvError}</p>
+      ) : null}
+
+      {suggestError ? (
+        <p className="text-xs text-destructive">{suggestError}</p>
+      ) : null}
+
+      {/* Skeletons while loading */}
+      {loadingSuggestions ? (
+        <div className="flex flex-col gap-2 mt-2">
+          <div className="h-16 w-full rounded-md animate-ai-shimmer" />
+          <div className="h-16 w-full rounded-md animate-ai-shimmer" />
+          <div className="h-16 w-full rounded-md animate-ai-shimmer" />
+        </div>
+      ) : null}
+
+      {/* Suggestions block */}
+      {!loadingSuggestions && visibleSuggestions.length > 0 ? (
+        <div className="mt-2 rounded-md border border-border bg-muted/30 p-3">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-semibold text-foreground flex items-center gap-1">
+              <Sparkles className="size-3 text-primary" />
+              AI Suggested Questions
+            </span>
+            <button
+              type="button"
+              onClick={() => setSuggestions(null)}
+              className="text-xs text-muted-foreground hover:text-foreground"
+            >
+              Hide
+            </button>
+          </div>
+          <div className="flex flex-col gap-2">
+            {visibleSuggestions.map((s, idx) => {
+              return (
+                <div
+                  key={idx}
+                  className="flex items-start justify-between gap-3 rounded border border-border bg-card p-2 text-xs"
+                >
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-foreground">{s.question}</p>
+                    <p className="mt-1 text-muted-foreground italic">
+                      Expected response: {s.answer}
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon-xs"
+                    disabled={atLimit}
+                    onClick={() => {
+                      onChange([
+                        ...items,
+                        {
+                          id: nextQaId(),
+                          question: s.question,
+                          answer: s.answer,
+                        },
+                      ])
+                    }}
+                    aria-label="Add suggestion"
+                  >
+                    <Plus className="size-3" />
+                  </Button>
+                </div>
+              )
+            })}
+          </div>
+        </div>
       ) : null}
 
       <Dialog open={editorOpen} onOpenChange={setEditorOpen}>

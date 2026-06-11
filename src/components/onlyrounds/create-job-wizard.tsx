@@ -606,6 +606,8 @@ export function CreateJobWizard() {
                 showErrors={showErrors}
                 openSectionId={step2OpenSection}
                 onSectionChange={setStep2OpenSection}
+                jobTitle={form.title}
+                jobJd={form.jd}
               />
             </>
           ) : activeId === "rounds" ? (
@@ -703,6 +705,14 @@ export function CreateJobWizard() {
         onOpenChange={setExitDialogOpen}
       >
         <AlertDialogContent>
+          <AlertDialogCancel
+            variant="ghost"
+            size="icon-sm"
+            className="absolute top-2 right-2"
+            aria-label="Close"
+          >
+            <X className="size-4" />
+          </AlertDialogCancel>
           <AlertDialogHeader>
             <AlertDialogTitle>Leave without saving?</AlertDialogTitle>
             <AlertDialogDescription>
@@ -711,9 +721,8 @@ export function CreateJobWizard() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              variant="ghost"
+              variant="outline"
               onClick={handleDiscardAndExit}
             >
               Exit without saving
