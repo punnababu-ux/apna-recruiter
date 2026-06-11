@@ -620,25 +620,22 @@ export function CreateJobWizard() {
               generatingTasks={generatingTasks}
               showErrors={showRoundErrors}
             />
-          ) : (
+          ) : activeId === "description" ? (
+            <DescriptionStep
+              form={form}
+              update={update}
+              showErrors={showErrors}
+            />
+          ) : activeId === "review" ? (
             <div className="rounded-lg border border-border bg-card p-6 shadow-card">
-              {activeId === "description" ? (
-                <DescriptionStep
-                  form={form}
-                  update={update}
-                  showErrors={showErrors}
-                />
-              ) : null}
-              {activeId === "review" ? (
-                <ReviewStep
-                  title={form.title}
-                  jd={form.jd}
-                  details={form.details}
-                  rounds={form.rounds}
-                />
-              ) : null}
+              <ReviewStep
+                title={form.title}
+                jd={form.jd}
+                details={form.details}
+                rounds={form.rounds}
+              />
             </div>
-          )}
+          ) : null}
         </section>
       </div>
 
@@ -939,7 +936,7 @@ function DescriptionStep({
           </div>
 
           {/* Right Column: Editable Fields */}
-          <div className="md:col-span-2 flex flex-col gap-4">
+          <div className="md:col-span-2 rounded-lg border border-border bg-card p-6 shadow-sm flex flex-col gap-4">
             <UIField>
               <FieldLabel htmlFor="title" icon={Briefcase}>Job title</FieldLabel>
               <Input
