@@ -892,7 +892,7 @@ function QuestionSectionsEditor({
       {/* Bottom-right Add section CTA — only when at least one section
           exists and the add form is not already open. */}
       {sections.length > 0 && !showAddSection ? (
-        <div className="flex items-center justify-end gap-2">
+        <div className="flex items-center justify-between">
           <Button
             type="button"
             variant="link"
