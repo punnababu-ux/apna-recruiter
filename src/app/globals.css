@@ -433,6 +433,11 @@
     @apply antialiased;
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
+
+    /* Scale layout by 1.1x on desktop screens to match 110% zoom at 1080p */
+    @media (min-width: 1024px) {
+      font-size: 110%;
+    }
   }
 
   body {
