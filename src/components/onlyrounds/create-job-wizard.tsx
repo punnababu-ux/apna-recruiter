@@ -1080,13 +1080,13 @@ function DescriptionStep({
             <h3 className="text-lg font-semibold">What is your hiring requirement?</h3>
           </div>
 
-          <div className="relative rounded-lg border border-border bg-background shadow-xs focus-within:ring-2 focus-within:ring-ring focus-within:border-transparent transition-all">
+          <div className="relative rounded-lg border border-border bg-background shadow-xs focus-within:ring-2 focus-within:ring-ring focus-within:border-transparent transition-all flex flex-col">
             {/* token-lint-ignore: Need fixed field-sizing and fixed height to prevent prompt input card auto-expansion */}
             <Textarea
               value={promptVal}
               onChange={(e) => setPromptVal(e.target.value)}
               placeholder={generating || processing ? "" : displayedPlaceholder}
-              className="w-full h-36 max-h-36 [field-sizing:fixed] resize-none border-0 bg-transparent p-4 pb-14 text-sm focus-visible:ring-0 focus-visible:outline-hidden overflow-y-auto"
+              className="w-full h-28 max-h-28 [field-sizing:fixed] resize-none border-0 bg-transparent p-4 pb-2 text-sm focus-visible:ring-0 focus-visible:outline-hidden overflow-y-auto"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault()
@@ -1111,7 +1111,7 @@ function DescriptionStep({
             ) : null}
 
             {!(generating || processing) ? (
-              <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
+              <div className="flex items-center justify-center gap-4 px-4 py-3 border-t border-border/40">
                 <div className="flex items-center gap-2">
                   <Button
                     type="button"
