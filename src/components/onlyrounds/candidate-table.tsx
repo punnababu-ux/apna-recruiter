@@ -42,7 +42,7 @@ const DEFAULT_WIDTHS: ColumnWidths = {
   phone: 180,
   resume: 160,
   state: 160,
-  actions: 360,
+  actions: 240,
 }
 
 export function CandidateTable({
@@ -230,23 +230,21 @@ export function CandidateTable({
                     >
                       <Button
                         variant="outline"
-                        size="sm"
-                        className="h-7 text-xs shrink-0"
+                        size="icon-sm"
+                        className="h-7 w-7 shrink-0 text-muted-foreground hover:text-foreground"
                         onClick={() => onReTake?.(c.id)}
                         title="Re-take"
                       >
-                        <RotateCcw className="size-3" />
-                        Re-take
+                        <RotateCcw className="size-3.5" />
                       </Button>
                       <Button
                         variant="outline"
-                        size="sm"
-                        className="h-7 text-xs shrink-0"
+                        size="icon-sm"
+                        className="h-7 w-7 shrink-0 text-muted-foreground hover:text-destructive hover:border-destructive/30 hover:bg-destructive/5"
                         onClick={() => onReject?.(c.id)}
                         title="Reject"
                       >
-                        <XCircle className="size-3" />
-                        Reject
+                        <XCircle className="size-3.5" />
                       </Button>
                       <Button
                         size="sm"
