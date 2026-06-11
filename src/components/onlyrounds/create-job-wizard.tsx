@@ -767,6 +767,7 @@ function DescriptionStep({
   const [generating, setGenerating] = React.useState(false)
   const [processing, setProcessing] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
+  const [showAllPrompt, setShowAllPrompt] = React.useState(false)
 
   const [displayedPlaceholder, setDisplayedPlaceholder] = React.useState("")
   const [placeholderIndex, setPlaceholderIndex] = React.useState(0)
@@ -822,6 +823,7 @@ function DescriptionStep({
     update("jd", "")
     update("promptText", "")
     update("attachedFileName", "")
+    setShowAllPrompt(false)
   }
 
   const handleGenerate = async (seedText?: string) => {
@@ -961,9 +963,27 @@ function DescriptionStep({
                     <span className="truncate flex-1">{form.attachedFileName}</span>
                   </div>
                 ) : form.promptText ? (
-                  <p className="text-sm font-medium text-foreground italic whitespace-pre-wrap leading-relaxed">
-                    &ldquo;{form.promptText}&rdquo;
-                  </p>
+                  <div className="flex flex-col gap-1.5">
+                    <div className={cn(
+                      "text-sm font-medium text-foreground italic whitespace-pre-wrap leading-relaxed",
+                      showAllPrompt && "max-h-60 overflow-y-auto pr-1"
+                    )}>
+                      &ldquo;
+                      {form.promptText.length > 180 && !showAllPrompt
+                        ? `${form.promptText.slice(0, 180)}...`
+                        : form.promptText}
+                      &rdquo;
+                    </div>
+                    {form.promptText.length > 180 ? (
+                      <button
+                        type="button"
+                        onClick={() => setShowAllPrompt(!showAllPrompt)}
+                        className="text-xs text-primary font-semibold hover:underline self-start cursor-pointer mt-0.5"
+                      >
+                        {showAllPrompt ? "See less" : "See more"}
+                      </button>
+                    ) : null}
+                  </div>
                 ) : (
                   <p className="text-xs text-muted-foreground italic">
                     Custom details entered manually.
