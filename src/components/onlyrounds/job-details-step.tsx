@@ -77,6 +77,7 @@ import {
 } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
+import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
 import {
   CLIENTS,
@@ -1486,9 +1487,9 @@ function QuestionSectionBody({
       {/* Skeletons while loading */}
       {loadingSuggestions ? (
         <div className="flex flex-col gap-2 mt-2">
-          <div className="h-16 w-full rounded-md animate-ai-shimmer" />
-          <div className="h-16 w-full rounded-md animate-ai-shimmer" />
-          <div className="h-16 w-full rounded-md animate-ai-shimmer" />
+          <Skeleton variant="ai" className="h-16 w-full" />
+          <Skeleton variant="ai" className="h-16 w-full" />
+          <Skeleton variant="ai" className="h-16 w-full" />
         </div>
       ) : null}
 
@@ -1513,7 +1514,7 @@ function QuestionSectionBody({
               return (
                 <div
                   key={idx}
-                  className="flex items-start justify-between gap-3 rounded border border-border bg-card p-2 text-xs"
+                  className="flex items-start justify-between gap-3 rounded-md border border-border bg-card p-2 text-xs"
                 >
                   <div className="min-w-0 flex-1">
                     <p className="font-medium text-foreground">{s.question}</p>

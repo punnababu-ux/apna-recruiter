@@ -55,6 +55,7 @@ copy-paste ready. If you add a component, add it here in the same commit.
 |------------------|------------------------------------------------------------------------|--------------------------------------------------|
 | Tooltip          | `import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"` | Short hover hint. Not for interactive content.   |
 | Popover          | `import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"` | Click-open floating panel.                       |
+| DropdownMenu     | `import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"` | Popup action menu built on Base UI Menu.         |
 | Dialog           | `import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"` | Modal. Focus-trapped.                            |
 | AlertDialog      | `import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from "@/components/ui/alert-dialog"` | Confirm destructive / irreversible actions.      |
 | Sheet            | `import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter } from "@/components/ui/sheet"` | Edge-docked drawer.                              |
@@ -64,6 +65,7 @@ copy-paste ready. If you add a component, add it here in the same commit.
 | Component        | Import                                                                 | tldr                                             |
 |------------------|------------------------------------------------------------------------|--------------------------------------------------|
 | Tabs             | `import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"` | Sectioned view switcher.                         |
+| ChipTabs         | `import { ChipTabs } from "@/components/ui/chip-tabs"`                 | Segmented control / pill-shaped choice tabs.     |
 | Breadcrumb       | `import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@/components/ui/breadcrumb"` | Hierarchical location trail.                     |
 | Sidebar          | `import { Sidebar, SidebarContent, SidebarHeader, SidebarFooter, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar"` | Persistent app sidebar with collapse.            |
 

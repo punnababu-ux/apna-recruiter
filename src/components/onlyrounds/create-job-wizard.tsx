@@ -73,6 +73,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
   Tooltip,
   TooltipContent,
@@ -967,8 +968,9 @@ function JDField({
         {generating ? (
           <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-md">
             {/* Animated gradient fills the entire field */}
-            <div
-              className="absolute inset-0 animate-ai-shimmer"
+            <Skeleton
+              variant="ai"
+              className="absolute inset-0 rounded-none"
               aria-hidden="true"
             />
             {/* Centered status chip — announced to screen readers */}
