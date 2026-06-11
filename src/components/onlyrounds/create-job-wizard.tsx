@@ -1078,10 +1078,7 @@ function DescriptionStep({
               "flex size-10 items-center justify-center rounded-full text-primary transition-all duration-300 border border-primary/15 shadow-xs",
               !generating && !processing ? "animate-ai-container-glow-shimmer" : "bg-primary/10"
             )}>
-              <Sparkles className={cn(
-                "size-5 transition-all duration-300",
-                !generating && !processing && "animate-ai-sparkle-breathe"
-              )} />
+              <Sparkles className="size-5" />
             </div>
             <h3 className="text-lg font-semibold">What is your hiring requirement?</h3>
           </div>
