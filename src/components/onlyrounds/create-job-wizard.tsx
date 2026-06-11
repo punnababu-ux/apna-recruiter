@@ -980,7 +980,7 @@ function DescriptionStep({
                   readOnly={generating}
                 />
                 {generating ? (
-                  <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-md">
+                  <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-md bg-background z-10">
                     <Skeleton variant="ai" className="absolute inset-0 rounded-none" aria-hidden="true" />
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium shadow-sm">
@@ -1018,7 +1018,7 @@ function DescriptionStep({
             <Textarea
               value={promptVal}
               onChange={(e) => setPromptVal(e.target.value)}
-              placeholder="e.g. 'Senior React Developer with 3+ years experience, remotely from India' or paste description..."
+              placeholder={generating || processing ? "" : "e.g. 'Senior React Developer with 3+ years experience, remotely from India' or paste description..."}
               className="w-full min-h-32 resize-none border-0 bg-transparent p-4 pb-14 text-sm focus-visible:ring-0 focus-visible:outline-hidden"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
@@ -1030,7 +1030,7 @@ function DescriptionStep({
             />
             
             {generating || processing ? (
-              <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-md">
+              <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-md bg-background z-10">
                 <Skeleton variant="ai" className="absolute inset-0 rounded-none" aria-hidden="true" />
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium shadow-sm">
@@ -1043,61 +1043,63 @@ function DescriptionStep({
               </div>
             ) : null}
 
-            <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
-              <div className="flex items-center gap-2">
+            {!(generating || processing) ? (
+              <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-xs"
+                    onClick={() => fileRef.current?.click()}
+                    title="Attach file"
+                    disabled={generating || processing}
+                    className="text-muted-foreground hover:text-foreground cursor-pointer"
+                  >
+                    <Paperclip className="size-4" />
+                  </Button>
+                  
+                  {attachedFile ? (
+                    <span className="inline-flex items-center gap-1.5 rounded-md bg-muted px-2 py-1 text-xs text-muted-foreground border border-border max-w-48">
+                      <FileText className="size-3.5 shrink-0 text-primary" />
+                      <span className="truncate flex-1">{attachedFile.name}</span>
+                      <button
+                        type="button"
+                        onClick={() => setAttachedFile(null)}
+                        className="hover:text-destructive cursor-pointer shrink-0"
+                      >
+                        <X className="size-3" />
+                      </button>
+                    </span>
+                  ) : null}
+
+                  <input
+                    ref={fileRef}
+                    type="file"
+                    accept=".txt,.md,.pdf,.doc,.docx"
+                    className="sr-only"
+                    onChange={(e) => {
+                      const f = e.target.files?.[0]
+                      if (f) {
+                        setAttachedFile(f)
+                        handleFileUpload(f)
+                      }
+                      e.currentTarget.value = ""
+                    }}
+                  />
+                </div>
+
                 <Button
                   type="button"
-                  variant="ghost"
-                  size="icon-xs"
-                  onClick={() => fileRef.current?.click()}
-                  title="Attach file"
-                  disabled={generating || processing}
-                  className="text-muted-foreground hover:text-foreground cursor-pointer"
+                  size="sm"
+                  disabled={(!promptVal.trim() && !attachedFile) || generating || processing}
+                  onClick={() => handleGenerate()}
+                  className="gap-1.5 cursor-pointer font-medium"
                 >
-                  <Paperclip className="size-4" />
+                  <Sparkles className="size-3.5" />
+                  Generate JD
                 </Button>
-                
-                {attachedFile ? (
-                  <span className="inline-flex items-center gap-1.5 rounded-md bg-muted px-2 py-1 text-xs text-muted-foreground border border-border max-w-48">
-                    <FileText className="size-3.5 shrink-0 text-primary" />
-                    <span className="truncate flex-1">{attachedFile.name}</span>
-                    <button
-                      type="button"
-                      onClick={() => setAttachedFile(null)}
-                      className="hover:text-destructive cursor-pointer shrink-0"
-                    >
-                      <X className="size-3" />
-                    </button>
-                  </span>
-                ) : null}
-
-                <input
-                  ref={fileRef}
-                  type="file"
-                  accept=".txt,.md,.pdf,.doc,.docx"
-                  className="sr-only"
-                  onChange={(e) => {
-                    const f = e.target.files?.[0]
-                    if (f) {
-                      setAttachedFile(f)
-                      handleFileUpload(f)
-                    }
-                    e.currentTarget.value = ""
-                  }}
-                />
               </div>
-
-              <Button
-                type="button"
-                size="sm"
-                disabled={(!promptVal.trim() && !attachedFile) || generating || processing}
-                onClick={() => handleGenerate()}
-                className="gap-1.5 cursor-pointer font-medium"
-              >
-                <Sparkles className="size-3.5" />
-                Generate JD
-              </Button>
-            </div>
+            ) : null}
           </div>
 
           {error ? (
