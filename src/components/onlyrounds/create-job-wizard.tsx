@@ -20,8 +20,9 @@ import {
   FileText,
   Save,
   Sparkles,
-  Upload,
   X,
+  Paperclip,
+  RotateCcw,
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import * as React from "react"
@@ -71,7 +72,6 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
@@ -88,6 +88,8 @@ type FormShape = {
   jd: string
   details: JobDetailsForm
   rounds: InterviewRoundsForm
+  promptText?: string
+  attachedFileName?: string
 }
 
 // ── App routes ────────────────────────────────────────────────────────────
@@ -100,8 +102,6 @@ export const ROUTES = {
 
 // ── Wizard constants ──────────────────────────────────────────────────────
 
-/** Minimum JD length before "Generate" switches to "clean-up" mode. */
-const JD_CLEANUP_THRESHOLD = 50
 /** Maximum JD file size accepted by the upload flow. */
 const MAX_JD_FILE_SIZE_BYTES = 5 * 1024 * 1024
 /** Simulated parse delay for plain-text / markdown uploads. */
@@ -120,6 +120,8 @@ const emptyForm: FormShape = {
   jd: "",
   details: defaultJobDetails,
   rounds: defaultInterviewRounds,
+  promptText: "",
+  attachedFileName: "",
 }
 
 
@@ -747,70 +749,45 @@ function DescriptionStep({
   update: <K extends keyof FormShape>(key: K, value: FormShape[K]) => void
   showErrors: boolean
 }) {
-  return (
-    <div className="flex flex-col gap-4">
-      <UIField>
-        <FieldLabel htmlFor="title" icon={Briefcase}>Job title</FieldLabel>
-        <Input
-          id="title"
-          value={form.title}
-          onChange={(e) => update("title", e.target.value)}
-          placeholder="e.g. Customer Support Associate"
-          aria-invalid={showErrors && !form.title.trim() ? true : undefined}
-        />
-        {showErrors && !form.title.trim() ? (
-          <FieldError>Required</FieldError>
-        ) : (
-          <FieldDescription>Shown on the candidate landing page.</FieldDescription>
-        )}
-      </UIField>
-      <JDField
-        value={form.jd}
-        onChange={(next) => update("jd", next)}
-        title={form.title}
-        onTitleChange={(next) => update("title", next)}
-        showErrors={showErrors}
-      />
-    </div>
-  )
-}
-
-function JDField({
-  value,
-  onChange,
-  title,
-  onTitleChange,
-  showErrors,
-}: {
-  value: string
-  onChange: (next: string) => void
-  title: string
-  onTitleChange: (next: string) => void
-  showErrors: boolean
-}) {
   const fileRef = React.useRef<HTMLInputElement>(null)
+  const [promptVal, setPromptVal] = React.useState(form.promptText || "")
+  const [attachedFile, setAttachedFile] = React.useState<File | null>(null)
   const [generating, setGenerating] = React.useState(false)
   const [processing, setProcessing] = React.useState(false)
-  const [fileName, setFileName] = React.useState<string | null>(null)
   const [error, setError] = React.useState<string | null>(null)
 
-  const hasTitle = title.trim().length > 0
-  const hasJd = value.trim().length > 0
-  // "Cleanup" mode kicks in when the user has typed/pasted a meaningful
-  // chunk of JD — we still send the title if they have one, but the model
-  // is expected to polish the existing text rather than write from scratch.
-  const isCleanup = value.trim().length > JD_CLEANUP_THRESHOLD
-  const canGenerate = hasTitle || hasJd
+  const hasResults = form.title.trim().length > 0 && form.jd.trim().length > 0
 
-  const generate = async () => {
-    if (!canGenerate) return
+  const SUGGESTIONS = [
+    "React Frontend Engineer with 3+ years experience, Remote",
+    "Customer Support Associate (English & Hindi speaking)",
+    "Field Sales Executive with own bike in Bengaluru",
+  ]
+
+  const unusedSuggestions = SUGGESTIONS.filter(
+    (s) => s.toLowerCase() !== promptVal.toLowerCase(),
+  )
+
+  const handleReset = () => {
+    setError(null)
+    setPromptVal("")
+    setAttachedFile(null)
+    update("title", "")
+    update("jd", "")
+    update("promptText", "")
+    update("attachedFileName", "")
+  }
+
+  const handleGenerate = async (seedText?: string) => {
+    const textToSubmit = seedText || promptVal.trim()
+    if (!textToSubmit) return
     setError(null)
     setGenerating(true)
     try {
       const res = await fetch("/api/onlyrounds/generate-jd", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ title, jd: value }),
+        body: JSON.stringify({ jd: textToSubmit }),
       })
       if (!res.ok) {
         setError("Could not generate. Try again in a moment.")
@@ -822,24 +799,16 @@ function JDField({
         error?: string
       }
       if (!data.jobDescription) {
-        // Surface the server's specific reason (rate limit, schema error,
-        // bad key, timeout, etc.) when present. Generic nudge otherwise.
-        setError(
-          data.error ?? "Add a job title or paste a rough JD, then try again.",
-        )
+        setError(data.error ?? "Add more details, then try again.")
         return
       }
-      onChange(data.jobDescription)
-      // Always apply the AI-cleaned title. The model strips qualifiers
-      // ("with 5 years of experience", "in Bengaluru", etc.) from whatever
-      // the user typed, and infers a title in CLEANUP mode when none was
-      // provided. Fall back to the local regex if the model didn't return
-      // one and the user's title is still empty.
+      update("promptText", textToSubmit)
+      update("jd", data.jobDescription)
       if (data.title) {
-        onTitleChange(data.title)
-      } else if (!title.trim()) {
+        update("title", data.title)
+      } else {
         const derived = deriveTitleFromJd(data.jobDescription)
-        if (derived) onTitleChange(derived)
+        if (derived) update("title", derived)
       }
     } catch {
       setError("Could not reach the generator. Try again.")
@@ -848,7 +817,38 @@ function JDField({
     }
   }
 
-  const handleFile = async (file: File) => {
+  const handlePolish = async () => {
+    setError(null)
+    setGenerating(true)
+    try {
+      const res = await fetch("/api/onlyrounds/generate-jd", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ title: form.title, jd: form.jd }),
+      })
+      if (!res.ok) {
+        setError("Could not generate. Try again in a moment.")
+        return
+      }
+      const data = (await res.json()) as {
+        jobDescription?: string
+        title?: string
+        error?: string
+      }
+      if (!data.jobDescription) {
+        setError(data.error ?? "Could not refine the description.")
+        return
+      }
+      update("jd", data.jobDescription)
+      if (data.title) update("title", data.title)
+    } catch {
+      setError("Could not reach the generator. Try again.")
+    } finally {
+      setGenerating(false)
+    }
+  }
+
+  const handleFileUpload = async (file: File) => {
     setError(null)
     if (!/\.(txt|md|pdf|docx?)$/i.test(file.name)) {
       setError("Upload a .txt, .md, .pdf, .doc, or .docx file.")
@@ -860,17 +860,12 @@ function JDField({
     }
     setProcessing(true)
     try {
-      // Simulate server-side parse. For .txt/.md we can read locally;
-      // richer formats would be parsed by the backend — here we mock a
-      // realistic delay so the UI state is observable.
       let parsed = ""
       if (/\.(txt|md)$/i.test(file.name)) {
         parsed = await file.text()
         await new Promise((r) => setTimeout(r, MOCK_PARSE_DELAY_TXT_MS))
       } else {
         await new Promise((r) => setTimeout(r, MOCK_PARSE_DELAY_BINARY_MS))
-        // Mock server-side parse: use filename stem as the role so the
-        // derived title is plausible until real parsing is wired up.
         const stem = file.name
           .replace(/\.(pdf|docx?|txt|md)$/i, "")
           .replace(/[_\-]+/g, " ")
@@ -889,117 +884,249 @@ function JDField({
           `• Strong written communication\n` +
           `• Comfort working through ambiguity`
       }
-      onChange(parsed)
+      update("promptText", `Uploaded file: ${file.name}`)
+      update("attachedFileName", file.name)
+      update("jd", parsed)
       const derived = deriveTitleFromJd(parsed)
-      if (derived) onTitleChange(derived)
-      setFileName(file.name)
+      if (derived) update("title", derived)
     } finally {
       setProcessing(false)
     }
   }
 
-  const jdMissing = showErrors && !value.trim()
+  const jdMissing = showErrors && !form.jd.trim()
+  const titleMissing = showErrors && !form.title.trim()
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between gap-3">
-        <Label
-          htmlFor="jd"
-          className={cn("text-sm font-medium inline-flex items-center leading-none gap-2", jdMissing && "text-destructive")}
-        >
-          <FileText className="size-4 text-muted-foreground shrink-0" />
-          Job description
-        </Label>
-        <div className="flex items-center gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={generate}
-            disabled={!canGenerate || generating || processing}
-            loading={generating}
-            loadingText={isCleanup ? "Cleaning up with AI…" : "Writing with AI…"}
-            title={
-              !canGenerate
-                ? "Enter a job title or a few lines of description first"
-                : undefined
-            }
-          >
-            <Sparkles className="size-3.5" />
-            {isCleanup ? "Clean up with AI" : "Generate with AI"}
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => fileRef.current?.click()}
-            disabled={processing || generating}
-            loading={processing}
-            loadingText="Processing your document…"
-          >
-            <Upload className="size-3.5" />
-            {fileName ? "Replace file" : "Upload JD"}
-          </Button>
-          <input
-            ref={fileRef}
-            type="file"
-            accept=".txt,.md,.pdf,.doc,.docx"
-            className="sr-only"
-            onChange={(e) => {
-              const f = e.target.files?.[0]
-              if (f) handleFile(f)
-              e.currentTarget.value = ""
-            }}
-          />
-        </div>
-      </div>
-      {/* The JD textarea — fully covered by an animated brand-gradient
-          overlay while the AI is working. */}
-      <div className="relative">
-        <Textarea
-          id="jd"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={generating ? "" : "Paste or write the JD here — or let AI draft a starting point."}
-          rows={12}
-          aria-invalid={jdMissing ? true : undefined}
-          readOnly={generating}
-        />
-        {generating ? (
-          <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-md">
-            {/* Animated gradient fills the entire field */}
-            <Skeleton
-              variant="ai"
-              className="absolute inset-0 rounded-none"
-              aria-hidden="true"
-            />
-            {/* Centered status chip — announced to screen readers */}
-            <div
-              className="absolute inset-0 flex items-center justify-center"
-              aria-live="polite"
-            >
-              <div className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium shadow-sm">
-                <Sparkles className="size-4 animate-pulse text-primary" />
-                <span>
-                  {isCleanup ? "Cleaning up with AI…" : "Writing with AI…"}
-                </span>
+      {hasResults ? (
+        /* Result State: Sliding Split View (2-column layout) */
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
+          {/* Left Column: Prompt / File Summary */}
+          <div className="md:col-span-1">
+            <div className="rounded-lg border border-border bg-muted/20 p-4 flex flex-col gap-3 h-fit shadow-xs">
+              <div>
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                  Your Input
+                </h4>
+                {form.attachedFileName ? (
+                  <div className="flex items-center gap-1.5 text-sm font-medium text-foreground p-2 rounded-md bg-background border border-border">
+                    <Paperclip className="size-3.5 text-primary shrink-0" />
+                    <span className="truncate flex-1">{form.attachedFileName}</span>
+                  </div>
+                ) : form.promptText ? (
+                  <div className="text-sm font-medium text-foreground bg-background p-3 rounded-md border border-border italic whitespace-pre-wrap">
+                    &ldquo;{form.promptText}&rdquo;
+                  </div>
+                ) : (
+                  <div className="text-xs text-muted-foreground italic bg-background p-2 rounded-md border border-border">
+                    Custom details entered manually.
+                  </div>
+                )}
               </div>
+              
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleReset}
+                className="w-full text-xs gap-1.5 cursor-pointer mt-1"
+              >
+                <RotateCcw className="size-3.5" />
+                Rewrite Prompt
+              </Button>
             </div>
           </div>
-        ) : null}
-      </div>
-      <div className="flex items-center justify-between text-xs text-muted-foreground">
-        <span>
-          {fileName
-            ? `Imported ${fileName}. Edit above to refine.`
-            : "We'll auto-extract skills and must-haves from the JD."}
-        </span>
-        {jdMissing ? (
-          <span className="text-destructive">Required</span>
-        ) : error ? (
-          <span className="text-destructive">{error}</span>
-        ) : null}
-      </div>
+
+          {/* Right Column: Editable Fields */}
+          <div className="md:col-span-2 flex flex-col gap-4">
+            <UIField>
+              <FieldLabel htmlFor="title" icon={Briefcase}>Job title</FieldLabel>
+              <Input
+                id="title"
+                value={form.title}
+                onChange={(e) => update("title", e.target.value)}
+                placeholder="e.g. Customer Support Associate"
+                aria-invalid={titleMissing ? true : undefined}
+              />
+              {titleMissing ? (
+                <FieldError>Required</FieldError>
+              ) : (
+                <FieldDescription>Shown on candidate landing page.</FieldDescription>
+              )}
+            </UIField>
+
+            <UIField>
+              <div className="flex items-center justify-between">
+                <FieldLabel htmlFor="jd" icon={FileText}>Job description</FieldLabel>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handlePolish}
+                  loading={generating}
+                  disabled={generating || !form.jd.trim()}
+                  className="h-7 text-xs gap-1 cursor-pointer"
+                >
+                  <Sparkles className="size-3 text-primary" />
+                  Polish with AI
+                </Button>
+              </div>
+              <div className="relative">
+                <Textarea
+                  id="jd"
+                  value={form.jd}
+                  onChange={(e) => update("jd", e.target.value)}
+                  placeholder="Paste or write the JD details here..."
+                  rows={12}
+                  aria-invalid={jdMissing ? true : undefined}
+                  readOnly={generating}
+                />
+                {generating ? (
+                  <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-md">
+                    <Skeleton variant="ai" className="absolute inset-0 rounded-none" aria-hidden="true" />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium shadow-sm">
+                        <Sparkles className="size-4 animate-pulse text-primary" />
+                        <span>Polishing with AI…</span>
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+              {jdMissing ? (
+                <FieldError>Required</FieldError>
+              ) : error ? (
+                <p className="text-xs text-destructive mt-1">{error}</p>
+              ) : (
+                <FieldDescription>Editable. We&apos;ll auto-extract skills from this text.</FieldDescription>
+              )}
+            </UIField>
+          </div>
+        </div>
+      ) : (
+        /* Initial State: Unified AI Command Bar Card */
+        <div className="rounded-lg border border-border bg-card p-6 shadow-sm max-w-2xl mx-auto w-full animate-in fade-in zoom-in-95 duration-200">
+          <div className="flex flex-col items-center text-center gap-2 mb-6">
+            <div className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+              <Sparkles className="size-5" />
+            </div>
+            <h3 className="text-base font-semibold">What is your hiring requirement?</h3>
+            <p className="text-xs text-muted-foreground max-w-md">
+              Tell the AI what role you&apos;re looking for, paste a description, or upload a document to get started.
+            </p>
+          </div>
+
+          <div className="relative rounded-lg border border-border bg-background shadow-xs focus-within:ring-2 focus-within:ring-ring focus-within:border-transparent transition-all">
+            <Textarea
+              value={promptVal}
+              onChange={(e) => setPromptVal(e.target.value)}
+              placeholder="e.g. 'Senior React Developer with 3+ years experience, remotely from India' or paste description..."
+              className="w-full min-h-32 resize-none border-0 bg-transparent p-4 pb-14 text-sm focus-visible:ring-0 focus-visible:outline-hidden"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault()
+                  handleGenerate()
+                }
+              }}
+              readOnly={generating || processing}
+            />
+            
+            {generating || processing ? (
+              <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-md">
+                <Skeleton variant="ai" className="absolute inset-0 rounded-none" aria-hidden="true" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium shadow-sm">
+                    <Sparkles className="size-4 animate-pulse text-primary" />
+                    <span>
+                      {processing ? "Processing document…" : "Writing with AI…"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ) : null}
+
+            <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-xs"
+                  onClick={() => fileRef.current?.click()}
+                  title="Attach file"
+                  disabled={generating || processing}
+                  className="text-muted-foreground hover:text-foreground cursor-pointer"
+                >
+                  <Paperclip className="size-4" />
+                </Button>
+                
+                {attachedFile ? (
+                  <span className="inline-flex items-center gap-1.5 rounded-md bg-muted px-2 py-1 text-xs text-muted-foreground border border-border max-w-48">
+                    <FileText className="size-3.5 shrink-0 text-primary" />
+                    <span className="truncate flex-1">{attachedFile.name}</span>
+                    <button
+                      type="button"
+                      onClick={() => setAttachedFile(null)}
+                      className="hover:text-destructive cursor-pointer shrink-0"
+                    >
+                      <X className="size-3" />
+                    </button>
+                  </span>
+                ) : null}
+
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept=".txt,.md,.pdf,.doc,.docx"
+                  className="sr-only"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0]
+                    if (f) {
+                      setAttachedFile(f)
+                      handleFileUpload(f)
+                    }
+                    e.currentTarget.value = ""
+                  }}
+                />
+              </div>
+
+              <Button
+                type="button"
+                size="sm"
+                disabled={(!promptVal.trim() && !attachedFile) || generating || processing}
+                onClick={() => handleGenerate()}
+                className="gap-1.5 cursor-pointer font-medium"
+              >
+                <Sparkles className="size-3.5" />
+                Generate JD
+              </Button>
+            </div>
+          </div>
+
+          {error ? (
+            <p className="text-xs text-destructive mt-2 text-center">{error}</p>
+          ) : null}
+
+          {unusedSuggestions.length > 0 && !generating && !processing ? (
+            <div className="mt-5 flex flex-wrap items-center gap-1.5 justify-center">
+              <span className="text-xs text-muted-foreground">Suggestions:</span>
+              {unusedSuggestions.map((suggestion) => (
+                <button
+                  key={suggestion}
+                  type="button"
+                  onClick={() => {
+                    setPromptVal(suggestion)
+                    setError(null)
+                  }}
+                  className="rounded-full border border-border bg-background px-2.5 py-0.5 text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-all cursor-pointer"
+                >
+                  {suggestion}
+                </button>
+              ))}
+            </div>
+          ) : null}
+        </div>
+      )}
     </div>
   )
 }
