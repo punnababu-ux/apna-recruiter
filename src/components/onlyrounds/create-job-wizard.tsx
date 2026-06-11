@@ -959,7 +959,7 @@ function JDField({
           id="jd"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          placeholder="Paste or write the JD here — or let AI draft a starting point."
+          placeholder={generating ? "" : "Paste or write the JD here — or let AI draft a starting point."}
           rows={12}
           aria-invalid={jdMissing ? true : undefined}
           readOnly={generating}

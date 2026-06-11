@@ -810,14 +810,16 @@ function QuestionSectionsEditor({
             <Plus className="size-3.5" />
             Add section
           </Button>
-          <button
+          <Button
             type="button"
+            variant="link"
+            size="sm"
             onClick={downloadSampleCsv}
-            className="inline-flex items-center gap-1 text-xs font-medium text-primary underline-offset-2 hover:underline mt-1"
+            className="h-auto p-0 text-xs gap-1 mt-1"
           >
             <Download className="size-3" />
             Sample CSV
-          </button>
+          </Button>
         </div>
       ) : null}
 
@@ -893,11 +895,12 @@ function QuestionSectionsEditor({
         <div className="flex items-center justify-end gap-2">
           <Button
             type="button"
-            variant="outline"
+            variant="link"
             size="sm"
             onClick={downloadSampleCsv}
+            className="h-auto p-0 text-xs gap-1"
           >
-            <Download className="size-3.5" />
+            <Download className="size-3" />
             Sample CSV
           </Button>
           <Button
