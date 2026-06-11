@@ -1112,7 +1112,10 @@ function DescriptionStep({
 
           {unusedSuggestions.length > 0 && !generating && !processing ? (
             <div className="mt-5 flex flex-wrap items-center gap-1.5 justify-center">
-              <span className="text-xs text-muted-foreground">Suggestions:</span>
+              <span className="text-xs text-muted-foreground flex items-center gap-1">
+                <Sparkles className="size-3 text-primary" />
+                Suggestions:
+              </span>
               {unusedSuggestions.map((suggestion) => (
                 <button
                   key={suggestion}
