@@ -1081,11 +1081,12 @@ function DescriptionStep({
           </div>
 
           <div className="relative rounded-lg border border-border bg-background shadow-xs focus-within:ring-2 focus-within:ring-ring focus-within:border-transparent transition-all">
+            {/* token-lint-ignore: Need fixed field-sizing and fixed height to prevent prompt input card auto-expansion */}
             <Textarea
               value={promptVal}
               onChange={(e) => setPromptVal(e.target.value)}
               placeholder={generating || processing ? "" : displayedPlaceholder}
-              className="w-full min-h-32 resize-none border-0 bg-transparent p-4 pb-14 text-sm focus-visible:ring-0 focus-visible:outline-hidden"
+              className="w-full h-36 max-h-36 [field-sizing:fixed] resize-none border-0 bg-transparent p-4 pb-14 text-sm focus-visible:ring-0 focus-visible:outline-hidden overflow-y-auto"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault()
