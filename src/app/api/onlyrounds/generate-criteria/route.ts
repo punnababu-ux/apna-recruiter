@@ -62,6 +62,20 @@ export const buildUserPrompt = (input: {
     : "") +
   `Job description:\n${input.jd || "(not provided)"}`
 
+export const buildBulkUserPrompt = (input: {
+  title: string
+  jd: string
+  detailsSummary: string
+  tasksSummary: string
+  tasks: Array<{ id: string; title: string; type: string }>
+}) =>
+  `Job title: ${input.title || "(not provided)"}\n\n` +
+  `Job details:\n${input.detailsSummary || "(none)"}\n\n` +
+  `Interview pipeline stages:\n${input.tasksSummary || "(none)"}\n\n` +
+  `Generate evaluation criteria specifically for the following stages in this pipeline:\n` +
+  input.tasks.map((t) => `- Stage ID: ${t.id}, Name: ${t.title || t.type}, Type: ${t.type}`).join("\n") +
+  `\n\nJob description:\n${input.jd || "(not provided)"}`
+
 export const CriteriaSchema = z.object({
   mustHave: z
     .array(z.string())
@@ -74,6 +88,17 @@ export const CriteriaSchema = z.object({
     .describe(
       "Dealbreakers — candidates who don't meet these are not shortlisted.",
     ),
+})
+
+export const BulkCriteriaSchema = z.object({
+  results: z.array(
+    z.object({
+      taskId: z.string().describe("The ID of the stage (must match one of the input stage IDs)."),
+      mustHave: z.array(z.string()).describe("Required criteria (3-5 items) for this stage."),
+      goodToHave: z.array(z.string()).describe("Bonus criteria (2-4 items) for this stage."),
+      redFlag: z.array(z.string()).describe("Dealbreakers (1-3 items) for this stage."),
+    })
+  )
 })
 
 export type CriteriaResult = z.infer<typeof CriteriaSchema>
@@ -122,6 +147,7 @@ function capTotal(result: CriteriaResult): CriteriaResult {
 }
 
 export async function POST(req: NextRequest) {
+  let tasks: Array<{ id: string; title: string; type: string }> = []
   try {
     const body = await req.json().catch(() => ({}))
     const title: string = (body?.title ?? "").toString()
@@ -130,11 +156,54 @@ export async function POST(req: NextRequest) {
     const tasksSummary: string = (body?.tasksSummary ?? "").toString()
     const taskName: string = (body?.taskName ?? "").toString()
     const taskType: string = (body?.taskType ?? "").toString()
+    tasks = body?.tasks ?? []
 
     if (!jd.trim() && !title.trim()) {
-      return NextResponse.json({ mustHave: [], goodToHave: [], redFlag: [] })
+      return NextResponse.json(
+        tasks.length > 0 ? { results: [] } : { mustHave: [], goodToHave: [], redFlag: [] }
+      )
     }
 
+    // Bulk Mode
+    if (tasks.length > 0) {
+      if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+        console.log(
+          "[generate-criteria] dummy bulk mode — set GOOGLE_GENERATIVE_AI_API_KEY to use live Gemini",
+        )
+        const results = tasks.map((t) => ({
+          taskId: t.id,
+          ...capTotal(buildDummyCriteria(title, t.title || t.type)),
+        }))
+        return NextResponse.json({ results })
+      }
+
+      const { output } = await generateText({
+        model: google("gemini-2.5-flash"),
+        output: Output.object({ schema: BulkCriteriaSchema }),
+        system: SYSTEM_PROMPT,
+        prompt: buildBulkUserPrompt({ title, jd, detailsSummary, tasksSummary, tasks }),
+      })
+
+      if (!output || !output.results) {
+        return NextResponse.json({
+          results: [],
+          error: "The AI didn't return bulk criteria. Try again.",
+        })
+      }
+
+      const cleanedResults = output.results.map((res) => ({
+        taskId: res.taskId,
+        ...capTotal({
+          mustHave: res.mustHave || [],
+          goodToHave: res.goodToHave || [],
+          redFlag: res.redFlag || [],
+        }),
+      }))
+
+      return NextResponse.json({ results: cleanedResults })
+    }
+
+    // Single Mode
     if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
       console.log(
         "[generate-criteria] dummy mode — set GOOGLE_GENERATIVE_AI_API_KEY to use live Gemini",
@@ -172,7 +241,7 @@ export async function POST(req: NextRequest) {
         "Gemini rejected the API key. Check GOOGLE_GENERATIVE_AI_API_KEY in .env.local."
     }
     return NextResponse.json(
-      { mustHave: [], goodToHave: [], redFlag: [], error },
+      tasks.length > 0 ? { results: [], error } : { mustHave: [], goodToHave: [], redFlag: [], error },
     )
   }
 }

@@ -709,6 +709,7 @@ function QuestionSectionsEditor({
   ) => {
     const trimmed = title.trim()
     if (!trimmed) return
+
     const newSection: QuestionSection = {
       id: nextSectionId(),
       title: trimmed,
@@ -790,6 +791,7 @@ function QuestionSectionsEditor({
               onToggle={() => toggleSection(section.id)}
               jobTitle={jobTitle}
               jobJd={jobJd}
+              suggestedPresets={presetsToUse}
             />
           ))}
         </div>
@@ -928,6 +930,7 @@ function QuestionSectionItem({
   onToggle,
   jobTitle = "",
   jobJd = "",
+  suggestedPresets,
 }: {
   section: QuestionSection
   onUpdate: (patch: Partial<QuestionSection>) => void
@@ -939,6 +942,7 @@ function QuestionSectionItem({
   onToggle: () => void
   jobTitle?: string
   jobJd?: string
+  suggestedPresets?: QuestionSectionPreset[]
 }) {
   const [editingTitle, setEditingTitle] = React.useState(false)
   const [titleDraft, setTitleDraft] = React.useState(section.title)
@@ -1182,6 +1186,7 @@ function QuestionSectionItem({
               onChange={(items) => onUpdate({ items })}
               jobTitle={jobTitle}
               jobJd={jobJd}
+              suggestedPresets={suggestedPresets}
             />
           </div>
         </div>
@@ -1198,6 +1203,7 @@ function QuestionSectionBody({
   onChange,
   jobTitle = "",
   jobJd = "",
+  suggestedPresets,
 }: {
   sectionId: string
   sectionTitle: string
@@ -1206,6 +1212,7 @@ function QuestionSectionBody({
   onChange: (next: QAItem[]) => void
   jobTitle?: string
   jobJd?: string
+  suggestedPresets?: QuestionSectionPreset[]
 }) {
   const fileRef = React.useRef<HTMLInputElement>(null)
   const [csvError, setCsvError] = React.useState<string | null>(null)
@@ -1220,6 +1227,15 @@ function QuestionSectionBody({
   const [suggestions, setSuggestions] = React.useState<{ question: string; answer: string }[] | null>(null)
   const [loadingSuggestions, setLoadingSuggestions] = React.useState(false)
   const [suggestError, setSuggestError] = React.useState<string | null>(null)
+
+  React.useEffect(() => {
+    const matchingPreset = suggestedPresets?.find(
+      (p) => p.title.toLowerCase().trim() === sectionTitle.toLowerCase().trim()
+    )
+    if (matchingPreset && matchingPreset.questions && matchingPreset.questions.length > 0) {
+      setSuggestions(matchingPreset.questions)
+    }
+  }, [suggestedPresets, sectionTitle])
 
   const visibleSuggestions = React.useMemo(() => {
     if (!suggestions) return []

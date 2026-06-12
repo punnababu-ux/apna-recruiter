@@ -26,7 +26,13 @@ export const SYSTEM_PROMPT =
   "You are a precise job-details extractor for Indian job postings. " +
   "Extract structured fields from the job description provided. " +
   "Only populate fields you are confident about — " +
-  "leave optional fields absent when the information is unclear or not present in the JD."
+  "leave optional fields absent when the information is unclear or not present in the JD.\n\n" +
+  "── Question Sections & Specific Questions ──\n" +
+  "Provide 3-5 highly relevant question section categories under `suggestedPresets` (e.g. 'English Communication', 'Technical Fit'). " +
+  "For EACH suggested section category, you MUST pre-generate exactly 3 screening questions (and expected ideal responses/answers) tailored to the role. Keep both questions and answers concise (under 2 sentences).\n\n" +
+  "── Pipeline Rounds & Criteria ──\n" +
+  "Suggest 2-3 pipeline rounds (under `suggestedRounds`) appropriate for this role (e.g. one 'screening' type round like 'Initial Screening' and one or two 'interview' type rounds like 'Technical Round'). " +
+  "For EACH round, pre-generate its specific evaluation criteria split into `mustHave` (3-5 items), `goodToHave` (2-4 items), and `redFlag` (1-3 items) based on the JD requirements. Keep criteria as concise, checkable statements."
 
 export const buildUserPrompt = (title: string, jd: string) =>
   `Job title: ${title || "(not provided)"}\n\nJob description:\n${jd}`
@@ -117,12 +123,30 @@ export const ExtractionSchema = z.object({
   suggestedPresets: z
     .array(
       z.object({
-        title: z.string().describe("Title of the question section, e.g. 'English Speaking', 'Technical Troubleshooting'."),
+        title: z.string().describe("Title of the question section, e.g. 'English Speaking', 'React Development'."),
         target: z.enum(["experienced", "freshers"]).describe("Audience target for this section."),
+        questions: z.array(
+          z.object({
+            question: z.string().describe("The screening question text."),
+            answer: z.string().describe("The expected response or ideal answer outline."),
+          })
+        ).describe("Exactly 3 screening questions for this section.")
       })
     )
     .optional()
-    .describe("3-5 suggested question sections (quick add suggestions) tailored specifically to this job role based on the JD. Make them highly relevant to the duties mentioned."),
+    .describe("3-5 suggested question sections tailored specifically to this job role based on the JD, each containing 3 pre-generated screening questions and expected answers."),
+  suggestedRounds: z
+    .array(
+      z.object({
+        type: z.enum(["screening", "interview"]).describe("Type of round."),
+        title: z.string().describe("Round title, e.g. 'Initial AI Screening', 'Technical Deep-dive'."),
+        mustHave: z.array(z.string()).describe("Required criteria (3-5 items) the candidate must meet."),
+        goodToHave: z.array(z.string()).describe("Bonus criteria (2-4 items) that strengthen a candidate."),
+        redFlag: z.array(z.string()).describe("Dealbreakers (1-3 items) that prevent shortlisting."),
+      })
+    )
+    .optional()
+    .describe("2-3 suggested rounds/tasks for the interview pipeline, each with pre-generated Must-have, Good-to-have, and Red-flag criteria specifically tailored for it.")
 })
 
 export type ExtractionResult = z.infer<typeof ExtractionSchema>
@@ -209,34 +233,130 @@ function buildDummyResponse(title: string, jd: string): ExtractionResult {
         ? "experienced"
         : "any"
 
+  // Mock questions mapping based on category
+  const getMockQuestions = (category: string) => {
+    if (category === "English Speaking" || category === "Customer Interaction" || category === "Customer Empathy") {
+      return [
+        {
+          question: "Can you introduce yourself in English and describe your background?",
+          answer: "Candidate should speak clearly, use correct grammar, and present their experience coherently."
+        },
+        {
+          question: "How would you handle an angry customer query over the phone?",
+          answer: "Listen actively, apologize for the issue, remain polite, and explain the steps to resolve it."
+        },
+        {
+          question: "Why are you interested in this role and working with our team?",
+          answer: "Demonstrate motivation, highlight relevant skills, and show alignment with customer service."
+        }
+      ]
+    }
+    if (category === "Technical Skills" || category === "Coding & Logic" || category === "System Troubleshooting") {
+      return [
+        {
+          question: "Explain the difference between state and props in React.",
+          answer: "State is local and managed within a component; props are passed from parent to child and are read-only."
+        },
+        {
+          question: "How do you optimize a React component's rendering performance?",
+          answer: "Use memoization (useMemo, useCallback), avoid inline functions, split components, or virtualize long lists."
+        },
+        {
+          question: "What is your approach to writing automated unit tests in React?",
+          answer: "Use Jest and React Testing Library to test component behavior, simulate user interactions, and mock external calls."
+        }
+      ]
+    }
+    // Default fallback questions
+    return [
+      {
+        question: "Describe your experience relevant to the requirements of this job.",
+        answer: "Provide specific examples of past tasks, responsibilities, and achievements related to the role."
+      },
+      {
+        question: "How do you prioritize your work when faced with multiple urgent deadlines?",
+        answer: "Assess urgency/impact, communicate with stakeholders, organize tasks systematically, and execute."
+      },
+      {
+        question: "Explain a time you had to learn a new tool or process quickly. How did you go about it?",
+        answer: "Read documentation, seek guidance from colleagues, practice hands-on, and ask targeted questions."
+      }
+    ]
+  }
+
   // Suggested presets based on job category
-  const suggestedPresets: ExtractionResult["suggestedPresets"] = [
+  const suggestedPresetsList: Array<{
+    title: string
+    target: "freshers" | "experienced"
+    questions?: Array<{ question: string; answer: string }>
+  }> = [
     { title: "English Speaking", target: "freshers" },
   ]
   if (text.includes("sales") || text.includes("bd") || text.includes("business development")) {
-    suggestedPresets.push(
+    suggestedPresetsList.push(
       { title: "Field Sales Capability", target: "experienced" },
       { title: "Customer Interaction", target: "freshers" },
       { title: "Negotiation", target: "experienced" }
     )
   } else if (text.includes("tech") || text.includes("developer") || text.includes("engineer") || text.includes("software")) {
-    suggestedPresets.push(
+    suggestedPresetsList.push(
       { title: "Technical Skills", target: "experienced" },
       { title: "Coding & Logic", target: "experienced" },
       { title: "System Troubleshooting", target: "experienced" }
     )
   } else if (text.includes("support") || text.includes("customer service") || text.includes("helpdesk")) {
-    suggestedPresets.push(
+    suggestedPresetsList.push(
       { title: "Customer Empathy", target: "freshers" },
       { title: "Problem Resolution", target: "experienced" },
       { title: "Escalation Handling", target: "experienced" }
     )
   } else {
-    suggestedPresets.push(
+    suggestedPresetsList.push(
       { title: "Freshers Assessment", target: "freshers" },
       { title: "Experienced Competency", target: "experienced" }
     )
   }
+
+  const suggestedPresets = suggestedPresetsList.map((p) => ({
+    ...p,
+    questions: getMockQuestions(p.title),
+  }))
+
+  const suggestedRounds = [
+    {
+      type: "screening" as const,
+      title: "Initial AI Screening",
+      mustHave: [
+        "Clearly communicates in English/Hindi",
+        "Demonstrates basic knowledge of the role",
+        "Willingness to work matching the job schedule"
+      ],
+      goodToHave: [
+        "Prior experience in a similar industry",
+        "Proactive attitude during conversation"
+      ],
+      redFlag: [
+        "Extremely poor communication or background noise",
+        "Unwilling to work standard shifts"
+      ]
+    },
+    {
+      type: "interview" as const,
+      title: "Technical deep-dive",
+      mustHave: [
+        "Solid understanding of core job competencies",
+        "Strong problem-solving capability"
+      ],
+      goodToHave: [
+        "Understands relevant frameworks or tools",
+        "Good alignment with the team culture"
+      ],
+      redFlag: [
+        "Cannot answer basic industry questions",
+        "Lack of interest or unprofessional conduct"
+      ]
+    }
+  ]
 
   return {
     clientId,
@@ -257,6 +377,7 @@ function buildDummyResponse(title: string, jd: string): ExtractionResult {
     workMode,
     scheduleDetails: "Mon–Sat, 9 am–6 pm; one rotational weekly off.",
     suggestedPresets,
+    suggestedRounds,
   }
 }
 

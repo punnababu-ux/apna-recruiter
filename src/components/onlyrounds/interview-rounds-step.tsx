@@ -563,7 +563,7 @@ function TaskCard({
             index={index}
             task={task}
             generating={!!isAnyGenerating}
-            onUpdateCriteria={(criteria) => onUpdate({ criteria })}
+            onUpdateCriteria={(criteria) => onUpdate({ criteria, isCriteriaEdited: true })}
             onUpdateTask={(patch) => onUpdate(patch)}
           />
         ) : isAnyGenerating ? (

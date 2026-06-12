@@ -58,6 +58,7 @@ export type InterviewTask = {
   agentId: AgentId
   /** Conversation language for AI rounds. */
   language: InterviewLanguage
+  isCriteriaEdited?: boolean
 }
 
 export type InterviewRoundsForm = {
@@ -87,6 +88,7 @@ export type QuestionSection = {
 export type QuestionSectionPreset = {
   title: string
   target: "freshers" | "experienced"
+  questions?: { question: string; answer: string }[]
 }
 
 export type JobDetailsForm = {

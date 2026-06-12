@@ -133,10 +133,77 @@ export function useCriteriaGeneration(
     const controller = new AbortController()
     abortRef.current = controller
 
-    await Promise.all(
-      tasksToGenerate.map((t) => generateTaskCriteria(t.id, controller.signal)),
-    )
-  }, [formRef, generateTaskCriteria])
+    // Set loading for all target tasks
+    const loadingPatch = Object.fromEntries(tasksToGenerate.map((t) => [t.id, true]))
+    setGeneratingTasks((prev) => ({ ...prev, ...loadingPatch }))
+
+    try {
+      const res = await fetch("/api/onlyrounds/generate-criteria", {
+        method: "POST",
+        signal: controller.signal,
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          title: form.title,
+          jd: form.jd,
+          detailsSummary: summarizeDetails(form.details),
+          tasksSummary: summarizeTasks(form.rounds.tasks),
+          tasks: tasksToGenerate.map((t) => ({
+            id: t.id,
+            title: t.title,
+            type: t.type,
+          })),
+        }),
+      })
+
+      if (!res.ok) throw new Error("Failed to generate bulk criteria")
+      const data = await res.json()
+      if (data.error) throw new Error(data.error)
+
+      setForm((prev) => ({
+        ...prev,
+        rounds: {
+          ...prev.rounds,
+          tasks: prev.rounds.tasks.map((t) => {
+            const regenerated = data.results?.find((r: { taskId: string }) => r.taskId === t.id)
+            if (!regenerated) return t
+
+            let critCounter = 0
+            const criteriaList: Criterion[] = []
+            const addCriteria = (category: CriteriaCategory, items?: string[]) => {
+              for (const text of items || []) {
+                if (text.trim()) {
+                  critCounter++
+                  criteriaList.push({
+                    id: `crit-${t.id}-${critCounter}`,
+                    category,
+                    text: text.trim(),
+                  })
+                }
+              }
+            }
+            addCriteria("must-have", regenerated.mustHave)
+            addCriteria("good-to-have", regenerated.goodToHave)
+            addCriteria("red-flag", regenerated.redFlag)
+
+            const synced = syncCefrCriteria(criteriaList, t.screening, t.id)
+            return { ...t, criteria: synced }
+          }),
+        },
+      }))
+    } catch (err) {
+      if (err instanceof Error && err.name === "AbortError") return
+      console.error("Error bulk generating criteria:", err)
+      toast.error("Could not generate criteria for some rounds.")
+    } finally {
+      setGeneratingTasks((prev) => {
+        const next = { ...prev }
+        for (const t of tasksToGenerate) {
+          delete next[t.id]
+        }
+        return next
+      })
+    }
+  }, [formRef, setForm])
 
   const abortGeneration = React.useCallback(() => {
     abortRef.current?.abort()

@@ -45,11 +45,17 @@ import {
   defaultInterviewRounds,
   defaultJobDetails,
 } from "@/lib/onlyrounds/constants"
-import { hasAiRound } from "@/lib/onlyrounds/utils"
+import { hasAiRound, summarizeDetails, summarizeTasks } from "@/lib/onlyrounds/utils"
 import type {
   InterviewRoundsForm,
   JobDetailsForm,
   SectionId,
+  Criterion,
+  TaskType,
+  AgentId,
+  InterviewLanguage,
+  WorkType,
+  WorkMode,
 } from "@/types/onlyrounds"
 import { ReviewStep } from "@/components/onlyrounds/review-step"
 import { Stepper, type Step } from "@/components/onlyrounds/stepper"
@@ -91,6 +97,34 @@ type FormShape = {
   rounds: InterviewRoundsForm
   promptText?: string
   attachedFileName?: string
+}
+
+export type GenerationData = {
+  title?: string
+  jobDescription?: string
+  clientId?: string
+  city?: string
+  area?: string
+  experienceType?: "any" | "experienced" | "freshers"
+  experiencedPersona?: string
+  fresherPersona?: string
+  workType?: "part-time" | "full-time" | "both"
+  workMode?: "wfh" | "wfo" | "field" | "store"
+  scheduleDetails?: string
+  compExperienced?: string
+  compFresher?: string
+  suggestedPresets?: Array<{
+    title: string
+    target: "freshers" | "experienced"
+    questions: Array<{ question: string; answer: string }>
+  }>
+  suggestedRounds?: Array<{
+    type: "screening" | "interview"
+    title: string
+    mustHave: string[]
+    goodToHave: string[]
+    redFlag: string[]
+  }>
 }
 
 // ── App routes ────────────────────────────────────────────────────────────
@@ -184,6 +218,168 @@ export function CreateJobWizard() {
   )
   const [exitDialogOpen, setExitDialogOpen] = useState(false)
   const [showRoundErrors, setShowRoundErrors] = useState(false)
+  const [lastCriteriaSnapshot, setLastCriteriaSnapshot] = useState<string>("")
+
+
+
+  const populateFormFromGeneration = (data: GenerationData, promptValToSet?: string) => {
+    // 1. Prepare job details
+    const details: JobDetailsForm = {
+      ...defaultJobDetails,
+      clientId: data.clientId ?? "",
+      city: data.city ?? "",
+      area: data.area ?? "",
+      experienceType: data.experienceType ?? "any",
+      experiencedPersona: data.experiencedPersona ?? "",
+      fresherPersona: data.fresherPersona ?? "",
+      workType: (data.workType ?? "") as "" | WorkType,
+      workMode: (data.workMode ?? "") as "" | WorkMode,
+      scheduleDetails: data.scheduleDetails ?? "",
+      compExperienced: data.compExperienced ?? "",
+      compFresher: data.compFresher ?? "",
+      additionalDetails: "",
+      questionSections: [],
+      suggestedPresets: [],
+    }
+
+    details.questionSections = []
+    details.suggestedPresets = data.suggestedPresets?.map((p) => ({
+      title: p.title,
+      target: p.target,
+      questions: p.questions,
+    })) ?? []
+
+    // Map suggestedRounds to form tasks structure
+    let roundCounter = 0
+    const tasks = data.suggestedRounds?.map((r) => {
+      roundCounter++
+      const taskId = `task-${roundCounter}`
+      
+      const criteria: Criterion[] = []
+      let critCounter = 0
+      
+      r.mustHave?.forEach((text: string) => {
+        critCounter++
+        criteria.push({
+          id: `crit-${taskId}-${critCounter}`,
+          category: "must-have",
+          text: text.trim(),
+        })
+      })
+      r.goodToHave?.forEach((text: string) => {
+        critCounter++
+        criteria.push({
+          id: `crit-${taskId}-${critCounter}`,
+          category: "good-to-have",
+          text: text.trim(),
+        })
+      })
+      r.redFlag?.forEach((text: string) => {
+        critCounter++
+        criteria.push({
+          id: `crit-${taskId}-${critCounter}`,
+          category: "red-flag",
+          text: text.trim(),
+        })
+      })
+
+      return {
+        id: taskId,
+        type: r.type as TaskType,
+        title: r.title,
+        notes: "",
+        screening: {
+          mode: "ai" as const,
+          direction: "inbound" as const,
+          format: "audio" as const,
+          humanNotes: "",
+          cefrEnabled: false,
+          cefrMinLevel: "" as const,
+          cefrPreferredLevel: "" as const,
+          cefrQuestions: "",
+        },
+        criteria,
+        agentId: "isha" as AgentId,
+        language: "english" as InterviewLanguage,
+      }
+    }) ?? []
+
+    const titleVal = data.title || deriveTitleFromJd(data.jobDescription || "") || ""
+
+    setForm((prev) => {
+      const next = {
+        ...prev,
+        jd: data.jobDescription || prev.jd || "",
+        title: titleVal || prev.title || "",
+        details,
+        rounds: {
+          tasks,
+        },
+      }
+      if (promptValToSet !== undefined) {
+        next.promptText = promptValToSet
+      }
+      return next
+    })
+
+    // Initialize snapshot states to avoid immediate regeneration
+    const currentSnapshot = JSON.stringify({
+      title: titleVal,
+      jd: data.jobDescription || "",
+      detailsSummary: summarizeDetails(details),
+      tasksSummary: summarizeTasks(tasks),
+    })
+    setLastCriteriaSnapshot(currentSnapshot)
+  }
+
+  // On-the-fly criteria regeneration when entering Step 3 (Rounds)
+  React.useEffect(() => {
+    if (activeId !== "rounds") return
+
+    const currentSnapshot = JSON.stringify({
+      title: form.title,
+      jd: form.jd,
+      detailsSummary: summarizeDetails(form.details),
+      tasksSummary: summarizeTasks(form.rounds.tasks),
+    })
+
+    if (!lastCriteriaSnapshot) {
+      setLastCriteriaSnapshot(currentSnapshot)
+      return
+    }
+
+    if (currentSnapshot !== lastCriteriaSnapshot) {
+      // Clear criteria for AI tasks that have not been manually edited
+      const tasksToRegenerate = form.rounds.tasks.filter(
+        (t) => CALL_TASK_TYPES.has(t.type) && t.screening.mode === "ai" && !t.isCriteriaEdited
+      )
+
+      if (tasksToRegenerate.length > 0) {
+        setForm((prev) => ({
+          ...prev,
+          rounds: {
+            ...prev.rounds,
+            tasks: prev.rounds.tasks.map((t) =>
+              CALL_TASK_TYPES.has(t.type) && t.screening.mode === "ai" && !t.isCriteriaEdited
+                ? { ...t, criteria: [] }
+                : t
+            ),
+          },
+        }))
+        
+        setTimeout(() => {
+          generateAllCriteria().then(() => {
+            setLastCriteriaSnapshot(currentSnapshot)
+            toast.success("Evaluation criteria updated", {
+              description: "AI rounds updated to match your new job details.",
+            })
+          })
+        }, 0)
+      } else {
+        setLastCriteriaSnapshot(currentSnapshot)
+      }
+    }
+  }, [activeId, form.title, form.jd, form.details, form.rounds.tasks, lastCriteriaSnapshot, generateAllCriteria, setForm])
 
 
   /** Top-bar "Create new job" back link click. If there's nothing to
@@ -389,12 +585,9 @@ export function CreateJobWizard() {
               body: JSON.stringify({ jd: form.jd, title: form.title }),
             })
             if (res.ok) {
-              const extracted: Partial<JobDetailsForm> = await res.json()
+              const extracted = await res.json()
               if (Object.keys(extracted).length > 0) {
-                setForm((prev) => ({
-                  ...prev,
-                  details: { ...prev.details, ...extracted },
-                }))
+                populateFormFromGeneration(extracted)
                 setFilledFromJd(true)
               }
             }
@@ -643,6 +836,7 @@ export function CreateJobWizard() {
               form={form}
               update={update}
               showErrors={showErrors}
+              populateFormFromGeneration={populateFormFromGeneration}
             />
           ) : activeId === "review" ? (
             <div className="rounded-lg border border-border bg-card p-6 shadow-card">
@@ -767,10 +961,12 @@ function DescriptionStep({
   form,
   update,
   showErrors,
+  populateFormFromGeneration,
 }: {
   form: FormShape
   update: <K extends keyof FormShape>(key: K, value: FormShape[K]) => void
   showErrors: boolean
+  populateFormFromGeneration: (data: GenerationData, promptValToSet?: string) => void
 }) {
   const fileRef = React.useRef<HTMLInputElement>(null)
   const [promptVal, setPromptVal] = React.useState(form.promptText || "")
@@ -837,6 +1033,8 @@ function DescriptionStep({
     setShowAllPrompt(false)
   }
 
+
+
   const handleGenerate = async (seedText?: string) => {
     const textToSubmit = seedText || promptVal.trim()
     if (!textToSubmit) return
@@ -852,23 +1050,12 @@ function DescriptionStep({
         setError("Could not generate. Try again in a moment.")
         return
       }
-      const data = (await res.json()) as {
-        jobDescription?: string
-        title?: string
-        error?: string
-      }
+      const data = await res.json()
       if (!data.jobDescription) {
         setError(data.error ?? "Add more details, then try again.")
         return
       }
-      update("promptText", textToSubmit)
-      update("jd", data.jobDescription)
-      if (data.title) {
-        update("title", data.title)
-      } else {
-        const derived = deriveTitleFromJd(data.jobDescription)
-        if (derived) update("title", derived)
-      }
+      populateFormFromGeneration(data, textToSubmit)
     } catch {
       setError("Could not reach the generator. Try again.")
     } finally {
@@ -889,17 +1076,12 @@ function DescriptionStep({
         setError("Could not generate. Try again in a moment.")
         return
       }
-      const data = (await res.json()) as {
-        jobDescription?: string
-        title?: string
-        error?: string
-      }
+      const data = await res.json()
       if (!data.jobDescription) {
         setError(data.error ?? "Could not refine the description.")
         return
       }
-      update("jd", data.jobDescription)
-      if (data.title) update("title", data.title)
+      populateFormFromGeneration(data)
     } catch {
       setError("Could not reach the generator. Try again.")
     } finally {

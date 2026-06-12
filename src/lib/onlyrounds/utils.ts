@@ -47,6 +47,17 @@ export function summarizeDetails(d: JobDetailsForm): string {
   if (d.compExperienced)
     lines.push(`Compensation (experienced): ${d.compExperienced}`)
   if (d.compFresher) lines.push(`Compensation (fresher): ${d.compFresher}`)
+
+  if (d.questionSections && d.questionSections.length > 0) {
+    const qSectionsText = d.questionSections
+      .map((sec) => {
+        const qTexts = (sec.items ?? []).map((it) => `- ${it.question}`).join("\n")
+        return `Section: ${sec.title} (${sec.target})\nQuestions:\n${qTexts || "(none)"}`
+      })
+      .join("\n\n")
+    lines.push(`\nScreening Questions Configured:\n${qSectionsText}`)
+  }
+
   return lines.join("\n")
 }
 
