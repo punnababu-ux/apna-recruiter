@@ -747,7 +747,7 @@ export function CreateJobWizard() {
   return (
     <div className="flex min-h-svh flex-col bg-muted">
       {/* Sticky top — title row + step-progress rail */}
-      <div className="sticky top-0 z-10 border-b border-border bg-card">
+      <div className="sticky top-0 z-sticky border-b border-border bg-card">
         {/* Title row — back/title on the left, Save & exit on the right */}
         <div className="border-b border-border px-6 py-3">
           <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3">
@@ -852,63 +852,67 @@ export function CreateJobWizard() {
       </div>
 
       {/* Sticky bottom — consistent across all steps */}
-      <div className="sticky bottom-0 z-10 border-t border-border bg-card px-6">
-        <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 py-3">
-          {/* Left — Previous (chevron; the back arrow lives in the top
-              bar, so the footer uses a chevron to stay distinct). base-ui's
-              TooltipTrigger uses `render={...}` (not Radix's `asChild`). */}
-          <div className="flex items-center gap-1">
+      {!(activeId === "description" && (!form.title.trim() || !form.jd.trim())) && (
+        <div className="sticky bottom-0 z-sticky border-t border-border bg-card px-6">
+          <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 py-3">
+            {/* Left — Previous (chevron; the back arrow lives in the top
+                bar, so the footer uses a chevron to stay distinct). base-ui's
+                TooltipTrigger uses `render={...}` (not Radix's `asChild`). */}
+            <div className="flex items-center gap-1">
+              {activeId !== "description" && (
+                <Tooltip>
+                  <TooltipTrigger
+                    render={
+                      <Button
+                        variant="outline"
+                        onClick={goPrev}
+                        disabled={!canGoPrev}
+                      >
+                        <ChevronLeft className="size-4" />
+                        Previous
+                      </Button>
+                    }
+                  />
+                  <TooltipContent>
+                    {activeId === "details" &&
+                    step2OpenSection &&
+                    step2OpenSection !== SECTION_IDS[0]
+                      ? "Previous section"
+                      : "Previous step"}
+                  </TooltipContent>
+                </Tooltip>
+              )}
+            </div>
+
+            {/* Right — adaptive primary CTA. Soft-disabled when blocked:
+                the button LOOKS disabled (opacity + not-allowed cursor +
+                aria-disabled) but stays clickable so a click reveals the
+                field-level errors. The tooltip explains what's blocking. */}
             <Tooltip>
               <TooltipTrigger
                 render={
-                  <Button
-                    variant="outline"
-                    onClick={goPrev}
-                    disabled={!canGoPrev}
-                  >
-                    <ChevronLeft className="size-4" />
-                    Previous
-                  </Button>
+                  <span className={cn(ctaBlocked && "cursor-not-allowed")}>
+                    <Button
+                      size="lg"
+                      onClick={goNext}
+                      loading={extracting || Object.values(generatingTasks).some(Boolean)}
+                      loadingText={Object.values(generatingTasks).some(Boolean) ? "Generating criteria…" : "Filling from JD…"}
+                      aria-disabled={ctaBlocked || undefined}
+                      className={cn(ctaBlocked && "opacity-50")}
+                    >
+                      {ctaLabel}
+                      {!(extracting || Object.values(generatingTasks).some(Boolean)) ? <ChevronRight className="size-4" /> : null}
+                    </Button>
+                  </span>
                 }
               />
-              <TooltipContent>
-                {activeId === "details" &&
-                step2OpenSection &&
-                step2OpenSection !== SECTION_IDS[0]
-                  ? "Previous section"
-                  : "Previous step"}
-              </TooltipContent>
+              {ctaDisabledReason ? (
+                <TooltipContent>{ctaDisabledReason}</TooltipContent>
+              ) : null}
             </Tooltip>
           </div>
-
-          {/* Right — adaptive primary CTA. Soft-disabled when blocked:
-              the button LOOKS disabled (opacity + not-allowed cursor +
-              aria-disabled) but stays clickable so a click reveals the
-              field-level errors. The tooltip explains what's blocking. */}
-          <Tooltip>
-            <TooltipTrigger
-              render={
-                <span className={cn(ctaBlocked && "cursor-not-allowed")}>
-                  <Button
-                    size="lg"
-                    onClick={goNext}
-                    loading={extracting || Object.values(generatingTasks).some(Boolean)}
-                    loadingText={Object.values(generatingTasks).some(Boolean) ? "Generating criteria…" : "Filling from JD…"}
-                    aria-disabled={ctaBlocked || undefined}
-                    className={cn(ctaBlocked && "opacity-50")}
-                  >
-                    {ctaLabel}
-                    {!(extracting || Object.values(generatingTasks).some(Boolean)) ? <ChevronRight className="size-4" /> : null}
-                  </Button>
-                </span>
-              }
-            />
-            {ctaDisabledReason ? (
-              <TooltipContent>{ctaDisabledReason}</TooltipContent>
-            ) : null}
-          </Tooltip>
         </div>
-      </div>
+      )}
 
       {/* Exit-confirmation dialog — fires when the user clicks the
           top-bar "Create new job" link with unsaved changes. */}
@@ -1242,7 +1246,7 @@ function DescriptionStep({
                   readOnly={generating}
                 />
                 {generating ? (
-                  <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-md bg-background z-10">
+                  <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-md bg-background z-docked">
                     <Skeleton variant="ai" className="absolute inset-0 rounded-none" aria-hidden="true" />
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium shadow-sm">
@@ -1290,7 +1294,7 @@ function DescriptionStep({
             />
             
             {generating || processing ? (
-              <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-md bg-background z-10">
+              <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-md bg-background z-docked">
                 <Skeleton variant="ai" className="absolute inset-0 rounded-none" aria-hidden="true" />
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="flex items-center gap-2 text-sm font-medium text-foreground">
