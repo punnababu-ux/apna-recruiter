@@ -5,7 +5,6 @@ import {
   Briefcase,
   CreditCard,
   HelpCircle,
-  Plus,
   Settings,
   Users,
 } from "lucide-react"
@@ -21,20 +20,17 @@ const WORKSPACES: SidebarWorkspace[] = [
   {
     id: "gamma",
     name: "Gamma Workspace",
-    subtext: "Free Tier",
     fallbackLetter: "G",
   },
   {
     id: "talentpass",
     name: "Apna TalentPass",
-    subtext: "Enterprise Plan",
     fallbackLetter: "A",
     logoUrl: "/vercel.svg",
   },
   {
     id: "beta",
     name: "Beta Design System",
-    subtext: "Pro Plan",
     fallbackLetter: "B",
   },
 ]
@@ -72,17 +68,6 @@ export function OnlyRoundsSidebar() {
       activeWorkspaceId={activeWorkspaceId}
       onWorkspaceChange={handleWorkspaceChange}
       navItems={NAV}
-      bottomCta={{
-        label: "Create Job",
-        icon: Plus,
-        href: "/onlyrounds/jobs/new",
-      }}
-      alertBanner={{
-        id: "onlyrounds-upgrade-alert",
-        title: "Upgrade Account",
-        description: "Get access to advanced matching filters.",
-        ctaText: "Learn more",
-      }}
       footerItems={[
         {
           href: "/onlyrounds/settings",

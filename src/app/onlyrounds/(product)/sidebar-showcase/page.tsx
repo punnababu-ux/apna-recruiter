@@ -23,9 +23,9 @@ import { SidebarProvider } from "@/components/ui/sidebar"
 
 // Predefined Mock Workspaces for both products
 const ONLYROUNDS_WORKSPACES: SidebarWorkspace[] = [
-  { id: "or-gamma", name: "Gamma Workspace", subtext: "Free Tier", fallbackLetter: "G" },
-  { id: "or-talentpass", name: "Apna TalentPass", subtext: "Enterprise Plan", fallbackLetter: "A", logoUrl: "/vercel.svg" },
-  { id: "or-beta", name: "Beta Design System", subtext: "Pro Plan", fallbackLetter: "B" },
+  { id: "or-gamma", name: "Gamma Workspace", fallbackLetter: "G" },
+  { id: "or-talentpass", name: "Apna TalentPass", fallbackLetter: "A", logoUrl: "/vercel.svg" },
+  { id: "or-beta", name: "Beta Design System", fallbackLetter: "B" },
 ]
 
 const APNAHIRE_WORKSPACES: SidebarWorkspace[] = [
@@ -202,17 +202,6 @@ export default function SidebarShowcasePage() {
                     activeWorkspaceId={activeORWorkspace}
                     onWorkspaceChange={(w) => setActiveORWorkspace(w.id)}
                     navItems={ONLYROUNDS_NAV}
-                    bottomCta={{
-                      label: "Create Job",
-                      icon: Plus,
-                      href: "/onlyrounds/jobs/new",
-                    }}
-                    alertBanner={showAlert ? {
-                      id: "showcase-or-alert",
-                      title: customAlertTitle,
-                      description: customAlertDesc,
-                      ctaText: "Upgrade",
-                    } : undefined}
                     footerItems={[
                       { href: "/onlyrounds/settings", label: "Settings", icon: Settings },
                       { href: "/onlyrounds/help", label: "Help", icon: HelpCircle },

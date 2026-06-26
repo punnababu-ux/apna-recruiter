@@ -42,7 +42,7 @@ import {
 export type SidebarWorkspace = {
   id: string
   name: string
-  subtext: string
+  subtext?: string
   logoUrl?: string
   fallbackLetter: string
 }
@@ -174,9 +174,11 @@ export function ReusableSidebar({
                     <span className="truncate font-semibold text-foreground text-sm">
                       {activeWorkspace.name}
                     </span>
-                    <span className="truncate text-2xs text-muted-foreground font-normal">
-                      {activeWorkspace.subtext}
-                    </span>
+                    {activeWorkspace.subtext && (
+                      <span className="truncate text-2xs text-muted-foreground font-normal">
+                        {activeWorkspace.subtext}
+                      </span>
+                    )}
                   </span>
                   <ChevronsUpDown className="size-4 shrink-0 text-muted-foreground group-data-[collapsible=icon]:hidden" />
                 </button>
@@ -211,9 +213,11 @@ export function ReusableSidebar({
                         <span className="font-semibold text-foreground text-sm truncate">
                           {w.name}
                         </span>
-                        <span className="text-2xs text-muted-foreground truncate">
-                          {w.subtext}
-                        </span>
+                        {w.subtext && (
+                          <span className="text-2xs text-muted-foreground truncate">
+                            {w.subtext}
+                          </span>
+                        )}
                       </div>
                       {isSelected && (
                         <Check className="size-4 shrink-0 text-primary" />
