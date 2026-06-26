@@ -35,15 +35,7 @@ const APNAHIRE_WORKSPACES: SidebarWorkspace[] = [
 
 // Predefined Navigation for both products
 const ONLYROUNDS_NAV: SidebarNavItem[] = [
-  {
-    href: "/onlyrounds/jobs",
-    label: "Jobs",
-    icon: Briefcase,
-    items: [
-      { href: "/onlyrounds/jobs", label: "All Jobs" },
-      { href: "/onlyrounds/jobs/new", label: "Create Job" },
-    ],
-  },
+  { href: "/onlyrounds/jobs", label: "Jobs", icon: Briefcase },
   { href: "/onlyrounds/clients", label: "Clients", icon: Users },
   { href: "/onlyrounds/credits", label: "Credits", icon: CreditCard },
 ]
@@ -62,7 +54,7 @@ const APNAHIRE_NAV: SidebarNavItem[] = [
 ]
 
 export default function SidebarShowcasePage() {
-  const [productMode, setProductMode] = React.useState<"onlyrounds" | "apnahire">("onlyrounds")
+  const [productMode, setProductMode] = React.useState<"onlyrounds" | "apnahire">("apnahire")
   const [viewportMode, setViewportMode] = React.useState<"desktop" | "tablet" | "mobile">("desktop")
 
   // State overrides for the dynamic playground configurations
@@ -70,8 +62,8 @@ export default function SidebarShowcasePage() {
   const [activeAHWorkspace, setActiveAHWorkspace] = React.useState<string>(APNAHIRE_WORKSPACES[0].id)
 
   const [showAlert, setShowAlert] = React.useState(true)
-  const [customAlertTitle, setCustomAlertTitle] = React.useState("Upgrade Account")
-  const [customAlertDesc, setCustomAlertDesc] = React.useState("Get access to advanced matching filters.")
+  const [customAlertTitle, setCustomAlertTitle] = React.useState("Verify Identity")
+  const [customAlertDesc, setCustomAlertDesc] = React.useState("Verify your company tax status to post jobs.")
 
   // Sync state if product switcher is used
   React.useEffect(() => {
@@ -113,20 +105,20 @@ export default function SidebarShowcasePage() {
               <span className="text-2xs font-semibold uppercase tracking-wider text-muted-foreground">Product Configuration</span>
               <div className="flex items-center gap-2">
                 <Button
-                  variant={productMode === "onlyrounds" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setProductMode("onlyrounds")}
-                  className="cursor-pointer"
-                >
-                  OnlyRounds AI
-                </Button>
-                <Button
                   variant={productMode === "apnahire" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setProductMode("apnahire")}
                   className="cursor-pointer"
                 >
                   Apna Hire Recruiter
+                </Button>
+                <Button
+                  variant={productMode === "onlyrounds" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setProductMode("onlyrounds")}
+                  className="cursor-pointer"
+                >
+                  OnlyRounds AI
                 </Button>
               </div>
             </div>

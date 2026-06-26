@@ -36,18 +36,9 @@ const WORKSPACES: SidebarWorkspace[] = [
 ]
 
 const NAV: SidebarNavItem[] = [
-  {
-    href: "/onlyrounds/jobs",
-    label: "Jobs",
-    icon: Briefcase,
-    items: [
-      { href: "/onlyrounds/jobs", label: "All Jobs" },
-      { href: "/onlyrounds/jobs/new", label: "Create Job" },
-    ],
-  },
+  { href: "/onlyrounds/jobs", label: "Jobs", icon: Briefcase },
   { href: "/onlyrounds/clients", label: "Clients", icon: Users },
   { href: "/onlyrounds/credits", label: "Credits", icon: CreditCard },
-  { href: "/onlyrounds/sidebar-showcase", label: "Sidebar Specs", icon: Settings },
 ]
 
 export function OnlyRoundsSidebar() {
