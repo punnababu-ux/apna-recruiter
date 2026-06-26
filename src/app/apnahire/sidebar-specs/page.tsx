@@ -24,7 +24,6 @@ import { SidebarProvider } from "@/components/ui/sidebar"
 // Predefined Mock Workspaces for both products
 const ONLYROUNDS_WORKSPACES: SidebarWorkspace[] = [
   { id: "or-gamma", name: "Gamma Workspace", fallbackLetter: "G" },
-  { id: "or-talentpass", name: "Apna TalentPass", fallbackLetter: "A", logoUrl: "/vercel.svg" },
   { id: "or-beta", name: "Beta Design System", fallbackLetter: "B" },
 ]
 

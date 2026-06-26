@@ -160,12 +160,12 @@ export function ReusableSidebar({
                     <img
                       src={activeWorkspace.logoUrl}
                       alt=""
-                      className="-ml-px mr-1 size-5 shrink-0 rounded object-cover"
+                      className="size-5 shrink-0 rounded object-cover"
                     />
                   ) : (
                     <span
                       aria-hidden
-                      className="-ml-px mr-1 flex size-5 shrink-0 items-center justify-center rounded bg-gradient-primary text-2xs font-bold text-white"
+                      className="flex size-5 shrink-0 items-center justify-center rounded bg-gradient-primary text-2xs font-bold text-white"
                     >
                       {activeWorkspace.fallbackLetter}
                     </span>

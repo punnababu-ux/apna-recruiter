@@ -23,12 +23,6 @@ const WORKSPACES: SidebarWorkspace[] = [
     fallbackLetter: "G",
   },
   {
-    id: "talentpass",
-    name: "Apna TalentPass",
-    fallbackLetter: "A",
-    logoUrl: "/vercel.svg",
-  },
-  {
     id: "beta",
     name: "Beta Design System",
     fallbackLetter: "B",
