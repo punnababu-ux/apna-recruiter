@@ -90,6 +90,7 @@ export type ReusableSidebarProps = {
     label: string
     icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
   }[]
+  dropdownClassName?: string
 }
 
 export function ReusableSidebar({
@@ -101,6 +102,7 @@ export function ReusableSidebar({
   bottomCta,
   alertBanner,
   footerItems,
+  dropdownClassName,
 }: ReusableSidebarProps) {
   const pathname = usePathname()
   const { state, isMobile } = useSidebar()
@@ -184,7 +186,7 @@ export function ReusableSidebar({
                 </button>
               }
             />
-            <DropdownMenuContent side="right" align="start" className="w-64 p-1.5">
+            <DropdownMenuContent side="right" align="start" className={cn("w-64 p-1.5", dropdownClassName)}>
               <DropdownMenuGroup className="space-y-1">
                 <DropdownMenuLabel className="px-2 py-1 text-xs font-semibold text-muted-foreground">
                   Workspaces

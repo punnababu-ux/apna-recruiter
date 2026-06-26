@@ -44,6 +44,7 @@ export function OnlyRoundsSidebar() {
 
   return (
     <ReusableSidebar
+      dropdownClassName="theme-onlyrounds"
       brand={{
         name: "OnlyRound AI",
         logo: <OnlyRoundsLogoMark className="-ml-1 size-7!" />,
