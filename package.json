@@ -2,15 +2,19 @@
   "name": "poneglyph-v0",
   "version": "0.1.0",
   "private": true,
+  "workspaces": [
+    "packages/design-system"
+  ],
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run build --prefix packages/design-system && next build",
     "start": "next start",
     "lint": "eslint",
     "lint:tokens": "bash ./scripts/lint-tokens.sh",
     "check": "npm run lint && npm run lint:tokens && npm run build"
   },
   "dependencies": {
+    "@apna/design-system": "*",
     "@ai-sdk/google": "^3.0.75",
     "@base-ui/react": "^1.4.1",
     "ai": "^6.0.185",

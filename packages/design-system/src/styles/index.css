@@ -1,0 +1,470 @@
+/* ============================================================================
+ * Poneglyph · globals.css (entry stylesheet)
+ * ----------------------------------------------------------------------------
+ * Orchestrator. Order matters:
+ *   1. Tailwind + animation utility layers
+ *   2. Primitive tokens (Tier 1 — raw atoms)
+ *   3. Semantic tokens  (Tier 2 — intent aliases, light + dark)
+ *   4. @theme inline    (expose semantics as Tailwind design tokens)
+ *   5. @layer base      (element defaults — body/html/focus)
+ *
+ * Do not add token values here. Primitives live in `src/styles/tokens/
+ * primitives.css`; aliases in `semantic.css`. This file only wires them.
+ * ========================================================================== */
+@import "./tokens/primitives.css";
+@import "./tokens/semantic.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ----------------------------------------------------------------------------
+ * @theme inline — exposes semantic tokens to Tailwind's utility generator.
+ * Every entry here MUST reference a semantic token (Tier 2). Never a
+ * primitive directly. That contract is what keeps components theme-swappable.
+ * -------------------------------------------------------------------------- */
+@theme inline {
+  /* Surfaces */
+  --color-background:         var(--background);
+  --color-foreground:         var(--foreground);
+  --color-card:               var(--card);
+  --color-card-foreground:    var(--card-foreground);
+  --color-popover:            var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  /* Roles */
+  --color-primary:              var(--primary);
+  --color-primary-foreground:   var(--primary-foreground);
+  --color-secondary:            var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted:                var(--muted);
+  --color-muted-foreground:     var(--muted-foreground);
+  --color-accent:               var(--accent);
+  --color-accent-foreground:    var(--accent-foreground);
+  --color-highlight:            var(--highlight);
+  --color-highlight-foreground: var(--highlight-foreground);
+
+  /* Status */
+  --color-destructive:             var(--destructive);
+  --color-destructive-foreground:  var(--destructive-foreground);
+  --color-destructive-subtle:      var(--destructive-subtle);
+  --color-success:                 var(--success);
+  --color-success-foreground:      var(--success-foreground);
+  --color-success-subtle:          var(--success-subtle);
+  --color-warning:                 var(--warning);
+  --color-warning-foreground:      var(--warning-foreground);
+  --color-warning-subtle:          var(--warning-subtle);
+  --color-info:                    var(--info);
+  --color-info-foreground:         var(--info-foreground);
+  --color-info-subtle:             var(--info-subtle);
+
+  /* Lines */
+  --color-border: var(--border);
+  --color-input:  var(--input);
+  --color-ring:   var(--ring);
+
+  /* Sidebar */
+  --color-sidebar:                     var(--sidebar);
+  --color-sidebar-foreground:          var(--sidebar-foreground);
+  --color-sidebar-primary:             var(--sidebar-primary);
+  --color-sidebar-primary-foreground:  var(--sidebar-primary-foreground);
+  --color-sidebar-accent:              var(--sidebar-accent);
+  --color-sidebar-accent-foreground:   var(--sidebar-accent-foreground);
+  --color-sidebar-border:              var(--sidebar-border);
+  --color-sidebar-ring:                var(--sidebar-ring);
+
+  /* Charts */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* ------------------------------------------------------------------------
+   * Typography
+   *
+   * Every entry below is an alias that resolves through the Tier-2
+   * semantic layer (see `tokens/semantic.css`). These registrations are
+   * what make `.font-body`, `.font-heading`, `.font-bold`, `.text-lg` etc.
+   * available as Tailwind utilities *backed by tokens*, so changing a
+   * semantic alias instantly re-themes every component that uses them.
+   * ------------------------------------------------------------------------ */
+
+  /* Family utilities → .font-body, .font-heading, .font-mono, .font-sans */
+  --font-body:    var(--font-body);
+  --font-heading: var(--font-heading);
+  --font-mono:    var(--font-mono);
+  --font-sans:    var(--font-body); /* backwards-compat alias; prefer font-body */
+
+  /* Weight utilities → .font-regular, .font-medium, .font-semibold, .font-bold, .font-extrabold */
+  --font-weight-regular:   var(--font-weight-regular);
+  --font-weight-medium:    var(--font-weight-medium);
+  --font-weight-semibold:  var(--font-weight-semibold);
+  --font-weight-bold:      var(--font-weight-bold);
+  --font-weight-extrabold: var(--font-weight-extrabold);
+
+  /* Size utilities → .text-xs, .text-sm, .text-base, .text-lg, .text-xl, .text-2xl, … */
+  --text-2xs:  var(--text-2xs);
+  --text-xs:   var(--text-xs);
+  --text-sm:   var(--text-sm);
+  --text-base: var(--text-base);
+  --text-lg:   var(--text-lg);
+  --text-xl:   var(--text-xl);
+  --text-2xl:  var(--text-2xl);
+  --text-3xl:  var(--text-3xl);
+  --text-4xl:  var(--text-4xl);
+  --text-5xl:  var(--text-5xl);
+  --text-6xl:  var(--text-6xl);
+
+  /* ------------------------------------------------------------------------
+   * Spacing — context-role aliases only.
+   *
+   * Tailwind v4 already derives numeric `p-4`, `gap-6`, `m-12` from the
+   * `--spacing` base (0.25rem). We intentionally DO NOT register named
+   * size aliases (`--spacing-sm`, `--spacing-md`, `--spacing-2xl`, …)
+   * here: they collide catastrophically with Tailwind's sizing utilities
+   * (`max-w-sm`, `w-md`, `h-2xl`, …), which share the `--spacing-*`
+   * namespace and would resolve to tiny pixel values (12–128px) instead
+   * of the expected reading widths (24rem, 28rem, 42rem, …).
+   *
+   * Context roles below (`.p-inset`, `.gap-stack`, `.gap-section`, …) use
+   * names Tailwind never consumes for sizing utilities, so they're safe.
+   * For size-based spacing, stick to the numeric scale (`p-4`, `gap-6`)
+   * or use a context role.
+   * ------------------------------------------------------------------------ */
+  --spacing-inline:  var(--space-inline);
+  --spacing-stack:   var(--space-stack);
+  --spacing-field:   var(--space-field);
+  --spacing-inset:   var(--space-inset);
+  --spacing-section: var(--space-section);
+  --spacing-page:    var(--space-page);
+
+  /* --------------------------------------------------------------------
+   * Radius — Tailwind `rounded-*` utilities anchor here.
+   *
+   * Two tiers are exposed:
+   *   - Primitive sizes  (rounded-xs … rounded-3xl, rounded-full) — the
+   *     underlying modular scale. Use when the size is the point.
+   *   - Semantic roles   (rounded-field / rounded-control / rounded-surface
+   *     / rounded-overlay / rounded-hero / rounded-pill) — describe intent.
+   *     Prefer these in new component code; they let the whole system
+   *     retune when a single role alias shifts in semantic.css.
+   * -------------------------------------------------------------------- */
+  --radius-xs:   var(--radius-xs);
+  --radius-sm:   var(--radius-sm);
+  --radius-md:   var(--radius-md);
+  --radius-lg:   var(--radius-lg);
+  --radius-xl:   var(--radius-xl);
+  --radius-2xl:  var(--radius-2xl);
+  --radius-3xl:  var(--radius-3xl);
+  --radius-full: var(--radius-full);
+
+  --radius-field:   var(--radius-field);
+  --radius-control: var(--radius-control);
+  --radius-surface: var(--radius-surface);
+  --radius-overlay: var(--radius-overlay);
+  --radius-hero:    var(--radius-hero);
+  --radius-pill:    var(--radius-pill);
+
+  /* --------------------------------------------------------------------
+   * Shadow — primitive ramp + intent aliases.
+   * Tailwind `shadow-*` utilities pick these up automatically.
+   * -------------------------------------------------------------------- */
+  --shadow-xs:   var(--shadow-xs);
+  --shadow-sm:   var(--shadow-sm);
+  --shadow-md:   var(--shadow-md);
+  --shadow-lg:   var(--shadow-lg);
+  --shadow-xl:   var(--shadow-xl);
+  --shadow-2xl:  var(--shadow-2xl);
+  --shadow-inner: var(--shadow-inner);
+
+  --shadow-card:      var(--shadow-card);
+  --shadow-popover:   var(--shadow-popover);
+  --shadow-elevated:  var(--shadow-elevated);
+  --shadow-dialog:    var(--shadow-dialog);
+  --shadow-marketing: var(--shadow-marketing);
+
+  /* --------------------------------------------------------------------
+   * Motion — duration + easing utilities. Enables `duration-enter`,
+   * `ease-out-ui`, `transition-standard`, etc.
+   * -------------------------------------------------------------------- */
+  --animate-duration-instant: var(--duration-instant);
+  --animate-duration-75:      var(--duration-75);
+  --animate-duration-100:     var(--duration-100);
+  --animate-duration-150:     var(--duration-150);
+  --animate-duration-200:     var(--duration-200);
+  --animate-duration-300:     var(--duration-300);
+  --animate-duration-500:     var(--duration-500);
+  --animate-duration-700:     var(--duration-700);
+  --animate-duration-1000:    var(--duration-1000);
+  --animate-duration-hover:   var(--duration-hover);
+  --animate-duration-enter:   var(--duration-enter);
+  --animate-duration-exit:    var(--duration-exit);
+  --animate-duration-large:   var(--duration-large);
+
+  --ease-linear:   var(--ease-linear);
+  --ease-standard: var(--ease-standard);
+  --ease-emphasis: var(--ease-emphasis);
+  --ease-decel:    var(--ease-decel);
+  --ease-spring:   var(--ease-spring);
+  --ease-in-ui:    var(--ease-in-ui);
+  --ease-out-ui:   var(--ease-out-ui);
+
+  /* --------------------------------------------------------------------
+   * Typography — line-height + tracking. Enables `leading-snug`,
+   * `tracking-tight`, etc. through our tokens instead of Tailwind's
+   * defaults.
+   * -------------------------------------------------------------------- */
+  --leading-tight:   var(--line-height-tight);
+  --leading-snug:    var(--line-height-snug);
+  --leading-normal:  var(--line-height-normal);
+  --leading-relaxed: var(--line-height-relaxed);
+  --leading-loose:   var(--line-height-loose);
+
+  --tracking-tighter: var(--letter-spacing-tighter);
+  --tracking-tight:   var(--letter-spacing-tight);
+  --tracking-normal:  var(--letter-spacing-normal);
+  --tracking-wide:    var(--letter-spacing-wide);
+  --tracking-wider:   var(--letter-spacing-wider);
+  --tracking-widest:  var(--letter-spacing-widest);
+
+  /* --------------------------------------------------------------------
+   * Z-index — `z-docked`, `z-modal`, `z-toast` etc., routed through
+   * tokens instead of raw numeric literals (`z-50`).
+   * -------------------------------------------------------------------- */
+  --z-index-hide:     var(--z-hide);
+  --z-index-base:     var(--z-base);
+  --z-index-docked:   var(--z-docked);
+  --z-index-dropdown: var(--z-dropdown);
+  --z-index-sticky:   var(--z-sticky);
+  --z-index-overlay:  var(--z-overlay);
+  --z-index-modal:    var(--z-modal);
+  --z-index-popover:  var(--z-popover);
+  --z-index-toast:    var(--z-toast);
+  --z-index-tooltip:  var(--z-tooltip);
+}
+
+/* ============================================================================
+ * Typography presets — composite utilities.
+ * ----------------------------------------------------------------------------
+ * Each preset bundles family + size + weight + line-height + tracking into a
+ * single class. Designers and agents can compose templates with one class
+ * per block of text instead of remembering the right combination each time.
+ *
+ * USAGE
+ *   <h1 className="text-display">…</h1>
+ *   <h2 className="text-h1">…</h2>
+ *   <p  className="text-body">…</p>
+ *   <span className="text-caption">…</span>
+ *
+ * EXTENDING
+ *   Add a new preset only when it represents a reused *role* (e.g. eyebrow,
+ *   quote). One-off sizes should use atomic utilities
+ *   (`font-heading font-semibold text-2xl leading-snug`).
+ * ========================================================================== */
+
+@utility text-display {
+  font-family:     var(--font-heading);
+  font-size:       var(--text-5xl);
+  line-height:     var(--line-height-tight);
+  font-weight:     var(--font-weight-bold);
+  letter-spacing:  var(--letter-spacing-tight);
+}
+
+@utility text-h1 {
+  font-family:     var(--font-heading);
+  font-size:       var(--text-4xl);
+  line-height:     var(--line-height-tight);
+  font-weight:     var(--font-weight-bold);
+  letter-spacing:  var(--letter-spacing-tight);
+}
+
+@utility text-h2 {
+  font-family:     var(--font-heading);
+  font-size:       var(--text-3xl);
+  line-height:     var(--line-height-snug);
+  font-weight:     var(--font-weight-semibold);
+  letter-spacing:  var(--letter-spacing-tight);
+}
+
+@utility text-h3 {
+  font-family:     var(--font-heading);
+  font-size:       var(--text-2xl);
+  line-height:     var(--line-height-snug);
+  font-weight:     var(--font-weight-semibold);
+}
+
+@utility text-h4 {
+  font-family:     var(--font-heading);
+  font-size:       var(--text-xl);
+  line-height:     var(--line-height-snug);
+  font-weight:     var(--font-weight-semibold);
+}
+
+@utility text-h5 {
+  font-family:     var(--font-heading);
+  font-size:       var(--text-lg);
+  line-height:     var(--line-height-snug);
+  font-weight:     var(--font-weight-semibold);
+}
+
+@utility text-h6 {
+  font-family:     var(--font-heading);
+  font-size:       var(--text-base);
+  line-height:     var(--line-height-snug);
+  font-weight:     var(--font-weight-semibold);
+}
+
+@utility text-body {
+  font-family:  var(--font-body);
+  font-size:    var(--text-base);
+  line-height:  var(--line-height-normal);
+  font-weight:  var(--font-weight-regular);
+}
+
+@utility text-body-sm {
+  font-family:  var(--font-body);
+  font-size:    var(--text-sm);
+  line-height:  var(--line-height-normal);
+  font-weight:  var(--font-weight-regular);
+}
+
+@utility text-caption {
+  font-family:  var(--font-body);
+  font-size:    var(--text-xs);
+  line-height:  var(--line-height-snug);
+  font-weight:  var(--font-weight-medium);
+  color:        var(--muted-foreground);
+}
+
+/* ============================================================================
+ * Gradient utilities — consume `--gradient-*` semantic tokens.
+ * Each theme (default · Apna, `.theme-onlyrounds`) re-aliases the tokens,
+ * so `bg-gradient-primary` retunes automatically when the theme class flips.
+ * ========================================================================== */
+
+@utility bg-gradient-primary {
+  background-image: var(--gradient-primary);
+}
+@utility bg-gradient-accent {
+  background-image: var(--gradient-accent);
+}
+
+/* ----------------------------------------------------------------------------
+ * AI activity shimmer — subtle animated gradient used as a full-field cover
+ * when an AI action is in flight (e.g. JD generation, JD cleanup).
+ *
+ * Uses the semantic `--muted` and `--accent` tokens so it sits softly against
+ * the surrounding UI in both light and dark themes (a faint brand tint
+ * sweeping across a near-white field, rather than a saturated brand gradient).
+ * -------------------------------------------------------------------------- */
+@keyframes ai-shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+
+@utility animate-ai-shimmer {
+  /* Pastel multi-hue wave (green → gold → green) — visible but not loud.
+     Dark-theme override below remaps to the same hues in the 800 tier so
+     the shimmer reads correctly against dark surfaces. */
+  background-image: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-apna-green-100) 70%, transparent),
+    color-mix(in srgb, var(--color-apna-gold-200) 70%, transparent),
+    color-mix(in srgb, var(--color-apna-green-200) 70%, transparent),
+    color-mix(in srgb, var(--color-apna-green-100) 70%, transparent)
+  );
+  background-size: 200% 100%;
+  animation: ai-shimmer 2.4s ease-in-out infinite;
+}
+
+.dark .animate-ai-shimmer {
+  background-image: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-apna-green-900) 70%, transparent),
+    color-mix(in srgb, var(--color-apna-gold-800) 70%, transparent),
+    color-mix(in srgb, var(--color-apna-green-800) 70%, transparent),
+    color-mix(in srgb, var(--color-apna-green-900) 70%, transparent)
+  );
+}
+
+/* Text gradients — clip a gradient to a glyph run. Pairs beautifully with
+   display-size headings for the "AI-powered" / "TalentPass" kind of inline
+   emphasis. Foreground is `transparent` so the background-image shows through. */
+@utility text-gradient-primary {
+  background-image: var(--gradient-primary);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+@utility text-gradient-accent {
+  background-image: var(--gradient-accent);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+@utility text-overline {
+  font-family:     var(--font-body);
+  font-size:       var(--text-2xs);
+  line-height:     var(--line-height-snug);
+  font-weight:     var(--font-weight-semibold);
+  letter-spacing:  var(--letter-spacing-wider);
+  text-transform:  uppercase;
+}
+
+
+
+/* ----------------------------------------------------------------------------
+ * Element defaults. Keep this minimal — anything that could be overridden by
+ * a component belongs in that component, not here.
+ * -------------------------------------------------------------------------- */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply antialiased;
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+
+    /* Scale layout by 1.1x on desktop screens to match 110% zoom at 1080p */
+    @media (min-width: 1024px) {
+      font-size: 110%;
+    }
+  }
+
+  body {
+    @apply bg-background text-foreground font-body text-base font-regular;
+  }
+
+  /* Native heading elements default to the heading family + semibold.
+     Templates should still prefer the explicit preset utilities
+     (`text-h1`, `text-display`, …) over relying on these defaults. */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading font-semibold;
+  }
+
+  /* Respect reduced-motion preference globally. Components that animate
+     should still check their own intent, but this is a safe floor. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ----------------------------------------------------------------------------
+ * Vertical Responsiveness for Short/Low-Height Viewports
+ *
+ * Automatically compacts spacing, padding, and elements on short devices
+ * (max-height: 720px) to prevent vertical overflow and avoid unnecessary scrolling.
+ * -------------------------------------------------------------------------- */
+
+

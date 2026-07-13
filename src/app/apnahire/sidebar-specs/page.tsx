@@ -2,382 +2,447 @@
 
 import * as React from "react"
 import {
-  Briefcase,
-  CreditCard,
-  HelpCircle,
-  Info,
-  Laptop,
-  MessageSquare,
+  AlertCircle,
+  ChevronDown,
+  ChevronsUpDown,
+  FileCode,
+  Layout,
+  LayoutGrid,
+  Monitor,
   PanelLeft,
-  Phone,
-  Plus,
   Settings,
-  Tablet,
-  Users,
+  Smartphone,
+  Sparkles,
+  X,
 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { OnlyRoundsLogoMark } from "@/components/ui/logo-onlyrounds"
-import { ReusableSidebar, type SidebarWorkspace, type SidebarNavItem } from "@/components/ui/app-sidebar"
-import { SidebarProvider } from "@/components/ui/sidebar"
+import { Badge, Button } from "@apna/design-system"
+import Link from "next/link"
 
-// Predefined Mock Workspaces for both products
-const ONLYROUNDS_WORKSPACES: SidebarWorkspace[] = [
-  { id: "or-gamma", name: "Gamma Workspace", fallbackLetter: "G" },
-  { id: "or-beta", name: "Beta Design System", fallbackLetter: "B" },
-]
-
-const APNAHIRE_WORKSPACES: SidebarWorkspace[] = [
-  { id: "ah-corp", name: "Apna Corp Workspace", subtext: "Enterprise Plan", fallbackLetter: "A", logoUrl: "/vercel.svg" },
-  { id: "ah-tech", name: "Beta Tech Group", subtext: "Growth Tier", fallbackLetter: "B" },
-]
-
-// Predefined Navigation for both products
-const ONLYROUNDS_NAV: SidebarNavItem[] = [
-  { href: "/onlyrounds/jobs", label: "Jobs", icon: Briefcase },
-  { href: "/onlyrounds/clients", label: "Clients", icon: Users },
-  { href: "/onlyrounds/credits", label: "Credits", icon: CreditCard },
-]
-
-const APNAHIRE_NAV: SidebarNavItem[] = [
-  {
-    label: "Talent Sourcing",
-    icon: Users,
-    items: [
-      { href: "/onlyrounds/clients", label: "Active Pools" },
-      { href: "/onlyrounds/jobs", label: "Talent Search" },
-    ],
-  },
-  { href: "/onlyrounds/jobs", label: "Assessments", icon: Briefcase },
-  { href: "/onlyrounds/credits", label: "Billing & Invoices", icon: CreditCard },
-]
-
-export default function SidebarShowcasePage() {
-  const [productMode, setProductMode] = React.useState<"onlyrounds" | "apnahire">("apnahire")
-  const [viewportMode, setViewportMode] = React.useState<"desktop" | "tablet" | "mobile">("desktop")
-
-  // State overrides for the dynamic playground configurations
-  const [activeORWorkspace, setActiveORWorkspace] = React.useState<string>(ONLYROUNDS_WORKSPACES[0].id)
-  const [activeAHWorkspace, setActiveAHWorkspace] = React.useState<string>(APNAHIRE_WORKSPACES[0].id)
-
-  const [showAlert, setShowAlert] = React.useState(true)
-  const [customAlertTitle, setCustomAlertTitle] = React.useState("Verify Identity")
-  const [customAlertDesc, setCustomAlertDesc] = React.useState("Verify your company tax status to post jobs.")
-
-  // Sync state if product switcher is used
-  React.useEffect(() => {
-    if (productMode === "onlyrounds") {
-      setCustomAlertTitle("Upgrade Account")
-      setCustomAlertDesc("Get access to advanced matching filters.")
-    } else {
-      setCustomAlertTitle("Verify Identity")
-      setCustomAlertDesc("Verify your company tax status to post jobs.")
-    }
-  }, [productMode])
-
+export default function SidebarSpecsPage() {
   return (
-    <div className="flex-1 space-y-8 p-6 md:p-8 max-w-6xl mx-auto animate-in fade-in duration-300">
+    <div className="flex-1 space-y-8 p-6 md:p-8 max-w-6xl mx-auto animate-in fade-in duration-300 font-body">
       {/* Page Header */}
-      <div className="flex flex-col gap-2 border-b border-border pb-5">
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className="border-primary/30 text-primary">
-            Apna Hire Core Component
-          </Badge>
-          <span className="text-2xs text-muted-foreground">Version 2.5.0</span>
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border pb-5">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="border-primary/30 text-primary">
+              Apna Hire Core Component
+            </Badge>
+            <span className="text-xs text-muted-foreground font-mono">v2.5.0 (Static Spec Sheet)</span>
+          </div>
+          <h1 className="text-3xl font-heading font-bold text-foreground">
+            Recruiter Sidebar Blueprint & Layout Rules
+          </h1>
+          <p className="text-base text-muted-foreground max-w-2xl text-left">
+            Complete static specifications of the `ReusableSidebar` component. This document outlines the geometric alignment rules, state transition guarantees, and layout possibilities across both desktop and mobile viewports.
+          </p>
         </div>
-        <h1 className="text-3xl font-heading font-bold text-foreground">
-          Recruiter Sidebar Specs & Showcase
-        </h1>
-        <p className="text-base text-muted-foreground max-w-3xl">
-          Demonstrating a highly flexible, props-driven `ReusableSidebar` component. The exact same component is rendered in two different product shells (OnlyRounds vs. Apna Hire) to ensure layout consistency.
-        </p>
+        
+        <Link href="/apnahire/sidebar-specs/interactive" className="shrink-0">
+          <Button className="gap-2 cursor-pointer shadow-xs">
+            <Sparkles className="size-4" />
+            Open Interactive Showcase
+          </Button>
+        </Link>
       </div>
 
-      {/* Main Grid: Interactive Playground + Specifications */}
+      {/* Grid: Component Layout Mockups */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        {/* Left Column: Interactive Playground (Mock Device Frame) */}
-        <div className="lg:col-span-7 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            {/* Product Switcher */}
-            <div className="flex flex-col gap-1.5 text-left">
-              <span className="text-2xs font-semibold uppercase tracking-wider text-muted-foreground">Product Configuration</span>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant={productMode === "apnahire" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setProductMode("apnahire")}
-                  className="cursor-pointer"
-                >
-                  Apna Hire Recruiter
-                </Button>
-                <Button
-                  variant={productMode === "onlyrounds" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setProductMode("onlyrounds")}
-                  className="cursor-pointer"
-                >
-                  OnlyRounds AI
-                </Button>
-              </div>
+        {/* Left Column: Visual Mockups */}
+        <div className="lg:col-span-8 space-y-8">
+          
+          {/* Section 1: Desktop State Mockups (Expanded vs Collapsed) */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <Monitor className="size-5 text-primary" />
+              <h2 className="text-xl font-heading font-semibold text-foreground">
+                Desktop Layout States
+              </h2>
             </div>
-
-            {/* Viewport Switcher */}
-            <div className="flex flex-col gap-1.5 items-start sm:items-end">
-              <span className="text-2xs font-semibold uppercase tracking-wider text-muted-foreground">Simulated Viewport</span>
-              <div className="flex items-center gap-1 bg-muted p-1 rounded-lg border border-border">
-                <button
-                  onClick={() => setViewportMode("desktop")}
-                  className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md transition-all cursor-pointer ${
-                    viewportMode === "desktop"
-                      ? "bg-background text-foreground shadow-xs"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  <Laptop className="size-3.5" />
-                  <span className="hidden sm:inline">Desktop</span>
-                </button>
-                <button
-                  onClick={() => setViewportMode("tablet")}
-                  className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md transition-all cursor-pointer ${
-                    viewportMode === "tablet"
-                      ? "bg-background text-foreground shadow-xs"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  <Tablet className="size-3.5" />
-                  <span className="hidden sm:inline">Tablet</span>
-                </button>
-                <button
-                  onClick={() => setViewportMode("mobile")}
-                  className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md transition-all cursor-pointer ${
-                    viewportMode === "mobile"
-                      ? "bg-background text-foreground shadow-xs"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  <Phone className="size-3.5" />
-                  <span className="hidden sm:inline">Mobile</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Interactive Frame */}
-          <div 
-            className="border border-border bg-muted/30 rounded-xl overflow-hidden shadow-md flex items-stretch justify-center transition-all duration-300 relative"
-            style={{
-              height: "650px",
-              width: "100%",
-            }}
-          >
-            {/* Device Container */}
-            <div 
-              className={`bg-background transition-all duration-300 flex border border-border/80 shadow-2xl relative overflow-hidden ${
-                viewportMode === "desktop" 
-                  ? "w-full h-full rounded-none" 
-                  : viewportMode === "tablet" 
-                    ? "w-[768px] max-w-full h-[600px] my-auto rounded-xl" 
-                    : "w-[360px] max-w-full h-[580px] my-auto rounded-2xl"
-              }`}
-            >
-              <SidebarProvider defaultOpen={viewportMode === "desktop"}>
-                {/* Dynamically Configure and Render ReusableSidebar */}
-                {productMode === "onlyrounds" ? (
-                  <ReusableSidebar
-                    brand={{
-                      name: "OnlyRound AI",
-                      logo: <OnlyRoundsLogoMark className="-ml-1 size-7!" />,
-                    }}
-                    workspaces={ONLYROUNDS_WORKSPACES}
-                    activeWorkspaceId={activeORWorkspace}
-                    onWorkspaceChange={(w) => setActiveORWorkspace(w.id)}
-                    navItems={ONLYROUNDS_NAV}
-                    footerItems={[
-                      { href: "/onlyrounds/settings", label: "Settings", icon: Settings },
-                      { href: "/onlyrounds/help", label: "Help", icon: HelpCircle },
-                    ]}
-                  />
-                ) : (
-                  <ReusableSidebar
-                    brand={{
-                      name: "Apna Hire",
-                      logo: <Users className="text-primary size-5" />,
-                    }}
-                    workspaces={APNAHIRE_WORKSPACES}
-                    activeWorkspaceId={activeAHWorkspace}
-                    onWorkspaceChange={(w) => setActiveAHWorkspace(w.id)}
-                    navItems={APNAHIRE_NAV}
-                    bottomCta={{
-                      label: "Invite Recruiter",
-                      icon: Plus,
-                      href: "/onlyrounds/settings",
-                    }}
-                    alertBanner={showAlert ? {
-                      id: "showcase-ah-alert",
-                      title: customAlertTitle,
-                      description: customAlertDesc,
-                      ctaText: "Verify",
-                    } : undefined}
-                    footerItems={[
-                      { href: "/onlyrounds/settings", label: "Settings", icon: Settings },
-                      { href: "/onlyrounds/help", label: "Support", icon: HelpCircle },
-                    ]}
-                  />
-                )}
-
-                {/* Simulated Content Area */}
-                <div className="flex-1 bg-muted/20 pl-[16rem] group-data-[collapsible=icon]:pl-[4rem] transition-[padding] duration-200 w-full h-full" /* token-lint-ignore: custom width padding for simulated sidebar */>
-                  {/* Top Bar */}
-                  <div className="h-14 border-b border-border bg-card flex items-center px-4 justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="size-5 rounded bg-primary/10 flex items-center justify-center">
-                        <PanelLeft className="size-3 text-primary" />
-                      </div>
-                      <span className="text-xs font-semibold text-foreground">
-                        {productMode === "onlyrounds" ? "OnlyRounds App" : "Apna Hire Dashboard"}
-                      </span>
+            
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 bg-muted/10 p-6 rounded-xl border border-border/80">
+              
+              {/* Expanded Sidebar Mockup */}
+              <div className="md:col-span-7 flex flex-col gap-2 text-left">
+                <span className="text-2xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                  1. Expanded View (w-64 / 256px)
+                </span>
+                
+                <div className="flex flex-col h-[400px] w-64 bg-card border border-border rounded-lg shadow-sm overflow-hidden text-xs text-foreground select-none" /* token-lint-ignore: mock layout dimensions */>
+                  {/* Brand Row */}
+                  <div className="flex h-14 items-center gap-3 border-b border-border/40 px-3">
+                    <div className="size-10 rounded-lg bg-primary flex items-center justify-center font-bold text-primary-foreground text-sm shrink-0">
+                      apna
                     </div>
-                    <div className="size-7 rounded-full bg-accent flex items-center justify-center text-xs font-bold text-muted-foreground">
-                      R
+                    <span className="text-sm font-bold text-foreground font-heading">
+                      apna <span className="text-primary font-bold">Hire</span>
+                    </span>
+                  </div>
+                  
+                  {/* Workspace Selector */}
+                  <div className="p-3">
+                    <div className="flex h-12 w-full items-center justify-between rounded-lg border border-border bg-background px-2.5 font-medium shadow-2xs">
+                      <div className="flex items-center gap-3">
+                        <div className="size-7 rounded bg-primary/10 flex items-center justify-center font-bold text-primary text-2xs">
+                          RE
+                        </div>
+                        <div className="flex flex-col leading-tight text-left">
+                          <span className="font-semibold text-2xs">Rohini Enterprises</span>
+                          <span className="text-2xs text-muted-foreground">Company</span>
+                        </div>
+                      </div>
+                      <ChevronsUpDown className="size-3 text-muted-foreground" />
                     </div>
                   </div>
-                  {/* Content Canvas */}
-                  <div className="p-6 space-y-4 text-left">
-                    <h3 className="text-sm font-semibold text-foreground">
-                      {productMode === "onlyrounds" ? "Evaluation Pipeline" : "Recruitment Overview"}
-                    </h3>
-                    <div className="space-y-2">
-                      <div className="h-4 w-full bg-accent/25 rounded" />
-                      <div className="h-4 w-[90%] bg-accent/25 rounded" /* token-lint-ignore: custom percentage widths for simulated placeholder lines */ />
-                      <div className="h-4 w-[60%] bg-accent/25 rounded" /* token-lint-ignore: custom percentage widths for simulated placeholder lines */ />
+                  
+                  {/* Nav list */}
+                  <div className="flex-1 px-3 py-2 space-y-1">
+                    <div className="flex h-9 items-center gap-3 rounded-md bg-accent px-2.5 text-accent-foreground font-semibold">
+                      <LayoutGrid className="size-4 shrink-0 text-primary" />
+                      <span>Jobs</span>
+                    </div>
+                    <div className="flex h-9 items-center justify-between rounded-md px-2.5 text-muted-foreground hover:bg-accent/50 hover:text-foreground">
+                      <div className="flex items-center gap-3">
+                        <Layout className="size-4 shrink-0" />
+                        <span>Database</span>
+                      </div>
+                      <ChevronDown className="size-3" />
+                    </div>
+                    <div className="flex h-9 items-center gap-3 rounded-md px-2.5 text-muted-foreground hover:bg-accent/50 hover:text-foreground">
+                      <Settings className="size-4 shrink-0" />
+                      <span>Settings</span>
+                    </div>
+                  </div>
+
+                  {/* Alert Banner */}
+                  <div className="p-3">
+                    <div className="relative rounded-lg border border-warning/20 bg-warning-subtle p-2.5 text-warning-foreground shadow-2xs">
+                      <div className="flex gap-2">
+                        <AlertCircle className="size-3.5 shrink-0 text-warning mt-0.5" />
+                        <div className="space-y-0.5 text-2xs leading-tight text-left">
+                          <p className="font-semibold text-warning-foreground">Verify Identity</p>
+                          <p className="text-muted-foreground/80">Verify tax status to post.</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </SidebarProvider>
+              </div>
+
+              {/* Collapsed Sidebar Mockup */}
+              <div className="md:col-span-5 flex flex-col gap-2 text-left">
+                <span className="text-2xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                  2. Collapsed View (w-16 / 64px)
+                </span>
+                
+                <div className="flex flex-col h-[400px] w-16 bg-card border border-border rounded-lg shadow-sm overflow-hidden text-xs text-foreground items-center select-none" /* token-lint-ignore: mock layout dimensions */>
+                  {/* Brand Row */}
+                  <div className="flex h-14 items-center justify-center border-b border-border/40 w-full">
+                    <div className="size-10 rounded-lg bg-primary flex items-center justify-center font-bold text-primary-foreground text-sm shrink-0">
+                      apna
+                    </div>
+                  </div>
+                  
+                  {/* Workspace Selector */}
+                  <div className="py-3 w-full flex justify-center">
+                    <div className="flex h-12 w-10 items-center justify-center rounded-lg border border-border bg-background shadow-2xs">
+                      <div className="size-7 rounded bg-primary/10 flex items-center justify-center font-bold text-primary text-2xs shrink-0">
+                        RE
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Nav list */}
+                  <div className="flex-1 py-2 space-y-1 w-full flex flex-col items-center">
+                    <div className="flex h-9 w-10 items-center justify-center rounded-md bg-accent text-accent-foreground">
+                      <LayoutGrid className="size-4 shrink-0 text-primary" />
+                    </div>
+                    <div className="flex h-9 w-10 items-center justify-center rounded-md text-muted-foreground hover:bg-accent/50 hover:text-foreground">
+                      <Layout className="size-4 shrink-0" />
+                    </div>
+                    <div className="flex h-9 w-10 items-center justify-center rounded-md text-muted-foreground hover:bg-accent/50 hover:text-foreground">
+                      <Settings className="size-4 shrink-0" />
+                    </div>
+                  </div>
+
+                  {/* Alert Banner (Collapsed) */}
+                  <div className="pb-3 w-full flex justify-center">
+                    <div className="size-9 rounded-lg border border-warning/20 bg-warning-subtle flex items-center justify-center text-warning shadow-2xs">
+                      <AlertCircle className="size-4" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
             </div>
           </div>
+
+          {/* Section 2: Mobile View Layout */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <Smartphone className="size-5 text-primary" />
+              <h2 className="text-xl font-heading font-semibold text-foreground">
+                Mobile Layout & Drawer Overlay
+              </h2>
+            </div>
+            
+            <div className="flex flex-col md:flex-row gap-6 bg-muted/10 p-6 rounded-xl border border-border/80 items-center justify-center">
+              {/* Mobile Phone Mockup */}
+              <div className="relative border-4 border-muted-foreground/30 bg-background rounded-2xl w-[280px] h-[450px] shadow-lg overflow-hidden flex flex-col" /* token-lint-ignore: mock phone screen dimensions */>
+                {/* Status Bar */}
+                <div className="h-5 bg-muted/30 px-3 flex items-center justify-between text-2xs text-muted-foreground font-mono">
+                  <span>10:42 AM</span>
+                  <div className="flex items-center gap-1">
+                    <span>5G</span>
+                    <div className="w-4 h-2 rounded-xs border border-muted-foreground/30 bg-muted-foreground/30" />
+                  </div>
+                </div>
+                
+                {/* App Header */}
+                <div className="h-10 border-b border-border bg-card flex items-center px-2 justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <div className="size-6 rounded bg-primary flex items-center justify-center font-bold text-primary-foreground text-3xs">
+                      apna
+                    </div>
+                    <span className="text-2xs font-semibold text-foreground">Apna Hire Dashboard</span>
+                  </div>
+                  {/* Floating Toggle Trigger */}
+                  <div className="size-6 rounded bg-muted flex items-center justify-center border border-border">
+                    <PanelLeft className="size-3 text-primary" />
+                  </div>
+                </div>
+                
+                {/* Screen Content */}
+                <div className="flex-1 p-3 bg-muted/10 space-y-2 text-left">
+                  <span className="text-2xs font-semibold text-muted-foreground uppercase tracking-wider block">Screen View</span>
+                  <div className="h-3 w-3/4 bg-accent/20 rounded" />
+                  <div className="h-3 w-1/2 bg-accent/20 rounded" />
+                  <div className="h-24 w-full border border-border/60 bg-card rounded-md p-2 space-y-1.5">
+                    <div className="h-2 w-full bg-accent/15 rounded" />
+                    <div className="h-2 w-5/6 bg-accent/15 rounded" />
+                    <div className="h-2 w-2/3 bg-accent/15 rounded" />
+                  </div>
+                </div>
+
+                {/* Overlaid Mobile Sheet (Simulated open drawer) */}
+                <div className="absolute inset-y-0 left-0 w-[210px] bg-card border-r border-border shadow-2xl flex flex-col text-xs animate-in slide-in-from-left duration-300" /* token-lint-ignore: mock mobile drawer width */>
+                  {/* Brand Row */}
+                  <div className="flex h-12 items-center justify-between border-b border-border/40 px-2.5">
+                    <div className="flex items-center gap-2">
+                      <div className="size-8 rounded-lg bg-primary flex items-center justify-center font-bold text-primary-foreground text-xs shrink-0">
+                        apna
+                      </div>
+                      <span className="text-xs font-bold text-foreground font-heading">apna <span className="text-primary font-bold">Hire</span></span>
+                    </div>
+                    <X className="size-3 text-muted-foreground" />
+                  </div>
+                  
+                  {/* Workspace Selector */}
+                  <div className="p-2">
+                    <div className="flex h-10 w-full items-center justify-between rounded-md border border-border bg-background px-2 font-medium shadow-2xs">
+                      <div className="flex items-center gap-2">
+                        <div className="size-6 rounded bg-primary/10 flex items-center justify-center font-bold text-primary text-2xs">RE</div>
+                        <span className="font-semibold text-2xs truncate max-w-[120px]" /* token-lint-ignore: mock layout text constraint */>Rohini Enterprises</span>
+                      </div>
+                      <ChevronsUpDown className="size-2.5 text-muted-foreground" />
+                    </div>
+                  </div>
+
+                  {/* Nav links */}
+                  <div className="flex-1 px-2 py-1 space-y-1 text-left">
+                    <div className="flex h-8 items-center gap-2 rounded bg-accent px-2 text-accent-foreground font-semibold">
+                      <LayoutGrid className="size-3.5 shrink-0 text-primary" />
+                      <span>Jobs</span>
+                    </div>
+                    {/* Inline Accordion Expanded state on mobile */}
+                    <div className="space-y-0.5">
+                      <div className="flex h-8 items-center justify-between rounded px-2 text-muted-foreground">
+                        <div className="flex items-center gap-2">
+                          <Layout className="size-3.5 shrink-0" />
+                          <span>Database</span>
+                        </div>
+                        <ChevronDown className="size-2.5 rotate-180" />
+                      </div>
+                      <div className="pl-6 border-l border-border/60 ml-3.5 py-0.5 space-y-1">
+                        <div className="h-6 flex items-center text-primary font-medium">Search Candidates</div>
+                        <div className="h-6 flex items-center text-muted-foreground">Saved Searches</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Explanatory pointers */}
+              <div className="flex-1 space-y-3.5 text-left">
+                <div className="space-y-1">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Mobile Sheet Constraints</h4>
+                  <p className="text-sm text-foreground">
+                    On screens below 768px, the sidebar is rendered in a responsive Sheet drawer that slides in from the left.
+                  </p>
+                </div>
+                <ul className="text-xs space-y-2 text-muted-foreground list-disc pl-4">
+                  <li><strong className="text-foreground">Force-Expanded</strong>: The sidebar ignores the collapsed setting on mobile, ensuring full labels and text remain readable in the sheet.</li>
+                  <li><strong className="text-foreground">Inline Expansion</strong>: Sub-item categories expand dynamically as accordions instead of opening right-aligned popover menus.</li>
+                  <li><strong className="text-foreground">Responsive Workspace Popover</strong>: Switches its anchor point to open on the bottom centered (`side=&quot;bottom&quot; align=&quot;center&quot;`) to prevent clipping.</li>
+                  <li><strong className="text-foreground">Instant Auto-Collapse</strong>: Clicking any workspace or navigation route calls `setOpenMobile(false)` to automatically slide the drawer shut.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
         </div>
 
-        {/* Right Column: Controls & Specs */}
-        <div className="lg:col-span-5 space-y-6 text-left">
-          {/* Controls Panel */}
+        {/* Right Column: Code Contract & Alignment Guidelines */}
+        <div className="lg:col-span-4 space-y-6 text-left">
+          
+          {/* Rules & Layout Contracts Panel */}
           <div className="rounded-xl border border-border bg-card p-5 shadow-xs space-y-4">
-            <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider flex items-center gap-1.5">
-              <Settings className="size-4 text-muted-foreground" />
-              Configure Active Preset
+            <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider flex items-center gap-1.5 border-b border-border/60 pb-2">
+              <FileCode className="size-4 text-primary" />
+              Sidebar Layout Rules
             </h3>
             
-            {/* Custom Banner Text */}
-            <div className="space-y-3">
-              <div className="text-xs font-medium text-foreground">Custom Alert Content</div>
-              <div className="flex items-center gap-2">
-                <input
-                  id="pg-show-alert"
-                  type="checkbox"
-                  checked={showAlert}
-                  onChange={(e) => setShowAlert(e.target.checked)}
-                  className="rounded border-border"
-                />
-                <label htmlFor="pg-show-alert" className="text-xs text-muted-foreground cursor-pointer select-none">
-                  Display Dismissible Alert Banner
-                </label>
+            <div className="space-y-4 text-xs">
+              <div className="space-y-1.5">
+                <h4 className="font-bold text-foreground uppercase tracking-wider text-2xs">1. Width & Spacing Contract</h4>
+                <p className="text-muted-foreground leading-normal">
+                  - Expanded: <code className="text-primary font-mono bg-muted px-1 py-0.5 rounded">256px</code> width.
+                </p>
+                <p className="text-muted-foreground leading-normal">
+                  - Collapsed: <code className="text-primary font-mono bg-muted px-1 py-0.5 rounded">64px</code> width.
+                </p>
+                <p className="text-muted-foreground leading-normal">
+                  - Sidebar Header Padding: Locked at <code className="font-mono bg-muted px-1 py-0.5 rounded">px-3</code> (12px left edge offset).
+                </p>
               </div>
 
-              {showAlert && (
-                <div className="space-y-3 animate-in fade-in duration-200">
-                  <div className="space-y-1">
-                    <label htmlFor="alert-title-custom" className="text-2xs text-muted-foreground">Title</label>
-                    <input
-                      id="alert-title-custom"
-                      type="text"
-                      value={customAlertTitle}
-                      onChange={(e) => setCustomAlertTitle(e.target.value)}
-                      className="w-full h-8 px-2 text-xs border border-border rounded-md bg-background focus:outline-hidden"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label htmlFor="alert-desc-custom" className="text-2xs text-muted-foreground">Description</label>
-                    <textarea
-                      id="alert-desc-custom"
-                      rows={2}
-                      value={customAlertDesc}
-                      onChange={(e) => setCustomAlertDesc(e.target.value)}
-                      className="w-full p-2 text-xs border border-border rounded-md bg-background resize-none focus:outline-hidden"
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
+              <div className="space-y-1.5">
+                <h4 className="font-bold text-foreground uppercase tracking-wider text-2xs">2. Horizontal Alignment Guarantees</h4>
+                <p className="text-muted-foreground leading-normal">
+                  - Brand Logo is sized to <code className="font-mono bg-muted px-1 py-0.5 rounded">40x40px</code> (`size-10`).
+                </p>
+                <p className="text-muted-foreground leading-normal">
+                  - Workspace button is sized to <code className="font-mono bg-muted px-1 py-0.5 rounded">48px</code> height (`h-12`) with `px-2.5` padding (10px).
+                </p>
+                <p className="text-muted-foreground leading-normal">
+                  - Centerline calculation: <code className="font-mono text-foreground">12px (offset) + 10px (padding) + 10px (half-logo width) = 32px</code>.
+                </p>
+                <p className="text-muted-foreground leading-normal">
+                  - Transition rule: The vertical centerline remains fixed at exactly <strong className="text-foreground">32px</strong> in both states to eliminate layout shifts or jumps.
+                </p>
+              </div>
 
-          {/* Technical specifications panel */}
-          <div className="rounded-xl border border-border bg-card p-5 shadow-xs space-y-4">
-            <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider flex items-center gap-1.5">
-              <Info className="size-4 text-muted-foreground" />
-              Product-Agnostic Specifications
-            </h3>
-            <div className="space-y-3 text-xs text-muted-foreground">
-              <div>
-                <span className="font-semibold text-foreground block mb-0.5">Abstract API Design</span>
-                <p>The sidebar makes zero assumptions about links, logos, active routes, or branding. Everything is passed down dynamically via props, allowing it to support multiple applications built on the same core tokens.</p>
-              </div>
-              <div>
-                <span className="font-semibold text-foreground block mb-0.5">Flexible Workspace Selector</span>
-                <p>Configured using an array of items. Displays checkmarks on active selections, fallback monogram circles for workspaces without custom brand logos, and subtitle tags for membership tier indicators.</p>
-              </div>
-              <div>
-                <span className="font-semibold text-foreground block mb-0.5">Responsive sheet rendering</span>
-                <p>On screen sizes below <code className="bg-muted px-1.5 py-0.5 rounded text-2xs">768px</code>, the sidebar transitions into a collapsible sheet drawer accessible via a header trigger icon.</p>
+              <div className="space-y-1.5">
+                <h4 className="font-bold text-foreground uppercase tracking-wider text-2xs">3. Category Sub-menu Rules</h4>
+                <p className="text-muted-foreground leading-normal">
+                  - Desktop Collapsed: Categories with children open on hover/click as a <code className="text-primary font-mono bg-muted px-1 py-0.5 rounded">DropdownMenu</code> to the right (`side=&quot;right&quot;`).
+                </p>
+                <p className="text-muted-foreground leading-normal">
+                  - Desktop Expanded: Sublist items expand inline vertically with a smooth dropdown chevron.
+                </p>
+                <p className="text-muted-foreground leading-normal">
+                  - Parent Highlight: When any sub-item is active, the parent menu button is automatically styled as active (highlight state).
+                </p>
               </div>
             </div>
           </div>
+          
+          {/* Token Contract Callout */}
+          <div className="rounded-xl border border-warning/20 bg-warning-subtle p-5 shadow-xs space-y-2 text-warning-foreground">
+            <h4 className="text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+              💡 Token Enforcement Rules
+            </h4>
+            <p className="text-xs text-muted-foreground leading-normal">
+              Any modification to this sidebar component is strictly gated by the project token linter (<code className="font-mono bg-background/50 px-1 rounded text-foreground">npm run lint:tokens</code>).
+            </p>
+            <ul className="text-xs text-muted-foreground list-disc pl-4 space-y-1 mt-2">
+              <li>No arbitrary sizes or spacing (e.g. <code className="font-mono">p-[13px]</code>) allowed outside `tokens/*.css`.</li>
+              <li>Colors must only be mapped to intent variables (<code className="font-mono text-foreground">var(--primary)</code>, <code className="font-mono text-foreground">bg-card</code>).</li>
+              <li>Typography uses semantic scale presets (<code className="font-mono">font-heading</code>, <code className="font-mono">text-xs</code>).</li>
+            </ul>
+          </div>
+          
         </div>
       </div>
 
-      {/* Spacing & Token Table */}
-      <div className="rounded-xl border border-border bg-card p-6 shadow-xs text-left space-y-4">
-        <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
-          <MessageSquare className="size-5 text-muted-foreground" />
-          Component Token Specs
-        </h2>
-        <div className="overflow-x-auto border border-border rounded-lg">
-          <table className="w-full text-xs text-left">
-            <thead className="bg-muted text-muted-foreground border-b border-border font-medium">
-              <tr>
-                <th className="px-4 py-2">Role/Token Type</th>
-                <th className="px-4 py-2">Token Name / CSS class</th>
-                <th className="px-4 py-2">Usage Context</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border text-muted-foreground">
-              <tr>
-                <td className="px-4 py-3 font-semibold text-foreground">Background Color</td>
-                <td className="px-4 py-3 font-mono text-2xs">bg-sidebar</td>
-                <td className="px-4 py-3">Sidebar background color (points to card/neutral surface)</td>
-              </tr>
-              <tr>
-                <td className="px-4 py-3 font-semibold text-foreground">Border Utility</td>
-                <td className="px-4 py-3 font-mono text-2xs">border-sidebar-border</td>
-                <td className="px-4 py-3">Dividers, header lines, and container outlines</td>
-              </tr>
-              <tr>
-                <td className="px-4 py-3 font-semibold text-foreground">Workspace Selector Height</td>
-                <td className="px-4 py-3 font-mono text-2xs">h-12</td>
-                <td className="px-4 py-3">Allows workspace selector to fit both logo, title and subtext</td>
-              </tr>
-              <tr>
-                <td className="px-4 py-3 font-semibold text-foreground">Alert Banner Tint</td>
-                <td className="px-4 py-3 font-mono text-2xs">bg-warning-subtle</td>
-                <td className="px-4 py-3">Subtle warning alert background using semantic palettes</td>
-              </tr>
-              <tr>
-                <td className="px-4 py-3 font-semibold text-foreground">Nesting Spacing</td>
-                <td className="px-4 py-3 font-mono text-2xs">mx-3.5 px-2.5</td>
-                <td className="px-4 py-3">Predefined alignment indent matching sidebar grid guidelines</td>
-              </tr>
-            </tbody>
-          </table>
+      {/* Visual QA Verification Proofs Section */}
+      <div className="border-t border-border pt-8 space-y-6">
+        <div className="text-left space-y-1.5">
+          <Badge variant="outline" className="border-primary/20 text-primary">
+            Verification Checkpoints
+          </Badge>
+          <h2 className="text-2xl font-heading font-bold text-foreground">
+            Visual QA Build Verification
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            The following static screenshots are captured directly from visual regression test builds to document the verified geometric properties of the sidebar.
+          </p>
+        </div>
+
+        {/* Gallery Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          
+          <div className="flex flex-col gap-2.5 text-left bg-card border border-border p-3 rounded-xl shadow-2xs">
+            <span className="text-xs font-bold text-foreground">1. Expanded Centerline (32px)</span>
+            <div className="aspect-[4/3] rounded-lg overflow-hidden border border-border/60 bg-muted/10 relative" /* token-lint-ignore: screenshot preview layout */>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img 
+                src="/specs-logo-expanded.png" 
+                alt="Expanded brand alignment showing 32px centerline offset" 
+                className="object-cover w-full h-full"
+              />
+            </div>
+            <p className="text-2xs text-muted-foreground leading-normal">
+              Shows the brand logo and workspace button aligned precisely at the 12px padding margin with a 32px centerline in expanded state.
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-2.5 text-left bg-card border border-border p-3 rounded-xl shadow-2xs">
+            <span className="text-xs font-bold text-foreground">2. Collapsed Alignment (32px)</span>
+            <div className="aspect-[4/3] rounded-lg overflow-hidden border border-border/60 bg-muted/10 relative" /* token-lint-ignore: screenshot preview layout */>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img 
+                src="/specs-logo-collapsed.png" 
+                alt="Collapsed brand alignment showing stable 32px centerline" 
+                className="object-cover w-full h-full"
+              />
+            </div>
+            <p className="text-2xs text-muted-foreground leading-normal">
+              Shows the collapsed sidebar at 64px width. The brand logo and selector remain locked horizontally with no transition jitter.
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-2.5 text-left bg-card border border-border p-3 rounded-xl shadow-2xs">
+            <span className="text-xs font-bold text-foreground">3. Collapsed Sublist Popover</span>
+            <div className="aspect-[4/3] rounded-lg overflow-hidden border border-border/60 bg-muted/10 relative" /* token-lint-ignore: screenshot preview layout */>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img 
+                src="/specs-collapsed-dropdown.png" 
+                alt="Sublist items opening in dropdown popover on the right" 
+                className="object-cover w-full h-full"
+              />
+            </div>
+            <p className="text-2xs text-muted-foreground leading-normal">
+              Verifies that collapsed sublist items render inside a popup menu with side=&quot;right&quot; and align=&quot;start&quot; offsets.
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-2.5 text-left bg-card border border-border p-3 rounded-xl shadow-2xs">
+            <span className="text-xs font-bold text-foreground">4. Active Parent Indicator</span>
+            <div className="aspect-[4/3] rounded-lg overflow-hidden border border-border/60 bg-muted/10 relative" /* token-lint-ignore: screenshot preview layout */>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img 
+                src="/specs-active-indicator.png" 
+                alt="Parent menu button highlighted when child sub-item is active" 
+                className="object-cover w-full h-full"
+              />
+            </div>
+            <p className="text-2xs text-muted-foreground leading-normal">
+              Verifies that selecting any sublist route highlights the parent category (like Database) with active background indicators.
+            </p>
+          </div>
+
         </div>
       </div>
     </div>

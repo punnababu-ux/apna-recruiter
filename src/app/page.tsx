@@ -2128,6 +2128,42 @@ export default function Home() {
             </Section>
           </div>
 
+          {/* ===================================================================
+           * APNA HIRE · Product-scoped extension
+           * Components under src/components/apnahire/* — the recruiter-facing
+           * side of the Apna platform.
+           * =================================================================*/}
+          <Section id="ah-overview" title="Apna Hire · Overview">
+            <p className="max-w-3xl text-sm text-muted-foreground">
+              Apna Hire is the recruiter portal for Apna&apos;s job platform. It reuses the shared
+              design-system primitives and adds a product-specific sidebar shell with the official
+              Apna brand mark, nested navigation, workspace switching, and a{" "}
+              <code className="font-mono text-foreground">+ Invite Recruiter</code> CTA.
+            </p>
+
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {[
+                {
+                  href: "/apnahire/sidebar-specs",
+                  label: "Sidebar specs",
+                  desc: "Interactive ApnaHireSidebar showcase — logo, workspaces, nested nav, alert banner",
+                },
+              ].map((l) => (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  className="group/ah-link flex flex-col gap-1 rounded-lg border border-border bg-card p-4 transition-colors hover:border-primary/40 hover:bg-accent/40"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">{l.label}</span>
+                    <ArrowUpRight className="size-3.5 text-muted-foreground transition-transform group-hover/ah-link:-translate-y-0.5 group-hover/ah-link:translate-x-0.5" />
+                  </div>
+                  <span className="text-xs text-muted-foreground">{l.desc}</span>
+                </Link>
+              ))}
+            </div>
+          </Section>
+
           <footer className="border-t border-border pt-8 text-sm text-muted-foreground">
             Mirrors the Figma file{" "}
             <a className="underline underline-offset-4 hover:text-foreground"

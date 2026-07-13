@@ -9,12 +9,12 @@ import {
   Users,
 } from "lucide-react"
 
-import { OnlyRoundsLogoMark } from "@/components/ui/logo-onlyrounds"
 import {
   ReusableSidebar,
+  OnlyRoundsLogoMark,
   type SidebarWorkspace,
   type SidebarNavItem,
-} from "@/components/ui/app-sidebar"
+} from "@apna/design-system"
 
 const WORKSPACES: SidebarWorkspace[] = [
   {
@@ -35,11 +35,28 @@ const NAV: SidebarNavItem[] = [
   { href: "/onlyrounds/credits", label: "Credits", icon: CreditCard },
 ]
 
-export function OnlyRoundsSidebar() {
-  const [activeWorkspaceId, setActiveWorkspaceId] = React.useState<string>(WORKSPACES[0].id)
+export interface OnlyRoundsSidebarProps {
+  activeWorkspaceId?: string
+  onWorkspaceChange?: (w: SidebarWorkspace) => void
+}
+
+export function OnlyRoundsSidebar({
+  activeWorkspaceId: propActiveWorkspaceId,
+  onWorkspaceChange,
+}: OnlyRoundsSidebarProps) {
+  const [internalActiveWorkspaceId, setInternalActiveWorkspaceId] = React.useState<string>(
+    WORKSPACES[0].id
+  )
+
+  const activeWorkspaceId =
+    propActiveWorkspaceId !== undefined ? propActiveWorkspaceId : internalActiveWorkspaceId
 
   const handleWorkspaceChange = (w: SidebarWorkspace) => {
-    setActiveWorkspaceId(w.id)
+    if (onWorkspaceChange) {
+      onWorkspaceChange(w)
+    } else {
+      setInternalActiveWorkspaceId(w.id)
+    }
   }
 
   return (
