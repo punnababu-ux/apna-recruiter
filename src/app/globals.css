@@ -433,7 +433,7 @@
 
     /* Scale layout by 1.1x on desktop screens to match 110% zoom at 1080p */
     @media (min-width: 1024px) {
-      font-size: 100%; /* Reduced from 110% */
+      font-size: 87.5%; /* Reduced to 14px base for a smaller UI */
     }
   }
 
