@@ -1,6 +1,6 @@
 "use client"
 
-import { Fragment, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react"
+import { Fragment, useEffect, useMemo, useRef, useState } from "react"
 
 /**
  * `useMounted()` — true on the client after hydration, false on the server.
@@ -8,30 +8,27 @@ import { Fragment, useEffect, useMemo, useRef, useState, useSyncExternalStore } 
  * it's safe to use as an SSR gate around components that produce
  * non-deterministic HTML (e.g. Calendar's `new Date()`).
  */
-const EMPTY_SUBSCRIBE = () => () => {}
-function useMounted(): boolean {
-  return useSyncExternalStore(
-    EMPTY_SUBSCRIBE,
-    () => true,
-    () => false,
-  )
-}
+// const EMPTY_SUBSCRIBE = () => () => {}
+// function useMounted(): boolean {
+//   return useSyncExternalStore(
+//     EMPTY_SUBSCRIBE,
+//     () => true,
+//     () => false,
+//   )
+// }
 import {
-  Bell,
   Bold,
-  Calendar as CalendarIcon,
   ChevronDown,
   Italic,
   Mail,
-  Search,
   Settings,
   Underline,
   User,
 } from "lucide-react"
 import { toast } from "sonner"
 
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { Alert, AlertAction, AlertDescription, AlertTitle } from "@/components/ui/alert"
+// import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+// import { Alert, AlertAction, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -43,7 +40,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { AspectRatio } from "@/components/ui/aspect-ratio"
+// import { AspectRatio } from "@/components/ui/aspect-ratio"
 import {
   Avatar,
   AvatarBadge,
@@ -51,61 +48,62 @@ import {
   AvatarGroup,
   AvatarImage,
 } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { ApnaLogo } from "@/components/ui/logo-apna"
+import { Badge, badgeVariants } from "@/components/ui/badge"
+// import { ApnaLogo } from "@/components/ui/logo-apna"
 import { OnlyRoundsLogo } from "@/components/ui/logo-onlyrounds"
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
+// import {
+//   Breadcrumb,
+//   BreadcrumbItem,
+//   BreadcrumbLink,
+//   BreadcrumbList,
+//   BreadcrumbPage,
+//   BreadcrumbSeparator,
+// } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
+import { BackButton } from "@/components/ui/back-button"
 import {
   ButtonGroup,
   ButtonGroupSeparator,
   ButtonGroupText,
 } from "@/components/ui/button-group"
-import { Calendar } from "@/components/ui/calendar"
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-} from "@/components/ui/command"
-import {
-  ContextMenu,
-  ContextMenuCheckboxItem,
-  ContextMenuContent,
-  ContextMenuGroup,
-  ContextMenuItem,
-  ContextMenuLabel,
-  ContextMenuSeparator,
-  ContextMenuTrigger,
-} from "@/components/ui/context-menu"
+// import { Calendar } from "@/components/ui/calendar"
+// import {
+//   Card,
+//   CardAction,
+//   CardContent,
+//   CardDescription,
+//   CardFooter,
+//   CardHeader,
+//   CardTitle,
+// } from "@/components/ui/card"
+// import {
+//   Carousel,
+//   CarouselContent,
+//   CarouselItem,
+//   CarouselNext,
+//   CarouselPrevious,
+// } from "@/components/ui/carousel"
+// import { Checkbox } from "@/components/ui/checkbox"
+// import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+// import {
+//   Command,
+//   CommandEmpty,
+//   CommandGroup,
+//   CommandInput,
+//   CommandItem,
+//   CommandList,
+//   CommandSeparator,
+// } from "@/components/ui/command"
+// import {
+//   ContextMenu,
+//   ContextMenuCheckboxItem,
+//   ContextMenuContent,
+//   ContextMenuGroup,
+//   ContextMenuItem,
+//   ContextMenuLabel,
+//   ContextMenuSeparator,
+//   ContextMenuTrigger,
+// } from "@/components/ui/context-menu"
 import {
   Dialog,
   DialogClose,
@@ -116,16 +114,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer"
+// import {
+//   Drawer,
+//   DrawerClose,
+//   DrawerContent,
+//   DrawerDescription,
+//   DrawerFooter,
+//   DrawerHeader,
+//   DrawerTitle,
+//   DrawerTrigger,
+// } from "@/components/ui/drawer"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -137,41 +135,41 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import {
-  Empty,
-  EmptyContent,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from "@/components/ui/empty"
+// import {
+//   Empty,
+//   EmptyContent,
+//   EmptyDescription,
+//   EmptyHeader,
+//   EmptyMedia,
+//   EmptyTitle,
+// } from "@/components/ui/empty"
 import {
   Field,
   FieldDescription,
   FieldError,
   FieldLabel,
 } from "@/components/ui/field"
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
+// import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
 import { Input } from "@/components/ui/input"
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@/components/ui/input-group"
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSeparator,
-  InputOTPSlot,
-} from "@/components/ui/input-otp"
-import { Item, ItemContent, ItemDescription, ItemMedia, ItemTitle } from "@/components/ui/item"
-import { Kbd, KbdGroup } from "@/components/ui/kbd"
+// import {
+//   InputGroup,
+//   InputGroupAddon,
+//   InputGroupInput,
+// } from "@/components/ui/input-group"
+// import {
+//   InputOTP,
+//   InputOTPGroup,
+//   InputOTPSeparator,
+//   InputOTPSlot,
+// } from "@/components/ui/input-otp"
+// import { Item, ItemContent, ItemDescription, ItemMedia, ItemTitle } from "@/components/ui/item"
+// import { Kbd, KbdGroup } from "@/components/ui/kbd"
 import { Label } from "@/components/ui/label"
-import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
+// import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Progress, ProgressIndicator, ProgressTrack } from "@/components/ui/progress"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { ScrollArea } from "@/components/ui/scroll-area"
+// import { Progress, ProgressIndicator, ProgressTrack } from "@/components/ui/progress"
+// import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+// import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   Select,
   SelectContent,
@@ -179,7 +177,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Separator } from "@/components/ui/separator"
+// import { Separator } from "@/components/ui/separator"
 import {
   Sheet,
   SheetContent,
@@ -189,8 +187,8 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Slider } from "@/components/ui/slider"
-import { Spinner } from "@/components/ui/spinner"
+// import { Slider } from "@/components/ui/slider"
+// import { Spinner } from "@/components/ui/spinner"
 import { Switch } from "@/components/ui/switch"
 import {
   Table,
@@ -203,10 +201,10 @@ import {
 } from "@/components/ui/table"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
-import { ThemeToggle } from "@/components/ui/theme-toggle"
+// import { ThemeToggle } from "@/components/ui/theme-toggle"
 import { cn } from "@/lib/utils"
-import { Toggle } from "@/components/ui/toggle"
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+// import { Toggle } from "@/components/ui/toggle"
+// import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { ModularScalesDemo } from "./_showcase/modular-scales-demo"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 // ---- OnlyRounds product molecules, organisms & templates -------------------
@@ -215,29 +213,26 @@ import {
   ArrowUpRight,
   Briefcase,
   Download,
-  Mic,
-  PhoneIncoming,
-  PhoneOutgoing,
   Share2,
   UserPlus,
-  Video,
 } from "lucide-react"
-import { AIInsightChip } from "@/components/onlyrounds/ai-insight-chip"
-import { ScorePill } from "@/components/onlyrounds/score-pill"
-import { RadioCard } from "@/components/onlyrounds/radio-card"
+// import { AIInsightChip } from "@/components/onlyrounds/ai-insight-chip"
+// import { ScorePill } from "@/components/onlyrounds/score-pill"
+// import { RadioCard } from "@/components/onlyrounds/radio-card"
 import { Stepper } from "@/components/onlyrounds/stepper"
-import { InfoBanner } from "@/components/onlyrounds/info-banner"
-import { SplitButton } from "@/components/onlyrounds/split-button"
+// import { InfoBanner } from "@/components/onlyrounds/info-banner"
+// import { SplitButton } from "@/components/onlyrounds/split-button"
 import { PageHeader } from "@/components/onlyrounds/page-header"
-import { FilterPanel } from "@/components/onlyrounds/filter-panel"
+// import { FilterPanel } from "@/components/onlyrounds/filter-panel"
 import {
   CandidateCard,
   type Candidate,
 } from "@/components/onlyrounds/candidate-card"
 import { ClientForm } from "@/components/onlyrounds/client-form"
+import { CandidateTable } from "@/components/onlyrounds/candidate-table"
 import { ClientsTable } from "@/components/onlyrounds/clients-table"
 import { JobsTable } from "@/components/onlyrounds/jobs-table"
-import { NetworkShareSheet } from "@/components/onlyrounds/network-share-sheet"
+// import { NetworkShareSheet } from "@/components/onlyrounds/network-share-sheet"
 import { ChipTabs } from "@/components/ui/chip-tabs"
 
 // ---------------------------------------------------------------------------
@@ -545,7 +540,7 @@ const TOC_GROUPS: TocGroup[] = [
       { id: "forms",      label: "Form controls" },
       { id: "navigation", label: "Navigation" },
       { id: "overlays",   label: "Overlays" },
-      { id: "containers", label: "Containers" },
+      // { id: "containers", label: "Containers" },
       { id: "data",       label: "Data" },
       { id: "complex",    label: "Calendar, carousel, command" },
       { id: "feedback",   label: "Feedback" },
@@ -564,36 +559,55 @@ const TOC_GROUPS: TocGroup[] = [
 
 const TOC: { id: string; label: string }[] = TOC_GROUPS.flatMap((g) => g.items)
 
-// Sample candidates for the OnlyRounds CandidateCard showcase — mirrors the
-// two "hard" states the component was designed around.
+// Sample candidates for the OnlyRounds CandidateCard showcase — covers the
+// four distinct state branches the component renders.
 const SAMPLE_CANDIDATES: Candidate[] = [
   {
-    id: "chaitra-inbound",
-    name: "chaitra_inbound",
-    email: "ravi_hindi@test.com",
-    phone: "+918971981508",
-    score: 1,
-    verdict: "not-fit",
-    rejectedByAI: true,
-    insights: [
-      { tone: "miss", label: "Unresponsive to role details" },
-      { tone: "miss", label: "Notice period not discussed" },
-      { tone: "miss", label: "Salary details not discussed" },
-      { tone: "miss", label: "Location / policy not discussed" },
-      { tone: "miss", label: "Tools familiarity not discussed" },
-    ],
+    id: "aditi-fit",
+    name: "Aditi Sharma",
+    role: "Se Engineer",
+    company: "Apna",
+    email: "aditi@apna.co",
+    phone: "+917003393362",
+    state: {
+      kind: "completed",
+      score: 100,
+      verdict: "fit",
+      insights: [
+        { tone: "ok", label: "Three years experience" },
+        { tone: "ok", label: "Agreed to salary budget" },
+        { tone: "ok", label: "Agreed to location and shifts" },
+        { tone: "ok", label: "15-day notice period" },
+        { tone: "ok", label: "Expert in test case design" },
+        { tone: "ok", label: "Articulate and clear communicator" },
+        { tone: "ok", label: "Exceeds minimum English level" },
+        { tone: "miss", label: "Employment history not discussed" },
+        { tone: "miss", label: "Industry domain not discussed" },
+      ],
+    },
   },
   {
-    id: "harsha-ravi",
-    name: "harsha_ravi_hindi_agent",
-    email: "harsha_ravi_hindi_agent@test.com",
+    id: "sadanand-pending",
+    name: "Sadanand",
+    role: "Se Engineer",
+    company: "Apna",
+    email: "buruds@gmail.com",
+    phone: "+919164862614",
+    state: { kind: "pending", attempted: 0, total: 5 },
+  },
+  {
+    id: "demo-incomplete",
+    name: "demo 1",
+    email: "retaker@test.co",
+    phone: "+918637266290",
+    state: { kind: "incomplete", attempted: 5, total: 5 },
+  },
+  {
+    id: "chaitra-no-response",
+    name: "chaitra",
+    email: "chaitra.b.ext@apna.co",
     phone: "+918971981508",
-    statusTag: { label: "Incomplete call", tone: "warning" },
-    incompleteCall: {
-      attempted: 1,
-      total: 2,
-      message: "will try again",
-    },
+    state: { kind: "no-response", attempted: 5, total: 5 },
   },
 ]
 
@@ -627,21 +641,21 @@ function useActiveSection(ids: string[]): string | null {
 }
 
 export default function Home() {
-  const mounted = useMounted()
-  const [sliderVal, setSliderVal] = useState<number[]>([40])
-  const [radioVal, setRadioVal] = useState("one")
-  const [checked, setChecked] = useState(true)
+  // const mounted = useMounted()
+  // const [sliderVal, setSliderVal] = useState<number[]>([40])
+  // const [radioVal, setRadioVal] = useState("one")
+  // const [checked, setChecked] = useState(true)
   const [switchOn, setSwitchOn] = useState(true)
   const [selectVal, setSelectVal] = useState<string>("apple")
-  const [toggleVal, setToggleVal] = useState<string[]>(["bold"])
-  const [otp, setOtp] = useState("")
-  const [commandQuery, setCommandQuery] = useState("")
+  // const [toggleVal, setToggleVal] = useState<string[]>(["bold"])
+  // const [otp, setOtp] = useState("")
+  // const [commandQuery, setCommandQuery] = useState("")
   // OnlyRounds demo state
   const [orTab, setOrTab] = useState<"all" | "active">("all")
   const [chipTab, setChipTab] = useState<"all" | "active" | "draft">("active")
-  const [orDirection, setOrDirection] = useState<"inbound" | "outbound">("outbound")
-  const [orFormat, setOrFormat] = useState<"audio" | "video">("audio")
-  const [orShareOpen, setOrShareOpen] = useState(false)
+  // const [orDirection, setOrDirection] = useState<"inbound" | "outbound">("outbound")
+  // const [orFormat, setOrFormat] = useState<"audio" | "video">("audio")
+  // const [orShareOpen, setOrShareOpen] = useState(false)
   const tocIds = useMemo(() => TOC.map((t) => t.id), [])
   const active = useActiveSection(tocIds)
 
@@ -654,7 +668,7 @@ export default function Home() {
             <span className="font-semibold tracking-tight">Poneglyph</span>
             <span className="font-mono text-2xs text-muted-foreground">design system</span>
           </div>
-          <ThemeToggle />
+          {/* <ThemeToggle /> */}
         </div>
       </div>
 
@@ -1050,13 +1064,13 @@ export default function Home() {
           <Section id="logos" title="Logos">
             <Sub title="Brand marks">
               <div className="grid gap-4 sm:grid-cols-2">
-                <LogoTile
+                {/* <LogoTile
                   name="Apna"
                   filename="apna-logo"
                   description="Parent brand lockup · gold · green · sky · plum"
                 >
                   <ApnaLogo className="h-16 w-auto" />
-                </LogoTile>
+                </LogoTile> */}
                 <LogoTile
                   name="OnlyRounds"
                   filename="onlyrounds-logo"
@@ -1118,6 +1132,11 @@ export default function Home() {
                 </ButtonGroup>
               </div>
             </Sub>
+            <Sub title="BackButton">
+              <div className="flex flex-wrap gap-4">
+                <BackButton />
+              </div>
+            </Sub>
           </Section>
 
           {/* ===== BADGES / KBD ===== */}
@@ -1127,13 +1146,37 @@ export default function Home() {
                 {badgeVariantList.map((v) => <Badge key={v} variant={v}>{v}</Badge>)}
               </div>
             </Sub>
-            <Sub title="Kbd">
+            <Sub title="Applied / Sourced Chips (with Tooltips)">
+              <div className="flex flex-wrap gap-4">
+                <Tooltip>
+                  <TooltipTrigger
+                    render={
+                      <span className={cn(badgeVariants({ variant: "outline" }), "text-2xs leading-none text-muted-foreground font-semibold cursor-help")}>
+                        Applied
+                      </span>
+                    }
+                  />
+                  <TooltipContent>Applied directly</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger
+                    render={
+                      <span className={cn(badgeVariants({ variant: "outline" }), "text-2xs leading-none text-muted-foreground font-semibold cursor-help")}>
+                        Sourced
+                      </span>
+                    }
+                  />
+                  <TooltipContent>manually added</TooltipContent>
+                </Tooltip>
+              </div>
+            </Sub>
+            {/* <Sub title="Kbd">
               <div className="flex flex-wrap items-center gap-3">
                 <Kbd>⌘</Kbd>
                 <KbdGroup><Kbd>⌘</Kbd><Kbd>K</Kbd></KbdGroup>
                 <KbdGroup><Kbd>Ctrl</Kbd><Kbd>Shift</Kbd><Kbd>P</Kbd></KbdGroup>
               </div>
-            </Sub>
+            </Sub> */}
           </Section>
 
           {/* ===== AVATARS ===== */}
@@ -1163,16 +1206,16 @@ export default function Home() {
 
           {/* ===== INDICATORS ===== */}
           <Section id="indicators" title="Indicators">
-            <Sub title="Progress, Spinner, Separator, Skeleton">
+            <Sub title="Skeleton">
               <div className="space-y-4">
-                <Progress value={sliderVal[0]}>
+                {/* <Progress value={sliderVal[0]}>
                   <ProgressTrack>
                     <ProgressIndicator />
                   </ProgressTrack>
-                </Progress>
+                </Progress> */}
                 <div className="flex items-center gap-6">
-                  <Spinner />
-                  <Separator orientation="vertical" className="h-6" />
+                  {/* <Spinner /> */}
+                  {/* <Separator orientation="vertical" className="h-6" /> */}
                   <div className="flex items-center gap-3">
                     <Skeleton className="size-8 rounded-full" />
                     <div className="space-y-1.5">
@@ -1203,17 +1246,17 @@ export default function Home() {
                   <Input id="err" aria-invalid defaultValue="not-an-email" />
                   <FieldError>Please enter a valid email.</FieldError>
                 </Field>
-                <Field>
+                {/* <Field>
                   <FieldLabel>InputGroup</FieldLabel>
                   <InputGroup>
                     <InputGroupAddon><Search /></InputGroupAddon>
                     <InputGroupInput placeholder="Search…" />
                   </InputGroup>
-                </Field>
+                </Field> */}
               </div>
             </Sub>
 
-            <Sub title="InputOTP">
+            {/* <Sub title="InputOTP">
               <InputOTP maxLength={6} value={otp} onChange={setOtp}>
                 <InputOTPGroup>
                   <InputOTPSlot index={0} />
@@ -1227,19 +1270,19 @@ export default function Home() {
                   <InputOTPSlot index={5} />
                 </InputOTPGroup>
               </InputOTP>
-            </Sub>
+            </Sub> */}
 
-            <Sub title="Checkbox, Switch, Radio, Slider">
+            <Sub title="Switch">
               <div className="grid gap-4 md:grid-cols-2">
-                <div className="flex items-center gap-2">
+                {/* <div className="flex items-center gap-2">
                   <Checkbox id="cb" checked={checked} onCheckedChange={(v) => setChecked(Boolean(v))} />
                   <Label htmlFor="cb">Accept terms</Label>
-                </div>
+                </div> */}
                 <div className="flex items-center gap-2">
                   <Switch id="sw" checked={switchOn} onCheckedChange={setSwitchOn} />
                   <Label htmlFor="sw">Notifications</Label>
                 </div>
-                <RadioGroup value={radioVal} onValueChange={setRadioVal} className="flex gap-6">
+                {/* <RadioGroup value={radioVal} onValueChange={setRadioVal} className="flex gap-6">
                   <div className="flex items-center gap-2">
                     <RadioGroupItem value="one" id="r1" /> <Label htmlFor="r1">One</Label>
                   </div>
@@ -1249,8 +1292,8 @@ export default function Home() {
                   <div className="flex items-center gap-2">
                     <RadioGroupItem value="three" id="r3" /> <Label htmlFor="r3">Three</Label>
                   </div>
-                </RadioGroup>
-                <div className="space-y-2">
+                </RadioGroup> */}
+                {/* <div className="space-y-2">
                   <Label>Slider — {sliderVal[0]}</Label>
                   <Slider
                     value={sliderVal}
@@ -1258,7 +1301,7 @@ export default function Home() {
                     max={100}
                     step={1}
                   />
-                </div>
+                </div> */}
               </div>
             </Sub>
 
@@ -1274,14 +1317,14 @@ export default function Home() {
                     <SelectItem value="cherry">Cherry</SelectItem>
                   </SelectContent>
                 </Select>
-                <NativeSelect defaultValue="a" className="w-48">
+                {/* <NativeSelect defaultValue="a" className="w-48">
                   <NativeSelectOption value="a">Native A</NativeSelectOption>
                   <NativeSelectOption value="b">Native B</NativeSelectOption>
-                </NativeSelect>
+                </NativeSelect> */}
               </div>
             </Sub>
 
-            <Sub title="Toggle / ToggleGroup">
+            {/* <Sub title="Toggle / ToggleGroup">
               <div className="flex items-center gap-4">
                 <Toggle aria-label="Bold"><Bold /></Toggle>
                 <ToggleGroup value={toggleVal} onValueChange={(v) => setToggleVal([...v])}>
@@ -1290,12 +1333,12 @@ export default function Home() {
                   <ToggleGroupItem value="underline"><Underline /></ToggleGroupItem>
                 </ToggleGroup>
               </div>
-            </Sub>
+            </Sub> */}
           </Section>
 
           {/* ===== NAVIGATION ===== */}
           <Section id="navigation" title="Navigation">
-            <Sub title="Breadcrumb">
+            {/* <Sub title="Breadcrumb">
               <Breadcrumb>
                 <BreadcrumbList>
                   <BreadcrumbItem><BreadcrumbLink href="#">Home</BreadcrumbLink></BreadcrumbItem>
@@ -1305,7 +1348,7 @@ export default function Home() {
                   <BreadcrumbItem><BreadcrumbPage>Button</BreadcrumbPage></BreadcrumbItem>
                 </BreadcrumbList>
               </Breadcrumb>
-            </Sub>
+            </Sub> */}
             <Sub title="ChipTabs · pill-shaped segmented control with optional counts">
               <ChipTabs
                 aria-label="Jobs status"
@@ -1319,22 +1362,70 @@ export default function Home() {
               />
             </Sub>
             <Sub title="Tabs">
-              <Tabs defaultValue="account" className="w-full">
-                <TabsList>
-                  <TabsTrigger value="account">Account</TabsTrigger>
-                  <TabsTrigger value="password">Password</TabsTrigger>
-                  <TabsTrigger value="team">Team</TabsTrigger>
-                </TabsList>
-                <TabsContent value="account" className="pt-4 text-sm text-muted-foreground">
-                  Your account settings and profile information live here.
-                </TabsContent>
-                <TabsContent value="password" className="pt-4 text-sm text-muted-foreground">
-                  Update your password here.
-                </TabsContent>
-                <TabsContent value="team" className="pt-4 text-sm text-muted-foreground">
-                  Manage team members and roles.
-                </TabsContent>
-              </Tabs>
+              <div className="flex flex-col gap-6 w-full">
+                {/* default — muted background, white active pill */}
+                <div className="flex flex-col gap-2">
+                  <p className="text-xs text-muted-foreground font-mono">variant=&quot;default&quot;</p>
+                  <Tabs defaultValue="account" className="w-full">
+                    <TabsList>
+                      <TabsTrigger value="account">Account</TabsTrigger>
+                      <TabsTrigger value="password">Password</TabsTrigger>
+                      <TabsTrigger value="team">Team</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="account" className="pt-4 text-sm text-muted-foreground">
+                      Your account settings and profile information live here.
+                    </TabsContent>
+                    <TabsContent value="password" className="pt-4 text-sm text-muted-foreground">
+                      Update your password here.
+                    </TabsContent>
+                    <TabsContent value="team" className="pt-4 text-sm text-muted-foreground">
+                      Manage team members and roles.
+                    </TabsContent>
+                  </Tabs>
+                </div>
+
+                {/* inverted — white/card background, near-black active pill. Use on tinted/gray canvases. */}
+                <div className="flex flex-col gap-2 rounded-lg bg-muted p-4">
+                  <p className="text-xs text-muted-foreground font-mono">variant=&quot;inverted&quot;</p>
+                  <Tabs defaultValue="account" className="w-full">
+                    <TabsList variant="inverted">
+                      <TabsTrigger value="account">Account</TabsTrigger>
+                      <TabsTrigger value="password">Password</TabsTrigger>
+                      <TabsTrigger value="team">Team</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="account" className="pt-4 text-sm text-muted-foreground">
+                      Your account settings and profile information live here.
+                    </TabsContent>
+                    <TabsContent value="password" className="pt-4 text-sm text-muted-foreground">
+                      Update your password here.
+                    </TabsContent>
+                    <TabsContent value="team" className="pt-4 text-sm text-muted-foreground">
+                      Manage team members and roles.
+                    </TabsContent>
+                  </Tabs>
+                </div>
+
+                {/* line — underline indicator, transparent background */}
+                <div className="flex flex-col gap-2">
+                  <p className="text-xs text-muted-foreground font-mono">variant=&quot;line&quot;</p>
+                  <Tabs defaultValue="account" className="w-full">
+                    <TabsList variant="line">
+                      <TabsTrigger value="account">Account</TabsTrigger>
+                      <TabsTrigger value="password">Password</TabsTrigger>
+                      <TabsTrigger value="team">Team</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="account" className="pt-4 text-sm text-muted-foreground">
+                      Your account settings and profile information live here.
+                    </TabsContent>
+                    <TabsContent value="password" className="pt-4 text-sm text-muted-foreground">
+                      Update your password here.
+                    </TabsContent>
+                    <TabsContent value="team" className="pt-4 text-sm text-muted-foreground">
+                      Manage team members and roles.
+                    </TabsContent>
+                  </Tabs>
+                </div>
+              </div>
             </Sub>
           </Section>
 
@@ -1346,7 +1437,7 @@ export default function Home() {
                   <TooltipTrigger render={<Button variant="outline">Hover me</Button>} />
                   <TooltipContent>Tooltip content</TooltipContent>
                 </Tooltip>
-                <HoverCard>
+                {/* <HoverCard>
                   <HoverCardTrigger render={<Button variant="outline">HoverCard</Button>} />
                   <HoverCardContent>
                     <div className="space-y-1">
@@ -1354,7 +1445,7 @@ export default function Home() {
                       <div className="text-xs text-muted-foreground">Design system built on shadcn</div>
                     </div>
                   </HoverCardContent>
-                </HoverCard>
+                </HoverCard> */}
                 <Popover>
                   <PopoverTrigger render={<Button variant="outline">Popover</Button>} />
                   <PopoverContent>
@@ -1403,7 +1494,7 @@ export default function Home() {
                     </SheetHeader>
                   </SheetContent>
                 </Sheet>
-                <Drawer>
+                {/* <Drawer>
                   <DrawerTrigger asChild>
                     <Button variant="outline">Drawer</Button>
                   </DrawerTrigger>
@@ -1418,7 +1509,7 @@ export default function Home() {
                       </DrawerClose>
                     </DrawerFooter>
                   </DrawerContent>
-                </Drawer>
+                </Drawer> */}
               </div>
             </Sub>
 
@@ -1438,7 +1529,7 @@ export default function Home() {
                     <DropdownMenuCheckboxItem checked>Notifications</DropdownMenuCheckboxItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-                <ContextMenu>
+                {/* <ContextMenu>
                   <ContextMenuTrigger className="flex h-20 w-48 items-center justify-center rounded-lg border border-dashed border-border text-sm text-muted-foreground">
                     Right-click me
                   </ContextMenuTrigger>
@@ -1453,13 +1544,13 @@ export default function Home() {
                     <ContextMenuSeparator />
                     <ContextMenuCheckboxItem checked>Show grid</ContextMenuCheckboxItem>
                   </ContextMenuContent>
-                </ContextMenu>
+                </ContextMenu> */}
               </div>
             </Sub>
           </Section>
 
           {/* ===== CONTAINERS ===== */}
-          <Section id="containers" title="Containers">
+          {/* <Section id="containers" title="Containers">
             <Sub title="Card">
               <Card className="max-w-sm">
                 <CardHeader>
@@ -1557,7 +1648,7 @@ export default function Home() {
                 </div>
               </div>
             </Sub>
-          </Section>
+          </Section> */}
 
           {/* ===== DATA ===== */}
           <Section id="data" title="Data">
@@ -1593,7 +1684,7 @@ export default function Home() {
           </Section>
 
           {/* ===== CALENDAR / CAROUSEL / COMMAND ===== */}
-          <Section id="complex" title="Calendar, Carousel, Command">
+          {/* <Section id="complex" title="Calendar, Carousel, Command">
             <Sub title="Calendar">
               {mounted && <Calendar mode="single" className="rounded-md border border-border" />}
             </Sub>
@@ -1629,10 +1720,10 @@ export default function Home() {
                 </CommandList>
               </Command>
             </Sub>
-          </Section>
+          </Section> */}
 
           {/* ===== FEEDBACK ===== */}
-          <Section id="feedback" title="Feedback">
+          {/* <Section id="feedback" title="Feedback">
             <Sub title="Toast (sonner)">
               <div className="flex gap-3">
                 <Button onClick={() => toast("Event created", { description: "Sunday, April 21, 2026" })}>Show toast</Button>
@@ -1640,7 +1731,7 @@ export default function Home() {
                 <Button variant="destructive" onClick={() => toast.error("Something went wrong")}>Error</Button>
               </div>
             </Sub>
-          </Section>
+          </Section> */}
 
           {/* ===================================================================
            * ONLYROUNDS · Product-scoped extension
@@ -1709,24 +1800,24 @@ export default function Home() {
             </Section>
 
             <Section id="or-molecules" title="OnlyRounds · Molecules">
-              <Sub title="AIInsightChip · tone variants">
+              {/* <Sub title="AIInsightChip · tone variants">
                 <div className="flex flex-wrap gap-2">
                   <AIInsightChip tone="ok">Role fit confirmed</AIInsightChip>
                   <AIInsightChip tone="info">Notice period discussed</AIInsightChip>
                   <AIInsightChip tone="warn">Salary mismatch</AIInsightChip>
                   <AIInsightChip tone="miss">Shift hours not discussed</AIInsightChip>
                 </div>
-              </Sub>
+              </Sub> */}
 
-              <Sub title="ScorePill · fit / review / not-fit">
+              {/* <Sub title="ScorePill · fit / review / not-fit">
                 <div className="flex items-center gap-4">
                   <ScorePill score={92} verdict="fit" />
                   <ScorePill score={58} verdict="review" />
                   <ScorePill score={14} verdict="not-fit" />
                 </div>
-              </Sub>
+              </Sub> */}
 
-              <Sub title="RadioCard · large clickable cards">
+              {/* <Sub title="RadioCard · large clickable cards">
                 <RadioGroup
                   value={orDirection}
                   onValueChange={(v) => setOrDirection(v as typeof orDirection)}
@@ -1767,7 +1858,7 @@ export default function Home() {
                     selected={orFormat === "video"}
                   />
                 </RadioGroup>
-              </Sub>
+              </Sub> */}
 
               <Sub title="Stepper · completed / current / pending">
                 <Stepper
@@ -1780,7 +1871,7 @@ export default function Home() {
                 />
               </Sub>
 
-              <Sub title="InfoBanner · 4 tones">
+              {/* <Sub title="InfoBanner · 4 tones">
                 <div className="flex flex-col gap-3">
                   <InfoBanner
                     variant="info"
@@ -1804,9 +1895,9 @@ export default function Home() {
                     description="A quota was exceeded. Resume to continue evaluations."
                   />
                 </div>
-              </Sub>
+              </Sub> */}
 
-              <Sub title="SplitButton · primary action + menu">
+              {/* <Sub title="SplitButton · primary action + menu">
                 <div className="flex gap-3">
                   <SplitButton
                     onClick={() => setOrShareOpen(true)}
@@ -1821,41 +1912,45 @@ export default function Home() {
                     <Share2 className="size-4" /> Share Job
                   </SplitButton>
                 </div>
-              </Sub>
+              </Sub> */}
             </Section>
 
             <Section id="or-organisms" title="OnlyRounds · Organisms">
               <Sub title="PageHeader · title + tabs + actions">
-                <PageHeader
-                  title={
-                    <span className="inline-flex items-center gap-2">
-                      <span>Product Designer</span>
-                      <Badge variant="success">Active</Badge>
-                    </span>
-                  }
-                  description="Simplilearn · Hubli"
-                  tabs={
-                    <Tabs value={orTab} onValueChange={(v) => setOrTab(v as typeof orTab)}>
-                      <TabsList>
-                        <TabsTrigger value="all">Screening (2)</TabsTrigger>
-                        <TabsTrigger value="active">Selected (0)</TabsTrigger>
-                      </TabsList>
-                    </Tabs>
-                  }
-                  actions={
-                    <>
-                      <Button variant="outline" size="sm">
-                        <Download className="size-4" /> Download
-                      </Button>
-                      <Button variant="outline" size="sm">
-                        <UserPlus className="size-4" /> Add candidates
-                      </Button>
-                      <Button size="sm" onClick={() => setOrShareOpen(true)}>
-                        <Share2 className="size-4" /> Share job
-                      </Button>
-                    </>
-                  }
-                />
+                {/* bg-muted mirrors the real product page background so the
+                    white header card and inverted tabs render in correct context. */}
+                <div className="rounded-lg bg-muted overflow-hidden">
+                  <PageHeader
+                    title={
+                      <span className="inline-flex items-center gap-2">
+                        <span>Product Designer</span>
+                        <Badge variant="success">Active</Badge>
+                      </span>
+                    }
+                    description="Simplilearn · Hubli"
+                    tabs={
+                      <Tabs value={orTab} onValueChange={(v) => setOrTab(v as typeof orTab)}>
+                        <TabsList variant="inverted">
+                          <TabsTrigger value="all">Screening (2)</TabsTrigger>
+                          <TabsTrigger value="active">Selected (0)</TabsTrigger>
+                        </TabsList>
+                      </Tabs>
+                    }
+                    actions={
+                      <>
+                        <Button variant="outline" size="sm">
+                          <Download className="size-4" /> Download
+                        </Button>
+                        <Button variant="outline" size="sm">
+                          <UserPlus className="size-4" /> Add candidates
+                        </Button>
+                        <Button size="sm" onClick={() => {}}>
+                          <Share2 className="size-4" /> Share job
+                        </Button>
+                      </>
+                    }
+                  />
+                </div>
               </Sub>
 
               <Sub title="JobsTable · title + status + client + location + screening/interview/shortlisted counts">
@@ -1933,7 +2028,7 @@ export default function Home() {
                 </div>
               </Sub>
 
-              <Sub title="FilterPanel · collapsible rail">
+              {/* <Sub title="FilterPanel · collapsible rail">
                 <div className="max-w-sm">
                   <FilterPanel
                     count={2}
@@ -1951,16 +2046,27 @@ export default function Home() {
                     ]}
                   />
                 </div>
-              </Sub>
+              </Sub> */}
 
-              <Sub title="CandidateCard · rejected + incomplete-call variants">
+              <Sub title="CandidateCard · 4 state variants (completed Fit · pending · incomplete · no-response)">
                 <div className="flex flex-col gap-3">
-                  <CandidateCard candidate={SAMPLE_CANDIDATES[0]} />
-                  <CandidateCard candidate={SAMPLE_CANDIDATES[1]} />
+                  {SAMPLE_CANDIDATES.map((c) => (
+                    <CandidateCard key={c.id} candidate={c} />
+                  ))}
                 </div>
               </Sub>
 
-              <Sub title="NetworkShareSheet · dialog">
+              <Sub title="CandidateTable · list/tabular view of pipeline">
+                <CandidateTable
+                  candidates={SAMPLE_CANDIDATES.map((c) => ({
+                    ...c,
+                    stage: "screening",
+                  }))}
+                  onOpen={() => {}}
+                />
+              </Sub>
+
+              {/* <Sub title="NetworkShareSheet · dialog">
                 <Button onClick={() => setOrShareOpen(true)}>
                   <Share2 className="size-4" /> Open share dialog
                 </Button>
@@ -1969,7 +2075,7 @@ export default function Home() {
                   onOpenChange={setOrShareOpen}
                   jobTitle="Product Designer"
                 />
-              </Sub>
+              </Sub> */}
             </Section>
 
             <Section id="or-templates" title="OnlyRounds · Templates">
@@ -2021,6 +2127,42 @@ export default function Home() {
               </div>
             </Section>
           </div>
+
+          {/* ===================================================================
+           * APNA HIRE · Product-scoped extension
+           * Components under src/components/apnahire/* — the recruiter-facing
+           * side of the Apna platform.
+           * =================================================================*/}
+          <Section id="ah-overview" title="Apna Hire · Overview">
+            <p className="max-w-3xl text-sm text-muted-foreground">
+              Apna Hire is the recruiter portal for Apna&apos;s job platform. It reuses the shared
+              design-system primitives and adds a product-specific sidebar shell with the official
+              Apna brand mark, nested navigation, workspace switching, and a{" "}
+              <code className="font-mono text-foreground">+ Invite Recruiter</code> CTA.
+            </p>
+
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {[
+                {
+                  href: "/apnahire/sidebar-specs",
+                  label: "Sidebar specs",
+                  desc: "Interactive ApnaHireSidebar showcase — logo, workspaces, nested nav, alert banner",
+                },
+              ].map((l) => (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  className="group/ah-link flex flex-col gap-1 rounded-lg border border-border bg-card p-4 transition-colors hover:border-primary/40 hover:bg-accent/40"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">{l.label}</span>
+                    <ArrowUpRight className="size-3.5 text-muted-foreground transition-transform group-hover/ah-link:-translate-y-0.5 group-hover/ah-link:translate-x-0.5" />
+                  </div>
+                  <span className="text-xs text-muted-foreground">{l.desc}</span>
+                </Link>
+              ))}
+            </div>
+          </Section>
 
           <footer className="border-t border-border pt-8 text-sm text-muted-foreground">
             Mirrors the Figma file{" "}

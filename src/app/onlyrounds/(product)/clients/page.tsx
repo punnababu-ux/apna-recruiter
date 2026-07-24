@@ -4,17 +4,19 @@
  * /onlyrounds/clients — Clients directory.
  *
  * Composition:
- *   PageHeader (implicit via product layout) + local header row with
- *   search + Add client CTA · ClientsTable with mock records.
- *
- * "Add client" opens a Dialog hosting the ClientForm organism.
+ *   PageHeader — title "Clients" + "Add client" CTA
+ *   SearchFilterBar — search only (no filters)
+ *   ClientsTable
+ *   Dialog — ClientForm for adding a new client
  */
 
-import { Plus, Search } from "lucide-react"
+import { Plus } from "lucide-react"
 import { useState } from "react"
 
 import { ClientForm, type ClientFormValues } from "@/components/onlyrounds/client-form"
 import { ClientsTable, type ClientRow } from "@/components/onlyrounds/clients-table"
+import { PageHeader } from "@/components/onlyrounds/page-header"
+import { SearchFilterBar } from "@/components/onlyrounds/search-filter-bar"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -23,7 +25,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
 
 const SEED: ClientRow[] = [
   {
@@ -58,7 +59,7 @@ export default function ClientsPage() {
   const [open, setOpen] = useState(false)
 
   const filtered = rows.filter((r) =>
-    r.name.toLowerCase().includes(query.toLowerCase())
+    r.name.toLowerCase().includes(query.toLowerCase()),
   )
 
   const handleSubmit = (values: ClientFormValues) => {
@@ -77,23 +78,25 @@ export default function ClientsPage() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col">
-      <div className="flex items-center gap-3 px-6 pt-4">
-        <div className="relative flex-1">
-          <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            inputSize="sm"
-            placeholder="Search clients..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="pl-9"
-          />
-        </div>
-        <Button size="sm" onClick={() => setOpen(true)}>
-          <Plus className="size-3.5" />
-          Add client
-        </Button>
-      </div>
+    <div className="mx-auto flex w-full max-w-7xl flex-col">
+      <PageHeader
+        variant="transparent"
+        className="px-6 pt-4"
+        title="Clients"
+        actions={
+          <Button size="sm" onClick={() => setOpen(true)}>
+            <Plus className="size-3.5" />
+            Add client
+          </Button>
+        }
+      />
+
+      <SearchFilterBar
+        className="px-6 pt-3"
+        placeholder="Search clients…"
+        value={query}
+        onChange={setQuery}
+      />
 
       <main className="flex-1 px-6 py-4">
         <ClientsTable rows={filtered} />

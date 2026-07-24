@@ -7,19 +7,23 @@
  * URLs — `/onlyrounds/jobs` stays `/onlyrounds/jobs`.
  */
 
+import { cookies } from "next/headers"
 import { OnlyRoundsSidebar } from "@/components/onlyrounds/app-sidebar"
 import { ProductTopBar } from "@/components/onlyrounds/product-top-bar"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 
-export default function OnlyRoundsProductLayout({
+export default async function OnlyRoundsProductLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const cookieStore = await cookies()
+  const defaultOpen = cookieStore.get("sidebar_state")?.value !== "false"
+
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={defaultOpen}>
       <OnlyRoundsSidebar />
-      <SidebarInset className="bg-background">
+      <SidebarInset className="bg-muted">
         <ProductTopBar />
         {children}
       </SidebarInset>

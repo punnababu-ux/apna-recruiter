@@ -22,14 +22,19 @@ import {
   CalendarDays,
   CheckCircle2,
   ChevronRight,
+  Copy,
   MapPin,
   MessagesSquare,
   MoreVertical,
+  PowerOff,
+  Share2,
+  Upload,
   User2,
   UserSearch,
 } from "lucide-react"
 import Link from "next/link"
 
+import { IconLabel, ClientLogo } from "@/components/onlyrounds/shared"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -88,9 +93,9 @@ function JobRowItem({ row }: { row: JobRow }) {
   const showRounds = row.status !== "draft"
 
   return (
-    <div className="rounded-lg border border-border bg-card px-4 py-3 transition-colors hover:bg-muted/50">
+    <div className="rounded-xl border border-border/60 bg-card px-5 py-4 shadow-card transition-shadow hover:shadow-elevated">
       <div className="flex items-start gap-4">
-        <ClientLogo client={row.client} src={row.clientLogo} />
+        <ClientLogo name={row.client} src={row.clientLogo} size="md" />
 
         <div className="min-w-0 flex-1">
           <Link href={`/onlyrounds/jobs/${row.id}`} className="group block">
@@ -98,13 +103,15 @@ function JobRowItem({ row }: { row: JobRow }) {
               {row.title}
             </span>
             <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-              <MetaItem icon={Building2} label={row.client} />
+              <IconLabel icon={Building2}>{row.client}</IconLabel>
               <span aria-hidden>·</span>
-              <MetaItem icon={MapPin} label={row.location} />
+              <IconLabel icon={MapPin}>{row.location}</IconLabel>
               <span aria-hidden>·</span>
-              <MetaItem icon={CalendarDays} label={`Created ${row.createdAt}`} />
+              <IconLabel icon={CalendarDays}>
+                Created {row.createdAt}
+              </IconLabel>
               <span aria-hidden>·</span>
-              <MetaItem icon={User2} label={`By ${row.owner}`} />
+              <IconLabel icon={User2}>By {row.owner}</IconLabel>
             </div>
           </Link>
         </div>
@@ -122,7 +129,7 @@ function JobRowItem({ row }: { row: JobRow }) {
 
       {showRounds ? (
         <>
-          <hr className="-mx-4 mt-3 border-t border-border" />
+          <hr className="-mx-5 mt-4 border-t border-border/60" />
           <div className="mt-3 flex flex-wrap items-center gap-x-1.5 gap-y-2">
             <RoundPill
               href={`/onlyrounds/jobs/${row.id}?round=screening`}
@@ -157,37 +164,7 @@ function JobRowItem({ row }: { row: JobRow }) {
   )
 }
 
-function ClientLogo({ client, src }: { client: string; src?: string }) {
-  if (src) {
-    return (
-      <img
-        src={src}
-        alt={`${client} logo`}
-        className="size-9 shrink-0 rounded-md border border-border bg-background object-contain p-1"
-      />
-    )
-  }
-  return (
-    <div className="flex size-9 shrink-0 items-center justify-center rounded-md border border-border bg-muted text-xs font-semibold text-muted-foreground">
-      {client.slice(0, 1).toUpperCase()}
-    </div>
-  )
-}
 
-function MetaItem({
-  icon: Icon,
-  label,
-}: {
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
-  label: string
-}) {
-  return (
-    <span className="inline-flex items-center gap-1">
-      <Icon className="size-3" aria-hidden />
-      {label}
-    </span>
-  )
-}
 
 function RoundPill({
   href,
@@ -232,13 +209,25 @@ function RowActions({ status }: { status: JobStatus }) {
         }
       />
       <DropdownMenuContent align="end">
-        <DropdownMenuItem>Share</DropdownMenuItem>
-        {canPublish ? <DropdownMenuItem>Publish</DropdownMenuItem> : null}
-        <DropdownMenuItem>Duplicate</DropdownMenuItem>
+        <DropdownMenuItem>
+          <Share2 className="size-3.5" />
+          Share
+        </DropdownMenuItem>
+        {canPublish ? (
+          <DropdownMenuItem>
+            <Upload className="size-3.5" />
+            Publish
+          </DropdownMenuItem>
+        ) : null}
+        <DropdownMenuItem>
+          <Copy className="size-3.5" />
+          Duplicate
+        </DropdownMenuItem>
         {canDeactivate ? (
           <>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="text-destructive">
+              <PowerOff className="size-3.5" />
               Deactivate
             </DropdownMenuItem>
           </>

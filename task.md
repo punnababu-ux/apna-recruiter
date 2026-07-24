@@ -1,0 +1,41 @@
+- [x] Integrate new Apna logo in `@apna/design-system`
+  - [x] Modify `packages/design-system/src/components/ui/logo-apna.tsx` with new SVG
+  - [x] Export `ApnaLogo` in `packages/design-system/src/index.ts`
+  - [x] Rebuild design system package
+- [x] Create `ApnaHireSidebar` component
+  - [x] Create folder `src/components/apnahire` if not exists
+  - [x] Write `src/components/apnahire/app-sidebar.tsx` wrapping `ReusableSidebar`
+- [x] Update specifications showcase page
+  - [x] Refactor `src/app/apnahire/sidebar-specs/page.tsx` to use `ApnaHireSidebar` and `OnlyRoundsSidebar`
+- [x] Fix layout spacing and alignment misalignment in sidebar
+  - [x] Standardize spacing of collapsible/grouped nav items and flat items in `packages/design-system/src/components/ui/app-sidebar.tsx`
+  - [x] Remove `mr-1` from all icons and use `gap-3` consistently on flex containers
+  - [x] Shift sub-items in `packages/design-system/src/components/ui/sidebar.tsx` to align sub-item labels with parent item labels
+  - [x] Apply `group-data-[collapsible=icon]:hidden` and `whitespace-nowrap` to label spans to ensure clean text-vanishing animation when collapsing
+  - [x] Align the vertical sub-item indicator line to start below the parent item button (removing negative margin-top/padding-top to avoid overlapping/cutting through the parent icon) and position it horizontally under the center of the icon
+  - [x] Rebuild design system package
+- [x] Increase brand logo size to size-10 (40x40px) and align vertically centered to rest of icons
+  - [x] Change brand button to `size="lg"` (h-12) and logo container inside `app-sidebar.tsx` to `size-10`
+  - [x] Remove all margin-left offsets (expanded `-ml-1` and collapsed `ml-0` overrides) to keep the logo centerline locked at exactly `32px` relative to the sidebar in both states
+  - [x] Update `src/components/apnahire/app-sidebar.tsx` brand name to `"Hire"` and `ApnaLogo` class to `size-10`
+  - [x] Rebuild design system package
+- [x] Remove Apna logo from Rohini Enterprises workspace
+  - [x] Remove `logoUrl` from the Rohini Enterprises workspace in `src/components/apnahire/app-sidebar.tsx`
+- [x] Make workspace selector button symmetrical and centered
+  - [x] Change workspace selector button height to `h-10` in both states
+  - [x] Apply `group-data-[collapsible=icon]:w-10 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0` to center the badge perfectly and prevent bouncing transitions
+  - [x] Rebuild design system package
+- [x] Increase brand logo size to 48x48px (size-12) and ensure zero movement
+  - [x] Set brand logo container inside `packages/design-system/src/components/ui/app-sidebar.tsx` to `size-12`
+  - [x] Set `px-2` padding on `SidebarHeader` to accommodate the 48px logo when collapsed
+  - [x] Apply `px-0!` class to brand `SidebarMenuButton` to prevent horizontal offset shifts
+  - [x] Apply `group-data-[collapsible=icon]:mx-auto` to workspace selector button to center it
+  - [x] Update `src/components/apnahire/app-sidebar.tsx` brand logo to use `size-12` class
+  - [x] Rebuild design system package and verify alignment
+- [x] Collapsed sublist access and selection indicator
+  - [x] Support collapsed sidebar sublist access via dropdown menus in `packages/design-system/src/components/ui/app-sidebar.tsx`
+  - [x] Highlight the parent sidebar item button when any of its sublist items is selected/active
+  - [x] Rebuild design system package and verify
+- [x] Verification
+  - [x] Run `npm run check` to ensure syntax, typecheck, tokens lint, and build succeed
+  - [x] Manually verify look and feel on specs page

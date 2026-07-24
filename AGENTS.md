@@ -294,3 +294,59 @@ Before you `git commit`:
 A PR that uses a raw colour, introduces a component not listed in
 `docs/COMPONENTS.md`, breaks `npm run lint:tokens`, or adds a template
 without also adding its new components, is a reject.
+
+---
+
+## Simplicity Operating Prompt
+
+*Distilled from John Maeda, "The Laws of Simplicity" (MIT Press).*
+
+### Mandate
+Hold every output — interface, copy, flow, document — to one standard: **subtract the obvious, add the meaningful.** When simplicity and completeness conflict, default to less, then earn back complexity only where it clearly pays.
+
+### Method — apply in order
+
+1. **Reduce.** When in doubt, remove. Cut anything that can go without real loss. Be deliberate about *what* you cut. Only once everything removable is gone, apply **SHE**:
+   - *Shrink* — make what remains modest; reward attention instead of demanding it.
+   - *Hide* — tuck rarely-used complexity away; surface it on demand, not by default.
+   - *Embody* — give the few remaining elements enough quality and clarity to carry the weight.
+
+2. **Organize.** Make many appear as few. Run **SLIP**: *Sort* related things together, *Label* the groups plainly, *Integrate* where groups overlap, *Prioritize* so the most important dominates.
+
+3. **Time.** Save the user's time, or make the wait feel shorter. Cut steps; show progress; never make someone wait without feedback.
+
+4. **Learn.** Make the hard thing knowable. Teach through the familiar — analogies, sane defaults, examples, consistent patterns. Don't make users earn basic understanding.
+
+5. **Differences.** Use contrast on purpose. Simplicity only reads against complexity; let a few elements stand out by keeping everything else quiet.
+
+6. **Context.** Mind the periphery. Whitespace, surroundings, and edge cases are not secondary — design them deliberately.
+
+7. **Emotion.** Don't strip warmth in the name of clean. A simple thing can still have character, feeling, and delight. Lean toward more emotion, not sterile minimalism.
+
+8. **Trust.** Earn trust, then simplify by relying on it. Strong defaults, forgiving actions (undo), and predictable behavior let you remove confirmations and clutter.
+
+9. **Failure.** Some things can't be made simple. Don't force it or fake it — name the irreducible complexity and handle it honestly.
+
+10. **The One.** Above all else: subtract the obvious, add the meaningful.
+
+### Keys — where to invest
+- **Away.** Relocate complexity rather than delete it. Move advanced options into a menu, a later step, or elsewhere so the main surface stays light.
+- **Open.** Prefer transparency. Expose state, explain what's happening; openness makes a complex system feel manageable.
+- **Power.** Use less, gain more. Fewer features, lower cost, less effort asked of the user.
+
+### Defaults
+- Start from the simplest version that could work; add only on evidence.
+- Every addition must justify its weight. If it can't, it goes.
+- Prefer one clear path over many possible ones.
+- Hide power; never remove it.
+- Match the user's existing mental model before introducing a new one.
+
+### Before shipping, check
+- [ ] Can anything here be removed without real loss?
+- [ ] Is the most important thing the most prominent?
+- [ ] Is rare complexity hidden, not deleted?
+- [ ] Does it respect the user's time at every step?
+- [ ] Does it lean on patterns the user already knows?
+- [ ] Did I keep the warmth that makes it worth using?
+- [ ] Is any remaining complexity genuinely irreducible — and acknowledged?
+

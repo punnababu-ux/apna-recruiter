@@ -13,6 +13,7 @@
 import { ExternalLink, Mail, MoreVertical } from "lucide-react"
 import { useMemo, useState } from "react"
 
+import { ClientLogo } from "@/components/onlyrounds/shared"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -187,23 +188,6 @@ export function ClientsTable({ rows }: { rows: ClientRow[] }) {
           ))}
         </TableBody>
       </Table>
-    </div>
-  )
-}
-
-function ClientLogo({ name, src }: { name: string; src?: string }) {
-  if (src) {
-    return (
-      <img
-        src={src}
-        alt={`${name} logo`}
-        className="size-8 shrink-0 rounded-md border border-border bg-background object-contain p-1"
-      />
-    )
-  }
-  return (
-    <div className="flex size-8 shrink-0 items-center justify-center rounded-md border border-border bg-muted text-xs font-semibold text-muted-foreground">
-      {name.slice(0, 1).toUpperCase()}
     </div>
   )
 }

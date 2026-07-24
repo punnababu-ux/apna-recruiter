@@ -1,0 +1,247 @@
+/**
+ * POST /api/onlyrounds/generate-criteria
+ *
+ * Generates candidate-evaluation criteria from the job description, job
+ * details, and the configured interview tasks. Returns three buckets:
+ *   • mustHave   — required; the candidate must meet all of these
+ *   • goodToHave — bonus; strengthens a candidate
+ *   • redFlag    — dealbreakers; candidates who don't meet these aren't
+ *                  shortlisted
+ *
+ * Uses Google Gemini via @ai-sdk/google. Total criteria across the three
+ * buckets are capped at 15.
+ *
+ * Setup: add GOOGLE_GENERATIVE_AI_API_KEY to your .env.local.
+ *
+ * ── Dummy mode ────────────────────────────────────────────────────────────
+ * When GOOGLE_GENERATIVE_AI_API_KEY is absent the route returns a small set
+ * of templated criteria so the UI flow works without an API key.
+ * ──────────────────────────────────────────────────────────────────────────
+ */
+
+import { google } from "@ai-sdk/google"
+import { generateText, Output } from "ai"
+import { NextRequest, NextResponse } from "next/server"
+import { z } from "zod"
+
+export const MAX_CRITERIA = 15
+
+export const SYSTEM_PROMPT =
+  "You are an expert recruiter defining how an AI screener should evaluate " +
+  "candidates for a role in the Indian job market.\n\n" +
+  "From the job description, job details, and interview tasks provided, " +
+  "produce concise, checkable evaluation criteria split into three buckets:\n" +
+  "• mustHave — hard requirements the candidate MUST meet (skills, " +
+  "experience, availability).\n" +
+  "• goodToHave — nice-to-haves that strengthen a candidate but aren't " +
+  "required.\n" +
+  "• redFlag — dealbreakers. If a candidate does not satisfy one of these, " +
+  "they should NOT be shortlisted (e.g. 'No valid two-wheeler license', " +
+  "'Cannot work weekends', 'Notice period over 60 days').\n\n" +
+  "Rules:\n" +
+  "• Each criterion is one short, specific, verifiable line (no sub-bullets).\n" +
+  "• The TOTAL number of criteria across all three buckets must be 15 or " +
+  "fewer. Aim for ~6 mustHave, ~4 goodToHave, ~3 redFlag.\n" +
+  "• Tailor them to the actual role and the screening/interview tasks — " +
+  "don't pad with generic filler.\n" +
+  "• Use plain language a recruiter would recognise."
+
+export const buildUserPrompt = (input: {
+  title: string
+  jd: string
+  detailsSummary: string
+  tasksSummary: string
+  taskName?: string
+  taskType?: string
+}) =>
+  `Job title: ${input.title || "(not provided)"}\n\n` +
+  `Job details:\n${input.detailsSummary || "(none)"}\n\n` +
+  `Interview pipeline stages:\n${input.tasksSummary || "(none)"}\n\n` +
+  (input.taskName
+    ? `Specific pipeline stage to generate evaluation criteria for:\n- Stage name: ${input.taskName}\n- Stage type: ${input.taskType || "screening"}\n\nGenerate evaluation criteria directly relevant to what should be assessed or filtered during this specific stage. Keep in mind the role requirements from the JD.\n\n`
+    : "") +
+  `Job description:\n${input.jd || "(not provided)"}`
+
+export const buildBulkUserPrompt = (input: {
+  title: string
+  jd: string
+  detailsSummary: string
+  tasksSummary: string
+  tasks: Array<{ id: string; title: string; type: string }>
+}) =>
+  `Job title: ${input.title || "(not provided)"}\n\n` +
+  `Job details:\n${input.detailsSummary || "(none)"}\n\n` +
+  `Interview pipeline stages:\n${input.tasksSummary || "(none)"}\n\n` +
+  `Generate evaluation criteria specifically for the following stages in this pipeline:\n` +
+  input.tasks.map((t) => `- Stage ID: ${t.id}, Name: ${t.title || t.type}, Type: ${t.type}`).join("\n") +
+  `\n\nJob description:\n${input.jd || "(not provided)"}`
+
+export const CriteriaSchema = z.object({
+  mustHave: z
+    .array(z.string())
+    .describe("Required criteria the candidate must meet."),
+  goodToHave: z
+    .array(z.string())
+    .describe("Bonus criteria that strengthen a candidate."),
+  redFlag: z
+    .array(z.string())
+    .describe(
+      "Dealbreakers — candidates who don't meet these are not shortlisted.",
+    ),
+})
+
+export const BulkCriteriaSchema = z.object({
+  results: z.array(
+    z.object({
+      taskId: z.string().describe("The ID of the stage (must match one of the input stage IDs)."),
+      mustHave: z.array(z.string()).describe("Required criteria (3-5 items) for this stage."),
+      goodToHave: z.array(z.string()).describe("Bonus criteria (2-4 items) for this stage."),
+      redFlag: z.array(z.string()).describe("Dealbreakers (1-3 items) for this stage."),
+    })
+  )
+})
+
+export type CriteriaResult = z.infer<typeof CriteriaSchema>
+
+// ── Dummy generation ──────────────────────────────────────────────────────
+
+function buildDummyCriteria(title: string, taskName?: string): CriteriaResult {
+  const role = title.trim() || "this role"
+  const taskText = taskName ? ` for ${taskName}` : ""
+  return {
+    mustHave: [
+      `Relevant experience for a ${role}${taskText}`,
+      "Clear spoken communication",
+      "Available to start within the expected notice period",
+      "Comfortable with the stated work mode and schedule",
+    ],
+    goodToHave: [
+      "Prior experience in a similar industry",
+      "Familiarity with common tools for the role",
+      "Multilingual ability for customer-facing work",
+    ],
+    redFlag: [
+      "Unwilling to work the required shifts",
+      "Compensation expectations far outside the offered range",
+    ],
+  }
+}
+
+// ── Route handler ─────────────────────────────────────────────────────────
+
+function capTotal(result: CriteriaResult): CriteriaResult {
+  let budget = MAX_CRITERIA
+  const take = (arr: string[]) => {
+    const cleaned = (arr ?? [])
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .slice(0, budget)
+    budget -= cleaned.length
+    return cleaned
+  }
+  // Fill in priority order: must-have, then good-to-have, then red-flag.
+  const mustHave = take(result.mustHave)
+  const goodToHave = take(result.goodToHave)
+  const redFlag = take(result.redFlag)
+  return { mustHave, goodToHave, redFlag }
+}
+
+export async function POST(req: NextRequest) {
+  let tasks: Array<{ id: string; title: string; type: string }> = []
+  try {
+    const body = await req.json().catch(() => ({}))
+    const title: string = (body?.title ?? "").toString()
+    const jd: string = (body?.jd ?? "").toString()
+    const detailsSummary: string = (body?.detailsSummary ?? "").toString()
+    const tasksSummary: string = (body?.tasksSummary ?? "").toString()
+    const taskName: string = (body?.taskName ?? "").toString()
+    const taskType: string = (body?.taskType ?? "").toString()
+    tasks = body?.tasks ?? []
+
+    if (!jd.trim() && !title.trim()) {
+      return NextResponse.json(
+        tasks.length > 0 ? { results: [] } : { mustHave: [], goodToHave: [], redFlag: [] }
+      )
+    }
+
+    // Bulk Mode
+    if (tasks.length > 0) {
+      if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+        console.log(
+          "[generate-criteria] dummy bulk mode — set GOOGLE_GENERATIVE_AI_API_KEY to use live Gemini",
+        )
+        const results = tasks.map((t) => ({
+          taskId: t.id,
+          ...capTotal(buildDummyCriteria(title, t.title || t.type)),
+        }))
+        return NextResponse.json({ results })
+      }
+
+      const { output } = await generateText({
+        model: google("gemini-2.5-flash"),
+        output: Output.object({ schema: BulkCriteriaSchema }),
+        system: SYSTEM_PROMPT,
+        prompt: buildBulkUserPrompt({ title, jd, detailsSummary, tasksSummary, tasks }),
+      })
+
+      if (!output || !output.results) {
+        return NextResponse.json({
+          results: [],
+          error: "The AI didn't return bulk criteria. Try again.",
+        })
+      }
+
+      const cleanedResults = output.results.map((res) => ({
+        taskId: res.taskId,
+        ...capTotal({
+          mustHave: res.mustHave || [],
+          goodToHave: res.goodToHave || [],
+          redFlag: res.redFlag || [],
+        }),
+      }))
+
+      return NextResponse.json({ results: cleanedResults })
+    }
+
+    // Single Mode
+    if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+      console.log(
+        "[generate-criteria] dummy mode — set GOOGLE_GENERATIVE_AI_API_KEY to use live Gemini",
+      )
+      return NextResponse.json(capTotal(buildDummyCriteria(title, taskName)))
+    }
+
+    const { output } = await generateText({
+      model: google("gemini-2.5-flash"),
+      output: Output.object({ schema: CriteriaSchema }),
+      system: SYSTEM_PROMPT,
+      prompt: buildUserPrompt({ title, jd, detailsSummary, tasksSummary, taskName, taskType }),
+    })
+
+    if (!output) {
+      return NextResponse.json({
+        mustHave: [],
+        goodToHave: [],
+        redFlag: [],
+        error: "The AI didn't return criteria. Try again.",
+      })
+    }
+    return NextResponse.json(capTotal(output))
+  } catch (err) {
+    const raw = String((err as { message?: unknown })?.message ?? err ?? "")
+    console.error("[generate-criteria]", raw)
+    let error = "Couldn't generate criteria. Try again in a moment."
+    if (/prepayment|billing|depleted|credits/i.test(raw)) {
+      error =
+        "Your Gemini API prepayment credits are depleted. Please check billing or top up credits in Google AI Studio."
+    } else if (/rate.?limit|quota|RESOURCE_EXHAUSTED|429/i.test(raw)) {
+      error = "Rate limit reached on Gemini's free tier. Wait ~30s and retry."
+    } else if (/401|403|unauthorized|api.?key/i.test(raw)) {
+      error =
+        "Gemini rejected the API key. Check GOOGLE_GENERATIVE_AI_API_KEY in .env.local."
+    }
+    return NextResponse.json(
+      tasks.length > 0 ? { results: [], error } : { mustHave: [], goodToHave: [], redFlag: [], error },
+    )
+  }
+}

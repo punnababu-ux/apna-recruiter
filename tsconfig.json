@@ -19,6 +19,8 @@
       }
     ],
     "paths": {
+      "@apna/design-system": ["./packages/design-system/src/index.ts"],
+      "@/components/ui/*": ["./packages/design-system/src/components/ui/*"],
       "@/*": ["./src/*"]
     }
   },

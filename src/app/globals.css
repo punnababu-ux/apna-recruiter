@@ -1,23 +1,22 @@
 /* ============================================================================
- * Poneglyph · globals.css (entry stylesheet)
+ * Poneglyph · globals.css (app stylesheet)
  * ----------------------------------------------------------------------------
  * Orchestrator. Order matters:
  *   1. Tailwind + animation utility layers
- *   2. Primitive tokens (Tier 1 — raw atoms)
- *   3. Semantic tokens  (Tier 2 — intent aliases, light + dark)
+ *   2. Primitive tokens (Tier 1 — raw atoms) from `@apna/design-system`
+ *   3. Semantic tokens  (Tier 2 — intent aliases) from `@apna/design-system`
  *   4. @theme inline    (expose semantics as Tailwind design tokens)
  *   5. @layer base      (element defaults — body/html/focus)
- *
- * Do not add token values here. Primitives live in `src/styles/tokens/
- * primitives.css`; aliases in `semantic.css`. This file only wires them.
  * ========================================================================== */
 
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@import "../styles/tokens/primitives.css";
-@import "../styles/tokens/semantic.css";
+@source "../../packages/design-system/src/**/*.{ts,tsx,js,jsx}";
+
+@import "../../packages/design-system/src/styles/tokens/primitives.css";
+@import "../../packages/design-system/src/styles/tokens/semantic.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -123,7 +122,7 @@
    * Spacing — context-role aliases only.
    *
    * Tailwind v4 already derives numeric `p-4`, `gap-6`, `m-12` from the
-   * `--spacing` base (0.25rem). We intentionally DO NOT register named
+   * `--spacing-base` (0.25rem). We intentionally DO NOT register named
    * size aliases (`--spacing-sm`, `--spacing-md`, `--spacing-2xl`, …)
    * here: they collide catastrophically with Tailwind's sizing utilities
    * (`max-w-sm`, `w-md`, `h-2xl`, …), which share the `--spacing-*`
@@ -353,6 +352,44 @@
   background-image: var(--gradient-accent);
 }
 
+/* ----------------------------------------------------------------------------
+ * AI activity shimmer — subtle animated gradient used as a full-field cover
+ * when an AI action is in flight (e.g. JD generation, JD cleanup).
+ *
+ * Uses the semantic `--muted` and `--accent` tokens so it sits softly against
+ * the surrounding UI in both light and dark themes (a faint brand tint
+ * sweeping across a near-white field, rather than a saturated brand gradient).
+ * -------------------------------------------------------------------------- */
+@keyframes ai-shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+
+@utility animate-ai-shimmer {
+  /* Pastel multi-hue wave (green → gold → green) — visible but not loud.
+     Dark-theme override below remaps to the same hues in the 800 tier so
+     the shimmer reads correctly against dark surfaces. */
+  background-image: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-apna-green-100) 70%, transparent),
+    color-mix(in srgb, var(--color-apna-gold-200) 70%, transparent),
+    color-mix(in srgb, var(--color-apna-green-200) 70%, transparent),
+    color-mix(in srgb, var(--color-apna-green-100) 70%, transparent)
+  );
+  background-size: 200% 100%;
+  animation: ai-shimmer 2.4s ease-in-out infinite;
+}
+
+.dark .animate-ai-shimmer {
+  background-image: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-apna-green-900) 70%, transparent),
+    color-mix(in srgb, var(--color-apna-gold-800) 70%, transparent),
+    color-mix(in srgb, var(--color-apna-green-800) 70%, transparent),
+    color-mix(in srgb, var(--color-apna-green-900) 70%, transparent)
+  );
+}
+
 /* Text gradients — clip a gradient to a glyph run. Pairs beautifully with
    display-size headings for the "AI-powered" / "TalentPass" kind of inline
    emphasis. Foreground is `transparent` so the background-image shows through. */
@@ -393,6 +430,11 @@
     @apply antialiased;
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
+
+    /* Scale layout by 1.1x on desktop screens to match 110% zoom at 1080p */
+    @media (min-width: 1024px) {
+      font-size: 87.5%; /* Reduced to 14px base for a smaller UI */
+    }
   }
 
   body {
@@ -419,3 +461,12 @@
     }
   }
 }
+
+/* ----------------------------------------------------------------------------
+ * Vertical Responsiveness for Short/Low-Height Viewports
+ *
+ * Automatically compacts spacing, padding, and elements on short devices
+ * (max-height: 720px) to prevent vertical overflow and avoid unnecessary scrolling.
+ * -------------------------------------------------------------------------- */
+
+
