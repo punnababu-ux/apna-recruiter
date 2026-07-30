@@ -48,9 +48,7 @@ import {
   AvatarGroup,
   AvatarImage,
 } from "@/components/ui/avatar"
-import { Badge, badgeVariants } from "@/components/ui/badge"
-// import { ApnaLogo } from "@/components/ui/logo-apna"
-import { OnlyRoundsLogo } from "@/components/ui/logo-onlyrounds"
+import { ApnaLogo, Badge, badgeVariants } from "@apna/design-system"
 // import {
 //   Breadcrumb,
 //   BreadcrumbItem,
@@ -530,24 +528,20 @@ const TOC_GROUPS: TocGroup[] = [
     ],
   },
   {
-    label: "Components",
+    label: "Components (M3 / Ant System)",
     items: [
-      { id: "logos",      label: "Logos" },
-      { id: "buttons",    label: "Buttons" },
-      { id: "badges",     label: "Badges & chips" },
-      { id: "avatars",    label: "Avatar" },
-      { id: "indicators", label: "Indicators" },
-      { id: "forms",      label: "Form controls" },
-      { id: "navigation", label: "Navigation" },
-      { id: "overlays",   label: "Overlays" },
-      // { id: "containers", label: "Containers" },
-      { id: "data",       label: "Data" },
-      { id: "complex",    label: "Calendar, carousel, command" },
-      { id: "feedback",   label: "Feedback" },
+      { id: "buttons",    label: "1. Actions" },
+      { id: "forms",      label: "2. Form & Inputs" },
+      { id: "badges",     label: "3. Data Display" },
+      { id: "navigation", label: "4. Navigation" },
+      { id: "overlays",   label: "5. Overlays & Dialogs" },
+      { id: "feedback",   label: "6. Feedback & Status" },
+      { id: "data",       label: "7. Data & Layout" },
+      { id: "logos",      label: "Brand & Logos" },
     ],
   },
   {
-    label: "OnlyRounds · Product",
+    label: "Apna Hire · Product",
     items: [
       { id: "or-overview",   label: "Overview" },
       { id: "or-molecules",  label: "Molecules" },
@@ -1064,19 +1058,12 @@ export default function Home() {
           <Section id="logos" title="Logos">
             <Sub title="Brand marks">
               <div className="grid gap-4 sm:grid-cols-2">
-                {/* <LogoTile
-                  name="Apna"
+                <LogoTile
+                  name="Apna Hire"
                   filename="apna-logo"
                   description="Parent brand lockup · gold · green · sky · plum"
                 >
-                  <ApnaLogo className="h-16 w-auto" />
-                </LogoTile> */}
-                <LogoTile
-                  name="OnlyRounds"
-                  filename="onlyrounds-logo"
-                  description="AI-interview sub-brand · native gradient mark"
-                >
-                  <OnlyRoundsLogo className="h-8 w-auto" />
+                  <ApnaLogo className="h-12 w-auto" />
                 </LogoTile>
               </div>
               <p className="mt-4 text-xs text-muted-foreground">
@@ -1754,10 +1741,10 @@ export default function Home() {
 
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 {[
-                  { href: "/onlyrounds/jobs",       label: "Jobs list",        desc: "List + status tabs + actions" },
-                  { href: "/onlyrounds/jobs/sample-job", label: "Job detail",  desc: "Candidate pipeline w/ filters" },
-                  { href: "/onlyrounds/jobs/new",   label: "Create job",       desc: "4-step wizard" },
-                  { href: "/onlyrounds/tokens",     label: "Tokens (self)",    desc: "Full showcase in OnlyRounds theme" },
+                  { href: "/apnahire/jobs",                      label: "Jobs list",        desc: "List + status tabs + actions" },
+                  { href: "/apnahire/jobs/manual-tester-profile", label: "Job detail",  desc: "Candidate pipeline w/ filters" },
+                  { href: "/apnahire/jobs/new",                  label: "Create job",       desc: "4-step wizard" },
+                  { href: "/apnahire/dashboard",                 label: "Dashboard",        desc: "Recruiter overview & metrics" },
                 ].map((l) => (
                   <Link
                     key={l.href}

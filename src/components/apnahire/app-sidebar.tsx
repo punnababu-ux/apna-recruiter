@@ -7,7 +7,6 @@ import {
   Database,
   HelpCircle,
   Mail,
-  Settings,
   BarChart2,
   Trophy,
 } from "lucide-react"

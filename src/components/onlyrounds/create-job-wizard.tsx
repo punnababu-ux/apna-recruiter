@@ -130,9 +130,9 @@ export type GenerationData = {
 // ── App routes ────────────────────────────────────────────────────────────
 
 export const ROUTES = {
-  jobs: "/onlyrounds/jobs",
-  jobsNew: "/onlyrounds/jobs/new",
-  aiTest: "/onlyrounds/test",
+  jobs: "/apnahire/jobs",
+  jobsNew: "/apnahire/jobs/new",
+  aiTest: "/apnahire/test",
 } as const
 
 // ── Wizard constants ──────────────────────────────────────────────────────

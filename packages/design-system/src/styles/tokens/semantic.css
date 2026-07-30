@@ -79,19 +79,23 @@
    * ------------------------------------------------------------------------ */
   --destructive:            var(--color-red-600);
   --destructive-foreground: var(--color-gray-50);
-  --destructive-subtle:     var(--color-red-50);
+  --destructive-subtle:     var(--color-red-100);
+  --destructive-subtle-fg:  var(--color-red-900);
 
   --success:                var(--color-apna-green-600);
   --success-foreground:     var(--color-gray-50);
-  --success-subtle:         var(--color-apna-green-50);
+  --success-subtle:         var(--color-apna-green-100);
+  --success-subtle-fg:      var(--color-apna-green-900);
 
   --warning:                var(--color-amber-500);
   --warning-foreground:     var(--color-gray-950);
-  --warning-subtle:         var(--color-amber-50);
+  --warning-subtle:         var(--color-amber-100);
+  --warning-subtle-fg:      var(--color-amber-900);
 
   --info:                   var(--color-blue-600);
   --info-foreground:        var(--color-gray-50);
-  --info-subtle:            var(--color-blue-50);
+  --info-subtle:            var(--color-blue-100);
+  --info-subtle-fg:         var(--color-blue-900);
 
   /* --------------------------------------------------------------------------
    * Lines — border, input outline, focus ring
@@ -281,34 +285,7 @@
                         var(--color-apna-gold-600) 100%);
 }
 
-/* ============================================================================
- * OnlyRounds theme — sub-brand under Apna for the AI-interview product.
- *
- * Scope: overrides ONLY the gradient roles. Every other role (primary,
- * accent, highlight, surfaces, sidebar, charts) inherits the Apna parent
- * theme unchanged. OnlyRounds is expressed through its distinctive
- * gradient, not a separate colour system.
- *
- * Both gradients compose from the Apna primitive library
- * (apna-green, apna-sky, apna-gold, apna-plum) — no new raw colours.
- *
- * USAGE
- *   <div className="theme-onlyrounds">…</div>
- * ========================================================================== */
-.theme-onlyrounds {
-  /* Luminous rainbow across the Apna primary hues — green → sky → gold.
-   * All three stops sit in the bright band, so there's no dark smear at
-   * the end. Interpolated in OKLCH to keep chroma high through the
-   * mid-points (sRGB would desaturate the green→sky and sky→gold
-   * transitions into grey). */
-  --gradient-primary: linear-gradient(135deg in oklch,
-                        var(--color-apna-green-400) 0%,
-                        var(--color-apna-sky-400)  50%,
-                        var(--color-apna-gold-400) 100%);
-  --gradient-accent:  linear-gradient(135deg in oklch,
-                        var(--color-apna-gold-300)  0%,
-                        var(--color-apna-green-400) 100%);
-}
+
 
 /* ============================================================================
  * Dark theme — only the mapping changes, primitives are untouched.
@@ -343,19 +320,19 @@
   /* Status */
   --destructive:            var(--color-red-400);
   --destructive-foreground: var(--color-gray-50);
-  --destructive-subtle:     var(--color-red-950);
+  --destructive-subtle:     var(--color-red-900);
 
   --success:                var(--color-apna-green-500);
   --success-foreground:     var(--color-gray-50);
-  --success-subtle:         var(--color-apna-green-950);
+  --success-subtle:         var(--color-apna-green-900);
 
   --warning:                var(--color-amber-400);
   --warning-foreground:     var(--color-gray-950);
-  --warning-subtle:         var(--color-amber-950);
+  --warning-subtle:         var(--color-amber-900);
 
   --info:                   var(--color-blue-400);
   --info-foreground:        var(--color-gray-950);
-  --info-subtle:            var(--color-blue-950);
+  --info-subtle:            var(--color-blue-900);
 
   /* Lines — translucent on dark for softer hairlines */
   --border: var(--color-alpha-white-10);

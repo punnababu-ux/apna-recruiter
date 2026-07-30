@@ -1,85 +1,80 @@
-# Components
+# Design System Components
 
-Inventory of every component in `src/components/ui/`. Import snippets are
-copy-paste ready. If you add a component, add it here in the same commit.
+Inventory of components in `@apna/design-system`. Organized according to **Ant Design / Material Design 3 (M3)** component taxonomy. Import snippets are copy-paste ready.
 
-> **Before you build a new one:** ⌘-F this file. The closest match is almost
-> always enough. See `AGENTS.md` for the component-first rule.
+> **Before you build a new one:** ⌘-F this file. The closest match is almost always enough. See `AGENTS.md` for the component-first rule.
 
 ---
 
-## Actions
+## 1. Actions
 
 | Component        | Import                                                                 | tldr                                             |
 |------------------|------------------------------------------------------------------------|--------------------------------------------------|
-| Button           | `import { Button } from "@/components/ui/button"`                       | Primary action surface. 6 variants × 4 sizes.    |
-| ButtonGroup      | `import { ButtonGroup, ButtonGroupText } from "@/components/ui/button-group"` | Horizontally grouped buttons with shared border. |
-| BackButton       | `import { BackButton } from "@/components/ui/back-button"`             | Standard back button with border and ChevronLeft. |
-| Toggle           | `import { Toggle } from "@/components/ui/toggle"`                       | On/off button. Use for formatting toolbars.      |
-| ToggleGroup      | `import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"` | Multiple toggles, single- or multi-select.       |
+| Button           | `import { Button } from "@apna/design-system"`                         | Primary action surface. 6 variants × 4 sizes.    |
+| ButtonGroup      | `import { ButtonGroup, ButtonGroupText } from "@apna/design-system"`   | Horizontally grouped buttons with shared border. |
+| BackButton       | `import { BackButton } from "@apna/design-system"`                     | Standard back button with border and ChevronLeft. |
+| Toggle           | `import { Toggle } from "@apna/design-system"`                         | On/off button. Use for formatting toolbars.      |
+| ToggleGroup      | `import { ToggleGroup, ToggleGroupItem } from "@apna/design-system"`   | Multiple toggles, single- or multi-select.       |
 
-## Form & Input
-
-| Component        | Import                                                                 | tldr                                             |
-|------------------|------------------------------------------------------------------------|--------------------------------------------------|
-| Field            | `import { Field, FieldLabel, FieldDescription, FieldError } from "@/components/ui/field"` | Label + control + help/error wrapper.            |
-| Label            | `import { Label } from "@/components/ui/label"`                         | Accessible form label.                           |
-| Input            | `import { Input } from "@/components/ui/input"`                         | Single-line text input.                          |
-| Textarea         | `import { Textarea } from "@/components/ui/textarea"`                   | Multi-line input.                                |
-| Checkbox         | `import { Checkbox } from "@/components/ui/checkbox"`                   | Binary toggle with `indeterminate` support.      |
-| RadioGroup       | `import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"` | Single-select from 2+ options.                   |
-| Switch           | `import { Switch } from "@/components/ui/switch"`                       | Instant on/off. Persist on change.               |
-| Select           | `import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"` | Styled dropdown. Use for 4+ options.             |
-
-## Display
+## 2. Form & Inputs
 
 | Component        | Import                                                                 | tldr                                             |
 |------------------|------------------------------------------------------------------------|--------------------------------------------------|
-| Avatar           | `import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"` | User image with fallback. Supports groups.       |
-| Badge            | `import { Badge } from "@/components/ui/badge"`                         | Small status / count marker.                     |
-| Skeleton         | `import { Skeleton } from "@/components/ui/skeleton"`                   | Loading placeholder shape.                       |
-| Spinner          | `import { Spinner } from "@/components/ui/spinner"`                     | Indeterminate loading indicator.                 |
-| Separator        | `import { Separator } from "@/components/ui/separator"`                 | Horizontal or vertical divider.                  |
-| Empty            | `import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent } from "@/components/ui/empty"` | Empty-state scaffold.                            |
+| Field            | `import { Field, FieldLabel, FieldDescription, FieldError } from "@apna/design-system"` | Label + control + help/error wrapper. |
+| Label            | `import { Label } from "@apna/design-system"`                         | Accessible form label.                           |
+| Input            | `import { Input } from "@apna/design-system"`                         | Single-line text input.                          |
+| Textarea         | `import { Textarea } from "@apna/design-system"`                       | Multi-line input.                                |
+| Checkbox         | `import { Checkbox } from "@apna/design-system"`                       | Binary toggle with `indeterminate` support.      |
+| RadioGroup       | `import { RadioGroup, RadioGroupItem } from "@apna/design-system"`     | Single-select from 2+ options.                   |
+| Switch           | `import { Switch } from "@apna/design-system"`                         | Instant on/off. Persist on change.               |
+| Select           | `import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@apna/design-system"` | Styled dropdown. Use for 4+ options. |
 
-## Feedback
-
-| Component        | Import                                                                 | tldr                                             |
-|------------------|------------------------------------------------------------------------|--------------------------------------------------|
-| Alert            | `import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"` | Static banner. Use for persistent messages.      |
-| Sonner (toast)   | `import { toast } from "sonner"`                                        | Transient toast. Mounted via `<Toaster />` in root layout. |
-
-## Overlays
+## 3. Data Display
 
 | Component        | Import                                                                 | tldr                                             |
 |------------------|------------------------------------------------------------------------|--------------------------------------------------|
-| Tooltip          | `import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"` | Short hover hint. Not for interactive content.   |
-| Popover          | `import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"` | Click-open floating panel.                       |
-| DropdownMenu     | `import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"` | Popup action menu built on Base UI Menu.         |
-| Dialog           | `import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"` | Modal. Focus-trapped.                            |
-| AlertDialog      | `import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from "@/components/ui/alert-dialog"` | Confirm destructive / irreversible actions.      |
-| Sheet            | `import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter } from "@/components/ui/sheet"` | Edge-docked drawer.                              |
+| Avatar           | `import { Avatar, AvatarImage, AvatarFallback } from "@apna/design-system"` | User image with fallback. Supports groups.  |
+| Badge            | `import { Badge } from "@apna/design-system"`                         | Small status / count marker.                     |
+| Skeleton         | `import { Skeleton } from "@apna/design-system"`                       | Loading placeholder shape.                       |
+| Spinner          | `import { Spinner } from "@apna/design-system"`                       | Indeterminate loading indicator.                 |
+| Separator        | `import { Separator } from "@apna/design-system"`                     | Horizontal or vertical divider.                  |
+| Empty            | `import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent } from "@apna/design-system"` | Empty-state scaffold. |
 
-## Navigation
-
-| Component        | Import                                                                 | tldr                                             |
-|------------------|------------------------------------------------------------------------|--------------------------------------------------|
-| Tabs             | `import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"` | Sectioned view switcher.                         |
-| ChipTabs         | `import { ChipTabs } from "@/components/ui/chip-tabs"`                 | Segmented control / pill-shaped choice tabs.     |
-| Breadcrumb       | `import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@/components/ui/breadcrumb"` | Hierarchical location trail.                     |
-| Sidebar          | `import { Sidebar, SidebarContent, SidebarHeader, SidebarFooter, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar"` | Persistent app sidebar with collapse.            |
-
-## Containers & Layout
+## 4. Navigation
 
 | Component        | Import                                                                 | tldr                                             |
 |------------------|------------------------------------------------------------------------|--------------------------------------------------|
-| Accordion        | `import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"` | Expand/collapse grouped content.                 |
+| Tabs             | `import { Tabs, TabsList, TabsTrigger, TabsContent } from "@apna/design-system"` | Sectioned view switcher.            |
+| ChipTabs         | `import { ChipTabs } from "@apna/design-system"`                      | Segmented control / pill-shaped choice tabs.     |
+| Breadcrumb       | `import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@apna/design-system"` | Hierarchical location trail. |
+| Sidebar          | `import { Sidebar, SidebarContent, SidebarHeader, SidebarFooter, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@apna/design-system"` | Persistent app sidebar primitives. |
+| ReusableSidebar  | `import { ReusableSidebar } from "@apna/design-system"`                | High-level configurable sidebar shell.           |
 
-## Data
+## 5. Overlays & Dialogs
 
 | Component        | Import                                                                 | tldr                                             |
 |------------------|------------------------------------------------------------------------|--------------------------------------------------|
-| Table            | `import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell, TableCaption, TableFooter } from "@/components/ui/table"` | Semantic tabular data.                           |
+| Tooltip          | `import { Tooltip, TooltipTrigger, TooltipContent } from "@apna/design-system"` | Short hover hint. Not for interactive content. |
+| Popover          | `import { Popover, PopoverTrigger, PopoverContent } from "@apna/design-system"` | Click-open floating panel.          |
+| DropdownMenu     | `import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@apna/design-system"` | Popup action menu built on Base UI Menu. |
+| Dialog           | `import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@apna/design-system"` | Modal. Focus-trapped. |
+| AlertDialog      | `import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from "@apna/design-system"` | Confirm destructive / irreversible actions. |
+| Sheet            | `import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter } from "@apna/design-system"` | Edge-docked drawer. |
+
+## 6. Feedback & Status
+
+| Component        | Import                                                                 | tldr                                             |
+|------------------|------------------------------------------------------------------------|--------------------------------------------------|
+| Alert            | `import { Alert, AlertTitle, AlertDescription } from "@apna/design-system"` | Static banner. Use for persistent messages. |
+| Sonner (toast)   | `import { toast } from "sonner"`                                       | Transient toast. Mounted via `<Toaster />` in root layout. |
+
+## 7. Data & Layout
+
+| Component        | Import                                                                 | tldr                                             |
+|------------------|------------------------------------------------------------------------|--------------------------------------------------|
+| Table            | `import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell, TableCaption, TableFooter } from "@apna/design-system"` | Semantic tabular data. |
+| Accordion        | `import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@apna/design-system"` | Expand/collapse grouped content. |
+| ApnaLogo         | `import { ApnaLogo } from "@apna/design-system"`                       | Brand mark lockup with gradient and wordmark.    |
 
 ---
 
@@ -89,8 +84,6 @@ copy-paste ready. If you add a component, add it here in the same commit.
 - Root element carries `data-slot="<component-name>"` for styling hooks.
 - `className` merged through `cn()` (`@/lib/utils`).
 - Built on Base UI (`@base-ui/react`) primitives where available.
-- Trigger-style props use Base UI's `render={<Component … />}` pattern, not
-  Radix-style `asChild`.
-- Variant props powered by `class-variance-authority`. Variants exported
-  alongside the component when they're part of the public API.
+- Trigger-style props use Base UI's `render={<Component … />}` pattern.
+- Variant props powered by `class-variance-authority`.
 - Only semantic tokens in `className`. No raw colours.

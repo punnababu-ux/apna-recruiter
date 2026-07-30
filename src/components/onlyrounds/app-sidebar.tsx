@@ -11,7 +11,7 @@ import {
 
 import {
   ReusableSidebar,
-  OnlyRoundsLogoMark,
+  ApnaLogo,
   type SidebarWorkspace,
   type SidebarNavItem,
 } from "@apna/design-system"
@@ -63,9 +63,9 @@ export function OnlyRoundsSidebar({
     <ReusableSidebar
       dropdownClassName="theme-onlyrounds"
       brand={{
-        name: "OnlyRound AI",
-        logo: <OnlyRoundsLogoMark className="-ml-1 size-7!" />,
-        href: "/onlyrounds/jobs",
+        name: "Apna Hire",
+        logo: <ApnaLogo className="size-8! shrink-0" />,
+        href: "/apnahire/jobs",
       }}
       workspaces={WORKSPACES}
       activeWorkspaceId={activeWorkspaceId}

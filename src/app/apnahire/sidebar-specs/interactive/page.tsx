@@ -3,54 +3,31 @@
 import * as React from "react"
 import {
   ArrowLeft,
-  Layout,
   Settings,
   Sparkles,
 } from "lucide-react"
 import { Badge, Button, SidebarInset, SidebarProvider, SidebarTrigger } from "@apna/design-system"
-import { OnlyRoundsSidebar } from "@/components/onlyrounds/app-sidebar"
 import { ApnaHireSidebar } from "@/components/apnahire/app-sidebar"
 import Link from "next/link"
 
 export default function InteractiveSpecsPage() {
-  const [productMode, setProductMode] = React.useState<"onlyrounds" | "apnahire">("apnahire")
-  
   // State overrides for the dynamic playground configurations
-  const [activeORWorkspace, setActiveORWorkspace] = React.useState<string>("gamma")
   const [activeAHWorkspace, setActiveAHWorkspace] = React.useState<string>("ah-corp")
 
   const [showAlert, setShowAlert] = React.useState(true)
   const [customAlertTitle, setCustomAlertTitle] = React.useState("Verify Identity")
   const [customAlertDesc, setCustomAlertDesc] = React.useState("Verify your company tax status to post jobs.")
 
-  // Sync state if product switcher is used
-  React.useEffect(() => {
-    if (productMode === "onlyrounds") {
-      setCustomAlertTitle("Upgrade Account")
-      setCustomAlertDesc("Get access to advanced matching filters.")
-    } else {
-      setCustomAlertTitle("Verify Identity")
-      setCustomAlertDesc("Verify your company tax status to post jobs.")
-    }
-  }, [productMode])
-
   return (
     <SidebarProvider defaultOpen={true}>
       {/* Sidebar instance */}
-      {productMode === "onlyrounds" ? (
-        <OnlyRoundsSidebar
-          activeWorkspaceId={activeORWorkspace}
-          onWorkspaceChange={(w) => setActiveORWorkspace(w.id)}
-        />
-      ) : (
-        <ApnaHireSidebar
-          activeWorkspaceId={activeAHWorkspace}
-          onWorkspaceChange={(w) => setActiveAHWorkspace(w.id)}
-          showAlert={showAlert}
-          alertTitle={customAlertTitle}
-          alertDescription={customAlertDesc}
-        />
-      )}
+      <ApnaHireSidebar
+        activeWorkspaceId={activeAHWorkspace}
+        onWorkspaceChange={(w) => setActiveAHWorkspace(w.id)}
+        showAlert={showAlert}
+        alertTitle={customAlertTitle}
+        alertDescription={customAlertDesc}
+      />
 
       {/* Main Content Layout */}
       <SidebarInset className="bg-muted/30">
@@ -60,7 +37,7 @@ export default function InteractiveSpecsPage() {
             <SidebarTrigger className="cursor-pointer" />
             <div className="h-4 w-px bg-border" />
             <span className="text-xs font-semibold text-foreground">
-              {productMode === "onlyrounds" ? "OnlyRounds App Presets" : "Apna Hire Recruiter Presets"}
+              Apna Hire Recruiter Presets
             </span>
           </div>
 
@@ -91,34 +68,6 @@ export default function InteractiveSpecsPage() {
 
           {/* Configuration controls */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Control Panel: Product Choice */}
-            <div className="rounded-xl border border-border bg-card p-5 shadow-xs space-y-4 text-left">
-              <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider flex items-center gap-1.5 border-b border-border/60 pb-2">
-                <Layout className="size-4 text-primary" />
-                Select Product Shell
-              </h3>
-              <p className="text-xs text-muted-foreground leading-normal">
-                Toggle between the two different product layouts to see how the sidebar adapts brand logo, colors, and navigation lists.
-              </p>
-              
-              <div className="flex gap-3">
-                <Button
-                  variant={productMode === "apnahire" ? "default" : "outline"}
-                  className="flex-1 cursor-pointer"
-                  onClick={() => setProductMode("apnahire")}
-                >
-                  Apna Hire Recruiter
-                </Button>
-                <Button
-                  variant={productMode === "onlyrounds" ? "default" : "outline"}
-                  className="flex-1 cursor-pointer"
-                  onClick={() => setProductMode("onlyrounds")}
-                >
-                  OnlyRounds AI
-                </Button>
-              </div>
-            </div>
-
             {/* Control Panel: Alerts */}
             <div className="rounded-xl border border-border bg-card p-5 shadow-xs space-y-4 text-left">
               <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider flex items-center gap-1.5 border-b border-border/60 pb-2">

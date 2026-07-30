@@ -254,16 +254,20 @@
   --highlight-foreground: var(--color-gray-950);
   --destructive: var(--color-red-600);
   --destructive-foreground: var(--color-gray-50);
-  --destructive-subtle: var(--color-red-50);
+  --destructive-subtle: var(--color-red-100);
+  --destructive-subtle-fg: var(--color-red-900);
   --success: var(--color-apna-green-600);
   --success-foreground: var(--color-gray-50);
-  --success-subtle: var(--color-apna-green-50);
+  --success-subtle: var(--color-apna-green-100);
+  --success-subtle-fg: var(--color-apna-green-900);
   --warning: var(--color-amber-500);
   --warning-foreground: var(--color-gray-950);
-  --warning-subtle: var(--color-amber-50);
+  --warning-subtle: var(--color-amber-100);
+  --warning-subtle-fg: var(--color-amber-900);
   --info: var(--color-blue-600);
   --info-foreground: var(--color-gray-50);
-  --info-subtle: var(--color-blue-50);
+  --info-subtle: var(--color-blue-100);
+  --info-subtle-fg: var(--color-blue-900);
   --border: var(--color-gray-200);
   --input: var(--color-gray-200);
   --ring: var(--color-apna-green-500);
@@ -347,19 +351,6 @@
       var(--color-apna-gold-400) 0%,
       var(--color-apna-gold-600) 100%);
 }
-.theme-onlyrounds {
-  --gradient-primary:
-    linear-gradient(
-      135deg in oklch,
-      var(--color-apna-green-400) 0%,
-      var(--color-apna-sky-400) 50%,
-      var(--color-apna-gold-400) 100%);
-  --gradient-accent:
-    linear-gradient(
-      135deg in oklch,
-      var(--color-apna-gold-300) 0%,
-      var(--color-apna-green-400) 100%);
-}
 .dark {
   --background: var(--color-apna-navy-950);
   --foreground: var(--color-gray-50);
@@ -379,16 +370,16 @@
   --highlight-foreground: var(--color-gray-950);
   --destructive: var(--color-red-400);
   --destructive-foreground: var(--color-gray-50);
-  --destructive-subtle: var(--color-red-950);
+  --destructive-subtle: var(--color-red-900);
   --success: var(--color-apna-green-500);
   --success-foreground: var(--color-gray-50);
-  --success-subtle: var(--color-apna-green-950);
+  --success-subtle: var(--color-apna-green-900);
   --warning: var(--color-amber-400);
   --warning-foreground: var(--color-gray-950);
-  --warning-subtle: var(--color-amber-950);
+  --warning-subtle: var(--color-amber-900);
   --info: var(--color-blue-400);
   --info-foreground: var(--color-gray-950);
-  --info-subtle: var(--color-blue-950);
+  --info-subtle: var(--color-blue-900);
   --border: var(--color-alpha-white-10);
   --input: var(--color-alpha-white-15);
   --ring: var(--color-apna-green-400);
@@ -533,78 +524,6 @@
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }
-  }
-}
-@media (max-height: 720px) {
-  [data-slot=sidebar-inner],
-  [data-mobile=true] > div.flex-col {
-    display: block !important;
-    overflow-y: auto !important;
-    height: 100% !important;
-    scrollbar-width: none !important;
-    -ms-overflow-style: none !important;
-  }
-  [data-slot=sidebar-inner]::-webkit-scrollbar,
-  [data-mobile=true] > div.flex-col::-webkit-scrollbar {
-    display: none !important;
-  }
-  [data-slot=sidebar-content] {
-    flex: none !important;
-    overflow: visible !important;
-  }
-  [data-slot=sidebar-content] .mt-auto {
-    margin-top: 0.5rem !important;
-  }
-  [data-slot=sidebar-header] {
-    padding-top: 0.5rem !important;
-    padding-bottom: 0.5rem !important;
-    gap: 0.5rem !important;
-  }
-  [data-slot=sidebar-header] [data-slot=sidebar-menu-button] {
-    height: 2.25rem !important;
-  }
-  [data-slot=sidebar-header] button[aria-label="Switch workspace"] {
-    height: 2.25rem !important;
-    gap: 0.5rem !important;
-    padding-left: 0.5rem !important;
-    padding-right: 0.5rem !important;
-  }
-  [data-slot=sidebar-header] button[aria-label="Switch workspace"] img,
-  [data-slot=sidebar-header] button[aria-label="Switch workspace"] .size-5,
-  [data-slot=sidebar-header] button[aria-label="Switch workspace"] .size-7 {
-    width: 1.125rem !important;
-    height: 1.125rem !important;
-  }
-  [data-slot=sidebar-group] {
-    padding-top: 0.25rem !important;
-    padding-bottom: 0.25rem !important;
-  }
-  [data-slot=sidebar-menu-button] {
-    height: 2rem !important;
-    font-size: 0.8125rem !important;
-  }
-  [data-slot=sidebar-menu-button] svg {
-    width: 1.125rem !important;
-    height: 1.125rem !important;
-  }
-  [data-slot=sidebar-menu-sub-button] {
-    height: 1.625rem !important;
-    font-size: 0.75rem !important;
-  }
-  [data-slot=sidebar-footer] {
-    padding-bottom: 0.5rem !important;
-    padding-top: 0.25rem !important;
-    gap: 0.25rem !important;
-  }
-  [data-slot=sidebar-content] > div:last-child {
-    padding-top: 0.25rem !important;
-    padding-bottom: 0.25rem !important;
-  }
-  [data-slot=sidebar-content] .bg-warning-subtle {
-    padding: 0.5rem !important;
-  }
-  [data-slot=sidebar-content] .bg-warning-subtle p:not(.font-semibold) {
-    display: none !important;
   }
 }
 @property --tw-font-weight { syntax: "*"; inherits: false; }

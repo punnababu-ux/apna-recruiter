@@ -98,7 +98,7 @@ function JobRowItem({ row }: { row: JobRow }) {
         <ClientLogo name={row.client} src={row.clientLogo} size="md" />
 
         <div className="min-w-0 flex-1">
-          <Link href={`/onlyrounds/jobs/${row.id}`} className="group block">
+          <Link href={`/apnahire/jobs/${row.id}`} className="group block">
             <span className="block truncate font-medium group-hover:underline">
               {row.title}
             </span>
@@ -132,7 +132,7 @@ function JobRowItem({ row }: { row: JobRow }) {
           <hr className="-mx-5 mt-4 border-t border-border/60" />
           <div className="mt-3 flex flex-wrap items-center gap-x-1.5 gap-y-2">
             <RoundPill
-              href={`/onlyrounds/jobs/${row.id}?round=screening`}
+              href={`/apnahire/jobs/${row.id}?round=screening`}
               icon={UserSearch}
               label="Screening"
               count={row.screening}
@@ -142,7 +142,7 @@ function JobRowItem({ row }: { row: JobRow }) {
               aria-hidden
             />
             <RoundPill
-              href={`/onlyrounds/jobs/${row.id}?round=interview`}
+              href={`/apnahire/jobs/${row.id}?round=interview`}
               icon={MessagesSquare}
               label="Interview"
               count={row.interview}
@@ -152,7 +152,7 @@ function JobRowItem({ row }: { row: JobRow }) {
               aria-hidden
             />
             <RoundPill
-              href={`/onlyrounds/jobs/${row.id}?round=shortlisted`}
+              href={`/apnahire/jobs/${row.id}?round=shortlisted`}
               icon={CheckCircle2}
               label="Shortlisted"
               count={row.shortlisted}

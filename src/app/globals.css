@@ -341,8 +341,6 @@
 
 /* ============================================================================
  * Gradient utilities — consume `--gradient-*` semantic tokens.
- * Each theme (default · Apna, `.theme-onlyrounds`) re-aliases the tokens,
- * so `bg-gradient-primary` retunes automatically when the theme class flips.
  * ========================================================================== */
 
 @utility bg-gradient-primary {
@@ -430,11 +428,6 @@
     @apply antialiased;
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
-
-    /* Scale layout by 1.1x on desktop screens to match 110% zoom at 1080p */
-    @media (min-width: 1024px) {
-      font-size: 87.5%; /* Reduced to 14px base for a smaller UI */
-    }
   }
 
   body {
