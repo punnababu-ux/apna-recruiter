@@ -14,11 +14,37 @@ import {
   AccordionContent,
   ApnaLogo,
   Badge,
+  Switch,
+  Button,
 } from "@apna/design-system"
 import { JobCard } from "@/components/shared/job-card"
-import { PricingCards } from "@/components/shared/pricing-cards"
+import {
+  SingleJobPricing,
+  UnlimitedPlans,
+  QuantityUpsellModal,
+  CrossSellModal,
+  CheckoutSummary,
+  SingleJobPlan,
+} from "@/components/shared/pricing"
 
 export default function DataLayoutComponentsPage() {
+  const [showMonthly, setShowMonthly] = React.useState<boolean>(true)
+  const [enableOldUser, setEnableOldUser] = React.useState<boolean>(true)
+
+  const [upsellModalOpen, setUpsellModalOpen] = React.useState<boolean>(false)
+  const [crossSellModalOpen, setCrossSellModalOpen] = React.useState<boolean>(false)
+  const [selectedPlan, setSelectedPlan] = React.useState<SingleJobPlan | null>(null)
+
+  const handleSelectPlan = (plan: SingleJobPlan) => {
+    setSelectedPlan(plan)
+    // Open upsell or cross-sell modal for demonstration
+    if (plan.id === "premium") {
+      setUpsellModalOpen(true)
+    } else {
+      setCrossSellModalOpen(true)
+    }
+  }
+
   return (
     <div className="space-y-10">
       <div>
@@ -30,12 +56,12 @@ export default function DataLayoutComponentsPage() {
           7. Data & Layout
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Tables, accordions, and brand mark lockups.
+          Tables, accordions, job cards, and interactive subscription pricing suite.
         </p>
       </div>
 
       <div className="rounded-xl border border-border bg-card p-4 font-mono text-xs text-muted-foreground">
-        <code>{'import { Table, Accordion, ApnaLogo } from "@apna/design-system"'}</code>
+        <code>{'import { SingleJobPricing, UnlimitedPlans, CheckoutSummary } from "@/components/shared/pricing"'}</code>
       </div>
 
       {/* Cards */}
@@ -55,60 +81,66 @@ export default function DataLayoutComponentsPage() {
         </div>
       </div>
 
-      {/* Pricing Cards */}
+      {/* Interactive Subscription Pricing Suite */}
+      <div className="rounded-xl border border-border bg-card p-6 space-y-6">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border/60 pb-3">
+          <div>
+            <h2 className="text-base font-semibold text-foreground font-heading">
+              Single Job Posting & Subscription Suite
+            </h2>
+            <p className="text-xs text-muted-foreground">
+              Explore single job tiers, apna unlimited cards, dev toggles, and modal flows.
+            </p>
+          </div>
+
+          {/* Dev Toggles */}
+          <div className="flex items-center gap-6 rounded-lg border border-border bg-muted/20 px-3 py-1.5 text-xs">
+            <label className="flex items-center gap-2 cursor-pointer text-muted-foreground font-medium hover:text-foreground">
+              <Switch checked={showMonthly} onCheckedChange={setShowMonthly} />
+              Show apna unlimited card
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer text-muted-foreground font-medium hover:text-foreground">
+              <Switch checked={enableOldUser} onCheckedChange={setEnableOldUser} />
+              Enable Old User Pricing
+            </label>
+          </div>
+        </div>
+
+        <SingleJobPricing
+          showMonthlyCard={showMonthly}
+          oldUserPricingEnabled={enableOldUser}
+          onSelectPlan={handleSelectPlan}
+          onSelectMonthly={() => setCrossSellModalOpen(true)}
+          onExploreUnlimited={() => {
+            const el = document.getElementById("unlimited-plans-section")
+            el?.scrollIntoView({ behavior: "smooth" })
+          }}
+        />
+
+        <div className="flex items-center gap-3 pt-2">
+          <Button variant="outline" size="sm" onClick={() => setUpsellModalOpen(true)}>
+            Test Buy More Save More Modal
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setCrossSellModalOpen(true)}>
+            Test Unlimited Upgrade Modal
+          </Button>
+        </div>
+      </div>
+
+      {/* Unlimited Plans Section */}
+      <div id="unlimited-plans-section" className="rounded-xl border border-border bg-card p-6 space-y-4">
+        <h2 className="text-base font-semibold text-foreground font-heading border-b border-border/60 pb-2">
+          Explore Plans - apna Unlimited
+        </h2>
+        <UnlimitedPlans />
+      </div>
+
+      {/* Checkout Summary Component */}
       <div className="rounded-xl border border-border bg-card p-6 space-y-4">
         <h2 className="text-base font-semibold text-foreground font-heading border-b border-border/60 pb-2">
-          Pricing Cards
+          Checkout Summary & Add-ons
         </h2>
-        <div className="w-full">
-          <PricingCards
-            oldUserPricingEnabled={true}
-            plans={[
-              {
-                id: "classic",
-                title: "Classic job",
-                originalPrice: 999,
-                currentPrice: 699,
-                actionLabel: "Get classic job",
-                features: [
-                  { label: "Job will be active for 15 days", included: true },
-                  { label: "Higher visibility to candidates", included: false },
-                  { label: "WhatsApp job notify", included: false },
-                  { label: "Urgently hiring tag", included: false },
-                  { label: "Top placements in job listings", included: false },
-                ],
-              },
-              {
-                id: "premium",
-                title: "Premium job",
-                originalPrice: 1999,
-                currentPrice: 1399,
-                actionLabel: "Get premium job",
-                features: [
-                  { label: "Job will be active for 15 days", included: true },
-                  { label: "Higher visibility to candidates", included: true },
-                  { label: "WhatsApp job notify", included: true, highlightIcon: "whatsapp" },
-                  { label: "Urgently hiring tag", included: true, highlightIcon: "flame" },
-                  { label: "Top placements in job listings", included: false },
-                ],
-              },
-              {
-                id: "super",
-                title: "Super premium job",
-                originalPrice: 2999,
-                currentPrice: 2799,
-                actionLabel: "Get super premium job",
-                features: [
-                  { label: "Job will be active for 15 days", included: true },
-                  { label: "2x more visibility to candidates", included: true },
-                  { label: "2x WhatsApp job notify", included: true, highlightIcon: "whatsapp" },
-                  { label: "Urgently hiring tag", included: true, highlightIcon: "flame" },
-                  { label: "Top placements in job listings", included: true },
-                ],
-              },
-            ]}
-          />
-        </div>
+        <CheckoutSummary />
       </div>
 
       {/* Brand Marks */}
@@ -171,6 +203,33 @@ export default function DataLayoutComponentsPage() {
           </AccordionItem>
         </Accordion>
       </div>
+
+      {/* Modals */}
+      <QuantityUpsellModal
+        open={upsellModalOpen}
+        onOpenChange={setUpsellModalOpen}
+        planTitle={selectedPlan?.title || "Premium"}
+        basePrice={selectedPlan ? (enableOldUser ? selectedPlan.oldUserPrice : selectedPlan.currentPrice) : 1399}
+        onProceed={(qty, total) => {
+          alert(`Proceeding with ${qty} jobs for ₹${total.toLocaleString()}`)
+          setUpsellModalOpen(false)
+        }}
+      />
+
+      <CrossSellModal
+        open={crossSellModalOpen}
+        onOpenChange={setCrossSellModalOpen}
+        singlePlanTitle={selectedPlan?.title || "Classic job"}
+        singlePlanPrice={selectedPlan ? (enableOldUser ? selectedPlan.oldUserPrice : selectedPlan.currentPrice) : 699}
+        onContinueSingle={() => {
+          alert("Continuing with single job posting")
+          setCrossSellModalOpen(false)
+        }}
+        onSwitchUnlimited={() => {
+          alert("Switching to apna Unlimited Monthly Plan")
+          setCrossSellModalOpen(false)
+        }}
+      />
     </div>
   )
 }
