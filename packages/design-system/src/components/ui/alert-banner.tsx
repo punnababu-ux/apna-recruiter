@@ -21,6 +21,8 @@ export interface AlertBannerProps extends Omit<React.ComponentProps<typeof Alert
   borderless?: boolean
   /** Style appearance. 'secondary' is subtle background, 'primary' is solid gradient */
   appearance?: "primary" | "secondary"
+  /** Collapsed icon-only mode for compact containers like sidebars */
+  collapsed?: boolean
 }
 
 const accentColorMap: Record<string, string> = {
@@ -32,11 +34,11 @@ const accentColorMap: Record<string, string> = {
 }
 
 const primaryBgMap: Record<string, string> = {
-  default: "bg-gradient-to-r from-muted to-muted/80",
-  destructive: "bg-gradient-to-r from-destructive to-destructive/80",
-  success: "bg-gradient-to-r from-success to-success/80",
-  warning: "bg-gradient-to-r from-warning to-warning/80",
-  info: "bg-gradient-to-r from-info to-info/80",
+  default: "bg-gradient-banner-default text-white",
+  destructive: "bg-gradient-banner-destructive text-white",
+  success: "bg-gradient-banner-success text-white",
+  warning: "bg-gradient-banner-warning text-gray-950",
+  info: "bg-gradient-banner-info text-white",
 }
 
 const AlertBanner = React.forwardRef<HTMLDivElement, AlertBannerProps>(
@@ -50,6 +52,7 @@ const AlertBanner = React.forwardRef<HTMLDivElement, AlertBannerProps>(
       onClose,
       borderless = true,
       appearance = "secondary",
+      collapsed = false,
       ...props
     },
     ref
@@ -59,27 +62,48 @@ const AlertBanner = React.forwardRef<HTMLDivElement, AlertBannerProps>(
     const accentColor = isPrimary ? "text-white" : accentColorMap[safeVariant]
     const textColor = isPrimary ? "text-white" : "text-foreground"
 
+    if (collapsed) {
+      return (
+        <Alert
+          ref={ref}
+          variant={isPrimary ? undefined : variant}
+          className={cn(
+            "flex size-10 items-center justify-center p-0 rounded-xl transition-all duration-200 shrink-0 mx-auto",
+            borderless && "border-transparent shadow-none",
+            isPrimary && cn("bg-transparent", primaryBgMap[safeVariant]),
+            className
+          )}
+          {...props}
+        >
+          {icon && (
+            <div className={cn("flex items-center justify-center [&>svg]:size-4", accentColor)}>
+              {icon}
+            </div>
+          )}
+        </Alert>
+      )
+    }
+
     return (
       <Alert
         ref={ref}
-        variant={isPrimary ? undefined : variant} // Remove variant class if primary so we can inject our own bg without conflict
+        variant={isPrimary ? undefined : variant}
         className={cn(
-          "flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 py-2.5 px-3",
+          "relative flex items-center justify-between gap-2.5 py-2.5 px-3 rounded-lg text-left",
           borderless && "border-transparent shadow-none",
-          onClose && "pr-8 sm:pr-3",
-          isPrimary && primaryBgMap[safeVariant],
+          isPrimary && cn("bg-transparent", primaryBgMap[safeVariant]),
           className
         )}
         {...props}
       >
-        <div className="flex flex-1 items-start sm:items-center gap-2">
+        <div className="flex flex-1 items-center gap-2.5 min-w-0">
           {icon && (
-            <div className={cn("mt-0.5 shrink-0 sm:mt-0 flex items-center justify-center [&>svg]:size-4", accentColor)}>
+            <div className={cn("shrink-0 flex items-center justify-center [&>svg]:size-4", accentColor)}>
               {icon}
             </div>
           )}
-          <div className="flex-1 text-sm leading-snug pt-0.5 sm:pt-0">
-            <AlertTitle className={cn("inline font-medium !mb-0 mr-1.5", textColor)}>
+          <div className="flex-1 text-xs leading-normal min-w-0">
+            <AlertTitle className={cn("inline font-medium !mb-0 mr-1.5 leading-normal", textColor)}>
               {title}
             </AlertTitle>
             {action && (
@@ -87,7 +111,7 @@ const AlertBanner = React.forwardRef<HTMLDivElement, AlertBannerProps>(
                 type="button"
                 onClick={action.onClick}
                 className={cn(
-                  "group inline-flex items-center font-semibold underline underline-offset-4 hover:opacity-80 focus-visible:outline-none rounded-sm align-baseline",
+                  "group inline-flex items-center font-semibold underline underline-offset-4 hover:opacity-80 focus-visible:outline-none rounded-sm align-baseline cursor-pointer whitespace-nowrap",
                   accentColor
                 )}
               >
@@ -102,7 +126,7 @@ const AlertBanner = React.forwardRef<HTMLDivElement, AlertBannerProps>(
             type="button"
             onClick={onClose}
             className={cn(
-              "absolute right-2 top-2.5 rounded-md p-1 opacity-70 hover:opacity-100 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:static sm:right-auto sm:top-auto sm:-mr-1",
+              "shrink-0 rounded-md p-1 opacity-70 hover:opacity-100 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer -mr-1",
               textColor
             )}
           >

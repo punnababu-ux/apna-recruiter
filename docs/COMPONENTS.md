@@ -28,6 +28,7 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 | RadioGroup       | `import { RadioGroup, RadioGroupItem } from "@apna/design-system"`     | Single-select from 2+ options.                   |
 | Switch           | `import { Switch } from "@apna/design-system"`                         | Instant on/off. Persist on change.               |
 | Select           | `import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@apna/design-system"` | Styled dropdown. Use for 4+ options. |
+| SearchFilterBar  | `import { SearchFilterBar } from "@apna/design-system"`               | Search input with optional multi-group filter popover. |
 
 ## 3. Data Display
 
@@ -35,6 +36,7 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 |------------------|------------------------------------------------------------------------|--------------------------------------------------|
 | Avatar           | `import { Avatar, AvatarImage, AvatarFallback } from "@apna/design-system"` | User image with fallback. Supports groups.  |
 | Badge            | `import { Badge } from "@apna/design-system"`                         | Small status / count marker.                     |
+| MetricCard       | `import { MetricCard } from "@apna/design-system"`                    | Metric summary card with value, icon, and trend. |
 | Skeleton         | `import { Skeleton } from "@apna/design-system"`                       | Loading placeholder shape.                       |
 | Spinner          | `import { Spinner } from "@apna/design-system"`                       | Indeterminate loading indicator.                 |
 | Separator        | `import { Separator } from "@apna/design-system"`                     | Horizontal or vertical divider.                  |
@@ -49,6 +51,7 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 | Breadcrumb       | `import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@apna/design-system"` | Hierarchical location trail. |
 | Sidebar          | `import { Sidebar, SidebarContent, SidebarHeader, SidebarFooter, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@apna/design-system"` | Persistent app sidebar primitives. |
 | ReusableSidebar  | `import { ReusableSidebar } from "@apna/design-system"`                | High-level configurable sidebar shell.           |
+| BottomNav        | `import { BottomNav, type BottomNavItem } from "@apna/design-system"` | Fixed mobile bottom tab bar. Hidden at `md+`. Items accept `href` (link) or `onClick` (button) + optional `badge` overlay. |
 
 ## 5. Overlays & Dialogs
 
@@ -74,6 +77,7 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 |------------------|------------------------------------------------------------------------|--------------------------------------------------|
 | Table            | `import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell, TableCaption, TableFooter } from "@apna/design-system"` | Semantic tabular data. |
 | Accordion        | `import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@apna/design-system"` | Expand/collapse grouped content. |
+| JobCard          | `import { JobCard } from "@apna/design-system"`                        | Candidate-facing job post card.                  |
 | ApnaLogo         | `import { ApnaLogo } from "@apna/design-system"`                       | Brand mark lockup with gradient and wordmark.    |
 
 ---

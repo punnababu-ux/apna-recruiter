@@ -12,8 +12,9 @@ import {
   EmptyTitle,
   EmptyDescription,
   Button,
+  MetricCard,
 } from "@apna/design-system"
-import { User, Plus } from "lucide-react"
+import { User, Plus, Briefcase, Users, CalendarCheck, TrendingUp } from "lucide-react"
 
 export default function DisplayComponentsPage() {
   return (
@@ -48,6 +49,43 @@ export default function DisplayComponentsPage() {
           <Badge variant="success">Success</Badge>
           <Badge variant="warning">Warning</Badge>
           <Badge variant="destructive">Destructive</Badge>
+        </div>
+      </div>
+
+      {/* Metric / Stat Summary Cards */}
+      <div className="rounded-xl border border-border bg-card p-6 space-y-4">
+        <h2 className="text-base font-semibold text-foreground font-heading border-b border-border/60 pb-2">
+          Metric & Stat Summary Cards
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <MetricCard
+            label="Active Postings"
+            value="166"
+            icon={<Briefcase />}
+            trend="+12% this mo"
+            trendVariant="success"
+          />
+          <MetricCard
+            label="Candidates Screened"
+            value="143"
+            icon={<Users />}
+            trend="Across active roles"
+            trendVariant="neutral"
+          />
+          <MetricCard
+            label="Interviews Today"
+            value="23"
+            icon={<CalendarCheck />}
+            trend="6 pending feedback"
+            trendVariant="warning"
+          />
+          <MetricCard
+            label="Offer Conversion"
+            value="88%"
+            icon={<TrendingUp />}
+            trend="High conversion"
+            trendVariant="success"
+          />
         </div>
       </div>
 

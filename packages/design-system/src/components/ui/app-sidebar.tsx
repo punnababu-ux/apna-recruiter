@@ -20,6 +20,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { AlertBanner } from "@/components/ui/alert-banner"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
@@ -63,9 +64,11 @@ export type SidebarNavItem = {
 export type SidebarAlertBanner = {
   id: string
   title: string
-  description: string
   ctaText?: string
   onCtaClick?: () => void
+  variant?: "warning" | "info" | "destructive" | "success" | "default"
+  appearance?: "primary" | "secondary"
+  showClose?: boolean
 }
 
 export type SidebarBrand = {
@@ -406,45 +409,25 @@ export function ReusableSidebar({
             </div>
           )}
 
-          {/* Alert Banner */}
+          {/* Alert Banner composed directly from AlertBanner design system primitive */}
           {alertBanner && !alertDismissed && (
             <div className="p-3 group-data-[collapsible=icon]:p-2 pt-0 group-data-[collapsible=icon]:pt-0">
               <Tooltip>
                 <TooltipTrigger
                   render={
-                    <div className="relative rounded-lg border border-warning/20 bg-warning-subtle p-3 group-data-[collapsible=icon]:p-2 text-xs text-warning-foreground shadow-xs transition-all duration-200">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setAlertDismissed(true)
-                        }}
-                        className="absolute top-2 right-2 text-warning hover:text-warning-foreground transition-colors group-data-[collapsible=icon]:hidden cursor-pointer"
-                        aria-label="Dismiss alert"
-                      >
-                        <X className="size-3" />
-                      </button>
-                      <div className="flex gap-2">
-                        <AlertCircle className="size-4 shrink-0 text-warning" />
-                        <div className="space-y-1 group-data-[collapsible=icon]:hidden text-left">
-                          <p className="font-semibold leading-none text-warning-foreground">
-                            {alertBanner.title}
-                          </p>
-                          <p className="text-2xs text-muted-foreground/85 leading-normal">
-                            {alertBanner.description}
-                          </p>
-                          {alertBanner.ctaText && (
-                            <button
-                              type="button"
-                              onClick={alertBanner.onCtaClick}
-                              className="text-2xs font-semibold text-warning underline hover:text-warning-foreground block pt-0.5 cursor-pointer"
-                            >
-                              {alertBanner.ctaText}
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
+                      <AlertBanner
+                        collapsed={isCollapsed}
+                        variant={alertBanner.variant || "warning"}
+                        appearance={alertBanner.appearance || "secondary"}
+                        icon={<AlertCircle className="size-4 shrink-0" />}
+                        title={alertBanner.title}
+                        action={
+                          alertBanner.ctaText
+                            ? { label: alertBanner.ctaText, onClick: alertBanner.onCtaClick || (() => {}) }
+                            : undefined
+                        }
+                        onClose={alertBanner.showClose !== false ? () => setAlertDismissed(true) : undefined}
+                      />
                   }
                 />
                 <TooltipContent
@@ -453,12 +436,7 @@ export function ReusableSidebar({
                   hidden={!isCollapsed || isMobile}
                   className="max-w-xs p-3 text-left"
                 >
-                  <div className="space-y-1">
-                    <p className="font-semibold text-xs text-warning">{alertBanner.title}</p>
-                    <p className="text-2xs text-muted-foreground">
-                      {alertBanner.description}
-                    </p>
-                  </div>
+                  <p className="font-semibold text-xs text-foreground">{alertBanner.title}</p>
                 </TooltipContent>
               </Tooltip>
             </div>

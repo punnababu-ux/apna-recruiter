@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Alert, AlertTitle, AlertDescription, AlertBanner, Button, Badge, Switch, Label } from "@apna/design-system"
+import { AlertBanner, Button, Badge, Switch, Label } from "@apna/design-system"
 import { toast } from "sonner"
 import { AlertCircle, Info, CreditCard, ChevronRight } from "lucide-react"
 
@@ -57,89 +57,42 @@ export default function FeedbackComponentsPage() {
           </div>
         </div>
         
-        <div className="p-4 sm:p-6 bg-background relative flex flex-col justify-center min-h-40">
-          {/* Desktop Preview */}
-          <div className="hidden sm:block space-y-6">
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Desktop Preview</p>
-            
-            <AlertBanner
-              variant="info"
-              appearance={appearance}
-              icon={showIcon ? <Info /> : undefined}
-              title="Information: Your candidate credits will renew at the beginning of next month."
-              action={showCTA ? { label: <span className="flex items-center">View details <ChevronRight className="size-4 ml-0.5" /></span>, onClick: () => toast("Action clicked") } : undefined}
-              onClose={showClose ? () => toast("Close clicked") : undefined}
-            />
+        <div className="p-4 sm:p-6 bg-background space-y-4">
+          <AlertBanner
+            variant="info"
+            appearance={appearance}
+            icon={showIcon ? <Info /> : undefined}
+            title="Information: Your candidate credits will renew at the beginning of next month."
+            action={showCTA ? { label: <span className="flex items-center">View details <ChevronRight className="size-4 ml-0.5" /></span>, onClick: () => toast("Action clicked") } : undefined}
+            onClose={showClose ? () => toast("Close clicked") : undefined}
+          />
 
-            <AlertBanner
-              variant="warning"
-              appearance={appearance}
-              icon={showIcon ? <CreditCard /> : undefined}
-              title="Alert: Plan expires in 7 days, auto-payment is disabled."
-              action={showCTA ? { label: <span className="flex items-center">Enable now <ChevronRight className="size-4 ml-0.5" /></span>, onClick: () => toast("Action clicked") } : undefined}
-              onClose={showClose ? () => toast("Close clicked") : undefined}
-            />
+          <AlertBanner
+            variant="warning"
+            appearance={appearance}
+            icon={showIcon ? <CreditCard /> : undefined}
+            title="Alert: Plan expires in 7 days, auto-payment is disabled."
+            action={showCTA ? { label: <span className="flex items-center">Enable now <ChevronRight className="size-4 ml-0.5" /></span>, onClick: () => toast("Action clicked") } : undefined}
+            onClose={showClose ? () => toast("Close clicked") : undefined}
+          />
 
-            <AlertBanner
-              variant="destructive"
-              appearance={appearance}
-              icon={showIcon ? <AlertCircle /> : undefined}
-              title="Warning: Job posting expired due to missing budget authorization."
-              action={showCTA ? { label: <span className="flex items-center">Renew posting <ChevronRight className="size-4 ml-0.5" /></span>, onClick: () => toast("Action clicked") } : undefined}
-              onClose={showClose ? () => toast("Close clicked") : undefined}
-            />
+          <AlertBanner
+            variant="destructive"
+            appearance={appearance}
+            icon={showIcon ? <AlertCircle /> : undefined}
+            title="Warning: Job posting expired due to missing budget authorization."
+            action={showCTA ? { label: <span className="flex items-center">Renew posting <ChevronRight className="size-4 ml-0.5" /></span>, onClick: () => toast("Action clicked") } : undefined}
+            onClose={showClose ? () => toast("Close clicked") : undefined}
+          />
 
-            <AlertBanner
-              variant="success"
-              appearance={appearance}
-              icon={showIcon ? <Info /> : undefined}
-              title="Positive: Candidate status updated successfully."
-              action={showCTA ? { label: <span className="flex items-center">View candidate <ChevronRight className="size-4 ml-0.5" /></span>, onClick: () => toast("Action clicked") } : undefined}
-              onClose={showClose ? () => toast("Close clicked") : undefined}
-            />
-          </div>
-
-          {/* Mobile Preview (Constrained width to simulate mobile wrapping) */}
-          <div className="mt-8 sm:hidden">
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Mobile Preview</p>
-            <div className="max-w-xs mx-auto border-x border-b border-border/50 bg-background shadow-sm pb-10 space-y-6 pt-4">
-              <AlertBanner
-                variant="info"
-                appearance={appearance}
-                icon={showIcon ? <Info /> : undefined}
-                title="Information: Your candidate credits will renew at the beginning of next month."
-                action={showCTA ? { label: <span className="flex items-center">View details <ChevronRight className="size-4 ml-0.5" /></span>, onClick: () => toast("Action clicked") } : undefined}
-                onClose={showClose ? () => toast("Close clicked") : undefined}
-              />
-
-              <AlertBanner
-                variant="warning"
-                appearance={appearance}
-                icon={showIcon ? <CreditCard /> : undefined}
-                title="Alert: Plan expires in 7 days, auto-payment is disabled."
-                action={showCTA ? { label: <span className="flex items-center">Enable now <ChevronRight className="size-4 ml-0.5" /></span>, onClick: () => toast("Action clicked") } : undefined}
-                onClose={showClose ? () => toast("Close clicked") : undefined}
-              />
-
-              <AlertBanner
-                variant="destructive"
-                appearance={appearance}
-                icon={showIcon ? <AlertCircle /> : undefined}
-                title="Warning: Job posting expired due to missing budget authorization."
-                action={showCTA ? { label: <span className="flex items-center">Renew posting <ChevronRight className="size-4 ml-0.5" /></span>, onClick: () => toast("Action clicked") } : undefined}
-                onClose={showClose ? () => toast("Close clicked") : undefined}
-              />
-
-              <AlertBanner
-                variant="success"
-                appearance={appearance}
-                icon={showIcon ? <Info /> : undefined}
-                title="Positive: Candidate status updated successfully."
-                action={showCTA ? { label: <span className="flex items-center">View candidate <ChevronRight className="size-4 ml-0.5" /></span>, onClick: () => toast("Action clicked") } : undefined}
-                onClose={showClose ? () => toast("Close clicked") : undefined}
-              />
-            </div>
-          </div>
+          <AlertBanner
+            variant="success"
+            appearance={appearance}
+            icon={showIcon ? <Info /> : undefined}
+            title="Positive: Candidate status updated successfully."
+            action={showCTA ? { label: <span className="flex items-center">View candidate <ChevronRight className="size-4 ml-0.5" /></span>, onClick: () => toast("Action clicked") } : undefined}
+            onClose={showClose ? () => toast("Close clicked") : undefined}
+          />
         </div>
       </div>
 

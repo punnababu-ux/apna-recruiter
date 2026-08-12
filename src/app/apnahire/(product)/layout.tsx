@@ -10,6 +10,7 @@
 
 import { cookies } from "next/headers"
 import { ApnaHireSidebar } from "@/components/apnahire/app-sidebar"
+import { ApnaHireBottomNav } from "@/components/apnahire/bottom-nav"
 import { ApnaHireTopBar } from "@/components/apnahire/top-bar"
 import { SidebarInset, SidebarProvider } from "@apna/design-system"
 
@@ -24,10 +25,11 @@ export default async function ApnaHireProductLayout({
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
       <ApnaHireSidebar />
-      <SidebarInset className="bg-muted">
+      <SidebarInset className="bg-muted pb-16 md:pb-0">
         <ApnaHireTopBar />
         {children}
       </SidebarInset>
+      <ApnaHireBottomNav />
     </SidebarProvider>
   )
 }

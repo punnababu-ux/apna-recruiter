@@ -1,0 +1,122 @@
+"use client"
+
+import * as React from "react"
+import { Search, SlidersHorizontal } from "lucide-react"
+
+import { Badge } from "./badge"
+import { Button } from "./button"
+import { Checkbox } from "./checkbox"
+import { Input } from "./input"
+import { Popover, PopoverContent, PopoverTrigger } from "./popover"
+import { cn } from "@/lib/utils"
+
+export type FilterGroup = {
+  label: string
+  options: string[]
+  selected: string[]
+  onToggle: (value: string) => void
+}
+
+export interface SearchFilterBarProps {
+  placeholder?: string
+  value: string
+  onChange: (value: string) => void
+  /** Pass one or more filter groups to show the Filters popover. */
+  filterGroups?: FilterGroup[]
+  /** Called when "Clear all" is clicked in the filter popover. */
+  onClearFilters?: () => void
+  className?: string
+}
+
+export function SearchFilterBar({
+  placeholder = "Search…",
+  value,
+  onChange,
+  filterGroups,
+  onClearFilters,
+  className,
+}: SearchFilterBarProps) {
+  const activeFilterCount =
+    filterGroups?.reduce((sum, g) => sum + g.selected.length, 0) ?? 0
+  const hasFilters = (filterGroups?.length ?? 0) > 0
+
+  return (
+    <div className={cn("flex items-center gap-3", className)}>
+      {/* Search Input */}
+      <div className="relative flex-1">
+        <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          placeholder={placeholder}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="bg-card pl-9 text-xs sm:text-sm h-9"
+        />
+      </div>
+
+      {/* Filters Popover */}
+      {hasFilters && (
+        <Popover>
+          <PopoverTrigger
+            render={
+              <Button variant="outline" size="sm" className="h-9 gap-1.5 cursor-pointer">
+                <SlidersHorizontal className="size-4" />
+                <span>Filters</span>
+                {activeFilterCount > 0 && (
+                  <Badge variant="success" className="ml-1 h-5 min-w-5 px-1.5 text-2xs">
+                    {activeFilterCount}
+                  </Badge>
+                )}
+              </Button>
+            }
+          />
+          <PopoverContent align="end" className="w-64 p-0">
+            <div className="flex items-center justify-between border-b border-border px-3 py-2">
+              <span className="text-xs font-semibold text-foreground uppercase tracking-wider">Filters</span>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={onClearFilters}
+                disabled={activeFilterCount === 0}
+                className="h-6 px-1.5 text-2xs cursor-pointer"
+              >
+                Clear all
+              </Button>
+            </div>
+            {filterGroups!.map((group, i) => (
+              <div key={group.label}>
+                {i > 0 && <div className="border-t border-border" />}
+                <div className="flex flex-col gap-1.5 p-3">
+                  <span className="text-2xs font-semibold text-muted-foreground">
+                    {group.label}
+                  </span>
+                  <div className="flex flex-col gap-1">
+                    {group.options.map((opt) => {
+                      const id = `filter-${group.label}-${opt}`
+                        .replace(/\s+/g, "-")
+                        .toLowerCase()
+                      return (
+                        <label
+                          key={opt}
+                          htmlFor={id}
+                          className="flex cursor-pointer items-center gap-2 rounded-md px-1.5 py-1 text-xs hover:bg-muted"
+                        >
+                          <Checkbox
+                            id={id}
+                            checked={group.selected.includes(opt)}
+                            onCheckedChange={() => group.onToggle(opt)}
+                          />
+                          <span className="truncate">{opt}</span>
+                        </label>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </PopoverContent>
+        </Popover>
+      )}
+    </div>
+  )
+}

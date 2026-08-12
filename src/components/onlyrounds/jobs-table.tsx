@@ -3,18 +3,18 @@
 /**
  * JobsTable — list of job rows for the Jobs surface.
  *
- * Row anatomy:
- *   avatar · [title + status + client] · meta (location / created / owner)
- *          · rounds pipeline (round counts + selected) · overflow menu
+ * Row anatomy (mobile-first):
+ *   [Logo] [Title]                    [⋮ menu]
+ *          [Status badge] [Client] [Location]
+ *          [Created · By owner]         ← hidden on mobile, shown sm+
+ *   ─────────────────────────────────────────
+ *   [Screening] › [Interview] › [Shortlisted]
  *
  * Status semantics:
  *   active    — configured, editable, not yet live
  *   published — live to candidates, no longer editable
  *   inactive  — deactivated
  *   draft     — still being configured
- *
- * Overflow menu: Share · Publish · Duplicate · Deactivate.
- * Rows are links into the job-detail route.
  */
 
 import {
@@ -44,7 +44,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { cn } from "@/lib/utils"
 
 export type JobStatus = "active" | "draft" | "inactive" | "published"
 
@@ -93,64 +92,73 @@ function JobRowItem({ row }: { row: JobRow }) {
   const showRounds = row.status !== "draft"
 
   return (
-    <div className="rounded-xl border border-border/60 bg-card px-5 py-4 shadow-card transition-shadow hover:shadow-elevated">
-      <div className="flex items-start gap-4">
-        <ClientLogo name={row.client} src={row.clientLogo} size="md" />
-
-        <div className="min-w-0 flex-1">
-          <Link href={`/apnahire/jobs/${row.id}`} className="group block">
-            <span className="block truncate font-medium group-hover:underline">
-              {row.title}
-            </span>
-            <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-              <IconLabel icon={Building2}>{row.client}</IconLabel>
-              <span aria-hidden>·</span>
-              <IconLabel icon={MapPin}>{row.location}</IconLabel>
-              <span aria-hidden>·</span>
-              <IconLabel icon={CalendarDays}>
-                Created {row.createdAt}
-              </IconLabel>
-              <span aria-hidden>·</span>
-              <IconLabel icon={User2}>By {row.owner}</IconLabel>
-            </div>
-          </Link>
+    <div className="rounded-xl border border-border/60 bg-card px-4 py-4 sm:px-5 shadow-card transition-shadow hover:shadow-elevated">
+      {/* Header row: Logo · content block · ⋮ menu */}
+      <div className="flex items-start gap-3">
+        <div className="mt-0.5 shrink-0">
+          <ClientLogo name={row.client} src={row.clientLogo} size="md" />
         </div>
 
-        <Badge
-          variant={STATUS_VARIANT[row.status]}
-          className={cn("self-center capitalize")}
-        >
-          {row.status}
-        </Badge>
-        <div className="self-center">
+        {/* Content column — grows to fill available width */}
+        <div className="min-w-0 flex-1">
+          {/* Job title — links to detail */}
+          <Link href={`/apnahire/jobs/${row.id}`} className="group block">
+            <span className="block truncate text-sm font-medium group-hover:underline sm:text-base">
+              {row.title}
+            </span>
+          </Link>
+
+          {/* Primary meta: status badge + client + location — always visible */}
+          <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1">
+            <Badge
+              variant={STATUS_VARIANT[row.status]}
+              className="h-5 capitalize"
+            >
+              {row.status}
+            </Badge>
+            <span className="flex items-center gap-1 text-xs text-muted-foreground">
+              <Building2 className="size-3 shrink-0" />
+              {row.client}
+            </span>
+            <span className="flex items-center gap-1 text-xs text-muted-foreground">
+              <MapPin className="size-3 shrink-0" />
+              {row.location}
+            </span>
+          </div>
+
+          {/* Secondary meta: date + owner — hidden on mobile, visible sm+ */}
+          <div className="mt-1 hidden flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground sm:flex">
+            <IconLabel icon={CalendarDays}>Created {row.createdAt}</IconLabel>
+            <span aria-hidden className="opacity-40">·</span>
+            <IconLabel icon={User2}>By {row.owner}</IconLabel>
+          </div>
+        </div>
+
+        {/* Overflow menu — top-right, never wraps */}
+        <div className="-mr-1 -mt-1 shrink-0 self-start">
           <RowActions status={row.status} />
         </div>
       </div>
 
+      {/* Pipeline pills — horizontal scroll on mobile */}
       {showRounds ? (
         <>
-          <hr className="-mx-5 mt-4 border-t border-border/60" />
-          <div className="mt-3 flex flex-wrap items-center gap-x-1.5 gap-y-2">
+          <hr className="-mx-4 mt-4 border-t border-border/60 sm:-mx-5" />
+          <div className="mt-3 flex max-w-full items-center gap-1.5 overflow-x-auto whitespace-nowrap no-scrollbar pb-0.5">
             <RoundPill
               href={`/apnahire/jobs/${row.id}?round=screening`}
               icon={UserSearch}
               label="Screening"
               count={row.screening}
             />
-            <ChevronRight
-              className="size-3.5 shrink-0 text-muted-foreground"
-              aria-hidden
-            />
+            <ChevronRight className="size-3.5 shrink-0 text-muted-foreground" aria-hidden />
             <RoundPill
               href={`/apnahire/jobs/${row.id}?round=interview`}
               icon={MessagesSquare}
               label="Interview"
               count={row.interview}
             />
-            <ChevronRight
-              className="size-3.5 shrink-0 text-muted-foreground"
-              aria-hidden
-            />
+            <ChevronRight className="size-3.5 shrink-0 text-muted-foreground" aria-hidden />
             <RoundPill
               href={`/apnahire/jobs/${row.id}?round=shortlisted`}
               icon={CheckCircle2}
@@ -163,8 +171,6 @@ function JobRowItem({ row }: { row: JobRow }) {
     </div>
   )
 }
-
-
 
 function RoundPill({
   href,

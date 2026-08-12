@@ -74,6 +74,7 @@ function Button({
     ButtonPrimitive,
     {
       "data-slot": "button",
+      nativeButton: props.nativeButton ?? (props.render ? false : void 0),
       "data-loading": loading || void 0,
       "aria-busy": loading || void 0,
       disabled: disabled || loading,
@@ -964,101 +965,8 @@ function Slider({
   );
 }
 
-// src/components/ui/avatar.tsx
-import { Avatar as AvatarPrimitive } from "@base-ui/react/avatar";
-import { jsx as jsx17 } from "react/jsx-runtime";
-function Avatar({
-  className,
-  size = "default",
-  ...props
-}) {
-  return /* @__PURE__ */ jsx17(
-    AvatarPrimitive.Root,
-    {
-      "data-slot": "avatar",
-      "data-size": size,
-      className: cn(
-        "group/avatar relative flex size-8 shrink-0 rounded-full select-none after:absolute after:inset-0 after:rounded-full after:border after:border-border after:mix-blend-darken data-[size=lg]:size-10 data-[size=sm]:size-6 dark:after:mix-blend-lighten",
-        className
-      ),
-      ...props
-    }
-  );
-}
-function AvatarImage({ className, ...props }) {
-  return /* @__PURE__ */ jsx17(
-    AvatarPrimitive.Image,
-    {
-      "data-slot": "avatar-image",
-      className: cn(
-        "aspect-square size-full rounded-full object-cover",
-        className
-      ),
-      ...props
-    }
-  );
-}
-function AvatarFallback({
-  className,
-  ...props
-}) {
-  return /* @__PURE__ */ jsx17(
-    AvatarPrimitive.Fallback,
-    {
-      "data-slot": "avatar-fallback",
-      className: cn(
-        "flex size-full items-center justify-center rounded-full bg-muted text-sm text-muted-foreground group-data-[size=sm]/avatar:text-xs",
-        className
-      ),
-      ...props
-    }
-  );
-}
-function AvatarBadge({ className, ...props }) {
-  return /* @__PURE__ */ jsx17(
-    "span",
-    {
-      "data-slot": "avatar-badge",
-      className: cn(
-        "absolute right-0 bottom-0 z-10 inline-flex items-center justify-center rounded-full bg-primary text-primary-foreground bg-blend-color ring-2 ring-background select-none",
-        "group-data-[size=sm]/avatar:size-2 group-data-[size=sm]/avatar:[&>svg]:hidden",
-        "group-data-[size=default]/avatar:size-2.5 group-data-[size=default]/avatar:[&>svg]:size-2",
-        "group-data-[size=lg]/avatar:size-3 group-data-[size=lg]/avatar:[&>svg]:size-2",
-        className
-      ),
-      ...props
-    }
-  );
-}
-function AvatarGroup({ className, ...props }) {
-  return /* @__PURE__ */ jsx17(
-    "div",
-    {
-      "data-slot": "avatar-group",
-      className: cn(
-        "group/avatar-group flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:ring-background",
-        className
-      ),
-      ...props
-    }
-  );
-}
-function AvatarGroupCount({
-  className,
-  ...props
-}) {
-  return /* @__PURE__ */ jsx17(
-    "div",
-    {
-      "data-slot": "avatar-group-count",
-      className: cn(
-        "relative flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-sm text-muted-foreground ring-2 ring-background group-has-data-[size=lg]/avatar-group:size-10 group-has-data-[size=sm]/avatar-group:size-6 [&>svg]:size-4 group-has-data-[size=lg]/avatar-group:[&>svg]:size-5 group-has-data-[size=sm]/avatar-group:[&>svg]:size-3",
-        className
-      ),
-      ...props
-    }
-  );
-}
+// src/components/ui/search-filter-bar.tsx
+import { Search, SlidersHorizontal } from "lucide-react";
 
 // src/components/ui/badge.tsx
 import { mergeProps as mergeProps2 } from "@base-ui/react/merge-props";
@@ -1107,14 +1015,268 @@ function Badge({
   });
 }
 
+// src/components/ui/popover.tsx
+import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
+import { jsx as jsx17 } from "react/jsx-runtime";
+function Popover({ ...props }) {
+  return /* @__PURE__ */ jsx17(PopoverPrimitive.Root, { "data-slot": "popover", ...props });
+}
+function PopoverTrigger({ ...props }) {
+  return /* @__PURE__ */ jsx17(PopoverPrimitive.Trigger, { "data-slot": "popover-trigger", ...props });
+}
+function PopoverContent({
+  className,
+  align = "center",
+  alignOffset = 0,
+  side = "bottom",
+  sideOffset = 4,
+  ...props
+}) {
+  return /* @__PURE__ */ jsx17(PopoverPrimitive.Portal, { children: /* @__PURE__ */ jsx17(
+    PopoverPrimitive.Positioner,
+    {
+      align,
+      alignOffset,
+      side,
+      sideOffset,
+      className: "isolate z-50",
+      children: /* @__PURE__ */ jsx17(
+        PopoverPrimitive.Popup,
+        {
+          "data-slot": "popover-content",
+          className: cn(
+            "z-50 flex w-72 origin-(--transform-origin) flex-col gap-2.5 rounded-lg bg-popover p-2.5 text-sm text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-hidden duration-100 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+            className
+          ),
+          ...props
+        }
+      )
+    }
+  ) });
+}
+function PopoverHeader({ className, ...props }) {
+  return /* @__PURE__ */ jsx17(
+    "div",
+    {
+      "data-slot": "popover-header",
+      className: cn("flex flex-col gap-0.5 text-sm", className),
+      ...props
+    }
+  );
+}
+function PopoverTitle({ className, ...props }) {
+  return /* @__PURE__ */ jsx17(
+    PopoverPrimitive.Title,
+    {
+      "data-slot": "popover-title",
+      className: cn("font-medium", className),
+      ...props
+    }
+  );
+}
+function PopoverDescription({
+  className,
+  ...props
+}) {
+  return /* @__PURE__ */ jsx17(
+    PopoverPrimitive.Description,
+    {
+      "data-slot": "popover-description",
+      className: cn("text-muted-foreground", className),
+      ...props
+    }
+  );
+}
+
+// src/components/ui/search-filter-bar.tsx
+import { jsx as jsx18, jsxs as jsxs5 } from "react/jsx-runtime";
+function SearchFilterBar({
+  placeholder = "Search\u2026",
+  value,
+  onChange,
+  filterGroups,
+  onClearFilters,
+  className
+}) {
+  const activeFilterCount = filterGroups?.reduce((sum, g) => sum + g.selected.length, 0) ?? 0;
+  const hasFilters = (filterGroups?.length ?? 0) > 0;
+  return /* @__PURE__ */ jsxs5("div", { className: cn("flex items-center gap-3", className), children: [
+    /* @__PURE__ */ jsxs5("div", { className: "relative flex-1", children: [
+      /* @__PURE__ */ jsx18(Search, { className: "pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" }),
+      /* @__PURE__ */ jsx18(
+        Input,
+        {
+          placeholder,
+          value,
+          onChange: (e) => onChange(e.target.value),
+          className: "bg-card pl-9 text-xs sm:text-sm h-9"
+        }
+      )
+    ] }),
+    hasFilters && /* @__PURE__ */ jsxs5(Popover, { children: [
+      /* @__PURE__ */ jsx18(
+        PopoverTrigger,
+        {
+          render: /* @__PURE__ */ jsxs5(Button, { variant: "outline", size: "sm", className: "h-9 gap-1.5 cursor-pointer", children: [
+            /* @__PURE__ */ jsx18(SlidersHorizontal, { className: "size-4" }),
+            /* @__PURE__ */ jsx18("span", { children: "Filters" }),
+            activeFilterCount > 0 && /* @__PURE__ */ jsx18(Badge, { variant: "success", className: "ml-1 h-5 min-w-5 px-1.5 text-2xs", children: activeFilterCount })
+          ] })
+        }
+      ),
+      /* @__PURE__ */ jsxs5(PopoverContent, { align: "end", className: "w-64 p-0", children: [
+        /* @__PURE__ */ jsxs5("div", { className: "flex items-center justify-between border-b border-border px-3 py-2", children: [
+          /* @__PURE__ */ jsx18("span", { className: "text-xs font-semibold text-foreground uppercase tracking-wider", children: "Filters" }),
+          /* @__PURE__ */ jsx18(
+            Button,
+            {
+              type: "button",
+              variant: "ghost",
+              size: "sm",
+              onClick: onClearFilters,
+              disabled: activeFilterCount === 0,
+              className: "h-6 px-1.5 text-2xs cursor-pointer",
+              children: "Clear all"
+            }
+          )
+        ] }),
+        filterGroups.map((group, i) => /* @__PURE__ */ jsxs5("div", { children: [
+          i > 0 && /* @__PURE__ */ jsx18("div", { className: "border-t border-border" }),
+          /* @__PURE__ */ jsxs5("div", { className: "flex flex-col gap-1.5 p-3", children: [
+            /* @__PURE__ */ jsx18("span", { className: "text-2xs font-semibold text-muted-foreground", children: group.label }),
+            /* @__PURE__ */ jsx18("div", { className: "flex flex-col gap-1", children: group.options.map((opt) => {
+              const id = `filter-${group.label}-${opt}`.replace(/\s+/g, "-").toLowerCase();
+              return /* @__PURE__ */ jsxs5(
+                "label",
+                {
+                  htmlFor: id,
+                  className: "flex cursor-pointer items-center gap-2 rounded-md px-1.5 py-1 text-xs hover:bg-muted",
+                  children: [
+                    /* @__PURE__ */ jsx18(
+                      Checkbox,
+                      {
+                        id,
+                        checked: group.selected.includes(opt),
+                        onCheckedChange: () => group.onToggle(opt)
+                      }
+                    ),
+                    /* @__PURE__ */ jsx18("span", { className: "truncate", children: opt })
+                  ]
+                },
+                opt
+              );
+            }) })
+          ] })
+        ] }, group.label))
+      ] })
+    ] })
+  ] });
+}
+
+// src/components/ui/avatar.tsx
+import { Avatar as AvatarPrimitive } from "@base-ui/react/avatar";
+import { jsx as jsx19 } from "react/jsx-runtime";
+function Avatar({
+  className,
+  size = "default",
+  ...props
+}) {
+  return /* @__PURE__ */ jsx19(
+    AvatarPrimitive.Root,
+    {
+      "data-slot": "avatar",
+      "data-size": size,
+      className: cn(
+        "group/avatar relative flex size-8 shrink-0 rounded-full select-none after:absolute after:inset-0 after:rounded-full after:border after:border-border after:mix-blend-darken data-[size=lg]:size-10 data-[size=sm]:size-6 dark:after:mix-blend-lighten",
+        className
+      ),
+      ...props
+    }
+  );
+}
+function AvatarImage({ className, ...props }) {
+  return /* @__PURE__ */ jsx19(
+    AvatarPrimitive.Image,
+    {
+      "data-slot": "avatar-image",
+      className: cn(
+        "aspect-square size-full rounded-full object-cover",
+        className
+      ),
+      ...props
+    }
+  );
+}
+function AvatarFallback({
+  className,
+  ...props
+}) {
+  return /* @__PURE__ */ jsx19(
+    AvatarPrimitive.Fallback,
+    {
+      "data-slot": "avatar-fallback",
+      className: cn(
+        "flex size-full items-center justify-center rounded-full bg-muted text-sm text-muted-foreground group-data-[size=sm]/avatar:text-xs",
+        className
+      ),
+      ...props
+    }
+  );
+}
+function AvatarBadge({ className, ...props }) {
+  return /* @__PURE__ */ jsx19(
+    "span",
+    {
+      "data-slot": "avatar-badge",
+      className: cn(
+        "absolute right-0 bottom-0 z-10 inline-flex items-center justify-center rounded-full bg-primary text-primary-foreground bg-blend-color ring-2 ring-background select-none",
+        "group-data-[size=sm]/avatar:size-2 group-data-[size=sm]/avatar:[&>svg]:hidden",
+        "group-data-[size=default]/avatar:size-2.5 group-data-[size=default]/avatar:[&>svg]:size-2",
+        "group-data-[size=lg]/avatar:size-3 group-data-[size=lg]/avatar:[&>svg]:size-2",
+        className
+      ),
+      ...props
+    }
+  );
+}
+function AvatarGroup({ className, ...props }) {
+  return /* @__PURE__ */ jsx19(
+    "div",
+    {
+      "data-slot": "avatar-group",
+      className: cn(
+        "group/avatar-group flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:ring-background",
+        className
+      ),
+      ...props
+    }
+  );
+}
+function AvatarGroupCount({
+  className,
+  ...props
+}) {
+  return /* @__PURE__ */ jsx19(
+    "div",
+    {
+      "data-slot": "avatar-group-count",
+      className: cn(
+        "relative flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-sm text-muted-foreground ring-2 ring-background group-has-data-[size=lg]/avatar-group:size-10 group-has-data-[size=sm]/avatar-group:size-6 [&>svg]:size-4 group-has-data-[size=lg]/avatar-group:[&>svg]:size-5 group-has-data-[size=sm]/avatar-group:[&>svg]:size-3",
+        className
+      ),
+      ...props
+    }
+  );
+}
+
 // src/components/ui/skeleton.tsx
-import { jsx as jsx18 } from "react/jsx-runtime";
+import { jsx as jsx20 } from "react/jsx-runtime";
 function Skeleton({
   className,
   variant = "default",
   ...props
 }) {
-  return /* @__PURE__ */ jsx18(
+  return /* @__PURE__ */ jsx20(
     "div",
     {
       "data-slot": "skeleton",
@@ -1131,9 +1293,9 @@ function Skeleton({
 
 // src/components/ui/empty.tsx
 import { cva as cva8 } from "class-variance-authority";
-import { jsx as jsx19 } from "react/jsx-runtime";
+import { jsx as jsx21 } from "react/jsx-runtime";
 function Empty({ className, ...props }) {
-  return /* @__PURE__ */ jsx19(
+  return /* @__PURE__ */ jsx21(
     "div",
     {
       "data-slot": "empty",
@@ -1146,7 +1308,7 @@ function Empty({ className, ...props }) {
   );
 }
 function EmptyHeader({ className, ...props }) {
-  return /* @__PURE__ */ jsx19(
+  return /* @__PURE__ */ jsx21(
     "div",
     {
       "data-slot": "empty-header",
@@ -1174,7 +1336,7 @@ function EmptyMedia({
   variant = "default",
   ...props
 }) {
-  return /* @__PURE__ */ jsx19(
+  return /* @__PURE__ */ jsx21(
     "div",
     {
       "data-slot": "empty-icon",
@@ -1185,7 +1347,7 @@ function EmptyMedia({
   );
 }
 function EmptyTitle({ className, ...props }) {
-  return /* @__PURE__ */ jsx19(
+  return /* @__PURE__ */ jsx21(
     "div",
     {
       "data-slot": "empty-title",
@@ -1198,7 +1360,7 @@ function EmptyTitle({ className, ...props }) {
   );
 }
 function EmptyDescription({ className, ...props }) {
-  return /* @__PURE__ */ jsx19(
+  return /* @__PURE__ */ jsx21(
     "div",
     {
       "data-slot": "empty-description",
@@ -1211,7 +1373,7 @@ function EmptyDescription({ className, ...props }) {
   );
 }
 function EmptyContent({ className, ...props }) {
-  return /* @__PURE__ */ jsx19(
+  return /* @__PURE__ */ jsx21(
     "div",
     {
       "data-slot": "empty-content",
@@ -1224,16 +1386,52 @@ function EmptyContent({ className, ...props }) {
   );
 }
 
+// src/components/ui/metric-card.tsx
+import * as React4 from "react";
+import { jsx as jsx22, jsxs as jsxs6 } from "react/jsx-runtime";
+var trendVariantMap = {
+  success: "text-success",
+  warning: "text-warning",
+  destructive: "text-destructive",
+  neutral: "text-muted-foreground"
+};
+var MetricCard = React4.forwardRef(
+  ({ className, label, value, icon, trend, trendVariant = "neutral", ...props }, ref) => {
+    return /* @__PURE__ */ jsxs6(
+      "div",
+      {
+        ref,
+        className: cn(
+          "rounded-xl border border-border/70 bg-card p-4 shadow-xs text-left transition-all",
+          className
+        ),
+        ...props,
+        children: [
+          /* @__PURE__ */ jsxs6("div", { className: "flex items-center justify-between gap-2", children: [
+            /* @__PURE__ */ jsx22("span", { className: "text-xs font-medium text-muted-foreground", children: label }),
+            icon && /* @__PURE__ */ jsx22("div", { className: "rounded-lg bg-muted/60 p-2 text-foreground [&>svg]:size-4", children: icon })
+          ] }),
+          /* @__PURE__ */ jsxs6("div", { className: "mt-3 flex items-baseline justify-between gap-2", children: [
+            /* @__PURE__ */ jsx22("span", { className: "text-2xl font-heading font-bold text-foreground", children: value }),
+            trend && /* @__PURE__ */ jsx22("span", { className: cn("text-2xs font-medium", trendVariantMap[trendVariant]), children: trend })
+          ] })
+        ]
+      }
+    );
+  }
+);
+MetricCard.displayName = "MetricCard";
+
 // src/components/ui/tabs.tsx
 import { Tabs as TabsPrimitive } from "@base-ui/react/tabs";
 import { cva as cva9 } from "class-variance-authority";
-import { jsx as jsx20 } from "react/jsx-runtime";
+import { jsx as jsx23 } from "react/jsx-runtime";
 function Tabs({
   className,
   orientation = "horizontal",
   ...props
 }) {
-  return /* @__PURE__ */ jsx20(
+  return /* @__PURE__ */ jsx23(
     TabsPrimitive.Root,
     {
       "data-slot": "tabs",
@@ -1247,7 +1445,7 @@ function Tabs({
   );
 }
 var tabsListVariants = cva9(
-  "group/tabs-list inline-flex w-fit items-center justify-center rounded-lg p-1 text-muted-foreground group-data-horizontal/tabs:h-10 group-data-vertical/tabs:h-fit group-data-vertical/tabs:flex-col data-[variant=line]:rounded-none",
+  "group/tabs-list inline-flex max-w-full overflow-x-auto no-scrollbar items-center justify-start sm:justify-center rounded-lg p-1 text-muted-foreground group-data-horizontal/tabs:h-10 group-data-vertical/tabs:h-fit group-data-vertical/tabs:flex-col data-[variant=line]:rounded-none shrink-0",
   {
     variants: {
       variant: {
@@ -1270,7 +1468,7 @@ function TabsList({
   variant = "default",
   ...props
 }) {
-  return /* @__PURE__ */ jsx20(
+  return /* @__PURE__ */ jsx23(
     TabsPrimitive.List,
     {
       "data-slot": "tabs-list",
@@ -1281,7 +1479,7 @@ function TabsList({
   );
 }
 function TabsTrigger({ className, ...props }) {
-  return /* @__PURE__ */ jsx20(
+  return /* @__PURE__ */ jsx23(
     TabsPrimitive.Tab,
     {
       "data-slot": "tabs-trigger",
@@ -1301,7 +1499,7 @@ function TabsTrigger({ className, ...props }) {
   );
 }
 function TabsContent({ className, ...props }) {
-  return /* @__PURE__ */ jsx20(
+  return /* @__PURE__ */ jsx23(
     TabsPrimitive.Panel,
     {
       "data-slot": "tabs-content",
@@ -1312,7 +1510,7 @@ function TabsContent({ className, ...props }) {
 }
 
 // src/components/ui/chip-tabs.tsx
-import { jsx as jsx21, jsxs as jsxs5 } from "react/jsx-runtime";
+import { jsx as jsx24, jsxs as jsxs7 } from "react/jsx-runtime";
 function ChipTabs({
   items,
   value,
@@ -1323,7 +1521,7 @@ function ChipTabs({
   "aria-label": ariaLabel,
   "aria-invalid": ariaInvalid
 }) {
-  return /* @__PURE__ */ jsx21(
+  return /* @__PURE__ */ jsx24(
     "div",
     {
       role: "tablist",
@@ -1332,7 +1530,7 @@ function ChipTabs({
       children: items.map((item) => {
         const active = value === item.value;
         const stateClass = variant === "choice" ? active ? "border-primary bg-accent text-accent-foreground" : ariaInvalid ? "border-destructive/60 bg-destructive/5 text-destructive hover:bg-destructive/10" : "border-border bg-muted text-muted-foreground hover:text-foreground" : active ? "border-transparent bg-secondary text-secondary-foreground" : ariaInvalid ? "border-destructive/60 text-destructive hover:bg-destructive/10" : "border-transparent text-muted-foreground hover:bg-muted hover:text-foreground";
-        return /* @__PURE__ */ jsxs5(
+        return /* @__PURE__ */ jsxs7(
           "button",
           {
             type: "button",
@@ -1347,7 +1545,7 @@ function ChipTabs({
             ),
             children: [
               item.label,
-              typeof item.count === "number" ? /* @__PURE__ */ jsxs5(
+              typeof item.count === "number" ? /* @__PURE__ */ jsxs7(
                 "span",
                 {
                   className: cn(
@@ -1374,9 +1572,9 @@ function ChipTabs({
 import { mergeProps as mergeProps3 } from "@base-ui/react/merge-props";
 import { useRender as useRender3 } from "@base-ui/react/use-render";
 import { ChevronRightIcon, MoreHorizontalIcon } from "lucide-react";
-import { jsx as jsx22, jsxs as jsxs6 } from "react/jsx-runtime";
+import { jsx as jsx25, jsxs as jsxs8 } from "react/jsx-runtime";
 function Breadcrumb({ className, ...props }) {
-  return /* @__PURE__ */ jsx22(
+  return /* @__PURE__ */ jsx25(
     "nav",
     {
       "aria-label": "breadcrumb",
@@ -1387,7 +1585,7 @@ function Breadcrumb({ className, ...props }) {
   );
 }
 function BreadcrumbList({ className, ...props }) {
-  return /* @__PURE__ */ jsx22(
+  return /* @__PURE__ */ jsx25(
     "ol",
     {
       "data-slot": "breadcrumb-list",
@@ -1400,7 +1598,7 @@ function BreadcrumbList({ className, ...props }) {
   );
 }
 function BreadcrumbItem({ className, ...props }) {
-  return /* @__PURE__ */ jsx22(
+  return /* @__PURE__ */ jsx25(
     "li",
     {
       "data-slot": "breadcrumb-item",
@@ -1429,7 +1627,7 @@ function BreadcrumbLink({
   });
 }
 function BreadcrumbPage({ className, ...props }) {
-  return /* @__PURE__ */ jsx22(
+  return /* @__PURE__ */ jsx25(
     "span",
     {
       "data-slot": "breadcrumb-page",
@@ -1446,7 +1644,7 @@ function BreadcrumbSeparator({
   className,
   ...props
 }) {
-  return /* @__PURE__ */ jsx22(
+  return /* @__PURE__ */ jsx25(
     "li",
     {
       "data-slot": "breadcrumb-separator",
@@ -1454,7 +1652,7 @@ function BreadcrumbSeparator({
       "aria-hidden": "true",
       className: cn("[&>svg]:size-3.5", className),
       ...props,
-      children: children ?? /* @__PURE__ */ jsx22(ChevronRightIcon, {})
+      children: children ?? /* @__PURE__ */ jsx25(ChevronRightIcon, {})
     }
   );
 }
@@ -1462,7 +1660,7 @@ function BreadcrumbEllipsis({
   className,
   ...props
 }) {
-  return /* @__PURE__ */ jsxs6(
+  return /* @__PURE__ */ jsxs8(
     "span",
     {
       "data-slot": "breadcrumb-ellipsis",
@@ -1474,28 +1672,28 @@ function BreadcrumbEllipsis({
       ),
       ...props,
       children: [
-        /* @__PURE__ */ jsx22(
+        /* @__PURE__ */ jsx25(
           MoreHorizontalIcon,
           {}
         ),
-        /* @__PURE__ */ jsx22("span", { className: "sr-only", children: "More" })
+        /* @__PURE__ */ jsx25("span", { className: "sr-only", children: "More" })
       ]
     }
   );
 }
 
 // src/components/ui/sidebar.tsx
-import * as React5 from "react";
+import * as React6 from "react";
 import { mergeProps as mergeProps4 } from "@base-ui/react/merge-props";
 import { useRender as useRender4 } from "@base-ui/react/use-render";
 import { cva as cva10 } from "class-variance-authority";
 
 // src/hooks/use-mobile.ts
-import * as React4 from "react";
+import * as React5 from "react";
 var MOBILE_BREAKPOINT = 768;
 function useIsMobile() {
-  const [isMobile, setIsMobile] = React4.useState(void 0);
-  React4.useEffect(() => {
+  const [isMobile, setIsMobile] = React5.useState(void 0);
+  React5.useEffect(() => {
     const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
     const onChange = () => {
       setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
@@ -1510,21 +1708,21 @@ function useIsMobile() {
 // src/components/ui/sheet.tsx
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog";
 import { XIcon } from "lucide-react";
-import { jsx as jsx23, jsxs as jsxs7 } from "react/jsx-runtime";
+import { jsx as jsx26, jsxs as jsxs9 } from "react/jsx-runtime";
 function Sheet({ ...props }) {
-  return /* @__PURE__ */ jsx23(SheetPrimitive.Root, { "data-slot": "sheet", ...props });
+  return /* @__PURE__ */ jsx26(SheetPrimitive.Root, { "data-slot": "sheet", ...props });
 }
 function SheetTrigger({ ...props }) {
-  return /* @__PURE__ */ jsx23(SheetPrimitive.Trigger, { "data-slot": "sheet-trigger", ...props });
+  return /* @__PURE__ */ jsx26(SheetPrimitive.Trigger, { "data-slot": "sheet-trigger", ...props });
 }
 function SheetClose({ ...props }) {
-  return /* @__PURE__ */ jsx23(SheetPrimitive.Close, { "data-slot": "sheet-close", ...props });
+  return /* @__PURE__ */ jsx26(SheetPrimitive.Close, { "data-slot": "sheet-close", ...props });
 }
 function SheetPortal({ ...props }) {
-  return /* @__PURE__ */ jsx23(SheetPrimitive.Portal, { "data-slot": "sheet-portal", ...props });
+  return /* @__PURE__ */ jsx26(SheetPrimitive.Portal, { "data-slot": "sheet-portal", ...props });
 }
 function SheetOverlay({ className, ...props }) {
-  return /* @__PURE__ */ jsx23(
+  return /* @__PURE__ */ jsx26(
     SheetPrimitive.Backdrop,
     {
       "data-slot": "sheet-overlay",
@@ -1543,9 +1741,9 @@ function SheetContent({
   showCloseButton = true,
   ...props
 }) {
-  return /* @__PURE__ */ jsxs7(SheetPortal, { children: [
-    /* @__PURE__ */ jsx23(SheetOverlay, {}),
-    /* @__PURE__ */ jsxs7(
+  return /* @__PURE__ */ jsxs9(SheetPortal, { children: [
+    /* @__PURE__ */ jsx26(SheetOverlay, {}),
+    /* @__PURE__ */ jsxs9(
       SheetPrimitive.Popup,
       {
         "data-slot": "sheet-content",
@@ -1557,11 +1755,11 @@ function SheetContent({
         ...props,
         children: [
           children,
-          showCloseButton && /* @__PURE__ */ jsxs7(
+          showCloseButton && /* @__PURE__ */ jsxs9(
             SheetPrimitive.Close,
             {
               "data-slot": "sheet-close",
-              render: /* @__PURE__ */ jsx23(
+              render: /* @__PURE__ */ jsx26(
                 Button,
                 {
                   variant: "ghost",
@@ -1570,11 +1768,11 @@ function SheetContent({
                 }
               ),
               children: [
-                /* @__PURE__ */ jsx23(
+                /* @__PURE__ */ jsx26(
                   XIcon,
                   {}
                 ),
-                /* @__PURE__ */ jsx23("span", { className: "sr-only", children: "Close" })
+                /* @__PURE__ */ jsx26("span", { className: "sr-only", children: "Close" })
               ]
             }
           )
@@ -1584,7 +1782,7 @@ function SheetContent({
   ] });
 }
 function SheetHeader({ className, ...props }) {
-  return /* @__PURE__ */ jsx23(
+  return /* @__PURE__ */ jsx26(
     "div",
     {
       "data-slot": "sheet-header",
@@ -1594,7 +1792,7 @@ function SheetHeader({ className, ...props }) {
   );
 }
 function SheetFooter({ className, ...props }) {
-  return /* @__PURE__ */ jsx23(
+  return /* @__PURE__ */ jsx26(
     "div",
     {
       "data-slot": "sheet-footer",
@@ -1604,7 +1802,7 @@ function SheetFooter({ className, ...props }) {
   );
 }
 function SheetTitle({ className, ...props }) {
-  return /* @__PURE__ */ jsx23(
+  return /* @__PURE__ */ jsx26(
     SheetPrimitive.Title,
     {
       "data-slot": "sheet-title",
@@ -1620,7 +1818,7 @@ function SheetDescription({
   className,
   ...props
 }) {
-  return /* @__PURE__ */ jsx23(
+  return /* @__PURE__ */ jsx26(
     SheetPrimitive.Description,
     {
       "data-slot": "sheet-description",
@@ -1632,12 +1830,12 @@ function SheetDescription({
 
 // src/components/ui/tooltip.tsx
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip";
-import { jsx as jsx24, jsxs as jsxs8 } from "react/jsx-runtime";
+import { jsx as jsx27, jsxs as jsxs10 } from "react/jsx-runtime";
 function TooltipProvider({
   delay = 0,
   ...props
 }) {
-  return /* @__PURE__ */ jsx24(
+  return /* @__PURE__ */ jsx27(
     TooltipPrimitive.Provider,
     {
       "data-slot": "tooltip-provider",
@@ -1647,10 +1845,10 @@ function TooltipProvider({
   );
 }
 function Tooltip({ ...props }) {
-  return /* @__PURE__ */ jsx24(TooltipPrimitive.Root, { "data-slot": "tooltip", ...props });
+  return /* @__PURE__ */ jsx27(TooltipPrimitive.Root, { "data-slot": "tooltip", ...props });
 }
 function TooltipTrigger({ ...props }) {
-  return /* @__PURE__ */ jsx24(TooltipPrimitive.Trigger, { "data-slot": "tooltip-trigger", ...props });
+  return /* @__PURE__ */ jsx27(TooltipPrimitive.Trigger, { "data-slot": "tooltip-trigger", ...props });
 }
 function TooltipContent({
   className,
@@ -1661,7 +1859,7 @@ function TooltipContent({
   children,
   ...props
 }) {
-  return /* @__PURE__ */ jsx24(TooltipPrimitive.Portal, { children: /* @__PURE__ */ jsx24(
+  return /* @__PURE__ */ jsx27(TooltipPrimitive.Portal, { children: /* @__PURE__ */ jsx27(
     TooltipPrimitive.Positioner,
     {
       align,
@@ -1669,7 +1867,7 @@ function TooltipContent({
       side,
       sideOffset,
       className: "isolate z-50",
-      children: /* @__PURE__ */ jsxs8(
+      children: /* @__PURE__ */ jsxs10(
         TooltipPrimitive.Popup,
         {
           "data-slot": "tooltip-content",
@@ -1680,7 +1878,7 @@ function TooltipContent({
           ...props,
           children: [
             children,
-            /* @__PURE__ */ jsx24(TooltipPrimitive.Arrow, { className: "z-50 size-2.5 translate-y-[calc(-50%-2px)] rotate-45 rounded-[2px] bg-foreground fill-foreground data-[side=bottom]:top-1 data-[side=inline-end]:top-1/2! data-[side=inline-end]:-left-1 data-[side=inline-end]:-translate-y-1/2 data-[side=inline-start]:top-1/2! data-[side=inline-start]:-right-1 data-[side=inline-start]:-translate-y-1/2 data-[side=left]:top-1/2! data-[side=left]:-right-1 data-[side=left]:-translate-y-1/2 data-[side=right]:top-1/2! data-[side=right]:-left-1 data-[side=right]:-translate-y-1/2 data-[side=top]:-bottom-2.5" })
+            /* @__PURE__ */ jsx27(TooltipPrimitive.Arrow, { className: "z-50 size-2.5 translate-y-[calc(-50%-2px)] rotate-45 rounded-[2px] bg-foreground fill-foreground data-[side=bottom]:top-1 data-[side=inline-end]:top-1/2! data-[side=inline-end]:-left-1 data-[side=inline-end]:-translate-y-1/2 data-[side=inline-start]:top-1/2! data-[side=inline-start]:-right-1 data-[side=inline-start]:-translate-y-1/2 data-[side=left]:top-1/2! data-[side=left]:-right-1 data-[side=left]:-translate-y-1/2 data-[side=right]:top-1/2! data-[side=right]:-left-1 data-[side=right]:-translate-y-1/2 data-[side=top]:-bottom-2.5" })
           ]
         }
       )
@@ -1690,16 +1888,16 @@ function TooltipContent({
 
 // src/components/ui/sidebar.tsx
 import { PanelLeftIcon } from "lucide-react";
-import { jsx as jsx25, jsxs as jsxs9 } from "react/jsx-runtime";
+import { jsx as jsx28, jsxs as jsxs11 } from "react/jsx-runtime";
 var SIDEBAR_COOKIE_NAME = "sidebar_state";
 var SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 var SIDEBAR_WIDTH = "16rem";
 var SIDEBAR_WIDTH_MOBILE = "18rem";
 var SIDEBAR_WIDTH_ICON = "4rem";
 var SIDEBAR_KEYBOARD_SHORTCUT = "b";
-var SidebarContext = React5.createContext(null);
+var SidebarContext = React6.createContext(null);
 function useSidebar() {
-  const context = React5.useContext(SidebarContext);
+  const context = React6.useContext(SidebarContext);
   if (!context) {
     throw new Error("useSidebar must be used within a SidebarProvider.");
   }
@@ -1715,10 +1913,10 @@ function SidebarProvider({
   ...props
 }) {
   const isMobile = useIsMobile();
-  const [openMobile, setOpenMobile] = React5.useState(false);
-  const [_open, _setOpen] = React5.useState(defaultOpen);
+  const [openMobile, setOpenMobile] = React6.useState(false);
+  const [_open, _setOpen] = React6.useState(defaultOpen);
   const open = openProp ?? _open;
-  const setOpen = React5.useCallback(
+  const setOpen = React6.useCallback(
     (value) => {
       const openState = typeof value === "function" ? value(open) : value;
       if (setOpenProp) {
@@ -1730,10 +1928,10 @@ function SidebarProvider({
     },
     [setOpenProp, open]
   );
-  const toggleSidebar = React5.useCallback(() => {
+  const toggleSidebar = React6.useCallback(() => {
     return isMobile ? setOpenMobile((open2) => !open2) : setOpen((open2) => !open2);
   }, [isMobile, setOpen, setOpenMobile]);
-  React5.useEffect(() => {
+  React6.useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === SIDEBAR_KEYBOARD_SHORTCUT && (event.metaKey || event.ctrlKey)) {
         event.preventDefault();
@@ -1744,7 +1942,7 @@ function SidebarProvider({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [toggleSidebar]);
   const state = open ? "expanded" : "collapsed";
-  const contextValue = React5.useMemo(
+  const contextValue = React6.useMemo(
     () => ({
       state,
       open,
@@ -1756,7 +1954,7 @@ function SidebarProvider({
     }),
     [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar]
   );
-  return /* @__PURE__ */ jsx25(SidebarContext.Provider, { value: contextValue, children: /* @__PURE__ */ jsx25(
+  return /* @__PURE__ */ jsx28(SidebarContext.Provider, { value: contextValue, children: /* @__PURE__ */ jsx28(
     "div",
     {
       "data-slot": "sidebar-wrapper",
@@ -1785,7 +1983,7 @@ function Sidebar({
 }) {
   const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
   if (collapsible === "none") {
-    return /* @__PURE__ */ jsx25(
+    return /* @__PURE__ */ jsx28(
       "div",
       {
         "data-slot": "sidebar",
@@ -1799,7 +1997,7 @@ function Sidebar({
     );
   }
   if (isMobile) {
-    return /* @__PURE__ */ jsx25(Sheet, { open: openMobile, onOpenChange: setOpenMobile, ...props, children: /* @__PURE__ */ jsxs9(
+    return /* @__PURE__ */ jsx28(Sheet, { open: openMobile, onOpenChange: setOpenMobile, ...props, children: /* @__PURE__ */ jsxs11(
       SheetContent,
       {
         dir,
@@ -1812,16 +2010,16 @@ function Sidebar({
         },
         side,
         children: [
-          /* @__PURE__ */ jsxs9(SheetHeader, { className: "sr-only", children: [
-            /* @__PURE__ */ jsx25(SheetTitle, { children: "Sidebar" }),
-            /* @__PURE__ */ jsx25(SheetDescription, { children: "Displays the mobile sidebar." })
+          /* @__PURE__ */ jsxs11(SheetHeader, { className: "sr-only", children: [
+            /* @__PURE__ */ jsx28(SheetTitle, { children: "Sidebar" }),
+            /* @__PURE__ */ jsx28(SheetDescription, { children: "Displays the mobile sidebar." })
           ] }),
-          /* @__PURE__ */ jsx25("div", { className: "flex h-full w-full flex-col", children })
+          /* @__PURE__ */ jsx28("div", { className: "flex h-full w-full flex-col", children })
         ]
       }
     ) });
   }
-  return /* @__PURE__ */ jsxs9(
+  return /* @__PURE__ */ jsxs11(
     "div",
     {
       className: "group peer hidden text-sidebar-foreground md:block",
@@ -1831,7 +2029,7 @@ function Sidebar({
       "data-side": side,
       "data-slot": "sidebar",
       children: [
-        /* @__PURE__ */ jsx25(
+        /* @__PURE__ */ jsx28(
           "div",
           {
             "data-slot": "sidebar-gap",
@@ -1843,7 +2041,7 @@ function Sidebar({
             )
           }
         ),
-        /* @__PURE__ */ jsx25(
+        /* @__PURE__ */ jsx28(
           "div",
           {
             "data-slot": "sidebar-container",
@@ -1855,7 +2053,7 @@ function Sidebar({
               className
             ),
             ...props,
-            children: /* @__PURE__ */ jsx25(
+            children: /* @__PURE__ */ jsx28(
               "div",
               {
                 "data-sidebar": "sidebar",
@@ -1876,7 +2074,7 @@ function SidebarTrigger({
   ...props
 }) {
   const { toggleSidebar } = useSidebar();
-  return /* @__PURE__ */ jsxs9(
+  return /* @__PURE__ */ jsxs11(
     Button,
     {
       "data-sidebar": "trigger",
@@ -1890,15 +2088,15 @@ function SidebarTrigger({
       },
       ...props,
       children: [
-        /* @__PURE__ */ jsx25(PanelLeftIcon, {}),
-        /* @__PURE__ */ jsx25("span", { className: "sr-only", children: "Toggle Sidebar" })
+        /* @__PURE__ */ jsx28(PanelLeftIcon, {}),
+        /* @__PURE__ */ jsx28("span", { className: "sr-only", children: "Toggle Sidebar" })
       ]
     }
   );
 }
 function SidebarRail({ className, ...props }) {
   const { toggleSidebar } = useSidebar();
-  return /* @__PURE__ */ jsx25(
+  return /* @__PURE__ */ jsx28(
     "button",
     {
       "data-sidebar": "rail",
@@ -1921,7 +2119,7 @@ function SidebarRail({ className, ...props }) {
   );
 }
 function SidebarInset({ className, ...props }) {
-  return /* @__PURE__ */ jsx25(
+  return /* @__PURE__ */ jsx28(
     "main",
     {
       "data-slot": "sidebar-inset",
@@ -1937,7 +2135,7 @@ function SidebarInput({
   className,
   ...props
 }) {
-  return /* @__PURE__ */ jsx25(
+  return /* @__PURE__ */ jsx28(
     Input,
     {
       "data-slot": "sidebar-input",
@@ -1948,7 +2146,7 @@ function SidebarInput({
   );
 }
 function SidebarHeader({ className, ...props }) {
-  return /* @__PURE__ */ jsx25(
+  return /* @__PURE__ */ jsx28(
     "div",
     {
       "data-slot": "sidebar-header",
@@ -1959,7 +2157,7 @@ function SidebarHeader({ className, ...props }) {
   );
 }
 function SidebarFooter({ className, ...props }) {
-  return /* @__PURE__ */ jsx25(
+  return /* @__PURE__ */ jsx28(
     "div",
     {
       "data-slot": "sidebar-footer",
@@ -1973,7 +2171,7 @@ function SidebarSeparator({
   className,
   ...props
 }) {
-  return /* @__PURE__ */ jsx25(
+  return /* @__PURE__ */ jsx28(
     Separator,
     {
       "data-slot": "sidebar-separator",
@@ -1984,7 +2182,7 @@ function SidebarSeparator({
   );
 }
 function SidebarContent({ className, ...props }) {
-  return /* @__PURE__ */ jsx25(
+  return /* @__PURE__ */ jsx28(
     "div",
     {
       "data-slot": "sidebar-content",
@@ -1998,7 +2196,7 @@ function SidebarContent({ className, ...props }) {
   );
 }
 function SidebarGroup({ className, ...props }) {
-  return /* @__PURE__ */ jsx25(
+  return /* @__PURE__ */ jsx28(
     "div",
     {
       "data-slot": "sidebar-group",
@@ -2058,7 +2256,7 @@ function SidebarGroupContent({
   className,
   ...props
 }) {
-  return /* @__PURE__ */ jsx25(
+  return /* @__PURE__ */ jsx28(
     "div",
     {
       "data-slot": "sidebar-group-content",
@@ -2069,7 +2267,7 @@ function SidebarGroupContent({
   );
 }
 function SidebarMenu({ className, ...props }) {
-  return /* @__PURE__ */ jsx25(
+  return /* @__PURE__ */ jsx28(
     "ul",
     {
       "data-slot": "sidebar-menu",
@@ -2080,7 +2278,7 @@ function SidebarMenu({ className, ...props }) {
   );
 }
 function SidebarMenuItem({ className, ...props }) {
-  return /* @__PURE__ */ jsx25(
+  return /* @__PURE__ */ jsx28(
     "li",
     {
       "data-slot": "sidebar-menu-item",
@@ -2128,7 +2326,7 @@ function SidebarMenuButton({
       },
       props
     ),
-    render: !tooltip ? render : /* @__PURE__ */ jsx25(TooltipTrigger, { render }),
+    render: !tooltip ? render : /* @__PURE__ */ jsx28(TooltipTrigger, { render }),
     state: {
       slot: "sidebar-menu-button",
       sidebar: "menu-button",
@@ -2144,9 +2342,9 @@ function SidebarMenuButton({
       children: tooltip
     };
   }
-  return /* @__PURE__ */ jsxs9(Tooltip, { children: [
+  return /* @__PURE__ */ jsxs11(Tooltip, { children: [
     comp,
-    /* @__PURE__ */ jsx25(
+    /* @__PURE__ */ jsx28(
       TooltipContent,
       {
         side: "right",
@@ -2186,7 +2384,7 @@ function SidebarMenuBadge({
   className,
   ...props
 }) {
-  return /* @__PURE__ */ jsx25(
+  return /* @__PURE__ */ jsx28(
     "div",
     {
       "data-slot": "sidebar-menu-badge",
@@ -2204,10 +2402,10 @@ function SidebarMenuSkeleton({
   showIcon = false,
   ...props
 }) {
-  const [width] = React5.useState(() => {
+  const [width] = React6.useState(() => {
     return `${Math.floor(Math.random() * 40) + 50}%`;
   });
-  return /* @__PURE__ */ jsxs9(
+  return /* @__PURE__ */ jsxs11(
     "div",
     {
       "data-slot": "sidebar-menu-skeleton",
@@ -2215,14 +2413,14 @@ function SidebarMenuSkeleton({
       className: cn("flex h-8 items-center gap-2 rounded-md px-2", className),
       ...props,
       children: [
-        showIcon && /* @__PURE__ */ jsx25(
+        showIcon && /* @__PURE__ */ jsx28(
           Skeleton,
           {
             className: "size-4 rounded-md",
             "data-sidebar": "menu-skeleton-icon"
           }
         ),
-        /* @__PURE__ */ jsx25(
+        /* @__PURE__ */ jsx28(
           Skeleton,
           {
             className: "h-4 max-w-(--skeleton-width) flex-1",
@@ -2237,7 +2435,7 @@ function SidebarMenuSkeleton({
   );
 }
 function SidebarMenuSub({ className, ...props }) {
-  return /* @__PURE__ */ jsx25(
+  return /* @__PURE__ */ jsx28(
     "ul",
     {
       "data-slot": "sidebar-menu-sub",
@@ -2254,7 +2452,7 @@ function SidebarMenuSubItem({
   className,
   ...props
 }) {
-  return /* @__PURE__ */ jsx25(
+  return /* @__PURE__ */ jsx28(
     "li",
     {
       "data-slot": "sidebar-menu-sub-item",
@@ -2293,13 +2491,12 @@ function SidebarMenuSubButton({
 }
 
 // src/components/ui/app-sidebar.tsx
-import * as React6 from "react";
+import * as React8 from "react";
 import {
   AlertCircle,
   Check,
   ChevronDown,
-  ChevronsUpDown,
-  X
+  ChevronsUpDown
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -2307,15 +2504,15 @@ import { usePathname } from "next/navigation";
 // src/components/ui/dropdown-menu.tsx
 import { Menu as MenuPrimitive } from "@base-ui/react/menu";
 import { ChevronRightIcon as ChevronRightIcon2, CheckIcon as CheckIcon3 } from "lucide-react";
-import { jsx as jsx26, jsxs as jsxs10 } from "react/jsx-runtime";
+import { jsx as jsx29, jsxs as jsxs12 } from "react/jsx-runtime";
 function DropdownMenu({ ...props }) {
-  return /* @__PURE__ */ jsx26(MenuPrimitive.Root, { "data-slot": "dropdown-menu", ...props });
+  return /* @__PURE__ */ jsx29(MenuPrimitive.Root, { "data-slot": "dropdown-menu", ...props });
 }
 function DropdownMenuPortal({ ...props }) {
-  return /* @__PURE__ */ jsx26(MenuPrimitive.Portal, { "data-slot": "dropdown-menu-portal", ...props });
+  return /* @__PURE__ */ jsx29(MenuPrimitive.Portal, { "data-slot": "dropdown-menu-portal", ...props });
 }
 function DropdownMenuTrigger({ ...props }) {
-  return /* @__PURE__ */ jsx26(MenuPrimitive.Trigger, { "data-slot": "dropdown-menu-trigger", ...props });
+  return /* @__PURE__ */ jsx29(MenuPrimitive.Trigger, { "data-slot": "dropdown-menu-trigger", ...props });
 }
 function DropdownMenuContent({
   align = "start",
@@ -2325,7 +2522,7 @@ function DropdownMenuContent({
   className,
   ...props
 }) {
-  return /* @__PURE__ */ jsx26(MenuPrimitive.Portal, { children: /* @__PURE__ */ jsx26(
+  return /* @__PURE__ */ jsx29(MenuPrimitive.Portal, { children: /* @__PURE__ */ jsx29(
     MenuPrimitive.Positioner,
     {
       className: "isolate z-50 outline-none",
@@ -2333,7 +2530,7 @@ function DropdownMenuContent({
       alignOffset,
       side,
       sideOffset,
-      children: /* @__PURE__ */ jsx26(
+      children: /* @__PURE__ */ jsx29(
         MenuPrimitive.Popup,
         {
           "data-slot": "dropdown-menu-content",
@@ -2345,14 +2542,14 @@ function DropdownMenuContent({
   ) });
 }
 function DropdownMenuGroup({ ...props }) {
-  return /* @__PURE__ */ jsx26(MenuPrimitive.Group, { "data-slot": "dropdown-menu-group", ...props });
+  return /* @__PURE__ */ jsx29(MenuPrimitive.Group, { "data-slot": "dropdown-menu-group", ...props });
 }
 function DropdownMenuLabel({
   className,
   inset,
   ...props
 }) {
-  return /* @__PURE__ */ jsx26(
+  return /* @__PURE__ */ jsx29(
     MenuPrimitive.GroupLabel,
     {
       "data-slot": "dropdown-menu-label",
@@ -2371,7 +2568,7 @@ function DropdownMenuItem({
   variant = "default",
   ...props
 }) {
-  return /* @__PURE__ */ jsx26(
+  return /* @__PURE__ */ jsx29(
     MenuPrimitive.Item,
     {
       "data-slot": "dropdown-menu-item",
@@ -2386,7 +2583,7 @@ function DropdownMenuItem({
   );
 }
 function DropdownMenuSub({ ...props }) {
-  return /* @__PURE__ */ jsx26(MenuPrimitive.SubmenuRoot, { "data-slot": "dropdown-menu-sub", ...props });
+  return /* @__PURE__ */ jsx29(MenuPrimitive.SubmenuRoot, { "data-slot": "dropdown-menu-sub", ...props });
 }
 function DropdownMenuSubTrigger({
   className,
@@ -2394,7 +2591,7 @@ function DropdownMenuSubTrigger({
   children,
   ...props
 }) {
-  return /* @__PURE__ */ jsxs10(
+  return /* @__PURE__ */ jsxs12(
     MenuPrimitive.SubmenuTrigger,
     {
       "data-slot": "dropdown-menu-sub-trigger",
@@ -2406,7 +2603,7 @@ function DropdownMenuSubTrigger({
       ...props,
       children: [
         children,
-        /* @__PURE__ */ jsx26(ChevronRightIcon2, { className: "ml-auto" })
+        /* @__PURE__ */ jsx29(ChevronRightIcon2, { className: "ml-auto" })
       ]
     }
   );
@@ -2419,7 +2616,7 @@ function DropdownMenuSubContent({
   className,
   ...props
 }) {
-  return /* @__PURE__ */ jsx26(
+  return /* @__PURE__ */ jsx29(
     DropdownMenuContent,
     {
       "data-slot": "dropdown-menu-sub-content",
@@ -2439,7 +2636,7 @@ function DropdownMenuCheckboxItem({
   inset,
   ...props
 }) {
-  return /* @__PURE__ */ jsxs10(
+  return /* @__PURE__ */ jsxs12(
     MenuPrimitive.CheckboxItem,
     {
       "data-slot": "dropdown-menu-checkbox-item",
@@ -2451,12 +2648,12 @@ function DropdownMenuCheckboxItem({
       checked,
       ...props,
       children: [
-        /* @__PURE__ */ jsx26(
+        /* @__PURE__ */ jsx29(
           "span",
           {
             className: "pointer-events-none absolute right-2 flex items-center justify-center",
             "data-slot": "dropdown-menu-checkbox-item-indicator",
-            children: /* @__PURE__ */ jsx26(MenuPrimitive.CheckboxItemIndicator, { children: /* @__PURE__ */ jsx26(
+            children: /* @__PURE__ */ jsx29(MenuPrimitive.CheckboxItemIndicator, { children: /* @__PURE__ */ jsx29(
               CheckIcon3,
               {}
             ) })
@@ -2468,7 +2665,7 @@ function DropdownMenuCheckboxItem({
   );
 }
 function DropdownMenuRadioGroup({ ...props }) {
-  return /* @__PURE__ */ jsx26(
+  return /* @__PURE__ */ jsx29(
     MenuPrimitive.RadioGroup,
     {
       "data-slot": "dropdown-menu-radio-group",
@@ -2482,7 +2679,7 @@ function DropdownMenuRadioItem({
   inset,
   ...props
 }) {
-  return /* @__PURE__ */ jsxs10(
+  return /* @__PURE__ */ jsxs12(
     MenuPrimitive.RadioItem,
     {
       "data-slot": "dropdown-menu-radio-item",
@@ -2493,12 +2690,12 @@ function DropdownMenuRadioItem({
       ),
       ...props,
       children: [
-        /* @__PURE__ */ jsx26(
+        /* @__PURE__ */ jsx29(
           "span",
           {
             className: "pointer-events-none absolute right-2 flex items-center justify-center",
             "data-slot": "dropdown-menu-radio-item-indicator",
-            children: /* @__PURE__ */ jsx26(MenuPrimitive.RadioItemIndicator, { children: /* @__PURE__ */ jsx26(
+            children: /* @__PURE__ */ jsx29(MenuPrimitive.RadioItemIndicator, { children: /* @__PURE__ */ jsx29(
               CheckIcon3,
               {}
             ) })
@@ -2513,7 +2710,7 @@ function DropdownMenuSeparator({
   className,
   ...props
 }) {
-  return /* @__PURE__ */ jsx26(
+  return /* @__PURE__ */ jsx29(
     MenuPrimitive.Separator,
     {
       "data-slot": "dropdown-menu-separator",
@@ -2526,7 +2723,7 @@ function DropdownMenuShortcut({
   className,
   ...props
 }) {
-  return /* @__PURE__ */ jsx26(
+  return /* @__PURE__ */ jsx29(
     "span",
     {
       "data-slot": "dropdown-menu-shortcut",
@@ -2539,694 +2736,12 @@ function DropdownMenuShortcut({
   );
 }
 
-// src/components/ui/app-sidebar.tsx
-import { Fragment as Fragment2, jsx as jsx27, jsxs as jsxs11 } from "react/jsx-runtime";
-function ReusableSidebar({
-  brand,
-  workspaces,
-  activeWorkspaceId,
-  onWorkspaceChange,
-  navItems,
-  bottomCta,
-  alertBanner,
-  footerItems,
-  dropdownClassName
-}) {
-  const pathname = usePathname();
-  const { state, isMobile, setOpenMobile } = useSidebar();
-  const isCollapsed = state === "collapsed" && !isMobile;
-  const activeWorkspace = React6.useMemo(() => {
-    return workspaces.find((w) => w.id === activeWorkspaceId) || workspaces[0];
-  }, [workspaces, activeWorkspaceId]);
-  const [expandedItems, setExpandedItems] = React6.useState(() => {
-    const initial = {};
-    for (const item of navItems) {
-      if (item.items?.some((sub) => pathname === sub.href || pathname.startsWith(`${sub.href}/`))) {
-        initial[item.label] = true;
-      }
-    }
-    return initial;
-  });
-  const [alertDismissed, setAlertDismissed] = React6.useState(false);
-  React6.useEffect(() => {
-    setAlertDismissed(false);
-  }, [alertBanner?.id]);
-  const toggleExpand = (label) => {
-    setExpandedItems((prev) => ({
-      ...prev,
-      [label]: !prev[label]
-    }));
-  };
-  return /* @__PURE__ */ jsxs11(Sidebar, { collapsible: "icon", children: [
-    /* @__PURE__ */ jsxs11(SidebarHeader, { className: "gap-3 px-3 py-3", children: [
-      /* @__PURE__ */ jsx27(SidebarMenu, { children: /* @__PURE__ */ jsx27(SidebarMenuItem, { children: /* @__PURE__ */ jsxs11(
-        SidebarMenuButton,
-        {
-          render: brand.href ? /* @__PURE__ */ jsx27(Link, { href: brand.href }) : void 0,
-          tooltip: brand.name,
-          size: "lg",
-          className: "hover:bg-transparent focus-visible:ring-0 active:bg-transparent px-0! group-data-[collapsible=icon]:w-10",
-          onClick: () => setOpenMobile(false),
-          children: [
-            /* @__PURE__ */ jsx27("div", { className: "size-10 shrink-0 flex items-center justify-center", children: brand.logo }),
-            /* @__PURE__ */ jsx27("span", { className: "text-lg font-bold tracking-tight text-secondary-foreground truncate", children: brand.name })
-          ]
-        }
-      ) }) }),
-      workspaces.length > 0 && /* @__PURE__ */ jsxs11(DropdownMenu, { children: [
-        /* @__PURE__ */ jsx27(
-          DropdownMenuTrigger,
-          {
-            render: /* @__PURE__ */ jsxs11(
-              "button",
-              {
-                type: "button",
-                "aria-label": "Switch workspace",
-                className: "flex h-12 w-full items-center gap-3 rounded-lg border border-sidebar-border bg-background px-2.5 text-left text-sm font-medium text-foreground shadow-sm ring-sidebar-ring outline-hidden transition-colors hover:bg-accent/50 focus-visible:ring-2 cursor-pointer group-data-[collapsible=icon]:w-10",
-                children: [
-                  activeWorkspace.logoUrl ? /* @__PURE__ */ jsx27(
-                    "img",
-                    {
-                      src: activeWorkspace.logoUrl,
-                      alt: "",
-                      className: "size-5 shrink-0 rounded object-cover"
-                    }
-                  ) : /* @__PURE__ */ jsx27(
-                    "span",
-                    {
-                      "aria-hidden": true,
-                      className: "flex size-5 shrink-0 items-center justify-center rounded bg-gradient-primary text-2xs font-bold text-white",
-                      children: activeWorkspace.fallbackLetter
-                    }
-                  ),
-                  /* @__PURE__ */ jsxs11("span", { className: "flex-1 min-w-0 flex flex-col text-left leading-tight group-data-[collapsible=icon]:hidden", children: [
-                    /* @__PURE__ */ jsx27("span", { className: "truncate font-semibold text-foreground text-sm", children: activeWorkspace.name }),
-                    activeWorkspace.subtext && /* @__PURE__ */ jsx27("span", { className: "truncate text-2xs text-muted-foreground font-normal", children: activeWorkspace.subtext })
-                  ] }),
-                  /* @__PURE__ */ jsx27(ChevronsUpDown, { className: "size-4 shrink-0 text-muted-foreground group-data-[collapsible=icon]:hidden" })
-                ]
-              }
-            )
-          }
-        ),
-        /* @__PURE__ */ jsxs11(DropdownMenuContent, { side: isMobile ? "bottom" : "right", align: isMobile ? "center" : "start", className: cn("w-64 p-1.5", dropdownClassName), children: [
-          /* @__PURE__ */ jsxs11(DropdownMenuGroup, { className: "space-y-1", children: [
-            /* @__PURE__ */ jsx27(DropdownMenuLabel, { className: "px-2 py-1 text-xs font-semibold text-muted-foreground", children: "Workspaces" }),
-            /* @__PURE__ */ jsx27(DropdownMenuSeparator, {}),
-            workspaces.map((w) => {
-              const isSelected = w.id === activeWorkspace.id;
-              return /* @__PURE__ */ jsxs11(
-                DropdownMenuItem,
-                {
-                  onClick: () => {
-                    onWorkspaceChange(w);
-                    setOpenMobile(false);
-                  },
-                  className: "flex items-center gap-3 rounded-md px-2 py-1.5 text-sm cursor-pointer hover:bg-accent focus:bg-accent",
-                  children: [
-                    w.logoUrl ? /* @__PURE__ */ jsx27(
-                      "img",
-                      {
-                        src: w.logoUrl,
-                        alt: "",
-                        className: "size-5 shrink-0 rounded object-cover"
-                      }
-                    ) : /* @__PURE__ */ jsx27("span", { className: "flex size-5 shrink-0 items-center justify-center rounded bg-gradient-primary text-2xs font-bold text-white", children: w.fallbackLetter }),
-                    /* @__PURE__ */ jsxs11("div", { className: "flex-1 min-w-0 flex flex-col text-left leading-tight", children: [
-                      /* @__PURE__ */ jsx27("span", { className: "font-semibold text-foreground text-sm truncate", children: w.name }),
-                      w.subtext && /* @__PURE__ */ jsx27("span", { className: "text-2xs text-muted-foreground truncate", children: w.subtext })
-                    ] }),
-                    isSelected && /* @__PURE__ */ jsx27(Check, { className: "size-4 shrink-0 text-primary" })
-                  ]
-                },
-                w.id
-              );
-            })
-          ] }),
-          /* @__PURE__ */ jsx27(DropdownMenuSeparator, {}),
-          /* @__PURE__ */ jsx27(
-            DropdownMenuItem,
-            {
-              onClick: () => setOpenMobile(false),
-              className: "cursor-pointer px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground",
-              children: "+ Add workspace"
-            }
-          )
-        ] })
-      ] })
-    ] }),
-    /* @__PURE__ */ jsxs11(SidebarContent, { children: [
-      /* @__PURE__ */ jsx27(SidebarGroup, { className: "p-0 px-3 pt-1", children: /* @__PURE__ */ jsx27(SidebarGroupContent, { children: /* @__PURE__ */ jsx27(SidebarMenu, { children: navItems.map(({ href, label, icon: Icon, items, badge }) => {
-        const active = href ? pathname === href || pathname.startsWith(`${href}/`) : items?.some((sub) => pathname === sub.href || pathname.startsWith(`${sub.href}/`)) || false;
-        const isExpanded = !!expandedItems[label];
-        return /* @__PURE__ */ jsx27(SidebarMenuItem, { children: items && items.length > 0 ? isCollapsed ? /* @__PURE__ */ jsxs11(DropdownMenu, { children: [
-          /* @__PURE__ */ jsx27(
-            DropdownMenuTrigger,
-            {
-              render: /* @__PURE__ */ jsx27(
-                SidebarMenuButton,
-                {
-                  isActive: active,
-                  tooltip: label,
-                  className: "w-full justify-between",
-                  children: /* @__PURE__ */ jsxs11("span", { className: "flex items-center gap-3", children: [
-                    /* @__PURE__ */ jsx27(Icon, {}),
-                    /* @__PURE__ */ jsx27("span", { className: "group-data-[collapsible=icon]:hidden whitespace-nowrap", children: label })
-                  ] })
-                }
-              )
-            }
-          ),
-          /* @__PURE__ */ jsxs11(DropdownMenuContent, { side: "right", align: "start", className: dropdownClassName, children: [
-            /* @__PURE__ */ jsx27(DropdownMenuGroup, { children: /* @__PURE__ */ jsx27(DropdownMenuLabel, { children: label }) }),
-            /* @__PURE__ */ jsx27(DropdownMenuSeparator, {}),
-            items.map((sub) => /* @__PURE__ */ jsx27(
-              DropdownMenuItem,
-              {
-                render: /* @__PURE__ */ jsx27(Link, { href: sub.href }),
-                className: cn(
-                  "cursor-pointer",
-                  pathname === sub.href && "bg-accent text-accent-foreground font-medium"
-                ),
-                children: /* @__PURE__ */ jsx27("span", { children: sub.label })
-              },
-              sub.href
-            ))
-          ] })
-        ] }) : /* @__PURE__ */ jsxs11(Fragment2, { children: [
-          /* @__PURE__ */ jsxs11(
-            SidebarMenuButton,
-            {
-              onClick: () => toggleExpand(label),
-              isActive: active,
-              tooltip: label,
-              className: "w-full justify-between",
-              children: [
-                /* @__PURE__ */ jsxs11("span", { className: "flex items-center gap-3", children: [
-                  /* @__PURE__ */ jsx27(Icon, {}),
-                  /* @__PURE__ */ jsx27("span", { className: "group-data-[collapsible=icon]:hidden whitespace-nowrap", children: label })
-                ] }),
-                /* @__PURE__ */ jsxs11("span", { className: "flex items-center gap-1 group-data-[collapsible=icon]:hidden", children: [
-                  badge,
-                  /* @__PURE__ */ jsx27(
-                    ChevronDown,
-                    {
-                      className: cn(
-                        "size-3.5 shrink-0 text-muted-foreground transition-transform duration-200",
-                        isExpanded && "rotate-180"
-                      )
-                    }
-                  )
-                ] })
-              ]
-            }
-          ),
-          isExpanded && /* @__PURE__ */ jsx27(SidebarMenuSub, { children: items.map((sub) => /* @__PURE__ */ jsx27(SidebarMenuSubItem, { children: /* @__PURE__ */ jsx27(
-            SidebarMenuSubButton,
-            {
-              render: /* @__PURE__ */ jsx27(Link, { href: sub.href }),
-              isActive: pathname === sub.href,
-              onClick: () => setOpenMobile(false),
-              children: /* @__PURE__ */ jsx27("span", { children: sub.label })
-            }
-          ) }, sub.href)) })
-        ] }) : /* @__PURE__ */ jsxs11(
-          SidebarMenuButton,
-          {
-            render: href ? /* @__PURE__ */ jsx27(Link, { href }) : void 0,
-            isActive: active,
-            tooltip: label,
-            className: "justify-between",
-            onClick: () => setOpenMobile(false),
-            children: [
-              /* @__PURE__ */ jsxs11("span", { className: "flex items-center gap-3", children: [
-                /* @__PURE__ */ jsx27(Icon, {}),
-                /* @__PURE__ */ jsx27("span", { className: "group-data-[collapsible=icon]:hidden whitespace-nowrap", children: label })
-              ] }),
-              badge && /* @__PURE__ */ jsx27("span", { className: "group-data-[collapsible=icon]:hidden", children: badge })
-            ]
-          }
-        ) }, label);
-      }) }) }) }),
-      /* @__PURE__ */ jsxs11("div", { className: "mt-auto flex flex-col", children: [
-        footerItems && footerItems.length > 0 && /* @__PURE__ */ jsx27("div", { className: "px-3 pb-2 pt-2 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:px-3", children: /* @__PURE__ */ jsx27(SidebarMenu, { children: footerItems.map((item) => /* @__PURE__ */ jsx27(SidebarMenuItem, { children: /* @__PURE__ */ jsxs11(
-          SidebarMenuButton,
-          {
-            render: /* @__PURE__ */ jsx27(Link, { href: item.href }),
-            tooltip: item.label,
-            onClick: () => setOpenMobile(false),
-            children: [
-              /* @__PURE__ */ jsx27(item.icon, {}),
-              /* @__PURE__ */ jsx27("span", { children: item.label })
-            ]
-          }
-        ) }, item.label)) }) }),
-        bottomCta && /* @__PURE__ */ jsx27("div", { className: "px-3 py-2 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:px-3", children: /* @__PURE__ */ jsx27(
-          Button,
-          {
-            variant: "default",
-            className: "w-full justify-start gap-2.5 h-10 group-data-[collapsible=icon]:size-10 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:rounded-lg",
-            render: /* @__PURE__ */ jsx27(Link, { href: bottomCta.href }),
-            onClick: () => setOpenMobile(false),
-            children: /* @__PURE__ */ jsxs11("span", { className: "flex items-center gap-2.5 w-full justify-start group-data-[collapsible=icon]:justify-center", children: [
-              /* @__PURE__ */ jsx27(bottomCta.icon, { className: "size-4 shrink-0" }),
-              /* @__PURE__ */ jsx27("span", { className: "group-data-[collapsible=icon]:hidden truncate", children: bottomCta.label })
-            ] })
-          }
-        ) }),
-        alertBanner && !alertDismissed && /* @__PURE__ */ jsx27("div", { className: "p-3 group-data-[collapsible=icon]:p-2 pt-0 group-data-[collapsible=icon]:pt-0", children: /* @__PURE__ */ jsxs11(Tooltip, { children: [
-          /* @__PURE__ */ jsx27(
-            TooltipTrigger,
-            {
-              render: /* @__PURE__ */ jsxs11("div", { className: "relative rounded-lg border border-warning/20 bg-warning-subtle p-3 group-data-[collapsible=icon]:p-2 text-xs text-warning-foreground shadow-xs transition-all duration-200", children: [
-                /* @__PURE__ */ jsx27(
-                  "button",
-                  {
-                    type: "button",
-                    onClick: (e) => {
-                      e.stopPropagation();
-                      setAlertDismissed(true);
-                    },
-                    className: "absolute top-2 right-2 text-warning hover:text-warning-foreground transition-colors group-data-[collapsible=icon]:hidden cursor-pointer",
-                    "aria-label": "Dismiss alert",
-                    children: /* @__PURE__ */ jsx27(X, { className: "size-3" })
-                  }
-                ),
-                /* @__PURE__ */ jsxs11("div", { className: "flex gap-2", children: [
-                  /* @__PURE__ */ jsx27(AlertCircle, { className: "size-4 shrink-0 text-warning" }),
-                  /* @__PURE__ */ jsxs11("div", { className: "space-y-1 group-data-[collapsible=icon]:hidden text-left", children: [
-                    /* @__PURE__ */ jsx27("p", { className: "font-semibold leading-none text-warning-foreground", children: alertBanner.title }),
-                    /* @__PURE__ */ jsx27("p", { className: "text-2xs text-muted-foreground/85 leading-normal", children: alertBanner.description }),
-                    alertBanner.ctaText && /* @__PURE__ */ jsx27(
-                      "button",
-                      {
-                        type: "button",
-                        onClick: alertBanner.onCtaClick,
-                        className: "text-2xs font-semibold text-warning underline hover:text-warning-foreground block pt-0.5 cursor-pointer",
-                        children: alertBanner.ctaText
-                      }
-                    )
-                  ] })
-                ] })
-              ] })
-            }
-          ),
-          /* @__PURE__ */ jsx27(
-            TooltipContent,
-            {
-              side: "right",
-              align: "center",
-              hidden: !isCollapsed || isMobile,
-              className: "max-w-xs p-3 text-left",
-              children: /* @__PURE__ */ jsxs11("div", { className: "space-y-1", children: [
-                /* @__PURE__ */ jsx27("p", { className: "font-semibold text-xs text-warning", children: alertBanner.title }),
-                /* @__PURE__ */ jsx27("p", { className: "text-2xs text-muted-foreground", children: alertBanner.description })
-              ] })
-            }
-          )
-        ] }) })
-      ] })
-    ] })
-  ] });
-}
-
-// src/components/ui/popover.tsx
-import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
-import { jsx as jsx28 } from "react/jsx-runtime";
-function Popover({ ...props }) {
-  return /* @__PURE__ */ jsx28(PopoverPrimitive.Root, { "data-slot": "popover", ...props });
-}
-function PopoverTrigger({ ...props }) {
-  return /* @__PURE__ */ jsx28(PopoverPrimitive.Trigger, { "data-slot": "popover-trigger", ...props });
-}
-function PopoverContent({
-  className,
-  align = "center",
-  alignOffset = 0,
-  side = "bottom",
-  sideOffset = 4,
-  ...props
-}) {
-  return /* @__PURE__ */ jsx28(PopoverPrimitive.Portal, { children: /* @__PURE__ */ jsx28(
-    PopoverPrimitive.Positioner,
-    {
-      align,
-      alignOffset,
-      side,
-      sideOffset,
-      className: "isolate z-50",
-      children: /* @__PURE__ */ jsx28(
-        PopoverPrimitive.Popup,
-        {
-          "data-slot": "popover-content",
-          className: cn(
-            "z-50 flex w-72 origin-(--transform-origin) flex-col gap-2.5 rounded-lg bg-popover p-2.5 text-sm text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-hidden duration-100 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
-            className
-          ),
-          ...props
-        }
-      )
-    }
-  ) });
-}
-function PopoverHeader({ className, ...props }) {
-  return /* @__PURE__ */ jsx28(
-    "div",
-    {
-      "data-slot": "popover-header",
-      className: cn("flex flex-col gap-0.5 text-sm", className),
-      ...props
-    }
-  );
-}
-function PopoverTitle({ className, ...props }) {
-  return /* @__PURE__ */ jsx28(
-    PopoverPrimitive.Title,
-    {
-      "data-slot": "popover-title",
-      className: cn("font-medium", className),
-      ...props
-    }
-  );
-}
-function PopoverDescription({
-  className,
-  ...props
-}) {
-  return /* @__PURE__ */ jsx28(
-    PopoverPrimitive.Description,
-    {
-      "data-slot": "popover-description",
-      className: cn("text-muted-foreground", className),
-      ...props
-    }
-  );
-}
-
-// src/components/ui/dialog.tsx
-import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
-import { XIcon as XIcon2 } from "lucide-react";
-import { jsx as jsx29, jsxs as jsxs12 } from "react/jsx-runtime";
-function Dialog({ ...props }) {
-  return /* @__PURE__ */ jsx29(DialogPrimitive.Root, { "data-slot": "dialog", ...props });
-}
-function DialogTrigger({ ...props }) {
-  return /* @__PURE__ */ jsx29(DialogPrimitive.Trigger, { "data-slot": "dialog-trigger", ...props });
-}
-function DialogPortal({ ...props }) {
-  return /* @__PURE__ */ jsx29(DialogPrimitive.Portal, { "data-slot": "dialog-portal", ...props });
-}
-function DialogClose({ ...props }) {
-  return /* @__PURE__ */ jsx29(DialogPrimitive.Close, { "data-slot": "dialog-close", ...props });
-}
-function DialogOverlay({
-  className,
-  ...props
-}) {
-  return /* @__PURE__ */ jsx29(
-    DialogPrimitive.Backdrop,
-    {
-      "data-slot": "dialog-overlay",
-      className: cn(
-        "fixed inset-0 isolate z-50 bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
-        className
-      ),
-      ...props
-    }
-  );
-}
-function DialogContent({
-  className,
-  children,
-  showCloseButton = true,
-  ...props
-}) {
-  return /* @__PURE__ */ jsxs12(DialogPortal, { children: [
-    /* @__PURE__ */ jsx29(DialogOverlay, {}),
-    /* @__PURE__ */ jsxs12(
-      DialogPrimitive.Popup,
-      {
-        "data-slot": "dialog-content",
-        className: cn(
-          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-popover p-4 text-sm text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
-          className
-        ),
-        ...props,
-        children: [
-          children,
-          showCloseButton && /* @__PURE__ */ jsxs12(
-            DialogPrimitive.Close,
-            {
-              "data-slot": "dialog-close",
-              render: /* @__PURE__ */ jsx29(
-                Button,
-                {
-                  variant: "ghost",
-                  className: "absolute top-2 right-2",
-                  size: "icon-sm"
-                }
-              ),
-              children: [
-                /* @__PURE__ */ jsx29(
-                  XIcon2,
-                  {}
-                ),
-                /* @__PURE__ */ jsx29("span", { className: "sr-only", children: "Close" })
-              ]
-            }
-          )
-        ]
-      }
-    )
-  ] });
-}
-function DialogHeader({ className, ...props }) {
-  return /* @__PURE__ */ jsx29(
-    "div",
-    {
-      "data-slot": "dialog-header",
-      className: cn("flex flex-col gap-2", className),
-      ...props
-    }
-  );
-}
-function DialogFooter({
-  className,
-  showCloseButton = false,
-  children,
-  ...props
-}) {
-  return /* @__PURE__ */ jsxs12(
-    "div",
-    {
-      "data-slot": "dialog-footer",
-      className: cn(
-        "-mx-4 -mb-4 flex flex-col-reverse gap-2 rounded-b-xl border-t bg-muted/50 p-4 sm:flex-row sm:justify-end",
-        className
-      ),
-      ...props,
-      children: [
-        children,
-        showCloseButton && /* @__PURE__ */ jsx29(DialogPrimitive.Close, { render: /* @__PURE__ */ jsx29(Button, { variant: "outline" }), children: "Close" })
-      ]
-    }
-  );
-}
-function DialogTitle({ className, ...props }) {
-  return /* @__PURE__ */ jsx29(
-    DialogPrimitive.Title,
-    {
-      "data-slot": "dialog-title",
-      className: cn(
-        "font-heading text-base leading-none font-medium",
-        className
-      ),
-      ...props
-    }
-  );
-}
-function DialogDescription({
-  className,
-  ...props
-}) {
-  return /* @__PURE__ */ jsx29(
-    DialogPrimitive.Description,
-    {
-      "data-slot": "dialog-description",
-      className: cn(
-        "text-sm text-muted-foreground *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-foreground",
-        className
-      ),
-      ...props
-    }
-  );
-}
-
-// src/components/ui/alert-dialog.tsx
-import { AlertDialog as AlertDialogPrimitive } from "@base-ui/react/alert-dialog";
-import { jsx as jsx30, jsxs as jsxs13 } from "react/jsx-runtime";
-function AlertDialog({ ...props }) {
-  return /* @__PURE__ */ jsx30(AlertDialogPrimitive.Root, { "data-slot": "alert-dialog", ...props });
-}
-function AlertDialogTrigger({ ...props }) {
-  return /* @__PURE__ */ jsx30(AlertDialogPrimitive.Trigger, { "data-slot": "alert-dialog-trigger", ...props });
-}
-function AlertDialogPortal({ ...props }) {
-  return /* @__PURE__ */ jsx30(AlertDialogPrimitive.Portal, { "data-slot": "alert-dialog-portal", ...props });
-}
-function AlertDialogOverlay({
-  className,
-  ...props
-}) {
-  return /* @__PURE__ */ jsx30(
-    AlertDialogPrimitive.Backdrop,
-    {
-      "data-slot": "alert-dialog-overlay",
-      className: cn(
-        "fixed inset-0 isolate z-50 bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
-        className
-      ),
-      ...props
-    }
-  );
-}
-function AlertDialogContent({
-  className,
-  size = "default",
-  ...props
-}) {
-  return /* @__PURE__ */ jsxs13(AlertDialogPortal, { children: [
-    /* @__PURE__ */ jsx30(AlertDialogOverlay, {}),
-    /* @__PURE__ */ jsx30(
-      AlertDialogPrimitive.Popup,
-      {
-        "data-slot": "alert-dialog-content",
-        "data-size": size,
-        className: cn(
-          "group/alert-dialog-content fixed top-1/2 left-1/2 z-50 grid w-full -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-popover p-4 text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none data-[size=default]:max-w-xs data-[size=sm]:max-w-xs data-[size=default]:sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
-          className
-        ),
-        ...props
-      }
-    )
-  ] });
-}
-function AlertDialogHeader({
-  className,
-  ...props
-}) {
-  return /* @__PURE__ */ jsx30(
-    "div",
-    {
-      "data-slot": "alert-dialog-header",
-      className: cn(
-        "grid grid-rows-[auto_1fr] place-items-center gap-1.5 text-center has-data-[slot=alert-dialog-media]:grid-rows-[auto_auto_1fr] has-data-[slot=alert-dialog-media]:gap-x-4 sm:group-data-[size=default]/alert-dialog-content:place-items-start sm:group-data-[size=default]/alert-dialog-content:text-left sm:group-data-[size=default]/alert-dialog-content:has-data-[slot=alert-dialog-media]:grid-rows-[auto_1fr]",
-        className
-      ),
-      ...props
-    }
-  );
-}
-function AlertDialogFooter({
-  className,
-  ...props
-}) {
-  return /* @__PURE__ */ jsx30(
-    "div",
-    {
-      "data-slot": "alert-dialog-footer",
-      className: cn(
-        "-mx-4 -mb-4 flex flex-col-reverse gap-2 rounded-b-xl border-t bg-muted/50 p-4 group-data-[size=sm]/alert-dialog-content:grid group-data-[size=sm]/alert-dialog-content:grid-cols-2 sm:flex-row sm:justify-end",
-        className
-      ),
-      ...props
-    }
-  );
-}
-function AlertDialogMedia({
-  className,
-  ...props
-}) {
-  return /* @__PURE__ */ jsx30(
-    "div",
-    {
-      "data-slot": "alert-dialog-media",
-      className: cn(
-        "mb-2 inline-flex size-10 items-center justify-center rounded-md bg-muted sm:group-data-[size=default]/alert-dialog-content:row-span-2 *:[svg:not([class*='size-'])]:size-6",
-        className
-      ),
-      ...props
-    }
-  );
-}
-function AlertDialogTitle({
-  className,
-  ...props
-}) {
-  return /* @__PURE__ */ jsx30(
-    AlertDialogPrimitive.Title,
-    {
-      "data-slot": "alert-dialog-title",
-      className: cn(
-        "font-heading text-base font-medium sm:group-data-[size=default]/alert-dialog-content:group-has-data-[slot=alert-dialog-media]/alert-dialog-content:col-start-2",
-        className
-      ),
-      ...props
-    }
-  );
-}
-function AlertDialogDescription({
-  className,
-  ...props
-}) {
-  return /* @__PURE__ */ jsx30(
-    AlertDialogPrimitive.Description,
-    {
-      "data-slot": "alert-dialog-description",
-      className: cn(
-        "text-sm text-balance text-muted-foreground md:text-pretty *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-foreground",
-        className
-      ),
-      ...props
-    }
-  );
-}
-function AlertDialogAction({
-  className,
-  ...props
-}) {
-  return /* @__PURE__ */ jsx30(
-    Button,
-    {
-      "data-slot": "alert-dialog-action",
-      className: cn(className),
-      ...props
-    }
-  );
-}
-function AlertDialogCancel({
-  className,
-  variant = "outline",
-  size = "default",
-  ...props
-}) {
-  return /* @__PURE__ */ jsx30(
-    AlertDialogPrimitive.Close,
-    {
-      "data-slot": "alert-dialog-cancel",
-      className: cn(className),
-      render: /* @__PURE__ */ jsx30(Button, { variant, size }),
-      ...props
-    }
-  );
-}
-
 // src/components/ui/alert-banner.tsx
 import * as React7 from "react";
 
 // src/components/ui/alert.tsx
 import { cva as cva11 } from "class-variance-authority";
-import { jsx as jsx31 } from "react/jsx-runtime";
+import { jsx as jsx30 } from "react/jsx-runtime";
 var alertVariants = cva11(
   "group/alert relative grid w-full gap-0.5 rounded-lg border px-2.5 py-2 text-left text-sm has-data-[slot=alert-action]:relative has-data-[slot=alert-action]:pr-18 has-[>svg]:grid-cols-[auto_1fr] has-[>svg]:gap-x-2 *:[svg]:row-span-2 *:[svg]:translate-y-0.5 *:[svg]:text-current *:[svg:not([class*='size-'])]:size-4",
   {
@@ -3249,7 +2764,7 @@ function Alert({
   variant,
   ...props
 }) {
-  return /* @__PURE__ */ jsx31(
+  return /* @__PURE__ */ jsx30(
     "div",
     {
       "data-slot": "alert",
@@ -3260,7 +2775,7 @@ function Alert({
   );
 }
 function AlertTitle({ className, ...props }) {
-  return /* @__PURE__ */ jsx31(
+  return /* @__PURE__ */ jsx30(
     "div",
     {
       "data-slot": "alert-title",
@@ -3276,7 +2791,7 @@ function AlertDescription({
   className,
   ...props
 }) {
-  return /* @__PURE__ */ jsx31(
+  return /* @__PURE__ */ jsx30(
     "div",
     {
       "data-slot": "alert-description",
@@ -3289,7 +2804,7 @@ function AlertDescription({
   );
 }
 function AlertAction({ className, ...props }) {
-  return /* @__PURE__ */ jsx31(
+  return /* @__PURE__ */ jsx30(
     "div",
     {
       "data-slot": "alert-action",
@@ -3300,8 +2815,8 @@ function AlertAction({ className, ...props }) {
 }
 
 // src/components/ui/alert-banner.tsx
-import { XIcon as XIcon3 } from "lucide-react";
-import { jsx as jsx32, jsxs as jsxs14 } from "react/jsx-runtime";
+import { XIcon as XIcon2 } from "lucide-react";
+import { jsx as jsx31, jsxs as jsxs13 } from "react/jsx-runtime";
 var accentColorMap = {
   default: "text-foreground",
   destructive: "text-destructive",
@@ -3310,11 +2825,11 @@ var accentColorMap = {
   info: "text-info"
 };
 var primaryBgMap = {
-  default: "bg-gradient-to-r from-muted to-muted/80",
-  destructive: "bg-gradient-to-r from-destructive to-destructive/80",
-  success: "bg-gradient-to-r from-success to-success/80",
-  warning: "bg-gradient-to-r from-warning to-warning/80",
-  info: "bg-gradient-to-r from-info to-info/80"
+  default: "bg-gradient-banner-default text-white",
+  destructive: "bg-gradient-banner-destructive text-white",
+  success: "bg-gradient-banner-success text-white",
+  warning: "bg-gradient-banner-warning text-gray-950",
+  info: "bg-gradient-banner-info text-white"
 };
 var AlertBanner = React7.forwardRef(
   ({
@@ -3326,37 +2841,54 @@ var AlertBanner = React7.forwardRef(
     onClose,
     borderless = true,
     appearance = "secondary",
+    collapsed = false,
     ...props
   }, ref) => {
     const isPrimary = appearance === "primary";
     const safeVariant = variant || "default";
     const accentColor = isPrimary ? "text-white" : accentColorMap[safeVariant];
     const textColor = isPrimary ? "text-white" : "text-foreground";
-    return /* @__PURE__ */ jsxs14(
+    if (collapsed) {
+      return /* @__PURE__ */ jsx31(
+        Alert,
+        {
+          ref,
+          variant: isPrimary ? void 0 : variant,
+          className: cn(
+            "flex size-10 items-center justify-center p-0 rounded-xl transition-all duration-200 shrink-0 mx-auto",
+            borderless && "border-transparent shadow-none",
+            isPrimary && cn("bg-transparent", primaryBgMap[safeVariant]),
+            className
+          ),
+          ...props,
+          children: icon && /* @__PURE__ */ jsx31("div", { className: cn("flex items-center justify-center [&>svg]:size-4", accentColor), children: icon })
+        }
+      );
+    }
+    return /* @__PURE__ */ jsxs13(
       Alert,
       {
         ref,
         variant: isPrimary ? void 0 : variant,
         className: cn(
-          "flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 py-2.5 px-3",
+          "relative flex items-center justify-between gap-2.5 py-2.5 px-3 rounded-lg text-left",
           borderless && "border-transparent shadow-none",
-          onClose && "pr-8 sm:pr-3",
-          isPrimary && primaryBgMap[safeVariant],
+          isPrimary && cn("bg-transparent", primaryBgMap[safeVariant]),
           className
         ),
         ...props,
         children: [
-          /* @__PURE__ */ jsxs14("div", { className: "flex flex-1 items-start sm:items-center gap-2", children: [
-            icon && /* @__PURE__ */ jsx32("div", { className: cn("mt-0.5 shrink-0 sm:mt-0 flex items-center justify-center [&>svg]:size-4", accentColor), children: icon }),
-            /* @__PURE__ */ jsxs14("div", { className: "flex-1 text-sm leading-snug pt-0.5 sm:pt-0", children: [
-              /* @__PURE__ */ jsx32(AlertTitle, { className: cn("inline font-medium !mb-0 mr-1.5", textColor), children: title }),
-              action && /* @__PURE__ */ jsx32(
+          /* @__PURE__ */ jsxs13("div", { className: "flex flex-1 items-center gap-2.5 min-w-0", children: [
+            icon && /* @__PURE__ */ jsx31("div", { className: cn("shrink-0 flex items-center justify-center [&>svg]:size-4", accentColor), children: icon }),
+            /* @__PURE__ */ jsxs13("div", { className: "flex-1 text-xs leading-normal min-w-0", children: [
+              /* @__PURE__ */ jsx31(AlertTitle, { className: cn("inline font-medium !mb-0 mr-1.5 leading-normal", textColor), children: title }),
+              action && /* @__PURE__ */ jsx31(
                 "button",
                 {
                   type: "button",
                   onClick: action.onClick,
                   className: cn(
-                    "group inline-flex items-center font-semibold underline underline-offset-4 hover:opacity-80 focus-visible:outline-none rounded-sm align-baseline",
+                    "group inline-flex items-center font-semibold underline underline-offset-4 hover:opacity-80 focus-visible:outline-none rounded-sm align-baseline cursor-pointer whitespace-nowrap",
                     accentColor
                   ),
                   children: action.label
@@ -3364,18 +2896,18 @@ var AlertBanner = React7.forwardRef(
               )
             ] })
           ] }),
-          onClose && /* @__PURE__ */ jsxs14(
+          onClose && /* @__PURE__ */ jsxs13(
             "button",
             {
               type: "button",
               onClick: onClose,
               className: cn(
-                "absolute right-2 top-2.5 rounded-md p-1 opacity-70 hover:opacity-100 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:static sm:right-auto sm:top-auto sm:-mr-1",
+                "shrink-0 rounded-md p-1 opacity-70 hover:opacity-100 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer -mr-1",
                 textColor
               ),
               children: [
-                /* @__PURE__ */ jsx32(XIcon3, { className: "size-4" }),
-                /* @__PURE__ */ jsx32("span", { className: "sr-only", children: "Close" })
+                /* @__PURE__ */ jsx31(XIcon2, { className: "size-4" }),
+                /* @__PURE__ */ jsx31("span", { className: "sr-only", children: "Close" })
               ]
             }
           )
@@ -3386,24 +2918,683 @@ var AlertBanner = React7.forwardRef(
 );
 AlertBanner.displayName = "AlertBanner";
 
+// src/components/ui/app-sidebar.tsx
+import { Fragment as Fragment2, jsx as jsx32, jsxs as jsxs14 } from "react/jsx-runtime";
+function ReusableSidebar({
+  brand,
+  workspaces,
+  activeWorkspaceId,
+  onWorkspaceChange,
+  navItems,
+  bottomCta,
+  alertBanner,
+  footerItems,
+  dropdownClassName
+}) {
+  const pathname = usePathname();
+  const { state, isMobile, setOpenMobile } = useSidebar();
+  const isCollapsed = state === "collapsed" && !isMobile;
+  const activeWorkspace = React8.useMemo(() => {
+    return workspaces.find((w) => w.id === activeWorkspaceId) || workspaces[0];
+  }, [workspaces, activeWorkspaceId]);
+  const [expandedItems, setExpandedItems] = React8.useState(() => {
+    const initial = {};
+    for (const item of navItems) {
+      if (item.items?.some((sub) => pathname === sub.href || pathname.startsWith(`${sub.href}/`))) {
+        initial[item.label] = true;
+      }
+    }
+    return initial;
+  });
+  const [alertDismissed, setAlertDismissed] = React8.useState(false);
+  React8.useEffect(() => {
+    setAlertDismissed(false);
+  }, [alertBanner?.id]);
+  const toggleExpand = (label) => {
+    setExpandedItems((prev) => ({
+      ...prev,
+      [label]: !prev[label]
+    }));
+  };
+  return /* @__PURE__ */ jsxs14(Sidebar, { collapsible: "icon", children: [
+    /* @__PURE__ */ jsxs14(SidebarHeader, { className: "gap-3 px-3 py-3", children: [
+      /* @__PURE__ */ jsx32(SidebarMenu, { children: /* @__PURE__ */ jsx32(SidebarMenuItem, { children: /* @__PURE__ */ jsxs14(
+        SidebarMenuButton,
+        {
+          render: brand.href ? /* @__PURE__ */ jsx32(Link, { href: brand.href }) : void 0,
+          tooltip: brand.name,
+          size: "lg",
+          className: "hover:bg-transparent focus-visible:ring-0 active:bg-transparent px-0! group-data-[collapsible=icon]:w-10",
+          onClick: () => setOpenMobile(false),
+          children: [
+            /* @__PURE__ */ jsx32("div", { className: "size-10 shrink-0 flex items-center justify-center", children: brand.logo }),
+            /* @__PURE__ */ jsx32("span", { className: "text-lg font-bold tracking-tight text-secondary-foreground truncate", children: brand.name })
+          ]
+        }
+      ) }) }),
+      workspaces.length > 0 && /* @__PURE__ */ jsxs14(DropdownMenu, { children: [
+        /* @__PURE__ */ jsx32(
+          DropdownMenuTrigger,
+          {
+            render: /* @__PURE__ */ jsxs14(
+              "button",
+              {
+                type: "button",
+                "aria-label": "Switch workspace",
+                className: "flex h-12 w-full items-center gap-3 rounded-lg border border-sidebar-border bg-background px-2.5 text-left text-sm font-medium text-foreground shadow-sm ring-sidebar-ring outline-hidden transition-colors hover:bg-accent/50 focus-visible:ring-2 cursor-pointer group-data-[collapsible=icon]:w-10",
+                children: [
+                  activeWorkspace.logoUrl ? /* @__PURE__ */ jsx32(
+                    "img",
+                    {
+                      src: activeWorkspace.logoUrl,
+                      alt: "",
+                      className: "size-5 shrink-0 rounded object-cover"
+                    }
+                  ) : /* @__PURE__ */ jsx32(
+                    "span",
+                    {
+                      "aria-hidden": true,
+                      className: "flex size-5 shrink-0 items-center justify-center rounded bg-gradient-primary text-2xs font-bold text-white",
+                      children: activeWorkspace.fallbackLetter
+                    }
+                  ),
+                  /* @__PURE__ */ jsxs14("span", { className: "flex-1 min-w-0 flex flex-col text-left leading-tight group-data-[collapsible=icon]:hidden", children: [
+                    /* @__PURE__ */ jsx32("span", { className: "truncate font-semibold text-foreground text-sm", children: activeWorkspace.name }),
+                    activeWorkspace.subtext && /* @__PURE__ */ jsx32("span", { className: "truncate text-2xs text-muted-foreground font-normal", children: activeWorkspace.subtext })
+                  ] }),
+                  /* @__PURE__ */ jsx32(ChevronsUpDown, { className: "size-4 shrink-0 text-muted-foreground group-data-[collapsible=icon]:hidden" })
+                ]
+              }
+            )
+          }
+        ),
+        /* @__PURE__ */ jsxs14(DropdownMenuContent, { side: isMobile ? "bottom" : "right", align: isMobile ? "center" : "start", className: cn("w-64 p-1.5", dropdownClassName), children: [
+          /* @__PURE__ */ jsxs14(DropdownMenuGroup, { className: "space-y-1", children: [
+            /* @__PURE__ */ jsx32(DropdownMenuLabel, { className: "px-2 py-1 text-xs font-semibold text-muted-foreground", children: "Workspaces" }),
+            /* @__PURE__ */ jsx32(DropdownMenuSeparator, {}),
+            workspaces.map((w) => {
+              const isSelected = w.id === activeWorkspace.id;
+              return /* @__PURE__ */ jsxs14(
+                DropdownMenuItem,
+                {
+                  onClick: () => {
+                    onWorkspaceChange(w);
+                    setOpenMobile(false);
+                  },
+                  className: "flex items-center gap-3 rounded-md px-2 py-1.5 text-sm cursor-pointer hover:bg-accent focus:bg-accent",
+                  children: [
+                    w.logoUrl ? /* @__PURE__ */ jsx32(
+                      "img",
+                      {
+                        src: w.logoUrl,
+                        alt: "",
+                        className: "size-5 shrink-0 rounded object-cover"
+                      }
+                    ) : /* @__PURE__ */ jsx32("span", { className: "flex size-5 shrink-0 items-center justify-center rounded bg-gradient-primary text-2xs font-bold text-white", children: w.fallbackLetter }),
+                    /* @__PURE__ */ jsxs14("div", { className: "flex-1 min-w-0 flex flex-col text-left leading-tight", children: [
+                      /* @__PURE__ */ jsx32("span", { className: "font-semibold text-foreground text-sm truncate", children: w.name }),
+                      w.subtext && /* @__PURE__ */ jsx32("span", { className: "text-2xs text-muted-foreground truncate", children: w.subtext })
+                    ] }),
+                    isSelected && /* @__PURE__ */ jsx32(Check, { className: "size-4 shrink-0 text-primary" })
+                  ]
+                },
+                w.id
+              );
+            })
+          ] }),
+          /* @__PURE__ */ jsx32(DropdownMenuSeparator, {}),
+          /* @__PURE__ */ jsx32(
+            DropdownMenuItem,
+            {
+              onClick: () => setOpenMobile(false),
+              className: "cursor-pointer px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground",
+              children: "+ Add workspace"
+            }
+          )
+        ] })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs14(SidebarContent, { children: [
+      /* @__PURE__ */ jsx32(SidebarGroup, { className: "p-0 px-3 pt-1", children: /* @__PURE__ */ jsx32(SidebarGroupContent, { children: /* @__PURE__ */ jsx32(SidebarMenu, { children: navItems.map(({ href, label, icon: Icon, items, badge }) => {
+        const active = href ? pathname === href || pathname.startsWith(`${href}/`) : items?.some((sub) => pathname === sub.href || pathname.startsWith(`${sub.href}/`)) || false;
+        const isExpanded = !!expandedItems[label];
+        return /* @__PURE__ */ jsx32(SidebarMenuItem, { children: items && items.length > 0 ? isCollapsed ? /* @__PURE__ */ jsxs14(DropdownMenu, { children: [
+          /* @__PURE__ */ jsx32(
+            DropdownMenuTrigger,
+            {
+              render: /* @__PURE__ */ jsx32(
+                SidebarMenuButton,
+                {
+                  isActive: active,
+                  tooltip: label,
+                  className: "w-full justify-between",
+                  children: /* @__PURE__ */ jsxs14("span", { className: "flex items-center gap-3", children: [
+                    /* @__PURE__ */ jsx32(Icon, {}),
+                    /* @__PURE__ */ jsx32("span", { className: "group-data-[collapsible=icon]:hidden whitespace-nowrap", children: label })
+                  ] })
+                }
+              )
+            }
+          ),
+          /* @__PURE__ */ jsxs14(DropdownMenuContent, { side: "right", align: "start", className: dropdownClassName, children: [
+            /* @__PURE__ */ jsx32(DropdownMenuGroup, { children: /* @__PURE__ */ jsx32(DropdownMenuLabel, { children: label }) }),
+            /* @__PURE__ */ jsx32(DropdownMenuSeparator, {}),
+            items.map((sub) => /* @__PURE__ */ jsx32(
+              DropdownMenuItem,
+              {
+                render: /* @__PURE__ */ jsx32(Link, { href: sub.href }),
+                className: cn(
+                  "cursor-pointer",
+                  pathname === sub.href && "bg-accent text-accent-foreground font-medium"
+                ),
+                children: /* @__PURE__ */ jsx32("span", { children: sub.label })
+              },
+              sub.href
+            ))
+          ] })
+        ] }) : /* @__PURE__ */ jsxs14(Fragment2, { children: [
+          /* @__PURE__ */ jsxs14(
+            SidebarMenuButton,
+            {
+              onClick: () => toggleExpand(label),
+              isActive: active,
+              tooltip: label,
+              className: "w-full justify-between",
+              children: [
+                /* @__PURE__ */ jsxs14("span", { className: "flex items-center gap-3", children: [
+                  /* @__PURE__ */ jsx32(Icon, {}),
+                  /* @__PURE__ */ jsx32("span", { className: "group-data-[collapsible=icon]:hidden whitespace-nowrap", children: label })
+                ] }),
+                /* @__PURE__ */ jsxs14("span", { className: "flex items-center gap-1 group-data-[collapsible=icon]:hidden", children: [
+                  badge,
+                  /* @__PURE__ */ jsx32(
+                    ChevronDown,
+                    {
+                      className: cn(
+                        "size-3.5 shrink-0 text-muted-foreground transition-transform duration-200",
+                        isExpanded && "rotate-180"
+                      )
+                    }
+                  )
+                ] })
+              ]
+            }
+          ),
+          isExpanded && /* @__PURE__ */ jsx32(SidebarMenuSub, { children: items.map((sub) => /* @__PURE__ */ jsx32(SidebarMenuSubItem, { children: /* @__PURE__ */ jsx32(
+            SidebarMenuSubButton,
+            {
+              render: /* @__PURE__ */ jsx32(Link, { href: sub.href }),
+              isActive: pathname === sub.href,
+              onClick: () => setOpenMobile(false),
+              children: /* @__PURE__ */ jsx32("span", { children: sub.label })
+            }
+          ) }, sub.href)) })
+        ] }) : /* @__PURE__ */ jsxs14(
+          SidebarMenuButton,
+          {
+            render: href ? /* @__PURE__ */ jsx32(Link, { href }) : void 0,
+            isActive: active,
+            tooltip: label,
+            className: "justify-between",
+            onClick: () => setOpenMobile(false),
+            children: [
+              /* @__PURE__ */ jsxs14("span", { className: "flex items-center gap-3", children: [
+                /* @__PURE__ */ jsx32(Icon, {}),
+                /* @__PURE__ */ jsx32("span", { className: "group-data-[collapsible=icon]:hidden whitespace-nowrap", children: label })
+              ] }),
+              badge && /* @__PURE__ */ jsx32("span", { className: "group-data-[collapsible=icon]:hidden", children: badge })
+            ]
+          }
+        ) }, label);
+      }) }) }) }),
+      /* @__PURE__ */ jsxs14("div", { className: "mt-auto flex flex-col", children: [
+        footerItems && footerItems.length > 0 && /* @__PURE__ */ jsx32("div", { className: "px-3 pb-2 pt-2 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:px-3", children: /* @__PURE__ */ jsx32(SidebarMenu, { children: footerItems.map((item) => /* @__PURE__ */ jsx32(SidebarMenuItem, { children: /* @__PURE__ */ jsxs14(
+          SidebarMenuButton,
+          {
+            render: /* @__PURE__ */ jsx32(Link, { href: item.href }),
+            tooltip: item.label,
+            onClick: () => setOpenMobile(false),
+            children: [
+              /* @__PURE__ */ jsx32(item.icon, {}),
+              /* @__PURE__ */ jsx32("span", { children: item.label })
+            ]
+          }
+        ) }, item.label)) }) }),
+        bottomCta && /* @__PURE__ */ jsx32("div", { className: "px-3 py-2 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:px-3", children: /* @__PURE__ */ jsx32(
+          Button,
+          {
+            variant: "default",
+            className: "w-full justify-start gap-2.5 h-10 group-data-[collapsible=icon]:size-10 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:rounded-lg",
+            render: /* @__PURE__ */ jsx32(Link, { href: bottomCta.href }),
+            onClick: () => setOpenMobile(false),
+            children: /* @__PURE__ */ jsxs14("span", { className: "flex items-center gap-2.5 w-full justify-start group-data-[collapsible=icon]:justify-center", children: [
+              /* @__PURE__ */ jsx32(bottomCta.icon, { className: "size-4 shrink-0" }),
+              /* @__PURE__ */ jsx32("span", { className: "group-data-[collapsible=icon]:hidden truncate", children: bottomCta.label })
+            ] })
+          }
+        ) }),
+        alertBanner && !alertDismissed && /* @__PURE__ */ jsx32("div", { className: "p-3 group-data-[collapsible=icon]:p-2 pt-0 group-data-[collapsible=icon]:pt-0", children: /* @__PURE__ */ jsxs14(Tooltip, { children: [
+          /* @__PURE__ */ jsx32(
+            TooltipTrigger,
+            {
+              render: /* @__PURE__ */ jsx32(
+                AlertBanner,
+                {
+                  collapsed: isCollapsed,
+                  variant: alertBanner.variant || "warning",
+                  appearance: alertBanner.appearance || "secondary",
+                  icon: /* @__PURE__ */ jsx32(AlertCircle, { className: "size-4 shrink-0" }),
+                  title: alertBanner.title,
+                  action: alertBanner.ctaText ? { label: alertBanner.ctaText, onClick: alertBanner.onCtaClick || (() => {
+                  }) } : void 0,
+                  onClose: alertBanner.showClose !== false ? () => setAlertDismissed(true) : void 0
+                }
+              )
+            }
+          ),
+          /* @__PURE__ */ jsx32(
+            TooltipContent,
+            {
+              side: "right",
+              align: "center",
+              hidden: !isCollapsed || isMobile,
+              className: "max-w-xs p-3 text-left",
+              children: /* @__PURE__ */ jsx32("p", { className: "font-semibold text-xs text-foreground", children: alertBanner.title })
+            }
+          )
+        ] }) })
+      ] })
+    ] })
+  ] });
+}
+
+// src/components/ui/bottom-nav.tsx
+import Link2 from "next/link";
+import { Fragment as Fragment3, jsx as jsx33, jsxs as jsxs15 } from "react/jsx-runtime";
+function BottomNav({ items, className }) {
+  return /* @__PURE__ */ jsx33(
+    "nav",
+    {
+      "data-slot": "bottom-nav",
+      "aria-label": "Main navigation",
+      className: cn(
+        // Fixed bar — hidden on desktop where sidebar is present
+        "fixed bottom-0 left-0 right-0 z-50 md:hidden",
+        "flex h-16 items-stretch border-t border-border bg-card",
+        className
+      ),
+      children: items.map((item, i) => {
+        const Icon = item.icon;
+        const inner = /* @__PURE__ */ jsxs15(Fragment3, { children: [
+          /* @__PURE__ */ jsxs15("div", { className: "relative", children: [
+            /* @__PURE__ */ jsx33(
+              Icon,
+              {
+                className: cn(
+                  "size-5 transition-colors",
+                  item.active ? "text-primary" : "text-muted-foreground"
+                ),
+                "aria-hidden": true
+              }
+            ),
+            item.badge && /* @__PURE__ */ jsx33("span", { className: "absolute -top-1 -right-2 flex items-center", children: item.badge })
+          ] }),
+          /* @__PURE__ */ jsx33(
+            "span",
+            {
+              className: cn(
+                "text-2xs font-medium leading-none transition-colors",
+                item.active ? "text-primary" : "text-muted-foreground"
+              ),
+              children: item.label
+            }
+          )
+        ] });
+        const sharedClass = "flex flex-1 flex-col items-center justify-center gap-1 py-2 touch-manipulation";
+        if (item.href) {
+          return /* @__PURE__ */ jsx33(
+            Link2,
+            {
+              href: item.href,
+              "aria-current": item.active ? "page" : void 0,
+              className: sharedClass,
+              children: inner
+            },
+            i
+          );
+        }
+        return /* @__PURE__ */ jsx33(
+          "button",
+          {
+            type: "button",
+            onClick: item.onClick,
+            className: sharedClass,
+            "aria-label": item.label,
+            children: inner
+          },
+          i
+        );
+      })
+    }
+  );
+}
+
+// src/components/ui/dialog.tsx
+import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
+import { XIcon as XIcon3 } from "lucide-react";
+import { jsx as jsx34, jsxs as jsxs16 } from "react/jsx-runtime";
+function Dialog({ ...props }) {
+  return /* @__PURE__ */ jsx34(DialogPrimitive.Root, { "data-slot": "dialog", ...props });
+}
+function DialogTrigger({ ...props }) {
+  return /* @__PURE__ */ jsx34(DialogPrimitive.Trigger, { "data-slot": "dialog-trigger", ...props });
+}
+function DialogPortal({ ...props }) {
+  return /* @__PURE__ */ jsx34(DialogPrimitive.Portal, { "data-slot": "dialog-portal", ...props });
+}
+function DialogClose({ ...props }) {
+  return /* @__PURE__ */ jsx34(DialogPrimitive.Close, { "data-slot": "dialog-close", ...props });
+}
+function DialogOverlay({
+  className,
+  ...props
+}) {
+  return /* @__PURE__ */ jsx34(
+    DialogPrimitive.Backdrop,
+    {
+      "data-slot": "dialog-overlay",
+      className: cn(
+        "fixed inset-0 isolate z-50 bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
+        className
+      ),
+      ...props
+    }
+  );
+}
+function DialogContent({
+  className,
+  children,
+  showCloseButton = true,
+  ...props
+}) {
+  return /* @__PURE__ */ jsxs16(DialogPortal, { children: [
+    /* @__PURE__ */ jsx34(DialogOverlay, {}),
+    /* @__PURE__ */ jsxs16(
+      DialogPrimitive.Popup,
+      {
+        "data-slot": "dialog-content",
+        className: cn(
+          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-popover p-4 text-sm text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          className
+        ),
+        ...props,
+        children: [
+          children,
+          showCloseButton && /* @__PURE__ */ jsxs16(
+            DialogPrimitive.Close,
+            {
+              "data-slot": "dialog-close",
+              render: /* @__PURE__ */ jsx34(
+                Button,
+                {
+                  variant: "ghost",
+                  className: "absolute top-2 right-2",
+                  size: "icon-sm"
+                }
+              ),
+              children: [
+                /* @__PURE__ */ jsx34(
+                  XIcon3,
+                  {}
+                ),
+                /* @__PURE__ */ jsx34("span", { className: "sr-only", children: "Close" })
+              ]
+            }
+          )
+        ]
+      }
+    )
+  ] });
+}
+function DialogHeader({ className, ...props }) {
+  return /* @__PURE__ */ jsx34(
+    "div",
+    {
+      "data-slot": "dialog-header",
+      className: cn("flex flex-col gap-2", className),
+      ...props
+    }
+  );
+}
+function DialogFooter({
+  className,
+  showCloseButton = false,
+  children,
+  ...props
+}) {
+  return /* @__PURE__ */ jsxs16(
+    "div",
+    {
+      "data-slot": "dialog-footer",
+      className: cn(
+        "-mx-4 -mb-4 flex flex-col-reverse gap-2 rounded-b-xl border-t bg-muted/50 p-4 sm:flex-row sm:justify-end",
+        className
+      ),
+      ...props,
+      children: [
+        children,
+        showCloseButton && /* @__PURE__ */ jsx34(DialogPrimitive.Close, { render: /* @__PURE__ */ jsx34(Button, { variant: "outline" }), children: "Close" })
+      ]
+    }
+  );
+}
+function DialogTitle({ className, ...props }) {
+  return /* @__PURE__ */ jsx34(
+    DialogPrimitive.Title,
+    {
+      "data-slot": "dialog-title",
+      className: cn(
+        "font-heading text-base leading-none font-medium",
+        className
+      ),
+      ...props
+    }
+  );
+}
+function DialogDescription({
+  className,
+  ...props
+}) {
+  return /* @__PURE__ */ jsx34(
+    DialogPrimitive.Description,
+    {
+      "data-slot": "dialog-description",
+      className: cn(
+        "text-sm text-muted-foreground *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-foreground",
+        className
+      ),
+      ...props
+    }
+  );
+}
+
+// src/components/ui/alert-dialog.tsx
+import { AlertDialog as AlertDialogPrimitive } from "@base-ui/react/alert-dialog";
+import { jsx as jsx35, jsxs as jsxs17 } from "react/jsx-runtime";
+function AlertDialog({ ...props }) {
+  return /* @__PURE__ */ jsx35(AlertDialogPrimitive.Root, { "data-slot": "alert-dialog", ...props });
+}
+function AlertDialogTrigger({ ...props }) {
+  return /* @__PURE__ */ jsx35(AlertDialogPrimitive.Trigger, { "data-slot": "alert-dialog-trigger", ...props });
+}
+function AlertDialogPortal({ ...props }) {
+  return /* @__PURE__ */ jsx35(AlertDialogPrimitive.Portal, { "data-slot": "alert-dialog-portal", ...props });
+}
+function AlertDialogOverlay({
+  className,
+  ...props
+}) {
+  return /* @__PURE__ */ jsx35(
+    AlertDialogPrimitive.Backdrop,
+    {
+      "data-slot": "alert-dialog-overlay",
+      className: cn(
+        "fixed inset-0 isolate z-50 bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
+        className
+      ),
+      ...props
+    }
+  );
+}
+function AlertDialogContent({
+  className,
+  size = "default",
+  ...props
+}) {
+  return /* @__PURE__ */ jsxs17(AlertDialogPortal, { children: [
+    /* @__PURE__ */ jsx35(AlertDialogOverlay, {}),
+    /* @__PURE__ */ jsx35(
+      AlertDialogPrimitive.Popup,
+      {
+        "data-slot": "alert-dialog-content",
+        "data-size": size,
+        className: cn(
+          "group/alert-dialog-content fixed top-1/2 left-1/2 z-50 grid w-full -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-popover p-4 text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none data-[size=default]:max-w-xs data-[size=sm]:max-w-xs data-[size=default]:sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          className
+        ),
+        ...props
+      }
+    )
+  ] });
+}
+function AlertDialogHeader({
+  className,
+  ...props
+}) {
+  return /* @__PURE__ */ jsx35(
+    "div",
+    {
+      "data-slot": "alert-dialog-header",
+      className: cn(
+        "grid grid-rows-[auto_1fr] place-items-center gap-1.5 text-center has-data-[slot=alert-dialog-media]:grid-rows-[auto_auto_1fr] has-data-[slot=alert-dialog-media]:gap-x-4 sm:group-data-[size=default]/alert-dialog-content:place-items-start sm:group-data-[size=default]/alert-dialog-content:text-left sm:group-data-[size=default]/alert-dialog-content:has-data-[slot=alert-dialog-media]:grid-rows-[auto_1fr]",
+        className
+      ),
+      ...props
+    }
+  );
+}
+function AlertDialogFooter({
+  className,
+  ...props
+}) {
+  return /* @__PURE__ */ jsx35(
+    "div",
+    {
+      "data-slot": "alert-dialog-footer",
+      className: cn(
+        "-mx-4 -mb-4 flex flex-col-reverse gap-2 rounded-b-xl border-t bg-muted/50 p-4 group-data-[size=sm]/alert-dialog-content:grid group-data-[size=sm]/alert-dialog-content:grid-cols-2 sm:flex-row sm:justify-end",
+        className
+      ),
+      ...props
+    }
+  );
+}
+function AlertDialogMedia({
+  className,
+  ...props
+}) {
+  return /* @__PURE__ */ jsx35(
+    "div",
+    {
+      "data-slot": "alert-dialog-media",
+      className: cn(
+        "mb-2 inline-flex size-10 items-center justify-center rounded-md bg-muted sm:group-data-[size=default]/alert-dialog-content:row-span-2 *:[svg:not([class*='size-'])]:size-6",
+        className
+      ),
+      ...props
+    }
+  );
+}
+function AlertDialogTitle({
+  className,
+  ...props
+}) {
+  return /* @__PURE__ */ jsx35(
+    AlertDialogPrimitive.Title,
+    {
+      "data-slot": "alert-dialog-title",
+      className: cn(
+        "font-heading text-base font-medium sm:group-data-[size=default]/alert-dialog-content:group-has-data-[slot=alert-dialog-media]/alert-dialog-content:col-start-2",
+        className
+      ),
+      ...props
+    }
+  );
+}
+function AlertDialogDescription({
+  className,
+  ...props
+}) {
+  return /* @__PURE__ */ jsx35(
+    AlertDialogPrimitive.Description,
+    {
+      "data-slot": "alert-dialog-description",
+      className: cn(
+        "text-sm text-balance text-muted-foreground md:text-pretty *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-foreground",
+        className
+      ),
+      ...props
+    }
+  );
+}
+function AlertDialogAction({
+  className,
+  ...props
+}) {
+  return /* @__PURE__ */ jsx35(
+    Button,
+    {
+      "data-slot": "alert-dialog-action",
+      className: cn(className),
+      ...props
+    }
+  );
+}
+function AlertDialogCancel({
+  className,
+  variant = "outline",
+  size = "default",
+  ...props
+}) {
+  return /* @__PURE__ */ jsx35(
+    AlertDialogPrimitive.Close,
+    {
+      "data-slot": "alert-dialog-cancel",
+      className: cn(className),
+      render: /* @__PURE__ */ jsx35(Button, { variant, size }),
+      ...props
+    }
+  );
+}
+
 // src/components/ui/sonner.tsx
 import { useTheme } from "next-themes";
 import { Toaster as Sonner } from "sonner";
 import { CircleCheckIcon, InfoIcon, TriangleAlertIcon, OctagonXIcon, Loader2Icon as Loader2Icon2 } from "lucide-react";
-import { jsx as jsx33 } from "react/jsx-runtime";
+import { jsx as jsx36 } from "react/jsx-runtime";
 var Toaster = ({ ...props }) => {
   const { theme = "system" } = useTheme();
-  return /* @__PURE__ */ jsx33(
+  return /* @__PURE__ */ jsx36(
     Sonner,
     {
       theme,
       className: "toaster group",
       icons: {
-        success: /* @__PURE__ */ jsx33(CircleCheckIcon, { className: "size-4" }),
-        info: /* @__PURE__ */ jsx33(InfoIcon, { className: "size-4" }),
-        warning: /* @__PURE__ */ jsx33(TriangleAlertIcon, { className: "size-4" }),
-        error: /* @__PURE__ */ jsx33(OctagonXIcon, { className: "size-4" }),
-        loading: /* @__PURE__ */ jsx33(Loader2Icon2, { className: "size-4 animate-spin" })
+        success: /* @__PURE__ */ jsx36(CircleCheckIcon, { className: "size-4" }),
+        info: /* @__PURE__ */ jsx36(InfoIcon, { className: "size-4" }),
+        warning: /* @__PURE__ */ jsx36(TriangleAlertIcon, { className: "size-4" }),
+        error: /* @__PURE__ */ jsx36(OctagonXIcon, { className: "size-4" }),
+        loading: /* @__PURE__ */ jsx36(Loader2Icon2, { className: "size-4 animate-spin" })
       },
       style: {
         "--normal-bg": "var(--popover)",
@@ -3423,15 +3614,15 @@ var Toaster = ({ ...props }) => {
 
 // src/components/ui/table.tsx
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
-import * as React8 from "react";
-import { jsx as jsx34, jsxs as jsxs15 } from "react/jsx-runtime";
+import * as React9 from "react";
+import { jsx as jsx37, jsxs as jsxs18 } from "react/jsx-runtime";
 function Table({ className, ...props }) {
-  return /* @__PURE__ */ jsx34(
+  return /* @__PURE__ */ jsx37(
     "div",
     {
       "data-slot": "table-container",
       className: "relative w-full overflow-x-auto",
-      children: /* @__PURE__ */ jsx34(
+      children: /* @__PURE__ */ jsx37(
         "table",
         {
           "data-slot": "table",
@@ -3443,7 +3634,7 @@ function Table({ className, ...props }) {
   );
 }
 function TableHeader({ className, ...props }) {
-  return /* @__PURE__ */ jsx34(
+  return /* @__PURE__ */ jsx37(
     "thead",
     {
       "data-slot": "table-header",
@@ -3453,7 +3644,7 @@ function TableHeader({ className, ...props }) {
   );
 }
 function TableBody({ className, ...props }) {
-  return /* @__PURE__ */ jsx34(
+  return /* @__PURE__ */ jsx37(
     "tbody",
     {
       "data-slot": "table-body",
@@ -3463,7 +3654,7 @@ function TableBody({ className, ...props }) {
   );
 }
 function TableFooter({ className, ...props }) {
-  return /* @__PURE__ */ jsx34(
+  return /* @__PURE__ */ jsx37(
     "tfoot",
     {
       "data-slot": "table-footer",
@@ -3476,7 +3667,7 @@ function TableFooter({ className, ...props }) {
   );
 }
 function TableRow({ className, ...props }) {
-  return /* @__PURE__ */ jsx34(
+  return /* @__PURE__ */ jsx37(
     "tr",
     {
       "data-slot": "table-row",
@@ -3489,7 +3680,7 @@ function TableRow({ className, ...props }) {
   );
 }
 function TableHead({ className, ...props }) {
-  return /* @__PURE__ */ jsx34(
+  return /* @__PURE__ */ jsx37(
     "th",
     {
       "data-slot": "table-head",
@@ -3502,7 +3693,7 @@ function TableHead({ className, ...props }) {
   );
 }
 function TableCell({ className, ...props }) {
-  return /* @__PURE__ */ jsx34(
+  return /* @__PURE__ */ jsx37(
     "td",
     {
       "data-slot": "table-cell",
@@ -3518,7 +3709,7 @@ function TableCaption({
   className,
   ...props
 }) {
-  return /* @__PURE__ */ jsx34(
+  return /* @__PURE__ */ jsx37(
     "caption",
     {
       "data-slot": "table-caption",
@@ -3536,7 +3727,7 @@ function SortableTableHead({
   className,
   ...props
 }) {
-  const lastXRef = React8.useRef(null);
+  const lastXRef = React9.useRef(null);
   const handlePointerDown = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -3562,14 +3753,14 @@ function SortableTableHead({
     if (sort === "desc") return null;
     return "asc";
   };
-  return /* @__PURE__ */ jsxs15(
+  return /* @__PURE__ */ jsxs18(
     TableHead,
     {
       className: cn("relative select-none", className),
       "aria-sort": sort === "asc" ? "ascending" : sort === "desc" ? "descending" : "none",
       ...props,
       children: [
-        onSortChange ? /* @__PURE__ */ jsxs15(
+        onSortChange ? /* @__PURE__ */ jsxs18(
           "button",
           {
             type: "button",
@@ -3577,11 +3768,11 @@ function SortableTableHead({
             className: "group/sort inline-flex items-center gap-1.5 text-left font-medium text-foreground hover:text-foreground",
             children: [
               children,
-              /* @__PURE__ */ jsx34(SortIcon, { direction: sort })
+              /* @__PURE__ */ jsx37(SortIcon, { direction: sort })
             ]
           }
         ) : children,
-        resizable ? /* @__PURE__ */ jsx34(
+        resizable ? /* @__PURE__ */ jsx37(
           "span",
           {
             role: "separator",
@@ -3590,7 +3781,7 @@ function SortableTableHead({
             onPointerDown: handlePointerDown,
             onDoubleClick: (e) => e.stopPropagation(),
             className: "group/resize absolute top-0 right-0 bottom-0 z-10 flex w-3 cursor-col-resize touch-none items-center justify-center",
-            children: /* @__PURE__ */ jsx34(
+            children: /* @__PURE__ */ jsx37(
               "span",
               {
                 "aria-hidden": true,
@@ -3605,12 +3796,12 @@ function SortableTableHead({
 }
 function SortIcon({ direction }) {
   if (direction === "asc") {
-    return /* @__PURE__ */ jsx34(ArrowUp, { className: "size-3.5 text-foreground", "aria-hidden": true });
+    return /* @__PURE__ */ jsx37(ArrowUp, { className: "size-3.5 text-foreground", "aria-hidden": true });
   }
   if (direction === "desc") {
-    return /* @__PURE__ */ jsx34(ArrowDown, { className: "size-3.5 text-foreground", "aria-hidden": true });
+    return /* @__PURE__ */ jsx37(ArrowDown, { className: "size-3.5 text-foreground", "aria-hidden": true });
   }
-  return /* @__PURE__ */ jsx34(
+  return /* @__PURE__ */ jsx37(
     ArrowUpDown,
     {
       className: "size-3.5 text-muted-foreground/60 group-hover/sort:text-muted-foreground",
@@ -3622,9 +3813,9 @@ function SortIcon({ direction }) {
 // src/components/ui/accordion.tsx
 import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion";
 import { ChevronDownIcon as ChevronDownIcon2, ChevronUpIcon as ChevronUpIcon2 } from "lucide-react";
-import { jsx as jsx35, jsxs as jsxs16 } from "react/jsx-runtime";
+import { jsx as jsx38, jsxs as jsxs19 } from "react/jsx-runtime";
 function Accordion({ className, ...props }) {
-  return /* @__PURE__ */ jsx35(
+  return /* @__PURE__ */ jsx38(
     AccordionPrimitive.Root,
     {
       "data-slot": "accordion",
@@ -3634,7 +3825,7 @@ function Accordion({ className, ...props }) {
   );
 }
 function AccordionItem({ className, ...props }) {
-  return /* @__PURE__ */ jsx35(
+  return /* @__PURE__ */ jsx38(
     AccordionPrimitive.Item,
     {
       "data-slot": "accordion-item",
@@ -3648,7 +3839,7 @@ function AccordionTrigger({
   children,
   ...props
 }) {
-  return /* @__PURE__ */ jsx35(AccordionPrimitive.Header, { className: "flex", children: /* @__PURE__ */ jsxs16(
+  return /* @__PURE__ */ jsx38(AccordionPrimitive.Header, { className: "flex", children: /* @__PURE__ */ jsxs19(
     AccordionPrimitive.Trigger,
     {
       "data-slot": "accordion-trigger",
@@ -3659,8 +3850,8 @@ function AccordionTrigger({
       ...props,
       children: [
         children,
-        /* @__PURE__ */ jsx35(ChevronDownIcon2, { "data-slot": "accordion-trigger-icon", className: "pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden" }),
-        /* @__PURE__ */ jsx35(ChevronUpIcon2, { "data-slot": "accordion-trigger-icon", className: "pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline" })
+        /* @__PURE__ */ jsx38(ChevronDownIcon2, { "data-slot": "accordion-trigger-icon", className: "pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden" }),
+        /* @__PURE__ */ jsx38(ChevronUpIcon2, { "data-slot": "accordion-trigger-icon", className: "pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline" })
       ]
     }
   ) });
@@ -3670,13 +3861,13 @@ function AccordionContent({
   children,
   ...props
 }) {
-  return /* @__PURE__ */ jsx35(
+  return /* @__PURE__ */ jsx38(
     AccordionPrimitive.Panel,
     {
       "data-slot": "accordion-content",
       className: "overflow-hidden text-sm data-open:animate-accordion-down data-closed:animate-accordion-up",
       ...props,
-      children: /* @__PURE__ */ jsx35(
+      children: /* @__PURE__ */ jsx38(
         "div",
         {
           className: cn(
@@ -3691,12 +3882,12 @@ function AccordionContent({
 }
 
 // src/components/ui/logo-apna.tsx
-import { jsx as jsx36, jsxs as jsxs17 } from "react/jsx-runtime";
+import { jsx as jsx39, jsxs as jsxs20 } from "react/jsx-runtime";
 function ApnaLogo({
   className,
   ...props
 }) {
-  return /* @__PURE__ */ jsxs17(
+  return /* @__PURE__ */ jsxs20(
     "svg",
     {
       width: "37",
@@ -3709,7 +3900,7 @@ function ApnaLogo({
       className: cn("size-9 shrink-0", className),
       ...props,
       children: [
-        /* @__PURE__ */ jsx36(
+        /* @__PURE__ */ jsx39(
           "path",
           {
             fillRule: "evenodd",
@@ -3719,22 +3910,22 @@ function ApnaLogo({
             stroke: "#DFE1E6"
           }
         ),
-        /* @__PURE__ */ jsx36(
+        /* @__PURE__ */ jsx39(
           "path",
           {
             d: "M35.9688 32C34.8948 34.639 32.306 36.5 29.2812 36.5H24.501V32H35.9688Z",
             fill: "#FFD166"
           }
         ),
-        /* @__PURE__ */ jsx36(
+        /* @__PURE__ */ jsx39(
           "path",
           {
             d: "M12.5 36.5H7.71875C4.69395 36.5 2.10519 34.639 1.03125 32H12.5V36.5Z",
             fill: "#2BB793"
           }
         ),
-        /* @__PURE__ */ jsx36("rect", { x: "12.502", y: "32", width: "12", height: "4.5", fill: "#83BDE4" }),
-        /* @__PURE__ */ jsx36(
+        /* @__PURE__ */ jsx39("rect", { x: "12.502", y: "32", width: "12", height: "4.5", fill: "#83BDE4" }),
+        /* @__PURE__ */ jsx39(
           "path",
           {
             fillRule: "evenodd",
@@ -3749,7 +3940,7 @@ function ApnaLogo({
 }
 
 // src/components/ui/logo-onlyrounds.tsx
-import { Fragment as Fragment3, jsx as jsx37, jsxs as jsxs18 } from "react/jsx-runtime";
+import { Fragment as Fragment4, jsx as jsx40, jsxs as jsxs21 } from "react/jsx-runtime";
 var STOPS = {
   green300: "#74D7AE",
   green400: "#3EBA8D",
@@ -3757,8 +3948,8 @@ var STOPS = {
   sky400: "#7BB9E5"
 };
 function MarkGradients({ prefix }) {
-  return /* @__PURE__ */ jsxs18("defs", { children: [
-    /* @__PURE__ */ jsxs18(
+  return /* @__PURE__ */ jsxs21("defs", { children: [
+    /* @__PURE__ */ jsxs21(
       "linearGradient",
       {
         id: `${prefix}-0`,
@@ -3768,12 +3959,12 @@ function MarkGradients({ prefix }) {
         y2: "32.7183",
         gradientUnits: "userSpaceOnUse",
         children: [
-          /* @__PURE__ */ jsx37("stop", { stopColor: STOPS.green300 }),
-          /* @__PURE__ */ jsx37("stop", { offset: "1", stopColor: STOPS.sky400 })
+          /* @__PURE__ */ jsx40("stop", { stopColor: STOPS.green300 }),
+          /* @__PURE__ */ jsx40("stop", { offset: "1", stopColor: STOPS.sky400 })
         ]
       }
     ),
-    /* @__PURE__ */ jsxs18(
+    /* @__PURE__ */ jsxs21(
       "linearGradient",
       {
         id: `${prefix}-1`,
@@ -3783,12 +3974,12 @@ function MarkGradients({ prefix }) {
         y2: "28.3822",
         gradientUnits: "userSpaceOnUse",
         children: [
-          /* @__PURE__ */ jsx37("stop", { stopColor: STOPS.gold300 }),
-          /* @__PURE__ */ jsx37("stop", { offset: "1", stopColor: STOPS.green400 })
+          /* @__PURE__ */ jsx40("stop", { stopColor: STOPS.gold300 }),
+          /* @__PURE__ */ jsx40("stop", { offset: "1", stopColor: STOPS.green400 })
         ]
       }
     ),
-    /* @__PURE__ */ jsxs18(
+    /* @__PURE__ */ jsxs21(
       "linearGradient",
       {
         id: `${prefix}-2`,
@@ -3798,12 +3989,12 @@ function MarkGradients({ prefix }) {
         y2: "31.495",
         gradientUnits: "userSpaceOnUse",
         children: [
-          /* @__PURE__ */ jsx37("stop", { stopColor: STOPS.sky400 }),
-          /* @__PURE__ */ jsx37("stop", { offset: "1", stopColor: STOPS.gold300 })
+          /* @__PURE__ */ jsx40("stop", { stopColor: STOPS.sky400 }),
+          /* @__PURE__ */ jsx40("stop", { offset: "1", stopColor: STOPS.gold300 })
         ]
       }
     ),
-    /* @__PURE__ */ jsxs18(
+    /* @__PURE__ */ jsxs21(
       "linearGradient",
       {
         id: `${prefix}-3`,
@@ -3813,12 +4004,12 @@ function MarkGradients({ prefix }) {
         y2: "15.9916",
         gradientUnits: "userSpaceOnUse",
         children: [
-          /* @__PURE__ */ jsx37("stop", { stopColor: STOPS.gold300 }),
-          /* @__PURE__ */ jsx37("stop", { offset: "1", stopColor: STOPS.green300, stopOpacity: "0.99" })
+          /* @__PURE__ */ jsx40("stop", { stopColor: STOPS.gold300 }),
+          /* @__PURE__ */ jsx40("stop", { offset: "1", stopColor: STOPS.green300, stopOpacity: "0.99" })
         ]
       }
     ),
-    /* @__PURE__ */ jsxs18(
+    /* @__PURE__ */ jsxs21(
       "linearGradient",
       {
         id: `${prefix}-4`,
@@ -3828,12 +4019,12 @@ function MarkGradients({ prefix }) {
         y2: "10.3991",
         gradientUnits: "userSpaceOnUse",
         children: [
-          /* @__PURE__ */ jsx37("stop", { stopColor: STOPS.sky400 }),
-          /* @__PURE__ */ jsx37("stop", { offset: "1", stopColor: STOPS.green300 })
+          /* @__PURE__ */ jsx40("stop", { stopColor: STOPS.sky400 }),
+          /* @__PURE__ */ jsx40("stop", { offset: "1", stopColor: STOPS.green300 })
         ]
       }
     ),
-    /* @__PURE__ */ jsxs18(
+    /* @__PURE__ */ jsxs21(
       "linearGradient",
       {
         id: `${prefix}-5`,
@@ -3843,12 +4034,12 @@ function MarkGradients({ prefix }) {
         y2: "33.6919",
         gradientUnits: "userSpaceOnUse",
         children: [
-          /* @__PURE__ */ jsx37("stop", { stopColor: STOPS.sky400 }),
-          /* @__PURE__ */ jsx37("stop", { offset: "1", stopColor: STOPS.gold300 })
+          /* @__PURE__ */ jsx40("stop", { stopColor: STOPS.sky400 }),
+          /* @__PURE__ */ jsx40("stop", { offset: "1", stopColor: STOPS.gold300 })
         ]
       }
     ),
-    /* @__PURE__ */ jsxs18(
+    /* @__PURE__ */ jsxs21(
       "linearGradient",
       {
         id: `${prefix}-6`,
@@ -3858,29 +4049,29 @@ function MarkGradients({ prefix }) {
         y2: "41.3405",
         gradientUnits: "userSpaceOnUse",
         children: [
-          /* @__PURE__ */ jsx37("stop", { stopColor: STOPS.green300 }),
-          /* @__PURE__ */ jsx37("stop", { offset: "1", stopColor: STOPS.gold300 })
+          /* @__PURE__ */ jsx40("stop", { stopColor: STOPS.green300 }),
+          /* @__PURE__ */ jsx40("stop", { offset: "1", stopColor: STOPS.gold300 })
         ]
       }
     )
   ] });
 }
 function MarkPaths({ prefix }) {
-  return /* @__PURE__ */ jsxs18(Fragment3, { children: [
-    /* @__PURE__ */ jsx37("path", { d: "M19.3545 10.2914C19.2335 10.4971 19.1194 10.7076 19.0125 10.9219L16.3556 15.5005L15.5775 16.8412L14.1615 19.2813L13.3699 20.6452L10.6999 25.2461C10.5725 25.4368 10.4509 25.6324 10.3363 25.8318C9.46695 27.3425 8.96972 29.0927 8.96972 30.9586C8.96972 32.6467 9.37683 34.2404 10.0984 35.6476C10.1778 35.8023 10.2615 35.9558 10.3484 36.1061H9.80956C4.34191 35.8097 0 31.3044 0 25.7901C0 24.0999 0.408027 22.5043 1.13122 21.0957L1.38486 20.6588L1.39265 20.6452L1.66253 20.18L10.0984 5.64342L10.3647 5.18445H10.9593C14.5435 5.37877 17.6437 7.38144 19.3545 10.2914Z", fill: `url(#${prefix}-0)` }),
-    /* @__PURE__ */ jsx37("path", { d: "M38.7089 25.7897C38.7089 31.3039 34.367 35.809 28.899 36.1055H28.3601C28.4471 35.9554 28.5307 35.8026 28.6101 35.6477L37.047 21.1086C37.1428 20.9613 37.2353 20.8111 37.324 20.6584L37.577 21.0943C38.301 22.5031 38.7089 24.099 38.7089 25.7897Z", fill: `url(#${prefix}-1)` }),
-    /* @__PURE__ */ jsx37("path", { d: "M38.7089 25.7897C38.7089 31.3039 34.367 35.809 28.899 36.1055H28.3601C28.4471 35.9554 28.5307 35.8026 28.6101 35.6477L37.047 21.1086C37.1428 20.9613 37.2353 20.8111 37.324 20.6584L37.577 21.0943C38.301 22.5031 38.7089 24.099 38.7089 25.7897Z", fill: `url(#${prefix}-2)` }),
-    /* @__PURE__ */ jsx37("path", { d: "M29.7377 10.3317C29.7377 12.1974 29.2406 13.9475 28.3711 15.4582C28.2564 15.6578 28.135 15.853 28.0072 16.044L25.3374 20.6448L24.5458 19.2809L23.1299 16.8409L22.3517 15.5001L19.6948 10.9216C19.5883 10.707 19.4741 10.4967 19.3529 10.291C17.6421 7.3813 14.5419 5.37863 10.9577 5.18406C10.7674 5.17363 10.5758 5.16837 10.3829 5.16837H10.3722L10.6354 4.71508C12.4867 1.87707 15.6994 0 19.3532 0C23.0068 0 26.2196 1.87707 28.0707 4.71508L28.3338 5.16837L28.3431 5.18406L28.6093 5.64303C29.331 7.05023 29.7377 8.64377 29.7377 10.3317Z", fill: `url(#${prefix}-3)` }),
-    /* @__PURE__ */ jsx37("path", { d: "M10.3484 5.18445C10.2613 5.33509 10.1778 5.48801 10.0984 5.64342L1.66253 20.1803C1.56623 20.3283 1.4736 20.4788 1.38486 20.6318L1.13237 20.1965C0.408254 18.7878 0 17.1914 0 15.5005C0 9.98624 4.34191 5.48118 9.80978 5.18445H10.3484Z", fill: `url(#${prefix}-4)` }),
-    /* @__PURE__ */ jsx37("path", { d: "M38.7097 15.5005C38.7097 17.1914 38.3013 18.7878 37.5773 20.1965L37.3246 20.6318L37.317 20.6454L37.0477 21.1094L28.6112 35.6479L28.345 36.1063H27.7504C24.1663 35.912 21.0661 33.9093 19.3553 30.9996C19.4765 30.7934 19.5907 30.5827 19.6977 30.3679L19.6984 30.3665L22.3542 25.7901L23.1323 24.4494L24.5483 22.0092L25.3399 20.6452L28.0097 16.0444C28.1372 15.8534 28.2586 15.6579 28.3735 15.4586C29.2428 13.9479 29.7403 12.1978 29.7403 10.3321C29.7403 8.64389 29.3332 7.05059 28.6115 5.64342C28.5321 5.48801 28.4485 5.33509 28.3613 5.18445H28.9001C34.3679 5.48118 38.7097 9.98624 38.7097 15.5005Z", fill: `url(#${prefix}-5)` }),
-    /* @__PURE__ */ jsx37("path", { d: "M28.3348 36.1218L28.0721 36.5749C26.221 39.4124 23.0077 41.2904 19.3543 41.2904C15.7008 41.2904 12.4883 39.4133 10.6371 36.5757L10.3736 36.1218L10.3647 36.1064L10.0987 35.6482C9.37684 34.241 8.96973 32.6471 8.96973 30.9587C8.96973 29.093 9.46673 27.3426 10.3363 25.8318C10.4509 25.6327 10.5721 25.4378 10.6995 25.2471L13.3699 20.6453L14.1615 22.0093L15.5775 24.4495L16.3556 25.7903L19.0119 30.3677C19.1187 30.5828 19.2329 30.7935 19.3543 30.9993C21.065 33.909 24.1653 35.9117 27.7494 36.1064C27.9397 36.1167 28.1315 36.1218 28.3243 36.1218H28.3348Z", fill: `url(#${prefix}-6)` })
+  return /* @__PURE__ */ jsxs21(Fragment4, { children: [
+    /* @__PURE__ */ jsx40("path", { d: "M19.3545 10.2914C19.2335 10.4971 19.1194 10.7076 19.0125 10.9219L16.3556 15.5005L15.5775 16.8412L14.1615 19.2813L13.3699 20.6452L10.6999 25.2461C10.5725 25.4368 10.4509 25.6324 10.3363 25.8318C9.46695 27.3425 8.96972 29.0927 8.96972 30.9586C8.96972 32.6467 9.37683 34.2404 10.0984 35.6476C10.1778 35.8023 10.2615 35.9558 10.3484 36.1061H9.80956C4.34191 35.8097 0 31.3044 0 25.7901C0 24.0999 0.408027 22.5043 1.13122 21.0957L1.38486 20.6588L1.39265 20.6452L1.66253 20.18L10.0984 5.64342L10.3647 5.18445H10.9593C14.5435 5.37877 17.6437 7.38144 19.3545 10.2914Z", fill: `url(#${prefix}-0)` }),
+    /* @__PURE__ */ jsx40("path", { d: "M38.7089 25.7897C38.7089 31.3039 34.367 35.809 28.899 36.1055H28.3601C28.4471 35.9554 28.5307 35.8026 28.6101 35.6477L37.047 21.1086C37.1428 20.9613 37.2353 20.8111 37.324 20.6584L37.577 21.0943C38.301 22.5031 38.7089 24.099 38.7089 25.7897Z", fill: `url(#${prefix}-1)` }),
+    /* @__PURE__ */ jsx40("path", { d: "M38.7089 25.7897C38.7089 31.3039 34.367 35.809 28.899 36.1055H28.3601C28.4471 35.9554 28.5307 35.8026 28.6101 35.6477L37.047 21.1086C37.1428 20.9613 37.2353 20.8111 37.324 20.6584L37.577 21.0943C38.301 22.5031 38.7089 24.099 38.7089 25.7897Z", fill: `url(#${prefix}-2)` }),
+    /* @__PURE__ */ jsx40("path", { d: "M29.7377 10.3317C29.7377 12.1974 29.2406 13.9475 28.3711 15.4582C28.2564 15.6578 28.135 15.853 28.0072 16.044L25.3374 20.6448L24.5458 19.2809L23.1299 16.8409L22.3517 15.5001L19.6948 10.9216C19.5883 10.707 19.4741 10.4967 19.3529 10.291C17.6421 7.3813 14.5419 5.37863 10.9577 5.18406C10.7674 5.17363 10.5758 5.16837 10.3829 5.16837H10.3722L10.6354 4.71508C12.4867 1.87707 15.6994 0 19.3532 0C23.0068 0 26.2196 1.87707 28.0707 4.71508L28.3338 5.16837L28.3431 5.18406L28.6093 5.64303C29.331 7.05023 29.7377 8.64377 29.7377 10.3317Z", fill: `url(#${prefix}-3)` }),
+    /* @__PURE__ */ jsx40("path", { d: "M10.3484 5.18445C10.2613 5.33509 10.1778 5.48801 10.0984 5.64342L1.66253 20.1803C1.56623 20.3283 1.4736 20.4788 1.38486 20.6318L1.13237 20.1965C0.408254 18.7878 0 17.1914 0 15.5005C0 9.98624 4.34191 5.48118 9.80978 5.18445H10.3484Z", fill: `url(#${prefix}-4)` }),
+    /* @__PURE__ */ jsx40("path", { d: "M38.7097 15.5005C38.7097 17.1914 38.3013 18.7878 37.5773 20.1965L37.3246 20.6318L37.317 20.6454L37.0477 21.1094L28.6112 35.6479L28.345 36.1063H27.7504C24.1663 35.912 21.0661 33.9093 19.3553 30.9996C19.4765 30.7934 19.5907 30.5827 19.6977 30.3679L19.6984 30.3665L22.3542 25.7901L23.1323 24.4494L24.5483 22.0092L25.3399 20.6452L28.0097 16.0444C28.1372 15.8534 28.2586 15.6579 28.3735 15.4586C29.2428 13.9479 29.7403 12.1978 29.7403 10.3321C29.7403 8.64389 29.3332 7.05059 28.6115 5.64342C28.5321 5.48801 28.4485 5.33509 28.3613 5.18445H28.9001C34.3679 5.48118 38.7097 9.98624 38.7097 15.5005Z", fill: `url(#${prefix}-5)` }),
+    /* @__PURE__ */ jsx40("path", { d: "M28.3348 36.1218L28.0721 36.5749C26.221 39.4124 23.0077 41.2904 19.3543 41.2904C15.7008 41.2904 12.4883 39.4133 10.6371 36.5757L10.3736 36.1218L10.3647 36.1064L10.0987 35.6482C9.37684 34.241 8.96973 32.6471 8.96973 30.9587C8.96973 29.093 9.46673 27.3426 10.3363 25.8318C10.4509 25.6327 10.5721 25.4378 10.6995 25.2471L13.3699 20.6453L14.1615 22.0093L15.5775 24.4495L16.3556 25.7903L19.0119 30.3677C19.1187 30.5828 19.2329 30.7935 19.3543 30.9993C21.065 33.909 24.1653 35.9117 27.7494 36.1064C27.9397 36.1167 28.1315 36.1218 28.3243 36.1218H28.3348Z", fill: `url(#${prefix}-6)` })
   ] });
 }
 function OnlyRoundsLogo({
   className,
   ...props
 }) {
-  return /* @__PURE__ */ jsxs18(
+  return /* @__PURE__ */ jsxs21(
     "svg",
     {
       viewBox: "0 0 248 42",
@@ -3891,15 +4082,15 @@ function OnlyRoundsLogo({
       className: cn("h-8 w-auto", className),
       ...props,
       children: [
-        /* @__PURE__ */ jsx37(MarkPaths, { prefix: "or-logo" }),
-        /* @__PURE__ */ jsx37(
+        /* @__PURE__ */ jsx40(MarkPaths, { prefix: "or-logo" }),
+        /* @__PURE__ */ jsx40(
           "path",
           {
             d: "M106.152 27.5463L110.504 16.5062H115.143L107.88 33.8822C107.432 34.9489 106.962 35.8879 106.471 36.6986C105.981 37.5303 105.373 38.1706 104.648 38.6185C103.944 39.0665 103.016 39.2904 101.864 39.2904C101.288 39.2904 100.648 39.1725 99.944 38.9379C99.2614 38.7246 98.6531 38.4689 98.1198 38.1703L99.6872 34.7465C100.05 34.9384 100.381 35.088 100.679 35.1947C100.999 35.3227 101.277 35.3861 101.511 35.3861C101.959 35.3861 102.355 35.2583 102.696 35.0023C103.037 34.7677 103.315 34.4158 103.528 33.9467L104.2 32.3138L96.9675 16.5062H101.608L106.152 27.5463ZM58.1657 9.75427C60.427 9.75428 62.4112 10.2555 64.1179 11.2582C65.8457 12.2394 67.2001 13.6048 68.1814 15.3539C69.1627 17.0819 69.654 19.0769 69.654 21.3383C69.654 23.5783 69.1627 25.5733 68.1814 27.3226C67.2214 29.0503 65.8778 30.4158 64.1501 31.4183C62.4434 32.3997 60.4801 32.89 58.2614 32.89C56.0002 32.89 53.995 32.3996 52.2458 31.4183C50.5178 30.4157 49.1627 29.0506 48.1814 27.3226C47.2 25.5733 46.7097 23.5783 46.7097 21.3383C46.7097 19.0558 47.2002 17.0505 48.1814 15.3226C49.1627 13.5733 50.5069 12.2073 52.2136 11.226C53.9416 10.2446 55.9258 9.75427 58.1657 9.75427ZM145.182 16.1224C146.825 16.1225 148.275 16.4851 149.534 17.2103C150.793 17.9143 151.774 18.896 152.478 20.1547C153.182 21.4132 153.534 22.8637 153.534 24.5062C153.534 26.1487 153.182 27.5992 152.478 28.8578C151.774 30.1165 150.793 31.109 149.534 31.8344C148.297 32.5382 146.867 32.89 145.246 32.89C143.625 32.89 142.174 32.5383 140.894 31.8344C139.636 31.109 138.644 30.1165 137.919 28.8578C137.215 27.5992 136.862 26.1488 136.862 24.5062C136.862 22.8636 137.215 21.4133 137.919 20.1547C138.623 18.8961 139.603 17.9143 140.862 17.2103C142.121 16.485 143.561 16.1224 145.182 16.1224ZM160.256 24.6986C160.256 25.765 160.374 26.6074 160.608 27.226C160.864 27.8233 161.216 28.2611 161.664 28.5385C162.133 28.7945 162.656 28.9222 163.232 28.9222C164.341 28.9435 165.184 28.6126 165.759 27.9301C166.335 27.2261 166.624 26.2127 166.624 24.89V16.5062H170.848V32.5062H166.88L166.72 30.3304C166.187 31.1411 165.514 31.7701 164.704 32.2181C163.915 32.6661 163.019 32.89 162.016 32.89C160.736 32.89 159.648 32.6344 158.752 32.1224C157.877 31.6104 157.205 30.8209 156.736 29.7543C156.267 28.6663 156.032 27.2686 156.032 25.5619V16.5062H160.256V24.6986ZM208.087 32.5062H204.087L203.959 30.266C203.425 31.098 202.743 31.7488 201.911 32.2181C201.079 32.6661 200.13 32.89 199.063 32.89C197.591 32.89 196.311 32.5491 195.223 31.8666C194.157 31.184 193.325 30.213 192.727 28.9545C192.13 27.6958 191.831 26.2129 191.831 24.5062C191.831 22.7782 192.13 21.2953 192.727 20.058C193.325 18.7995 194.157 17.8285 195.223 17.1459C196.311 16.4634 197.591 16.1224 199.063 16.1224C200.108 16.1225 201.037 16.3463 201.847 16.7943C202.679 17.2209 203.351 17.8394 203.863 18.6498V10.1058H208.087V32.5062ZM81.4655 16.1224C82.7239 16.1225 83.8011 16.3782 84.697 16.89C85.593 17.402 86.2755 18.2024 86.7448 19.2904C87.2141 20.3571 87.438 21.7439 87.4167 23.4506V32.5062H83.1931V24.3138C83.193 23.2262 83.0652 22.3838 82.8093 21.7865C82.5746 21.1892 82.2329 20.7622 81.7849 20.5062C81.337 20.229 80.8146 20.0903 80.2175 20.0902C79.1295 20.0689 78.2865 20.3997 77.6892 21.0824C77.1132 21.7651 76.8249 22.7785 76.8249 24.1224V32.5062H72.6013V16.5062H76.569L76.7614 18.682C77.2734 17.8501 77.9243 17.2209 78.7136 16.7943C79.5242 16.3464 80.4416 16.1224 81.4655 16.1224ZM95.0124 32.5062H90.7888V10.1058H95.0124V32.5062ZM126.029 10.1058C127.608 10.1058 129.005 10.4159 130.221 11.0345C131.437 11.6532 132.386 12.5063 133.069 13.5941C133.752 14.6608 134.093 15.9089 134.093 17.3383C134.093 18.8102 133.698 20.1119 132.909 21.2426C132.12 22.3516 131.085 23.194 129.805 23.7699L134.989 32.5062H130.029L125.453 24.5707H122.093V32.5062H117.71V10.1058H126.029ZM183.372 16.1224C184.63 16.1225 185.707 16.3781 186.603 16.89C187.499 17.402 188.182 18.2024 188.651 19.2904C189.12 20.3571 189.344 21.7439 189.323 23.4506V32.5062H185.099V24.3138C185.099 23.2262 184.971 22.3838 184.716 21.7865C184.481 21.1892 184.139 20.7622 183.691 20.5062C183.243 20.229 182.721 20.0903 182.124 20.0902C181.036 20.0689 180.193 20.3997 179.595 21.0824C179.019 21.7651 178.731 22.7785 178.731 24.1224V32.5062H174.508V16.5062H178.475L178.668 18.682C179.18 17.8501 179.831 17.2209 180.62 16.7943C181.43 16.3464 182.348 16.1224 183.372 16.1224ZM240.119 32.5062H235.479L233.559 27.5785H224.343L222.424 32.5062H217.783L226.615 10.1058H231.287L240.119 32.5062ZM247.187 32.5062H242.802V10.1058H247.187V32.5062ZM200.119 20.0258C199.351 20.0258 198.668 20.218 198.071 20.6019C197.495 20.9646 197.036 21.4876 196.695 22.1703C196.375 22.8529 196.215 23.6316 196.215 24.5062C196.215 25.3809 196.386 26.1595 196.727 26.8422C197.069 27.5248 197.527 28.0578 198.103 28.4418C198.701 28.8258 199.383 29.0179 200.151 29.0179C200.855 29.0179 201.473 28.8474 202.007 28.5062C202.561 28.1436 202.999 27.6423 203.319 27.0023C203.639 26.3624 203.82 25.6371 203.863 24.8265V24.1859C203.82 23.3754 203.639 22.6609 203.319 22.0424C202.999 21.4024 202.561 20.912 202.007 20.5707C201.452 20.208 200.823 20.0258 200.119 20.0258ZM145.182 20.0258C144.414 20.0258 143.721 20.218 143.102 20.6019C142.505 20.9859 142.035 21.5198 141.694 22.2025C141.353 22.8638 141.182 23.6317 141.182 24.5062C141.182 25.3808 141.353 26.1595 141.694 26.8422C142.035 27.5035 142.516 28.0265 143.134 28.4105C143.753 28.7943 144.457 28.9857 145.246 28.9857C146.035 28.9857 146.729 28.7944 147.326 28.4105C147.923 28.0265 148.382 27.5034 148.702 26.8422C149.043 26.1595 149.215 25.3809 149.215 24.5062C149.215 23.6316 149.043 22.8638 148.702 22.2025C148.361 21.5199 147.881 20.9859 147.262 20.6019C146.665 20.218 145.972 20.0258 145.182 20.0258ZM58.1657 13.7543C56.8217 13.7543 55.6162 14.0851 54.5495 14.7465C53.5043 15.3864 52.6829 16.2721 52.0856 17.4027C51.4884 18.5333 51.1901 19.8451 51.1901 21.3383C51.1901 22.8103 51.4883 24.1119 52.0856 25.2426C52.683 26.3731 53.5152 27.2688 54.5817 27.9301C55.6483 28.57 56.8749 28.89 58.2614 28.89C59.6267 28.89 60.8214 28.57 61.8454 27.9301C62.8907 27.2687 63.702 26.3732 64.278 25.2426C64.8754 24.1119 65.1735 22.8103 65.1735 21.3383C65.1735 19.8451 64.8752 18.5333 64.278 17.4027C63.6807 16.272 62.8585 15.3865 61.8132 14.7465C60.7679 14.0852 59.5523 13.7543 58.1657 13.7543ZM225.783 23.7064H232.119L228.951 15.5785L225.783 23.7064ZM122.093 20.5707H126.061C126.722 20.5707 127.309 20.4319 127.821 20.1547C128.354 19.8774 128.77 19.4929 129.069 19.0023C129.389 18.5117 129.55 17.9569 129.55 17.3383C129.55 16.3783 129.197 15.5997 128.493 15.0023C127.81 14.4051 126.925 14.1059 125.838 14.1058H122.093V20.5707Z",
             fill: "var(--foreground)"
           }
         ),
-        /* @__PURE__ */ jsx37(MarkGradients, { prefix: "or-logo" })
+        /* @__PURE__ */ jsx40(MarkGradients, { prefix: "or-logo" })
       ]
     }
   );
@@ -3908,7 +4099,7 @@ function OnlyRoundsLogoMark({
   className,
   ...props
 }) {
-  return /* @__PURE__ */ jsxs18(
+  return /* @__PURE__ */ jsxs21(
     "svg",
     {
       viewBox: "0 0 39 42",
@@ -3919,8 +4110,70 @@ function OnlyRoundsLogoMark({
       className: cn("h-6 w-auto", className),
       ...props,
       children: [
-        /* @__PURE__ */ jsx37(MarkPaths, { prefix: "or-mark" }),
-        /* @__PURE__ */ jsx37(MarkGradients, { prefix: "or-mark" })
+        /* @__PURE__ */ jsx40(MarkPaths, { prefix: "or-mark" }),
+        /* @__PURE__ */ jsx40(MarkGradients, { prefix: "or-mark" })
+      ]
+    }
+  );
+}
+
+// src/components/ui/job-card.tsx
+import { MapPin, Briefcase, Clock, Building2, BookmarkPlus } from "lucide-react";
+import { jsx as jsx41, jsxs as jsxs22 } from "react/jsx-runtime";
+function JobCard({
+  title,
+  company,
+  location,
+  salary,
+  jobType,
+  postedAt,
+  logoUrl,
+  onApply,
+  onSave,
+  className,
+  ...props
+}) {
+  return /* @__PURE__ */ jsxs22(
+    "div",
+    {
+      className: cn(
+        "flex flex-col gap-5 rounded-xl border border-border bg-card p-5 sm:p-6 transition-all hover:border-border/80 hover:shadow-xs",
+        className
+      ),
+      ...props,
+      children: [
+        /* @__PURE__ */ jsx41("div", { className: "flex items-start justify-between gap-4", children: /* @__PURE__ */ jsxs22("div", { className: "flex gap-4", children: [
+          /* @__PURE__ */ jsx41("div", { className: "flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-border bg-muted/30 overflow-hidden", children: logoUrl ? /* @__PURE__ */ jsx41("img", { src: logoUrl, alt: `${company} logo`, className: "h-full w-full object-cover" }) : /* @__PURE__ */ jsx41(Building2, { className: "h-6 w-6 text-muted-foreground/60" }) }),
+          /* @__PURE__ */ jsxs22("div", { className: "space-y-1 text-left", children: [
+            /* @__PURE__ */ jsx41("h3", { className: "font-heading text-lg font-semibold leading-tight text-foreground line-clamp-1", children: title }),
+            /* @__PURE__ */ jsx41("p", { className: "text-sm font-medium text-muted-foreground", children: company })
+          ] })
+        ] }) }),
+        /* @__PURE__ */ jsxs22("div", { className: "flex flex-wrap items-center gap-2", children: [
+          /* @__PURE__ */ jsxs22(Badge, { variant: "outline", className: "gap-1.5 font-normal text-muted-foreground", children: [
+            /* @__PURE__ */ jsx41(MapPin, { className: "h-3.5 w-3.5" }),
+            location
+          ] }),
+          /* @__PURE__ */ jsxs22(Badge, { variant: "outline", className: "gap-1.5 font-normal text-muted-foreground", children: [
+            /* @__PURE__ */ jsx41(Briefcase, { className: "h-3.5 w-3.5" }),
+            jobType
+          ] }),
+          salary && /* @__PURE__ */ jsx41(Badge, { variant: "outline", className: "gap-1.5 font-medium text-foreground bg-muted/30", children: salary })
+        ] }),
+        /* @__PURE__ */ jsx41(Separator, { className: "opacity-50" }),
+        /* @__PURE__ */ jsxs22("div", { className: "flex items-center justify-between gap-4", children: [
+          /* @__PURE__ */ jsxs22("div", { className: "flex items-center gap-1.5 text-xs text-muted-foreground", children: [
+            /* @__PURE__ */ jsx41(Clock, { className: "h-3.5 w-3.5" }),
+            /* @__PURE__ */ jsx41("span", { children: postedAt })
+          ] }),
+          /* @__PURE__ */ jsxs22("div", { className: "flex items-center gap-2 sm:gap-3", children: [
+            /* @__PURE__ */ jsxs22(Button, { variant: "outline", onClick: onSave, className: "h-9 w-9 p-0 sm:w-auto sm:px-4 shrink-0 cursor-pointer", "aria-label": "Save Job", children: [
+              /* @__PURE__ */ jsx41(BookmarkPlus, { className: "h-4 w-4 sm:mr-2" }),
+              /* @__PURE__ */ jsx41("span", { className: "hidden sm:inline", children: "Save" })
+            ] }),
+            /* @__PURE__ */ jsx41(Button, { variant: "default", onClick: onApply, className: "h-9 px-6 shrink-0 cursor-pointer", children: "Apply Now" })
+          ] })
+        ] })
       ]
     }
   );
@@ -3956,6 +4209,7 @@ export {
   AvatarImage,
   BackButton,
   Badge,
+  BottomNav,
   Breadcrumb,
   BreadcrumbEllipsis,
   BreadcrumbItem,
@@ -4011,7 +4265,9 @@ export {
   FieldSet,
   FieldTitle,
   Input,
+  JobCard,
   Label,
+  MetricCard,
   OnlyRoundsLogo,
   OnlyRoundsLogoMark,
   Popover,
@@ -4023,6 +4279,7 @@ export {
   RadioGroup,
   RadioGroupItem,
   ReusableSidebar,
+  SearchFilterBar,
   Select,
   SelectContent,
   SelectGroup,

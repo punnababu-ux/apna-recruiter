@@ -126,6 +126,24 @@ declare function SelectScrollDownButton({ className, ...props }: React$1.Compone
 
 declare function Slider({ className, defaultValue, value, min, max, step, ...props }: Slider$1.Root.Props): react_jsx_runtime.JSX.Element;
 
+type FilterGroup = {
+    label: string;
+    options: string[];
+    selected: string[];
+    onToggle: (value: string) => void;
+};
+interface SearchFilterBarProps {
+    placeholder?: string;
+    value: string;
+    onChange: (value: string) => void;
+    /** Pass one or more filter groups to show the Filters popover. */
+    filterGroups?: FilterGroup[];
+    /** Called when "Clear all" is clicked in the filter popover. */
+    onClearFilters?: () => void;
+    className?: string;
+}
+declare function SearchFilterBar({ placeholder, value, onChange, filterGroups, onClearFilters, className, }: SearchFilterBarProps): react_jsx_runtime.JSX.Element;
+
 declare function Avatar({ className, size, ...props }: Avatar$1.Root.Props & {
     size?: "default" | "sm" | "lg";
 }): react_jsx_runtime.JSX.Element;
@@ -155,6 +173,23 @@ declare function EmptyMedia({ className, variant, ...props }: React.ComponentPro
 declare function EmptyTitle({ className, ...props }: React.ComponentProps<"div">): react_jsx_runtime.JSX.Element;
 declare function EmptyDescription({ className, ...props }: React.ComponentProps<"p">): react_jsx_runtime.JSX.Element;
 declare function EmptyContent({ className, ...props }: React.ComponentProps<"div">): react_jsx_runtime.JSX.Element;
+
+/**
+ * MetricCard — A reusable stat/metric summary card for dashboards and directory headers.
+ */
+interface MetricCardProps extends React$1.HTMLAttributes<HTMLDivElement> {
+    /** Metric label / header text */
+    label: React$1.ReactNode;
+    /** Primary metric value display (e.g. "166", "88%", "$4.2k") */
+    value: React$1.ReactNode;
+    /** Optional icon displayed in top right */
+    icon?: React$1.ReactNode;
+    /** Optional trend or secondary helper text (e.g. "+12% this mo") */
+    trend?: React$1.ReactNode;
+    /** Optional variant for trend color ('success' | 'warning' | 'destructive' | 'neutral') */
+    trendVariant?: "success" | "warning" | "destructive" | "neutral";
+}
+declare const MetricCard: React$1.ForwardRefExoticComponent<MetricCardProps & React$1.RefAttributes<HTMLDivElement>>;
 
 declare function Tabs({ className, orientation, ...props }: Tabs$1.Root.Props): react_jsx_runtime.JSX.Element;
 declare const tabsListVariants: (props?: ({
@@ -282,9 +317,11 @@ type SidebarNavItem = {
 type SidebarAlertBanner = {
     id: string;
     title: string;
-    description: string;
     ctaText?: string;
     onCtaClick?: () => void;
+    variant?: "warning" | "info" | "destructive" | "success" | "default";
+    appearance?: "primary" | "secondary";
+    showClose?: boolean;
 };
 type SidebarBrand = {
     name: string;
@@ -311,6 +348,24 @@ type ReusableSidebarProps = {
     dropdownClassName?: string;
 };
 declare function ReusableSidebar({ brand, workspaces, activeWorkspaceId, onWorkspaceChange, navItems, bottomCta, alertBanner, footerItems, dropdownClassName, }: ReusableSidebarProps): react_jsx_runtime.JSX.Element;
+
+interface BottomNavItem {
+    /** If provided, renders an <a> tag via next/link. */
+    href?: string;
+    label: string;
+    icon: React$1.ComponentType<React$1.SVGProps<SVGSVGElement>>;
+    /** Whether this item reflects the current route. */
+    active?: boolean;
+    /** Optional badge node rendered over the icon (e.g. a notification count). */
+    badge?: React$1.ReactNode;
+    /** Used when `href` is not provided — renders a <button>. */
+    onClick?: () => void;
+}
+interface BottomNavProps {
+    items: BottomNavItem[];
+    className?: string;
+}
+declare function BottomNav({ items, className }: BottomNavProps): react_jsx_runtime.JSX.Element;
 
 declare function Popover({ ...props }: Popover$1.Root.Props): react_jsx_runtime.JSX.Element;
 declare function PopoverTrigger({ ...props }: Popover$1.Trigger.Props): react_jsx_runtime.JSX.Element;
@@ -412,6 +467,8 @@ interface AlertBannerProps extends Omit<React$1.ComponentProps<typeof Alert>, "t
     borderless?: boolean;
     /** Style appearance. 'secondary' is subtle background, 'primary' is solid gradient */
     appearance?: "primary" | "secondary";
+    /** Collapsed icon-only mode for compact containers like sidebars */
+    collapsed?: boolean;
 }
 declare const AlertBanner: React$1.ForwardRefExoticComponent<Omit<AlertBannerProps, "ref"> & React$1.RefAttributes<HTMLDivElement>>;
 
@@ -484,8 +541,21 @@ declare function OnlyRoundsLogo({ className, ...props }: React.SVGProps<SVGSVGEl
  */
 declare function OnlyRoundsLogoMark({ className, ...props }: React.SVGProps<SVGSVGElement>): react_jsx_runtime.JSX.Element;
 
+interface JobCardProps extends React$1.HTMLAttributes<HTMLDivElement> {
+    title: string;
+    company: string;
+    location: string;
+    salary?: string;
+    jobType: string;
+    postedAt: string;
+    logoUrl?: string;
+    onApply?: () => void;
+    onSave?: () => void;
+}
+declare function JobCard({ title, company, location, salary, jobType, postedAt, logoUrl, onApply, onSave, className, ...props }: JobCardProps): react_jsx_runtime.JSX.Element;
+
 declare function cn(...inputs: ClassValue[]): string;
 /** Capitalise the first character of a string. */
 declare function capitalize(s: string): string;
 
-export { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Alert, AlertAction, AlertBanner, type AlertBannerProps, AlertDescription, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogMedia, AlertDialogOverlay, AlertDialogPortal, AlertDialogTitle, AlertDialogTrigger, AlertTitle, ApnaLogo, Avatar, AvatarBadge, AvatarFallback, AvatarGroup, AvatarGroupCount, AvatarImage, BackButton, Badge, Breadcrumb, BreadcrumbEllipsis, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator, Button, ButtonGroup, ButtonGroupSeparator, ButtonGroupText, Checkbox, type ChipTabItem, ChipTabs, Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle, Field, FieldContent, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSeparator, FieldSet, FieldTitle, Input, Label, OnlyRoundsLogo, OnlyRoundsLogoMark, Popover, PopoverContent, PopoverDescription, PopoverHeader, PopoverTitle, PopoverTrigger, RadioGroup, RadioGroupItem, ReusableSidebar, type ReusableSidebarProps, Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectScrollDownButton, SelectScrollUpButton, SelectSeparator, SelectTrigger, SelectValue, Separator, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger, Sidebar, type SidebarAlertBanner, type SidebarBrand, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupAction, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInput, SidebarInset, SidebarMenu, SidebarMenuAction, SidebarMenuBadge, SidebarMenuButton, SidebarMenuItem, SidebarMenuSkeleton, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, type SidebarNavItem, SidebarProvider, SidebarRail, SidebarSeparator, type SidebarSubNavItem, SidebarTrigger, type SidebarWorkspace, Skeleton, Slider, type SortDirection, SortableTableHead, Spinner, Switch, Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow, Tabs, TabsContent, TabsList, TabsTrigger, Textarea, Toaster, Toggle, ToggleGroup, ToggleGroupItem, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, badgeVariants, buttonGroupVariants, buttonVariants, capitalize, cn, inputVariants, tabsListVariants, textareaVariants, toggleVariants, useSidebar };
+export { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Alert, AlertAction, AlertBanner, type AlertBannerProps, AlertDescription, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogMedia, AlertDialogOverlay, AlertDialogPortal, AlertDialogTitle, AlertDialogTrigger, AlertTitle, ApnaLogo, Avatar, AvatarBadge, AvatarFallback, AvatarGroup, AvatarGroupCount, AvatarImage, BackButton, Badge, BottomNav, type BottomNavItem, type BottomNavProps, Breadcrumb, BreadcrumbEllipsis, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator, Button, ButtonGroup, ButtonGroupSeparator, ButtonGroupText, Checkbox, type ChipTabItem, ChipTabs, Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle, Field, FieldContent, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSeparator, FieldSet, FieldTitle, type FilterGroup, Input, JobCard, type JobCardProps, Label, MetricCard, type MetricCardProps, OnlyRoundsLogo, OnlyRoundsLogoMark, Popover, PopoverContent, PopoverDescription, PopoverHeader, PopoverTitle, PopoverTrigger, RadioGroup, RadioGroupItem, ReusableSidebar, type ReusableSidebarProps, SearchFilterBar, type SearchFilterBarProps, Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectScrollDownButton, SelectScrollUpButton, SelectSeparator, SelectTrigger, SelectValue, Separator, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger, Sidebar, type SidebarAlertBanner, type SidebarBrand, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupAction, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInput, SidebarInset, SidebarMenu, SidebarMenuAction, SidebarMenuBadge, SidebarMenuButton, SidebarMenuItem, SidebarMenuSkeleton, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, type SidebarNavItem, SidebarProvider, SidebarRail, SidebarSeparator, type SidebarSubNavItem, SidebarTrigger, type SidebarWorkspace, Skeleton, Slider, type SortDirection, SortableTableHead, Spinner, Switch, Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow, Tabs, TabsContent, TabsList, TabsTrigger, Textarea, Toaster, Toggle, ToggleGroup, ToggleGroupItem, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, badgeVariants, buttonGroupVariants, buttonVariants, capitalize, cn, inputVariants, tabsListVariants, textareaVariants, toggleVariants, useSidebar };

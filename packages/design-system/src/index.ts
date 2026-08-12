@@ -20,6 +20,7 @@ export * from "./components/ui/radio-group"
 export * from "./components/ui/switch"
 export * from "./components/ui/select"
 export * from "./components/ui/slider"
+export * from "./components/ui/search-filter-bar"
 
 // 3. Data Display
 export * from "./components/ui/avatar"
@@ -28,6 +29,7 @@ export * from "./components/ui/skeleton"
 export * from "./components/ui/spinner"
 export * from "./components/ui/separator"
 export * from "./components/ui/empty"
+export * from "./components/ui/metric-card"
 
 // 4. Navigation
 export * from "./components/ui/tabs"
@@ -35,6 +37,7 @@ export * from "./components/ui/chip-tabs"
 export * from "./components/ui/breadcrumb"
 export * from "./components/ui/sidebar"
 export * from "./components/ui/app-sidebar"
+export * from "./components/ui/bottom-nav"
 
 // 5. Overlays & Dialogs
 export * from "./components/ui/tooltip"
@@ -54,6 +57,7 @@ export * from "./components/ui/table"
 export * from "./components/ui/accordion"
 export * from "./components/ui/logo-apna"
 export * from "./components/ui/logo-onlyrounds"
+export * from "./components/ui/job-card"
 
 // Helper Utilities
 export * from "./lib/utils"

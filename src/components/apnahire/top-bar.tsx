@@ -40,10 +40,10 @@ export function ApnaHireTopBar({
         className
       )}
     >
-      <SidebarTrigger className="-ml-1" />
+      <SidebarTrigger className="-ml-1 hidden md:flex" />
 
-      {/* Divider */}
-      <div className="mx-1 h-4 w-px bg-border" />
+      {/* Divider — only visible alongside the sidebar trigger */}
+      <div className="mx-1 h-4 w-px bg-border hidden md:block" />
 
       <ApnaHireBreadcrumb />
 

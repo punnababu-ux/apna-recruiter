@@ -4,21 +4,19 @@
  * /apnahire/jobs — Jobs list surface.
  */
 
-import { Plus } from "lucide-react"
+import { Plus, Briefcase, Users, CalendarCheck, TrendingUp } from "lucide-react"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Suspense, useMemo, useState } from "react"
 
+import { MetricCard, SearchFilterBar, Button, Tabs, TabsList, TabsTrigger } from "@apna/design-system"
 import { JobsTable, type JobRow, type JobStatus } from "@/components/onlyrounds/jobs-table"
 import { PageHeader } from "@/components/onlyrounds/page-header"
-import { SearchFilterBar } from "@/components/onlyrounds/search-filter-bar"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 const MOCK: JobRow[] = [
   {
     id: "product-designer",
-    title: "Product Designer",
+    title: "Senior Product Designer",
     status: "active",
     client: "Flipkart",
     clientLogo: "https://www.google.com/s2/favicons?domain=flipkart.com&sz=128",
@@ -27,11 +25,11 @@ const MOCK: JobRow[] = [
     owner: "Mitushi Agarwal",
     screening: 24,
     interview: 6,
-    shortlisted: 0,
+    shortlisted: 2,
   },
   {
     id: "manual-tester-profile",
-    title: "Manual Tester",
+    title: "Lead QA Automation Engineer",
     status: "active",
     client: "Swiggy",
     clientLogo: "https://www.google.com/s2/favicons?domain=swiggy.com&sz=128",
@@ -40,24 +38,24 @@ const MOCK: JobRow[] = [
     owner: "Mitushi Agarwal",
     screening: 12,
     interview: 3,
-    shortlisted: 0,
+    shortlisted: 1,
   },
   {
     id: "manual-tester-ravi-english",
-    title: "QA Engineer",
+    title: "Frontend React Architect",
     status: "published",
     client: "Amazon",
     clientLogo: "https://www.google.com/s2/favicons?domain=amazon.com&sz=128",
-    location: "Hubli, IN",
+    location: "Bengaluru, IN",
     createdAt: "17 Apr 2026",
     owner: "Ravi Kumar",
     screening: 58,
     interview: 14,
-    shortlisted: 1,
+    shortlisted: 4,
   },
   {
     id: "full-stack-developer",
-    title: "Full Stack Developer",
+    title: "Senior Full Stack Engineer (Node + Next.js)",
     status: "draft",
     client: "Zomato",
     clientLogo: "https://www.google.com/s2/favicons?domain=zomato.com&sz=128",
@@ -68,16 +66,42 @@ const MOCK: JobRow[] = [
     interview: 0,
     shortlisted: 0,
   },
+  {
+    id: "mobile-dev-lead",
+    title: "iOS Lead Engineer (SwiftUI)",
+    status: "active",
+    client: "Razorpay",
+    clientLogo: "https://www.google.com/s2/favicons?domain=razorpay.com&sz=128",
+    location: "Bengaluru, IN",
+    createdAt: "10 Apr 2026",
+    owner: "Ravi Kumar",
+    screening: 31,
+    interview: 8,
+    shortlisted: 3,
+  },
+  {
+    id: "devops-specialist",
+    title: "Principal Cloud DevOps Lead",
+    status: "inactive",
+    client: "Uber",
+    clientLogo: "https://www.google.com/s2/favicons?domain=uber.com&sz=128",
+    location: "Gurugram, IN",
+    createdAt: "05 Apr 2026",
+    owner: "Priya Shah",
+    screening: 18,
+    interview: 2,
+    shortlisted: 1,
+  },
 ]
 
 type JobTab = JobStatus | "all"
 
 const TABS: { value: JobTab; label: string; count: number }[] = [
-  { value: "all",       label: "All",       count: 266 },
-  { value: "active",    label: "Active",    count: 166 },
-  { value: "published", label: "Published", count: 4 },
-  { value: "inactive",  label: "Inactive",  count: 2 },
-  { value: "draft",     label: "Draft",     count: 94 },
+  { value: "all",       label: "All Jobs",   count: 266 },
+  { value: "active",    label: "Active",     count: 166 },
+  { value: "published", label: "Published",  count: 4 },
+  { value: "inactive",  label: "Inactive",   count: 2 },
+  { value: "draft",     label: "Drafts",     count: 94 },
 ]
 
 export default function JobsPage() {
@@ -92,18 +116,17 @@ function JobsPageInner() {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const tab = (searchParams.get("tab") as JobTab | null) ?? "active"
+  const tab = (searchParams.get("tab") as JobTab | null) ?? "all"
 
   const [clientFilters, setClientFilters] = useState<string[]>([])
   const [locationFilters, setLocationFilters] = useState<string[]>([])
+  const [searchQuery, setSearchQuery] = useState("")
 
   const setTab = (next: JobTab) => {
     const params = new URLSearchParams(searchParams.toString())
     params.set("tab", next)
     router.replace(`${pathname}?${params.toString()}`, { scroll: false })
   }
-
-  const [searchQuery, setSearchQuery] = useState("")
 
   const clients = useMemo(
     () => Array.from(new Set(MOCK.map((j) => j.client))).sort(),
@@ -126,11 +149,13 @@ function JobsPageInner() {
   })
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col">
+    <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 p-4 sm:gap-6 sm:p-6">
+      {/* Page Title & Action Bar */}
       <PageHeader
         variant="transparent"
-        className="px-6 pt-4"
-        title="Jobs"
+        className="px-0 pt-0"
+        title="Jobs Directory"
+        description="Manage active job openings, candidate evaluation pipelines, and recruiter assignments."
         tabs={
           <Tabs
             value={tab}
@@ -150,16 +175,50 @@ function JobsPageInner() {
             size="sm"
             nativeButton={false}
             render={<Link href="/apnahire/jobs/new" />}
+            className="gap-2 cursor-pointer font-semibold shadow-xs"
           >
             <Plus className="size-4" />
-            Create new job
+            <span className="hidden sm:inline">Create new job</span>
           </Button>
         }
       />
 
+      {/* Overview Metrics Cards */}
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 sm:gap-4">
+        <MetricCard
+          label="Active Postings"
+          value="166"
+          icon={<Briefcase />}
+          trend={<span className="flex items-center gap-0.5"><TrendingUp className="size-3" /> +12% this mo</span>}
+          trendVariant="success"
+        />
+        <MetricCard
+          label="Candidates Screened"
+          value="143"
+          icon={<Users />}
+          trend="Across active roles"
+          trendVariant="neutral"
+        />
+        <MetricCard
+          label="Interviews Today"
+          value="23"
+          icon={<CalendarCheck />}
+          trend="6 pending feedback"
+          trendVariant="warning"
+        />
+        <MetricCard
+          label="Offer Conversion"
+          value="88%"
+          icon={<TrendingUp />}
+          trend="High conversion"
+          trendVariant="success"
+        />
+      </div>
+
+      {/* Filter and Search Bar */}
       <SearchFilterBar
-        className="px-6 pt-3"
-        placeholder="Search jobs…"
+        className="px-0 pt-0"
+        placeholder="Search by job title or client…"
         value={searchQuery}
         onChange={setSearchQuery}
         filterGroups={[
@@ -179,7 +238,8 @@ function JobsPageInner() {
         onClearFilters={() => { setClientFilters([]); setLocationFilters([]) }}
       />
 
-      <main className="flex-1 px-6 py-4">
+      {/* Main Jobs Table List */}
+      <main className="flex-1">
         <JobsTable rows={filtered} />
       </main>
     </div>

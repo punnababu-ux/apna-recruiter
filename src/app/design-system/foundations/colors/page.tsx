@@ -26,6 +26,16 @@ export default function ColorsPage() {
     { token: "bg-warning", label: "Warning", role: "Cautionary banners & chips" },
   ]
 
+  const semanticGradients = [
+    { token: "bg-gradient-primary", label: "Primary Gradient", role: "Signature hero & CTA (--gradient-primary)", darkText: false },
+    { token: "bg-gradient-accent", label: "Accent Gradient", role: "Secondary highlight & pop (--gradient-accent)", darkText: false },
+    { token: "bg-gradient-banner-info", label: "Banner Info", role: "Informational callout banners (--gradient-banner-info)", darkText: false },
+    { token: "bg-gradient-banner-success", label: "Banner Success", role: "Positive verification banners (--gradient-banner-success)", darkText: false },
+    { token: "bg-gradient-banner-warning", label: "Banner Warning", role: "Cautionary alert banners (--gradient-banner-warning)", darkText: true },
+    { token: "bg-gradient-banner-destructive", label: "Banner Destructive", role: "Error & deletion banners (--gradient-banner-destructive)", darkText: false },
+    { token: "bg-gradient-banner-default", label: "Banner Default", role: "Neutral dark surface banners (--gradient-banner-default)", darkText: false },
+  ]
+
   const primitiveRamps = [
     {
       name: "Gray (Neutral Ramp)",
@@ -92,42 +102,68 @@ export default function ColorsPage() {
       ],
     },
     {
-      name: "Green (Success)",
+      name: "Apna Navy / Purple (Dark Surfaces)",
       steps: [
-        { name: "50", token: "--color-green-50", bg: "bg-[var(--color-green-50)]", darkText: true },
-        { name: "100", token: "--color-green-100", bg: "bg-[var(--color-green-100)]", darkText: true },
-        { name: "200", token: "--color-green-200", bg: "bg-[var(--color-green-200)]", darkText: true },
-        { name: "300", token: "--color-green-300", bg: "bg-[var(--color-green-300)]", darkText: true },
-        { name: "400", token: "--color-green-400", bg: "bg-[var(--color-green-400)]" },
-        { name: "500", token: "--color-green-500", bg: "bg-[var(--color-green-500)]" },
-        { name: "600", token: "--color-green-600", bg: "bg-[var(--color-green-600)]" },
-        { name: "700", token: "--color-green-700", bg: "bg-[var(--color-green-700)]" },
-        { name: "800", token: "--color-green-800", bg: "bg-[var(--color-green-800)]" },
-        { name: "900", token: "--color-green-900", bg: "bg-[var(--color-green-900)]" },
-        { name: "950", token: "--color-green-950", bg: "bg-[var(--color-green-950)]" },
+        { name: "50", token: "--color-apna-navy-50", bg: "bg-[var(--color-apna-navy-50)]", darkText: true },
+        { name: "100", token: "--color-apna-navy-100", bg: "bg-[var(--color-apna-navy-100)]", darkText: true },
+        { name: "200", token: "--color-apna-navy-200", bg: "bg-[var(--color-apna-navy-200)]", darkText: true },
+        { name: "300", token: "--color-apna-navy-300", bg: "bg-[var(--color-apna-navy-300)]", darkText: true },
+        { name: "400", token: "--color-apna-navy-400", bg: "bg-[var(--color-apna-navy-400)]" },
+        { name: "500", token: "--color-apna-navy-500", bg: "bg-[var(--color-apna-navy-500)]" },
+        { name: "600", token: "--color-apna-navy-600", bg: "bg-[var(--color-apna-navy-600)]" },
+        { name: "700", token: "--color-apna-navy-700", bg: "bg-[var(--color-apna-navy-700)]" },
+        { name: "800", token: "--color-apna-navy-800", bg: "bg-[var(--color-apna-navy-800)]" },
+        { name: "900", token: "--color-apna-navy-900", bg: "bg-[var(--color-apna-navy-900)]" },
+        { name: "950", token: "--color-apna-navy-950", bg: "bg-[var(--color-apna-navy-950)]" },
+      ],
+    },
+
+    {
+      name: "Apna Plum (Wordmark Accent)",
+      steps: [
+        { name: "50", token: "--color-apna-plum-50", bg: "bg-[var(--color-apna-plum-50)]", darkText: true },
+        { name: "100", token: "--color-apna-plum-100", bg: "bg-[var(--color-apna-plum-100)]", darkText: true },
+        { name: "200", token: "--color-apna-plum-200", bg: "bg-[var(--color-apna-plum-200)]", darkText: true },
+        { name: "300", token: "--color-apna-plum-300", bg: "bg-[var(--color-apna-plum-300)]", darkText: true },
+        { name: "400", token: "--color-apna-plum-400", bg: "bg-[var(--color-apna-plum-400)]", darkText: true },
+        { name: "500", token: "--color-apna-plum-500", bg: "bg-[var(--color-apna-plum-500)]" },
+        { name: "600", token: "--color-apna-plum-600", bg: "bg-[var(--color-apna-plum-600)]" },
+        { name: "700", token: "--color-apna-plum-700", bg: "bg-[var(--color-apna-plum-700)]" },
+        { name: "800", token: "--color-apna-plum-800", bg: "bg-[var(--color-apna-plum-800)]" },
+        { name: "900", token: "--color-apna-plum-900", bg: "bg-[var(--color-apna-plum-900)]" },
+        { name: "950", token: "--color-apna-plum-950", bg: "bg-[var(--color-apna-plum-950)]" },
       ],
     },
     {
-      name: "Blue (Info / Accent)",
+      name: "Apna Sky (Tertiary Accent)",
       steps: [
-        { name: "50", token: "--color-blue-50", bg: "bg-[var(--color-blue-50)]", darkText: true },
-        { name: "100", token: "--color-blue-100", bg: "bg-[var(--color-blue-100)]", darkText: true },
-        { name: "200", token: "--color-blue-200", bg: "bg-[var(--color-blue-200)]", darkText: true },
-        { name: "300", token: "--color-blue-300", bg: "bg-[var(--color-blue-300)]", darkText: true },
-        { name: "400", token: "--color-blue-400", bg: "bg-[var(--color-blue-400)]" },
-        { name: "500", token: "--color-blue-500", bg: "bg-[var(--color-blue-500)]" },
-        { name: "600", token: "--color-blue-600", bg: "bg-[var(--color-blue-600)]" },
-        { name: "700", token: "--color-blue-700", bg: "bg-[var(--color-blue-700)]" },
-        { name: "800", token: "--color-blue-800", bg: "bg-[var(--color-blue-800)]" },
-        { name: "900", token: "--color-blue-900", bg: "bg-[var(--color-blue-900)]" },
-        { name: "950", token: "--color-blue-950", bg: "bg-[var(--color-blue-950)]" },
+        { name: "50", token: "--color-apna-sky-50", bg: "bg-[var(--color-apna-sky-50)]", darkText: true },
+        { name: "100", token: "--color-apna-sky-100", bg: "bg-[var(--color-apna-sky-100)]", darkText: true },
+        { name: "200", token: "--color-apna-sky-200", bg: "bg-[var(--color-apna-sky-200)]", darkText: true },
+        { name: "300", token: "--color-apna-sky-300", bg: "bg-[var(--color-apna-sky-300)]", darkText: true },
+        { name: "400", token: "--color-apna-sky-400", bg: "bg-[var(--color-apna-sky-400)]", darkText: true },
+        { name: "500", token: "--color-apna-sky-500", bg: "bg-[var(--color-apna-sky-500)]" },
+        { name: "600", token: "--color-apna-sky-600", bg: "bg-[var(--color-apna-sky-600)]" },
+        { name: "700", token: "--color-apna-sky-700", bg: "bg-[var(--color-apna-sky-700)]" },
+        { name: "800", token: "--color-apna-sky-800", bg: "bg-[var(--color-apna-sky-800)]" },
+        { name: "900", token: "--color-apna-sky-900", bg: "bg-[var(--color-apna-sky-900)]" },
+        { name: "950", token: "--color-apna-sky-950", bg: "bg-[var(--color-apna-sky-950)]" },
       ],
     },
   ]
 
   const copySwatch = (event: React.MouseEvent<HTMLDivElement>, label: string) => {
-    const el = event.currentTarget
-    const computedColor = window.getComputedStyle(el).backgroundColor
+    const cardEl = event.currentTarget
+    const swatchEl = (cardEl.firstElementChild as HTMLElement) || cardEl
+    const style = window.getComputedStyle(swatchEl)
+    const computedColor = style.backgroundColor
+    const computedBgImage = style.backgroundImage
+
+    if (computedBgImage && computedBgImage !== "none") {
+      navigator.clipboard.writeText(label)
+      toast.success(`Copied "${label}" to clipboard!`)
+      return
+    }
 
     // Convert rgb values to hex format
     let hex = computedColor
@@ -197,6 +233,41 @@ export default function ColorsPage() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Semantic Gradients */}
+        <div className="pt-6 space-y-3 border-t border-border/40">
+          <div>
+            <h3 className="text-sm font-semibold text-foreground font-heading">
+              Semantic Gradient Roles
+            </h3>
+            <p className="text-3xs text-muted-foreground">
+              Expressive brand & banner gradients defined in <code>semantic.css</code>. Theme-swappable across light & dark modes.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {semanticGradients.map((g) => (
+              <div
+                key={g.token}
+                onClick={(e) => copySwatch(e, g.token)}
+                className="group cursor-pointer rounded-xl border border-border bg-card overflow-hidden shadow-xs hover:border-primary/50 transition-all flex flex-col"
+              >
+                <div className={`h-20 w-full ${g.token} border-b border-border/40 relative flex items-end justify-end p-2`}>
+                  <div className="rounded-md bg-card/80 p-1 backdrop-blur-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Copy className="size-3 text-foreground" />
+                  </div>
+                </div>
+                <div className="p-3 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-foreground">{g.label}</span>
+                    <span className="text-3xs text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">Copy HEX</span>
+                  </div>
+                  <p className="text-3xs text-muted-foreground font-mono">{g.token}</p>
+                  <p className="text-3xs text-muted-foreground">{g.role}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 

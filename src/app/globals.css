@@ -349,6 +349,21 @@
 @utility bg-gradient-accent {
   background-image: var(--gradient-accent);
 }
+@utility bg-gradient-banner-default {
+  background-image: var(--gradient-banner-default);
+}
+@utility bg-gradient-banner-info {
+  background-image: var(--gradient-banner-info);
+}
+@utility bg-gradient-banner-success {
+  background-image: var(--gradient-banner-success);
+}
+@utility bg-gradient-banner-warning {
+  background-image: var(--gradient-banner-warning);
+}
+@utility bg-gradient-banner-destructive {
+  background-image: var(--gradient-banner-destructive);
+}
 
 /* ----------------------------------------------------------------------------
  * AI activity shimmer — subtle animated gradient used as a full-field cover

@@ -107,6 +107,7 @@ function Button({
   return (
     <ButtonPrimitive
       data-slot="button"
+      nativeButton={props.nativeButton ?? (props.render ? false : undefined)}
       data-loading={loading || undefined}
       aria-busy={loading || undefined}
       disabled={disabled || loading}

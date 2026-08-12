@@ -80,15 +80,21 @@ export interface ApnaHireSidebarProps {
   onWorkspaceChange?: (w: SidebarWorkspace) => void
   showAlert?: boolean
   alertTitle?: string
-  alertDescription?: string
+  alertCtaText?: string
+  alertVariant?: "warning" | "info" | "destructive" | "success" | "default"
+  alertAppearance?: "primary" | "secondary"
+  alertShowClose?: boolean
 }
 
 export function ApnaHireSidebar({
   activeWorkspaceId: controlledId,
   onWorkspaceChange,
   showAlert = false,
-  alertTitle = "Verify Identity",
-  alertDescription = "Complete verification to unlock all recruiter features.",
+  alertTitle = "Verify Identity: Complete tax verification to post jobs.",
+  alertCtaText = "Verify",
+  alertVariant = "warning",
+  alertAppearance = "secondary",
+  alertShowClose = true,
 }: ApnaHireSidebarProps) {
   const [internalId, setInternalId] = React.useState(WORKSPACES[0].id)
   const activeWorkspaceId = controlledId ?? internalId
@@ -111,10 +117,12 @@ export function ApnaHireSidebar({
       alertBanner={
         showAlert
           ? {
-              id: "ah-verify",
+              id: `ah-alert-${alertVariant}-${alertAppearance}`,
               title: alertTitle,
-              description: alertDescription,
-              ctaText: "Verify",
+              ctaText: alertCtaText || undefined,
+              variant: alertVariant,
+              appearance: alertAppearance,
+              showClose: alertShowClose,
             }
           : undefined
       }

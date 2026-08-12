@@ -113,14 +113,14 @@ export function PageHeader({
       {tabs ? (
         <div
           className={cn(
-            "flex flex-wrap items-center",
+            "flex items-center min-w-0 max-w-full overflow-x-auto no-scrollbar",
             // pt-0 + pb-0: the underline indicator of variant="line" tabs sits
             // at bottom-0 of the trigger, which lands flush against the
             // header's border-b line.
             isDefault && "mx-auto w-full max-w-7xl px-6",
           )}
         >
-          <div className="min-w-0 flex-1">{tabs}</div>
+          <div className="min-w-0 max-w-full flex-1 overflow-x-auto no-scrollbar">{tabs}</div>
         </div>
       ) : null}
     </header>

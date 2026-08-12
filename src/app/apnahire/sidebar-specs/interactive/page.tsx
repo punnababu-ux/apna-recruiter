@@ -15,8 +15,11 @@ export default function InteractiveSpecsPage() {
   const [activeAHWorkspace, setActiveAHWorkspace] = React.useState<string>("ah-corp")
 
   const [showAlert, setShowAlert] = React.useState(true)
-  const [customAlertTitle, setCustomAlertTitle] = React.useState("Verify Identity")
-  const [customAlertDesc, setCustomAlertDesc] = React.useState("Verify your company tax status to post jobs.")
+  const [alertVariant, setAlertVariant] = React.useState<"warning" | "info" | "destructive" | "success" | "default">("warning")
+  const [alertAppearance, setAlertAppearance] = React.useState<"primary" | "secondary">("secondary")
+  const [customAlertTitle, setCustomAlertTitle] = React.useState("Verify Identity: Complete tax verification to post jobs.")
+  const [customCtaText, setCustomCtaText] = React.useState("Verify")
+  const [showClose, setShowClose] = React.useState(true)
 
   return (
     <SidebarProvider defaultOpen={true}>
@@ -26,7 +29,10 @@ export default function InteractiveSpecsPage() {
         onWorkspaceChange={(w) => setActiveAHWorkspace(w.id)}
         showAlert={showAlert}
         alertTitle={customAlertTitle}
-        alertDescription={customAlertDesc}
+        alertCtaText={customCtaText}
+        alertVariant={alertVariant}
+        alertAppearance={alertAppearance}
+        alertShowClose={showClose}
       />
 
       {/* Main Content Layout */}
@@ -75,41 +81,90 @@ export default function InteractiveSpecsPage() {
                 Configure Alert Banner
               </h3>
               
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <div className="flex items-center gap-2">
                   <input
                     id="play-show-alert"
                     type="checkbox"
                     checked={showAlert}
                     onChange={(e) => setShowAlert(e.target.checked)}
-                    className="rounded border-border"
+                    className="rounded border-border cursor-pointer"
                   />
-                  <label htmlFor="play-show-alert" className="text-xs text-muted-foreground cursor-pointer select-none">
-                    Show Dismissible Warning Banner
+                  <label htmlFor="play-show-alert" className="text-xs text-muted-foreground cursor-pointer select-none font-medium">
+                    Show Alert Banner
                   </label>
                 </div>
 
                 {showAlert && (
-                  <div className="space-y-3 animate-in fade-in duration-200">
+                  <div className="space-y-4 animate-in fade-in duration-200 pt-1">
+                    {/* Banner Variant & Appearance Controls */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-1">
+                        <label htmlFor="play-alert-variant" className="text-2xs font-semibold text-muted-foreground">Banner Type / Variant</label>
+                        <select
+                          id="play-alert-variant"
+                          value={alertVariant}
+                          onChange={(e) => setAlertVariant(e.target.value as "warning" | "info" | "destructive" | "success" | "default")}
+                          className="w-full h-8 px-2 text-xs border border-border rounded-md bg-background text-foreground focus:outline-hidden cursor-pointer"
+                        >
+                          <option value="warning">Warning (Amber)</option>
+                          <option value="info">Info (Sky Blue)</option>
+                          <option value="destructive">Destructive (Red)</option>
+                          <option value="success">Success (Green)</option>
+                          <option value="default">Default (Gray)</option>
+                        </select>
+                      </div>
+
+                      <div className="space-y-1">
+                        <label htmlFor="play-alert-appearance" className="text-2xs font-semibold text-muted-foreground">Style Fill</label>
+                        <select
+                          id="play-alert-appearance"
+                          value={alertAppearance}
+                          onChange={(e) => setAlertAppearance(e.target.value as "primary" | "secondary")}
+                          className="w-full h-8 px-2 text-xs border border-border rounded-md bg-background text-foreground focus:outline-hidden cursor-pointer"
+                        >
+                          <option value="secondary">Subtle Background</option>
+                          <option value="primary">Primary Gradient</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Text content inputs */}
                     <div className="space-y-1">
-                      <label htmlFor="play-alert-title" className="text-2xs text-muted-foreground">Alert Title</label>
+                      <label htmlFor="play-alert-title" className="text-2xs font-semibold text-muted-foreground">Alert Message / Title</label>
                       <input
                         id="play-alert-title"
                         type="text"
                         value={customAlertTitle}
                         onChange={(e) => setCustomAlertTitle(e.target.value)}
-                        className="w-full h-8 px-2 text-xs border border-border rounded-md bg-background focus:outline-hidden"
+                        className="w-full h-8 px-2 text-xs border border-border rounded-md bg-background text-foreground focus:outline-hidden"
                       />
                     </div>
+
                     <div className="space-y-1">
-                      <label htmlFor="play-alert-desc" className="text-2xs text-muted-foreground">Alert Description</label>
-                      <textarea
-                        id="play-alert-desc"
-                        rows={2}
-                        value={customAlertDesc}
-                        onChange={(e) => setCustomAlertDesc(e.target.value)}
-                        className="w-full p-2 text-xs border border-border rounded-md bg-background focus:outline-hidden resize-none"
+                      <label htmlFor="play-alert-cta" className="text-2xs font-semibold text-muted-foreground">CTA Link Label</label>
+                      <input
+                        id="play-alert-cta"
+                        type="text"
+                        value={customCtaText}
+                        onChange={(e) => setCustomCtaText(e.target.value)}
+                        placeholder="Leave blank to hide CTA"
+                        className="w-full h-8 px-2 text-xs border border-border rounded-md bg-background text-foreground focus:outline-hidden"
                       />
+                    </div>
+
+                    {/* Toggle Close Icon */}
+                    <div className="flex items-center gap-2 pt-1">
+                      <input
+                        id="play-show-close"
+                        type="checkbox"
+                        checked={showClose}
+                        onChange={(e) => setShowClose(e.target.checked)}
+                        className="rounded border-border cursor-pointer"
+                      />
+                      <label htmlFor="play-show-close" className="text-xs text-muted-foreground cursor-pointer select-none">
+                        Show Close Icon (X)
+                      </label>
                     </div>
                   </div>
                 )}

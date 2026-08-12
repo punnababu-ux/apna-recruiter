@@ -16,8 +16,8 @@ import {
   Badge,
   Switch,
   Button,
+  JobCard,
 } from "@apna/design-system"
-import { JobCard } from "@/components/shared/job-card"
 import {
   SingleJobPricing,
   UnlimitedPlans,

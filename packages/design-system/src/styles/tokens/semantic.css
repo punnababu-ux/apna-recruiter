@@ -87,15 +87,15 @@
   --success-subtle:         var(--color-apna-green-100);
   --success-subtle-fg:      var(--color-apna-green-900);
 
-  --warning:                var(--color-amber-500);
+  --warning:                var(--color-apna-gold-500);
   --warning-foreground:     var(--color-gray-950);
-  --warning-subtle:         var(--color-amber-100);
-  --warning-subtle-fg:      var(--color-amber-900);
+  --warning-subtle:         var(--color-apna-gold-100);
+  --warning-subtle-fg:      var(--color-apna-gold-900);
 
-  --info:                   var(--color-blue-600);
+  --info:                   var(--color-apna-sky-600);
   --info-foreground:        var(--color-gray-50);
-  --info-subtle:            var(--color-blue-100);
-  --info-subtle-fg:         var(--color-blue-900);
+  --info-subtle:            var(--color-apna-sky-100);
+  --info-subtle-fg:         var(--color-apna-sky-900);
 
   /* --------------------------------------------------------------------------
    * Lines — border, input outline, focus ring
@@ -283,6 +283,13 @@
   --gradient-accent:  linear-gradient(135deg,
                         var(--color-apna-gold-400) 0%,
                         var(--color-apna-gold-600) 100%);
+
+  /* Alert Banner Gradients */
+  --gradient-banner-default:     linear-gradient(135deg, var(--color-gray-800) 0%, var(--color-gray-950) 100%);
+  --gradient-banner-info:        linear-gradient(135deg, var(--color-apna-sky-500) 0%, var(--color-apna-sky-700) 100%);
+  --gradient-banner-success:     linear-gradient(135deg, var(--color-apna-green-500) 0%, var(--color-apna-green-700) 100%);
+  --gradient-banner-warning:     linear-gradient(135deg, var(--color-apna-gold-300) 0%, var(--color-apna-gold-500) 100%);
+  --gradient-banner-destructive: linear-gradient(135deg, var(--color-red-500) 0%, var(--color-red-700) 100%);
 }
 
 
@@ -326,13 +333,13 @@
   --success-foreground:     var(--color-gray-50);
   --success-subtle:         var(--color-apna-green-900);
 
-  --warning:                var(--color-amber-400);
+  --warning:                var(--color-apna-gold-400);
   --warning-foreground:     var(--color-gray-950);
-  --warning-subtle:         var(--color-amber-900);
+  --warning-subtle:         var(--color-apna-gold-900);
 
-  --info:                   var(--color-blue-400);
+  --info:                   var(--color-apna-sky-400);
   --info-foreground:        var(--color-gray-950);
-  --info-subtle:            var(--color-blue-900);
+  --info-subtle:            var(--color-apna-sky-900);
 
   /* Lines — translucent on dark for softer hairlines */
   --border: var(--color-alpha-white-10);
@@ -356,4 +363,11 @@
   --chart-3: var(--color-apna-sky-400);
   --chart-4: var(--color-gray-400);
   --chart-5: var(--color-apna-green-700);
+
+  /* Alert Banner Gradients (Dark) */
+  --gradient-banner-default:     linear-gradient(135deg, var(--color-apna-navy-800) 0%, var(--color-apna-navy-950) 100%);
+  --gradient-banner-info:        linear-gradient(135deg, var(--color-apna-sky-700) 0%, var(--color-apna-sky-900) 100%);
+  --gradient-banner-success:     linear-gradient(135deg, var(--color-apna-green-700) 0%, var(--color-apna-green-900) 100%);
+  --gradient-banner-warning:     linear-gradient(135deg, var(--color-apna-gold-600) 0%, var(--color-apna-gold-800) 100%);
+  --gradient-banner-destructive: linear-gradient(135deg, var(--color-red-700) 0%, var(--color-red-900) 100%);
 }
