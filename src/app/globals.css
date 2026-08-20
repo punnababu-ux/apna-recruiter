@@ -60,6 +60,10 @@
   --color-info-foreground:         var(--info-foreground);
   --color-info-subtle:             var(--info-subtle);
 
+  /* Inverted surfaces */
+  --color-surface-inverted:    var(--surface-inverted);
+  --color-surface-inverted-fg: var(--surface-inverted-fg);
+
   /* Lines */
   --color-border: var(--border);
   --color-input:  var(--input);

@@ -32,6 +32,11 @@
   --popover:             var(--color-gray-0);     /* floating surface         */
   --popover-foreground:  var(--color-gray-950);
 
+  /* Inverted hero surface — Apna Navy for full-bleed pricing/marketing banners.
+   * Use bg-surface-inverted + text-surface-inverted-fg on dark hero sections. */
+  --surface-inverted:    var(--color-apna-navy-900);
+  --surface-inverted-fg: var(--color-gray-0);
+
   /* --------------------------------------------------------------------------
    * Roles — Primary (high-emphasis action) · Apna green
    * The brand's action colour. CTAs, selected state, focus ring, any

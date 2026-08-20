@@ -113,6 +113,11 @@
   --color-apna-sky-800: #154A6E;
   --color-apna-sky-900: #163F5C;
   --color-apna-sky-950: #0D273B;
+  --color-apna-navy-600: #0052CC;
+  --color-apna-navy-700: #004BA9;
+  --color-apna-navy-800: #003A80;
+  --color-apna-navy-900: #002963;
+  --color-apna-navy-950: #001840;
   --color-alpha-black-5: rgba(0, 0, 0, 0.05);
   --color-alpha-black-10: rgba(0, 0, 0, 0.10);
   --color-alpha-black-20: rgba(0, 0, 0, 0.20);
@@ -262,6 +267,8 @@
   --card-foreground: var(--color-gray-950);
   --popover: var(--color-gray-0);
   --popover-foreground: var(--color-gray-950);
+  --surface-inverted: var(--color-apna-navy-900);
+  --surface-inverted-fg: var(--color-gray-0);
   --primary: var(--color-apna-green-600);
   --primary-foreground: var(--color-gray-50);
   --secondary: var(--color-gray-100);
