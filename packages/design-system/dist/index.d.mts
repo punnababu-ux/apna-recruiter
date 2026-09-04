@@ -26,7 +26,7 @@ import { Accordion as Accordion$1 } from '@base-ui/react/accordion';
 import { ClassValue } from 'clsx';
 
 declare const buttonVariants: (props?: ({
-    variant?: "link" | "default" | "outline" | "secondary" | "ghost" | "destructive" | null | undefined;
+    variant?: "link" | "default" | "outline" | "secondary" | "ghost" | "destructive" | "success" | null | undefined;
     size?: "default" | "xs" | "sm" | "lg" | "icon" | "icon-xs" | "icon-sm" | "icon-lg" | null | undefined;
 } & class_variance_authority_dist_types.ClassProp) | undefined) => string;
 type ButtonProps = Button$1.Props & VariantProps<typeof buttonVariants> & {
@@ -154,7 +154,7 @@ declare function AvatarGroup({ className, ...props }: React$1.ComponentProps<"di
 declare function AvatarGroupCount({ className, ...props }: React$1.ComponentProps<"div">): react_jsx_runtime.JSX.Element;
 
 declare const badgeVariants: (props?: ({
-    variant?: "link" | "default" | "outline" | "secondary" | "ghost" | "destructive" | "info" | "success" | "warning" | null | undefined;
+    variant?: "link" | "default" | "outline" | "secondary" | "ghost" | "destructive" | "success" | "info" | "warning" | null | undefined;
 } & class_variance_authority_dist_types.ClassProp) | undefined) => string;
 declare function Badge({ className, variant, render, ...props }: useRender.ComponentProps<"span"> & VariantProps<typeof badgeVariants>): React$1.ReactElement<unknown, string | React$1.JSXElementConstructor<any>>;
 
@@ -444,7 +444,7 @@ declare function SheetTitle({ className, ...props }: Dialog$1.Title.Props): reac
 declare function SheetDescription({ className, ...props }: Dialog$1.Description.Props): react_jsx_runtime.JSX.Element;
 
 declare const alertVariants: (props?: ({
-    variant?: "default" | "destructive" | "info" | "success" | "warning" | null | undefined;
+    variant?: "default" | "destructive" | "success" | "info" | "warning" | null | undefined;
 } & class_variance_authority_dist_types.ClassProp) | undefined) => string;
 declare function Alert({ className, variant, ...props }: React$1.ComponentProps<"div"> & VariantProps<typeof alertVariants>): react_jsx_runtime.JSX.Element;
 declare function AlertTitle({ className, ...props }: React$1.ComponentProps<"div">): react_jsx_runtime.JSX.Element;

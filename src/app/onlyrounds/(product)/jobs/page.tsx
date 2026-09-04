@@ -19,8 +19,8 @@ import { Suspense, useMemo, useState } from "react"
 
 import { JobsTable, type JobRow, type JobStatus } from "@/components/onlyrounds/jobs-table"
 import { PageHeader } from "@/components/onlyrounds/page-header"
-import { SearchFilterBar } from "@/components/onlyrounds/search-filter-bar"
 import { Button } from "@/components/ui/button"
+import { SearchFilterBar } from "@apna/design-system"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 const MOCK: JobRow[] = [

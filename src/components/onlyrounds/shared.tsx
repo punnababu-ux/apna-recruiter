@@ -201,6 +201,7 @@ export function ClientLogo({
   const sizeClass = size === "sm" ? "size-8" : "size-9"
   if (src) {
     return (
+      /* eslint-disable-next-line @next/next/no-img-element -- Dynamic third-party client logo */
       <img
         src={src}
         alt={`${name} logo`}

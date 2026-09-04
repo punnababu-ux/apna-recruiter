@@ -180,6 +180,7 @@ function LogoUpload({
       />
       <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-md border border-border bg-muted">
         {value ? (
+          /* eslint-disable-next-line @next/next/no-img-element -- User-uploaded data URL preview */
           <img
             src={value}
             alt="Client logo preview"

@@ -16,8 +16,8 @@ import { useState } from "react"
 import { ClientForm, type ClientFormValues } from "@/components/onlyrounds/client-form"
 import { ClientsTable, type ClientRow } from "@/components/onlyrounds/clients-table"
 import { PageHeader } from "@/components/onlyrounds/page-header"
-import { SearchFilterBar } from "@/components/onlyrounds/search-filter-bar"
 import { Button } from "@/components/ui/button"
+import { SearchFilterBar } from "@apna/design-system"
 import {
   Dialog,
   DialogContent,

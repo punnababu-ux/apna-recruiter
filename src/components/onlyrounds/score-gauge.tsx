@@ -6,25 +6,29 @@
  * 1-10 score, see ScorePill instead.
  */
 
+import { badgeVariants } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 
 export type Verdict = "fit" | "review" | "not-fit"
 
-const TONE: Record<Verdict, { ring: string; text: string; label: string }> = {
+const VERDICT_CONFIG: Record<
+  Verdict,
+  { variant: "success" | "warning" | "destructive"; label: string; text: string }
+> = {
   fit: {
-    ring: "border-success bg-success/10 text-success",
-    text: "text-success",
+    variant: "success",
     label: "Fit",
+    text: "text-success",
   },
   review: {
-    ring: "border-warning bg-warning/10 text-warning",
-    text: "text-warning",
+    variant: "warning",
     label: "Review",
+    text: "text-warning",
   },
   "not-fit": {
-    ring: "border-destructive bg-destructive/10 text-destructive",
-    text: "text-destructive",
+    variant: "destructive",
     label: "Not fit",
+    text: "text-destructive",
   },
 }
 
@@ -46,7 +50,7 @@ export function ScoreGauge({
   layout?: "row" | "col"
   className?: string
 }) {
-  const tone = TONE[verdict]
+  const config = VERDICT_CONFIG[verdict]
   const sizeCls =
     size === "lg"
       ? "size-12 text-base"
@@ -68,13 +72,13 @@ export function ScoreGauge({
         className={cn(
           "flex items-center justify-center rounded-full border font-semibold tabular-nums",
           sizeCls,
-          tone.ring,
+          badgeVariants({ variant: config.variant }),
         )}
       >
         {score}
       </span>
-      <span className={cn("font-medium", labelCls, tone.text)}>
-        {label ?? tone.label}
+      <span className={cn("font-medium", labelCls, config.text)}>
+        {label ?? config.label}
       </span>
     </div>
   )

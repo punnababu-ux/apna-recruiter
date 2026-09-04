@@ -10,7 +10,7 @@
 
 import * as React from "react"
 import { CalendarDays, Check, ChevronDown } from "lucide-react"
-import { Badge } from "@apna/design-system"
+import { Badge, Button } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 
 /* ─────────────────────────────────────── types ───────────────────────── */
@@ -173,19 +173,15 @@ export function JobCreditBundles({
                 </div>
 
                 {/* CTA */}
-                <button
+                <Button
                   type="button"
+                  variant={isSelected ? "success" : "outline"}
                   onClick={() => onSelectBundle(bundle.id)}
-                  className={cn(
-                    "mt-auto flex w-full items-center justify-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-semibold transition-colors",
-                    isSelected
-                      ? "border-success bg-success/10 text-success hover:bg-success/15"
-                      : "border-border bg-card text-foreground hover:bg-muted"
-                  )}
+                  className="mt-auto w-full font-semibold"
+                  leadingIcon={isSelected ? <Check className="size-3.5" aria-hidden /> : undefined}
                 >
-                  {isSelected && <Check className="size-3.5" aria-hidden />}
                   {isSelected ? "Selected" : "Select"}
-                </button>
+                </Button>
               </div>
             </div>
           )

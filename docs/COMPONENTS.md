@@ -28,6 +28,7 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 | RadioGroup       | `import { RadioGroup, RadioGroupItem } from "@apna/design-system"`     | Single-select from 2+ options.                   |
 | Switch           | `import { Switch } from "@apna/design-system"`                         | Instant on/off. Persist on change.               |
 | Select           | `import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@apna/design-system"` | Styled dropdown. Use for 4+ options. |
+| Slider           | `import { Slider } from "@apna/design-system"`                         | Range input slider built on Base UI Slider.      |
 | SearchFilterBar  | `import { SearchFilterBar } from "@apna/design-system"`               | Search input with optional multi-group filter popover. |
 
 ## 3. Data Display
@@ -69,6 +70,7 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 | Component        | Import                                                                 | tldr                                             |
 |------------------|------------------------------------------------------------------------|--------------------------------------------------|
 | Alert            | `import { Alert, AlertTitle, AlertDescription } from "@apna/design-system"` | Static banner. Use for persistent messages. |
+| AlertBanner      | `import { AlertBanner } from "@apna/design-system"`                   | High-emphasis action banner with icon, title, and action button. |
 | Sonner (toast)   | `import { toast } from "sonner"`                                       | Transient toast. Mounted via `<Toaster />` in root layout. |
 
 ## 7. Data & Layout

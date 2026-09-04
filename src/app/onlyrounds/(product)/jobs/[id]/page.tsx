@@ -44,7 +44,7 @@ import {
   type DrawerCandidate,
 } from "@/components/onlyrounds/candidate-drawer"
 
-import { SearchFilterBar } from "@/components/onlyrounds/search-filter-bar"
+import { SearchFilterBar } from "@apna/design-system"
 import { RoundSummaryStrip } from "@/components/onlyrounds/round-summary-strip"
 import { PageHeader } from "@/components/onlyrounds/page-header"
 import { CandidateTable } from "@/components/onlyrounds/candidate-table"
