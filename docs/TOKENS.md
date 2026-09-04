@@ -73,7 +73,7 @@ ramp). Authored in OKLCH for perceptually-uniform progression.
 | green     | success                                        | 50 – 950  |
 | amber     | warning                                        | 50 – 950  |
 | blue      | info / accent option                           | 50 – 950  |
-| apna-navy | marketing hero / inverted surfaces             | 600 – 950 |
+| apna-royal | marketing hero / inverted surfaces             | 600 – 950 |
 
 **Alpha neutrals** (`--color-alpha-black-*`, `--color-alpha-white-*`) are
 used for overlays, dividers, focus rings on dark backdrops.
@@ -112,7 +112,7 @@ change between themes.
 | `--card-foreground`      | gray-950           | gray-50             | text on card                    |
 | `--popover`              | gray-0             | gray-900            | floating surface                |
 | `--popover-foreground`   | gray-950           | gray-50             | text on popover                 |
-| `--surface-inverted`     | apna-navy-900      | apna-navy-950       | inverted hero / marketing banner|
+| `--surface-inverted`     | apna-royal-900     | apna-royal-950      | inverted hero / marketing banner|
 | `--surface-inverted-fg`  | gray-0             | gray-0              | text on inverted surface        |
 
 ### Roles

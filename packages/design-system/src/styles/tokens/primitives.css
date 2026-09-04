@@ -175,14 +175,14 @@
   --color-apna-sky-900: #163F5C;
   --color-apna-sky-950: #0D273B;
 
-  /* Apna Brand Navy — royal blue for inverted/hero marketing surfaces.
-   * Different hue from apna-sky (teal). Anchored at #004BA9, the Apna web
-   * app's primary action blue used in pricing hero, campaign banners, etc. */
-  --color-apna-navy-600: #0052CC;
-  --color-apna-navy-700: #004BA9;   /* Apna web active-blue anchor */
-  --color-apna-navy-800: #003A80;
-  --color-apna-navy-900: #002963;   /* Hero/inverted surface base */
-  --color-apna-navy-950: #001840;   /* Hero/inverted surface deep */
+  /* Apna Royal Blue — royal blue for inverted/hero marketing surfaces.
+   * Anchored at #004BA9, the Apna web primary action blue used in pricing hero,
+   * campaign banners, etc. */
+  --color-apna-royal-600: #0052CC;
+  --color-apna-royal-700: #004BA9;   /* Apna web active-blue anchor */
+  --color-apna-royal-800: #003A80;
+  --color-apna-royal-900: #002963;   /* Hero/inverted surface base */
+  --color-apna-royal-950: #001840;   /* Hero/inverted surface deep */
 
   /* --------------------------------------------------------------------------
    * Color · Alpha (translucent neutrals for overlays, rings, dividers)

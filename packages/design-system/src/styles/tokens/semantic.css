@@ -32,9 +32,9 @@
   --popover:             var(--color-gray-0);     /* floating surface         */
   --popover-foreground:  var(--color-gray-950);
 
-  /* Inverted hero surface — Apna Navy for full-bleed pricing/marketing banners.
+  /* Inverted hero surface — Apna Royal Blue for full-bleed pricing/marketing banners.
    * Use bg-surface-inverted + text-surface-inverted-fg on dark hero sections. */
-  --surface-inverted:    var(--color-apna-navy-900);
+  --surface-inverted:    var(--color-apna-royal-900);
   --surface-inverted-fg: var(--color-gray-0);
 
   /* --------------------------------------------------------------------------
@@ -303,27 +303,31 @@
  * Dark theme — only the mapping changes, primitives are untouched.
  * ========================================================================== */
 .dark {
-  /* Surfaces — Apna navy, matching the TalentPass slide deck */
-  --background:         var(--color-apna-navy-950);
+  /* Surfaces — Clean neutral dark */
+  --background:         var(--color-gray-950);
   --foreground:         var(--color-gray-50);
-  --card:               var(--color-apna-navy-900);
+  --card:               var(--color-gray-900);
   --card-foreground:    var(--color-gray-50);
-  --popover:            var(--color-apna-navy-900);
+  --popover:            var(--color-gray-900);
   --popover-foreground: var(--color-gray-50);
 
+  /* Inverted hero surface remains royal blue in dark theme */
+  --surface-inverted:    var(--color-apna-royal-950);
+  --surface-inverted-fg: var(--color-gray-0);
+
   /* Roles — green stays the action colour on dark; brightened one step
-     so it sits comfortably on the navy surface. */
+     so it sits comfortably on dark surfaces. */
   --primary:            var(--color-apna-green-500);
   --primary-foreground: var(--color-gray-50);
 
-  --secondary:            var(--color-apna-navy-800);
+  --secondary:            var(--color-gray-800);
   --secondary-foreground: var(--color-gray-50);
 
-  --muted:            var(--color-apna-navy-800);
+  --muted:            var(--color-gray-800);
   --muted-foreground: var(--color-gray-400);
 
-  --accent:            var(--color-apna-green-900);
-  --accent-foreground: var(--color-apna-green-200);
+  --accent:            var(--color-gray-800);
+  --accent-foreground: var(--color-gray-50);
 
   /* Highlight — gold, brightened for dark surfaces */
   --highlight:             var(--color-apna-gold-400);
@@ -352,11 +356,10 @@
   --ring:   var(--color-apna-green-400);
 
   /* Sidebar */
-  --sidebar:                    var(--color-apna-navy-900);
+  --sidebar:                    var(--color-gray-900);
   --sidebar-foreground:         var(--color-gray-50);
   --sidebar-primary:            var(--color-apna-green-500);
   --sidebar-primary-foreground: var(--color-gray-50);
-  /* Dark-mode active row: neutral tint, not brand. Mirrors light theme. */
   --sidebar-accent:             var(--color-gray-800);
   --sidebar-accent-foreground:  var(--color-gray-50);
   --sidebar-border:             var(--color-alpha-white-10);
@@ -370,7 +373,7 @@
   --chart-5: var(--color-apna-green-700);
 
   /* Alert Banner Gradients (Dark) */
-  --gradient-banner-default:     linear-gradient(135deg, var(--color-apna-navy-800) 0%, var(--color-apna-navy-950) 100%);
+  --gradient-banner-default:     linear-gradient(135deg, var(--color-gray-800) 0%, var(--color-gray-950) 100%);
   --gradient-banner-info:        linear-gradient(135deg, var(--color-apna-sky-700) 0%, var(--color-apna-sky-900) 100%);
   --gradient-banner-success:     linear-gradient(135deg, var(--color-apna-green-700) 0%, var(--color-apna-green-900) 100%);
   --gradient-banner-warning:     linear-gradient(135deg, var(--color-apna-gold-600) 0%, var(--color-apna-gold-800) 100%);
