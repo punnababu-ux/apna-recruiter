@@ -207,19 +207,19 @@ export function UnlimitedPlans({
                 <div className="h-px w-full bg-border/60" />
 
                 <ul className="flex flex-col gap-3">
-                  <li className="flex items-start gap-2.5 text-xs text-foreground font-medium">
-                    <Building className="mt-0.5 size-4 shrink-0 text-primary" />
+                  <li className="flex items-center gap-2.5 text-xs text-foreground font-medium">
+                    <Building className="size-4 shrink-0 text-primary" />
                     <span>
                       {activeSlots} Active job slot for{" "}
                       <strong className="font-bold">{plan.durationDays} days</strong>
                     </span>
                   </li>
-                  <li className="flex items-start gap-2.5 text-xs text-foreground font-medium">
-                    <Sparkles className="mt-0.5 size-4 shrink-0 text-primary" />
+                  <li className="flex items-center gap-2.5 text-xs text-foreground font-medium">
+                    <Sparkles className="size-4 shrink-0 text-primary" />
                     <span>Unlimited free reposts on job expiry</span>
                   </li>
-                  <li className="flex items-start gap-2.5 text-xs text-foreground font-medium">
-                    <ShieldCheck className="mt-0.5 size-4 shrink-0 text-primary" />
+                  <li className="flex items-center gap-2.5 text-xs text-foreground font-medium">
+                    <ShieldCheck className="size-4 shrink-0 text-primary" />
                     <span>
                       <strong className="font-bold">
                         {(plan.unlocksCount * activeSlots).toLocaleString()}
@@ -230,12 +230,12 @@ export function UnlimitedPlans({
                       </span>
                     </span>
                   </li>
-                  <li className="flex items-start gap-2.5 text-xs text-foreground font-medium">
-                    <WhatsappIcon className="mt-0.5 size-4 shrink-0 text-success" />
+                  <li className="flex items-center gap-2.5 text-xs text-foreground font-medium">
+                    <WhatsappIcon className="size-4 shrink-0 text-success" />
                     <span>WhatsApp boost for more applications</span>
                   </li>
-                  <li className="flex items-start gap-2.5 text-xs text-foreground font-medium">
-                    <Headphones className="mt-0.5 size-4 shrink-0 text-primary" />
+                  <li className="flex items-center gap-2.5 text-xs text-foreground font-medium">
+                    <Headphones className="size-4 shrink-0 text-primary" />
                     <span>Priority support</span>
                   </li>
                 </ul>

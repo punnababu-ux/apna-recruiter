@@ -173,11 +173,11 @@ export function SingleJobPricing({
 
                   <ul className="flex flex-col gap-2.5">
                     {plan.features.map((feature, i) => (
-                      <li key={i} className="flex items-start gap-2">
+                      <li key={i} className="flex items-center gap-2">
                         {feature.included ? (
-                          <Check className="mt-0.5 size-4 shrink-0 text-success" />
+                          <Check className="size-4 shrink-0 text-success" />
                         ) : (
-                          <X className="mt-0.5 size-4 shrink-0 text-muted-foreground/40" />
+                          <X className="size-4 shrink-0 text-muted-foreground/40" />
                         )}
                         <span
                           className={cn(
@@ -195,7 +195,7 @@ export function SingleJobPricing({
                         {feature.highlightIcon === "whatsapp" && (
                           <WhatsappIcon
                             className={cn(
-                              "mt-0.5 size-3.5 shrink-0",
+                              "size-3.5 shrink-0",
                               feature.included ? "text-success" : "text-muted-foreground/40"
                             )}
                           />
@@ -203,7 +203,7 @@ export function SingleJobPricing({
                         {feature.highlightIcon === "flame" && (
                           <Flame
                             className={cn(
-                              "mt-0.5 size-3.5 shrink-0",
+                              "size-3.5 shrink-0",
                               feature.included ? "text-destructive" : "text-muted-foreground/40"
                             )}
                           />
@@ -249,30 +249,30 @@ export function SingleJobPricing({
               <div className="h-px w-full bg-border/60" />
 
               <ul className="flex flex-col gap-3">
-                <li className="flex items-start gap-2.5 text-xs text-foreground font-medium">
-                  <Building className="mt-0.5 size-4 shrink-0 text-primary" />
+                <li className="flex items-center gap-2.5 text-xs text-foreground font-medium">
+                  <Building className="size-4 shrink-0 text-primary" />
                   <span>
                     <strong className="font-bold">1</strong> Active job slot for{" "}
                     <strong className="font-bold">30 days</strong>
                   </span>
                 </li>
-                <li className="flex items-start gap-2.5 text-xs text-foreground font-medium">
-                  <Sparkles className="mt-0.5 size-4 shrink-0 text-primary" />
+                <li className="flex items-center gap-2.5 text-xs text-foreground font-medium">
+                  <Sparkles className="size-4 shrink-0 text-primary" />
                   <span>Unlimited free reposts on job expiry</span>
                 </li>
-                <li className="flex items-start gap-2.5 text-xs text-foreground font-medium">
-                  <ShieldCheck className="mt-0.5 size-4 shrink-0 text-primary" />
+                <li className="flex items-center gap-2.5 text-xs text-foreground font-medium">
+                  <ShieldCheck className="size-4 shrink-0 text-primary" />
                   <span>
                     <strong className="font-bold">200</strong> database unlocks{" "}
                     <span className="text-muted-foreground italic">worth ₹2,000</span>
                   </span>
                 </li>
-                <li className="flex items-start gap-2.5 text-xs text-foreground font-medium">
-                  <WhatsappIcon className="mt-0.5 size-4 shrink-0 text-success" />
+                <li className="flex items-center gap-2.5 text-xs text-foreground font-medium">
+                  <WhatsappIcon className="size-4 shrink-0 text-success" />
                   <span>WhatsApp boost for more applications</span>
                 </li>
-                <li className="flex items-start gap-2.5 text-xs text-foreground font-medium">
-                  <Headphones className="mt-0.5 size-4 shrink-0 text-primary" />
+                <li className="flex items-center gap-2.5 text-xs text-foreground font-medium">
+                  <Headphones className="size-4 shrink-0 text-primary" />
                   <span>Priority support</span>
                 </li>
               </ul>
