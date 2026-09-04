@@ -113,11 +113,11 @@
   --color-apna-sky-800: #154A6E;
   --color-apna-sky-900: #163F5C;
   --color-apna-sky-950: #0D273B;
-  --color-apna-navy-600: #0052CC;
-  --color-apna-navy-700: #004BA9;
-  --color-apna-navy-800: #003A80;
-  --color-apna-navy-900: #002963;
-  --color-apna-navy-950: #001840;
+  --color-apna-royal-600: #0052CC;
+  --color-apna-royal-700: #004BA9;
+  --color-apna-royal-800: #003A80;
+  --color-apna-royal-900: #002963;
+  --color-apna-royal-950: #001840;
   --color-alpha-black-5: rgba(0, 0, 0, 0.05);
   --color-alpha-black-10: rgba(0, 0, 0, 0.10);
   --color-alpha-black-20: rgba(0, 0, 0, 0.20);
@@ -267,7 +267,7 @@
   --card-foreground: var(--color-gray-950);
   --popover: var(--color-gray-0);
   --popover-foreground: var(--color-gray-950);
-  --surface-inverted: var(--color-apna-navy-900);
+  --surface-inverted: var(--color-apna-royal-900);
   --surface-inverted-fg: var(--color-gray-0);
   --primary: var(--color-apna-green-600);
   --primary-foreground: var(--color-gray-50);
@@ -404,20 +404,22 @@
       var(--color-red-700) 100%);
 }
 .dark {
-  --background: var(--color-apna-navy-950);
+  --background: var(--color-gray-950);
   --foreground: var(--color-gray-50);
-  --card: var(--color-apna-navy-900);
+  --card: var(--color-gray-900);
   --card-foreground: var(--color-gray-50);
-  --popover: var(--color-apna-navy-900);
+  --popover: var(--color-gray-900);
   --popover-foreground: var(--color-gray-50);
+  --surface-inverted: var(--color-apna-royal-950);
+  --surface-inverted-fg: var(--color-gray-0);
   --primary: var(--color-apna-green-500);
   --primary-foreground: var(--color-gray-50);
-  --secondary: var(--color-apna-navy-800);
+  --secondary: var(--color-gray-800);
   --secondary-foreground: var(--color-gray-50);
-  --muted: var(--color-apna-navy-800);
+  --muted: var(--color-gray-800);
   --muted-foreground: var(--color-gray-400);
-  --accent: var(--color-apna-green-900);
-  --accent-foreground: var(--color-apna-green-200);
+  --accent: var(--color-gray-800);
+  --accent-foreground: var(--color-gray-50);
   --highlight: var(--color-apna-gold-400);
   --highlight-foreground: var(--color-gray-950);
   --destructive: var(--color-red-400);
@@ -435,7 +437,7 @@
   --border: var(--color-alpha-white-10);
   --input: var(--color-alpha-white-15);
   --ring: var(--color-apna-green-400);
-  --sidebar: var(--color-apna-navy-900);
+  --sidebar: var(--color-gray-900);
   --sidebar-foreground: var(--color-gray-50);
   --sidebar-primary: var(--color-apna-green-500);
   --sidebar-primary-foreground: var(--color-gray-50);
@@ -451,8 +453,8 @@
   --gradient-banner-default:
     linear-gradient(
       135deg,
-      var(--color-apna-navy-800) 0%,
-      var(--color-apna-navy-950) 100%);
+      var(--color-gray-800) 0%,
+      var(--color-gray-950) 100%);
   --gradient-banner-info:
     linear-gradient(
       135deg,
