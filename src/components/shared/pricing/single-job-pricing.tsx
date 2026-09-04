@@ -133,7 +133,7 @@ export function SingleJobPricing({
                 <div
                   key={plan.id}
                   className={cn(
-                    "flex flex-col rounded-xl border bg-card p-5 shadow-sm transition-all hover:shadow-md",
+                    "flex flex-col gap-4 rounded-xl border bg-card p-5 shadow-sm transition-all hover:shadow-md",
                     plan.isPopular && !showMonthlyCard
                       ? "border-primary ring-1 ring-primary/20"
                       : "border-border"
@@ -150,7 +150,7 @@ export function SingleJobPricing({
                     )}
                   </div>
 
-                  <div className="my-4 flex items-baseline gap-0.5">
+                  <div className="flex items-baseline gap-0.5">
                     <span className="text-2xl font-bold text-foreground">
                       ₹{activePrice.toLocaleString()}*
                     </span>
@@ -163,13 +163,13 @@ export function SingleJobPricing({
 
                   <Button
                     variant={plan.isPopular ? "default" : "outline"}
-                    className="w-full justify-center font-semibold mb-5"
+                    className="w-full justify-center font-semibold"
                     onClick={() => onSelectPlan?.(plan)}
                   >
                     {plan.actionLabel}
                   </Button>
 
-                  <div className="h-px w-full bg-border/60 mb-4" />
+                  <div className="h-px w-full bg-border/60" />
 
                   <ul className="flex flex-col gap-2.5">
                     {plan.features.map((feature, i) => (
@@ -220,32 +220,33 @@ export function SingleJobPricing({
         {/* Monthly Plan (apna Unlimited) Card */}
         {showMonthlyCard && (
           <div className="rounded-2xl border border-primary/30 bg-primary/5 p-5 sm:p-6 lg:col-span-4 flex flex-col justify-between">
-            <div>
-              <div className="mb-5 flex items-center justify-between">
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center justify-between">
                 <Badge variant="info" className="gap-1 font-semibold">
                   <Sparkles className="size-3.5" />
                   apna Unlimited
                 </Badge>
               </div>
 
-              <h3 className="font-heading text-lg font-bold text-foreground mb-2">
-                Monthly plan
-              </h3>
-
-              <div className="mb-4 flex items-baseline gap-1">
-                <span className="text-3xl font-bold text-foreground">₹2,499*</span>
-                <span className="text-xs text-muted-foreground font-medium">/month</span>
+              <div className="flex flex-col gap-1">
+                <h3 className="font-heading text-lg font-bold text-foreground">
+                  Monthly plan
+                </h3>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-bold text-foreground">₹2,499*</span>
+                  <span className="text-xs text-muted-foreground font-medium">/month</span>
+                </div>
               </div>
 
               <Button
                 variant="default"
-                className="w-full justify-center font-semibold mb-5 shadow-sm"
+                className="w-full justify-center font-semibold shadow-sm"
                 onClick={onSelectMonthly}
               >
                 Get apna unlimited
               </Button>
 
-              <div className="h-px w-full bg-border/60 mb-4" />
+              <div className="h-px w-full bg-border/60" />
 
               <ul className="flex flex-col gap-3">
                 <li className="flex items-start gap-2.5 text-xs text-foreground font-medium">

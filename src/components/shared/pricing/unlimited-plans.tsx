@@ -169,8 +169,9 @@ export function UnlimitedPlans({
                   : "border-border"
               )}
             >
-              <div>
-                <div className="flex items-center justify-between mb-3">
+              <div className="flex flex-col gap-4">
+                {/* Header: title + badge */}
+                <div className="flex items-center justify-between">
                   <h3 className="font-heading text-lg font-bold text-foreground">
                     {plan.name}
                   </h3>
@@ -181,26 +182,29 @@ export function UnlimitedPlans({
                   )}
                 </div>
 
-                <div className="my-3 flex items-baseline gap-1">
-                  <span className="text-3xl font-extrabold text-foreground">
-                    ₹{finalMonthlyRate.toLocaleString()}*
-                  </span>
-                  <span className="text-xs font-medium text-muted-foreground">/month</span>
+                {/* Price block: rate + upfront */}
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-3xl font-extrabold text-foreground">
+                      ₹{finalMonthlyRate.toLocaleString()}*
+                    </span>
+                    <span className="text-xs font-medium text-muted-foreground">/month</span>
+                  </div>
+                  <p className="text-xs font-medium text-muted-foreground">
+                    Pay upfront ₹{finalUpfront.toLocaleString()}
+                  </p>
                 </div>
 
-                <p className="text-xs text-muted-foreground font-medium mb-5">
-                  Pay upfront ₹{finalUpfront.toLocaleString()}
-                </p>
-
+                {/* Action CTA */}
                 <Button
                   variant={plan.isHighlighted ? "default" : "outline"}
-                  className="w-full justify-center font-semibold mb-6"
+                  className="w-full justify-center font-semibold"
                   onClick={() => onSelectPlan?.(plan)}
                 >
                   Get {plan.name.toLowerCase()}
                 </Button>
 
-                <div className="h-px w-full bg-border/60 mb-5" />
+                <div className="h-px w-full bg-border/60" />
 
                 <ul className="flex flex-col gap-3">
                   <li className="flex items-start gap-2.5 text-xs text-foreground font-medium">

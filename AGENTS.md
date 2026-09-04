@@ -123,6 +123,19 @@ Tier 2 — Semantics    src/styles/tokens/semantic.css
    `className="text-h1"` over
    `className="font-heading font-bold text-4xl leading-tight"` for a
    heading. Atomic utilities are for genuine one-offs.
+8. **Structured stacks over ad-hoc margins.** Never chain ad-hoc margins
+   (`mb-*` / `my-*` / `mt-*` on every sibling) to separate elements inside
+   cards, forms, or content surfaces. Margin-stacking causes margin-collapse
+   bugs and squashed layouts. Always use a Flexbox or Grid container with
+   explicit `gap` (`flex flex-col gap-4` or `gap-stack`).
+   - **CTA Breathing Room:** An interactive CTA button must never touch or
+     collapse against preceding metadata, subtitles, or helper copy (e.g.
+     "Pay upfront", "Billed annually", disclaimer). Always maintain at least
+     `--space-stack` (`gap-4` / 16px) separation between content and CTAs.
+   - **Metadata Cohesion:** Group related metadata pairs (e.g. primary price
+     + upfront note) in a dedicated inner container with tight spacing
+     (`flex flex-col gap-1`), while separating the entire group from the
+     action button with the container's outer gap.
 
 ---
 
