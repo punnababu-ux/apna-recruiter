@@ -66,10 +66,10 @@ export default function ActionsComponentsPage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {buttonTypographySpecs.map((spec) => (
             <div key={spec.size} className="rounded-lg border border-border/80 bg-muted/40 p-3 space-y-1.5">
-              <span className="text-3xs font-bold font-mono text-primary uppercase tracking-wider">{spec.size}</span>
+              <span className="text-2xs font-bold font-mono text-primary uppercase tracking-wider">{spec.size}</span>
               <p className="text-xs font-bold font-heading text-foreground">{spec.headingRole}</p>
-              <code className="text-3xs font-mono text-muted-foreground block">{spec.cssSpec}</code>
-              <p className="text-3xs text-muted-foreground">{spec.usage}</p>
+              <code className="text-2xs font-mono text-muted-foreground block">{spec.cssSpec}</code>
+              <p className="text-2xs text-muted-foreground">{spec.usage}</p>
             </div>
           ))}
         </div>
@@ -81,7 +81,7 @@ export default function ActionsComponentsPage() {
           <div className="flex items-center gap-2">
             <Sliders className="size-4 text-primary" />
             <span className="text-xs font-bold font-heading text-foreground">Interactive Size Toggle</span>
-            <Badge variant="outline" className="text-3xs font-mono">Active: {sizeLabels[activeSize]}</Badge>
+            <Badge variant="outline" size="sm" className="font-mono">Active: {sizeLabels[activeSize]}</Badge>
           </div>
 
           {/* Size Segment Selector */}
@@ -133,7 +133,7 @@ export default function ActionsComponentsPage() {
             <div key={v.variant} className="py-5 first:pt-0 last:pb-0 space-y-3.5">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold font-heading text-foreground">{v.name}</span>
-                <code className="text-3xs font-mono text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
+                <code className="text-2xs font-mono text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
                   variant=&quot;{v.variant}&quot; size=&quot;{activeSize}&quot;
                 </code>
               </div>
@@ -195,9 +195,9 @@ export default function ActionsComponentsPage() {
           <div className="rounded-xl border border-border/80 bg-muted/20 p-4 space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-foreground">1. Primary Button Group (`variant=&quot;default&quot;`)</span>
-              <Badge variant="default" className="text-3xs">Primary Style</Badge>
+              <Badge variant="default" size="sm">Primary Style</Badge>
             </div>
-            <p className="text-3xs text-muted-foreground">Split button for primary action + dropdown menu.</p>
+            <p className="text-2xs text-muted-foreground">Split button for primary action + dropdown menu.</p>
             <div className="pt-2">
               <ButtonGroup>
                 <Button variant="default" size={activeSize} leadingIcon={<Plus />}>
@@ -225,9 +225,9 @@ export default function ActionsComponentsPage() {
           <div className="rounded-xl border border-border/80 bg-muted/20 p-4 space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-foreground">2. Secondary Button Group (`variant=&quot;secondary&quot;`)</span>
-              <Badge variant="secondary" className="text-3xs">Secondary Style</Badge>
+              <Badge variant="secondary" size="sm">Secondary Style</Badge>
             </div>
-            <p className="text-3xs text-muted-foreground">Segmented action bar for candidate management.</p>
+            <p className="text-2xs text-muted-foreground">Segmented action bar for candidate management.</p>
             <div className="pt-2">
               <ButtonGroup>
                 <Button variant="secondary" size={activeSize} leadingIcon={<Share2 />}>
@@ -257,9 +257,9 @@ export default function ActionsComponentsPage() {
           <div className="rounded-xl border border-border/80 bg-muted/20 p-4 space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-foreground">3. Outline Button Group (`variant=&quot;outline&quot;`)</span>
-              <Badge variant="outline" className="text-3xs">Outline Style</Badge>
+              <Badge variant="outline" size="sm">Outline Style</Badge>
             </div>
-            <p className="text-3xs text-muted-foreground">Segmented filter bar or view switcher.</p>
+            <p className="text-2xs text-muted-foreground">Segmented filter bar or view switcher.</p>
             <div className="pt-2">
               <ButtonGroup>
                 <Button variant="outline" size={activeSize} leadingIcon={<Filter />}>
@@ -289,9 +289,9 @@ export default function ActionsComponentsPage() {
           <div className="rounded-xl border border-border/80 bg-muted/20 p-4 space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-foreground">4. Button Group with Text Addon</span>
-              <Badge variant="info" className="text-3xs">Text Addon</Badge>
+              <Badge variant="info" size="sm">Text Addon</Badge>
             </div>
-            <p className="text-3xs text-muted-foreground">Prefix label addon with action button.</p>
+            <p className="text-2xs text-muted-foreground">Prefix label addon with action button.</p>
             <div className="pt-2">
               <ButtonGroup>
                 <ButtonGroupText>https://apnahire.com/jobs/</ButtonGroupText>

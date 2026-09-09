@@ -36,7 +36,7 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 | Component        | Import                                                                 | tldr                                             |
 |------------------|------------------------------------------------------------------------|--------------------------------------------------|
 | Avatar           | `import { Avatar, AvatarImage, AvatarFallback } from "@apna/design-system"` | User image with fallback. Supports groups.  |
-| Badge            | `import { Badge } from "@apna/design-system"`                         | Small status / count marker.                     |
+| Badge            | `import { Badge } from "@apna/design-system"`                         | Status / count marker (`variant`: 7 roles, `size`: "default" · "sm"). |
 | MetricCard       | `import { MetricCard } from "@apna/design-system"`                    | Metric summary card with value, icon, and trend. |
 | Skeleton         | `import { Skeleton } from "@apna/design-system"`                       | Loading placeholder shape.                       |
 | Spinner          | `import { Spinner } from "@apna/design-system"`                       | Indeterminate loading indicator.                 |

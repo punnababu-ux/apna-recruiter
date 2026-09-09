@@ -128,6 +128,7 @@
   --font-weight-extrabold: var(--font-weight-extrabold);
 
   /* Size utilities → .text-xs, .text-sm, .text-base, .text-lg, .text-xl, .text-2xl, … */
+  --text-3xs:  var(--text-2xs); /* fallback safety alias for micro tags */
   --text-2xs:  var(--text-2xs);
   --text-xs:   var(--text-xs);
   --text-sm:   var(--text-sm);

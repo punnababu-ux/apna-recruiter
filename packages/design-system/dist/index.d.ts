@@ -354,8 +354,9 @@ declare function AvatarGroupCount({ className, ...props }: React$1.ComponentProp
 
 declare const badgeVariants: (props?: ({
     variant?: "link" | "default" | "outline" | "secondary" | "ghost" | "destructive" | "success" | "info" | "warning" | null | undefined;
+    size?: "default" | "sm" | null | undefined;
 } & class_variance_authority_dist_types.ClassProp) | undefined) => string;
-declare function Badge({ className, variant, render, ...props }: useRender.ComponentProps<"span"> & VariantProps<typeof badgeVariants>): React$1.ReactElement<unknown, string | React$1.JSXElementConstructor<any>>;
+declare function Badge({ className, variant, size, render, ...props }: useRender.ComponentProps<"span"> & VariantProps<typeof badgeVariants>): React$1.ReactElement<unknown, string | React$1.JSXElementConstructor<any>>;
 
 declare function Skeleton({ className, variant, ...props }: React.ComponentProps<"div"> & {
     variant?: "default" | "ai";

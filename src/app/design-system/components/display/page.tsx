@@ -37,18 +37,46 @@ export default function DisplayComponentsPage() {
       </div>
 
       {/* Badges */}
-      <div className="rounded-xl border border-border bg-card p-6 space-y-4">
-        <h2 className="text-base font-semibold text-foreground font-heading border-b border-border/60 pb-2">
-          Status Badges & Chips
-        </h2>
-        <div className="flex flex-wrap items-center gap-3">
-          <Badge variant="default">Default</Badge>
-          <Badge variant="secondary">Secondary</Badge>
-          <Badge variant="outline">Outline</Badge>
-          <Badge variant="info">Info</Badge>
-          <Badge variant="success">Success</Badge>
-          <Badge variant="warning">Warning</Badge>
-          <Badge variant="destructive">Destructive</Badge>
+      <div className="rounded-xl border border-border bg-card p-6 space-y-6">
+        <div className="flex items-center justify-between border-b border-border/60 pb-2">
+          <h2 className="text-base font-semibold text-foreground font-heading">
+            Status Badges & Chips
+          </h2>
+          <Badge variant="outline" size="sm" className="font-mono">2 Sizes · 7 Variants</Badge>
+        </div>
+
+        {/* Default Size */}
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold text-foreground font-heading">Default Size (`size=&quot;default&quot;`)</span>
+            <code className="text-2xs font-mono text-muted-foreground bg-muted px-1.5 py-0.5 rounded">h-5 px-2 py-0.5 text-xs</code>
+          </div>
+          <div className="flex flex-wrap items-center gap-3 pt-1">
+            <Badge variant="default">Default</Badge>
+            <Badge variant="secondary">Secondary</Badge>
+            <Badge variant="outline">Outline</Badge>
+            <Badge variant="info">Info</Badge>
+            <Badge variant="success">Success</Badge>
+            <Badge variant="warning">Warning</Badge>
+            <Badge variant="destructive">Destructive</Badge>
+          </div>
+        </div>
+
+        {/* Small Size */}
+        <div className="space-y-2 pt-4 border-t border-border/40">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold text-foreground font-heading">Small Size (`size=&quot;sm&quot;`)</span>
+            <code className="text-2xs font-mono text-muted-foreground bg-muted px-1.5 py-0.5 rounded">h-4 px-1.5 py-0 text-2xs</code>
+          </div>
+          <div className="flex flex-wrap items-center gap-2.5 pt-1">
+            <Badge variant="default" size="sm">Default</Badge>
+            <Badge variant="secondary" size="sm">Secondary</Badge>
+            <Badge variant="outline" size="sm">Outline</Badge>
+            <Badge variant="info" size="sm">Info</Badge>
+            <Badge variant="success" size="sm">Success</Badge>
+            <Badge variant="warning" size="sm">Warning</Badge>
+            <Badge variant="destructive" size="sm">Destructive</Badge>
+          </div>
         </div>
       </div>
 
