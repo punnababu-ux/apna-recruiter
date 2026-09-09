@@ -1,6 +1,6 @@
 "use client"
 
-import { ChevronLeft, ChevronRight, Info, Mic, Phone, Video } from "lucide-react"
+import { ChevronLeft, ChevronRight, Info, Mic, Phone, Video } from "@apna/design-system"
 import * as React from "react"
 
 import { PageHeader } from "@/components/onlyrounds/page-header"

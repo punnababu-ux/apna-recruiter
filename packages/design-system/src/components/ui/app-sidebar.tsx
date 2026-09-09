@@ -1,13 +1,7 @@
 "use client"
 
 import * as React from "react"
-import {
-  AlertCircle,
-  Check,
-  ChevronDown,
-  ChevronsUpDown,
-  X,
-} from "lucide-react"
+import { AlertCircle, Check, ChevronDown, ChevronsUpDown, X } from "@/icons/icons"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 

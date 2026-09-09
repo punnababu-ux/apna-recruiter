@@ -295,6 +295,67 @@
   --gradient-banner-success:     linear-gradient(135deg, var(--color-apna-green-500) 0%, var(--color-apna-green-700) 100%);
   --gradient-banner-warning:     linear-gradient(135deg, var(--color-apna-gold-300) 0%, var(--color-apna-gold-500) 100%);
   --gradient-banner-destructive: linear-gradient(135deg, var(--color-red-500) 0%, var(--color-red-700) 100%);
+
+  /* Checkout hero — soft multi-tone ambient mesh, used behind the
+   * self-checkout / pricing page hero + tab selector. Matches the
+   * finalized self-checkout designs' light gradient backdrop.
+   * Deliberately FIXED across themes (no .dark override below) — like
+   * --gradient-banner-default this is a marketing surface, not a themed
+   * one, so it always reads as a soft light wash even if the app is in
+   * dark mode. Pair with --surface-checkout-hero-fg / -fg-muted, which
+   * are fixed dark-on-light text roles for the same reason. */
+  --gradient-checkout-hero:
+    radial-gradient(circle at 8% 15%,  var(--color-apna-gold-100) 0%, transparent 45%),
+    radial-gradient(circle at 14% 55%, var(--color-apna-navy-100) 0%, transparent 50%),
+    radial-gradient(circle at 12% 90%, var(--color-apna-sky-100)  0%, transparent 50%),
+    radial-gradient(circle at 90% 18%, var(--color-apna-sky-50)   0%, transparent 55%),
+    linear-gradient(135deg, var(--color-gray-0) 0%, var(--color-gray-50) 45%, var(--color-gray-100) 100%);
+  --surface-checkout-hero-fg:       var(--color-gray-900);
+  --surface-checkout-hero-fg-muted: var(--color-gray-500);
+  /* Source's tab-selector track is a translucent black overlay (not a solid
+   * gray fill, and no border) — confirmed from the winning (later,
+   * `!important`) rule in index.html: `background: rgba(0,0,0,0.08)`. */
+  --surface-checkout-track: rgba(0, 0, 0, 0.08);
+
+  /* Checkout inset — a fixed-white nested card, used for the white content
+   * box inside the always-dark Unlimited side-card (and any similar "card
+   * inside a dark card" pattern). Fixed across themes on purpose: the outer
+   * card is deliberately dark regardless of app theme (see
+   * --gradient-checkout-unlimited below), so the inner box must stay
+   * deliberately light for the same contrast to keep working in dark mode. */
+  --surface-checkout-inset:        var(--color-gray-0);
+  --surface-checkout-inset-border: var(--color-gray-200);
+
+  /* Checkout primary — the self-checkout surface's CTA/discount/status
+   * green. Now that --color-apna-green itself is anchored at this same
+   * source green (#1F8268 at the 600 step), this points straight at the
+   * primitive rather than a separate duplicate ramp. It stays its own
+   * token (not a plain alias of --primary) because it's FIXED across
+   * themes — a "marketing surface" like the hero gradient — while
+   * --primary/--success brighten one step in dark mode (apna-green-500). */
+  --checkout-primary:            var(--color-apna-green-600);
+  --checkout-primary-hover:       var(--color-apna-green-700);
+  --checkout-primary-foreground: var(--color-gray-0);
+  --checkout-discount-fg:        var(--color-checkout-discount-fg);
+  --checkout-discount-bg:        var(--color-apna-green-100);
+  /* The "Recommended" ribbon is blue, not the checkout brand green — but
+   * now that apna-sky includes the exact source blue (#3B82F6, the 500
+   * step), it just uses the ordinary --info role instead of a dedicated
+   * checkout-scoped token. See job-credit-bundles.tsx. */
+
+  /* Checkout unlimited promo — dark noir card background for the
+   * "apna Unlimited" promo banner. Reuses the existing apna-plum ramp
+   * (its darkest steps land within a few RGB points of the source's
+   * literal #1e1c22/#151419/#0f0e13) instead of adding new near-duplicate
+   * primitives. */
+  --gradient-checkout-unlimited: linear-gradient(180deg,
+                                   var(--color-apna-plum-800) 0%,
+                                   var(--color-apna-plum-900) 60%,
+                                   var(--color-apna-plum-950) 100%);
+  --checkout-unlimited-border:        rgba(255, 255, 255, 0.12);
+  --checkout-unlimited-border-hover:  rgba(255, 255, 255, 0.3);
+  --checkout-unlimited-cta-bg:        rgba(255, 255, 255, 0.16);
+  --checkout-unlimited-cta-bg-hover:  rgba(255, 255, 255, 0.26);
 }
 
 
@@ -378,4 +439,25 @@
   --gradient-banner-success:     linear-gradient(135deg, var(--color-apna-green-700) 0%, var(--color-apna-green-900) 100%);
   --gradient-banner-warning:     linear-gradient(135deg, var(--color-apna-gold-600) 0%, var(--color-apna-gold-800) 100%);
   --gradient-banner-destructive: linear-gradient(135deg, var(--color-red-700) 0%, var(--color-red-900) 100%);
+
+  /* Checkout hero (dark) — the source has no dark design to port, so this is
+   * an original dark treatment: soft white glows over a dark diagonal wash,
+   * instead of the light version's warm/pink/blue mesh. Cards/drawer/etc.
+   * underneath already flip correctly via the ordinary --card/--border/etc.
+   * mappings above — only the hero backdrop + its own text/track needed a
+   * dark variant. */
+  --gradient-checkout-hero:
+    radial-gradient(circle at 8% 15%,  var(--color-alpha-white-10) 0%, transparent 45%),
+    radial-gradient(circle at 90% 18%, var(--color-alpha-white-10) 0%, transparent 55%),
+    radial-gradient(circle at 50% 90%, var(--color-alpha-white-5)  0%, transparent 60%),
+    linear-gradient(135deg, var(--color-gray-950) 0%, var(--color-gray-900) 50%, var(--color-gray-800) 100%);
+  --surface-checkout-hero-fg:       var(--color-gray-50);
+  --surface-checkout-hero-fg-muted: var(--color-gray-400);
+  /* Mirrors the light track's alpha-black overlay, inverted for a dark hero. */
+  --surface-checkout-track: rgba(255, 255, 255, 0.08);
+
+  /* Checkout primary — brand green stays the same hex (it already reads
+   * fine on dark), only the discount tint needs a dark-safe pairing. */
+  --checkout-discount-fg: var(--color-apna-green-400);
+  --checkout-discount-bg: var(--color-apna-green-900);
 }

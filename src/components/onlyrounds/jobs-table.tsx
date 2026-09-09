@@ -17,21 +17,7 @@
  *   draft     — still being configured
  */
 
-import {
-  Building2,
-  CalendarDays,
-  CheckCircle2,
-  ChevronRight,
-  Copy,
-  MapPin,
-  MessagesSquare,
-  MoreVertical,
-  PowerOff,
-  Share2,
-  Upload,
-  User2,
-  UserSearch,
-} from "lucide-react"
+import { Building2, CalendarDays, CheckCircle2, ChevronRight, Copy, MapPin, MessagesSquare, MoreVertical, PowerOff, Share2, Upload, User2, UserSearch } from "@apna/design-system"
 import Link from "next/link"
 
 import { IconLabel, ClientLogo } from "@/components/onlyrounds/shared"

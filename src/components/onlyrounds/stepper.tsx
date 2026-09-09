@@ -11,7 +11,7 @@
  * you're hiring → Company & Benefits).
  */
 
-import { Check } from "lucide-react"
+import { Check } from "@apna/design-system"
 import * as React from "react"
 
 import { cn } from "@/lib/utils"

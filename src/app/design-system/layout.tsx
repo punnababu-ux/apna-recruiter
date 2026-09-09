@@ -1,6 +1,6 @@
 import * as React from "react"
 import Link from "next/link"
-import { Layers, ArrowLeft } from "lucide-react"
+import { Layers, ArrowLeft } from "@apna/design-system"
 
 import {
   SidebarProvider,

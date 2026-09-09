@@ -22,7 +22,7 @@ import {
   Button,
   Badge,
 } from "@apna/design-system"
-import { MoreHorizontal, Info, Edit, Trash, Settings } from "lucide-react"
+import { MoreHorizontal, Info, Edit, Trash, Settings } from "@apna/design-system"
 
 export default function OverlaysComponentsPage() {
   return (

@@ -22,39 +22,7 @@
  * fixed at 480px on lg+, full-screen on mobile.
  */
 
-import {
-  AtSign,
-  Briefcase,
-  CalendarDays,
-  ChevronLeft,
-  ChevronRight,
-  CircleCheck,
-  FileText,
-  GraduationCap,
-  Mail,
-  MapPin,
-  MessageCircle,
-  Mic,
-  Pause,
-  Pencil,
-  Phone,
-  PhoneIncoming,
-  PhoneOutgoing,
-  Play,
-  RotateCcw,
-  ShieldAlert,
-  Video,
-  VideoOff,
-  Voicemail,
-  X,
-  XCircle,
-  Star,
-  Flag,
-  QrCode,
-  Sparkles,
-  Footprints,
-  Download,
-} from "lucide-react"
+import { AtSign, Briefcase, CalendarDays, ChevronLeft, ChevronRight, CircleCheck, FileText, GraduationCap, Mail, MapPin, MessageCircle, Mic, Pause, Pencil, Phone, PhoneIncoming, PhoneOutgoing, Play, RotateCcw, ShieldAlert, Video, VideoOff, Voicemail, X, XCircle, Star, Flag, QrCode, Sparkles, Footprints, Download } from "@apna/design-system"
 import * as ReactDOM from "react-dom"
 import * as React from "react"
 

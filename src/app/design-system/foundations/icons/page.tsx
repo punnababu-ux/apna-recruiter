@@ -2,86 +2,7 @@
 
 import * as React from "react"
 import { Badge, Button, Input } from "@apna/design-system"
-import {
-  Sparkles,
-  Heart,
-  Bookmark,
-  Star,
-  CheckCircle2,
-  Bell,
-  Search,
-  User,
-  Settings,
-  Briefcase,
-  Layers,
-  Filter,
-  FileText,
-  Copy,
-  Plus,
-  Minus,
-  Trash2,
-  Edit3,
-  Share2,
-  Download,
-  Upload,
-  RefreshCw,
-  ExternalLink,
-  Eye,
-  EyeOff,
-  Lock,
-  Unlock,
-  MoreHorizontal,
-  MoreVertical,
-  Check,
-  X,
-  ArrowLeft,
-  ArrowRight,
-  ArrowUp,
-  ArrowDown,
-  ChevronDown,
-  ChevronUp,
-  ChevronLeft,
-  ChevronRight,
-  Home,
-  Menu,
-  Grid,
-  MapPin,
-  Building2,
-  Users,
-  UserPlus,
-  UserCheck,
-  GraduationCap,
-  Award,
-  DollarSign,
-  CreditCard,
-  Calendar,
-  Clock,
-  Target,
-  Zap,
-  XCircle,
-  AlertTriangle,
-  AlertCircle,
-  Info,
-  HelpCircle,
-  ShieldCheck,
-  Activity,
-  FilePlus,
-  Folder,
-  FolderPlus,
-  Mail,
-  MessageSquare,
-  Send,
-  Paperclip,
-  Link as LinkIcon,
-  Tag,
-  Hash,
-  Image as ImageIcon,
-  Wand2,
-  Bot,
-  Brain,
-  Cpu,
-  Lightbulb,
-} from "lucide-react"
+import { Sparkles, Heart, Bookmark, Star, CheckCircle2, Bell, Search, User, Settings, Briefcase, Layers, Filter, FileText, Copy, Plus, Minus, Trash2, Edit3, Share2, Download, Upload, RefreshCw, ExternalLink, Eye, EyeOff, Lock, Unlock, MoreHorizontal, MoreVertical, Check, X, ArrowLeft, ArrowRight, ArrowUp, ArrowDown, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Home, Menu, Grid, MapPin, Building2, Users, UserPlus, UserCheck, GraduationCap, Award, DollarSign, CreditCard, Calendar, Clock, Target, Zap, XCircle, AlertTriangle, AlertCircle, Info, HelpCircle, ShieldCheck, Activity, FilePlus, Folder, FolderPlus, Mail, MessageSquare, Send, Paperclip, LinkIcon, Tag, Hash, ImageIcon, Wand2, Bot, Brain, Cpu, Lightbulb } from "@apna/design-system"
 import { toast } from "sonner"
 
 export default function IconsPage() {
@@ -198,7 +119,7 @@ export default function IconsPage() {
   })
 
   const copyIconSnippet = (name: string) => {
-    const code = `import { ${name} } from "lucide-react"`
+    const code = `import { ${name} } from "@apna/design-system"`
     navigator.clipboard.writeText(code)
     toast.success(`Copied import for ${name}!`)
   }
@@ -214,7 +135,7 @@ export default function IconsPage() {
           Icons & Symbol System
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Built on <code>lucide-react</code>. Guidelines for icon sizing, line vs fill states, and context coloring.
+          Built on Material Symbols Rounded (vendored as SVG components — see <code>@apna/design-system</code>). Guidelines for icon sizing, line vs fill states, and context coloring.
         </p>
       </div>
 
@@ -390,7 +311,7 @@ export default function IconsPage() {
               <h2 className="text-lg font-semibold text-foreground font-heading">
                 System Icon Library ({filteredIcons.length} icons)
               </h2>
-              <Badge variant="outline" className="text-3xs">Lucide React</Badge>
+              <Badge variant="outline" className="text-3xs">Material Symbols</Badge>
             </div>
             <p className="text-2xs text-muted-foreground mt-0.5">
               Click any icon card to copy its <code>import</code> snippet. Filter by category or search by name.

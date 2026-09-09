@@ -8,7 +8,7 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@apna/design-system"
-import { Type, Code, Heading, Layers, ArrowRight } from "lucide-react"
+import { Type, Code, Heading, Layers, ArrowRight } from "@apna/design-system"
 
 export default function TypographyPage() {
   const primitiveWeights = [

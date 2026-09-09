@@ -14,19 +14,7 @@
  * propagation so they don't fire the card click.
  */
 
-import {
-  AtSign,
-  ChevronDown,
-  ChevronRight,
-  ChevronUp,
-  History,
-  Phone,
-  Pencil,
-  QrCode,
-  XCircle,
-  CircleCheck,
-  RotateCcw,
-} from "lucide-react"
+import { AtSign, ChevronDown, ChevronRight, ChevronUp, History, Phone, Pencil, QrCode, XCircle, CircleCheck, RotateCcw } from "@apna/design-system"
 
 import * as React from "react"
 

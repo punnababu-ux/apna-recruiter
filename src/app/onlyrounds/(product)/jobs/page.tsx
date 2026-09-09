@@ -12,7 +12,7 @@
  * Tabs drive an in-page status filter; URL wiring TBD.
  */
 
-import { Plus } from "lucide-react"
+import { Plus } from "@apna/design-system"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Suspense, useMemo, useState } from "react"

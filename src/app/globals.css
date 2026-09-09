@@ -64,6 +64,24 @@
   --color-surface-inverted:    var(--surface-inverted);
   --color-surface-inverted-fg: var(--surface-inverted-fg);
 
+  /* Checkout hero — fixed light surface, see semantic.css */
+  --color-checkout-hero-fg:       var(--surface-checkout-hero-fg);
+  --color-checkout-hero-fg-muted: var(--surface-checkout-hero-fg-muted);
+  --color-checkout-track:         var(--surface-checkout-track);
+  --color-checkout-inset:         var(--surface-checkout-inset);
+  --color-checkout-inset-border:  var(--surface-checkout-inset-border);
+
+  /* Checkout primary — the self-checkout surface's own brand green */
+  --color-checkout-primary:            var(--checkout-primary);
+  --color-checkout-primary-hover:      var(--checkout-primary-hover);
+  --color-checkout-primary-foreground: var(--checkout-primary-foreground);
+  --color-checkout-discount-fg:        var(--checkout-discount-fg);
+  --color-checkout-discount-bg:        var(--checkout-discount-bg);
+  --color-checkout-unlimited-line:      var(--checkout-unlimited-border);
+  --color-checkout-unlimited-line-hover: var(--checkout-unlimited-border-hover);
+  --color-checkout-unlimited-cta:       var(--checkout-unlimited-cta-bg);
+  --color-checkout-unlimited-cta-hover: var(--checkout-unlimited-cta-bg-hover);
+
   /* Lines */
   --color-border: var(--border);
   --color-input:  var(--input);
@@ -368,6 +386,12 @@
 @utility bg-gradient-banner-destructive {
   background-image: var(--gradient-banner-destructive);
 }
+@utility bg-gradient-checkout-hero {
+  background-image: var(--gradient-checkout-hero);
+}
+@utility bg-gradient-checkout-unlimited {
+  background-image: var(--gradient-checkout-unlimited);
+}
 
 /* ----------------------------------------------------------------------------
  * AI activity shimmer — subtle animated gradient used as a full-field cover
@@ -380,6 +404,18 @@
 @keyframes ai-shimmer {
   0%, 100% { background-position: 0% 50%; }
   50%      { background-position: 100% 50%; }
+}
+
+/* Hides the scrollbar on a horizontally/vertically scrollable container
+ * while keeping it scrollable (mouse wheel, touch, keyboard). Already
+ * referenced by a couple of onlyrounds components without a definition —
+ * defining it here fixes those too. */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @utility animate-ai-shimmer {

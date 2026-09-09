@@ -9,7 +9,7 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@apna/design-system"
-import { Play, Sparkles, Zap, Layers } from "lucide-react"
+import { Play, Sparkles, Zap, Layers } from "@apna/design-system"
 
 export default function RadiusMotionPage() {
   const [animateKey, setAnimateKey] = React.useState(0)

@@ -1,11 +1,7 @@
 "use client"
 
 import * as React from "react"
-import {
-  ArrowLeft,
-  Settings,
-  Sparkles,
-} from "lucide-react"
+import { ArrowLeft, Settings, Sparkles } from "@apna/design-system"
 import { Badge, Button, SidebarInset, SidebarProvider, SidebarTrigger } from "@apna/design-system"
 import { ApnaHireSidebar } from "@/components/apnahire/app-sidebar"
 import Link from "next/link"

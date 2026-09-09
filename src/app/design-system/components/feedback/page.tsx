@@ -3,7 +3,7 @@
 import * as React from "react"
 import { AlertBanner, Button, Badge, Switch, Label } from "@apna/design-system"
 import { toast } from "sonner"
-import { AlertCircle, Info, CreditCard, ChevronRight } from "lucide-react"
+import { AlertCircle, Info, CreditCard, ChevronRight } from "@apna/design-system"
 
 export default function FeedbackComponentsPage() {
   const [showIcon, setShowIcon] = React.useState(true)

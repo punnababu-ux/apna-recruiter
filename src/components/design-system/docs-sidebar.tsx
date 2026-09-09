@@ -3,21 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import {
-  Palette,
-  Type,
-  Maximize2,
-  Sparkles,
-  Shapes,
-  Zap,
-  CheckSquare,
-  Eye,
-  Navigation,
-  MessageSquare,
-  Bell,
-  Table as TableIcon,
-  BookOpen,
-} from "lucide-react"
+import { Palette, Type, Maximize2, Sparkles, Shapes, Zap, CheckSquare, Eye, Navigation, MessageSquare, Bell, TableIcon, BookOpen } from "@apna/design-system"
 
 import {
   Sidebar,

@@ -4,7 +4,7 @@ import * as React from "react"
 import { Badge } from "./badge"
 import { Button } from "./button"
 import { Separator } from "./separator"
-import { MapPin, Briefcase, Clock, Building2, BookmarkPlus } from "lucide-react"
+import { MapPin, Briefcase, Clock, Building2, BookmarkPlus } from "@/icons/icons"
 import { cn } from "@/lib/utils"
 
 export interface JobCardProps extends React.HTMLAttributes<HTMLDivElement> {

@@ -13,37 +13,19 @@ import {
   AccordionTrigger,
   AccordionContent,
   ApnaLogo,
+  LogoApnaUnlimited,
   Badge,
-  Switch,
   Button,
   JobCard,
+  PricingCard,
+  CalendarDays,
+  Switch,
+  Label,
 } from "@apna/design-system"
-import {
-  SingleJobPricing,
-  UnlimitedPlans,
-  QuantityUpsellModal,
-  CrossSellModal,
-  CheckoutSummary,
-  SingleJobPlan,
-} from "@/components/shared/pricing"
+import { cn } from "@/lib/utils"
 
 export default function DataLayoutComponentsPage() {
-  const [showMonthly, setShowMonthly] = React.useState<boolean>(true)
-  const [enableOldUser, setEnableOldUser] = React.useState<boolean>(true)
-
-  const [upsellModalOpen, setUpsellModalOpen] = React.useState<boolean>(false)
-  const [crossSellModalOpen, setCrossSellModalOpen] = React.useState<boolean>(false)
-  const [selectedPlan, setSelectedPlan] = React.useState<SingleJobPlan | null>(null)
-
-  const handleSelectPlan = (plan: SingleJobPlan) => {
-    setSelectedPlan(plan)
-    // Open upsell or cross-sell modal for demonstration
-    if (plan.id === "premium") {
-      setUpsellModalOpen(true)
-    } else {
-      setCrossSellModalOpen(true)
-    }
-  }
+  const [solidRibbon, setSolidRibbon] = React.useState(true)
 
   return (
     <div className="space-y-10">
@@ -56,12 +38,8 @@ export default function DataLayoutComponentsPage() {
           7. Data & Layout
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Tables, accordions, job cards, and interactive subscription pricing suite.
+          Tables, accordions, job cards, and pricing cards.
         </p>
-      </div>
-
-      <div className="rounded-xl border border-border bg-card p-4 font-mono text-xs text-muted-foreground">
-        <code>{'import { SingleJobPricing, UnlimitedPlans, CheckoutSummary } from "@/components/shared/pricing"'}</code>
       </div>
 
       {/* Cards */}
@@ -81,66 +59,55 @@ export default function DataLayoutComponentsPage() {
         </div>
       </div>
 
-      {/* Interactive Subscription Pricing Suite */}
-      <div className="rounded-xl border border-border bg-card p-6 space-y-6">
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border/60 pb-3">
+      {/* Pricing Card */}
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="border-b border-border/60 bg-muted/30 p-4 sm:p-6 flex flex-wrap gap-6 items-center justify-between">
           <div>
             <h2 className="text-base font-semibold text-foreground font-heading">
-              Single Job Posting & Subscription Suite
+              Pricing Card
             </h2>
             <p className="text-xs text-muted-foreground">
-              Explore single job tiers, apna unlimited cards, dev toggles, and modal flows.
+              Plan/bundle card — ribbon, price+MRP+badge, CTA slot. Pure layout;
+              extracted from the apnahire self-checkout page. The ribbon is a
+              slot (any node), not a fixed style — toggle below.
             </p>
           </div>
-
-          {/* Dev Toggles */}
-          <div className="flex items-center gap-6 rounded-lg border border-border bg-muted/20 px-3 py-1.5 text-xs">
-            <label className="flex items-center gap-2 cursor-pointer text-muted-foreground font-medium hover:text-foreground">
-              <Switch checked={showMonthly} onCheckedChange={setShowMonthly} />
-              Show apna unlimited card
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer text-muted-foreground font-medium hover:text-foreground">
-              <Switch checked={enableOldUser} onCheckedChange={setEnableOldUser} />
-              Enable Old User Pricing
-            </label>
+          <div className="flex items-center gap-2">
+            <Switch id="toggle-ribbon" checked={solidRibbon} onCheckedChange={setSolidRibbon} />
+            <Label htmlFor="toggle-ribbon">Solid ribbon (self-checkout style)</Label>
           </div>
         </div>
 
-        <SingleJobPricing
-          showMonthlyCard={showMonthly}
-          oldUserPricingEnabled={enableOldUser}
-          onSelectPlan={handleSelectPlan}
-          onSelectMonthly={() => setCrossSellModalOpen(true)}
-          onExploreUnlimited={() => {
-            const el = document.getElementById("unlimited-plans-section")
-            el?.scrollIntoView({ behavior: "smooth" })
-          }}
-        />
-
-        <div className="flex items-center gap-3 pt-2">
-          <Button variant="outline" size="sm" onClick={() => setUpsellModalOpen(true)}>
-            Test Buy More Save More Modal
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => setCrossSellModalOpen(true)}>
-            Test Unlimited Upgrade Modal
-          </Button>
+        <div className="p-4 sm:p-6 bg-background">
+          <div className="max-w-xs w-full">
+            <PricingCard
+              ribbon={
+                <Badge
+                  variant={solidRibbon ? undefined : "info"}
+                  className={cn(
+                    "rounded-none rounded-bl-xl px-4 py-0.5",
+                    solidRibbon && "border-transparent bg-info text-info-foreground"
+                  )}
+                >
+                  Recommended
+                </Badge>
+              }
+              title="6 Job credits"
+              subtitle="Perfect for growing businesses"
+              meta={
+                <>
+                  <CalendarDays className="size-4 shrink-0" aria-hidden />
+                  Valid for 90 days
+                </>
+              }
+              price="₹3,649"
+              mrp="₹4,194"
+              badge={<Badge variant="success">13% OFF</Badge>}
+              priceSuffix="₹608 /credit"
+              cta={<Button className="w-full font-semibold">Buy now</Button>}
+            />
+          </div>
         </div>
-      </div>
-
-      {/* Unlimited Plans Section */}
-      <div id="unlimited-plans-section" className="rounded-xl border border-border bg-card p-6 space-y-4">
-        <h2 className="text-base font-semibold text-foreground font-heading border-b border-border/60 pb-2">
-          Explore Plans - apna Unlimited
-        </h2>
-        <UnlimitedPlans />
-      </div>
-
-      {/* Checkout Summary Component */}
-      <div className="rounded-xl border border-border bg-card p-6 space-y-4">
-        <h2 className="text-base font-semibold text-foreground font-heading border-b border-border/60 pb-2">
-          Checkout Summary & Add-ons
-        </h2>
-        <CheckoutSummary />
       </div>
 
       {/* Brand Marks */}
@@ -148,9 +115,38 @@ export default function DataLayoutComponentsPage() {
         <h2 className="text-base font-semibold text-foreground font-heading border-b border-border/60 pb-2">
           Brand Mark Lockup
         </h2>
-        <div className="p-4 bg-muted/40 rounded-lg inline-block border border-border">
-          <ApnaLogo className="h-10 w-auto" />
+        <div className="flex flex-wrap items-end gap-4">
+          <div className="flex flex-col gap-1.5">
+            <div className="p-4 bg-muted/40 rounded-lg inline-block border border-border">
+              <ApnaLogo className="h-10 w-auto" />
+            </div>
+            <span className="text-3xs text-muted-foreground font-mono">ApnaLogo</span>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <div className="p-4 bg-card rounded-lg inline-block border border-border">
+              <LogoApnaUnlimited variant="default" className="h-5 w-auto" />
+            </div>
+            <span className="text-3xs text-muted-foreground font-mono">LogoApnaUnlimited variant=&quot;default&quot;</span>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <div className="p-4 bg-foreground rounded-lg inline-block">
+              <LogoApnaUnlimited variant="white" className="h-5 w-auto" />
+            </div>
+            <span className="text-3xs text-muted-foreground font-mono">variant=&quot;white&quot;</span>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <div className="p-4 bg-foreground rounded-lg inline-block">
+              <LogoApnaUnlimited variant="gradient" className="h-5 w-auto" />
+            </div>
+            <span className="text-3xs text-muted-foreground font-mono">variant=&quot;gradient&quot; (Accent Gradient)</span>
+          </div>
         </div>
+        <p className="text-xs text-muted-foreground">
+          <code className="font-mono bg-muted px-1 rounded">default</code> for light surfaces, <code className="font-mono bg-muted px-1 rounded">white</code> or <code className="font-mono bg-muted px-1 rounded">gradient</code> for dark/noir cards — used on the self-checkout Unlimited card.
+        </p>
       </div>
 
       {/* Table */}
@@ -203,33 +199,6 @@ export default function DataLayoutComponentsPage() {
           </AccordionItem>
         </Accordion>
       </div>
-
-      {/* Modals */}
-      <QuantityUpsellModal
-        open={upsellModalOpen}
-        onOpenChange={setUpsellModalOpen}
-        planTitle={selectedPlan?.title || "Premium"}
-        basePrice={selectedPlan ? (enableOldUser ? selectedPlan.oldUserPrice : selectedPlan.currentPrice) : 1399}
-        onProceed={(qty, total) => {
-          alert(`Proceeding with ${qty} jobs for ₹${total.toLocaleString()}`)
-          setUpsellModalOpen(false)
-        }}
-      />
-
-      <CrossSellModal
-        open={crossSellModalOpen}
-        onOpenChange={setCrossSellModalOpen}
-        singlePlanTitle={selectedPlan?.title || "Classic job"}
-        singlePlanPrice={selectedPlan ? (enableOldUser ? selectedPlan.oldUserPrice : selectedPlan.currentPrice) : 699}
-        onContinueSingle={() => {
-          alert("Continuing with single job posting")
-          setCrossSellModalOpen(false)
-        }}
-        onSwitchUnlimited={() => {
-          alert("Switching to apna Unlimited Monthly Plan")
-          setCrossSellModalOpen(false)
-        }}
-      />
     </div>
   )
 }

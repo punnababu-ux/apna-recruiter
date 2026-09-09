@@ -3,7 +3,7 @@
 import * as React from "react"
 import { useMemo } from "react"
 import { cva, type VariantProps } from "class-variance-authority"
-import type { LucideIcon } from "lucide-react"
+import { IconComponent } from "@/icons/icons"
 
 import { cn } from "@/lib/utils"
 import { Label } from "@/components/ui/label"
@@ -105,7 +105,7 @@ function FieldLabel({
   icon: Icon,
   children,
   ...props
-}: React.ComponentProps<typeof Label> & { icon?: LucideIcon }) {
+}: React.ComponentProps<typeof Label> & { icon?: IconComponent }) {
   const hasFieldChild = React.Children.toArray(children).some(
     (child) =>
       React.isValidElement(child) &&

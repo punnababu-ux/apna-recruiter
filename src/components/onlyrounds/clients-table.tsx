@@ -10,7 +10,7 @@
  * locally here; lift it up if the caller needs to persist.
  */
 
-import { ExternalLink, Mail, MoreVertical } from "lucide-react"
+import { ExternalLink, Mail, MoreVertical } from "@apna/design-system"
 import { useMemo, useState } from "react"
 
 import { ClientLogo } from "@/components/onlyrounds/shared"

@@ -115,29 +115,29 @@
   /* --------------------------------------------------------------------------
    * Color · Apna brand ramps (Hex values matching Figma 1:1)
    * ------------------------------------------------------------------------ */
-  --color-apna-green-50:  #E6F8F3;
-  --color-apna-green-100: #C7F1E4;
-  --color-apna-green-200: #93E4CC;
-  --color-apna-green-300: #4DD0AC;
-  --color-apna-green-400: #00B88D;   /* Apna Logo Green Anchor */
-  --color-apna-green-500: #009B75;
-  --color-apna-green-600: #007D5E;
-  --color-apna-green-700: #00634B;
-  --color-apna-green-800: #004D3B;
-  --color-apna-green-900: #003B2E;
-  --color-apna-green-950: #00221A;
+  --color-apna-green-50:  #E6F7F0;
+  --color-apna-green-100: #C6EFE0;
+  --color-apna-green-200: #9DE2C9;
+  --color-apna-green-300: #6CD3AE;
+  --color-apna-green-400: #3EBA8D;
+  --color-apna-green-500: #00A86B;
+  --color-apna-green-600: #1F8268;   /* Apna Logo Green Anchor */
+  --color-apna-green-700: #186954;
+  --color-apna-green-800: #135343;
+  --color-apna-green-900: #0E4134;
+  --color-apna-green-950: #082820;
 
-  --color-apna-gold-50:  #FFFBF0;
-  --color-apna-gold-100: #FFF4D6;
-  --color-apna-gold-200: #FFE6A8;
-  --color-apna-gold-300: #FDD47A;
-  --color-apna-gold-400: #FBC24E;    /* Apna Logo Yellow/Gold Anchor */
-  --color-apna-gold-500: #E5A835;
-  --color-apna-gold-600: #C48821;
-  --color-apna-gold-700: #9E6916;
-  --color-apna-gold-800: #7E5114;
-  --color-apna-gold-900: #664114;
-  --color-apna-gold-950: #3D2409;
+  --color-apna-gold-50:  #FFFBEB;
+  --color-apna-gold-100: #FEF3C7;
+  --color-apna-gold-200: #FDE68A;
+  --color-apna-gold-300: #FCD34D;
+  --color-apna-gold-400: #FFD166;    /* Apna Logo Yellow/Gold Anchor */
+  --color-apna-gold-500: #F59E0B;
+  --color-apna-gold-600: #D97706;
+  --color-apna-gold-700: #B45309;
+  --color-apna-gold-800: #92400E;
+  --color-apna-gold-900: #78350F;
+  --color-apna-gold-950: #451A03;
 
   --color-apna-navy-50:  #F5F3FF;
   --color-apna-navy-100: #ECE9FE;
@@ -163,17 +163,17 @@
   --color-apna-plum-900: #1C151E;
   --color-apna-plum-950: #120E13;
 
-  --color-apna-sky-50:  #F0F7FD;
-  --color-apna-sky-100: #DDF0FA;
-  --color-apna-sky-200: #B9E0F5;
-  --color-apna-sky-300: #81C6EE;
-  --color-apna-sky-400: #47A4DB;   /* Apna Logo Blue/Sky Anchor */
-  --color-apna-sky-500: #2589C7;
-  --color-apna-sky-600: #1A6DA3;
-  --color-apna-sky-700: #165783;
-  --color-apna-sky-800: #154A6E;
-  --color-apna-sky-900: #163F5C;
-  --color-apna-sky-950: #0D273B;
+  --color-apna-sky-50:  #EFF6FF;
+  --color-apna-sky-100: #DBEAFE;
+  --color-apna-sky-200: #BFDBFE;
+  --color-apna-sky-300: #93C5FD;
+  --color-apna-sky-400: #60A5FA;
+  --color-apna-sky-500: #3B82F6;
+  --color-apna-sky-600: #2563EB;
+  --color-apna-sky-700: #1D4ED8;
+  --color-apna-sky-800: #1E40AF;
+  --color-apna-sky-900: #1E3A8A;
+  --color-apna-sky-950: #172554;
 
   /* Apna Royal Blue — royal blue for inverted/hero marketing surfaces.
    * Anchored at #004BA9, the Apna web primary action blue used in pricing hero,
@@ -183,6 +183,8 @@
   --color-apna-royal-800: #003A80;
   --color-apna-royal-900: #002963;   /* Hero/inverted surface base */
   --color-apna-royal-950: #001840;   /* Hero/inverted surface deep */
+
+  --color-checkout-discount-fg: #166534; /* discount-pill / itemized discount text */
 
   /* --------------------------------------------------------------------------
    * Color · Alpha (translucent neutrals for overlays, rings, dividers)

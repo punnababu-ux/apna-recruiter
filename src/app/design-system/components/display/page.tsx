@@ -14,7 +14,7 @@ import {
   Button,
   MetricCard,
 } from "@apna/design-system"
-import { User, Plus, Briefcase, Users, CalendarCheck, TrendingUp } from "lucide-react"
+import { User, Plus, Briefcase, Users, CalendarCheck, TrendingUp } from "@apna/design-system"
 
 export default function DisplayComponentsPage() {
   return (

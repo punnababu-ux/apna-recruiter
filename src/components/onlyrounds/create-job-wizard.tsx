@@ -13,18 +13,7 @@
  * the right, sticky footer with Back / Save & exit / Next.
  */
 
-import {
-  Briefcase,
-  ChevronLeft,
-  ChevronRight,
-  FileText,
-  Save,
-  Sparkles,
-  X,
-  Paperclip,
-  RotateCcw,
-  ArrowRight,
-} from "lucide-react"
+import { Briefcase, ChevronLeft, ChevronRight, FileText, Save, Sparkles, X, Paperclip, RotateCcw, ArrowRight } from "@apna/design-system"
 import { useRouter } from "next/navigation"
 import * as React from "react"
 import { useRef, useState } from "react"

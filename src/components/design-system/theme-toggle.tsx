@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { useTheme } from "next-themes"
-import { Sun, Moon } from "lucide-react"
+import { Sun, Moon } from "@apna/design-system"
 import { Button } from "@apna/design-system"
 
 export function ThemeToggle() {

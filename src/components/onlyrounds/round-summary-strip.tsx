@@ -6,7 +6,7 @@
  * shows a pulsing active status and a "Stop Dialing" button.
  */
 
-import { Bot, FlaskConical, PhoneOutgoing, PhoneOff, type LucideIcon } from "lucide-react"
+import { Bot, FlaskConical, PhoneOutgoing, PhoneOff, type IconComponent } from "@apna/design-system"
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -14,7 +14,7 @@ import { InfoChip } from "@/components/onlyrounds/shared"
 import { cn } from "@/lib/utils"
 
 export type RoundMetaItem = {
-  icon: LucideIcon
+  icon: IconComponent
   label: string
 }
 

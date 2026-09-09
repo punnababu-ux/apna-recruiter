@@ -9,7 +9,7 @@ import {
   AccordionContent,
 } from "@apna/design-system"
 import { toast } from "sonner"
-import { Copy, Layers } from "lucide-react"
+import { Copy, Layers } from "@apna/design-system"
 import { ThemeToggle } from "@/components/design-system/theme-toggle"
 
 export default function ColorsPage() {
@@ -34,6 +34,8 @@ export default function ColorsPage() {
     { token: "bg-gradient-banner-warning", label: "Banner Warning", role: "Cautionary alert banners (--gradient-banner-warning)", darkText: true },
     { token: "bg-gradient-banner-destructive", label: "Banner Destructive", role: "Error & deletion banners (--gradient-banner-destructive)", darkText: false },
     { token: "bg-gradient-banner-default", label: "Banner Default", role: "Neutral dark surface banners (--gradient-banner-default)", darkText: false },
+    { token: "bg-gradient-checkout-hero", label: "Checkout Hero", role: "Self-checkout ambient-mesh hero backdrop (--gradient-checkout-hero)", darkText: true },
+    { token: "bg-gradient-checkout-unlimited", label: "Checkout Unlimited", role: "apna Unlimited dark promo card (--gradient-checkout-unlimited)", darkText: false },
   ]
 
   const primitiveRamps = [

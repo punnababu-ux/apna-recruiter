@@ -12,7 +12,7 @@
  */
 
 import * as React from "react"
-import { ChevronLeft } from "lucide-react"
+import { ChevronLeft } from "@/icons/icons"
 import { useRouter } from "next/navigation"
 
 import { Button } from "@/components/ui/button"

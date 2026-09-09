@@ -19,38 +19,7 @@
  * Fully controlled — the wizard owns the form state.
  */
 
-import {
-  Bookmark,
-  Bot,
-  CalendarClock,
-  Check,
-  CircleCheck,
-  Compass,
-  HelpCircle,
-  Languages,
-  Layout,
-  ListTodo,
-  Mars,
-  MessageCircleQuestion,
-  Mic,
-  MoreVertical,
-  Pause,
-  Pencil,
-  PhoneCall,
-  PhoneIncoming,
-  PhoneOutgoing,
-  Play,
-  Plus,
-  Puzzle,
-  Sparkles,
-  Trash2,
-  UserRound,
-  Users,
-  Venus,
-  Video,
-  Wrench,
-  type LucideIcon,
-} from "lucide-react"
+import { Bookmark, Bot, CalendarClock, Check, CircleCheck, Compass, HelpCircle, Languages, Layout, ListTodo, Mars, MessageCircleQuestion, Mic, MoreVertical, Pause, Pencil, PhoneCall, PhoneIncoming, PhoneOutgoing, Play, Plus, Puzzle, Sparkles, Trash2, UserRound, Users, Venus, Video, Wrench, type IconComponent } from "@apna/design-system"
 import * as React from "react"
 
 import { Badge } from "@/components/ui/badge"
@@ -135,7 +104,7 @@ type TaskTypeMeta = {
   type: TaskType
   label: string
   description: string
-  icon: LucideIcon
+  icon: IconComponent
 }
 
 const TASK_TYPES: TaskTypeMeta[] = [
@@ -640,7 +609,7 @@ function ScreeningSummary({ task }: { task: InterviewTask }) {
   const { mode, direction, format } = task.screening
   if (!mode) return null
 
-  const chips: { icon: LucideIcon; label: string }[] = [
+  const chips: { icon: IconComponent; label: string }[] = [
     {
       icon: mode === "ai" ? Bot : UserRound,
       label: mode === "ai" ? "AI" : "Human",
@@ -999,7 +968,7 @@ function InlineCategoryGroup({
 }: {
   label: string
   description: string
-  Icon: LucideIcon
+  Icon: IconComponent
   tone: string
   /** Tinted border + background that colour-codes the category. */
   surface: string
@@ -1145,7 +1114,7 @@ function CriterionRow({
 // ---- AI interviewer card ------------------------------------------------
 
 // InfoPill → use InfoChip (variant="outlined") from shared.tsx
-const InfoPill = ({ icon, children }: { icon: LucideIcon; children: React.ReactNode }) => (
+const InfoPill = ({ icon, children }: { icon: IconComponent; children: React.ReactNode }) => (
   <InfoChip icon={icon} variant="outlined">{children}</InfoChip>
 )
 

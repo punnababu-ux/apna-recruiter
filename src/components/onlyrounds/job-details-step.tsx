@@ -17,32 +17,7 @@
  * question/FAQ list editors.
  */
 
-import {
-  Briefcase,
-  Building2,
-  CalendarDays,
-  Check,
-  ChevronDown,
-  Clock,
-  Compass,
-  Download,
-  FileText,
-  GraduationCap,
-  IndianRupee,
-  Laptop,
-  MapPin,
-  MessageCircleQuestion,
-  MoreVertical,
-  Pencil,
-  Plus,
-  Sparkles,
-  StickyNote,
-  Trash2,
-  Upload,
-  UserCheck,
-  UserPlus,
-  type LucideIcon,
-} from "lucide-react"
+import { Briefcase, Building2, CalendarDays, Check, ChevronDown, Clock, Compass, Download, FileText, GraduationCap, IndianRupee, Laptop, MapPin, MessageCircleQuestion, MoreVertical, Pencil, Plus, Sparkles, StickyNote, Trash2, Upload, UserCheck, UserPlus, type IconComponent } from "@apna/design-system"
 import * as React from "react"
 
 import { Button } from "@/components/ui/button"
@@ -103,7 +78,7 @@ export type { JobDetailsForm, SectionId, SectionStatus }
 
 // Per-section icon shown in the accordion header chip (replaces the
 // numeric index).
-const SECTION_ICONS: Record<SectionId, LucideIcon> = {
+const SECTION_ICONS: Record<SectionId, IconComponent> = {
   basics: Briefcase,
   schedule: Clock,
   compensation: IndianRupee,

@@ -1,15 +1,7 @@
 "use client"
 
 import * as React from "react"
-import {
-  Briefcase,
-  CreditCard,
-  Database,
-  HelpCircle,
-  Mail,
-  BarChart2,
-  Trophy,
-} from "lucide-react"
+import { Briefcase, CreditCard, Database, HelpCircle, Mail, BarChart2, Trophy } from "@apna/design-system"
 
 import {
   ReusableSidebar,

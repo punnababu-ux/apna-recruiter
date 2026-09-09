@@ -1,20 +1,7 @@
 "use client"
 
 import * as React from "react"
-import {
-  AlertCircle,
-  ChevronDown,
-  ChevronsUpDown,
-  FileCode,
-  Layout,
-  LayoutGrid,
-  Monitor,
-  PanelLeft,
-  Settings,
-  Smartphone,
-  Sparkles,
-  X,
-} from "lucide-react"
+import { AlertCircle, ChevronDown, ChevronsUpDown, FileCode, Layout, LayoutGrid, Monitor, PanelLeft, Settings, Smartphone, Sparkles, X } from "@apna/design-system"
 import { Badge, Button } from "@apna/design-system"
 import Link from "next/link"
 

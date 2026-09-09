@@ -11,21 +11,7 @@ import {
   ToggleGroupItem,
   Badge,
 } from "@apna/design-system"
-import {
-  Bold,
-  Italic,
-  Underline,
-  ChevronDown,
-  Layers,
-  Plus,
-  ArrowRight,
-  Download,
-  Bookmark,
-  Share2,
-  Search,
-  Filter,
-  Sliders,
-} from "lucide-react"
+import { Bold, Italic, Underline, ChevronDown, Layers, Plus, ArrowRight, Download, Bookmark, Share2, Search, Filter, Sliders } from "@apna/design-system"
 
 export default function ActionsComponentsPage() {
   const [activeSize, setActiveSize] = React.useState<"lg" | "default" | "sm">("lg")
@@ -159,12 +145,12 @@ export default function ActionsComponentsPage() {
                 </Button>
 
                 {/* Leading Icon */}
-                <Button variant={v.variant} size={activeSize} leadingIcon={<Plus className="size-4" />}>
+                <Button variant={v.variant} size={activeSize} leadingIcon={<Plus />}>
                   With Leading Icon
                 </Button>
 
                 {/* Trailing Icon */}
-                <Button variant={v.variant} size={activeSize} trailingIcon={<ArrowRight className="size-4" />}>
+                <Button variant={v.variant} size={activeSize} trailingIcon={<ArrowRight />}>
                   With Trailing Icon
                 </Button>
 
@@ -214,7 +200,7 @@ export default function ActionsComponentsPage() {
             <p className="text-3xs text-muted-foreground">Split button for primary action + dropdown menu.</p>
             <div className="pt-2">
               <ButtonGroup>
-                <Button variant="default" size={activeSize} leadingIcon={<Plus className="size-4" />}>
+                <Button variant="default" size={activeSize} leadingIcon={<Plus />}>
                   Publish Job Post
                 </Button>
                 <Button
@@ -244,10 +230,10 @@ export default function ActionsComponentsPage() {
             <p className="text-3xs text-muted-foreground">Segmented action bar for candidate management.</p>
             <div className="pt-2">
               <ButtonGroup>
-                <Button variant="secondary" size={activeSize} leadingIcon={<Share2 className="size-4" />}>
+                <Button variant="secondary" size={activeSize} leadingIcon={<Share2 />}>
                   Share Candidate
                 </Button>
-                <Button variant="secondary" size={activeSize} leadingIcon={<Download className="size-4" />}>
+                <Button variant="secondary" size={activeSize} leadingIcon={<Download />}>
                   Export Resume
                 </Button>
                 <Button
@@ -276,7 +262,7 @@ export default function ActionsComponentsPage() {
             <p className="text-3xs text-muted-foreground">Segmented filter bar or view switcher.</p>
             <div className="pt-2">
               <ButtonGroup>
-                <Button variant="outline" size={activeSize} leadingIcon={<Filter className="size-4" />}>
+                <Button variant="outline" size={activeSize} leadingIcon={<Filter />}>
                   Filter List
                 </Button>
                 <Button variant="outline" size={activeSize}>

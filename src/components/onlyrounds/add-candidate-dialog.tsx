@@ -2,17 +2,7 @@
 
 import * as React from "react"
 import { useState, useRef } from "react"
-import {
-  ChevronLeft,
-  Download,
-  FileSpreadsheet,
-  FileText,
-  Upload,
-  UserPlus,
-  X,
-  File,
-  Loader2,
-} from "lucide-react"
+import { ChevronLeft, Download, FileSpreadsheet, FileText, Upload, UserPlus, X, File, Loader2 } from "@apna/design-system"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"

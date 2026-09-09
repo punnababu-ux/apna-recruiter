@@ -1,4 +1,4 @@
-import { CircleCheck, Flag, Star, type LucideIcon } from "lucide-react"
+import { CircleCheck, Flag, Star, type IconComponent } from "@apna/design-system"
 
 import type {
   AgentId,
@@ -128,7 +128,7 @@ export type CriteriaCategoryMeta = {
   key: CriteriaCategory
   label: string
   description: string
-  icon: LucideIcon
+  icon: IconComponent
   tone: string
   surface: string
 }

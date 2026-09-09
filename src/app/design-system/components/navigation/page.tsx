@@ -7,6 +7,8 @@ import {
   TabsTrigger,
   TabsContent,
   ChipTabs,
+  SegmentedTabSwitcher,
+  type SegmentedTabItem,
   Breadcrumb,
   BreadcrumbList,
   BreadcrumbItem,
@@ -14,10 +16,42 @@ import {
   BreadcrumbSeparator,
   BreadcrumbPage,
   Badge,
+  Briefcase,
+  Database,
+  InfinityIcon,
+  Building2,
 } from "@apna/design-system"
+
+const SEGMENTED_DEMO_ITEMS: SegmentedTabItem[] = [
+  {
+    value: "jobs",
+    label: "Jobs",
+    description: "Post any job type with credits",
+    icon: <Briefcase className="size-4 shrink-0" aria-hidden />,
+  },
+  {
+    value: "database",
+    label: "Database",
+    description: "Unlock profiles from 5 Cr+ candidates",
+    icon: <Database className="size-4 shrink-0" aria-hidden />,
+  },
+  {
+    value: "unlimited",
+    label: "Unlimited",
+    description: "Unlimited job roles & reposts",
+    icon: <InfinityIcon className="size-4 shrink-0" aria-hidden />,
+  },
+  {
+    value: "enterprise",
+    label: "Enterprise",
+    description: "Pan-India hiring solutions",
+    icon: <Building2 className="size-4 shrink-0" aria-hidden />,
+  },
+]
 
 export default function NavigationComponentsPage() {
   const [activeChip, setActiveChip] = React.useState("active")
+  const [activeSegment, setActiveSegment] = React.useState("jobs")
 
   return (
     <div className="space-y-10">
@@ -30,12 +64,12 @@ export default function NavigationComponentsPage() {
           4. Navigation
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Tabs, chip pill tabs, breadcrumb trails, and sidebars.
+          Tabs, chip pill tabs, the responsive segmented switcher, breadcrumb trails, and sidebars.
         </p>
       </div>
 
       <div className="rounded-xl border border-border bg-card p-4 font-mono text-xs text-muted-foreground">
-        <code>{'import { Tabs, ChipTabs, Breadcrumb, Sidebar } from "@apna/design-system"'}</code>
+        <code>{'import { Tabs, ChipTabs, SegmentedTabSwitcher, Breadcrumb, Sidebar } from "@apna/design-system"'}</code>
       </div>
 
       {/* Breadcrumb */}
@@ -115,6 +149,35 @@ export default function NavigationComponentsPage() {
             <TabsTrigger value="draft">Drafts (94)</TabsTrigger>
           </TabsList>
         </Tabs>
+      </div>
+
+      {/* Segmented Tab Switcher */}
+      <div className="rounded-xl border border-border bg-card p-6 space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-2">
+          <h2 className="text-base font-semibold text-foreground font-heading">
+            Segmented Tab Switcher
+          </h2>
+          <Badge variant="info">Responsive — resize below 768px</Badge>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Extracted from the apnahire self-checkout page&apos;s Jobs / Database /
+          Unlimited / Enterprise switcher. One controlled <code className="font-mono bg-muted px-1 rounded">value</code>/
+          <code className="font-mono bg-muted px-1 rounded">onValueChange</code>, two layouts — both render in the DOM at once, CSS decides which shows.
+        </p>
+        <div className="rounded-lg border border-border bg-muted/30 p-4">
+          <p className="text-xs font-semibold text-foreground mb-2">Breakpoint rules</p>
+          <ul className="text-xs text-muted-foreground space-y-1.5 list-disc list-inside">
+            <li><span className="font-mono">≥ md (768px)</span> — full-width segmented pill. Each item is equal-width (<span className="font-mono">flex-1</span>), stacking an icon+label row over a description line. The active item floats as a solid card with a shadow on the track.</li>
+            <li><span className="font-mono">&lt; md</span> — horizontally-scrolling icon+label chip carousel (&quot;YouTube/Airbnb style&quot;), no description line, no visible scrollbar. The active chip gets a solid card background.</li>
+            <li>Colour is themeable per state (<span className="font-mono">activeClassName</span>, <span className="font-mono">mobileActiveClassName</span>, <span className="font-mono">inactiveClassName</span>, <span className="font-mono">mutedClassName</span>, <span className="font-mono">trackClassName</span>) — the source design intentionally uses a <em>different</em> active colour on mobile (brand green) than on desktop (neutral dark), which is why active colour splits into two props instead of one.</li>
+            <li>Prefer this over <code className="font-mono bg-muted px-1 rounded">Tabs</code>/<code className="font-mono bg-muted px-1 rounded">ChipTabs</code> only when you need both the two-line desktop pill <em>and</em> a distinct mobile chip carousel for the same control — for a plain single-row bar use <code className="font-mono bg-muted px-1 rounded">Tabs</code>, for wrapping filter chips use <code className="font-mono bg-muted px-1 rounded">ChipTabs</code>.</li>
+          </ul>
+        </div>
+        <SegmentedTabSwitcher
+          items={SEGMENTED_DEMO_ITEMS}
+          value={activeSegment}
+          onValueChange={setActiveSegment}
+        />
       </div>
 
       {/* Persistent App Sidebar */}

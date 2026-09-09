@@ -16,15 +16,7 @@ import { Fragment, useEffect, useMemo, useRef, useState } from "react"
 //     () => false,
 //   )
 // }
-import {
-  Bold,
-  ChevronDown,
-  Italic,
-  Mail,
-  Settings,
-  Underline,
-  User,
-} from "lucide-react"
+import { Bold, ChevronDown, Italic, Mail, Settings, Underline, User } from "@apna/design-system"
 import { toast } from "sonner"
 
 // import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
@@ -207,13 +199,7 @@ import { ModularScalesDemo } from "./_showcase/modular-scales-demo"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 // ---- OnlyRounds product molecules, organisms & templates -------------------
 import Link from "next/link"
-import {
-  ArrowUpRight,
-  Briefcase,
-  Download,
-  Share2,
-  UserPlus,
-} from "lucide-react"
+import { ArrowUpRight, Briefcase, Download, Share2, UserPlus } from "@apna/design-system"
 // import { AIInsightChip } from "@/components/onlyrounds/ai-insight-chip"
 // import { ScorePill } from "@/components/onlyrounds/score-pill"
 // import { RadioCard } from "@/components/onlyrounds/radio-card"

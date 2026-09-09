@@ -1,20 +1,6 @@
 import * as React from "react"
 import Link from "next/link"
-import {
-  Palette,
-  Type,
-  Maximize2,
-  Sparkles,
-  Zap,
-  CheckSquare,
-  Eye,
-  Navigation,
-  MessageSquare,
-  Bell,
-  Table as TableIcon,
-  ArrowRight,
-  ShieldCheck,
-} from "lucide-react"
+import { Palette, Type, Maximize2, Sparkles, Zap, CheckSquare, Eye, Navigation, MessageSquare, Bell, TableIcon, ArrowRight, ShieldCheck } from "@apna/design-system"
 
 import { ApnaLogo, Badge, Button } from "@apna/design-system"
 

@@ -34,6 +34,7 @@ export * from "./components/ui/metric-card"
 // 4. Navigation
 export * from "./components/ui/tabs"
 export * from "./components/ui/chip-tabs"
+export * from "./components/ui/segmented-tab-switcher"
 export * from "./components/ui/breadcrumb"
 export * from "./components/ui/sidebar"
 export * from "./components/ui/app-sidebar"
@@ -57,7 +58,12 @@ export * from "./components/ui/table"
 export * from "./components/ui/accordion"
 export * from "./components/ui/logo-apna"
 export * from "./components/ui/logo-onlyrounds"
+export * from "./components/ui/logo-apna-unlimited"
 export * from "./components/ui/job-card"
+export * from "./components/ui/pricing-card"
 
 // Helper Utilities
 export * from "./lib/utils"
+
+// Icons (Material Symbols Rounded, vendored — see src/icons/icons.tsx)
+export * from "./icons/icons"

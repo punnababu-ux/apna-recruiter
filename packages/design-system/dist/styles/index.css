@@ -58,28 +58,28 @@
   --color-blue-800: var(--color-apna-sky-800);
   --color-blue-900: var(--color-apna-sky-900);
   --color-blue-950: var(--color-apna-sky-950);
-  --color-apna-green-50: #E6F8F3;
-  --color-apna-green-100: #C7F1E4;
-  --color-apna-green-200: #93E4CC;
-  --color-apna-green-300: #4DD0AC;
-  --color-apna-green-400: #00B88D;
-  --color-apna-green-500: #009B75;
-  --color-apna-green-600: #007D5E;
-  --color-apna-green-700: #00634B;
-  --color-apna-green-800: #004D3B;
-  --color-apna-green-900: #003B2E;
-  --color-apna-green-950: #00221A;
-  --color-apna-gold-50: #FFFBF0;
-  --color-apna-gold-100: #FFF4D6;
-  --color-apna-gold-200: #FFE6A8;
-  --color-apna-gold-300: #FDD47A;
-  --color-apna-gold-400: #FBC24E;
-  --color-apna-gold-500: #E5A835;
-  --color-apna-gold-600: #C48821;
-  --color-apna-gold-700: #9E6916;
-  --color-apna-gold-800: #7E5114;
-  --color-apna-gold-900: #664114;
-  --color-apna-gold-950: #3D2409;
+  --color-apna-green-50: #E6F7F0;
+  --color-apna-green-100: #C6EFE0;
+  --color-apna-green-200: #9DE2C9;
+  --color-apna-green-300: #6CD3AE;
+  --color-apna-green-400: #3EBA8D;
+  --color-apna-green-500: #00A86B;
+  --color-apna-green-600: #1F8268;
+  --color-apna-green-700: #186954;
+  --color-apna-green-800: #135343;
+  --color-apna-green-900: #0E4134;
+  --color-apna-green-950: #082820;
+  --color-apna-gold-50: #FFFBEB;
+  --color-apna-gold-100: #FEF3C7;
+  --color-apna-gold-200: #FDE68A;
+  --color-apna-gold-300: #FCD34D;
+  --color-apna-gold-400: #FFD166;
+  --color-apna-gold-500: #F59E0B;
+  --color-apna-gold-600: #D97706;
+  --color-apna-gold-700: #B45309;
+  --color-apna-gold-800: #92400E;
+  --color-apna-gold-900: #78350F;
+  --color-apna-gold-950: #451A03;
   --color-apna-navy-50: #F5F3FF;
   --color-apna-navy-100: #ECE9FE;
   --color-apna-navy-200: #DDD6FE;
@@ -102,22 +102,23 @@
   --color-apna-plum-800: #241B26;
   --color-apna-plum-900: #1C151E;
   --color-apna-plum-950: #120E13;
-  --color-apna-sky-50: #F0F7FD;
-  --color-apna-sky-100: #DDF0FA;
-  --color-apna-sky-200: #B9E0F5;
-  --color-apna-sky-300: #81C6EE;
-  --color-apna-sky-400: #47A4DB;
-  --color-apna-sky-500: #2589C7;
-  --color-apna-sky-600: #1A6DA3;
-  --color-apna-sky-700: #165783;
-  --color-apna-sky-800: #154A6E;
-  --color-apna-sky-900: #163F5C;
-  --color-apna-sky-950: #0D273B;
-  --color-apna-navy-600: #0052CC;
-  --color-apna-navy-700: #004BA9;
-  --color-apna-navy-800: #003A80;
-  --color-apna-navy-900: #002963;
-  --color-apna-navy-950: #001840;
+  --color-apna-sky-50: #EFF6FF;
+  --color-apna-sky-100: #DBEAFE;
+  --color-apna-sky-200: #BFDBFE;
+  --color-apna-sky-300: #93C5FD;
+  --color-apna-sky-400: #60A5FA;
+  --color-apna-sky-500: #3B82F6;
+  --color-apna-sky-600: #2563EB;
+  --color-apna-sky-700: #1D4ED8;
+  --color-apna-sky-800: #1E40AF;
+  --color-apna-sky-900: #1E3A8A;
+  --color-apna-sky-950: #172554;
+  --color-apna-royal-600: #0052CC;
+  --color-apna-royal-700: #004BA9;
+  --color-apna-royal-800: #003A80;
+  --color-apna-royal-900: #002963;
+  --color-apna-royal-950: #001840;
+  --color-checkout-discount-fg: #166534;
   --color-alpha-black-5: rgba(0, 0, 0, 0.05);
   --color-alpha-black-10: rgba(0, 0, 0, 0.10);
   --color-alpha-black-20: rgba(0, 0, 0, 0.20);
@@ -267,7 +268,7 @@
   --card-foreground: var(--color-gray-950);
   --popover: var(--color-gray-0);
   --popover-foreground: var(--color-gray-950);
-  --surface-inverted: var(--color-apna-navy-900);
+  --surface-inverted: var(--color-apna-royal-900);
   --surface-inverted-fg: var(--color-gray-0);
   --primary: var(--color-apna-green-600);
   --primary-foreground: var(--color-gray-50);
@@ -402,22 +403,66 @@
       135deg,
       var(--color-red-500) 0%,
       var(--color-red-700) 100%);
+  --gradient-checkout-hero:
+    radial-gradient(
+      circle at 8% 15%,
+      var(--color-apna-gold-100) 0%,
+      transparent 45%),
+    radial-gradient(
+      circle at 14% 55%,
+      var(--color-apna-navy-100) 0%,
+      transparent 50%),
+    radial-gradient(
+      circle at 12% 90%,
+      var(--color-apna-sky-100) 0%,
+      transparent 50%),
+    radial-gradient(
+      circle at 90% 18%,
+      var(--color-apna-sky-50) 0%,
+      transparent 55%),
+    linear-gradient(
+      135deg,
+      var(--color-gray-0) 0%,
+      var(--color-gray-50) 45%,
+      var(--color-gray-100) 100%);
+  --surface-checkout-hero-fg: var(--color-gray-900);
+  --surface-checkout-hero-fg-muted: var(--color-gray-500);
+  --surface-checkout-track: rgba(0, 0, 0, 0.08);
+  --surface-checkout-inset: var(--color-gray-0);
+  --surface-checkout-inset-border: var(--color-gray-200);
+  --checkout-primary: var(--color-apna-green-600);
+  --checkout-primary-hover: var(--color-apna-green-700);
+  --checkout-primary-foreground: var(--color-gray-0);
+  --checkout-discount-fg: var(--color-checkout-discount-fg);
+  --checkout-discount-bg: var(--color-apna-green-100);
+  --gradient-checkout-unlimited:
+    linear-gradient(
+      180deg,
+      var(--color-apna-plum-800) 0%,
+      var(--color-apna-plum-900) 60%,
+      var(--color-apna-plum-950) 100%);
+  --checkout-unlimited-border: rgba(255, 255, 255, 0.12);
+  --checkout-unlimited-border-hover: rgba(255, 255, 255, 0.3);
+  --checkout-unlimited-cta-bg: rgba(255, 255, 255, 0.16);
+  --checkout-unlimited-cta-bg-hover: rgba(255, 255, 255, 0.26);
 }
 .dark {
-  --background: var(--color-apna-navy-950);
+  --background: var(--color-gray-950);
   --foreground: var(--color-gray-50);
-  --card: var(--color-apna-navy-900);
+  --card: var(--color-gray-900);
   --card-foreground: var(--color-gray-50);
-  --popover: var(--color-apna-navy-900);
+  --popover: var(--color-gray-900);
   --popover-foreground: var(--color-gray-50);
+  --surface-inverted: var(--color-apna-royal-950);
+  --surface-inverted-fg: var(--color-gray-0);
   --primary: var(--color-apna-green-500);
   --primary-foreground: var(--color-gray-50);
-  --secondary: var(--color-apna-navy-800);
+  --secondary: var(--color-gray-800);
   --secondary-foreground: var(--color-gray-50);
-  --muted: var(--color-apna-navy-800);
+  --muted: var(--color-gray-800);
   --muted-foreground: var(--color-gray-400);
-  --accent: var(--color-apna-green-900);
-  --accent-foreground: var(--color-apna-green-200);
+  --accent: var(--color-gray-800);
+  --accent-foreground: var(--color-gray-50);
   --highlight: var(--color-apna-gold-400);
   --highlight-foreground: var(--color-gray-950);
   --destructive: var(--color-red-400);
@@ -435,7 +480,7 @@
   --border: var(--color-alpha-white-10);
   --input: var(--color-alpha-white-15);
   --ring: var(--color-apna-green-400);
-  --sidebar: var(--color-apna-navy-900);
+  --sidebar: var(--color-gray-900);
   --sidebar-foreground: var(--color-gray-50);
   --sidebar-primary: var(--color-apna-green-500);
   --sidebar-primary-foreground: var(--color-gray-50);
@@ -451,8 +496,8 @@
   --gradient-banner-default:
     linear-gradient(
       135deg,
-      var(--color-apna-navy-800) 0%,
-      var(--color-apna-navy-950) 100%);
+      var(--color-gray-800) 0%,
+      var(--color-gray-950) 100%);
   --gradient-banner-info:
     linear-gradient(
       135deg,
@@ -473,6 +518,29 @@
       135deg,
       var(--color-red-700) 0%,
       var(--color-red-900) 100%);
+  --gradient-checkout-hero:
+    radial-gradient(
+      circle at 8% 15%,
+      var(--color-alpha-white-10) 0%,
+      transparent 45%),
+    radial-gradient(
+      circle at 90% 18%,
+      var(--color-alpha-white-10) 0%,
+      transparent 55%),
+    radial-gradient(
+      circle at 50% 90%,
+      var(--color-alpha-white-5) 0%,
+      transparent 60%),
+    linear-gradient(
+      135deg,
+      var(--color-gray-950) 0%,
+      var(--color-gray-900) 50%,
+      var(--color-gray-800) 100%);
+  --surface-checkout-hero-fg: var(--color-gray-50);
+  --surface-checkout-hero-fg-muted: var(--color-gray-400);
+  --surface-checkout-track: rgba(255, 255, 255, 0.08);
+  --checkout-discount-fg: var(--color-apna-green-400);
+  --checkout-discount-bg: var(--color-apna-green-900);
 }
 :root,
 :host {

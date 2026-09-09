@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import type { LucideIcon } from "lucide-react"
+import { IconComponent } from "@apna/design-system"
 
 import type { CandidateState } from "@/components/onlyrounds/candidate-card"
 import { Badge } from "@/components/ui/badge"
@@ -60,7 +60,7 @@ export function DisplayField({
 }: {
   label: string
   value?: string | React.ReactNode | null
-  icon?: LucideIcon
+  icon?: IconComponent
 }) {
   if (value == null) return null
   return (
@@ -91,7 +91,7 @@ export function IconLabel({
   iconClassName,
   className,
 }: {
-  icon: LucideIcon
+  icon: IconComponent
   children: React.ReactNode
   /** Override the icon size. Defaults to size-3.5 (good for text-sm/-xs). */
   iconClassName?: string
@@ -124,7 +124,7 @@ export function InfoChip({
   children,
   variant = "muted",
 }: {
-  icon: LucideIcon
+  icon: IconComponent
   children: React.ReactNode
   variant?: "muted" | "outlined"
 }) {

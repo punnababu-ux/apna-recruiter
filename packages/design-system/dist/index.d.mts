@@ -7,7 +7,6 @@ import { useRender } from '@base-ui/react/use-render';
 import { Separator as Separator$1 } from '@base-ui/react/separator';
 import { Toggle as Toggle$1 } from '@base-ui/react/toggle';
 import { ToggleGroup as ToggleGroup$1 } from '@base-ui/react/toggle-group';
-import { LucideIcon } from 'lucide-react';
 import { Checkbox as Checkbox$1 } from '@base-ui/react/checkbox';
 import { Radio } from '@base-ui/react/radio';
 import { RadioGroup as RadioGroup$1 } from '@base-ui/react/radio-group';
@@ -18,7 +17,7 @@ import { Avatar as Avatar$1 } from '@base-ui/react/avatar';
 import { Tabs as Tabs$1 } from '@base-ui/react/tabs';
 import { Tooltip as Tooltip$1 } from '@base-ui/react/tooltip';
 import { Popover as Popover$1 } from '@base-ui/react/popover';
-import { Menu } from '@base-ui/react/menu';
+import { Menu as Menu$1 } from '@base-ui/react/menu';
 import { Dialog as Dialog$1 } from '@base-ui/react/dialog';
 import { AlertDialog as AlertDialog$1 } from '@base-ui/react/alert-dialog';
 import { ToasterProps } from 'sonner';
@@ -64,6 +63,206 @@ declare function ToggleGroup({ className, variant, size, spacing, orientation, c
 }): react_jsx_runtime.JSX.Element;
 declare function ToggleGroupItem({ className, children, variant, size, ...props }: Toggle$1.Props & VariantProps<typeof toggleVariants>): react_jsx_runtime.JSX.Element;
 
+/**
+ * Material Symbols Rounded — vendored as individual SVG React components.
+ *
+ * Generated from https://github.com/google/material-design-icons
+ * (symbols/web/<name>/materialsymbolsrounded/<name>_24px.svg), Apache-2.0.
+ *
+ * Each export is named after the lucide-react icon it replaces, so existing
+ * call sites only need their import source changed, not their JSX. The
+ * underlying glyph shape now matches the Poneglyph Figma design system's
+ * Material Symbols icon set exactly (same source, same names).
+ *
+ * Do not hand-edit — regenerate from the mapping table if icons change.
+ */
+
+interface IconProps extends React$1.SVGProps<SVGSVGElement> {
+    size?: number | string;
+}
+/** Compatible with the shape of lucide-react's IconComponent type, for call
+ *  sites that type a prop as `icon?: IconComponent`. */
+type IconComponent = React$1.ForwardRefExoticComponent<IconProps & React$1.RefAttributes<SVGSVGElement>>;
+declare const Activity: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const AlertCircle: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const AlertTriangle: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const ArrowDown: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const ArrowLeft: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const ArrowRight: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const ArrowUp: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const ArrowUpDown: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const ArrowUpRight: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const AtSign: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Award: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const BarChart2: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Bell: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Bold: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const BookOpen: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Bookmark: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const BookmarkPlus: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Bot: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Brain: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Briefcase: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Building: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Building2: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Calendar: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const CalendarCheck: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const CalendarClock: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const CalendarDays: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Check: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const CheckCircle2: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const CheckIcon: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const CheckSquare: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const ChevronDown: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const ChevronDownIcon: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const ChevronLeft: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const ChevronRight: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const ChevronRightIcon: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const ChevronUp: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const ChevronUpIcon: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const ChevronsUpDown: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const CircleCheck: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const CircleCheckIcon: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Clock: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Code: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Compass: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Copy: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Cpu: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const CreditCard: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Database: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const DollarSign: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Download: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Edit: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Edit3: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const ExternalLink: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Eye: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const EyeOff: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const File: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const FileCode: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const FilePlus: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const FileSpreadsheet: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const FileText: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Filter: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Flag: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Flame: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const FlaskConical: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Folder: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const FolderPlus: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Footprints: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Globe: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const GraduationCap: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Grid: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Hash: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Heading: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Headphones: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Heart: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const HelpCircle: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const History: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Home: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const ImageIcon: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const ImagePlus: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const IndianRupee: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const InfinityIcon: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Info: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const InfoIcon: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Italic: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Languages: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Laptop: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Layers: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Layout: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const LayoutGrid: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const LayoutList: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Lightbulb: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const LinkIcon: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const ListChecks: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const ListTodo: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Loader2: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Loader2Icon: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Lock: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Mail: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const MapPin: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Mars: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Maximize2: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Menu: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const MessageCircle: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const MessageCircleQuestion: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const MessageSquare: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const MessagesSquare: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Mic: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Minus: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Monitor: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Moon: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const MoreHorizontal: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const MoreHorizontalIcon: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const MoreVertical: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Navigation: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const OctagonXIcon: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Palette: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const PanelLeft: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const PanelLeftIcon: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Paperclip: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Pause: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Pencil: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Phone: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const PhoneCall: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const PhoneIncoming: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const PhoneOff: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const PhoneOutgoing: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Play: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Plus: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const PowerOff: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Puzzle: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const QrCode: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const RefreshCw: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const RotateCcw: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Save: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Search: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Send: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Settings: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Shapes: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Share2: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const ShieldAlert: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const ShieldCheck: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Sliders: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const SlidersHorizontal: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Smartphone: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Sparkles: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Star: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const StickyNote: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Sun: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const TableIcon: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Table2: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Tag: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Target: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Trash: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Trash2: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const TrendingUp: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const TriangleAlertIcon: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Trophy: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Type: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Underline: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Unlock: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Upload: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const User: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const User2: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const UserCheck: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const UserPlus: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const UserRound: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const UserSearch: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Users: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Venus: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Video: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const VideoOff: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Voicemail: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Wallet: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Wand2: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Wrench: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const X: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const XCircle: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const XIcon: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Zap: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+declare const Sell: React$1.ForwardRefExoticComponent<Omit<IconProps, "ref"> & React$1.RefAttributes<SVGSVGElement>>;
+
 declare function Label({ className, ...props }: React$1.ComponentProps<"label">): react_jsx_runtime.JSX.Element;
 
 declare function FieldSet({ className, ...props }: React$1.ComponentProps<"fieldset">): react_jsx_runtime.JSX.Element;
@@ -77,7 +276,7 @@ declare const fieldVariants: (props?: ({
 declare function Field({ className, orientation, ...props }: React$1.ComponentProps<"div"> & VariantProps<typeof fieldVariants>): react_jsx_runtime.JSX.Element;
 declare function FieldContent({ className, ...props }: React$1.ComponentProps<"div">): react_jsx_runtime.JSX.Element;
 declare function FieldLabel({ className, icon: Icon, children, ...props }: React$1.ComponentProps<typeof Label> & {
-    icon?: LucideIcon;
+    icon?: IconComponent;
 }): react_jsx_runtime.JSX.Element;
 declare function FieldTitle({ className, ...props }: React$1.ComponentProps<"div">): react_jsx_runtime.JSX.Element;
 declare function FieldDescription({ className, ...props }: React$1.ComponentProps<"p">): react_jsx_runtime.JSX.Element;
@@ -227,6 +426,38 @@ declare function ChipTabs<V extends string = string>({ items, value, onValueChan
     "aria-invalid"?: boolean;
 }): react_jsx_runtime.JSX.Element;
 
+interface SegmentedTabItem<V extends string = string> {
+    value: V;
+    label: string;
+    description?: string;
+    icon?: React$1.ReactNode;
+}
+interface SegmentedTabSwitcherProps<V extends string = string> {
+    items: SegmentedTabItem<V>[];
+    value: V;
+    onValueChange: (value: V) => void;
+    /** Desktop pill background, and each inactive mobile chip's own
+     *  background (the mobile row itself is never painted). Defaults to
+     *  `bg-muted`. */
+    trackClassName?: string;
+    /** Icon/label colour for the active item on the desktop pill. Defaults
+     *  to `text-primary`. */
+    activeClassName?: string;
+    /** Icon/label colour for the active chip on mobile — a brand accent
+     *  often reads better here than the desktop's neutral active colour
+     *  (that's the case in the source this was extracted from). Defaults
+     *  to `activeClassName`. */
+    mobileActiveClassName?: string;
+    /** Icon/label colour for inactive items, both layouts. Defaults to
+     *  `text-muted-foreground`. */
+    inactiveClassName?: string;
+    /** Desktop description-line colour (both states). Defaults to
+     *  `text-muted-foreground`. */
+    mutedClassName?: string;
+    className?: string;
+}
+declare function SegmentedTabSwitcher<V extends string = string>({ items, value, onValueChange, trackClassName, activeClassName, mobileActiveClassName, inactiveClassName, mutedClassName, className, }: SegmentedTabSwitcherProps<V>): react_jsx_runtime.JSX.Element;
+
 declare function Breadcrumb({ className, ...props }: React$1.ComponentProps<"nav">): react_jsx_runtime.JSX.Element;
 declare function BreadcrumbList({ className, ...props }: React$1.ComponentProps<"ol">): react_jsx_runtime.JSX.Element;
 declare function BreadcrumbItem({ className, ...props }: React$1.ComponentProps<"li">): react_jsx_runtime.JSX.Element;
@@ -374,31 +605,31 @@ declare function PopoverHeader({ className, ...props }: React$1.ComponentProps<"
 declare function PopoverTitle({ className, ...props }: Popover$1.Title.Props): react_jsx_runtime.JSX.Element;
 declare function PopoverDescription({ className, ...props }: Popover$1.Description.Props): react_jsx_runtime.JSX.Element;
 
-declare function DropdownMenu({ ...props }: Menu.Root.Props): react_jsx_runtime.JSX.Element;
-declare function DropdownMenuPortal({ ...props }: Menu.Portal.Props): react_jsx_runtime.JSX.Element;
-declare function DropdownMenuTrigger({ ...props }: Menu.Trigger.Props): react_jsx_runtime.JSX.Element;
-declare function DropdownMenuContent({ align, alignOffset, side, sideOffset, className, ...props }: Menu.Popup.Props & Pick<Menu.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset">): react_jsx_runtime.JSX.Element;
-declare function DropdownMenuGroup({ ...props }: Menu.Group.Props): react_jsx_runtime.JSX.Element;
-declare function DropdownMenuLabel({ className, inset, ...props }: Menu.GroupLabel.Props & {
+declare function DropdownMenu({ ...props }: Menu$1.Root.Props): react_jsx_runtime.JSX.Element;
+declare function DropdownMenuPortal({ ...props }: Menu$1.Portal.Props): react_jsx_runtime.JSX.Element;
+declare function DropdownMenuTrigger({ ...props }: Menu$1.Trigger.Props): react_jsx_runtime.JSX.Element;
+declare function DropdownMenuContent({ align, alignOffset, side, sideOffset, className, ...props }: Menu$1.Popup.Props & Pick<Menu$1.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset">): react_jsx_runtime.JSX.Element;
+declare function DropdownMenuGroup({ ...props }: Menu$1.Group.Props): react_jsx_runtime.JSX.Element;
+declare function DropdownMenuLabel({ className, inset, ...props }: Menu$1.GroupLabel.Props & {
     inset?: boolean;
 }): react_jsx_runtime.JSX.Element;
-declare function DropdownMenuItem({ className, inset, variant, ...props }: Menu.Item.Props & {
+declare function DropdownMenuItem({ className, inset, variant, ...props }: Menu$1.Item.Props & {
     inset?: boolean;
     variant?: "default" | "destructive";
 }): react_jsx_runtime.JSX.Element;
-declare function DropdownMenuSub({ ...props }: Menu.SubmenuRoot.Props): react_jsx_runtime.JSX.Element;
-declare function DropdownMenuSubTrigger({ className, inset, children, ...props }: Menu.SubmenuTrigger.Props & {
+declare function DropdownMenuSub({ ...props }: Menu$1.SubmenuRoot.Props): react_jsx_runtime.JSX.Element;
+declare function DropdownMenuSubTrigger({ className, inset, children, ...props }: Menu$1.SubmenuTrigger.Props & {
     inset?: boolean;
 }): react_jsx_runtime.JSX.Element;
 declare function DropdownMenuSubContent({ align, alignOffset, side, sideOffset, className, ...props }: React$1.ComponentProps<typeof DropdownMenuContent>): react_jsx_runtime.JSX.Element;
-declare function DropdownMenuCheckboxItem({ className, children, checked, inset, ...props }: Menu.CheckboxItem.Props & {
+declare function DropdownMenuCheckboxItem({ className, children, checked, inset, ...props }: Menu$1.CheckboxItem.Props & {
     inset?: boolean;
 }): react_jsx_runtime.JSX.Element;
-declare function DropdownMenuRadioGroup({ ...props }: Menu.RadioGroup.Props): react_jsx_runtime.JSX.Element;
-declare function DropdownMenuRadioItem({ className, children, inset, ...props }: Menu.RadioItem.Props & {
+declare function DropdownMenuRadioGroup({ ...props }: Menu$1.RadioGroup.Props): react_jsx_runtime.JSX.Element;
+declare function DropdownMenuRadioItem({ className, children, inset, ...props }: Menu$1.RadioItem.Props & {
     inset?: boolean;
 }): react_jsx_runtime.JSX.Element;
-declare function DropdownMenuSeparator({ className, ...props }: Menu.Separator.Props): react_jsx_runtime.JSX.Element;
+declare function DropdownMenuSeparator({ className, ...props }: Menu$1.Separator.Props): react_jsx_runtime.JSX.Element;
 declare function DropdownMenuShortcut({ className, ...props }: React$1.ComponentProps<"span">): react_jsx_runtime.JSX.Element;
 
 declare function Dialog({ ...props }: Dialog$1.Root.Props): react_jsx_runtime.JSX.Element;
@@ -541,6 +772,11 @@ declare function OnlyRoundsLogo({ className, ...props }: React.SVGProps<SVGSVGEl
  */
 declare function OnlyRoundsLogoMark({ className, ...props }: React.SVGProps<SVGSVGElement>): react_jsx_runtime.JSX.Element;
 
+interface LogoApnaUnlimitedProps extends React$1.SVGProps<SVGSVGElement> {
+    variant?: "default" | "white" | "gradient";
+}
+declare function LogoApnaUnlimited({ className, variant, ...props }: LogoApnaUnlimitedProps): react_jsx_runtime.JSX.Element;
+
 interface JobCardProps extends React$1.HTMLAttributes<HTMLDivElement> {
     title: string;
     company: string;
@@ -554,8 +790,21 @@ interface JobCardProps extends React$1.HTMLAttributes<HTMLDivElement> {
 }
 declare function JobCard({ title, company, location, salary, jobType, postedAt, logoUrl, onApply, onSave, className, ...props }: JobCardProps): react_jsx_runtime.JSX.Element;
 
+interface PricingCardProps extends Omit<React$1.ComponentProps<"div">, "title"> {
+    ribbon?: React$1.ReactNode;
+    title: React$1.ReactNode;
+    subtitle?: React$1.ReactNode;
+    meta?: React$1.ReactNode;
+    price: React$1.ReactNode;
+    mrp?: React$1.ReactNode;
+    badge?: React$1.ReactNode;
+    priceSuffix?: React$1.ReactNode;
+    cta: React$1.ReactNode;
+}
+declare function PricingCard({ ribbon, title, subtitle, meta, price, mrp, badge, priceSuffix, cta, className, ...props }: PricingCardProps): react_jsx_runtime.JSX.Element;
+
 declare function cn(...inputs: ClassValue[]): string;
 /** Capitalise the first character of a string. */
 declare function capitalize(s: string): string;
 
-export { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Alert, AlertAction, AlertBanner, type AlertBannerProps, AlertDescription, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogMedia, AlertDialogOverlay, AlertDialogPortal, AlertDialogTitle, AlertDialogTrigger, AlertTitle, ApnaLogo, Avatar, AvatarBadge, AvatarFallback, AvatarGroup, AvatarGroupCount, AvatarImage, BackButton, Badge, BottomNav, type BottomNavItem, type BottomNavProps, Breadcrumb, BreadcrumbEllipsis, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator, Button, ButtonGroup, ButtonGroupSeparator, ButtonGroupText, Checkbox, type ChipTabItem, ChipTabs, Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle, Field, FieldContent, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSeparator, FieldSet, FieldTitle, type FilterGroup, Input, JobCard, type JobCardProps, Label, MetricCard, type MetricCardProps, OnlyRoundsLogo, OnlyRoundsLogoMark, Popover, PopoverContent, PopoverDescription, PopoverHeader, PopoverTitle, PopoverTrigger, RadioGroup, RadioGroupItem, ReusableSidebar, type ReusableSidebarProps, SearchFilterBar, type SearchFilterBarProps, Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectScrollDownButton, SelectScrollUpButton, SelectSeparator, SelectTrigger, SelectValue, Separator, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger, Sidebar, type SidebarAlertBanner, type SidebarBrand, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupAction, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInput, SidebarInset, SidebarMenu, SidebarMenuAction, SidebarMenuBadge, SidebarMenuButton, SidebarMenuItem, SidebarMenuSkeleton, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, type SidebarNavItem, SidebarProvider, SidebarRail, SidebarSeparator, type SidebarSubNavItem, SidebarTrigger, type SidebarWorkspace, Skeleton, Slider, type SortDirection, SortableTableHead, Spinner, Switch, Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow, Tabs, TabsContent, TabsList, TabsTrigger, Textarea, Toaster, Toggle, ToggleGroup, ToggleGroupItem, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, badgeVariants, buttonGroupVariants, buttonVariants, capitalize, cn, inputVariants, tabsListVariants, textareaVariants, toggleVariants, useSidebar };
+export { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Activity, Alert, AlertAction, AlertBanner, type AlertBannerProps, AlertCircle, AlertDescription, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogMedia, AlertDialogOverlay, AlertDialogPortal, AlertDialogTitle, AlertDialogTrigger, AlertTitle, AlertTriangle, ApnaLogo, ArrowDown, ArrowLeft, ArrowRight, ArrowUp, ArrowUpDown, ArrowUpRight, AtSign, Avatar, AvatarBadge, AvatarFallback, AvatarGroup, AvatarGroupCount, AvatarImage, Award, BackButton, Badge, BarChart2, Bell, Bold, BookOpen, Bookmark, BookmarkPlus, Bot, BottomNav, type BottomNavItem, type BottomNavProps, Brain, Breadcrumb, BreadcrumbEllipsis, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator, Briefcase, Building, Building2, Button, ButtonGroup, ButtonGroupSeparator, ButtonGroupText, Calendar, CalendarCheck, CalendarClock, CalendarDays, Check, CheckCircle2, CheckIcon, CheckSquare, Checkbox, ChevronDown, ChevronDownIcon, ChevronLeft, ChevronRight, ChevronRightIcon, ChevronUp, ChevronUpIcon, ChevronsUpDown, type ChipTabItem, ChipTabs, CircleCheck, CircleCheckIcon, Clock, Code, Compass, Copy, Cpu, CreditCard, Database, Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger, DollarSign, Download, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, Edit, Edit3, Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle, ExternalLink, Eye, EyeOff, Field, FieldContent, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSeparator, FieldSet, FieldTitle, File, FileCode, FilePlus, FileSpreadsheet, FileText, Filter, type FilterGroup, Flag, Flame, FlaskConical, Folder, FolderPlus, Footprints, Globe, GraduationCap, Grid, Hash, Heading, Headphones, Heart, HelpCircle, History, Home, type IconComponent, type IconProps, ImageIcon, ImagePlus, IndianRupee, InfinityIcon, Info, InfoIcon, Input, Italic, JobCard, type JobCardProps, Label, Languages, Laptop, Layers, Layout, LayoutGrid, LayoutList, Lightbulb, LinkIcon, ListChecks, ListTodo, Loader2, Loader2Icon, Lock, LogoApnaUnlimited, type LogoApnaUnlimitedProps, Mail, MapPin, Mars, Maximize2, Menu, MessageCircle, MessageCircleQuestion, MessageSquare, MessagesSquare, MetricCard, type MetricCardProps, Mic, Minus, Monitor, Moon, MoreHorizontal, MoreHorizontalIcon, MoreVertical, Navigation, OctagonXIcon, OnlyRoundsLogo, OnlyRoundsLogoMark, Palette, PanelLeft, PanelLeftIcon, Paperclip, Pause, Pencil, Phone, PhoneCall, PhoneIncoming, PhoneOff, PhoneOutgoing, Play, Plus, Popover, PopoverContent, PopoverDescription, PopoverHeader, PopoverTitle, PopoverTrigger, PowerOff, PricingCard, type PricingCardProps, Puzzle, QrCode, RadioGroup, RadioGroupItem, RefreshCw, ReusableSidebar, type ReusableSidebarProps, RotateCcw, Save, Search, SearchFilterBar, type SearchFilterBarProps, type SegmentedTabItem, SegmentedTabSwitcher, type SegmentedTabSwitcherProps, Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectScrollDownButton, SelectScrollUpButton, SelectSeparator, SelectTrigger, SelectValue, Sell, Send, Separator, Settings, Shapes, Share2, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger, ShieldAlert, ShieldCheck, Sidebar, type SidebarAlertBanner, type SidebarBrand, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupAction, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInput, SidebarInset, SidebarMenu, SidebarMenuAction, SidebarMenuBadge, SidebarMenuButton, SidebarMenuItem, SidebarMenuSkeleton, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, type SidebarNavItem, SidebarProvider, SidebarRail, SidebarSeparator, type SidebarSubNavItem, SidebarTrigger, type SidebarWorkspace, Skeleton, Slider, Sliders, SlidersHorizontal, Smartphone, type SortDirection, SortableTableHead, Sparkles, Spinner, Star, StickyNote, Sun, Switch, Table, Table2, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableIcon, TableRow, Tabs, TabsContent, TabsList, TabsTrigger, Tag, Target, Textarea, Toaster, Toggle, ToggleGroup, ToggleGroupItem, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, Trash, Trash2, TrendingUp, TriangleAlertIcon, Trophy, Type, Underline, Unlock, Upload, User, User2, UserCheck, UserPlus, UserRound, UserSearch, Users, Venus, Video, VideoOff, Voicemail, Wallet, Wand2, Wrench, X, XCircle, XIcon, Zap, badgeVariants, buttonGroupVariants, buttonVariants, capitalize, cn, inputVariants, tabsListVariants, textareaVariants, toggleVariants, useSidebar };

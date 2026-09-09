@@ -11,25 +11,7 @@
  *   CandidateDrawer (right-side panel; URL-driven via ?leadId=)
  */
 
-import {
-  Building2,
-  Clock,
-  Copy,
-  Download,
-  Globe,
-  LayoutList,
-  Languages,
-  ListChecks,
-  MapPin,
-  MoreVertical,
-  PhoneCall,
-  PowerOff,
-  Share2,
-  Table2,
-  Upload,
-  User,
-  UserPlus,
-} from "lucide-react"
+import { Building2, Clock, Copy, Download, Globe, LayoutList, Languages, ListChecks, MapPin, MoreVertical, PhoneCall, PowerOff, Share2, Table2, Upload, User, UserPlus } from "@apna/design-system"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Suspense, use, useMemo, useState } from "react"
 import confetti from "canvas-confetti"

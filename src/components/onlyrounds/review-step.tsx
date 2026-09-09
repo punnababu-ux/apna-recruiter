@@ -10,30 +10,7 @@
  *      AI rounds also surface a "Test AI" CTA that opens the testing page.
  */
 
-import {
-  Bot,
-  Briefcase,
-  Building2,
-  CalendarDays,
-  CircleCheck,
-  Clock,
-  ExternalLink,
-  FileText,
-  GraduationCap,
-  IndianRupee,
-  Languages,
-  Laptop,
-  ListTodo,
-  MapPin,
-  MessageCircleQuestion,
-  Mic,
-  Phone,
-  StickyNote,
-  User,
-  UserCheck,
-  UserPlus,
-  Video,
-} from "lucide-react"
+import { Bot, Briefcase, Building2, CalendarDays, CircleCheck, Clock, ExternalLink, FileText, GraduationCap, IndianRupee, Languages, Laptop, ListTodo, MapPin, MessageCircleQuestion, Mic, Phone, StickyNote, User, UserCheck, UserPlus, Video } from "@apna/design-system"
 import * as React from "react"
 
 import {

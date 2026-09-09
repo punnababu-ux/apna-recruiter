@@ -114,6 +114,10 @@ change between themes.
 | `--popover-foreground`   | gray-950           | gray-50             | text on popover                 |
 | `--surface-inverted`     | apna-royal-900     | apna-royal-950      | inverted hero / marketing banner|
 | `--surface-inverted-fg`  | gray-0             | gray-0              | text on inverted surface        |
+| `--surface-checkout-hero-fg`       | gray-900 | gray-50  | text on the checkout-hero gradient (see Gradients) |
+| `--surface-checkout-hero-fg-muted`| gray-500  | gray-400 | helper text on the checkout-hero gradient |
+| `--surface-checkout-track`        | gray-100  | gray-800 | pricing-hero tab-selector track background |
+| `--surface-checkout-track-border` | gray-200  | gray-700 | pricing-hero tab-selector track border |
 
 ### Roles
 
@@ -127,6 +131,34 @@ change between themes.
 | `--muted-foreground`     | gray-500         | gray-400         | helper text                       |
 | `--accent`               | gray-100         | gray-800         | hover / selection                 |
 | `--accent-foreground`    | gray-900         | gray-50          | text on accent                    |
+
+### Gradients
+
+Composed from primitives only, exposed as `bg-gradient-<name>` utilities
+(globals.css). Fixed across themes unless noted otherwise.
+
+| Token                       | Composition                                                        | Intent                                          |
+|------------------------------|---------------------------------------------------------------------|--------------------------------------------------|
+| `--gradient-checkout-hero`  | Light: radial blooms (apna-gold-100, apna-navy-100, apna-sky-100/50) over a gray-0→gray-100 diagonal. Dark: soft alpha-white glows over a gray-950→gray-800 diagonal (an original dark treatment — the source has no dark design) | ambient mesh background for the self-checkout / pricing page (`bg-gradient-checkout-hero`), pairs with `--surface-checkout-hero-fg(-muted)` / `--surface-checkout-track(-border)` |
+| `--gradient-checkout-unlimited` | `linear-gradient(180deg, apna-plum-800 → apna-plum-900 → apna-plum-950)` | dark noir card background for the "apna Unlimited" promo banner (`bg-gradient-checkout-unlimited`) — fixed across themes, it's a deliberately-dark card in both. Pair with `--surface-inverted-fg` for its (white) text and `--checkout-unlimited-border(-hover)` / `--checkout-unlimited-cta(-hover)` for its border/CTA |
+
+### Checkout brand
+
+`--color-apna-green` is now anchored at the self-checkout source's exact
+green (#1F8268 at the 600 step), so these tokens point straight at the
+primitive ramp rather than a separate duplicate. They stay their own
+tokens (not plain aliases of `--primary`/`--success`) because they're
+FIXED across themes — a "marketing surface" like the hero gradient —
+while `--primary`/`--success` brighten one step in dark mode
+(apna-green-500).
+
+| Token                          | Light                  | Dark                    | Intent                                    |
+|---------------------------------|-------------------------|--------------------------|--------------------------------------------|
+| `--checkout-primary`           | apna-green-600 (#1F8268) | apna-green-600 (fixed) | checkout CTAs |
+| `--checkout-primary-hover`     | apna-green-700 (#186954) | apna-green-700 (fixed) | checkout CTA hover |
+| `--checkout-primary-foreground`| gray-0                 | gray-0                   | text/icon on checkout-primary             |
+| `--checkout-discount-fg`       | checkout-discount-fg (#166534) | apna-green-400     | itemized discount-row text (drawer, cards)|
+| `--checkout-discount-bg`       | apna-green-100          | apna-green-900           | discount pill background                  |
 
 ### Status
 

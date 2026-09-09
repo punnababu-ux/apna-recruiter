@@ -10,10 +10,18 @@ const buttonGroupVariants = cva(
   {
     variants: {
       orientation: {
+        // The `!` (important) markers are load-bearing: Button's base radius
+        // is `rounded-full` (pill), and without `!important` these
+        // corner-squaring overrides lose the cascade to it unpredictably —
+        // producing a half-round/half-square seam between grouped buttons.
+        // The first child also needs an EXPLICIT outer-corner override
+        // (mirroring the last child's `rounded-r-lg!`) — without it, its
+        // untouched outer corner just falls back to Button's own
+        // `rounded-full` instead of the group's modest `rounded-lg`.
         horizontal:
-          "*:data-slot:rounded-r-none [&>[data-slot]:not(:has(~[data-slot]))]:rounded-r-lg! [&>[data-slot]~[data-slot]]:rounded-l-none [&>[data-slot]~[data-slot]]:border-l-0",
+          "*:data-slot:rounded-r-none! [&>[data-slot]:first-child]:rounded-l-lg! [&>[data-slot]:not(:has(~[data-slot]))]:rounded-r-lg! [&>[data-slot]~[data-slot]]:rounded-l-none! [&>[data-slot]~[data-slot]]:border-l-0",
         vertical:
-          "flex-col *:data-slot:rounded-b-none [&>[data-slot]:not(:has(~[data-slot]))]:rounded-b-lg! [&>[data-slot]~[data-slot]]:rounded-t-none [&>[data-slot]~[data-slot]]:border-t-0",
+          "flex-col *:data-slot:rounded-b-none! [&>[data-slot]:first-child]:rounded-t-lg! [&>[data-slot]:not(:has(~[data-slot]))]:rounded-b-lg! [&>[data-slot]~[data-slot]]:rounded-t-none! [&>[data-slot]~[data-slot]]:border-t-0",
       },
     },
     defaultVariants: {

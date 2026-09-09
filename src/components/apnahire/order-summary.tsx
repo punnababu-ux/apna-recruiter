@@ -8,7 +8,7 @@
  */
 
 import * as React from "react"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight } from "@apna/design-system"
 import { Button, Separator } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 

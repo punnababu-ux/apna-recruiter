@@ -8,7 +8,7 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@apna/design-system"
-import { Layers } from "lucide-react"
+import { Layers } from "@apna/design-system"
 
 export default function SpacingPage() {
   const tshirtSteps = [

@@ -4,7 +4,7 @@
  * /apnahire/jobs — Jobs list surface.
  */
 
-import { Plus, Briefcase, Users, CalendarCheck, TrendingUp } from "lucide-react"
+import { Plus, Briefcase, Users, CalendarCheck, TrendingUp } from "@apna/design-system"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Suspense, useMemo, useState } from "react"

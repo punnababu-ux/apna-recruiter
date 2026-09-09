@@ -11,16 +11,7 @@
 
 import * as React from "react"
 import { usePathname } from "next/navigation"
-import {
-  BarChart2,
-  Briefcase,
-  CreditCard,
-  Database,
-  HelpCircle,
-  Mail,
-  MoreHorizontal,
-  Trophy,
-} from "lucide-react"
+import { BarChart2, Briefcase, CreditCard, Database, HelpCircle, Mail, MoreHorizontal, Trophy } from "@apna/design-system"
 import Link from "next/link"
 
 import {

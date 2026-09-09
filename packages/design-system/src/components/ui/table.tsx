@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react"
+import { ArrowDown, ArrowUp, ArrowUpDown } from "@/icons/icons"
 import * as React from "react"
 
 import { cn } from "@/lib/utils"

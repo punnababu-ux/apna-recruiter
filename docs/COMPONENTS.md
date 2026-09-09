@@ -49,6 +49,7 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 |------------------|------------------------------------------------------------------------|--------------------------------------------------|
 | Tabs             | `import { Tabs, TabsList, TabsTrigger, TabsContent } from "@apna/design-system"` | Sectioned view switcher.            |
 | ChipTabs         | `import { ChipTabs } from "@apna/design-system"`                      | Segmented control / pill-shaped choice tabs.     |
+| SegmentedTabSwitcher | `import { SegmentedTabSwitcher } from "@apna/design-system"`      | Responsive section switcher — two-line desktop pill, horizontal-scroll mobile chip carousel. Extracted from self-checkout. |
 | Breadcrumb       | `import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@apna/design-system"` | Hierarchical location trail. |
 | Sidebar          | `import { Sidebar, SidebarContent, SidebarHeader, SidebarFooter, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@apna/design-system"` | Persistent app sidebar primitives. |
 | ReusableSidebar  | `import { ReusableSidebar } from "@apna/design-system"`                | High-level configurable sidebar shell.           |
@@ -80,7 +81,9 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 | Table            | `import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell, TableCaption, TableFooter } from "@apna/design-system"` | Semantic tabular data. |
 | Accordion        | `import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@apna/design-system"` | Expand/collapse grouped content. |
 | JobCard          | `import { JobCard } from "@apna/design-system"`                        | Candidate-facing job post card.                  |
+| PricingCard      | `import { PricingCard } from "@apna/design-system"`                    | Plan/bundle card — ribbon, price+MRP+badge, CTA slot. Pure layout; caller supplies coloured ribbon/badge/cta. |
 | ApnaLogo         | `import { ApnaLogo } from "@apna/design-system"`                       | Brand mark lockup with gradient and wordmark.    |
+| LogoApnaUnlimited | `import { LogoApnaUnlimited } from "@apna/design-system"`             | "apna ∞ Unlimited" wordmark — `variant="default\|white\|gradient"` (dark/light/Accent-Gradient fill). |
 
 ---
 

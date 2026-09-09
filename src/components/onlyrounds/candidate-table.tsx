@@ -9,7 +9,7 @@
  */
 
 import * as React from "react"
-import { FileText, RotateCcw, XCircle, CircleCheck } from "lucide-react"
+import { FileText, RotateCcw, XCircle, CircleCheck } from "@apna/design-system"
 
 import type { Candidate } from "@/components/onlyrounds/candidate-card"
 import { CandidateStatusBadge } from "@/components/onlyrounds/shared"

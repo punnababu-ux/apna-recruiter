@@ -10,7 +10,7 @@
  * callers can persist without a separate upload step.
  */
 
-import { ImagePlus, Upload, X } from "lucide-react"
+import { ImagePlus, Upload, X } from "@apna/design-system"
 import { useRef, useState } from "react"
 
 import { Button } from "@/components/ui/button"

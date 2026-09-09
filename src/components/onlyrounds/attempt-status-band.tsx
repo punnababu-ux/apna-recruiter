@@ -19,7 +19,7 @@
  * The tone drives label + progress colour; the rest of the chrome stays neutral.
  */
 
-import { ChevronDown, ChevronUp, Info } from "lucide-react"
+import { ChevronDown, ChevronUp, Info } from "@apna/design-system"
 import * as React from "react"
 
 import { cn } from "@/lib/utils"

@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Alert, AlertTitle } from "./alert"
-import { XIcon } from "lucide-react"
+import { XIcon } from "@/icons/icons"
 import { cn } from "@/lib/utils"
 
 export interface AlertBannerProps extends Omit<React.ComponentProps<typeof Alert>, "title"> {

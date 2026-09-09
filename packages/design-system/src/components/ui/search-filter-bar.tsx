@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Search, SlidersHorizontal } from "lucide-react"
+import { Search, SlidersHorizontal } from "@/icons/icons"
 
 import { Badge } from "./badge"
 import { Button } from "./button"

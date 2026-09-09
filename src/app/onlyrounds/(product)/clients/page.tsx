@@ -10,7 +10,7 @@
  *   Dialog — ClientForm for adding a new client
  */
 
-import { Plus } from "lucide-react"
+import { Plus } from "@apna/design-system"
 import { useState } from "react"
 
 import { ClientForm, type ClientFormValues } from "@/components/onlyrounds/client-form"
