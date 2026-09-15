@@ -38,18 +38,22 @@
   /* --------------------------------------------------------------------------
    * Color · Gray (neutral ramp — the workhorse of the system)
    * ------------------------------------------------------------------------ */
+  /* Zinc family (near-neutral, faintest cool tint) — swapped in to fix a
+   * measurable blue cast in the old scale's dark end (#030712 had a B
+   * channel 6x the R channel), which read as navy in dark-mode surfaces
+   * rather than gray. Token names unchanged; only the hex values moved. */
   --color-gray-0:    #FFFFFF;       /* pure white */
-  --color-gray-50:   #F9FAFB;
-  --color-gray-100:  #F3F4F6;
-  --color-gray-200:  #E5E7EB;
-  --color-gray-300:  #D1D5DB;
-  --color-gray-400:  #9CA3AF;
-  --color-gray-500:  #6B7280;
-  --color-gray-600:  #4B5563;
-  --color-gray-700:  #374151;
-  --color-gray-800:  #1F2937;
-  --color-gray-900:  #111827;
-  --color-gray-950:  #030712;
+  --color-gray-50:   #FAFAFA;
+  --color-gray-100:  #F4F4F5;
+  --color-gray-200:  #E4E4E7;
+  --color-gray-300:  #D4D4D8;
+  --color-gray-400:  #A1A1AA;
+  --color-gray-500:  #71717A;
+  --color-gray-600:  #52525B;
+  --color-gray-700:  #3F3F46;
+  --color-gray-800:  #27272A;
+  --color-gray-900:  #18181B;
+  --color-gray-950:  #09090B;
   --color-gray-1000: #000000;       /* pure black */
 
   /* --------------------------------------------------------------------------

@@ -61,7 +61,8 @@ export function PricingCard({
     <div
       data-slot="pricing-card"
       className={cn(
-        "relative flex h-full flex-col gap-5 overflow-hidden rounded-xl border border-border bg-card p-4 pb-4 pt-8 transition-shadow hover:shadow-md",
+        // `card-hover-lift` is the shared card interaction (see styles/index.css).
+        "card-hover-lift relative flex h-full flex-col gap-5 overflow-hidden rounded-xl border border-border bg-card p-4 pb-4 pt-8",
         props.onClick && "cursor-pointer",
         className
       )}

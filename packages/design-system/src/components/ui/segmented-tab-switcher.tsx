@@ -21,10 +21,12 @@
  * (the desktop pill's background, AND each inactive mobile chip's own
  * background — the mobile row itself never paints a background, only its
  * chips do) and `activeClassName`/`mobileActiveClassName` (active
- * icon+label colour, which the source design intentionally differs
- * between layouts) — the defaults below use ordinary theme-aware tokens;
+ * icon+label colour, split in two so a design can differ per layout) —
+ * the defaults below use ordinary theme-aware tokens;
  * a page with its own fixed-across-themes marketing surface (like
- * checkout's ambient-mesh hero) should override them.
+ * checkout's ambient-mesh hero) should override them. Glyph sizing is the
+ * component's own (24px desktop, 20px mobile) — call sites pass icons
+ * without a size class.
  *
  * Rule of thumb for reuse: pick this over `Tabs`/`ChipTabs` only when you
  * need BOTH the two-line desktop pill AND a distinct mobile chip-carousel
@@ -54,10 +56,9 @@ export interface SegmentedTabSwitcherProps<V extends string = string> {
   /** Icon/label colour for the active item on the desktop pill. Defaults
    *  to `text-primary`. */
   activeClassName?: string
-  /** Icon/label colour for the active chip on mobile — a brand accent
-   *  often reads better here than the desktop's neutral active colour
-   *  (that's the case in the source this was extracted from). Defaults
-   *  to `activeClassName`. */
+  /** Icon/label colour for the active chip on mobile, for designs that
+   *  tint it differently from the desktop pill. Defaults to
+   *  `activeClassName`. */
   mobileActiveClassName?: string
   /** Icon/label colour for inactive items, both layouts. Defaults to
    *  `text-muted-foreground`. */
@@ -100,13 +101,17 @@ export function SegmentedTabSwitcher<V extends string = string>({
               onClick={() => onValueChange(v)}
               aria-pressed={active}
               className={cn(
-                "flex flex-1 flex-col items-start justify-center gap-1 rounded-full px-5 py-3 text-left transition-all duration-200",
+                "flex flex-1 flex-col items-start justify-center gap-1 rounded-full px-8 py-3 text-left transition-all duration-200",
                 active ? "bg-card shadow-sm" : "hover:bg-card/60"
               )}
             >
+              {/* 18px/28 label with 24px glyphs — the switcher sets the icon
+                  size itself (rather than trusting each call site to pass a
+                  matching one) so the two scale together. The descendant
+                  selector outranks a `size-*` on the icon element. */}
               <span
                 className={cn(
-                  "flex items-center gap-2 text-sm font-semibold",
+                  "flex items-center gap-2 text-lg leading-7 font-semibold [&_svg]:size-6",
                   active ? activeClassName : inactiveClassName
                 )}
               >
@@ -158,7 +163,7 @@ export function SegmentedTabSwitcher<V extends string = string>({
                 onClick={() => onValueChange(v)}
                 aria-pressed={active}
                 className={cn(
-                  "flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors",
+                  "flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors [&_svg]:size-5",
                   active
                     ? cn("border-transparent bg-card font-bold shadow-sm", mobileActiveClassName ?? activeClassName)
                     : cn("border-transparent bg-muted hover:bg-muted", inactiveClassName, trackClassName)

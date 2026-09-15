@@ -55,28 +55,30 @@ export function UnlimitedSideCard({
 
       {/* Fixed-white inner card — stretches to fill the outer card's
           (stretched-to-match-sibling) height, pinning the CTA to the
-          bottom, matching source's `justify-content:space-between`. */}
-      <div className="flex flex-1 flex-col justify-between gap-3.5 rounded-xl border border-checkout-inset-border bg-checkout-inset p-4 pt-6">
+          bottom, matching source's `justify-content:space-between`.
+          Hover lift lives HERE, not on the outer dark card — matches the
+          source site's `.v4-unlimited-inner-card:hover`. */}
+      <div className="card-hover-lift flex flex-1 flex-col justify-between gap-3.5 rounded-xl border border-checkout-inset-border bg-checkout-inset p-4 pt-6">
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-1">
-            <p className="text-lg font-semibold text-checkout-hero-fg">
+            <p className="text-lg font-semibold text-checkout-inset-fg">
               ₹{price.toLocaleString("en-IN")}
             </p>
-            <p className="text-xs text-checkout-hero-fg-muted">Quarterly plan</p>
+            <p className="text-xs text-checkout-inset-fg-muted">Quarterly plan</p>
           </div>
 
           <div className="flex flex-col gap-2.5">
-            <span className="flex items-center gap-2 text-sm text-checkout-hero-fg-muted">
+            <span className="flex items-center gap-2 text-sm text-checkout-inset-fg-muted">
               <CalendarClock className="size-4 shrink-0" aria-hidden />
               1 Active job slot for {jobSlotMonths} months
             </span>
-            <span className="flex items-center gap-2 text-sm text-checkout-hero-fg-muted">
+            <span className="flex items-center gap-2 text-sm text-checkout-inset-fg-muted">
               <Database className="size-4 shrink-0" aria-hidden />
               {dbCredits} database credits worth ₹{dbCreditsWorth.toLocaleString("en-IN")}
             </span>
           </div>
 
-          <p className="border-t border-checkout-inset-border pt-2.5 text-xs text-checkout-hero-fg-muted">
+          <p className="border-t border-checkout-inset-border pt-2.5 text-xs text-checkout-inset-fg-muted">
             Note: This plan is valid in a single city.
           </p>
         </div>
@@ -84,7 +86,7 @@ export function UnlimitedSideCard({
         <Button
           type="button"
           variant="outline"
-          className="w-full border-checkout-inset-border bg-checkout-inset font-semibold text-checkout-hero-fg hover:bg-checkout-track"
+          className="w-full border-checkout-inset-border bg-checkout-inset font-semibold text-checkout-inset-fg hover:bg-gray-100"
         >
           Buy now
         </Button>

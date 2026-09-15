@@ -135,7 +135,7 @@ export default function IconsPage() {
           Icons & Symbol System
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Built on Material Symbols Rounded (vendored as SVG components — see <code>@apna/design-system</code>). Guidelines for icon sizing, line vs fill states, and context coloring.
+          Built on Lucide (re-exported from <code>lucide-react</code> — see <code>@apna/design-system</code>). Guidelines for icon sizing, line vs fill states, and context coloring.
         </p>
       </div>
 
@@ -311,7 +311,7 @@ export default function IconsPage() {
               <h2 className="text-lg font-semibold text-foreground font-heading">
                 System Icon Library ({filteredIcons.length} icons)
               </h2>
-              <Badge variant="outline" className="text-3xs">Material Symbols</Badge>
+              <Badge variant="outline" className="text-3xs">Lucide</Badge>
             </div>
             <p className="text-2xs text-muted-foreground mt-0.5">
               Click any icon card to copy its <code>import</code> snippet. Filter by category or search by name.

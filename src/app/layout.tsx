@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Figtree, Geist_Mono, Inter } from "next/font/google";
+import { Figtree, Geist_Mono } from "next/font/google";
 
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -17,15 +17,10 @@ const figtree = Figtree({
   display: "swap",
 });
 
-// Inter · Apna Hire product typeface.
-// Exposed via `--font-inter` so the Apna Hire layout can override
-// the `--font-body` / `--font-heading` semantic tokens in its scope.
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
-  display: "swap",
-});
+// Inter was loaded here for /apnahire, which now inherits Figtree like every
+// other surface. Dropped rather than left dangling — an unused next/font entry
+// still ships its @font-face. Re-add it here if Inter ever becomes the global
+// typeface, and point `--font-family-sans` at it in primitives.css.
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -45,7 +40,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${figtree.variable} ${inter.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${figtree.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full">

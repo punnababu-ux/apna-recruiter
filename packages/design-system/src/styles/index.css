@@ -336,6 +336,35 @@
 }
 
 /* ============================================================================
+ * Interaction utilities
+ * ========================================================================== */
+
+/* Card hover lift — the system-wide "this card is interactive" cue: a 2px
+ * rise onto the --shadow-elevated step (the semantic "hovered cards" role).
+ * One utility rather than per-component classes, because every card surface
+ * shares it — pricing, plan, quote, FAQ and stat cards alike. Animates the
+ * standalone `translate` property, not `transform`, to match the Tailwind v4
+ * translate utilities it sits alongside. */
+@utility card-hover-lift {
+  transition-property: box-shadow, translate;
+  transition-duration: 220ms;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:hover {
+    translate: 0 -2px;
+    box-shadow: var(--shadow-elevated);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition-duration: 0ms;
+
+    &:hover {
+      translate: none;
+    }
+  }
+}
+
+/* ============================================================================
  * Gradient utilities — consume `--gradient-*` semantic tokens.
  * Each theme (default · Apna, `.theme-onlyrounds`) re-aliases the tokens,
  * so `bg-gradient-primary` retunes automatically when the theme class flips.

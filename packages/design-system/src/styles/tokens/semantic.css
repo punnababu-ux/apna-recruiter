@@ -299,17 +299,25 @@
   /* Checkout hero — soft multi-tone ambient mesh, used behind the
    * self-checkout / pricing page hero + tab selector. Matches the
    * finalized self-checkout designs' light gradient backdrop.
-   * Deliberately FIXED across themes (no .dark override below) — like
-   * --gradient-banner-default this is a marketing surface, not a themed
-   * one, so it always reads as a soft light wash even if the app is in
-   * dark mode. Pair with --surface-checkout-hero-fg / -fg-muted, which
-   * are fixed dark-on-light text roles for the same reason. */
+   * Has its own dark treatment below (.dark override) — this one is the
+   * light-mode value, not fixed across themes. Pair with
+   * --surface-checkout-hero-fg / -fg-muted, which ARE fixed dark-on-light
+   * text roles, since both hero backdrops keep light-toned text. */
+  /* Exact match of the source reference (self-checkout-five.vercel.app)
+   * `body` background: a flat white wash + a soft mesh-gradient JPEG
+   * (vendored at /public/bg-ambient-mesh.jpg — this is what gives the
+   * corner blobs their soft, painterly blend; plain CSS radial-gradients
+   * alone can't reproduce that softness) + the same 5 radial accents +
+   * base linear, layered in the exact order/values the source uses. */
   --gradient-checkout-hero:
-    radial-gradient(circle at 8% 15%,  var(--color-apna-gold-100) 0%, transparent 45%),
-    radial-gradient(circle at 14% 55%, var(--color-apna-navy-100) 0%, transparent 50%),
-    radial-gradient(circle at 12% 90%, var(--color-apna-sky-100)  0%, transparent 50%),
-    radial-gradient(circle at 90% 18%, var(--color-apna-sky-50)   0%, transparent 55%),
-    linear-gradient(135deg, var(--color-gray-0) 0%, var(--color-gray-50) 45%, var(--color-gray-100) 100%);
+    linear-gradient(rgba(255, 255, 255, 0.52), rgba(255, 255, 255, 0.52)),
+    url("/bg-ambient-mesh.jpg"),
+    radial-gradient(circle at 8% 12%,  rgba(255, 247, 237, 0.75) 0%, rgba(254, 226, 226, 0.50) 28%, transparent 55%),
+    radial-gradient(circle at 10% 42%, rgba(252, 231, 243, 0.55) 0%, rgba(243, 232, 255, 0.45) 30%, transparent 58%),
+    radial-gradient(circle at 12% 82%, rgba(224, 231, 255, 0.60) 0%, rgba(219, 234, 254, 0.45) 32%, transparent 60%),
+    radial-gradient(circle at 85% 15%, rgba(239, 246, 255, 0.70) 0%, rgba(240, 249, 255, 0.50) 40%, transparent 65%),
+    radial-gradient(circle at 92% 88%, rgba(255, 255, 255, 1)    0%, rgba(248, 250, 252, 0.80) 45%, transparent 70%),
+    linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 40%, #F1F5F9 80%, #E2E8F0 100%);
   --surface-checkout-hero-fg:       var(--color-gray-900);
   --surface-checkout-hero-fg-muted: var(--color-gray-500);
   /* Source's tab-selector track is a translucent black overlay (not a solid
@@ -322,9 +330,15 @@
    * inside a dark card" pattern). Fixed across themes on purpose: the outer
    * card is deliberately dark regardless of app theme (see
    * --gradient-checkout-unlimited below), so the inner box must stay
-   * deliberately light for the same contrast to keep working in dark mode. */
-  --surface-checkout-inset:        var(--color-gray-0);
-  --surface-checkout-inset-border: var(--color-gray-200);
+   * deliberately light for the same contrast to keep working in dark mode.
+   * Its text needs its OWN fixed dark-on-light pair, distinct from
+   * --surface-checkout-hero-fg — that one flips with .dark (paired with the
+   * theme-aware hero gradient), which is exactly wrong here and was the
+   * cause of near-invisible text on this always-white box in dark mode. */
+  --surface-checkout-inset:           var(--color-gray-0);
+  --surface-checkout-inset-border:    var(--color-gray-200);
+  --surface-checkout-inset-fg:        var(--color-gray-900);
+  --surface-checkout-inset-fg-muted:  var(--color-gray-500);
 
   /* Checkout primary — the self-checkout surface's CTA/discount/status
    * green. Now that --color-apna-green itself is anchored at this same
@@ -338,6 +352,10 @@
   --checkout-primary-foreground: var(--color-gray-0);
   --checkout-discount-fg:        var(--color-checkout-discount-fg);
   --checkout-discount-bg:        var(--color-apna-green-100);
+  /* Testimonial avatar — the design's brighter "CoreGreen" (#2BB792), not
+   * the checkout CTA green; apna-green-400 (#3EBA8D) is the existing ramp
+   * step that lands on it. Quote/name ink just uses --foreground. */
+  --checkout-avatar:             var(--color-apna-green-400);
   /* The "Recommended" ribbon is blue, not the checkout brand green — but
    * now that apna-sky includes the exact source blue (#3B82F6, the 500
    * step), it just uses the ordinary --info role instead of a dedicated

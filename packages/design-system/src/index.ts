@@ -65,5 +65,5 @@ export * from "./components/ui/pricing-card"
 // Helper Utilities
 export * from "./lib/utils"
 
-// Icons (Material Symbols Rounded, vendored — see src/icons/icons.tsx)
+// Icons (Lucide, re-exported from lucide-react — see src/icons/icons.tsx)
 export * from "./icons/icons"

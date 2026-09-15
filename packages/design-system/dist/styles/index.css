@@ -2,17 +2,17 @@
 @layer properties;
 :root {
   --color-gray-0: #FFFFFF;
-  --color-gray-50: #F9FAFB;
-  --color-gray-100: #F3F4F6;
-  --color-gray-200: #E5E7EB;
-  --color-gray-300: #D1D5DB;
-  --color-gray-400: #9CA3AF;
-  --color-gray-500: #6B7280;
-  --color-gray-600: #4B5563;
-  --color-gray-700: #374151;
-  --color-gray-800: #1F2937;
-  --color-gray-900: #111827;
-  --color-gray-950: #030712;
+  --color-gray-50: #FAFAFA;
+  --color-gray-100: #F4F4F5;
+  --color-gray-200: #E4E4E7;
+  --color-gray-300: #D4D4D8;
+  --color-gray-400: #A1A1AA;
+  --color-gray-500: #71717A;
+  --color-gray-600: #52525B;
+  --color-gray-700: #3F3F46;
+  --color-gray-800: #27272A;
+  --color-gray-900: #18181B;
+  --color-gray-950: #09090B;
   --color-gray-1000: #000000;
   --color-red-50: #FEF2F2;
   --color-red-100: #FEE2E2;
@@ -404,37 +404,52 @@
       var(--color-red-500) 0%,
       var(--color-red-700) 100%);
   --gradient-checkout-hero:
+    linear-gradient(rgba(255, 255, 255, 0.52), rgba(255, 255, 255, 0.52)),
+    url(/bg-ambient-mesh.jpg),
     radial-gradient(
-      circle at 8% 15%,
-      var(--color-apna-gold-100) 0%,
-      transparent 45%),
-    radial-gradient(
-      circle at 14% 55%,
-      var(--color-apna-navy-100) 0%,
-      transparent 50%),
-    radial-gradient(
-      circle at 12% 90%,
-      var(--color-apna-sky-100) 0%,
-      transparent 50%),
-    radial-gradient(
-      circle at 90% 18%,
-      var(--color-apna-sky-50) 0%,
+      circle at 8% 12%,
+      rgba(255, 247, 237, 0.75) 0%,
+      rgba(254, 226, 226, 0.50) 28%,
       transparent 55%),
+    radial-gradient(
+      circle at 10% 42%,
+      rgba(252, 231, 243, 0.55) 0%,
+      rgba(243, 232, 255, 0.45) 30%,
+      transparent 58%),
+    radial-gradient(
+      circle at 12% 82%,
+      rgba(224, 231, 255, 0.60) 0%,
+      rgba(219, 234, 254, 0.45) 32%,
+      transparent 60%),
+    radial-gradient(
+      circle at 85% 15%,
+      rgba(239, 246, 255, 0.70) 0%,
+      rgba(240, 249, 255, 0.50) 40%,
+      transparent 65%),
+    radial-gradient(
+      circle at 92% 88%,
+      rgba(255, 255, 255, 1) 0%,
+      rgba(248, 250, 252, 0.80) 45%,
+      transparent 70%),
     linear-gradient(
       135deg,
-      var(--color-gray-0) 0%,
-      var(--color-gray-50) 45%,
-      var(--color-gray-100) 100%);
+      #FFFFFF 0%,
+      #F8FAFC 40%,
+      #F1F5F9 80%,
+      #E2E8F0 100%);
   --surface-checkout-hero-fg: var(--color-gray-900);
   --surface-checkout-hero-fg-muted: var(--color-gray-500);
   --surface-checkout-track: rgba(0, 0, 0, 0.08);
   --surface-checkout-inset: var(--color-gray-0);
   --surface-checkout-inset-border: var(--color-gray-200);
+  --surface-checkout-inset-fg: var(--color-gray-900);
+  --surface-checkout-inset-fg-muted: var(--color-gray-500);
   --checkout-primary: var(--color-apna-green-600);
   --checkout-primary-hover: var(--color-apna-green-700);
   --checkout-primary-foreground: var(--color-gray-0);
   --checkout-discount-fg: var(--color-checkout-discount-fg);
   --checkout-discount-bg: var(--color-apna-green-100);
+  --checkout-avatar: var(--color-apna-green-400);
   --gradient-checkout-unlimited:
     linear-gradient(
       180deg,

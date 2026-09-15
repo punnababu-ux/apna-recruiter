@@ -3,27 +3,33 @@
 /**
  * CheckoutDrawer — right-side cart/order-summary drawer.
  *
- * Opens when the user clicks "Buy now" on any plan card. Shows the selected
- * item(s) — each priced at MRP with its own itemized discount row below it
- * (never a strikethrough), a database-credit add-on upsell card, a coupon
- * code block and a GSTIN block (each independently expandable, but only one
- * open for editing at a time), a GST-inclusive bill breakdown, and the
- * "Proceed to pay" CTA.
+ * Opens when the user clicks "Buy now" on any plan card. Structure matches
+ * the Figma "order summary side card" board (node 863:5722) state-for-state:
+ *
+ *  - Primary item at MRP with its own itemized discount row beneath it.
+ *  - A database-credit upsell card (blue banner + 3 tiers, 380 first) that
+ *    is replaced by a plain net-priced line + "Remove" once one is added —
+ *    the added add-on does NOT get its own discount row (Figma shows it at
+ *    its net price directly).
+ *  - Coupon and GSTIN each expand into their own light-gray card with an
+ *    inline-action input (green "Apply" / "Save"), never both at once.
+ *  - "Sub total" is the post-coupon taxable amount, which is what GST is
+ *    charged on — matching the Figma bill maths exactly.
  *
  * Matches source behavior: the backdrop does NOT close the drawer (only the
  * X button does) — outside-press is intercepted and cancelled below.
  */
 
 import * as React from "react"
-import { Lock, ChevronDown, Pencil, Tag } from "@apna/design-system"
+import { Lock, ChevronRight, Pencil, Tag, Check, X } from "@apna/design-system"
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   Button,
+  Badge,
   Separator,
-  Input,
 } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 
@@ -49,9 +55,10 @@ export interface DatabaseAddon {
   discountPct: number
 }
 
+/** Order matches Figma: the mid tier is surfaced first, not ascending. */
 const DATABASE_ADDONS: DatabaseAddon[] = [
+  { id: "380", credits: 380, validDays: 90, price: 3649, mrp: 6840, discountPct: 46 },
   { id: "170", credits: 170, validDays: 30, price: 1949, mrp: 3170, discountPct: 38 },
-  { id: "380", credits: 380, validDays: 90, price: 3649, mrp: 6840, discountPct: 38 },
   { id: "900", credits: 900, validDays: 180, price: 7099, mrp: 15750, discountPct: 54 },
 ]
 
@@ -60,6 +67,7 @@ const MAX_ADDON_DISCOUNT_PCT = Math.max(...DATABASE_ADDONS.map((a) => a.discount
 const COUPONS: Record<string, { label: string; discountPct: number; maxDiscount: number }> = {
   STAY20: { label: "STAY20", discountPct: 20, maxDiscount: 300 },
   FIRST20: { label: "FIRST20", discountPct: 20, maxDiscount: 300 },
+  WELCOME10: { label: "WELCOME10", discountPct: 10, maxDiscount: 200 },
 }
 
 interface CheckoutDrawerProps {
@@ -69,25 +77,104 @@ interface CheckoutDrawerProps {
   onProceedToPay: (total: number) => void
 }
 
-/** A single cart line: headline price (MRP if present, else price), plus an
- *  optional itemized discount row directly beneath it — used identically
- *  for the primary item, the DB add-on, and (via its own markup) the coupon. */
-function CartLineRow({ line }: { line: CartLine }) {
+const inr = (n: number) => `₹${n.toLocaleString("en-IN")}`
+
+/** Light-gray expandable card used by both the coupon and GSTIN blocks. */
+function EditCard({
+  title,
+  onClose,
+  children,
+}: {
+  title: string
+  onClose: () => void
+  children: React.ReactNode
+}) {
+  return (
+    <div className="flex flex-col gap-3 rounded-xl bg-muted p-4">
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-semibold text-foreground">{title}</p>
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label={`Close ${title}`}
+          className="flex size-5 items-center justify-center rounded-full bg-muted-foreground/25 text-muted-foreground hover:bg-muted-foreground/40"
+        >
+          <X className="size-3" aria-hidden />
+        </button>
+      </div>
+      {children}
+    </div>
+  )
+}
+
+/** White input with an inline green text action on its right edge. */
+function InlineActionInput({
+  value,
+  onChange,
+  placeholder,
+  actionLabel,
+  onAction,
+}: {
+  value: string
+  onChange: (v: string) => void
+  placeholder: string
+  actionLabel: string
+  onAction: () => void
+}) {
+  return (
+    <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2.5">
+      <input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
+      />
+      <button
+        type="button"
+        onClick={onAction}
+        disabled={!value.trim()}
+        className={cn(
+          "shrink-0 text-sm font-semibold",
+          value.trim() ? "text-checkout-primary" : "text-muted-foreground"
+        )}
+      >
+        {actionLabel}
+      </button>
+    </div>
+  )
+}
+
+/** A single cart line: headline price, plus either an itemized discount row
+ *  beneath it or an inline "Remove" link under the price. */
+function CartLineRow({ line, onRemove }: { line: CartLine; onRemove?: () => void }) {
   return (
     <li className="flex flex-col gap-1">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <p className="text-sm font-medium text-foreground">{line.label}</p>
+          <p className="text-base font-semibold text-foreground">{line.label}</p>
           {line.sublabel && <p className="text-xs text-muted-foreground">{line.sublabel}</p>}
         </div>
-        <span className="shrink-0 text-sm font-semibold text-foreground">
-          ₹{(line.mrp ?? line.price).toLocaleString("en-IN")}
-        </span>
+        <div className="flex shrink-0 flex-col items-end gap-0.5">
+          <span className="text-base font-semibold text-foreground">
+            {inr(line.mrp ?? line.price)}
+          </span>
+          {onRemove && (
+            <button
+              type="button"
+              onClick={onRemove}
+              className="text-xs text-foreground underline underline-offset-2 hover:text-destructive"
+            >
+              Remove
+            </button>
+          )}
+        </div>
       </div>
       {line.discountLabel && (
-        <div className="flex items-center justify-between gap-2 text-xs font-medium text-checkout-discount-fg">
-          <span>{line.discountLabel}</span>
-          <span>-₹{line.discountAmount?.toLocaleString("en-IN")}</span>
+        <div className="flex items-center justify-between gap-2 text-sm">
+          <span className="text-foreground">{line.discountLabel}</span>
+          <span className="font-medium text-checkout-discount-fg">
+            -{inr(line.discountAmount ?? 0)}
+          </span>
         </div>
       )}
     </li>
@@ -118,6 +205,8 @@ export function CheckoutDrawer({ open, onOpenChange, item, onProceedToPay }: Che
 
   const addon = addonId ? DATABASE_ADDONS.find((a) => a.id === addonId) ?? null : null
 
+  // The add-on line carries no discount row of its own — Figma shows it at
+  // its net price with just a "Remove" affordance.
   const lines: CartLine[] = [
     item,
     ...(addon
@@ -127,26 +216,27 @@ export function CheckoutDrawer({ open, onOpenChange, item, onProceedToPay }: Che
             label: `${addon.credits} Database credits`,
             sublabel: `Valid for ${addon.validDays} days`,
             price: addon.price,
-            mrp: addon.mrp,
-            discountLabel: `Database add-on discount (${addon.discountPct}% OFF)`,
-            discountAmount: addon.mrp - addon.price,
           },
         ]
       : []),
   ]
 
-  const subtotal = lines.reduce((sum, l) => sum + l.price, 0)
+  const itemsTotal = lines.reduce((sum, l) => sum + l.price, 0)
   const coupon = appliedCoupon ? COUPONS[appliedCoupon] : null
-  const couponDiscount = coupon ? Math.min(Math.round((subtotal * coupon.discountPct) / 100), coupon.maxDiscount) : 0
-  const taxableAmount = subtotal - couponDiscount
-  const gst = Math.round(taxableAmount * 0.18)
-  const total = taxableAmount + gst
+  const couponDiscount = coupon
+    ? Math.min(Math.round((itemsTotal * coupon.discountPct) / 100), coupon.maxDiscount)
+    : 0
+  // "Sub total" in the bill is the post-coupon taxable amount (Figma maths).
+  const subtotal = itemsTotal - couponDiscount
+  const gst = Math.round(subtotal * 0.18)
+  const total = subtotal + gst
 
   const handleApplyCoupon = (code: string) => {
     const normalized = code.trim().toUpperCase()
     if (COUPONS[normalized]) {
       setAppliedCoupon(normalized)
       setExpanded(null)
+      setCouponInput("")
     }
   }
 
@@ -175,39 +265,52 @@ export function CheckoutDrawer({ open, onOpenChange, item, onProceedToPay }: Che
           <SheetTitle>Order summary</SheetTitle>
         </SheetHeader>
 
-        <div className="flex flex-1 flex-col gap-5 p-4">
-          {/* Selected item(s) — each priced at MRP with its own discount row */}
-          <ul className="flex flex-col gap-3">
+        <div className="flex flex-1 flex-col gap-4 p-4">
+          {/* Selected item(s) */}
+          <ul className="flex flex-col gap-4">
             {lines.map((line) => (
-              <CartLineRow key={line.id} line={line} />
+              <CartLineRow
+                key={line.id}
+                line={line}
+                onRemove={line.id === `db-${addon?.id}` ? () => setAddonId(null) : undefined}
+              />
             ))}
           </ul>
 
-          {/* Database add-on upsell — bordered card with a solid banner strip */}
+          {/* Database add-on upsell — only until one is added */}
           {!addon && (
             <div className="flex flex-col overflow-hidden rounded-xl border border-info">
-              <div className="flex items-center justify-center gap-1.5 bg-info py-1.5">
-                <Tag className="size-3.5 text-info-foreground" aria-hidden />
-                <span className="text-2xs font-semibold uppercase tracking-wide text-info-foreground">
+              <div className="bg-info py-1.5 text-center">
+                <span className="text-xs font-bold uppercase tracking-wide text-info-foreground">
                   Take {MAX_ADDON_DISCOUNT_PCT}% off database
                 </span>
               </div>
-              <ul className="flex flex-col gap-2 p-3">
+              <ul className="flex flex-col divide-y divide-border bg-muted">
                 {DATABASE_ADDONS.map((a) => (
-                  <li
-                    key={a.id}
-                    className="flex items-center justify-between gap-2 rounded-lg bg-muted/40 px-3 py-2"
-                  >
+                  <li key={a.id} className="flex items-center justify-between gap-3 px-4 py-3">
                     <div>
-                      <p className="text-xs font-medium text-foreground">
+                      <p className="text-sm font-semibold text-foreground">
                         {a.credits} database credits
                       </p>
-                      <p className="text-2xs text-muted-foreground">
-                        Valid for {a.validDays} days · ₹{a.price.toLocaleString("en-IN")}{" "}
-                        <span className="line-through">₹{a.mrp.toLocaleString("en-IN")}</span>
-                      </p>
+                      <p className="text-xs text-muted-foreground">Valid for {a.validDays} days</p>
+                      <div className="mt-1.5 flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground line-through">
+                          {inr(a.mrp)}
+                        </span>
+                        <span className="text-base font-semibold text-foreground">
+                          {inr(a.price)}
+                        </span>
+                        <Badge className="border-transparent bg-checkout-discount-bg text-2xs font-semibold text-checkout-discount-fg">
+                          {a.discountPct}% OFF
+                        </Badge>
+                      </div>
                     </div>
-                    <Button size="xs" variant="outline" onClick={() => setAddonId(a.id)}>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="shrink-0 font-semibold"
+                      onClick={() => setAddonId(a.id)}
+                    >
                       Add
                     </Button>
                   </li>
@@ -215,154 +318,144 @@ export function CheckoutDrawer({ open, onOpenChange, item, onProceedToPay }: Che
               </ul>
             </div>
           )}
-          {addon && (
+
+          {/* Coupon — dashed trigger, its own edit card, or the applied row */}
+          {appliedCoupon ? (
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center justify-between gap-2 text-sm">
+                <span className="text-foreground">Coupon discount ({appliedCoupon})</span>
+                <span className="font-medium text-checkout-discount-fg">
+                  -{inr(couponDiscount)}
+                </span>
+              </div>
+              <div className="flex items-center justify-between gap-2">
+                <span className="flex items-center gap-1.5 text-xs font-medium text-checkout-discount-fg">
+                  <span className="flex size-4 items-center justify-center rounded-full bg-checkout-discount-fg text-white">
+                    <Check className="size-2.5" aria-hidden />
+                  </span>
+                  Applied
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setAppliedCoupon(null)}
+                  className="text-xs text-foreground underline underline-offset-2 hover:text-destructive"
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+          ) : expanded === "coupon" ? (
+            <EditCard title="Apply coupon" onClose={() => setExpanded(null)}>
+              <InlineActionInput
+                value={couponInput}
+                onChange={setCouponInput}
+                placeholder="Enter coupon code"
+                actionLabel="Apply"
+                onAction={() => handleApplyCoupon(couponInput)}
+              />
+              {Object.values(COUPONS).map((c) => (
+                <div
+                  key={c.label}
+                  className="flex items-center justify-between gap-3 rounded-lg bg-card p-3"
+                >
+                  <div className="flex flex-col gap-0.5">
+                    <span className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
+                      <Tag className="size-4 text-checkout-primary" aria-hidden />
+                      {c.label}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      Get {c.discountPct}% off up to{" "}
+                      <span className="font-semibold text-foreground">{inr(c.maxDiscount)}</span> on
+                      this purchase
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleApplyCoupon(c.label)}
+                    className="shrink-0 text-sm font-semibold text-checkout-primary"
+                  >
+                    Apply
+                  </button>
+                </div>
+              ))}
+            </EditCard>
+          ) : (
             <button
               type="button"
-              onClick={() => setAddonId(null)}
-              className="self-start text-xs font-medium text-destructive underline underline-offset-2"
+              onClick={() => setExpanded("coupon")}
+              className="flex items-center justify-between rounded-xl border border-dashed border-border bg-muted/60 px-4 py-3"
             >
-              Remove database add-on
+              <span className="flex items-center gap-2 text-sm">
+                <Tag className="size-4 text-muted-foreground" aria-hidden />
+                <span className="font-semibold text-foreground">Apply Coupons</span>
+                <span className="text-muted-foreground">• {Object.keys(COUPONS).length} offers</span>
+              </span>
+              <ChevronRight className="size-4 text-checkout-primary" aria-hidden />
             </button>
           )}
 
-          <Separator />
-
-          {/* Coupon — dashed trigger that expands into its own edit card */}
-          <div className="flex flex-col gap-2">
-            {!appliedCoupon ? (
-              <>
-                <button
-                  type="button"
-                  onClick={() => setExpanded((e) => (e === "coupon" ? null : "coupon"))}
-                  className="flex items-center justify-between rounded-lg border border-dashed border-border px-3 py-2 text-sm font-medium text-foreground"
-                >
-                  <span className="flex items-center gap-1.5">
-                    <Tag className="size-4 text-muted-foreground" aria-hidden />
-                    Apply Coupons · {Object.keys(COUPONS).length} offers
-                  </span>
-                  <ChevronDown
-                    className={cn("size-4 transition-transform", expanded === "coupon" && "rotate-180")}
-                    aria-hidden
-                  />
-                </button>
-                {expanded === "coupon" && (
-                  <div className="flex flex-col gap-2 rounded-lg bg-muted/40 p-3">
-                    <div className="flex gap-2">
-                      <Input
-                        inputSize="sm"
-                        placeholder="Enter coupon code"
-                        value={couponInput}
-                        onChange={(e) => setCouponInput(e.target.value)}
-                        className="flex-1"
-                      />
-                      <Button size="sm" variant="outline" onClick={() => handleApplyCoupon(couponInput)}>
-                        Apply
-                      </Button>
-                    </div>
-                    {Object.values(COUPONS).map((c) => (
-                      <div
-                        key={c.label}
-                        className="flex items-center justify-between rounded-lg border border-border bg-card px-3 py-2"
-                      >
-                        <span className="text-xs font-medium text-foreground">
-                          {c.label} — {c.discountPct}% off up to ₹{c.maxDiscount}
-                        </span>
-                        <Button size="xs" variant="outline" onClick={() => handleApplyCoupon(c.label)}>
-                          Apply
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </>
-            ) : (
-              <div className="flex items-center justify-between text-xs font-medium text-checkout-discount-fg">
-                <span>Coupon discount ({appliedCoupon})</span>
-                <span className="flex items-center gap-2">
-                  -₹{couponDiscount.toLocaleString("en-IN")}
-                  <button
-                    type="button"
-                    onClick={() => setAppliedCoupon(null)}
-                    className="text-destructive underline underline-offset-2"
-                  >
-                    Remove
-                  </button>
-                </span>
-              </div>
-            )}
-          </div>
-
-          <Separator />
-
-          {/* Bill details */}
-          <div className="flex flex-col gap-2">
+          {/* Bill details — pinned to the bottom of the scroll area */}
+          <div className="mt-auto flex flex-col gap-3 pt-6">
+            <Separator />
             <p className="text-sm font-semibold text-foreground">Bill details</p>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Sub total</span>
-              <span className="font-medium text-foreground">₹{subtotal.toLocaleString("en-IN")}</span>
+              <span className="text-foreground">Sub total</span>
+              <span className="font-semibold text-foreground">{inr(subtotal)}</span>
             </div>
-            <div className="flex items-start justify-between text-sm">
-              <div className="flex flex-col gap-0.5">
-                <span className="text-muted-foreground">GST Fee (18%)</span>
-                {!gstin ? (
-                  <button
-                    type="button"
-                    onClick={() => setExpanded((e) => (e === "gstin" ? null : "gstin"))}
-                    className="text-2xs font-medium text-info underline underline-offset-2"
-                  >
-                    Add GSTIN number
-                  </button>
-                ) : (
-                  <span className="flex items-center gap-1 text-2xs font-medium text-foreground">
-                    GSTIN: <strong>{gstin}</strong>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setGstinInput(gstin)
-                        setExpanded("gstin")
-                      }}
-                      aria-label="Edit GSTIN"
-                    >
-                      <Pencil className="size-3" aria-hidden />
-                    </button>
-                  </span>
-                )}
-                {expanded === "gstin" && (
-                  <div className="mt-1 flex w-56 gap-1.5">
-                    <Input
-                      inputSize="sm"
-                      placeholder="e.g. 29AAAAA0000A1Z5"
-                      value={gstinInput}
-                      onChange={(e) => setGstinInput(e.target.value.toUpperCase())}
-                      className="flex-1"
-                    />
-                    <Button size="sm" variant="outline" onClick={handleApplyGstin}>
-                      Apply
-                    </Button>
-                  </div>
-                )}
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-foreground">GST (18%)</span>
+              <span className="text-foreground">{inr(gst)}</span>
+            </div>
+
+            {expanded === "gstin" ? (
+              <EditCard title="Add GSTIN number" onClose={() => setExpanded(null)}>
+                <InlineActionInput
+                  value={gstinInput}
+                  onChange={(v) => setGstinInput(v.toUpperCase())}
+                  placeholder="Enter GSTIN"
+                  actionLabel="Save"
+                  onAction={handleApplyGstin}
+                />
+              </EditCard>
+            ) : gstin ? (
+              <div className="flex items-center gap-1.5 text-sm text-foreground">
+                GSTIN: {gstin}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setGstinInput(gstin)
+                    setExpanded("gstin")
+                  }}
+                  aria-label="Edit GSTIN"
+                >
+                  <Pencil className="size-3.5 text-muted-foreground" aria-hidden />
+                </button>
               </div>
-              <span className="font-medium text-foreground">₹{gst.toLocaleString("en-IN")}</span>
-            </div>
-          </div>
-
-          <Separator />
-
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-foreground">
-              Total <span className="text-xs text-muted-foreground">(Inc tax)</span>
-            </span>
-            <span className="text-2xl font-bold text-foreground">₹{total.toLocaleString("en-IN")}</span>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setExpanded("gstin")}
+                className="self-start text-sm font-medium text-info underline underline-offset-2"
+              >
+                Add GSTIN number
+              </button>
+            )}
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 border-t border-border p-4">
+        <div className="flex flex-col gap-3 border-t border-border p-4">
+          <div className="flex items-center justify-between">
+            <span className="text-base text-foreground">
+              Total <span className="text-xs text-muted-foreground">(Inc tax)</span>
+            </span>
+            <span className="text-2xl font-bold text-foreground">{inr(total)}</span>
+          </div>
           <Button
             size="lg"
             className="w-full border-transparent bg-checkout-primary font-semibold text-checkout-primary-foreground hover:bg-checkout-primary-hover"
             onClick={() => onProceedToPay(total)}
           >
-            Proceed to pay ₹{total.toLocaleString("en-IN")}
+            Proceed to pay {inr(total)}
           </Button>
           <p className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
             <Lock className="size-3.5" aria-hidden />
