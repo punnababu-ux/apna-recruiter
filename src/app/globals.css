@@ -422,6 +422,13 @@
   background-size: cover;
   background-position: center top;
   background-repeat: no-repeat;
+  /* Load-bearing, and the source reference sets it too. The positioning
+     area for a `fixed` background is the viewport, not the element — so
+     `cover` sizes the mesh to ~1440x900 and its warm/pink corner blobs
+     stay in frame. Without it the area is the whole 2800px-tall page,
+     `cover` blows the 1024x682 mesh up ~4x, and the crop keeps only the
+     neutral middle: the pink disappears entirely. */
+  background-attachment: fixed;
 }
 @utility bg-gradient-checkout-unlimited {
   background-image: var(--gradient-checkout-unlimited);
