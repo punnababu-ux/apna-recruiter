@@ -1,16 +1,24 @@
 /* ============================================================================
- * Poneglyph · globals.css (entry stylesheet)
+ * Poneglyph · index.css (design-system entry stylesheet)
  * ----------------------------------------------------------------------------
- * Orchestrator. Order matters:
- *   1. Tailwind + animation utility layers
- *   2. Primitive tokens (Tier 1 — raw atoms)
- *   3. Semantic tokens  (Tier 2 — intent aliases, light + dark)
- *   4. @theme inline    (expose semantics as Tailwind design tokens)
+ * The single source of truth for the system's Tailwind wiring. Order matters:
+ *   1. Primitive tokens (Tier 1 — raw atoms)
+ *   2. Semantic tokens  (Tier 2 — intent aliases, light + dark)
+ *   3. @theme inline    (expose semantics as Tailwind design tokens)
+ *   4. @utility         (presets, gradients, interaction + motion helpers)
  *   5. @layer base      (element defaults — body/html/focus)
  *
- * Do not add token values here. Primitives live in `src/styles/tokens/
- * primitives.css`; aliases in `semantic.css`. This file only wires them.
+ * Consumers import THIS file; they do not restate any of it. The app's
+ * `src/app/globals.css` is a five-line wrapper that adds Tailwind's own
+ * layers and a @source glob, then imports this. It used to be a near-verbatim
+ * copy that had to be hand-synced, and had already drifted.
+ *
+ * Do not add token values here. Primitives live in `tokens/primitives.css`;
+ * aliases in `tokens/semantic.css`. This file only wires them.
  * ========================================================================== */
+
+
+
 @import "./tokens/primitives.css";
 @import "./tokens/semantic.css";
 
@@ -55,6 +63,31 @@
   --color-info:                    var(--info);
   --color-info-foreground:         var(--info-foreground);
   --color-info-subtle:             var(--info-subtle);
+
+  /* Inverted surfaces */
+  --color-surface-inverted:    var(--surface-inverted);
+  --color-surface-inverted-fg: var(--surface-inverted-fg);
+
+  /* Checkout hero — fixed light surface, see semantic.css */
+  --color-checkout-hero-fg:       var(--surface-checkout-hero-fg);
+  --color-checkout-hero-fg-muted: var(--surface-checkout-hero-fg-muted);
+  --color-checkout-track:         var(--surface-checkout-track);
+  --color-checkout-inset:            var(--surface-checkout-inset);
+  --color-checkout-inset-border:     var(--surface-checkout-inset-border);
+  --color-checkout-inset-fg:         var(--surface-checkout-inset-fg);
+  --color-checkout-inset-fg-muted:   var(--surface-checkout-inset-fg-muted);
+
+  /* Checkout primary — the self-checkout surface's own brand green */
+  --color-checkout-avatar:             var(--checkout-avatar);
+  --color-checkout-primary:            var(--checkout-primary);
+  --color-checkout-primary-hover:      var(--checkout-primary-hover);
+  --color-checkout-primary-foreground: var(--checkout-primary-foreground);
+  --color-checkout-discount-fg:        var(--checkout-discount-fg);
+  --color-checkout-discount-bg:        var(--checkout-discount-bg);
+  --color-checkout-unlimited-line:      var(--checkout-unlimited-border);
+  --color-checkout-unlimited-line-hover: var(--checkout-unlimited-border-hover);
+  --color-checkout-unlimited-cta:       var(--checkout-unlimited-cta-bg);
+  --color-checkout-unlimited-cta-hover: var(--checkout-unlimited-cta-bg-hover);
 
   /* Lines */
   --color-border: var(--border);
@@ -102,6 +135,7 @@
   --font-weight-extrabold: var(--font-weight-extrabold);
 
   /* Size utilities → .text-xs, .text-sm, .text-base, .text-lg, .text-xl, .text-2xl, … */
+  --text-3xs:  var(--text-2xs); /* fallback safety alias for micro tags */
   --text-2xs:  var(--text-2xs);
   --text-xs:   var(--text-xs);
   --text-sm:   var(--text-sm);
@@ -118,7 +152,7 @@
    * Spacing — context-role aliases only.
    *
    * Tailwind v4 already derives numeric `p-4`, `gap-6`, `m-12` from the
-   * `--spacing` base (0.25rem). We intentionally DO NOT register named
+   * `--spacing-base` (0.25rem). We intentionally DO NOT register named
    * size aliases (`--spacing-sm`, `--spacing-md`, `--spacing-2xl`, …)
    * here: they collide catastrophically with Tailwind's sizing utilities
    * (`max-w-sm`, `w-md`, `h-2xl`, …), which share the `--spacing-*`
@@ -366,8 +400,6 @@
 
 /* ============================================================================
  * Gradient utilities — consume `--gradient-*` semantic tokens.
- * Each theme (default · Apna, `.theme-onlyrounds`) re-aliases the tokens,
- * so `bg-gradient-primary` retunes automatically when the theme class flips.
  * ========================================================================== */
 
 @utility bg-gradient-primary {
@@ -391,6 +423,22 @@
 @utility bg-gradient-banner-destructive {
   background-image: var(--gradient-banner-destructive);
 }
+@utility bg-gradient-checkout-hero {
+  background-image: var(--gradient-checkout-hero);
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  /* Load-bearing, and the source reference sets it too. The positioning
+     area for a `fixed` background is the viewport, not the element — so
+     `cover` sizes the mesh to ~1440x900 and its warm/pink corner blobs
+     stay in frame. Without it the area is the whole 2800px-tall page,
+     `cover` blows the 1024x682 mesh up ~4x, and the crop keeps only the
+     neutral middle: the pink disappears entirely. */
+  background-attachment: fixed;
+}
+@utility bg-gradient-checkout-unlimited {
+  background-image: var(--gradient-checkout-unlimited);
+}
 
 /* ----------------------------------------------------------------------------
  * AI activity shimmer — subtle animated gradient used as a full-field cover
@@ -403,6 +451,18 @@
 @keyframes ai-shimmer {
   0%, 100% { background-position: 0% 50%; }
   50%      { background-position: 100% 50%; }
+}
+
+/* Hides the scrollbar on a horizontally/vertically scrollable container
+ * while keeping it scrollable (mouse wheel, touch, keyboard). Already
+ * referenced by a couple of onlyrounds components without a definition —
+ * defining it here fixes those too. */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @utility animate-ai-shimmer {
@@ -455,8 +515,6 @@
   text-transform:  uppercase;
 }
 
-
-
 /* ----------------------------------------------------------------------------
  * Element defaults. Keep this minimal — anything that could be overridden by
  * a component belongs in that component, not here.
@@ -472,11 +530,6 @@
     @apply antialiased;
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
-
-    /* Scale layout by 1.1x on desktop screens to match 110% zoom at 1080p */
-    @media (min-width: 1024px) {
-      font-size: 110%;
-    }
   }
 
   body {

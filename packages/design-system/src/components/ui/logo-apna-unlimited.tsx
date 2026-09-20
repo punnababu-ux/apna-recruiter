@@ -51,8 +51,8 @@ export function LogoApnaUnlimited({
       {variant === "gradient" && (
         <defs>
           <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-            <stop style={{ stopColor: "var(--color-apna-gold-600)" }} />
-            <stop offset="1" style={{ stopColor: "var(--color-apna-gold-400)" }} />
+            <stop style={{ stopColor: "var(--color-apna-gold-600)" }} /> {/* token-lint-ignore: SVG gradient stops take no className; the value is already a token var */}
+            <stop offset="1" style={{ stopColor: "var(--color-apna-gold-400)" }} /> {/* token-lint-ignore: SVG gradient stops take no className; the value is already a token var */}
           </linearGradient>
         </defs>
       )}

@@ -75,10 +75,10 @@ export function EnterprisePricingTable({
             re-add the 16px inset themselves. The bottom border here is the
             rule under the last feature row. */}
         <div className="-mx-4 -mt-4 border-b border-border">
-          <Table className="min-w-[900px] table-fixed">
+          <Table className="min-w-[900px] table-fixed"> {/* token-lint-ignore: scroll threshold for the 6-column table, not a spacing step */}
             <TableHeader className="bg-transparent">
               <TableRow className="hover:bg-transparent">
-                <TableHead className="h-auto w-[236px] pt-4 pr-3 pb-5 pl-4 align-bottom text-xl font-semibold text-foreground">
+                <TableHead className="h-auto w-[236px] pt-4 pr-3 pb-5 pl-4 align-bottom text-xl font-semibold text-foreground"> {/* token-lint-ignore: Figma column geometry (16px inset + 208 col + half gutter); see file header */}
                   Features
                 </TableHead>
                 {TIERS.map((tier) => (

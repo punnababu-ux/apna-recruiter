@@ -2,6 +2,14 @@
 
 # dependencies
 /node_modules
+# Workspace deps — the root rule is anchored, so packages/*/node_modules was
+# being tracked (44 files).
+**/node_modules
+
+# Build output. The app never reads it: tsconfig maps @apna/design-system to
+# src, next.config transpiles the package, and `npm run build` builds it first.
+# Tracking it only produced merge conflicts on every design-system change.
+/packages/design-system/dist
 /.pnp
 .pnp.*
 .yarn/*

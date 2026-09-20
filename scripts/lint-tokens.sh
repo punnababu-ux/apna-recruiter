@@ -2,8 +2,8 @@
 # ============================================================================
 # lint-tokens.sh — Poneglyph design-system guard rail.
 #
-# Scans `src/app` and `src/components` for patterns that break the token
-# contract. Exits 1 on any violation so CI blocks the merge.
+# Scans `src/app`, `src/components` and the design-system package for patterns
+# that break the token contract. Exits 1 on any violation so CI blocks the merge.
 #
 # Checks
 #   1. Arbitrary Tailwind values — `p-[13px]`, `text-[#fff]`, `bg-[...]`, etc.
@@ -29,21 +29,34 @@ fail=0
 # ----------------------------------------------------------------------------
 # Scan scope
 # ----------------------------------------------------------------------------
-# The contract is enforced on *consumer* code: pages, templates, and any new
-# components authored against the system.
+# The contract is enforced on consumer code (pages, templates, product
+# components) AND on the design system itself. The system used to be exempt —
+# the exclusion still named `src/components/ui/**`, a path that moved into
+# `packages/design-system/` long ago, so in practice nothing in the system was
+# ever checked. A guard rail that skips the components meant to embody the
+# contract is not a guard rail.
 #
-# `src/components/ui/**` is the system itself — vetted shadcn/Base UI
-# primitives that legitimately need some arbitrary Tailwind values (recharts
-# `[&_.recharts-*]` selectors, CSS system colors like `bg-[Canvas]`,
-# `ring-[3px]` native control affordances). Changes there go through design-
-# system review rather than this guard-rail.
+# Two things stay out of scope, both by category rather than by convenience:
+#
+#   · `**/styles/**` — the token files. They are where literals are *supposed*
+#     to live; that is the whole point of a primitive layer.
+#   · `logo-*.tsx` — brand marks, exempt from the colour-literal check only.
+#     A logo's colours are the brand, not a themeable role (the files say so
+#     in their own headers). Every other check still applies to them.
+#
+# Anything else that genuinely needs an exception uses the `token-lint-ignore`
+# pragma with a stated reason, which is visible in review.
 # ----------------------------------------------------------------------------
-FILES_TS=$(find src/app src/components -type f \
+SCAN_DIRS="src/app src/components packages/design-system/src"
+
+FILES_TS=$(find $SCAN_DIRS -type f \
   \( -name '*.ts' -o -name '*.tsx' -o -name '*.js' -o -name '*.jsx' \) \
-  -not -path 'src/components/ui/*' 2>/dev/null || true)
-FILES_ALL=$(find src/app src/components -type f \
+  -not -path '*/styles/*' 2>/dev/null || true)
+FILES_ALL=$(find $SCAN_DIRS -type f \
   \( -name '*.ts' -o -name '*.tsx' -o -name '*.js' -o -name '*.jsx' -o -name '*.css' \) \
-  -not -path 'src/components/ui/*' 2>/dev/null || true)
+  -not -path '*/styles/*' 2>/dev/null || true)
+# Colour-literal scan only: brand marks carry their own hex by definition.
+FILES_COLOR=$(printf "%s\n" "$FILES_ALL" | grep -v '/logo-[^/]*$' || true)
 
 filter_ignored() {
   # Drop lines containing the escape hatch pragma.
@@ -84,11 +97,11 @@ run_check \
   "$FILES_TS"
 
 # 2. Raw color literals (hex / rgb / oklch / hsl) in components or app.
-#    Token files (src/styles/**) are explicitly outside the scan paths.
+#    Token files (**/styles/**) and brand marks (logo-*.tsx) are out of scope.
 run_check \
-  "No raw hex / rgb() / oklch() / hsl() in components or app" \
+  "No raw hex / rgb() / oklch() / hsl() outside token files and brand marks" \
   '(#[0-9A-Fa-f]{3,8}\b|\brgba?\(|\boklch\(|\bhsla?\()' \
-  "$FILES_ALL"
+  "$FILES_COLOR"
 
 # 3. Inline JSX styles for tokenized properties.
 run_check \

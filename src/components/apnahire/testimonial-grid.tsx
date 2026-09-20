@@ -41,7 +41,7 @@ export function TestimonialGrid({ className }: { className?: string }) {
           />
           <p className="font-serif text-2xl leading-8 text-foreground">{QUOTE}</p>
           <div className="flex items-center gap-3.5">
-            <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-checkout-avatar text-[15px] font-bold text-white">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-checkout-avatar text-sm font-bold text-white">
               PR
             </span>
             <div className="flex flex-col gap-0.5">
