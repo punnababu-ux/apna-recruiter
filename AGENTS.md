@@ -232,8 +232,10 @@ Trigger: you need a UI pattern that doesn't exist yet.
    - Named exports, no default exports.
    - File-level JSDoc header: purpose, API, a11y notes, minimal usage.
 3. Wire it into `docs/COMPONENTS.md` (add a row — import snippet + tldr).
-4. Add it to the showcase page (`src/app/page.tsx`) so it's visually
-   verifiable on every commit.
+4. Add it to its category page under `src/app/design-system/components/`
+   so it's visually verifiable on every commit. (The catch-all kitchen sink
+   at `src/app/design-system/showcase/` is legacy — new work goes on the
+   category page, which is what the docs sidebar links to.)
 5. `npm run check` must pass.
 
 ---

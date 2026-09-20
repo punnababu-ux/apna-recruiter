@@ -10,11 +10,9 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
-      {
-        source: "/",
-        destination: "/design-system",
-        permanent: false,
-      },
+      // `/` used to redirect here because the root page was the component
+      // showcase. The showcase now lives at /design-system/showcase and `/`
+      // belongs to the marketing homepage.
       {
         source: "/onlyrounds",
         destination: "/apnahire/jobs",

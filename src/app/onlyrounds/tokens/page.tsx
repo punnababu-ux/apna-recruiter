@@ -9,8 +9,8 @@
  * in the sidebar shell from `(product)/layout.tsx`.
  */
 
-import Home from "../../page"
+import KitchenSink from "../../design-system/showcase/page"
 
 export default function OnlyRoundsTokensPage() {
-  return <Home />
+  return <KitchenSink />
 }

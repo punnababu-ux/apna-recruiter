@@ -195,7 +195,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 // import { Toggle } from "@/components/ui/toggle"
 // import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import { ModularScalesDemo } from "./_showcase/modular-scales-demo"
+import { ModularScalesDemo } from "./_parts/modular-scales-demo"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 // ---- OnlyRounds product molecules, organisms & templates -------------------
 import Link from "next/link"
