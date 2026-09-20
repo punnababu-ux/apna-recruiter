@@ -19,7 +19,7 @@ import type { CheckoutAuthState } from "@/components/apnahire/self-checkout"
 
 const ROUTES: Record<CheckoutAuthState, string> = {
   "logged-in": "/apnahire/credits",
-  "logged-out": "/apnahire/pricing",
+  "logged-out": "/pricing",
 }
 
 const LABELS: Record<CheckoutAuthState, string> = {

@@ -5,17 +5,22 @@
  *
  * The same page serves two audiences and Figma draws it twice:
  *
- *  · `logged-in`  → /apnahire/credits — reached from the dashboard, so it
- *    wears the product chrome: a back button, the credits-balance pill, and
- *    the compact tab switcher inside that single bar.
- *  · `logged-out` → /apnahire/pricing — the public pricing page, so it wears
- *    the marketing chrome instead: the public nav, a sticky sub-nav for the
- *    compact tabs, and the site footer. Figma: 881:11579.
+ *  · `logged-in`  → /apnahire/credits — reached from the dashboard. This is
+ *    still a standalone route with no shell (no sidebar, no site header —
+ *    see AGENTS.md's "standalone route" pattern), so it draws its own inline
+ *    product header: a back button, the credits-balance pill, and the
+ *    compact tab switcher inside that single bar.
+ *  · `logged-out` → /pricing, under the `(marketing)` route group. That
+ *    group's layout already supplies `SiteHeader` and `SiteFooter`, so this
+ *    component draws neither for that state — it only publishes its compact
+ *    tab switcher into the shared header via `useHeaderSlot` (the header
+ *    lives above this component in the tree, so the data has to go up, not
+ *    down; see `header-slot.tsx`). Figma: 881:11579.
  *
- * Everything between the chrome — hero, the four tab bodies, the FAQ /
- * testimonial / trust bands, and the whole checkout → payment → success
- * flow — is identical in both, which is why it lives here once instead of
- * in each route. The auth state only picks the chrome.
+ * Everything else — hero, the four tab bodies, the FAQ / testimonial / trust
+ * bands, and the whole checkout → payment → success flow — is identical in
+ * both, which is why it lives here once instead of in each route. The auth
+ * state only picks the chrome.
  */
 
 import * as React from "react"
@@ -42,8 +47,7 @@ import { UnlimitedSideCard } from "@/components/apnahire/unlimited-side-card"
 import { CheckoutDrawer, type CartLine } from "@/components/apnahire/checkout-drawer"
 import { PaymentModal } from "@/components/apnahire/payment-modal"
 import { PaymentSuccess } from "@/components/apnahire/payment-success"
-import { MarketingHeader } from "@/components/apnahire/marketing-header"
-import { MarketingFooter } from "@/components/apnahire/marketing-footer"
+import { useHeaderSlot } from "@/components/marketing/header-slot"
 import { AuthStateSwitcher } from "@/components/apnahire/auth-state-switcher"
 
 export type CheckoutAuthState = "logged-in" | "logged-out"
@@ -86,6 +90,35 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
     observer.observe(el)
     return () => observer.disconnect()
   }, [])
+
+  // Logged-out only: publish the compact tab switcher into the shared
+  // SiteHeader (provided by the (marketing) layout above this component).
+  // Memoized on activeTab so the published node's identity is stable across
+  // unrelated re-renders — useHeaderSlot re-publishes whenever it changes.
+  const compactTabSwitcher = React.useMemo(
+    () => (
+      <div className="flex items-center gap-2 rounded-full border border-border bg-checkout-track p-1">
+        {PRICING_TABS.map((tab) => (
+          <button
+            key={tab.value}
+            type="button"
+            onClick={() => setActiveTab(tab.value)}
+            className={cn(
+              "inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-semibold transition-colors [&_svg]:size-5",
+              activeTab === tab.value
+                ? "bg-card text-checkout-primary shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            {tab.icon}
+            {PRICING_TAB_SHORT_LABELS[tab.value]}
+          </button>
+        ))}
+      </div>
+    ),
+    [activeTab]
+  )
+  useHeaderSlot(isLoggedOut ? compactTabSwitcher : null, showCompactTabs)
 
   const [drawerOpen, setDrawerOpen] = React.useState(false)
   const [checkoutItem, setCheckoutItem] = React.useState<CartLine | null>(null)
@@ -191,20 +224,24 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   }
 
   return (
-    <div className="flex min-h-dvh flex-col bg-gradient-checkout-hero">
-      {isLoggedOut ? (
-        <MarketingHeader
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-          isScrolled={isScrolled}
-          showCompactTabs={showCompactTabs}
-        />
-      ) : (
+    <div
+      className={cn(
+        "flex flex-col",
+        // Logged-out renders inside (marketing)/layout.tsx, which already
+        // supplies min-h-dvh and this gradient on its own wrapper — doing it
+        // again here would just nest two copies of the same canvas.
+        !isLoggedOut && "min-h-dvh bg-gradient-checkout-hero"
+      )}
+    >
+      {!isLoggedOut && (
         /* ── Sticky product top bar (this page has no sidebar/shell — see
              AGENTS.md (wizard)-style standalone route) — starts transparent
              over the gradient (which now spans the whole page, not just the
              section below), turns solid on scroll, and grows a compact tab
-             switcher once the hero's own switcher scrolls out of view. ── */
+             switcher once the hero's own switcher scrolls out of view.
+             Logged-out has no bar of its own here at all: SiteHeader (from
+             the (marketing) layout) is the header, and compactTabSwitcher
+             above is published into it rather than rendered here. ── */
         <header
           className={cn(
             "sticky top-0 z-40 flex items-center justify-between border-b px-4 py-3 transition-[background-color,border-color,box-shadow] duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] sm:px-6",
@@ -344,15 +381,10 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
         </div>
       </div>
 
-      {/* Footer is public-site chrome — the logged-in page ends at the
-          trust bar because the product shell owns navigation from there. */}
-      {isLoggedOut && (
-        <div className="px-4 sm:px-8 lg:px-12">
-          <div className="mx-auto max-w-6xl">
-            <MarketingFooter />
-          </div>
-        </div>
-      )}
+      {/* No footer band here for logged-out: (marketing)/layout.tsx already
+          renders SiteFooter below this component. The logged-in page ends
+          at the trust bar because the product shell owns navigation from
+          there — same reasoning, different chrome. */}
 
       <CheckoutDrawer
         open={drawerOpen}
@@ -370,7 +402,9 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
         onFailure={handlePaymentFailure}
       />
 
-      <AuthStateSwitcher current={authState} />
+      {/* Prototype-only affordance for comparing the two Figma states side
+          by side without hand-typing URLs — never meant to ship. */}
+      {process.env.NODE_ENV !== "production" && <AuthStateSwitcher current={authState} />}
     </div>
   )
 }

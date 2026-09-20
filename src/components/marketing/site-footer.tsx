@@ -25,7 +25,7 @@ import {
   LinkedinMark,
   XMark,
   YoutubeMark,
-} from "@/components/apnahire/social-icons"
+} from "@/components/marketing/social-icons"
 
 const SOCIAL_MARKS: Record<SocialIconName, React.FC<React.SVGProps<SVGSVGElement>>> = {
   facebook: FacebookMark,

@@ -10,9 +10,10 @@
  *
  *  · Links come from `src/content/nav.ts`, and `current` is derived from the
  *    pathname. Adding a page no longer means editing the header.
- *  · The pricing tab switcher is no longer baked in. Any page can pass a
- *    `subNav` node, which slides down from under the bar on scroll — the
- *    pricing page passes its tab switcher into that slot.
+ *  · The pricing tab switcher is no longer baked in. Any page under
+ *    `(marketing)` can publish a secondary bar via `useHeaderSlot` (see
+ *    `header-slot.tsx`) — the pricing page publishes its tab switcher, and
+ *    it slides down from under the bar on scroll.
  *  · `variant="minimal"` (logo + one CTA) for campaign pages. The Interview
  *    Prep Lounge prototype uses exactly that, so it's needed on day one
  *    rather than retrofitted.
@@ -33,16 +34,11 @@ import {
   type NavGroup,
 } from "@/content/nav"
 import { useScrolled } from "@/hooks/use-scrolled"
+import { useHeaderSlotValue } from "@/components/marketing/header-slot"
 
 interface SiteHeaderProps {
   /** Full nav, or logo + primary CTA only (campaign and landing pages). */
   variant?: "default" | "minimal"
-  /**
-   * Secondary bar revealed on scroll, below the header. Rendered but hidden
-   * until `showSubNav`, so it can animate rather than pop in.
-   */
-  subNav?: React.ReactNode
-  showSubNav?: boolean
 }
 
 /** A top-level item is "current" when its href is the page or its ancestor. */
@@ -61,13 +57,10 @@ function useIsCurrent() {
   )
 }
 
-export function SiteHeader({
-  variant = "default",
-  subNav,
-  showSubNav = false,
-}: SiteHeaderProps) {
+export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
   const isScrolled = useScrolled()
   const isCurrent = useIsCurrent()
+  const slot = useHeaderSlotValue()
   const [openPanel, setOpenPanel] = React.useState<string | null>(null)
   const [mobileOpen, setMobileOpen] = React.useState(false)
 
@@ -195,18 +188,19 @@ export function SiteHeader({
         </div>
       ))}
 
-      {/* ── Sub-nav slot ── kept mounted so it can slide rather than pop. */}
-      {subNav && (
+      {/* ── Sub-nav slot ── published by the page via useHeaderSlot; kept
+           mounted once published so it can slide rather than pop. */}
+      {slot && (
         <div
-          aria-hidden={!showSubNav}
+          aria-hidden={!slot.showSubNav}
           className={cn(
             "absolute inset-x-0 top-full -z-10 hidden h-16 items-center justify-center bg-card px-4 shadow-sm transition-[opacity,translate] duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] md:flex",
-            showSubNav
+            slot.showSubNav
               ? "translate-y-0 opacity-100"
               : "pointer-events-none -translate-y-full opacity-0"
           )}
         >
-          {subNav}
+          {slot.subNav}
         </div>
       )}
     </header>

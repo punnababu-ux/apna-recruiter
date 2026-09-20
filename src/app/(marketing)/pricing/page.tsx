@@ -1,7 +1,8 @@
 /**
- * /apnahire/pricing — self-checkout in its logged-out state: apna's public
- * pricing page. Same body as the logged-in /apnahire/credits, wearing the
- * marketing nav + footer instead of the product chrome. Figma: 881:11579.
+ * /pricing — self-checkout in its logged-out state: apna's public pricing
+ * page. Same body as the logged-in /apnahire/credits; this route sits under
+ * the `(marketing)` group so it gets SiteHeader/SiteFooter for free instead
+ * of drawing its own. Figma: 881:11579.
  */
 
 import { SelfCheckout } from "@/components/apnahire/self-checkout"

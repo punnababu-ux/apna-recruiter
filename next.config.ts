@@ -23,6 +23,13 @@ const nextConfig: NextConfig = {
         destination: "/apnahire/:path*",
         permanent: true,
       },
+      // The public pricing page moved out of the product namespace and into
+      // the (marketing) route group, which doesn't appear in the URL.
+      {
+        source: "/apnahire/pricing",
+        destination: "/pricing",
+        permanent: true,
+      },
     ]
   },
 };

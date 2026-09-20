@@ -14,6 +14,7 @@
  * a band is transparent, this gradient shows through.
  */
 
+import { HeaderSlotProvider } from "@/components/marketing/header-slot"
 import { SiteFooter } from "@/components/marketing/site-footer"
 import { SiteHeader } from "@/components/marketing/site-header"
 
@@ -23,14 +24,19 @@ export default function MarketingLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="bg-gradient-checkout-hero flex min-h-dvh flex-col">
-      <SiteHeader />
-      <main className="flex-1">{children}</main>
-      <div className="px-4 sm:px-8 lg:px-12">
-        <div className="mx-auto max-w-band">
-          <SiteFooter />
+    // Provides the seam a page uses to publish a secondary bar (the pricing
+    // tab switcher) up into SiteHeader — see header-slot.tsx. Wraps SiteHeader
+    // too, since SiteHeader is the thing reading the published value.
+    <HeaderSlotProvider>
+      <div className="bg-gradient-checkout-hero flex min-h-dvh flex-col">
+        <SiteHeader />
+        <main className="flex-1">{children}</main>
+        <div className="px-4 sm:px-8 lg:px-12">
+          <div className="mx-auto max-w-band">
+            <SiteFooter />
+          </div>
         </div>
       </div>
-    </div>
+    </HeaderSlotProvider>
   )
 }
