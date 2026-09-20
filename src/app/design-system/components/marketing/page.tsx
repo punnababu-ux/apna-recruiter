@@ -11,10 +11,27 @@ import {
   CardHeader,
   CardTitle,
   CheckCircle2,
+  LogoWall,
+  MetricCard,
   Section,
   SectionHeading,
   Sparkles,
 } from "@apna/design-system"
+
+const DEMO_LOGOS = ["Paytm", "Flipkart", "Swiggy", "Zomato", "Uber"].map((name) => ({
+  name,
+  logo: (
+    <span className="text-lg font-bold tracking-tight text-muted-foreground">
+      {name}
+    </span>
+  ),
+}))
+
+const DEMO_STATS = [
+  { value: "6 Cr+", label: "Candidates use apna" },
+  { value: "7 L+", label: "Employers already at apna" },
+  { value: "7,200+", label: "Towns & cities covered" },
+]
 
 export default function MarketingComponentsPage() {
   return (
@@ -157,6 +174,30 @@ export default function MarketingComponentsPage() {
               </CardContent>
             </Card>
           ))}
+        </div>
+      </div>
+
+      {/* ── LogoWall + MetricCard variant="stat" ───────────────────────── */}
+      <div className="overflow-hidden rounded-xl border border-border bg-card">
+        <div className="border-b border-border/60 bg-muted/30 p-4 sm:p-6">
+          <h2 className="font-heading text-base font-semibold text-foreground">
+            LogoWall &amp; MetricCard variant=&quot;stat&quot;
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Lifted out of <code>trust-bar.tsx</code>, where both were
+            hand-rolled. <code>LogoWall</code> takes nodes, not{" "}
+            <code>src</code> strings — the system can&apos;t import{" "}
+            <code>next/image</code>.
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-8 bg-background p-4 sm:p-6">
+          <LogoWall items={DEMO_LOGOS} />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            {DEMO_STATS.map((stat) => (
+              <MetricCard key={stat.label} variant="stat" value={stat.value} label={stat.label} />
+            ))}
+          </div>
         </div>
       </div>
 

@@ -6,11 +6,13 @@
  *
  * Logos are the design's own exported assets (public/logos/*), rendered at
  * their designed 36px height with widths left to each asset's own aspect
- * ratio. The strip is wider than the content column in Figma too, so it
- * scrolls horizontally rather than wrapping or being squeezed.
+ * ratio. Composes `LogoWall` and `MetricCard variant="stat"` — this file was
+ * where both were hand-rolled before they were promoted to the design system;
+ * it keeps only the content (which clients, which numbers).
  */
 
 import * as React from "react"
+import { LogoWall, MetricCard } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 
 interface ClientLogo {
@@ -36,6 +38,14 @@ const CLIENTS: ClientLogo[] = [
   { name: "Zomato", src: "/logos/zomato.svg", width: 168 },
 ]
 
+const CLIENT_LOGO_ITEMS = CLIENTS.map((client) => ({
+  name: client.name,
+  logo: (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={client.src} alt={client.name} height={36} width={client.width} />
+  ),
+}))
+
 const STATS = [
   { value: "6 crore+", label: "Candidates use apna" },
   { value: "5 lakhs+", label: "New candidates every month" },
@@ -57,33 +67,12 @@ export function TrustBar({ className }: { className?: string }) {
           </p>
         </div>
 
-        {/* Wider than the column by design — scrolls instead of squeezing. */}
-        <div className="-mx-4 overflow-x-auto px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <div className="flex w-max items-center gap-14">
-            {CLIENTS.map((client) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                key={client.name}
-                src={client.src}
-                alt={client.name}
-                height={36}
-                width={client.width}
-                className="h-9 w-auto shrink-0 object-contain"
-              />
-            ))}
-          </div>
-        </div>
+        <LogoWall items={CLIENT_LOGO_ITEMS} />
       </div>
 
       <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
         {STATS.map((stat) => (
-          <div
-            key={stat.label}
-            className="card-hover-lift flex flex-col gap-2 rounded-xl bg-muted px-6 py-9 hover:bg-card"
-          >
-            <p className="text-h3 font-heading font-semibold text-foreground">{stat.value}</p>
-            <p className="text-base text-foreground">{stat.label}</p>
-          </div>
+          <MetricCard key={stat.label} variant="stat" value={stat.value} label={stat.label} />
         ))}
       </div>
     </div>

@@ -56,14 +56,17 @@ export * from "./components/ui/sonner"
 // 7. Data & Layout
 export * from "./components/ui/table"
 export * from "./components/ui/accordion"
-export * from "./components/ui/card"
-export * from "./components/ui/section"
-export * from "./components/ui/section-heading"
 export * from "./components/ui/logo-apna"
 export * from "./components/ui/logo-onlyrounds"
 export * from "./components/ui/logo-apna-unlimited"
 export * from "./components/ui/job-card"
 export * from "./components/ui/pricing-card"
+
+// 8. Marketing & Layout
+export * from "./components/ui/card"
+export * from "./components/ui/section"
+export * from "./components/ui/section-heading"
+export * from "./components/ui/logo-wall"
 
 // Helper Utilities
 export * from "./lib/utils"

@@ -36,8 +36,8 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 | Component        | Import                                                                 | tldr                                             |
 |------------------|------------------------------------------------------------------------|--------------------------------------------------|
 | Avatar           | `import { Avatar, AvatarImage, AvatarFallback } from "@apna/design-system"` | User image with fallback. Supports groups.  |
-| Badge            | `import { Badge } from "@apna/design-system"`                         | Status / count marker (`variant`: 7 roles, `size`: "default" · "sm"). |
-| MetricCard       | `import { MetricCard } from "@apna/design-system"`                    | Metric summary card with value, icon, and trend. |
+| Badge            | `import { Badge } from "@apna/design-system"`                         | Status / count marker (`variant`: 7 roles, `size`: "default" · "sm" · "lg"). |
+| MetricCard       | `import { MetricCard } from "@apna/design-system"`                    | `variant="metric"` (default): dashboard stat, bordered, icon + trend. `variant="stat"`: marketing stat tile, borderless, value-first, no icon/trend chrome. |
 | Skeleton         | `import { Skeleton } from "@apna/design-system"`                       | Loading placeholder shape.                       |
 | Spinner          | `import { Spinner } from "@apna/design-system"`                       | Indeterminate loading indicator.                 |
 | Separator        | `import { Separator } from "@apna/design-system"`                     | Horizontal or vertical divider.                  |
@@ -92,6 +92,7 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 | Section          | `import { Section } from "@apna/design-system"`                        | One horizontal band: background, page gutters, centred column. `tone` (transparent·default·muted·card·ink), `size`, `width` (narrow·band·wide·full), `bleed`. The only layout component — use bare `grid`/`flex` inside it. |
 | SectionHeading   | `import { SectionHeading } from "@apna/design-system"`                 | Eyebrow + title + description + actions. Carries `text-balance`, a reading measure, and the gap. Sets no colour, so it works on any `tone`. `level` picks the heading tag and type preset. |
 | Card             | `import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@apna/design-system"` | The base surface. `tone` (default·muted·ink·ghost), `padding`, `interactive`. `CardDescription` follows the tone via `data-tone` — don't thread the prop. |
+| LogoWall         | `import { LogoWall } from "@apna/design-system"`                       | Horizontally-scrolling logo strip (`no-scrollbar`, wider than its column by design). `items: { name, logo }[]` — `logo` is a node, not a `src`: the system can't import `next/image`, so the caller renders the `<img>`/`<Image>` and hands it over. `itemHeight`, `muted` (grayscale, colour on hover). |
 
 **Tone pairing.** `Section tone="ink"` and `Card tone="ink"` both set a foreground, so descendants inherit correctly. Don't put `text-muted-foreground` inside either — it's a near-black role and disappears; the ink surface supplies `text-ink-fg-muted`.
 
