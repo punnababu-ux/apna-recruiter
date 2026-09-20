@@ -171,7 +171,7 @@ export function SubscriptionPlans({
               same thing by giving the logo a 32px-tall frame and dropping the
               20px mark 5px inside it (node 780:1190). */}
           <div className="flex items-center gap-2">
-            <LogoApnaUnlimited className="h-5 w-auto translate-y-[3px]" /> {/* token-lint-ignore: optical baseline nudge for the wordmark, derived above; not a spacing step */}
+            <LogoApnaUnlimited className={/* token-lint-ignore: optical baseline nudge for the wordmark, derived above; not a spacing step */ "h-5 w-auto translate-y-[3px]"} />
             <span className="text-xl font-semibold text-foreground">plans</span>
           </div>
           <p className="text-sm text-muted-foreground">

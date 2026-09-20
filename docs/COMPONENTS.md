@@ -85,6 +85,16 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 | ApnaLogo         | `import { ApnaLogo } from "@apna/design-system"`                       | Brand mark lockup with gradient and wordmark.    |
 | LogoApnaUnlimited | `import { LogoApnaUnlimited } from "@apna/design-system"`             | "apna ∞ Unlimited" wordmark — `variant="default\|white\|gradient"` (dark/light/Accent-Gradient fill). |
 
+## 8. Marketing & Layout
+
+| Component        | Import                                                                 | tldr                                             |
+|------------------|------------------------------------------------------------------------|--------------------------------------------------|
+| Section          | `import { Section } from "@apna/design-system"`                        | One horizontal band: background, page gutters, centred column. `tone` (transparent·default·muted·card·ink), `size`, `width` (narrow·band·wide·full), `bleed`. The only layout component — use bare `grid`/`flex` inside it. |
+| SectionHeading   | `import { SectionHeading } from "@apna/design-system"`                 | Eyebrow + title + description + actions. Carries `text-balance`, a reading measure, and the gap. Sets no colour, so it works on any `tone`. `level` picks the heading tag and type preset. |
+| Card             | `import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@apna/design-system"` | The base surface. `tone` (default·muted·ink·ghost), `padding`, `interactive`. `CardDescription` follows the tone via `data-tone` — don't thread the prop. |
+
+**Tone pairing.** `Section tone="ink"` and `Card tone="ink"` both set a foreground, so descendants inherit correctly. Don't put `text-muted-foreground` inside either — it's a near-black role and disappears; the ink surface supplies `text-ink-fg-muted`.
+
 ---
 
 ## Conventions every component follows

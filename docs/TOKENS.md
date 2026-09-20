@@ -367,5 +367,48 @@ globally if the system's rhythm is re-aliased.
 3. **Adding a primitive hue** — system-level. Requires a design discussion,
    not just a code PR. Ramps should land with all 11 steps (50–950).
 
-Raw literals inside `src/components/**` or `src/app/**` are a CI-level
-reject.
+Raw literals inside `src/components/**`, `src/app/**` or
+`packages/design-system/src/**` are a CI-level reject. Brand marks
+(`logo-*.tsx`) are exempt from the colour check only — a logo's colours are
+the brand, not a themeable role.
+
+---
+
+## Marketing additions
+
+**Content widths** (Tier 1 `--width-content-*` → Tier 2 `--container-*` →
+`max-w-narrow` / `max-w-band` / `max-w-wide`). Measures, not spacing: they
+don't scale with the 4px ramp. `band` (1152px) is the house width. For a
+reading measure use Tailwind's built-in `max-w-prose`.
+
+**The `ink` surface** (`--surface-ink`, `-fg`, `-fg-muted`, `-border`,
+`-hover` → `bg-ink text-ink-fg border-ink-border`). A deliberately dark card
+or band on the ordinary light canvas.
+
+Fixed *by intent*, but not fixed *in value*: the `.dark` block lifts it from
+plum-900 to plum-800, because plum-900 on a gray-950 canvas separates by
+almost nothing. "Fixed across themes" and "the same hex in both themes" are
+different things, and conflating them is how a card disappears in dark mode.
+
+There is deliberately **no `marketing-*` namespace**. `checkout-*` earned its
+scope because that surface stays light regardless of app theme; marketing has
+no such constraint — its canvas, cards, borders and copy are the existing
+dual-mapped roles. A parallel namespace would force every page author to
+choose between `text-foreground` and `text-marketing-fg`, and the two would
+disagree within a quarter.
+
+**Type roles.** `--font-display` is its own role aliased to `--font-heading`,
+so introducing a display face later is one line here rather than a hunt
+through every preset. `--font-quote` maps `--font-family-serif`, which
+existed as a primitive but was never registered — meaning `font-serif` in a
+component silently fell through to the browser's default serif.
+
+`--font-heading` and `--font-body` resolving to the same family (Figtree) is
+a decision, not an oversight: a second webfont is a real cost, and the
+display voice is carried by weight (800) and tracking (-0.04em) instead.
+
+**Presets.** `text-display-lg` (fluid `clamp()` 40→60px — a hero never needs
+`text-4xl md:text-5xl lg:text-6xl`), `text-lead`, `text-quote`. `text-lead`
+deliberately sets no colour: on an ink surface `--muted-foreground` is the
+wrong token, which is why `text-caption` — which does bake colour in — can't
+be reused there.

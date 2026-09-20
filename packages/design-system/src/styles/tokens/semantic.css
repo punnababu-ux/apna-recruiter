@@ -37,6 +37,20 @@
   --surface-inverted:    var(--color-apna-royal-900);
   --surface-inverted-fg: var(--color-gray-0);
 
+  /* Ink — a deliberately dark card sitting on the ordinary light canvas.
+   * Marketing leans on this for feature and stat cards: the page stays light,
+   * one card goes dark to carry weight.
+   *
+   * Fixed by intent, unlike --card, but NOT fixed in value: the .dark block
+   * lifts it a step, because plum-900 on a gray-950 canvas separates by almost
+   * nothing. "Fixed across themes" and "the same hex in both themes" are
+   * different things, and conflating them is how a card disappears. */
+  --surface-ink:          var(--color-apna-plum-900);
+  --surface-ink-fg:       var(--color-gray-0);
+  --surface-ink-fg-muted: var(--color-apna-plum-300);
+  --surface-ink-border:   var(--color-alpha-white-10);
+  --surface-ink-hover:    var(--color-alpha-white-5);
+
   /* --------------------------------------------------------------------------
    * Roles — Primary (high-emphasis action) · Apna green
    * The brand's action colour. CTAs, selected state, focus ring, any
@@ -206,10 +220,21 @@
    * `font-family: "Inter"` or `font-weight: 600` in JSX.
    * ======================================================================== */
 
-  /* Family roles — the two-family model: heading vs body, plus mono for code */
+  /* Family roles. Heading and body deliberately resolve to the SAME family
+   * today — Figtree carries both. That is a decision, not an oversight: a
+   * second webfont is a real cost and the display voice is currently carried
+   * by weight and tracking instead (see the display presets). --font-display
+   * exists as its own role so introducing a display face later is one line
+   * here, rather than a hunt through every heading preset. */
   --font-body:    var(--font-family-sans);
   --font-heading: var(--font-family-sans);
+  --font-display: var(--font-heading);
   --font-mono:    var(--font-family-mono);
+
+  /* Quote voice — pull quotes and testimonials. `--font-family-serif` existed
+   * in the primitive layer but was never registered, so `font-serif` in a
+   * component silently fell through to the browser default serif. */
+  --font-quote:   var(--font-family-serif);
 
   /* Weight roles — industry-standard defaults. Re-alias to shift the whole
      system's weight feel (e.g. regular → 300 for a lighter brand). */
@@ -232,6 +257,7 @@
   --text-4xl:  var(--font-size-4xl);
   --text-5xl:  var(--font-size-5xl);
   --text-6xl:  var(--font-size-6xl);
+  --text-display-fluid: var(--font-size-display-fluid);
 
   /* ==========================================================================
    * Spacing
@@ -268,6 +294,11 @@
   --space-field:   var(--space-sm);  /* between label / control / help text     */
   --space-inset:   var(--space-md);  /* padding inside a contained surface      */
   --space-section: var(--space-2xl); /* between top-level page sections         */
+  /* Container roles — the width a band's content is capped to. */
+  --container-narrow: var(--width-content-narrow);
+  --container-band:   var(--width-content);
+  --container-wide:   var(--width-content-wide);
+
   --space-page:    var(--space-3xl); /* page gutter / max breathing room        */
 
   /* ==========================================================================
@@ -393,6 +424,12 @@
   /* Inverted hero surface remains royal blue in dark theme */
   --surface-inverted:    var(--color-apna-royal-950);
   --surface-inverted-fg: var(--color-gray-0);
+
+  /* Ink lifts a step in dark mode. On a gray-950 canvas, plum-900 reads as
+   * the same surface; plum-800 still separates. The border opens up for the
+   * same reason. */
+  --surface-ink:        var(--color-apna-plum-800);
+  --surface-ink-border: var(--color-alpha-white-15);
 
   /* Roles — green stays the action colour on dark; brightened one step
      so it sits comfortably on dark surfaces. */

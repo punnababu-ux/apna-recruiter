@@ -29,6 +29,9 @@ const badgeVariants = cva(
       size: {
         default: "h-5 px-2 py-0.5 text-xs",
         sm: "h-4 px-1.5 py-0 text-2xs",
+        /* Marketing "eyebrow" pills sit above a headline and need to read at
+         * arm's length, unlike the in-table and in-card badges above. */
+        lg: "h-7 gap-1.5 px-3 py-1 text-xs [&>svg]:size-3.5!",
       },
     },
     defaultVariants: {

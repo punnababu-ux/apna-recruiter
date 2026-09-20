@@ -68,6 +68,13 @@
   --color-surface-inverted:    var(--surface-inverted);
   --color-surface-inverted-fg: var(--surface-inverted-fg);
 
+  /* Ink — the deliberately dark card on a light canvas */
+  --color-ink:           var(--surface-ink);
+  --color-ink-fg:        var(--surface-ink-fg);
+  --color-ink-fg-muted:  var(--surface-ink-fg-muted);
+  --color-ink-border:    var(--surface-ink-border);
+  --color-ink-hover:     var(--surface-ink-hover);
+
   /* Checkout hero — fixed light surface, see semantic.css */
   --color-checkout-hero-fg:       var(--surface-checkout-hero-fg);
   --color-checkout-hero-fg-muted: var(--surface-checkout-hero-fg-muted);
@@ -125,6 +132,8 @@
   --font-body:    var(--font-body);
   --font-heading: var(--font-heading);
   --font-mono:    var(--font-mono);
+  --font-display: var(--font-display);
+  --font-quote:   var(--font-quote);
   --font-sans:    var(--font-body); /* backwards-compat alias; prefer font-body */
 
   /* Weight utilities → .font-regular, .font-medium, .font-semibold, .font-bold, .font-extrabold */
@@ -147,6 +156,13 @@
   --text-4xl:  var(--text-4xl);
   --text-5xl:  var(--text-5xl);
   --text-6xl:  var(--text-6xl);
+  --text-display-fluid: var(--text-display-fluid);
+
+  /* Container widths → max-w-narrow | max-w-band | max-w-wide.
+   * Tailwind's own --max-width-prose (65ch) covers reading measure. */
+  --container-narrow: var(--container-narrow);
+  --container-band:   var(--container-band);
+  --container-wide:   var(--container-wide);
 
   /* ------------------------------------------------------------------------
    * Spacing — context-role aliases only.
@@ -295,6 +311,17 @@
  *   (`font-heading font-semibold text-2xl leading-snug`).
  * ========================================================================== */
 
+/* The page-opening headline. Fluid 40→60px, so a hero never needs
+ * `text-4xl md:text-5xl lg:text-6xl`. Heavier and tighter than text-display:
+ * with one type family, weight and tracking are what make a display voice. */
+@utility text-display-lg {
+  font-family:     var(--font-display);
+  font-size:       var(--text-display-fluid);
+  line-height:     var(--line-height-tight);
+  font-weight:     var(--font-weight-extrabold);
+  letter-spacing:  var(--letter-spacing-tighter);
+}
+
 @utility text-display {
   font-family:     var(--font-heading);
   font-size:       var(--text-5xl);
@@ -367,6 +394,24 @@
   line-height:  var(--line-height-snug);
   font-weight:  var(--font-weight-medium);
   color:        var(--muted-foreground);
+}
+
+/* Subcopy under a headline. Deliberately sets no colour: on an ink surface
+ * --muted-foreground is the wrong token, and a preset that bakes colour in
+ * can't be reused there (which is why text-caption is body-only). */
+@utility text-lead {
+  font-family:  var(--font-body);
+  font-size:    var(--text-lg);
+  line-height:  var(--line-height-relaxed);
+  font-weight:  var(--font-weight-regular);
+}
+
+/* Pull quotes and testimonials. */
+@utility text-quote {
+  font-family:  var(--font-quote);
+  font-size:    var(--text-2xl);
+  line-height:  var(--line-height-snug);
+  font-weight:  var(--font-weight-regular);
 }
 
 /* ============================================================================
