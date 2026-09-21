@@ -53,3 +53,31 @@ export const HOME_TRUSTED_BY = {
   eyebrow: "Trusted by",
   title: "Top Hiring Partners",
 }
+
+/**
+ * Product offerings grid. Requested "like" a competitor's (Naukri's)
+ * equivalent section — its 2×3 illustrated-card layout is the reference for
+ * STRUCTURE only. Two deliberate departures, not oversights:
+ *   - 4 cards, not 6: apna's real product lineup (nav.ts PRODUCT_LINKS),
+ *     not Naukri's.
+ *   - No bespoke mockup illustrations: those are a competitor's own product
+ *     UI, not something to imitate. Each card gets a plain tinted block with
+ *     an icon instead — Briefcase / PhoneCall / Search / InfinityIcon are
+ *     already the icon language for these same four products in
+ *     pricing-hero.tsx's PRICING_TABS.
+ *
+ * Heading and item taglines ARE sourced, verbatim, from
+ * self-checkout-five.vercel.app/employer's own "hiring suite" section
+ * (confirmed via get_page_text, 2026-09-21) — not written for this pass.
+ */
+export const HOME_SUITE = {
+  eyebrow: "The apna hiring suite",
+  title: "A single platform for every hiring need",
+  description: "Choose the exact recruitment solution suited for your role urgency and scale.",
+  items: [
+    { name: "Smart Jobs", tagline: "Post Classic & Premium jobs", icon: "briefcase" },
+    { name: "AI Calling Agent", tagline: "24/7 candidate interviews", icon: "phone" },
+    { name: "Hyperlocal Database", tagline: "Direct 5Cr+ verified profiles", icon: "search" },
+    { name: "apna Unlimited", tagline: "Post unlimited jobs in one plan", icon: "infinity" },
+  ] as const,
+}
