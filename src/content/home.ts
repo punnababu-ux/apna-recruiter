@@ -18,10 +18,8 @@
  *   - description, tagline: verbatim from the Lovable prototype, confirmed
  *     via get_page_text against the live preview, 2026-09-21.
  *
- * Hero only, deliberately: the remaining bands (suite, trust stats,
- * testimonials, FAQ, CTA) are being designed and approved one at a time
- * rather than built ahead of that — add their content here in the same
- * commit as the band itself.
+ * Sections are added one at a time, approved, then built — not ahead of
+ * that. Each section's content sourcing is noted where it's declared below.
  */
 
 export interface Stat {
@@ -40,4 +38,18 @@ export const HOME_HERO = {
     { value: "7 L+", label: "Businesses and Enterprises" },
     { value: "7,200+", label: "Towns & Cities Covered" },
   ] satisfies Stat[],
+}
+
+/**
+ * "TRUSTED BY / Top Hiring Partners": verbatim from the Lovable prototype
+ * (confirmed via get_page_text, 2026-09-21). Its subtitle ("Click on any
+ * company logo below to view their live job openings!") and per-logo
+ * "View Jobs →" links are deliberately dropped — that implies live,
+ * per-company job listings this site doesn't have. The logos themselves
+ * are `CLIENT_LOGOS` (content/logos.ts), our own vetted roster, not the
+ * different set (Zomato, Amazon, Reliance, …) shown on that prototype.
+ */
+export const HOME_TRUSTED_BY = {
+  eyebrow: "Trusted by",
+  title: "Top Hiring Partners",
 }
