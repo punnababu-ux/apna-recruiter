@@ -51,6 +51,8 @@ export default function HomePage() {
               </div>
             ))}
           </dl>
+
+          <p className="text-sm font-medium text-muted-foreground">{HOME_HERO.tagline}</p>
         </div>
 
         {/* max-w-md is already set inside HeroLeadCard itself — shrink-0
