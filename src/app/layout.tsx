@@ -27,9 +27,33 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// The site-wide default. `/design-system` (internal docs, not the public
+// product) overrides this with its own title template in its own layout —
+// Next lets a nested layout replace the parent's template for everything
+// under it. Every other page just sets a short `title: "..."` and gets the
+// " · apna for employers" suffix for free.
+//
+// metadataBase turns every relative `openGraph.images` URL below (and in
+// per-page metadata) into an absolute one — required for OG/Twitter cards,
+// which don't resolve relative URLs. employer.apna.co is the real production
+// host this app is standing in for.
 export const metadata: Metadata = {
-  title: "Poneglyph",
-  description: "Poneglyph Design System",
+  metadataBase: new URL("https://employer.apna.co"),
+  title: {
+    template: "%s · apna for employers",
+    default: "apna for employers — Hire top talent, faster",
+  },
+  description:
+    "India's largest AI-native early talent platform. Post jobs, search 6 crore+ candidates, and hire faster with apna.",
+  openGraph: {
+    siteName: "apna for employers",
+    type: "website",
+    images: [{ url: "/apna-logo.svg" }],
+  },
+  twitter: {
+    card: "summary",
+    images: [{ url: "/apna-logo.svg" }],
+  },
 };
 
 export default function RootLayout({

@@ -5,10 +5,13 @@
  * of drawing its own. Figma: 881:11579.
  */
 
+import type { Metadata } from "next"
 import { SelfCheckout } from "@/components/apnahire/self-checkout"
 
-export const metadata = {
-  title: "Pricing | apna for employers",
+// A short, literal title — the root layout's "%s · apna for employers"
+// template supplies the suffix.
+export const metadata: Metadata = {
+  title: "Pricing",
   description:
     "Job credits, database credits, Unlimited subscriptions and enterprise plans — everything you need to hire on apna.",
 }

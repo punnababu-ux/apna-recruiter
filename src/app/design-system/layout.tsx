@@ -1,5 +1,6 @@
 import * as React from "react"
 import Link from "next/link"
+import type { Metadata } from "next"
 import { Layers, ArrowLeft } from "@apna/design-system"
 
 import {
@@ -11,6 +12,19 @@ import {
 } from "@apna/design-system"
 import { DocsSidebar } from "@/components/design-system/docs-sidebar"
 import { ThemeToggle } from "@/components/design-system/theme-toggle"
+
+// This whole subtree is internal tooling, not the public product — it should
+// read as "Poneglyph", not "apna for employers". A nested layout's own
+// `title.template` replaces the parent's for everything under it, so this
+// is the one override needed; individual doc pages just set a short title.
+export const metadata: Metadata = {
+  title: {
+    template: "%s · Poneglyph",
+    default: "Poneglyph Design System",
+  },
+  description: "Poneglyph — apna's design system. Tokens, components, and usage docs.",
+  robots: { index: false, follow: false },
+}
 
 export default function DesignSystemLayout({
   children,
