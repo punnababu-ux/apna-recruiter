@@ -14,7 +14,15 @@
  */
 
 import * as React from "react"
-import { Building2, Button, Card, Field, FieldLabel, inputVariants } from "@apna/design-system"
+import {
+  Building2,
+  Button,
+  Card,
+  Field,
+  FieldLabel,
+  Separator,
+  inputVariants,
+} from "@apna/design-system"
 import { cn } from "@/lib/utils"
 import { LEGAL_LINKS } from "@/content/footer"
 
@@ -80,11 +88,7 @@ export function HeroLeadCard({ className, onContinue, onEnterpriseLogin }: HeroL
         </Button>
       </form>
 
-      <div className="flex items-center gap-3">
-        <span className="h-px flex-1 bg-border" aria-hidden />
-        <span className="text-xs text-muted-foreground">OR</span>
-        <span className="h-px flex-1 bg-border" aria-hidden />
-      </div>
+      <Separator />
 
       <button
         type="button"
