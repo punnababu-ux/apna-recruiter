@@ -92,7 +92,7 @@ export function HeroLeadCard({ className, onContinue, onEnterpriseLogin }: HeroL
         className="inline-flex items-center gap-2 text-sm font-bold text-foreground underline underline-offset-2"
       >
         <Building2 className="size-4" aria-hidden />
-        Click here for Enterprise login
+        Enterprise login
       </button>
 
       <p className="text-xs text-muted-foreground">
