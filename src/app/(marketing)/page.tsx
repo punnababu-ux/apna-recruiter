@@ -74,7 +74,13 @@ export default function HomePage() {
                   Early Talent Platform
                 </>
               }
-              description={HOME_HERO.description}
+              description={
+                <>
+                  {HOME_HERO.description}
+                  <br />
+                  {HOME_HERO.tagline}
+                </>
+              }
             />
 
             <dl className="flex flex-wrap gap-x-12 gap-y-6">
@@ -90,8 +96,6 @@ export default function HomePage() {
                 </div>
               ))}
             </dl>
-
-            <p className="text-sm font-medium text-muted-foreground">{HOME_HERO.tagline}</p>
           </div>
 
           {/* max-w-md is already set inside HeroLeadCard itself — shrink-0
