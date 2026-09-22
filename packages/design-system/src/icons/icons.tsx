@@ -38,7 +38,7 @@ export {
   PanelLeft, PanelLeftIcon, Paperclip, Pause, Pencil,
   Phone, PhoneCall, PhoneIncoming, PhoneOff, PhoneOutgoing,
   Play, Plus, PowerOff, Puzzle, QrCode,
-  RefreshCw, RotateCcw, Save, Search, Send,
+  Quote, RefreshCw, RotateCcw, Save, Search, Send,
   Settings, Shapes, Share2, ShieldAlert, ShieldCheck,
   Sliders, SlidersHorizontal, Smartphone, Sparkles, Star,
   StickyNote, Sun, TableIcon, Table2, Tag,

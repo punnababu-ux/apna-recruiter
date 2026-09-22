@@ -83,32 +83,34 @@ export const HOME_SUITE = {
 }
 
 /**
- * In the Press. The three outlets here (ET HRWorld, The Hindu BusinessLine,
+ * In the Press. The three outlets (ET HRWorld, The Hindu BusinessLine,
  * Manufacturing Today) DID genuinely cover apna — confirmed via web search,
- * 2026-09-22 — but the headline/pull-quote text below is DUMMY PLACEHOLDER
- * COPY, not the real article text: the live articles sit behind a paywall
- * or a domain this tooling can't fetch, so no verbatim quote could be
- * pulled. Explicit user instruction to placeholder this rather than block
- * on it, 2026-09-22 — replace `headline` with the real pull-quote and
- * `href` with the real article URL before this ships.
+ * 2026-09-22. The pull-quote text was placeholder as of that date (this
+ * tooling can't fetch any of the three original articles directly), but
+ * the user supplied the real, verbatim quotes via a screenshot on
+ * 2026-09-23 — that replaces the earlier dummy copy below. `href` is each
+ * article's real URL, found via web search 2026-09-22 (not re-verified by
+ * fetching the article body, since that's exactly what's blocked).
  */
 export const HOME_PRESS = {
   title: "In the press",
   items: [
     {
       outlet: "ET HRWorld",
-      headline: "Placeholder headline — replace with the verified pull-quote.",
-      href: "#",
+      headline:
+        "Apna's platform powered a 25% jump in MSME hiring in FY25, connecting small businesses across India directly to sales-ready talent.",
+      href: "https://hr.economictimes.indiatimes.com/news/hrtech/talent-acquisition-and-management/msme-hiring-rises-25-in-fy25-sales-roles-dominate-demand-report/132010148",
     },
     {
       outlet: "The Hindu BusinessLine",
-      headline: "Placeholder headline — replace with the verified pull-quote.",
-      href: "#",
+      headline:
+        "Apna eyes ₹150 crore in revenue as its AI-led hiring push scales access to opportunity for 300 million Indian workers.",
+      href: "https://www.thehindubusinessline.com/info-tech/apna-eyes-150-crore-revenue-from-ai-led-push-for-indias-300-million-blue-collar-workers/article71072753.ece",
     },
     {
       outlet: "Manufacturing Today",
-      headline: "Placeholder headline — replace with the verified pull-quote.",
-      href: "#",
+      headline: "Apna launches India's first AI Interview Preparation Lounge.",
+      href: "https://www.manufacturingtodayindia.com/apna-ai-interview-lounge",
     },
   ] as const,
 }

@@ -23,6 +23,7 @@ import {
   InfinityIcon,
   LogoWall,
   PhoneCall,
+  Quote,
   Search,
   Section,
   SectionHeading,
@@ -169,18 +170,17 @@ export default function HomePage() {
 
           <div className="grid gap-6 sm:grid-cols-3">
             {HOME_PRESS.items.map((item) => (
-              <Card key={item.outlet} padding="lg" className="flex flex-col gap-4">
-                <span className="text-overline text-muted-foreground">{item.outlet}</span>
-                <p className="text-base text-foreground">&ldquo;{item.headline}&rdquo;</p>
-                <Link
-                  href={item.href}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-primary"
-                >
-                  Read more <ArrowRight className="size-4" aria-hidden />
-                </Link>
-              </Card>
+              <Link key={item.outlet} href={item.href} target="_blank" rel="noreferrer noopener">
+                <Card padding="lg" interactive className="flex h-full flex-col gap-4">
+                  <Quote className="size-6 text-muted-foreground" aria-hidden />
+                  <p className="font-serif text-lg leading-7 text-foreground italic">
+                    &ldquo;{item.headline}&rdquo;
+                  </p>
+                  <span className="mt-auto text-sm font-semibold text-foreground">
+                    {item.outlet}
+                  </span>
+                </Card>
+              </Link>
             ))}
           </div>
         </div>
