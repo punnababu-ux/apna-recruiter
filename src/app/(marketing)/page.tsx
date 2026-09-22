@@ -29,7 +29,7 @@ import {
   type IconComponent,
 } from "@apna/design-system"
 import { HeroLeadCard } from "@/components/marketing/hero-lead-card"
-import { HOME_HERO, HOME_SUITE, HOME_TRUSTED_BY } from "@/content/home"
+import { HOME_HERO, HOME_PRESS, HOME_SUITE, HOME_TRUSTED_BY } from "@/content/home"
 import { CLIENT_LOGOS } from "@/content/logos"
 import { PRODUCT_LINKS } from "@/content/nav"
 
@@ -159,6 +159,29 @@ export default function HomePage() {
                 </Card>
               )
             })}
+          </div>
+        </div>
+      </Section>
+
+      <Section tone="card" size="md">
+        <div className="flex flex-col gap-10">
+          <SectionHeading level={2} align="center" title={HOME_PRESS.title} />
+
+          <div className="grid gap-6 sm:grid-cols-3">
+            {HOME_PRESS.items.map((item) => (
+              <Card key={item.outlet} padding="lg" className="flex flex-col gap-4">
+                <span className="text-overline text-muted-foreground">{item.outlet}</span>
+                <p className="text-base text-foreground">&ldquo;{item.headline}&rdquo;</p>
+                <Link
+                  href={item.href}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-primary"
+                >
+                  Read more <ArrowRight className="size-4" aria-hidden />
+                </Link>
+              </Card>
+            ))}
           </div>
         </div>
       </Section>

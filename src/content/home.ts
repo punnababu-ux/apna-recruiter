@@ -81,3 +81,34 @@ export const HOME_SUITE = {
     { name: "apna Unlimited", tagline: "Post unlimited jobs in one plan", icon: "infinity" },
   ] as const,
 }
+
+/**
+ * In the Press. The three outlets here (ET HRWorld, The Hindu BusinessLine,
+ * Manufacturing Today) DID genuinely cover apna — confirmed via web search,
+ * 2026-09-22 — but the headline/pull-quote text below is DUMMY PLACEHOLDER
+ * COPY, not the real article text: the live articles sit behind a paywall
+ * or a domain this tooling can't fetch, so no verbatim quote could be
+ * pulled. Explicit user instruction to placeholder this rather than block
+ * on it, 2026-09-22 — replace `headline` with the real pull-quote and
+ * `href` with the real article URL before this ships.
+ */
+export const HOME_PRESS = {
+  title: "In the press",
+  items: [
+    {
+      outlet: "ET HRWorld",
+      headline: "Placeholder headline — replace with the verified pull-quote.",
+      href: "#",
+    },
+    {
+      outlet: "The Hindu BusinessLine",
+      headline: "Placeholder headline — replace with the verified pull-quote.",
+      href: "#",
+    },
+    {
+      outlet: "Manufacturing Today",
+      headline: "Placeholder headline — replace with the verified pull-quote.",
+      href: "#",
+    },
+  ] as const,
+}
