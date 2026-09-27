@@ -14,6 +14,14 @@ import { cn } from "@/lib/utils"
  * this package's output. The caller renders whichever it prefers and hands
  * this the element — the same "pass pre-styled nodes" rule `PricingCard`
  * documents for the same reason.
+ *
+ * `w-full` on the root is load-bearing: every known caller sits inside a
+ * `flex-col items-center` wrapper (for the centered heading above it), and
+ * under `items-center` a flex item's cross-axis width shrinks to its own
+ * max-content size rather than the available width — `overflow-x-auto`
+ * then has nothing to clip against, and the full unscrolled logo row
+ * overflows the page. `w-full` forces the intended width so the scroll
+ * container actually contains its content instead of just wrapping it.
  */
 
 export interface LogoWallItem {
@@ -44,7 +52,7 @@ function LogoWall({
   return (
     <div
       data-slot="logo-wall"
-      className={cn("no-scrollbar -mx-4 overflow-x-auto px-4", className)}
+      className={cn("no-scrollbar w-full -mx-4 overflow-x-auto px-4", className)}
       {...props}
     >
       <div className="flex w-max items-center gap-14">

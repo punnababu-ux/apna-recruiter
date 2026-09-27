@@ -558,17 +558,19 @@
   --chip-solid:            var(--color-gray-100);
   --chip-solid-foreground: var(--color-gray-900);
 
-  /* Checkout inset (dark mode only) — one step off pure white. The outer
+  /* Checkout inset (dark mode only) — stepped off pure white. The outer
    * dark-plum card (--gradient-checkout-unlimited, unchanged, fixed dark in
    * both themes) stops contrasting against the page once the page itself
    * goes near-black in dark mode, so the "card nested in a card" cue
-   * disappears and a pure-white inset just floats. gray-100 keeps the text
-   * pair (still gray-900/-500, unchanged) fully legible while reading as a
-   * deliberately tinted panel rather than a stray white rectangle. Border
-   * and hover step down to match. */
-  --surface-checkout-inset:        var(--color-gray-100);
-  --surface-checkout-inset-border: var(--color-gray-300);
-  --surface-checkout-inset-hover:  var(--color-gray-200);
+   * disappears and a pure-white inset just floats. gray-900/-500 text
+   * (unchanged) stays legible against any of these steps.
+   * First attempt used gray-100 (#F4F4F5) — confirmed live (2026-09-28) that
+   * it's only 11/255 off white, too subtle to read as an intentional tint
+   * at normal viewing size; it read as "still white". gray-200 (#E4E4E7) is
+   * the visibly-distinct step. Border and hover move down with it. */
+  --surface-checkout-inset:        var(--color-gray-200);
+  --surface-checkout-inset-border: var(--color-gray-400);
+  --surface-checkout-inset-hover:  var(--color-gray-300);
 
   /* No dark override for --checkout-discount-fg/-bg (or --checkout-primary,
    * --checkout-info, --checkout-ribbon below it in :root): every checkout-*
