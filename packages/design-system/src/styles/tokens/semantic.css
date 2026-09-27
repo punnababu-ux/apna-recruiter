@@ -375,23 +375,28 @@
    * `!important`) rule in index.html: `background: rgba(0,0,0,0.08)`. */
   --surface-checkout-track: rgba(0, 0, 0, 0.08);
 
-  /* Checkout inset — a fixed-white nested card, used for the white content
-   * box inside the always-dark Unlimited side-card (and any similar "card
-   * inside a dark card" pattern). Fixed across themes on purpose: the outer
-   * card is deliberately dark regardless of app theme (see
-   * --gradient-checkout-unlimited below), so the inner box must stay
-   * deliberately light for the same contrast to keep working in dark mode.
-   * Its text needs its OWN fixed dark-on-light pair, distinct from
-   * --surface-checkout-hero-fg — that one flips with .dark (paired with the
-   * theme-aware hero gradient), which is exactly wrong here and was the
-   * cause of near-invisible text on this always-white box in dark mode. */
+  /* Checkout inset — a nested card, used for the light content box inside
+   * the always-dark Unlimited side-card (and any similar "card inside a
+   * dark card" pattern). DELIBERATELY light in both themes — the outer card
+   * is dark regardless of app theme (see --gradient-checkout-unlimited
+   * below), so the inner box must stay light for the same contrast to keep
+   * working in dark mode. Its text needs its OWN fixed dark-on-light pair,
+   * distinct from --surface-checkout-hero-fg — that one flips with .dark
+   * (paired with the theme-aware hero gradient), which is exactly wrong
+   * here and was the cause of near-invisible text on this box in dark mode.
+   *
+   * The background itself (not the text pair) gets a ONE-STEP dark-mode
+   * tint below — pure white read as a glaring, disconnected box once the
+   * outer dark card stopped contrasting against an also-near-black page.
+   * gray-900 text stays legible against gray-100 just as it does against
+   * gray-0, so only the surface, border and hover steps move. */
   --surface-checkout-inset:           var(--color-gray-0);
   --surface-checkout-inset-border:    var(--color-gray-200);
   --surface-checkout-inset-fg:        var(--color-gray-900);
   --surface-checkout-inset-fg-muted:  var(--color-gray-500);
-  /* Hover for a CTA sitting ON the fixed-white inset. Fixed like the rest
-   * of the family: --muted would flip to near-black in dark mode on a box
-   * that stays white. */
+  /* Hover for a CTA sitting ON the inset card. Fixed like the rest of the
+   * family: --muted would flip to near-black in dark mode on a box that
+   * otherwise stays light. */
   --surface-checkout-inset-hover:     var(--color-gray-100);
 
   /* Checkout primary — the self-checkout surface's CTA/discount/status
@@ -552,6 +557,18 @@
   /* Chip — inverted so the solid chip still reads against the dark track. */
   --chip-solid:            var(--color-gray-100);
   --chip-solid-foreground: var(--color-gray-900);
+
+  /* Checkout inset (dark mode only) — one step off pure white. The outer
+   * dark-plum card (--gradient-checkout-unlimited, unchanged, fixed dark in
+   * both themes) stops contrasting against the page once the page itself
+   * goes near-black in dark mode, so the "card nested in a card" cue
+   * disappears and a pure-white inset just floats. gray-100 keeps the text
+   * pair (still gray-900/-500, unchanged) fully legible while reading as a
+   * deliberately tinted panel rather than a stray white rectangle. Border
+   * and hover step down to match. */
+  --surface-checkout-inset:        var(--color-gray-100);
+  --surface-checkout-inset-border: var(--color-gray-300);
+  --surface-checkout-inset-hover:  var(--color-gray-200);
 
   /* No dark override for --checkout-discount-fg/-bg (or --checkout-primary,
    * --checkout-info, --checkout-ribbon below it in :root): every checkout-*
