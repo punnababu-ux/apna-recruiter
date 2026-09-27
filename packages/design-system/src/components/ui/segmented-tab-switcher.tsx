@@ -66,6 +66,20 @@ export interface SegmentedTabSwitcherProps<V extends string = string> {
   /** Desktop description-line colour (both states). Defaults to
    *  `text-muted-foreground`. */
   mutedClassName?: string
+  /** Surface treatment for the active desktop pill, replacing the default
+   *  `bg-card shadow-sm` outright. Pass the complete string — a partial
+   *  override (say `"shadow-none"`) would drop the fill rather than merge
+   *  with it. Use an inset ring, not `border`, for a stroke: a real border
+   *  grows the pill and therefore the whole track. */
+  activeItemClassName?: string
+  /** The mobile carousel is full-bleed: it cancels the parent's gutter and
+   *  re-adds it inside, so the scroll area reaches the screen edge while the
+   *  first and last chips keep a gutter that scrolls away. These two must
+   *  mirror whatever gutter the PARENT uses — override both together when it
+   *  isn't the default `px-4 sm:px-10`, or the carousel over/undershoots and
+   *  can cause horizontal page scroll. */
+  mobileBleedClassName?: string
+  mobileGutterClassName?: string
   className?: string
 }
 
@@ -78,6 +92,9 @@ export function SegmentedTabSwitcher<V extends string = string>({
   mobileActiveClassName,
   inactiveClassName = "text-muted-foreground",
   mutedClassName = "text-muted-foreground",
+  activeItemClassName = "bg-card shadow-sm",
+  mobileBleedClassName = "-mx-4 sm:-mx-10",
+  mobileGutterClassName = "px-4 sm:px-10",
   className,
 }: SegmentedTabSwitcherProps<V>) {
   return (
@@ -101,8 +118,8 @@ export function SegmentedTabSwitcher<V extends string = string>({
               onClick={() => onValueChange(v)}
               aria-pressed={active}
               className={cn(
-                "flex flex-1 flex-col items-start justify-center gap-1 rounded-full px-8 py-3 text-left transition-all duration-200",
-                active ? "bg-card shadow-sm" : "hover:bg-card/60"
+                "flex flex-1 flex-col items-start justify-center gap-1 rounded-full px-8 py-3 text-left transition-all duration-200 outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+                active ? activeItemClassName : "hover:bg-card/60"
               )}
             >
               {/* 18px/28 label with 24px glyphs — the switcher sets the icon
@@ -119,13 +136,7 @@ export function SegmentedTabSwitcher<V extends string = string>({
                 {label}
               </span>
               {description && (
-                <span
-                  className={cn(
-                    "text-xs leading-tight",
-                    mutedClassName,
-                    !active && "opacity-70"
-                  )}
-                >
+                <span className={cn("text-xs leading-4", mutedClassName)}>
                   {description}
                 </span>
               )}
@@ -137,7 +148,8 @@ export function SegmentedTabSwitcher<V extends string = string>({
       {/* Mobile — horizontally-scrolling icon+label chip carousel, full-bleed
           to the viewport edge (the classic "negative margin on the scroll
           container, matching padding on its content" trick): the outer div
-          cancels this component's usual parent gutter (px-4 sm:px-10) so
+          cancels the parent's gutter (mobileBleedClassName, default
+          px-4 sm:px-10 — override it when the parent differs) so
           the scrollable area itself reaches the true screen edge, while the
           inner row re-adds that same padding so the first/last chip still
           starts with a visual gutter — one that scrolls away as the user
@@ -145,7 +157,12 @@ export function SegmentedTabSwitcher<V extends string = string>({
           itself (that painted a visible rectangular tint behind/around the
           chips) — each chip carries its own pill background instead, same
           as the source design. */}
-      <div className="no-scrollbar -mx-4 overflow-x-auto pb-1 sm:-mx-10 md:hidden">
+      <div
+        className={cn(
+          "no-scrollbar overflow-x-auto pb-1 md:hidden",
+          mobileBleedClassName
+        )}
+      >
         {/* `w-max` is load-bearing: without it, this row (a plain block-level
             flex child) sizes to fill the *viewport*, not its own content —
             its overflowing children then render past its own box and
@@ -153,7 +170,7 @@ export function SegmentedTabSwitcher<V extends string = string>({
             at max scroll. `w-max` makes the row grow to fit all children
             (+ both paddings), which is what the scrollable area should be
             measuring in the first place. */}
-        <div className="flex w-max gap-2 px-4 sm:px-10">
+        <div className={cn("flex w-max gap-2", mobileGutterClassName)}>
           {items.map(({ value: v, label, icon }) => {
             const active = v === value
             return (

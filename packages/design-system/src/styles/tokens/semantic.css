@@ -150,6 +150,17 @@
   --chart-5: var(--color-apna-green-300);
 
   /* --------------------------------------------------------------------------
+   * Chip — solid selected state
+   *
+   * A high-contrast ink chip on a translucent track, distinct from the
+   * `secondary` surface ChipTabs uses by default. Theme-aware: the track it
+   * sits on (--surface-checkout-track) inverts in dark, so a fixed dark chip
+   * would disappear into it.
+   * ------------------------------------------------------------------------ */
+  --chip-solid:            var(--color-gray-800);
+  --chip-solid-foreground: var(--color-gray-0);
+
+  /* --------------------------------------------------------------------------
    * Radius — intent roles
    *
    * Describes WHAT is being rounded, not HOW MUCH. Components prefer these
@@ -351,6 +362,14 @@
     linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 40%, #F1F5F9 80%, #E2E8F0 100%);
   --surface-checkout-hero-fg:       var(--color-gray-900);
   --surface-checkout-hero-fg-muted: var(--color-gray-500);
+  /* A third, darker secondary step between fg (900) and fg-muted (500).
+   * The finalized designs use gray/700 for this surface's secondary ink in
+   * several unrelated places — inactive tab labels + their glyphs, every
+   * tab description, the "Available credits" label, and body subtitles —
+   * so it earns a role rather than an opacity hack. Figma's ramp is
+   * Tailwind's cool gray (#374151); ours is zinc, so this is the nearest
+   * step, not an exact match. */
+  --surface-checkout-hero-fg-secondary: var(--color-gray-700);
   /* Source's tab-selector track is a translucent black overlay (not a solid
    * gray fill, and no border) — confirmed from the winning (later,
    * `!important`) rule in index.html: `background: rgba(0,0,0,0.08)`. */
@@ -370,6 +389,10 @@
   --surface-checkout-inset-border:    var(--color-gray-200);
   --surface-checkout-inset-fg:        var(--color-gray-900);
   --surface-checkout-inset-fg-muted:  var(--color-gray-500);
+  /* Hover for a CTA sitting ON the fixed-white inset. Fixed like the rest
+   * of the family: --muted would flip to near-black in dark mode on a box
+   * that stays white. */
+  --surface-checkout-inset-hover:     var(--color-gray-100);
 
   /* Checkout primary — the self-checkout surface's CTA/discount/status
    * green. Now that --color-apna-green itself is anchored at this same
@@ -381,16 +404,28 @@
   --checkout-primary:            var(--color-apna-green-600);
   --checkout-primary-hover:       var(--color-apna-green-700);
   --checkout-primary-foreground: var(--color-gray-0);
-  --checkout-discount-fg:        var(--color-checkout-discount-fg);
-  --checkout-discount-bg:        var(--color-apna-green-100);
+  /* Discount pill — the finalized designs pair a neutral gray-200 chip with
+   * apna-green-700 text, not the green-on-green tint this used to carry.
+   * `--color-apna-green-700` (#186954) is Figma's value exactly; gray-200
+   * (#E4E4E7) is visually indistinguishable from its #E5E7EB. The fg used to
+   * point at `--color-checkout-discount-fg`, which is also the name
+   * index.css's @theme block gives its own alias of this very token — a
+   * shadowed, self-referential-looking pair. It now points straight at the
+   * ramp and the orphan primitive is gone. */
+  --checkout-discount-fg:        var(--color-apna-green-700);
+  --checkout-discount-bg:        var(--color-gray-200);
   /* Testimonial avatar — the design's brighter "CoreGreen" (#2BB792), not
    * the checkout CTA green; apna-green-400 (#3EBA8D) is the existing ramp
    * step that lands on it. Quote/name ink just uses --foreground. */
   --checkout-avatar:             var(--color-apna-green-400);
-  /* The "Recommended" ribbon is blue, not the checkout brand green — but
-   * now that apna-sky includes the exact source blue (#3B82F6, the 500
-   * step), it just uses the ordinary --info role instead of a dedicated
-   * checkout-scoped token. See job-credit-bundles.tsx. */
+  /* The "Recommended" ribbon is blue, not the checkout brand green. It needs
+   * its own checkout-scoped token rather than --info: --info resolves to
+   * apna-sky-600 (#2563EB) and remaps to apna-sky-400 in dark, whereas this
+   * ribbon sits on a surface that is deliberately light in both themes and
+   * is drawn at apna-sky-500 (#3B82F6) — a step the design system already
+   * carries at exactly that hex. Consumed via Badge's `ribbon` variant. */
+  --checkout-ribbon:             var(--color-apna-sky-500);
+  --checkout-ribbon-foreground:  var(--color-gray-0);
 
   /* Checkout unlimited promo — dark noir card background for the
    * "apna Unlimited" promo banner. Reuses the existing apna-plum ramp
@@ -508,8 +543,15 @@
     linear-gradient(135deg, var(--color-gray-950) 0%, var(--color-gray-900) 50%, var(--color-gray-800) 100%);
   --surface-checkout-hero-fg:       var(--color-gray-50);
   --surface-checkout-hero-fg-muted: var(--color-gray-400);
+  /* Sits between the two, as it does in light. No dark design exists to
+   * port — this is an original value, like the dark hero gradient above. */
+  --surface-checkout-hero-fg-secondary: var(--color-gray-300);
   /* Mirrors the light track's alpha-black overlay, inverted for a dark hero. */
   --surface-checkout-track: rgba(255, 255, 255, 0.08);
+
+  /* Chip — inverted so the solid chip still reads against the dark track. */
+  --chip-solid:            var(--color-gray-100);
+  --chip-solid-foreground: var(--color-gray-900);
 
   /* Checkout primary — brand green stays the same hex (it already reads
    * fine on dark), only the discount tint needs a dark-safe pairing. */

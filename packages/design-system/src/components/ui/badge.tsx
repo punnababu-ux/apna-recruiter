@@ -25,6 +25,14 @@ const badgeVariants = cva(
         ghost:
           "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",
         link: "text-primary underline-offset-4 hover:underline",
+        /* The two checkout/pricing-card pills. Both sit on surfaces that stay
+         * light in either theme, so they use the fixed checkout-* roles rather
+         * than --info / --success, which remap in dark. Pair `ribbon` with
+         * size="ribbon" for the corner treatment. */
+        ribbon:
+          "bg-checkout-ribbon font-semibold text-checkout-ribbon-foreground",
+        discount:
+          "bg-checkout-discount-bg font-semibold text-checkout-discount-fg",
       },
       size: {
         default: "h-5 px-2 py-0.5 text-xs",
@@ -32,6 +40,10 @@ const badgeVariants = cva(
         /* Marketing "eyebrow" pills sit above a headline and need to read at
          * arm's length, unlike the in-table and in-card badges above. */
         lg: "h-7 gap-1.5 px-3 py-1 text-xs [&>svg]:size-3.5!",
+        /* Card corner ribbon: square except for the inside corner, so it sits
+         * flush in the card's top-right. The card must clip it
+         * (`overflow-hidden`). */
+        ribbon: "h-auto rounded-none rounded-bl-xl px-4 py-0.5 text-xs [&>svg]:size-3.5!",
       },
     },
     defaultVariants: {

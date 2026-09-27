@@ -78,11 +78,13 @@
   /* Checkout hero — fixed light surface, see semantic.css */
   --color-checkout-hero-fg:       var(--surface-checkout-hero-fg);
   --color-checkout-hero-fg-muted: var(--surface-checkout-hero-fg-muted);
+  --color-checkout-hero-fg-secondary: var(--surface-checkout-hero-fg-secondary);
   --color-checkout-track:         var(--surface-checkout-track);
   --color-checkout-inset:            var(--surface-checkout-inset);
   --color-checkout-inset-border:     var(--surface-checkout-inset-border);
   --color-checkout-inset-fg:         var(--surface-checkout-inset-fg);
   --color-checkout-inset-fg-muted:   var(--surface-checkout-inset-fg-muted);
+  --color-checkout-inset-hover:      var(--surface-checkout-inset-hover);
 
   /* Checkout primary — the self-checkout surface's own brand green */
   --color-checkout-avatar:             var(--checkout-avatar);
@@ -91,6 +93,8 @@
   --color-checkout-primary-foreground: var(--checkout-primary-foreground);
   --color-checkout-discount-fg:        var(--checkout-discount-fg);
   --color-checkout-discount-bg:        var(--checkout-discount-bg);
+  --color-checkout-ribbon:             var(--checkout-ribbon);
+  --color-checkout-ribbon-foreground:  var(--checkout-ribbon-foreground);
   --color-checkout-unlimited-line:      var(--checkout-unlimited-border);
   --color-checkout-unlimited-line-hover: var(--checkout-unlimited-border-hover);
   --color-checkout-unlimited-cta:       var(--checkout-unlimited-cta-bg);
@@ -117,6 +121,10 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+
+  /* Chip — solid selected state, see semantic.css */
+  --color-chip-solid:            var(--chip-solid);
+  --color-chip-solid-foreground: var(--chip-solid-foreground);
 
   /* ------------------------------------------------------------------------
    * Typography

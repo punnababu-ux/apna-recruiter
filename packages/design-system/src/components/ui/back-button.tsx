@@ -12,7 +12,7 @@
  */
 
 import * as React from "react"
-import { ChevronLeft } from "@/icons/icons"
+import { ArrowLeft, ChevronLeft } from "@/icons/icons"
 import { useRouter } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
@@ -21,8 +21,15 @@ import { cn } from "@/lib/utils"
 function BackButton({
   onClick,
   className,
+  variant = "outline",
   ...props
-}: Omit<React.ComponentProps<typeof Button>, "children" | "variant" | "size">) {
+}: Omit<React.ComponentProps<typeof Button>, "children" | "variant" | "size"> & {
+  /** "outline" (default) — a 32px bordered circle with a chevron, for
+   *  in-page and wizard back actions.
+   *  "ghost" — a bare 24px arrow in a 40px hit box, for a product header
+   *  where the glyph sits directly on the page surface. */
+  variant?: "outline" | "ghost"
+}) {
   const router = useRouter()
 
   const handleBack = (e: Parameters<NonNullable<React.ComponentProps<typeof Button>["onClick"]>>[0]) => {
@@ -33,16 +40,18 @@ function BackButton({
     }
   }
 
+  const ghost = variant === "ghost"
+
   return (
     <Button
-      variant="outline"
-      size="icon-sm"
+      variant={variant}
+      size={ghost ? "icon-lg" : "icon-sm"}
       aria-label="Go back"
       onClick={handleBack}
       className={cn("shrink-0", className)}
       {...props}
     >
-      <ChevronLeft className="size-4" />
+      {ghost ? <ArrowLeft className="size-6" /> : <ChevronLeft className="size-4" />}
     </Button>
   )
 }

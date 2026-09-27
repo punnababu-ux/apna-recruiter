@@ -33,6 +33,7 @@ export function ChipTabs<V extends string = string>({
   className,
   size = "md",
   variant = "default",
+  itemClassName,
   "aria-label": ariaLabel,
   "aria-invalid": ariaInvalid,
 }: {
@@ -47,8 +48,14 @@ export function ChipTabs<V extends string = string>({
    *   surface, inactive chips text-only. Use for view-switching tabs.
    * - "choice" — single-select form field: inactive chips are filled
    *   grey, the selected chip gets a green (brand) tint + green border.
+   * - "solid" — high-contrast ink chip on a translucent track, for a
+   *   compact switcher sitting on a tinted surface rather than on the page
+   *   background. Inactive chips are text-only and un-bolded.
    */
-  variant?: "default" | "choice"
+  variant?: "default" | "choice" | "solid"
+  /** Layout-only overrides for each chip (padding, width). Not for colour —
+   *  that belongs to `variant`. */
+  itemClassName?: string
   "aria-label"?: string
   /** When true (e.g. a required, unselected field), inactive chips gain a
    *  destructive outline to signal a selection is needed. */
@@ -63,7 +70,11 @@ export function ChipTabs<V extends string = string>({
       {items.map((item) => {
         const active = value === item.value
         const stateClass =
-          variant === "choice"
+          variant === "solid"
+            ? active
+              ? "border-transparent bg-chip-solid font-semibold text-chip-solid-foreground"
+              : "border-transparent font-regular text-muted-foreground hover:text-foreground"
+            : variant === "choice"
             ? active
               ? "border-primary bg-accent text-accent-foreground"
               : ariaInvalid
@@ -83,9 +94,11 @@ export function ChipTabs<V extends string = string>({
             disabled={item.disabled}
             onClick={() => onValueChange(item.value)}
             className={cn(
-              "inline-flex items-center gap-1 rounded-full border font-medium transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-40",
+              "inline-flex items-center justify-center gap-1 rounded-full border font-medium transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-40",
               size === "sm" ? "h-7 px-2.5 text-xs" : "h-8 px-3 text-sm",
-              stateClass
+              variant === "solid" && size === "md" && "px-4",
+              stateClass,
+              itemClassName
             )}
           >
             {item.label}

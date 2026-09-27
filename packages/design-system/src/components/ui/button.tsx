@@ -44,6 +44,17 @@ const buttonVariants = cva(
         success:
           "bg-success/10 text-success border border-success/30 hover:bg-success/20 hover:border-success/50 focus-visible:border-success/50 focus-visible:ring-success/20 dark:bg-success/20 dark:hover:bg-success/30 dark:focus-visible:ring-success/40",
         link: "text-primary underline-offset-4 hover:underline",
+        /* Self-checkout CTAs. `--checkout-primary` is fixed across themes
+         * (--primary brightens a step in dark), matching a surface that is
+         * deliberately light in both. */
+        checkout:
+          "bg-checkout-primary text-checkout-primary-foreground hover:bg-checkout-primary-hover active:bg-checkout-primary-hover",
+        /* The secondary CTA on a fixed-white inset card — e.g. the white box
+         * inside the always-dark Unlimited card. `outline` cannot be used
+         * there: it carries dark: overrides that would paint a dark button on
+         * a box that stays white. */
+        "checkout-inset":
+          "border-checkout-inset-border bg-checkout-inset text-checkout-inset-fg hover:bg-checkout-inset-hover",
       },
       size: {
         default:
