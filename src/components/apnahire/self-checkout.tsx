@@ -25,8 +25,8 @@
 
 import * as React from "react"
 import { useRouter } from "next/navigation"
-import { Wallet, ChevronRight } from "@apna/design-system"
-import { Button, BackButton } from "@apna/design-system"
+import { Wallet } from "@apna/design-system"
+import { ApnaLogo, Button, BackButton } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 
 import {
@@ -244,47 +244,73 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
              above is published into it rather than rendered here. ── */
         <header
           className={cn(
-            "sticky top-0 z-40 flex items-center justify-between border-b px-4 py-3 transition-[background-color,border-color,box-shadow] duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] sm:px-6",
+            "sticky top-0 z-40 border-b transition-[background-color,border-color,box-shadow] duration-300 ease-standard",
             isScrolled
               ? "border-border bg-card shadow-sm"
-              : "border-transparent bg-transparent shadow-none"
+              : "border-checkout-track bg-transparent shadow-none"
           )}
         >
-          <BackButton
-            onClick={() => router.push("/apnahire/dashboard")}
-            aria-label="Back to dashboard"
-          />
+          {/* Same gutter + column as the hero and the tab bodies, so the back
+              arrow and the credits pill line up with the H1 and the cards
+              rather than hugging the viewport edge. */}
+          <div className="px-4 sm:px-8 lg:px-12">
+            <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between">
+              {/* -ml-2 pulls the 24px glyph flush with the column edge; the
+                  remaining gap-1 plus the button's own 8px inset is the 12px
+                  Figma measures from glyph edge to logo edge. */}
+              <div className="flex flex-1 items-center gap-1">
+                <BackButton
+                  variant="ghost"
+                  onClick={() => router.push("/apnahire/dashboard")}
+                  aria-label="Back to dashboard"
+                  className="-ml-2 text-checkout-hero-fg"
+                />
+                <ApnaLogo />
+              </div>
 
-          <div
-            className={cn(
-              "hidden items-center gap-1 rounded-full border border-border bg-muted p-1 transition-[opacity,translate] duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] md:flex",
-              showCompactTabs
-                ? "translate-y-0 opacity-100"
-                : "pointer-events-none -translate-y-2 opacity-0"
-            )}
-          >
-            {PRICING_TABS.map((tab) => (
-              <button
-                key={tab.value}
-                type="button"
-                onClick={() => setActiveTab(tab.value)}
+              {/* Revealed from lg, not md: with the logo and the full-size
+                  credits pill in the row, four chips no longer fit between
+                  them at tablet widths. */}
+              <div
                 className={cn(
-                  "inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-sm font-semibold transition-colors [&_svg]:size-5",
-                  activeTab === tab.value
-                    ? "bg-card text-checkout-primary shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
+                  "hidden items-center gap-1 rounded-full border border-border bg-muted p-1 transition-[opacity,translate] duration-300 ease-standard lg:flex",
+                  showCompactTabs
+                    ? "translate-y-0 opacity-100"
+                    : "pointer-events-none -translate-y-2 opacity-0"
                 )}
               >
-                {tab.icon}
-                {PRICING_TAB_SHORT_LABELS[tab.value]}
-              </button>
-            ))}
-          </div>
+                {PRICING_TABS.map((tab) => (
+                  <button
+                    key={tab.value}
+                    type="button"
+                    onClick={() => setActiveTab(tab.value)}
+                    className={cn(
+                      "inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-sm font-semibold transition-colors [&_svg]:size-5",
+                      activeTab === tab.value
+                        ? "bg-card text-checkout-primary shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    {tab.icon}
+                    {PRICING_TAB_SHORT_LABELS[tab.value]}
+                  </button>
+                ))}
+              </div>
 
-          <Button variant="outline" size="sm" className="gap-1.5 text-xs font-medium">
-            <Wallet className="size-3.5" aria-hidden />
-            Available credits
-          </Button>
+              <div className="flex flex-1 justify-end">
+                {/* `outline` ships bg-background plus dark: overrides; this
+                    surface stays light in both themes and Figma shows no
+                    fill, hence the transparent overrides. */}
+                <Button
+                  variant="outline"
+                  className="gap-1 bg-transparent text-checkout-hero-fg-secondary dark:border-border dark:bg-transparent"
+                >
+                  <Wallet className="size-5" aria-hidden />
+                  Available credits
+                </Button>
+              </div>
+            </div>
+          </div>
         </header>
       )}
 
@@ -292,55 +318,70 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
       <div className="flex-1">
         <PricingHero activeTab={activeTab} onTabChange={setActiveTab} tabsRef={heroTabsRef} />
 
-        <div className="px-4 pb-10 sm:px-8 lg:px-12">
+        <div className="px-4 pb-12 sm:px-8 lg:px-12">
           {activeTab === "jobs" ? (
-            <div className="mx-auto flex max-w-6xl flex-col gap-4">
-              {/* Side-by-side comparison — job-credit cards in their own
-                  frame on the left, the Unlimited plan card on the right */}
-              <div className="flex flex-col items-stretch gap-4 lg:flex-row">
-                <JobCreditBundles
-                  className="flex-1"
-                  onBuyNow={handleBuyBundle}
-                  onBuySingleCredit={handleBuySingleCredit}
-                />
-                <UnlimitedSideCard onBuyNow={handleBuyUnlimitedQuarterly} />
+            <div className="mx-auto flex max-w-6xl flex-col gap-3">
+              <div className="flex flex-col gap-5">
+                {/* Side by side only from xl: the 20px price row needs ~219px
+                    of card, which three columns plus a 328px side card can't
+                    give below that. */}
+                <div className="flex flex-col gap-4 xl:flex-row">
+                  {/* Each column owns its own caption, so the caption sits
+                      under its card rather than spanning both columns. */}
+                  <div className="flex min-w-0 flex-1 flex-col gap-3">
+                    <JobCreditBundles
+                      className="flex-1"
+                      onBuyNow={handleBuyBundle}
+                      onBuySingleCredit={handleBuySingleCredit}
+                    />
+                    <p className="text-xs text-checkout-hero-fg">
+                      1 job credit = 1 classic job ・ 2 credits = 1 premium job ・ 4
+                      credits = 1 super premium job.{" "}
+                      <button
+                        type="button"
+                        className="font-semibold underline underline-offset-2"
+                      >
+                        Need more info?
+                      </button>
+                    </p>
+                  </div>
+
+                  <div className="flex w-full flex-col gap-3 xl:w-82">
+                    <UnlimitedSideCard
+                      className="flex-1"
+                      onBuyNow={handleBuyUnlimitedQuarterly}
+                    />
+                    <p className="text-xs text-checkout-hero-fg-muted">
+                      Note: This plan is valid in a single city.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Both auth states — the updated Jobs frame draws this card
+                    on the logged-in page too. */}
+                <ContactSalesCard />
               </div>
 
-              {/* Job-type legend — full-width row below both columns */}
-              <div className="px-1 text-xs text-checkout-hero-fg-muted">
-                1 credit = 1 classic job · 2 credits = 1 premium job · 4 credits = 1 super
-                premium job.{" "}
-                <button
-                  type="button"
-                  className="inline-flex items-center gap-0.5 font-semibold text-checkout-hero-fg underline underline-offset-2"
-                >
-                  Need more info?
-                  <ChevronRight className="size-3.5" aria-hidden />
-                </button>
-              </div>
-
-              {/* The logged-out page sells the custom plan here too — the
-                  logged-in Jobs tab is the only place Figma omits it. */}
-              {isLoggedOut && <ContactSalesCard className="mt-2" />}
-
-              <p className="mt-2 text-xs text-checkout-hero-fg-muted">
+              <p className="text-xs text-checkout-hero-fg-muted">
                 * 18% GST will be added at checkout
               </p>
             </div>
           ) : activeTab === "database" ? (
             <div className="mx-auto flex max-w-6xl flex-col gap-4">
-              <DatabaseCreditBundles onBuyNow={handleBuyDatabaseBundle} />
-
-              <div className="px-1 text-xs text-checkout-hero-fg-muted">
-                1 credit = 1 candidate profile unlock · 2 credits = 1 candidate profile
-                export to excel
+              <div className="flex flex-col gap-3">
+                <DatabaseCreditBundles onBuyNow={handleBuyDatabaseBundle} />
+                <p className="text-xs text-checkout-hero-fg">
+                  1 credit = 1 candidate profile unlock ・ 2 credits = 1 candidate
+                  profile export to excel
+                </p>
               </div>
 
-              <ContactSalesCard />
-
-              <p className="mt-2 text-xs text-checkout-hero-fg-muted">
-                * 18% GST will be added at checkout
-              </p>
+              <div className="flex flex-col gap-3">
+                <ContactSalesCard />
+                <p className="text-xs text-checkout-hero-fg-muted">
+                  * 18% GST will be added at checkout
+                </p>
+              </div>
             </div>
           ) : activeTab === "unlimited" ? (
             <div className="mx-auto flex max-w-6xl flex-col gap-4">

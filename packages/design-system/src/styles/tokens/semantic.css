@@ -424,8 +424,8 @@
    * ribbon sits on a surface that is deliberately light in both themes and
    * is drawn at apna-sky-500 (#3B82F6) — a step the design system already
    * carries at exactly that hex. Consumed via Badge's `ribbon` variant. */
-  --checkout-ribbon:             var(--color-apna-sky-500);
-  --checkout-ribbon-foreground:  var(--color-gray-0);
+  --checkout-info:               var(--color-apna-sky-500);
+  --checkout-info-foreground:    var(--color-gray-0);
 
   /* Checkout unlimited promo — dark noir card background for the
    * "apna Unlimited" promo banner. Reuses the existing apna-plum ramp

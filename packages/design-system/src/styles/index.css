@@ -93,8 +93,8 @@
   --color-checkout-primary-foreground: var(--checkout-primary-foreground);
   --color-checkout-discount-fg:        var(--checkout-discount-fg);
   --color-checkout-discount-bg:        var(--checkout-discount-bg);
-  --color-checkout-ribbon:             var(--checkout-ribbon);
-  --color-checkout-ribbon-foreground:  var(--checkout-ribbon-foreground);
+  --color-checkout-info:               var(--checkout-info);
+  --color-checkout-info-foreground:    var(--checkout-info-foreground);
   --color-checkout-unlimited-line:      var(--checkout-unlimited-border);
   --color-checkout-unlimited-line-hover: var(--checkout-unlimited-border-hover);
   --color-checkout-unlimited-cta:       var(--checkout-unlimited-cta-bg);

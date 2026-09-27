@@ -3,14 +3,29 @@
 /**
  * DatabaseCreditBundles — Database tab pricing cards.
  *
- * Same shape as JobCreditBundles (three credit-bundle cards, each with its
- * own "Buy now" CTA) — Figma's Database tab reuses the identical card
- * pattern with database-credit figures instead of job-credit ones.
+ * Section heading + three database-credit bundle cards, each with its own
+ * "Buy now" CTA (Figma 899:1253).
+ *
+ * Not a clone of JobCreditBundles. Three things differ from the Jobs tab
+ * (1971:8641):
+ *   - No grey track. 899:1253 has no fill, padding or radius — the heading
+ *     and cards sit straight on the page gradient, 20px apart.
+ *   - Title-led hierarchy. The credit count is 20px over a 16px price
+ *     (`emphasis="title"`); Jobs is the other way round.
+ *   - The card draws its own 1px gray/200 border; the Jobs card draws none.
+ *
+ * The legend line ("1 credit = …") and the GST footnote live at the
+ * self-checkout.tsx callsite, grouped with this block at 12px.
  */
 
 import * as React from "react"
-import { CalendarDays } from "@apna/design-system"
-import { Badge, Button, PricingCard } from "@apna/design-system"
+import {
+  Badge,
+  Button,
+  ClockFading,
+  PricingCard,
+  Sparkles,
+} from "@apna/design-system"
 import { cn } from "@/lib/utils"
 
 export type DbBundleId = "170" | "380" | "900"
@@ -27,7 +42,9 @@ interface DbBundle {
   recommended?: boolean
 }
 
-/* Figures match the Figma Database tab exactly. */
+/* Figures match the Figma Database tab exactly. The discount percentages are
+ * floored and the per-credit prices rounded in Figma — they are literal text
+ * nodes there, so never derive them. */
 const DB_BUNDLES: DbBundle[] = [
   {
     id: "170",
@@ -74,25 +91,29 @@ export function DatabaseCreditBundles({
   return (
     <div
       data-slot="database-credit-bundles"
-      className={cn("flex flex-col gap-4 rounded-2xl bg-checkout-track p-4", className)}
+      className={cn("flex flex-col gap-5", className)}
     >
-      <div className="px-1">
-        <h2 className="text-lg font-semibold text-checkout-hero-fg">Database credits</h2>
-        <p className="mt-0.5 text-sm text-checkout-hero-fg-muted">
+      <div className="flex flex-col gap-1">
+        <h2 className="text-xl font-semibold leading-tight text-checkout-hero-fg">
+          Database credits
+        </h2>
+        <p className="text-sm text-checkout-hero-fg-secondary">
           22+ filters across roles, city, experience, salary and shifts, and then unlock
           the profiles you want to talk to.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         {DB_BUNDLES.map((bundle) => (
           <PricingCard
             key={bundle.id}
+            emphasis="title"
             onClick={() => onBuyNow(bundle)}
             ribbon={
               bundle.recommended && (
-                <Badge className="rounded-none rounded-bl-xl border-transparent bg-info px-4 py-0.5 text-2xs font-semibold text-info-foreground">
+                <Badge variant="ribbon" size="ribbon">
                   Recommended
+                  <Sparkles aria-hidden />
                 </Badge>
               )
             }
@@ -100,27 +121,19 @@ export function DatabaseCreditBundles({
             subtitle={bundle.subcopy}
             meta={
               <>
-                <CalendarDays className="size-4 shrink-0" aria-hidden />
+                <ClockFading aria-hidden />
                 Valid for {bundle.validDays} days
               </>
             }
             price={`₹${bundle.price.toLocaleString("en-IN")}`}
             mrp={`₹${bundle.mrp.toLocaleString("en-IN")}`}
-            badge={
-              <Badge className="border-transparent bg-checkout-discount-bg text-2xs text-checkout-discount-fg">
-                {bundle.discountPct}% OFF
-              </Badge>
-            }
+            badge={<Badge variant="discount">{bundle.discountPct}% OFF</Badge>}
             priceSuffix={`₹${bundle.pricePerCredit} /credit`}
             cta={
               <Button
                 type="button"
-                variant="outline"
-                className={cn(
-                  "w-full font-semibold",
-                  bundle.recommended &&
-                    "border-transparent bg-checkout-primary text-checkout-primary-foreground hover:bg-checkout-primary-hover hover:text-checkout-primary-foreground"
-                )}
+                variant={bundle.recommended ? "checkout" : "outline"}
+                className="h-10 w-full"
               >
                 Buy now
               </Button>

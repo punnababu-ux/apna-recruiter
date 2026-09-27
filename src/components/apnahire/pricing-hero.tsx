@@ -21,8 +21,8 @@ import {
   Briefcase,
   Building2,
   InfinityIcon,
-  Search,
   SegmentedTabSwitcher,
+  UserSearch,
   type SegmentedTabItem,
 } from "@apna/design-system"
 import { cn } from "@/lib/utils"
@@ -36,14 +36,17 @@ export const PRICING_TABS: SegmentedTabItem<PricingTab>[] = [
   {
     value: "jobs",
     label: "Jobs",
-    description: "Post any job type with credits",
+    description: "Post a job to attract candidates",
     icon: <Briefcase className="shrink-0" aria-hidden />,
   },
   {
     value: "database",
     label: "Database",
     description: "Search & hire from 6 Cr+ candidates",
-    icon: <Search className="shrink-0" aria-hidden />,
+    // Figma draws Material `data_loss_prevention` — a head and shoulders
+    // inside a magnifier lens. `UserSearch` is the nearest lucide glyph;
+    // plain `Search` loses the "candidate" half of the meaning.
+    icon: <UserSearch className="shrink-0" aria-hidden />,
   },
   {
     value: "unlimited",
@@ -90,30 +93,42 @@ export function PricingHero({
     <section
       data-slot="pricing-hero"
       className={cn(
-        "relative flex flex-col items-center gap-8 px-4 pb-8 pt-10 sm:px-10 sm:pt-14",
+        // Same gutter as the page header and the tab bodies below, so the
+        // left-aligned H1, the tab track, the back arrow and the body cards
+        // all land on one column. Top padding is Figma's 112px less the
+        // 64px header, which is in-flow here rather than overlaid.
+        "relative flex flex-col items-center px-4 pb-8 pt-10 sm:px-8 sm:pt-12 lg:px-12",
         className
       )}
     >
-      {/* Heading — source has no subtitle under the H1 */}
-      <h1 className="text-h1 font-heading font-bold text-checkout-hero-fg text-center">
-        Everything you need to hire
-      </h1>
+      <div className="flex w-full max-w-6xl flex-col gap-8">
+        {/* Heading — source has no subtitle under the H1. `text-h1` already
+            carries font-heading and bold. */}
+        <h1 className="text-h1 text-checkout-hero-fg">Everything you need to hire</h1>
 
-      {/* Plain block wrapper (not `display: contents`) — needed so
-          `tabsRef`'s bounding box is measurable by the page's
-          IntersectionObserver; `contents` would collapse it to zero size. */}
-      <div ref={tabsRef} className="w-full max-w-6xl">
-        <SegmentedTabSwitcher
-          className="max-w-6xl"
-          items={PRICING_TABS}
-          value={activeTab}
-          onValueChange={onTabChange}
-          trackClassName="bg-checkout-track"
-          activeClassName="text-checkout-primary"
-          mobileActiveClassName="text-checkout-primary"
-          inactiveClassName="text-checkout-hero-fg-muted"
-          mutedClassName="text-checkout-hero-fg-muted"
-        />
+        {/* Plain block wrapper (not `display: contents`) — needed so
+            `tabsRef`'s bounding box is measurable by the page's
+            IntersectionObserver; `contents` would collapse it to zero size. */}
+        <div ref={tabsRef} className="w-full">
+          <SegmentedTabSwitcher
+            items={PRICING_TABS}
+            value={activeTab}
+            onValueChange={onTabChange}
+            trackClassName="bg-checkout-track"
+            activeClassName="text-checkout-primary"
+            mobileActiveClassName="text-checkout-primary"
+            inactiveClassName="text-checkout-hero-fg-secondary"
+            mutedClassName="text-checkout-hero-fg-secondary"
+            // Figma's active pill has a 1px INSIDE stroke and no shadow. An
+            // inset ring reproduces that without growing the pill — a real
+            // border would add 2px to every chip and so to the whole track.
+            activeItemClassName="bg-card inset-ring-1 inset-ring-border shadow-none"
+            // The carousel's full-bleed trick has to cancel THIS section's
+            // gutter, not the primitive's default one.
+            mobileBleedClassName="-mx-4 sm:-mx-8"
+            mobileGutterClassName="px-4 sm:px-8"
+          />
+        </div>
       </div>
     </section>
   )

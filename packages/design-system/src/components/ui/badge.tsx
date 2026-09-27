@@ -30,7 +30,7 @@ const badgeVariants = cva(
          * than --info / --success, which remap in dark. Pair `ribbon` with
          * size="ribbon" for the corner treatment. */
         ribbon:
-          "bg-checkout-ribbon font-semibold text-checkout-ribbon-foreground",
+          "bg-checkout-info font-semibold text-checkout-info-foreground",
         discount:
           "bg-checkout-discount-bg font-semibold text-checkout-discount-fg",
       },
@@ -42,8 +42,10 @@ const badgeVariants = cva(
         lg: "h-7 gap-1.5 px-3 py-1 text-xs [&>svg]:size-3.5!",
         /* Card corner ribbon: square except for the inside corner, so it sits
          * flush in the card's top-right. The card must clip it
-         * (`overflow-hidden`). */
-        ribbon: "h-auto rounded-none rounded-bl-xl px-4 py-0.5 text-xs [&>svg]:size-3.5!",
+         * (`overflow-hidden`). Deliberately no `[&>svg]:size-*` override —
+         * the base's 12px is what the designs draw, and a second !important
+         * size here would just fight it. */
+        ribbon: "h-5 rounded-none rounded-bl-xl px-4 py-0.5 text-xs",
       },
     },
     defaultVariants: {

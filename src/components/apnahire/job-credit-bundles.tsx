@@ -10,7 +10,7 @@
  */
 
 import * as React from "react"
-import { CalendarDays, ArrowRight } from "@apna/design-system"
+import { ClockFading, ArrowRight, Sparkles } from "@apna/design-system"
 import { Badge, Button, PricingCard } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 
@@ -31,7 +31,10 @@ interface Bundle {
 }
 
 /* ─────────────────────────────────────── data ────────────────────────── */
-/* Figures match the finalized self-checkout Figma design exactly. */
+/* Figures match the finalized self-checkout Figma design exactly. Every
+ * derived figure (pricePerCredit) is stored as the Figma literal rather
+ * than computed: the design rounds 1949/3 = 649.67 to 650 but truncates
+ * elsewhere, so arithmetic would drift from the drawing. */
 
 const BUNDLES: Bundle[] = [
   {
@@ -93,84 +96,93 @@ export function JobCreditBundles({
   className,
 }: JobCreditBundlesProps) {
   return (
-    // Card-group frame — source's `.v4-jobs-cards-wrapper`, an alpha-black
-    // panel wrapping the header + cards. This IS the component's root (not
-    // wrapped in an outer column with the footer legend) so it can
-    // participate directly in the parent row's `items-stretch` and match
-    // the Unlimited side-card's height — the footer legend renders as its
-    // own full-width row in credits/page.tsx instead.
+    // Card-group frame — an alpha-black panel wrapping the header + cards.
+    // This IS the component's root (the job-type legend is NOT part of it):
+    // the legend renders directly under this frame, in the left column of
+    // self-checkout.tsx, so the frame itself can stretch to match the
+    // Unlimited side-card next to it.
     <div
       data-slot="job-credit-bundles"
-      className={cn("flex flex-col gap-4 rounded-2xl bg-checkout-track p-4", className)}
+      className={cn("flex flex-col gap-5 rounded-2xl bg-checkout-track p-4", className)}
     >
-        {/* Section header — fixed min-height so it lines up with the
-            Unlimited side-card's header, keeping both inner-card rows
-            starting at the same top edge regardless of copy length. */}
-        <div className="flex min-h-12 items-start justify-between gap-3 px-1">
-          <div>
-            <h2 className="text-lg font-semibold text-checkout-hero-fg">Job credits</h2>
-            <p className="mt-0.5 text-sm text-checkout-hero-fg-muted">
-              Pick a bundle. Choose the job type later, when you post.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={onBuySingleCredit}
-            className="flex shrink-0 items-center gap-1 text-sm font-semibold text-info hover:opacity-80"
-          >
-            I need a single job credit
-            <ArrowRight className="size-4" aria-hidden />
-          </button>
+      {/* Section header — fixed min-height so it lines up with the
+          Unlimited side-card's header, keeping both inner-card rows
+          starting at the same top edge regardless of copy length.
+          `leading-6` on the title is deliberate: text-h4's snug 1.3 line
+          renders 26px, which makes this header 50px against the Unlimited
+          header's 48px and knocks the two card columns 2px out of line.
+          Below sm the link drops under the title so the subtitle keeps a
+          readable measure. */}
+      <div className="flex min-h-12 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-1">
+        <div className="flex min-w-0 flex-col gap-1">
+          <h2 className="font-heading text-xl font-semibold leading-6 text-checkout-hero-fg">
+            Job credits
+          </h2>
+          <p className="text-sm text-checkout-hero-fg-muted">
+            Pick a bundle. Choose the job type later, when you post.
+          </p>
         </div>
+        {/* `text-checkout-info` is the checkout surface's fixed blue-500
+            (apna-sky-500) — the same ink the design gives this link and the
+            Recommended ribbon. `--info` is apna-sky-600 and remaps in dark,
+            so it is wrong on a surface drawn light in both themes. */}
+        <button
+          type="button"
+          onClick={onBuySingleCredit}
+          className="flex shrink-0 items-center gap-1 text-sm font-semibold text-checkout-info hover:opacity-80"
+        >
+          I need a single job credit
+          <ArrowRight className="size-5" aria-hidden />
+        </button>
+      </div>
 
-        {/* Credit bundle cards — whole card is clickable (matches source:
-            card click and the "Buy now" button trigger the same action).
-            PricingCard is the shared design-system layout primitive;
-            colour (checkout-scoped green/blue) stays here, at the caller. */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          {BUNDLES.map((bundle) => (
-            <PricingCard
-              key={bundle.id}
-              onClick={() => onBuyNow(bundle)}
-              ribbon={
-                bundle.recommended && (
-                  <Badge className="rounded-none rounded-bl-xl border-transparent bg-info px-4 py-0.5 text-2xs font-semibold text-info-foreground">
-                    Recommended
-                  </Badge>
-                )
-              }
-              title={`${bundle.credits} Job credits`}
-              subtitle={bundle.subcopy}
-              meta={
-                <>
-                  <CalendarDays className="size-4 shrink-0" aria-hidden />
-                  Valid for {bundle.validDays} days
-                </>
-              }
-              price={`₹${bundle.price.toLocaleString("en-IN")}`}
-              mrp={`₹${bundle.mrp.toLocaleString("en-IN")}`}
-              badge={
-                <Badge className="border-transparent bg-checkout-discount-bg text-2xs text-checkout-discount-fg">
-                  {bundle.discountPct}% OFF
+      {/* Credit bundle cards — whole card is clickable (card click and the
+          "Buy now" button trigger the same action). PricingCard is the
+          shared design-system layout primitive; the accent (ribbon,
+          discount pill, filled CTA) is passed in as pre-styled primitives.
+          `flex-1` is load-bearing: it lets the grid absorb the frame's
+          spare height so all four dividers, price rows and CTAs line up
+          with the Unlimited card's. The 3-up breakpoint is `lg`, not `sm`
+          — below that the 20px price row plus the discount pill overflows
+          a ~170px card. */}
+      <div className="grid flex-1 grid-cols-1 gap-4 lg:grid-cols-3">
+        {BUNDLES.map((bundle) => (
+          <PricingCard
+            key={bundle.id}
+            className="border-transparent"
+            onClick={() => onBuyNow(bundle)}
+            ribbon={
+              bundle.recommended && (
+                <Badge variant="ribbon" size="ribbon">
+                  Recommended
+                  <Sparkles aria-hidden />
                 </Badge>
-              }
-              priceSuffix={`₹${bundle.pricePerCredit} /credit`}
-              cta={
-                <Button
-                  type="button"
-                  variant="outline"
-                  className={cn(
-                    "w-full font-semibold",
-                    bundle.recommended &&
-                      "border-transparent bg-checkout-primary text-checkout-primary-foreground hover:bg-checkout-primary-hover hover:text-checkout-primary-foreground"
-                  )}
-                >
-                  Buy now
-                </Button>
-              }
-            />
-          ))}
-        </div>
+              )
+            }
+            title={`${bundle.credits} Job credits`}
+            subtitle={bundle.subcopy}
+            meta={[
+              <>
+                <ClockFading aria-hidden />
+                Valid for {bundle.validDays} days
+              </>,
+            ]}
+            price={`₹${bundle.price.toLocaleString("en-IN")}`}
+            mrp={`₹${bundle.mrp.toLocaleString("en-IN")}`}
+            badge={<Badge variant="discount">{bundle.discountPct}% OFF</Badge>}
+            priceSuffix={`₹${bundle.pricePerCredit} /credit`}
+            cta={
+              <Button
+                type="button"
+                variant={bundle.recommended ? "checkout" : "outline"}
+                className="h-10 w-full font-semibold"
+              >
+                Buy now
+              </Button>
+            }
+          />
+        ))}
+      </div>
     </div>
   )
 }
