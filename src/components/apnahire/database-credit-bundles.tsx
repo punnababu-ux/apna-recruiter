@@ -6,13 +6,16 @@
  * Section heading + three database-credit bundle cards, each with its own
  * "Buy now" CTA (Figma 899:1253).
  *
- * Not a clone of JobCreditBundles. Three things differ from the Jobs tab
+ * Not a clone of JobCreditBundles. Two things differ from the Jobs tab
  * (1971:8641):
  *   - No grey track. 899:1253 has no fill, padding or radius — the heading
  *     and cards sit straight on the page gradient, 20px apart.
- *   - Title-led hierarchy. The credit count is 20px over a 16px price
- *     (`emphasis="title"`); Jobs is the other way round.
  *   - The card draws its own 1px gray/200 border; the Jobs card draws none.
+ *
+ * The card hierarchy itself matches Jobs — price-led (`emphasis="price"`,
+ * PricingCard's default) rather than Figma 899:1265's title-led 20/16 split
+ * — a deliberate consistency call (2026-09-28) so the two credit-bundle
+ * grids read as the same component, not two different type scales.
  *
  * The legend line ("1 credit = …") and the GST footnote live at the
  * self-checkout.tsx callsite, grouped with this block at 12px.
@@ -107,7 +110,6 @@ export function DatabaseCreditBundles({
         {DB_BUNDLES.map((bundle) => (
           <PricingCard
             key={bundle.id}
-            emphasis="title"
             onClick={() => onBuyNow(bundle)}
             ribbon={
               bundle.recommended && (
