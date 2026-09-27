@@ -15,12 +15,15 @@
  *
  * Two knobs beyond that:
  *
- *   `emphasis` — which line carries the card's weight. The self-checkout
- *   design uses both: Jobs leads with the price (16px title over a 20px
- *   price), Database leads with the credit count (20px title over a 16px
- *   price). They also differ in rhythm, so the meta lines sit inside the
- *   title group under `emphasis="title"` and stand apart from it under
- *   `emphasis="price"`.
+ *   `emphasis` — which line carries the card's weight. `"price"` (the
+ *   default, used by both Jobs and Database on self-checkout) is 16px title
+ *   over a 24px price — the same price size as the Subscription and
+ *   Enterprise cards elsewhere on the page, so every plan price reads at one
+ *   size regardless of which component draws it. `"title"` inverts that
+ *   (20px title over a 16px price) and also moves the meta lines inside the
+ *   title group instead of standing apart from it — currently unused on
+ *   self-checkout, kept for a future card that genuinely needs to lead with
+ *   the title.
  *
  *   `surface` — `"inset"` swaps the theme-aware card roles for the fixed
  *   `checkout-inset-*` family, for a card nested inside a surface that is
@@ -156,16 +159,18 @@ export function PricingCard({
               <span
                 className={cn(
                   "font-semibold",
-                  titleLed ? "text-base" : "text-xl leading-6",
+                  // 24px — matches the price size on the Subscription and
+                  // Enterprise cards (text-2xl / text-h3), so every plan
+                  // price on the page reads at one size regardless of which
+                  // component draws the card.
+                  titleLed ? "text-base" : "text-2xl leading-tight",
                   fg
                 )}
               >
                 {price}
               </span>
               {mrp && (
-                <span className={cn("text-sm leading-6 line-through", fgMuted)}>
-                  {mrp}
-                </span>
+                <span className={cn("text-sm line-through", fgMuted)}>{mrp}</span>
               )}
             </div>
             {badge && <div className="shrink-0">{badge}</div>}

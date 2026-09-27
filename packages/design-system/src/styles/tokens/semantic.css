@@ -553,8 +553,13 @@
   --chip-solid:            var(--color-gray-100);
   --chip-solid-foreground: var(--color-gray-900);
 
-  /* Checkout primary — brand green stays the same hex (it already reads
-   * fine on dark), only the discount tint needs a dark-safe pairing. */
-  --checkout-discount-fg: var(--color-apna-green-400);
-  --checkout-discount-bg: var(--color-apna-green-900);
+  /* No dark override for --checkout-discount-fg/-bg (or --checkout-primary,
+   * --checkout-info, --checkout-ribbon below it in :root): every checkout-*
+   * role on this surface is fixed across themes, same as the hero gradient
+   * and the inset card. A stale pre-Figma override used to sit here
+   * (apna-green-400 on apna-green-900) — a genuinely dark-mode-safe pairing,
+   * but the wrong one now: it silently diverged from the gray-200/
+   * apna-green-700 pill the current design draws, so the discount badge
+   * changed colour between light and dark instead of staying put like the
+   * rest of this surface. */
 }
