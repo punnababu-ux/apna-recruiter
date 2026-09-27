@@ -184,7 +184,15 @@ export function SubscriptionPlans({
               same thing by giving the logo a 32px-tall frame and dropping the
               20px mark 5px inside it (node 1971:8978). */}
           <div className="flex items-center gap-2">
-            <LogoApnaUnlimited className={/* token-lint-ignore: optical baseline nudge for the wordmark, derived above; not a spacing step */ "h-5 w-auto translate-y-[3px]"} />
+            {/* "theme" fill (currentColor) + text-foreground: this header
+                sits on the page body, which flips light/dark with the app
+                theme — unlike the always-dark Unlimited card, where the
+                gold "gradient" variant is correct. A fixed dark fill here
+                went near-invisible once the surrounding page went dark. */}
+            <LogoApnaUnlimited
+              variant="theme"
+              className={/* token-lint-ignore: optical baseline nudge for the wordmark, derived above; not a spacing step */ "h-5 w-auto translate-y-[3px] text-foreground"}
+            />
             <span className="text-xl font-semibold text-foreground">plans</span>
           </div>
           <p className="text-sm text-muted-foreground">
