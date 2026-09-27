@@ -458,21 +458,50 @@
  * Dark theme — only the mapping changes, primitives are untouched.
  * ========================================================================== */
 .dark {
-  /* Surfaces — Clean neutral dark */
-  --background:         var(--color-gray-950);
+  /* Surfaces — tinted dark, not neutral gray.
+   *
+   * Previously gray-950/-900/-800 (Zinc): HSL(240°, 4–10%, 4–16%) — a faint
+   * COOL BLUE undertone nobody chose on purpose, just Zinc's default cast.
+   * apna-plum sits at HSL(287–291°, 17–18%, 10–16%): a deliberate WARM
+   * VIOLET, already used elsewhere in this file for --surface-ink and the
+   * checkout-unlimited gradient. Those two hues actively fought wherever
+   * they sat next to each other (the Unlimited card against the Jobs-tab
+   * background being the case that surfaced this) — no shared undertone
+   * anywhere in dark mode tied them together. Re-anchoring the ambient
+   * surfaces to the SAME ramp plum already uses elsewhere means anything
+   * plum-toned now sits on a page that shares its hue, not a competing one.
+   * User decision, 2026-09-28, after a live audit of both ramps' HSL values.
+   *
+   * Elevation ladder (Material's "lighter = higher", not shadows): each
+   * step below is exactly one rung up the SAME ramp, formalizing what the
+   * gray version already did informally (950 → 900 → 800) rather than
+   * hand-picking a new lightness per surface:
+   *   canvas   (--background)                → plum-950
+   *   card 1   (--card/--popover/--sidebar)   → plum-900
+   *   card 2   (--secondary/--muted/--accent/
+   *             --sidebar-accent — a surface
+   *             sitting ON a card)            → plum-800
+   *
+   * Text/foreground roles are UNCHANGED (still gray-50/-400/etc.) —
+   * legibility, not mood, is what matters for text, and these lightness
+   * steps are functionally neutral regardless of the tiny hue shift (see
+   * the contrast check in the commit message: text contrast improved
+   * slightly, not regressed, moving from gray to plum at the same steps). */
+  --background:         var(--color-apna-plum-950);
   --foreground:         var(--color-gray-50);
-  --card:               var(--color-gray-900);
+  --card:               var(--color-apna-plum-900);
   --card-foreground:    var(--color-gray-50);
-  --popover:            var(--color-gray-900);
+  --popover:            var(--color-apna-plum-900);
   --popover-foreground: var(--color-gray-50);
 
   /* Inverted hero surface remains royal blue in dark theme */
   --surface-inverted:    var(--color-apna-royal-950);
   --surface-inverted-fg: var(--color-gray-0);
 
-  /* Ink lifts a step in dark mode. On a gray-950 canvas, plum-900 reads as
-   * the same surface; plum-800 still separates. The border opens up for the
-   * same reason. */
+  /* Ink lifts a step in dark mode. On the new plum-950 canvas, plum-900
+   * reads as the same surface; plum-800 still separates — same elevation
+   * ladder as --card above, since ink IS a card sitting on the canvas now.
+   * The border opens up for the same reason. */
   --surface-ink:        var(--color-apna-plum-800);
   --surface-ink-border: var(--color-alpha-white-15);
 
@@ -481,13 +510,13 @@
   --primary:            var(--color-apna-green-500);
   --primary-foreground: var(--color-gray-50);
 
-  --secondary:            var(--color-gray-800);
+  --secondary:            var(--color-apna-plum-800);
   --secondary-foreground: var(--color-gray-50);
 
-  --muted:            var(--color-gray-800);
+  --muted:            var(--color-apna-plum-800);
   --muted-foreground: var(--color-gray-400);
 
-  --accent:            var(--color-gray-800);
+  --accent:            var(--color-apna-plum-800);
   --accent-foreground: var(--color-gray-50);
 
   /* Highlight — gold, brightened for dark surfaces */
@@ -516,12 +545,12 @@
   --input:  var(--color-alpha-white-15);
   --ring:   var(--color-apna-green-400);
 
-  /* Sidebar */
-  --sidebar:                    var(--color-gray-900);
+  /* Sidebar — card 1 / card 2 on the same elevation ladder as above. */
+  --sidebar:                    var(--color-apna-plum-900);
   --sidebar-foreground:         var(--color-gray-50);
   --sidebar-primary:            var(--color-apna-green-500);
   --sidebar-primary-foreground: var(--color-gray-50);
-  --sidebar-accent:             var(--color-gray-800);
+  --sidebar-accent:             var(--color-apna-plum-800);
   --sidebar-accent-foreground:  var(--color-gray-50);
   --sidebar-border:             var(--color-alpha-white-10);
   --sidebar-ring:               var(--color-apna-green-400);
@@ -534,7 +563,7 @@
   --chart-5: var(--color-apna-green-700);
 
   /* Alert Banner Gradients (Dark) */
-  --gradient-banner-default:     linear-gradient(135deg, var(--color-gray-800) 0%, var(--color-gray-950) 100%);
+  --gradient-banner-default:     linear-gradient(135deg, var(--color-apna-plum-800) 0%, var(--color-apna-plum-950) 100%);
   --gradient-banner-info:        linear-gradient(135deg, var(--color-apna-sky-700) 0%, var(--color-apna-sky-900) 100%);
   --gradient-banner-success:     linear-gradient(135deg, var(--color-apna-green-700) 0%, var(--color-apna-green-900) 100%);
   --gradient-banner-warning:     linear-gradient(135deg, var(--color-apna-gold-600) 0%, var(--color-apna-gold-800) 100%);
@@ -545,12 +574,17 @@
    * instead of the light version's warm/pink/blue mesh. Cards/drawer/etc.
    * underneath already flip correctly via the ordinary --card/--border/etc.
    * mappings above — only the hero backdrop + its own text/track needed a
-   * dark variant. */
+   * dark variant. The diagonal wash used to hard-code the neutral gray
+   * ramp directly rather than reading the semantic --background/--card/
+   * --muted roles above it; now that those roles are plum-tinted, this
+   * follows suit explicitly (still the same three elevation steps: canvas
+   * → card → card-on-card) so the hero backdrop and the page it sits above
+   * are never two different hues again. */
   --gradient-checkout-hero:
     radial-gradient(circle at 8% 15%,  var(--color-alpha-white-10) 0%, transparent 45%),
     radial-gradient(circle at 90% 18%, var(--color-alpha-white-10) 0%, transparent 55%),
     radial-gradient(circle at 50% 90%, var(--color-alpha-white-5)  0%, transparent 60%),
-    linear-gradient(135deg, var(--color-gray-950) 0%, var(--color-gray-900) 50%, var(--color-gray-800) 100%);
+    linear-gradient(135deg, var(--color-apna-plum-950) 0%, var(--color-apna-plum-900) 50%, var(--color-apna-plum-800) 100%);
   --surface-checkout-hero-fg:       var(--color-gray-50);
   --surface-checkout-hero-fg-muted: var(--color-gray-400);
   /* Sits between the two, as it does in light. No dark design exists to

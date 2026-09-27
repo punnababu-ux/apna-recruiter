@@ -106,11 +106,11 @@ change between themes.
 
 | Token                    | Light target       | Dark target         | Intent                          |
 |--------------------------|--------------------|---------------------|---------------------------------|
-| `--background`           | gray-0             | gray-950            | page background                 |
+| `--background`           | gray-0             | apna-plum-950       | page background                 |
 | `--foreground`           | gray-950           | gray-50             | primary text                    |
-| `--card`                 | gray-0             | gray-900            | elevated container              |
+| `--card`                 | gray-0             | apna-plum-900       | elevated container              |
 | `--card-foreground`      | gray-950           | gray-50             | text on card                    |
-| `--popover`              | gray-0             | gray-900            | floating surface                |
+| `--popover`              | gray-0             | apna-plum-900       | floating surface                |
 | `--popover-foreground`   | gray-950           | gray-50             | text on popover                 |
 | `--surface-inverted`     | apna-royal-900     | apna-royal-950      | inverted hero / marketing banner|
 | `--surface-inverted-fg`  | gray-0             | gray-0              | text on inverted surface        |
@@ -119,11 +119,26 @@ change between themes.
 | `--surface-checkout-hero-fg-muted`| gray-500  | gray-400 | helper text on the checkout-hero gradient |
 | `--surface-checkout-track`        | gray-100  | gray-800 | pricing-hero tab-selector track background |
 | `--surface-checkout-track-border` | gray-200  | gray-700 | pricing-hero tab-selector track border |
-| `--surface-checkout-inset`        | gray-0    | = `--card` | nested card inside an always-dark card (e.g. the Unlimited side-card). Fixed white in light mode (matches Figma); in dark mode it aliases the ordinary `--card` role instead of any fixed value, so it renders identically to the sibling job-credit PricingCards next to it — a plain dark card, not a tinted-white one. (Three literal gray steps were tried and rejected first: gray-100/-200/-300 all still read as "a light card", which was never the ask once the direction became "match the other cards' dark colour" rather than "tint the white") |
+| `--surface-checkout-inset`        | gray-0    | alpha-black-20 | nested card inside an always-dark card (e.g. the Unlimited side-card). Fixed white in light mode (matches Figma). Dark mode went through 4 revisions live: literal gray tints (gray-100/-200/-300 — all still read as "a light card"), then aliasing `--card` (matched the sibling job-credit cards' darkness, but the neutral card colour clashed against the warm plum gradient it sits inside). Landed on a translucent black overlay instead of any opaque colour — it's the same gradient showing through, just darkened, so it can't clash with whatever hue that gradient is |
 | `--surface-checkout-inset-border` | gray-200  | = `--border` | border on the inset card, aliases the ordinary role in dark mode |
-| `--surface-checkout-inset-fg`     | gray-900  | = `--card-foreground` | text on the inset card — fixed light-mode value (matches `--surface-checkout-hero-fg`'s ORIGINAL failure mode reasoning doesn't apply here anymore: now that the background itself flips in dark mode, the text has to flip with it) |
+| `--surface-checkout-inset-fg`     | gray-900  | = `--card-foreground` | text on the inset card — fixed light-mode value (matches `--surface-checkout-hero-fg`'s ORIGINAL failure mode reasoning doesn't apply here anymore: now that the background itself darkens in dark mode, the text has to flip with it) |
 | `--surface-checkout-inset-fg-muted` | gray-500 | = `--muted-foreground` | muted text on the inset card, aliases the ordinary role in dark mode |
-| `--surface-checkout-inset-hover`  | gray-100  | = `--muted` | hover for a CTA sitting on the inset card, aliases the ordinary role in dark mode |
+| `--surface-checkout-inset-hover`  | gray-100  | alpha-black-40 | hover for a CTA sitting on the inset card — one step more opaque than the resting overlay, same reasoning |
+
+**The dark-mode surface ramp is `apna-plum`, not neutral gray.** Originally
+`--background`/`--card`/`--popover`/`--secondary`/`--muted`/`--accent`/
+`--sidebar*` all pointed at the Zinc gray ramp in dark mode — which, measured
+in HSL, turns out to carry a faint, unintentional cool-blue undertone (hue
+~240°, 4–10% saturation), not true neutral. Every already-plum-toned surface
+(`--surface-ink`, the checkout-unlimited gradient) sits at hue ~287–291°,
+~18% saturation — a different, warmer hue at nearly 3× the saturation. The
+two fought wherever they sat next to each other. Re-anchored dark mode's
+ambient surfaces to the same `apna-plum` ramp plum-toned surfaces already
+used (user decision, 2026-09-28), on a fixed three-rung elevation ladder —
+canvas → card → card-on-card is `plum-950 → plum-900 → plum-800`, one rung
+per surface, rather than a hand-picked lightness per token. Text/foreground
+roles are untouched; contrast was verified to improve slightly, not regress,
+at every step measured. Light mode is completely unaffected.
 
 ### Roles
 
@@ -131,11 +146,11 @@ change between themes.
 |--------------------------|------------------|------------------|-----------------------------------|
 | `--primary`              | gray-900         | gray-200         | high-emphasis action              |
 | `--primary-foreground`   | gray-50          | gray-900         | text/icon on primary              |
-| `--secondary`            | gray-100         | gray-800         | medium-emphasis action            |
+| `--secondary`            | gray-100         | apna-plum-800    | medium-emphasis action            |
 | `--secondary-foreground` | gray-900         | gray-50          | text/icon on secondary            |
-| `--muted`                | gray-100         | gray-800         | low-emphasis surface              |
+| `--muted`                | gray-100         | apna-plum-800    | low-emphasis surface              |
 | `--muted-foreground`     | gray-500         | gray-400         | helper text                       |
-| `--accent`               | gray-100         | gray-800         | hover / selection                 |
+| `--accent`               | gray-100         | apna-plum-800    | hover / selection                 |
 | `--accent-foreground`    | gray-900         | gray-50          | text on accent                    |
 
 ### Gradients
@@ -145,7 +160,7 @@ Composed from primitives only, exposed as `bg-gradient-<name>` utilities
 
 | Token                       | Composition                                                        | Intent                                          |
 |------------------------------|---------------------------------------------------------------------|--------------------------------------------------|
-| `--gradient-checkout-hero`  | Light: radial blooms (apna-gold-100, apna-navy-100, apna-sky-100/50) over a gray-0→gray-100 diagonal. Dark: soft alpha-white glows over a gray-950→gray-800 diagonal (an original dark treatment — the source has no dark design) | ambient mesh background for the self-checkout / pricing page (`bg-gradient-checkout-hero`), pairs with `--surface-checkout-hero-fg(-muted)` / `--surface-checkout-track(-border)` |
+| `--gradient-checkout-hero`  | Light: radial blooms (apna-gold-100, apna-navy-100, apna-sky-100/50) over a gray-0→gray-100 diagonal. Dark: soft alpha-white glows over an apna-plum-950→plum-800 diagonal (an original dark treatment — the source has no dark design; re-pointed from a hard-coded gray-950→gray-800 to the same plum ramp `--background`/`--card`/`--muted` now use, 2026-09-28, so the hero backdrop and the page it sits above share one hue) | ambient mesh background for the self-checkout / pricing page (`bg-gradient-checkout-hero`), pairs with `--surface-checkout-hero-fg(-muted)` / `--surface-checkout-track(-border)` |
 | `--gradient-checkout-unlimited` | `linear-gradient(180deg, apna-plum-800 → apna-plum-900 → apna-plum-950)` | dark noir card background for the "apna Unlimited" promo banner (`bg-gradient-checkout-unlimited`) — fixed across themes, it's a deliberately-dark card in both. Pair with `--surface-inverted-fg` for its (white) text and `--checkout-unlimited-border(-hover)` / `--checkout-unlimited-cta(-hover)` for its border/CTA |
 
 ### Checkout brand
@@ -404,9 +419,10 @@ reading measure use Tailwind's built-in `max-w-prose`.
 or band on the ordinary light canvas.
 
 Fixed *by intent*, but not fixed *in value*: the `.dark` block lifts it from
-plum-900 to plum-800, because plum-900 on a gray-950 canvas separates by
-almost nothing. "Fixed across themes" and "the same hex in both themes" are
-different things, and conflating them is how a card disappears in dark mode.
+plum-900 to plum-800, because plum-900 on the (now plum-950, previously
+gray-950) canvas separates by almost nothing. "Fixed across themes" and "the
+same hex in both themes" are different things, and conflating them is how a
+card disappears in dark mode.
 
 There is deliberately **no `marketing-*` namespace**. `checkout-*` earned its
 scope because that surface stays light regardless of app theme; marketing has
