@@ -30,9 +30,16 @@ import {
   type IconComponent,
 } from "@apna/design-system"
 import { HeroLeadCard } from "@/components/marketing/hero-lead-card"
-import { HOME_HERO, HOME_PRESS, HOME_SUITE, HOME_TRUSTED_BY } from "@/content/home"
+import {
+  HOME_HERO,
+  HOME_PRESS,
+  HOME_PRODUCT_DETAILS,
+  HOME_SUITE,
+  HOME_TRUSTED_BY,
+} from "@/content/home"
 import { CLIENT_LOGOS } from "@/content/logos"
 import { PRODUCT_LINKS } from "@/content/nav"
+import { cn } from "@/lib/utils"
 
 const CLIENT_LOGO_ITEMS = CLIENT_LOGOS.map((client) => ({
   name: client.name,
@@ -158,6 +165,69 @@ export default function HomePage() {
                     </Link>
                   </CardContent>
                 </Card>
+              )
+            })}
+          </div>
+
+          {/* Detail rows — one per product, description alternating left/
+              right against a media panel. The grid above stays as the
+              compact overview; this is the detail underneath it, not a
+              replacement (user call, 2026-09-28). Media is a placeholder:
+              the same plain tinted-icon-block language as the grid cards
+              above, scaled up — standing in for a real product screenshot
+              or recording, which doesn't exist in this repo yet. See
+              content/home.ts's HOME_PRODUCT_DETAILS header for the full
+              sourcing note. */}
+          <div className="flex flex-col gap-16">
+            {HOME_PRODUCT_DETAILS.map((product, i) => {
+              const Icon = SUITE_ICONS[HOME_SUITE.items.find((s) => s.name === product.name)!.icon]
+              const reversed = i % 2 === 1
+              return (
+                <div
+                  key={product.name}
+                  className={cn(
+                    "flex flex-col items-center gap-8 lg:flex-row lg:gap-12",
+                    reversed && "lg:flex-row-reverse"
+                  )}
+                >
+                  <div className="flex flex-1 flex-col gap-5">
+                    <span className="text-overline text-primary">{product.eyebrow}</span>
+                    <h3 className="text-h4 text-foreground">{product.heading}</h3>
+                    <ul className="flex flex-col gap-4">
+                      {product.features.map((feature) => (
+                        <li key={feature.title} className="flex items-start gap-3">
+                          <CheckCircle2
+                            className="mt-0.5 size-5 shrink-0 text-primary"
+                            aria-hidden
+                          />
+                          <div className="flex flex-col gap-0.5">
+                            <p className="text-sm font-semibold text-foreground">
+                              {feature.title}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              {feature.description}
+                            </p>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                    <Link
+                      href={hrefFor(product.name)}
+                      className="inline-flex w-fit items-center gap-1 text-sm font-semibold text-primary"
+                    >
+                      Learn more <ArrowRight className="size-4" aria-hidden />
+                    </Link>
+                  </div>
+
+                  <div className="w-full flex-1">
+                    <Card
+                      padding="none"
+                      className="flex h-64 items-center justify-center overflow-hidden bg-muted"
+                    >
+                      <Icon className="size-16 text-primary" aria-hidden />
+                    </Card>
+                  </div>
+                </div>
               )
             })}
           </div>

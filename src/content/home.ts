@@ -82,6 +82,113 @@ export const HOME_SUITE = {
   ] as const,
 }
 
+export interface ProductFeature {
+  title: string
+  description: string
+}
+
+export interface ProductDetailRow {
+  /** Must match a `HOME_SUITE.items[].name` — the row reuses that item's
+   *  icon and its `PRODUCT_LINKS` href rather than declaring its own. */
+  name: string
+  eyebrow: string
+  heading: string
+  features: ProductFeature[]
+}
+
+/**
+ * Product suite — alternating detail rows, one per product, below the
+ * compact grid above (both stay; the grid is the overview, this is the
+ * detail). Modeled on gomotive.com's per-product layout, per the approved
+ * wireframe (2026-09-28).
+ *
+ * Smart Jobs, AI Calling Agent and Hyperlocal Database: eyebrow, heading
+ * and every feature title/description below are verbatim from
+ * employer.apna.co, re-confirmed live via get_page_text on 2026-09-28 (not
+ * from memory of an earlier fetch). Two features shown per product; the
+ * live page lists more under each (e.g. Smart Jobs also has "AI-Suggested
+ * Candidates", "Customized Lead Management", "Job Post Boosts") — trimmed
+ * to the first two for this layout, not dropped because they were weaker.
+ *
+ * apna Unlimited has no matching section on employer.apna.co under that
+ * name (the live page's own "Post unlimited jobs in one plan" banner is a
+ * different, shorter pitch). Its heading and features are cross-referenced
+ * from copy already shipped in this repo's own checkout flow instead —
+ * `unlimited-side-card.tsx` and `subscription-plans.tsx` — rather than
+ * written fresh for this section.
+ *
+ * The media side of every row is a placeholder (a tinted icon panel, same
+ * visual language as the grid cards above) standing in for a real product
+ * screenshot or recording — explicit product-owner call, 2026-09-28, since
+ * no such asset exists in this repo yet. Swap `HomeProductRows`' media slot
+ * for a real image/video per product once one is supplied; nothing here
+ * should be mistaken for the real thing.
+ */
+export const HOME_PRODUCT_DETAILS: ProductDetailRow[] = [
+  {
+    name: "Smart Jobs",
+    eyebrow: "Smart job posting",
+    heading: "Get applications from relevant, high-intent candidates",
+    features: [
+      {
+        title: "Advanced Job Filters & Smart Matching",
+        description:
+          "Use advanced filters and automated assessments to attract the most relevant candidates",
+      },
+      {
+        title: "Smart AI Lead Management",
+        description:
+          "Boost recruiter productivity by automatically categorizing leads into matched and non-matched candidates",
+      },
+    ],
+  },
+  {
+    name: "AI Calling Agent",
+    eyebrow: "Job with AI Calling Agent",
+    heading: "AI Calling Agent interviews and shortlists candidates 24/7",
+    features: [
+      {
+        title: "Inbound & Outbound AI Calling",
+        description: "AI interviews all job applicants 24/7 & shortlists only the best candidates",
+      },
+      {
+        title: "80% response rate with AI",
+        description: "Compared to just 30% call connection rate in manual hiring",
+      },
+    ],
+  },
+  {
+    name: "Hyperlocal Database",
+    eyebrow: "apna Database",
+    heading: "Quickly hire active jobseekers around your office.",
+    features: [
+      {
+        title: "AI Powered Search",
+        description: "Instantly turn your job descriptions into candidate searches using apnaAI",
+      },
+      {
+        title: "Area-based Search",
+        description: "Effortlessly locate candidates within a 5km radius to optimize your hiring.",
+      },
+    ],
+  },
+  {
+    name: "apna Unlimited",
+    eyebrow: "apna Unlimited",
+    heading: "Unlimited job posting flexibility, predictable hiring cost.",
+    features: [
+      {
+        title: "Unlimited job posts",
+        description: "Free job reposts and swapping",
+      },
+      {
+        title: "WhatsApp outreach",
+        description: "To matched candidates for more applications",
+      },
+    ],
+  },
+]
+
 /**
  * In the Press. The three outlets (ET HRWorld, The Hindu BusinessLine,
  * Manufacturing Today) DID genuinely cover apna — confirmed via web search,
