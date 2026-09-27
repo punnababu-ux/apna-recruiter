@@ -433,14 +433,19 @@
   --checkout-info-foreground:    var(--color-gray-0);
 
   /* Checkout unlimited promo — dark noir card background for the
-   * "apna Unlimited" promo banner. Reuses the existing apna-plum ramp
-   * (its darkest steps land within a few RGB points of the source's
-   * literal #1e1c22/#151419/#0f0e13) instead of adding new near-duplicate
-   * primitives. */
+   * "apna Unlimited" promo banner. Reuses the existing apna-plum ramp.
+   * Originally plum-800/900/950, matching the source design's literal
+   * #1e1c22/#151419/#0f0e13 within a few RGB points. Lightened one step
+   * (700/800/900) per direct user request (2026-09-28), a deliberate
+   * departure from that literal match: the inset card inside it (see
+   * --surface-checkout-inset below) became a translucent black overlay
+   * rather than an opaque colour, and needed a lighter base to darken
+   * against — plum-800/900/950 left too little headroom for the overlay
+   * to read as a distinct, lifted layer. */
   --gradient-checkout-unlimited: linear-gradient(180deg,
-                                   var(--color-apna-plum-800) 0%,
-                                   var(--color-apna-plum-900) 60%,
-                                   var(--color-apna-plum-950) 100%);
+                                   var(--color-apna-plum-700) 0%,
+                                   var(--color-apna-plum-800) 60%,
+                                   var(--color-apna-plum-900) 100%);
   --checkout-unlimited-border:        rgba(255, 255, 255, 0.12);
   --checkout-unlimited-border-hover:  rgba(255, 255, 255, 0.3);
   --checkout-unlimited-cta-bg:        rgba(255, 255, 255, 0.16);
@@ -558,19 +563,32 @@
   --chip-solid:            var(--color-gray-100);
   --chip-solid-foreground: var(--color-gray-900);
 
-  /* Checkout inset (dark mode only) — stepped off pure white. The outer
-   * dark-plum card (--gradient-checkout-unlimited, unchanged, fixed dark in
-   * both themes) stops contrasting against the page once the page itself
-   * goes near-black in dark mode, so the "card nested in a card" cue
-   * disappears and a pure-white inset just floats. gray-900/-500 text
-   * (unchanged) stays legible against any of these steps.
-   * First attempt used gray-100 (#F4F4F5) — confirmed live (2026-09-28) that
-   * it's only 11/255 off white, too subtle to read as an intentional tint
-   * at normal viewing size; it read as "still white". gray-200 (#E4E4E7) is
-   * the visibly-distinct step. Border and hover move down with it. */
-  --surface-checkout-inset:        var(--color-gray-200);
-  --surface-checkout-inset-border: var(--color-gray-400);
-  --surface-checkout-inset-hover:  var(--color-gray-300);
+  /* Checkout inset (dark mode only) — through three revisions so far
+   * (2026-09-28), each on direct live feedback:
+   *   1. Fixed white in every theme (original) — read as a stray light box
+   *      once the page around the outer dark card went dark too.
+   *   2. Literal gray tints (gray-100 → -200 → -300) — kept missing
+   *      because the actual ask was never "make white read as
+   *      intentional", it was "make this look like the other cards".
+   *   3. Aliased the ordinary --card role (dark = neutral gray-900) — now
+   *      matched the sibling job-credit cards' darkness, but read as a
+   *      mismatched, muddy neutral dropped onto the warm plum gradient
+   *      (--gradient-checkout-unlimited) it actually sits inside.
+   *
+   * This revision: a translucent black overlay instead of any opaque
+   * colour, so it's never a separate hue decision that can clash — it's
+   * literally the same plum gradient showing through, just darkened,
+   * guaranteeing tonal agreement by construction. The gradient itself was
+   * lightened a step (see above) to give this overlay room to read as a
+   * distinct, lifted layer rather than crushing to near-black.
+   *
+   * Light mode is untouched: this card still renders fixed white with
+   * fixed dark text there, matching Figma exactly. Only dark mode changes. */
+  --surface-checkout-inset:        var(--color-alpha-black-20);
+  --surface-checkout-inset-border: var(--border);
+  --surface-checkout-inset-fg:     var(--card-foreground);
+  --surface-checkout-inset-fg-muted: var(--muted-foreground);
+  --surface-checkout-inset-hover:  var(--color-alpha-black-40);
 
   /* No dark override for --checkout-discount-fg/-bg (or --checkout-primary,
    * --checkout-info, --checkout-ribbon below it in :root): every checkout-*

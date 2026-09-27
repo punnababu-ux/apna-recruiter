@@ -25,10 +25,15 @@
  *   self-checkout, kept for a future card that genuinely needs to lead with
  *   the title.
  *
- *   `surface` — `"inset"` swaps the theme-aware card roles for the fixed
- *   `checkout-inset-*` family, for a card nested inside a surface that is
- *   deliberately dark in BOTH themes (the Unlimited side card). Using the
- *   ordinary roles there produces near-invisible text in dark mode.
+ *   `surface` — `"inset"` is for a card nested inside a surface that is
+ *   deliberately dark in BOTH themes (the Unlimited side card): fixed
+ *   white/dark-text in light mode, matching the source design exactly, but
+ *   in dark mode the `checkout-inset-*` family aliases the ordinary
+ *   `--card`/`--card-foreground`/etc. roles — the same tokens the sibling
+ *   PricingCards next to it already render with — so this card reads as an
+ *   ordinary dark card rather than a stray light box (or, the very first
+ *   version of this, invisible dark-on-dark text). See the `.dark` block
+ *   in semantic.css for the reasoning trail.
  *
  * The card fills its grid cell (`h-full`) and pins the divider, price and
  * CTA to the bottom (`mt-auto` on the rule), so a row of cards with unequal

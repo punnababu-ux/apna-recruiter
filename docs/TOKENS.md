@@ -119,11 +119,11 @@ change between themes.
 | `--surface-checkout-hero-fg-muted`| gray-500  | gray-400 | helper text on the checkout-hero gradient |
 | `--surface-checkout-track`        | gray-100  | gray-800 | pricing-hero tab-selector track background |
 | `--surface-checkout-track-border` | gray-200  | gray-700 | pricing-hero tab-selector track border |
-| `--surface-checkout-inset`        | gray-0    | gray-200 | nested light card inside an always-dark card (e.g. the Unlimited side-card). Visibly tinted in dark mode only — a pure-white inset read as a stray floating box once the outer dark card stopped contrasting against the also-near-black page. (gray-100 was tried first and confirmed live to be too subtle — 11/255 off white — to read as intentional) |
-| `--surface-checkout-inset-border` | gray-200  | gray-400 | border on the inset card, steps with the background |
-| `--surface-checkout-inset-fg`     | gray-900  | gray-900 (fixed) | text on the inset card — fixed, unlike `--surface-checkout-hero-fg`: that pair flipping here was the original cause of near-invisible text |
-| `--surface-checkout-inset-fg-muted` | gray-500 | gray-500 (fixed) | muted text on the inset card |
-| `--surface-checkout-inset-hover`  | gray-100  | gray-300 | hover for a CTA sitting on the inset card, steps with the background |
+| `--surface-checkout-inset`        | gray-0    | = `--card` | nested card inside an always-dark card (e.g. the Unlimited side-card). Fixed white in light mode (matches Figma); in dark mode it aliases the ordinary `--card` role instead of any fixed value, so it renders identically to the sibling job-credit PricingCards next to it — a plain dark card, not a tinted-white one. (Three literal gray steps were tried and rejected first: gray-100/-200/-300 all still read as "a light card", which was never the ask once the direction became "match the other cards' dark colour" rather than "tint the white") |
+| `--surface-checkout-inset-border` | gray-200  | = `--border` | border on the inset card, aliases the ordinary role in dark mode |
+| `--surface-checkout-inset-fg`     | gray-900  | = `--card-foreground` | text on the inset card — fixed light-mode value (matches `--surface-checkout-hero-fg`'s ORIGINAL failure mode reasoning doesn't apply here anymore: now that the background itself flips in dark mode, the text has to flip with it) |
+| `--surface-checkout-inset-fg-muted` | gray-500 | = `--muted-foreground` | muted text on the inset card, aliases the ordinary role in dark mode |
+| `--surface-checkout-inset-hover`  | gray-100  | = `--muted` | hover for a CTA sitting on the inset card, aliases the ordinary role in dark mode |
 
 ### Roles
 
