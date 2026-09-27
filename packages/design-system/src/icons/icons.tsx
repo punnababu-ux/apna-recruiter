@@ -14,7 +14,7 @@ export type { LucideIcon as IconComponent, LucideProps as IconProps } from "luci
 export {
   Activity, AlertCircle, AlertTriangle, ArrowDown, ArrowLeft,
   ArrowRight, ArrowUp, ArrowUpDown, ArrowUpRight, AtSign,
-  Award, BarChart2, Bell, Bold, BookOpen,
+  Award, Ban, BarChart2, Bell, Bold, BookOpen,
   Bookmark, BookmarkPlus, Bot, Brain, Briefcase,
   BriefcaseBusiness,
   Building, Building2, Calendar, CalendarCheck, CalendarClock,

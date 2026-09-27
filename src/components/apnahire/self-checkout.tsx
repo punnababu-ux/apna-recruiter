@@ -44,7 +44,11 @@ import { FaqSection } from "@/components/apnahire/faq-section"
 import { TrustBar } from "@/components/apnahire/trust-bar"
 import { TestimonialGrid } from "@/components/apnahire/testimonial-grid"
 import { UnlimitedSideCard } from "@/components/apnahire/unlimited-side-card"
-import { CheckoutDrawer, type CartLine } from "@/components/apnahire/checkout-drawer"
+import {
+  CheckoutDrawer,
+  type CartLine,
+  type SubscriptionPaymentMethod,
+} from "@/components/apnahire/checkout-drawer"
 import { PaymentModal } from "@/components/apnahire/payment-modal"
 import { PaymentSuccess } from "@/components/apnahire/payment-success"
 import { useHeaderSlot } from "@/components/marketing/header-slot"
@@ -125,6 +129,10 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
 
   const [paymentOpen, setPaymentOpen] = React.useState(false)
   const [paymentAmount, setPaymentAmount] = React.useState(0)
+  // Non-null only for subscriptions: the mandate method already chosen in the
+  // drawer, which the payment step shows read-only instead of re-asking.
+  const [mandateMethod, setMandateMethod] =
+    React.useState<SubscriptionPaymentMethod | null>(null)
 
   const [order, setOrder] = React.useState<{ lines: CartLine[]; total: number; id: string } | null>(
     null
@@ -170,12 +178,16 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
     setDrawerOpen(true)
   }
 
+  // `renewAfterDays` is what switches the drawer into its subscription
+  // variant, and what the renewal date is computed from. The parenthesised
+  // sublabel is verbatim from the drawer's own frames (1236:22188).
   const handleBuyUnlimitedQuarterly = () => {
     setCheckoutItem({
       id: "unlimited_quarterly_1",
       label: "Quarterly plan",
-      sublabel: "1 active job slot + 600 Database credits + Valid for 90 days",
+      sublabel: "(1 active job slot + 600 Database credits + Valid for 90 days)",
       price: 5999,
+      renewAfterDays: 90,
     })
     setDrawerOpen(true)
   }
@@ -184,14 +196,22 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
     setCheckoutItem({
       id: "unlimited_monthly_1",
       label: "Monthly plan",
-      sublabel: "1 active job slot + 200 Database credits + Valid for 30 days",
+      sublabel: "(1 active job slot + 200 Database credits + Valid for 30 days)",
       price: 2499,
+      renewAfterDays: 30,
     })
     setDrawerOpen(true)
   }
 
-  const handleProceedToPay = (total: number) => {
+  const handleProceedToPay = (
+    total: number,
+    _lines: CartLine[],
+    method?: SubscriptionPaymentMethod
+  ) => {
     setPaymentAmount(total)
+    // Subscriptions carry their mandate method from the drawer, so the payment
+    // step must not ask again — it is handed straight to the gateway.
+    setMandateMethod(method ?? null)
     setDrawerOpen(false)
     setPaymentOpen(true)
   }
@@ -439,6 +459,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
         onOpenChange={setPaymentOpen}
         itemLabel={checkoutItem?.label ?? "Purchase"}
         amount={paymentAmount}
+        mandateMethod={mandateMethod}
         onSuccess={handlePaymentSuccess}
         onFailure={handlePaymentFailure}
       />

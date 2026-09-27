@@ -24,11 +24,24 @@ import { cn } from "@/lib/utils"
 
 export type PaymentMethod = "upi" | "card" | "netbanking"
 
+/** How a subscription's mandate method reads once it reaches this step. */
+const MANDATE_LABELS = {
+  "upi-autopay": "UPI Autopay",
+  card: "Card (Credit/Debit)",
+} as const
+
 interface PaymentModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   itemLabel: string
   amount: number
+  /**
+   * Set for subscriptions only. The method was already chosen in the drawer —
+   * Razorpay needs it up front to create the recurring mandate — so this step
+   * shows it read-only rather than asking a second time. Netbanking is not
+   * offered at all in that case: it cannot carry a mandate.
+   */
+  mandateMethod?: "upi-autopay" | "card" | null
   onSuccess: () => void
   onFailure: () => void
 }
@@ -38,6 +51,7 @@ export function PaymentModal({
   onOpenChange,
   itemLabel,
   amount,
+  mandateMethod,
   onSuccess,
   onFailure,
 }: PaymentModalProps) {
@@ -78,9 +92,20 @@ export function PaymentModal({
         <Separator />
 
         <p className="text-2xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Payment options (demo simulation)
+          {mandateMethod ? "Mandate method" : "Payment options (demo simulation)"}
         </p>
 
+        {mandateMethod ? (
+          /* Chosen in the drawer and already on its way to the gateway — shown
+             here so the amount and the method can be checked together, not to
+             be changed again. */
+          <div className="flex items-center gap-3 rounded-lg border border-border p-3">
+            <span className="flex-1 text-sm font-medium text-foreground">
+              {MANDATE_LABELS[mandateMethod]}
+            </span>
+            <span className="text-2xs text-muted-foreground">Recurring mandate</span>
+          </div>
+        ) : (
         <RadioGroup value={method} onValueChange={(v) => setMethod(v as PaymentMethod)} className="gap-2">
           {[
             { id: "upi" as const, label: "UPI / QR", tag: "Instant", tagVariant: "success" as const, sub: "Google Pay, PhonePe, Paytm, BHIM" },
@@ -116,9 +141,12 @@ export function PaymentModal({
             </label>
           ))}
         </RadioGroup>
+        )}
 
         <div className="mt-2 flex flex-col gap-2">
-          {method === "netbanking" ? (
+          {/* Netbanking is the demo's failure path and cannot carry a mandate,
+              so a subscription never reaches it. */}
+          {!mandateMethod && method === "netbanking" ? (
             <Button
               variant="destructive"
               size="lg"
