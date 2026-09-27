@@ -10,9 +10,9 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 
 | Component        | Import                                                                 | tldr                                             |
 |------------------|------------------------------------------------------------------------|--------------------------------------------------|
-| Button           | `import { Button } from "@apna/design-system"`                         | Primary action surface. 6 variants × 4 sizes.    |
+| Button           | `import { Button } from "@apna/design-system"`                         | Primary action surface. 9 variants × 4 sizes — includes `checkout` / `checkout-inset` for the fixed-light self-checkout surface. |
 | ButtonGroup      | `import { ButtonGroup, ButtonGroupText } from "@apna/design-system"`   | Horizontally grouped buttons with shared border. |
-| BackButton       | `import { BackButton } from "@apna/design-system"`                     | Standard back button with border and ChevronLeft. |
+| BackButton       | `import { BackButton } from "@apna/design-system"`                     | Back navigation. `variant="outline"` (default) is a bordered circle + ChevronLeft; `"ghost"` is a bare 24px ArrowLeft in a 40px hit box, for product headers. |
 | Toggle           | `import { Toggle } from "@apna/design-system"`                         | On/off button. Use for formatting toolbars.      |
 | ToggleGroup      | `import { ToggleGroup, ToggleGroupItem } from "@apna/design-system"`   | Multiple toggles, single- or multi-select.       |
 
@@ -36,7 +36,7 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 | Component        | Import                                                                 | tldr                                             |
 |------------------|------------------------------------------------------------------------|--------------------------------------------------|
 | Avatar           | `import { Avatar, AvatarImage, AvatarFallback } from "@apna/design-system"` | User image with fallback. Supports groups.  |
-| Badge            | `import { Badge } from "@apna/design-system"`                         | Status / count marker (`variant`: 7 roles, `size`: "default" · "sm" · "lg"). |
+| Badge            | `import { Badge } from "@apna/design-system"`                         | Status / count marker (`variant`: 9 roles incl. `ribbon` / `discount` for pricing cards, `size`: "default" · "sm" · "lg" · "ribbon"). Pair `variant="ribbon"` with `size="ribbon"` for the flush card-corner treatment. |
 | MetricCard       | `import { MetricCard } from "@apna/design-system"`                    | `variant="metric"` (default): dashboard stat, bordered, icon + trend. `variant="stat"`: marketing stat tile, borderless, value-first, no icon/trend chrome. |
 | Skeleton         | `import { Skeleton } from "@apna/design-system"`                       | Loading placeholder shape.                       |
 | Spinner          | `import { Spinner } from "@apna/design-system"`                       | Indeterminate loading indicator.                 |
@@ -48,8 +48,8 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 | Component        | Import                                                                 | tldr                                             |
 |------------------|------------------------------------------------------------------------|--------------------------------------------------|
 | Tabs             | `import { Tabs, TabsList, TabsTrigger, TabsContent } from "@apna/design-system"` | Sectioned view switcher.            |
-| ChipTabs         | `import { ChipTabs } from "@apna/design-system"`                      | Segmented control / pill-shaped choice tabs.     |
-| SegmentedTabSwitcher | `import { SegmentedTabSwitcher } from "@apna/design-system"`      | Responsive section switcher — two-line desktop pill, horizontal-scroll mobile chip carousel. Extracted from self-checkout. |
+| ChipTabs         | `import { ChipTabs } from "@apna/design-system"`                      | Segmented control / pill-shaped choice tabs (`variant`: "default" · "choice" · "solid"; `itemClassName` for layout-only chip overrides). |
+| SegmentedTabSwitcher | `import { SegmentedTabSwitcher } from "@apna/design-system"`      | Responsive section switcher — two-line desktop pill, horizontal-scroll mobile chip carousel. Extracted from self-checkout. `activeItemClassName` themes the active pill; `mobileBleedClassName` / `mobileGutterClassName` must mirror the parent's gutter, or the full-bleed carousel over/undershoots. |
 | Breadcrumb       | `import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@apna/design-system"` | Hierarchical location trail. |
 | Sidebar          | `import { Sidebar, SidebarContent, SidebarHeader, SidebarFooter, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@apna/design-system"` | Persistent app sidebar primitives. |
 | ReusableSidebar  | `import { ReusableSidebar } from "@apna/design-system"`                | High-level configurable sidebar shell.           |
@@ -81,7 +81,7 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 | Table            | `import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell, TableCaption, TableFooter } from "@apna/design-system"` | Semantic tabular data. |
 | Accordion        | `import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@apna/design-system"` | Expand/collapse grouped content. |
 | JobCard          | `import { JobCard } from "@apna/design-system"`                        | Candidate-facing job post card.                  |
-| PricingCard      | `import { PricingCard } from "@apna/design-system"`                    | Plan/bundle card — ribbon, price+MRP+badge, CTA slot. Pure layout; caller supplies coloured ribbon/badge/cta. |
+| PricingCard      | `import { PricingCard } from "@apna/design-system"`                    | Plan/bundle card — ribbon, one or more meta rows, price+MRP+badge, CTA slot. Pure layout; caller supplies coloured ribbon/badge/cta. `emphasis`: "price" (default) or "title" picks which line leads. `surface="inset"` for a card nested in an always-dark surface. |
 | ApnaLogo         | `import { ApnaLogo } from "@apna/design-system"`                       | Brand mark lockup with gradient and wordmark.    |
 | LogoApnaUnlimited | `import { LogoApnaUnlimited } from "@apna/design-system"`             | "apna ∞ Unlimited" wordmark — `variant="default\|white\|gradient"` (dark/light/Accent-Gradient fill). |
 

@@ -115,9 +115,11 @@ change between themes.
 | `--surface-inverted`     | apna-royal-900     | apna-royal-950      | inverted hero / marketing banner|
 | `--surface-inverted-fg`  | gray-0             | gray-0              | text on inverted surface        |
 | `--surface-checkout-hero-fg`       | gray-900 | gray-50  | text on the checkout-hero gradient (see Gradients) |
+| `--surface-checkout-hero-fg-secondary` | gray-700 | gray-300 | secondary ink on the checkout-hero gradient — inactive tab labels + their glyphs, tab descriptions, the "Available credits" label, body subtitles. A step darker than `-muted`; the designs use it widely enough to earn a role rather than an opacity dim |
 | `--surface-checkout-hero-fg-muted`| gray-500  | gray-400 | helper text on the checkout-hero gradient |
 | `--surface-checkout-track`        | gray-100  | gray-800 | pricing-hero tab-selector track background |
 | `--surface-checkout-track-border` | gray-200  | gray-700 | pricing-hero tab-selector track border |
+| `--surface-checkout-inset-hover`  | gray-100  | gray-100 (fixed) | hover for a CTA sitting on the fixed-white inset card. Fixed like the rest of the inset family — `--muted` would flip to near-black on a box that stays white |
 
 ### Roles
 
@@ -157,8 +159,10 @@ while `--primary`/`--success` brighten one step in dark mode
 | `--checkout-primary`           | apna-green-600 (#1F8268) | apna-green-600 (fixed) | checkout CTAs |
 | `--checkout-primary-hover`     | apna-green-700 (#186954) | apna-green-700 (fixed) | checkout CTA hover |
 | `--checkout-primary-foreground`| gray-0                 | gray-0                   | text/icon on checkout-primary             |
-| `--checkout-discount-fg`       | checkout-discount-fg (#166534) | apna-green-400     | itemized discount-row text (drawer, cards)|
-| `--checkout-discount-bg`       | apna-green-100          | apna-green-900           | discount pill background                  |
+| `--checkout-discount-fg`       | apna-green-700 (#186954) | apna-green-400     | discount-pill and itemized discount text (drawer, cards). Consumed via `<Badge variant="discount">` |
+| `--checkout-discount-bg`       | gray-200                | apna-green-900           | discount pill background                  |
+| `--checkout-info`              | apna-sky-500 (#3B82F6)  | apna-sky-500 (fixed)     | the checkout surface's fixed accent blue — the "Recommended" ribbon (`<Badge variant="ribbon">`) and the single-credit link. Not `--info`: that is apna-sky-600 and remaps in dark, while this surface stays light in both themes |
+| `--checkout-info-foreground`   | gray-0                  | gray-0 (fixed)           | text/icon on `--checkout-info`            |
 
 ### Status
 
@@ -194,6 +198,16 @@ surface so the sidebar can be re-themed independently.
 
 `--chart-1 … --chart-5`. Addressed by slot, not hue — do not reason about
 "green" or "red" here. The ramp is ordered by emphasis.
+
+### Chip
+
+| Token                     | Light    | Dark     | Intent |
+|---------------------------|----------|----------|--------|
+| `--chip-solid`            | gray-800 | gray-100 | selected chip in `<ChipTabs variant="solid">` — a high-contrast ink chip on a translucent track, distinct from the `secondary` surface the default variant uses |
+| `--chip-solid-foreground` | gray-0   | gray-900 | text on `--chip-solid` |
+
+Theme-aware on purpose: the track these sit on (`--surface-checkout-track`)
+inverts in dark, so a fixed dark chip would disappear into it.
 
 ### Radius
 

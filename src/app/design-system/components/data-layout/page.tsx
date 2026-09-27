@@ -18,14 +18,13 @@ import {
   Button,
   JobCard,
   PricingCard,
-  CalendarDays,
+  ClockFading,
   Switch,
   Label,
 } from "@apna/design-system"
-import { cn } from "@/lib/utils"
 
 export default function DataLayoutComponentsPage() {
-  const [solidRibbon, setSolidRibbon] = React.useState(true)
+  const [titleLed, setTitleLed] = React.useState(false)
 
   return (
     <div className="space-y-10">
@@ -67,28 +66,25 @@ export default function DataLayoutComponentsPage() {
               Pricing Card
             </h2>
             <p className="text-xs text-muted-foreground">
-              Plan/bundle card — ribbon, price+MRP+badge, CTA slot. Pure layout;
-              extracted from the apnahire self-checkout page. The ribbon is a
-              slot (any node), not a fixed style — toggle below.
+              Plan/bundle card — ribbon, meta rows, price+MRP+badge, CTA slot.
+              Pure layout; extracted from the apnahire self-checkout page. The
+              ribbon and badge are slots (any node), not fixed styles.
+              `emphasis` picks which line leads: self-checkout uses price-led
+              on Jobs and title-led on Database — toggle below.
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <Switch id="toggle-ribbon" checked={solidRibbon} onCheckedChange={setSolidRibbon} />
-            <Label htmlFor="toggle-ribbon">Solid ribbon (self-checkout style)</Label>
+            <Switch id="toggle-emphasis" checked={titleLed} onCheckedChange={setTitleLed} />
+            <Label htmlFor="toggle-emphasis">Title-led (Database style)</Label>
           </div>
         </div>
 
         <div className="p-4 sm:p-6 bg-background">
           <div className="max-w-xs w-full">
             <PricingCard
+              emphasis={titleLed ? "title" : "price"}
               ribbon={
-                <Badge
-                  variant={solidRibbon ? undefined : "info"}
-                  className={cn(
-                    "rounded-none rounded-bl-xl px-4 py-0.5",
-                    solidRibbon && "border-transparent bg-info text-info-foreground"
-                  )}
-                >
+                <Badge variant="ribbon" size="ribbon">
                   Recommended
                 </Badge>
               }
@@ -96,15 +92,19 @@ export default function DataLayoutComponentsPage() {
               subtitle="Perfect for growing businesses"
               meta={
                 <>
-                  <CalendarDays className="size-4 shrink-0" aria-hidden />
+                  <ClockFading aria-hidden />
                   Valid for 90 days
                 </>
               }
               price="₹3,649"
               mrp="₹4,194"
-              badge={<Badge variant="success">13% OFF</Badge>}
+              badge={<Badge variant="discount">13% OFF</Badge>}
               priceSuffix="₹608 /credit"
-              cta={<Button className="w-full font-semibold">Buy now</Button>}
+              cta={
+                <Button variant="checkout" className="h-10 w-full font-semibold">
+                  Buy now
+                </Button>
+              }
             />
           </div>
         </div>
