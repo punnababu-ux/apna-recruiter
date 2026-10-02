@@ -48,6 +48,7 @@ export * from "./components/ui/dialog"
 export * from "./components/ui/alert-dialog"
 export * from "./components/ui/sheet"
 export * from "./components/ui/alert-banner"
+export * from "./components/ui/renewal-banner"
 
 // 6. Feedback & Status
 export * from "./components/ui/alert"

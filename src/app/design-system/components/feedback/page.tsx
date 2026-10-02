@@ -1,9 +1,28 @@
 "use client"
 
 import * as React from "react"
-import { AlertBanner, Button, Badge, Switch, Label } from "@apna/design-system"
+import { AlertBanner, RenewalBanner, Button, Badge, Switch, Label } from "@apna/design-system"
 import { toast } from "sonner"
-import { AlertCircle, Info, CreditCard, ChevronRight } from "@apna/design-system"
+import { AlertCircle, Info, CreditCard, ChevronRight, RefreshCw, Sparkles } from "@apna/design-system"
+import { cn } from "@/lib/utils"
+
+// A translucent overlay rather than an opaque chip — `bg-foreground/15` reads
+// as "black at ~15% opacity" in light mode and "white at ~15% opacity" in
+// dark mode (foreground flips with theme), so the pill softly darkens a
+// light tint card or lightens a dark one instead of sitting on top of it as
+// a stark white/black block. `bg-white/15` is used on the primary (solid
+// gradient) appearance instead, matching the gradient's own fixed white text.
+function DiscountBadge({ appearance }: { appearance: "primary" | "secondary" }) {
+  return appearance === "primary" ? (
+    <Badge variant="outline" className="border-transparent bg-white/15 text-white">
+      22% OFF
+    </Badge>
+  ) : (
+    <Badge variant="outline" className="border-transparent bg-foreground/15 text-foreground">
+      22% OFF
+    </Badge>
+  )
+}
 
 export default function FeedbackComponentsPage() {
   const [showIcon, setShowIcon] = React.useState(true)
@@ -33,9 +52,15 @@ export default function FeedbackComponentsPage() {
       {/* Configurable Alert Banner */}
       <div className="rounded-xl border border-border bg-card overflow-hidden">
         <div className="border-b border-border/60 bg-muted/30 p-4 sm:p-6 flex flex-wrap gap-6 items-center justify-between">
-          <h2 className="text-base font-semibold text-foreground font-heading">
-            Configurable Alert Banner
-          </h2>
+          <div>
+            <h2 className="text-base font-semibold text-foreground font-heading">
+              Configurable Alert Banner
+            </h2>
+            <p className="text-sm text-muted-foreground mt-1 max-w-prose">
+              AlertBanner and RenewalBanner share one appearance=&quot;primary&quot; | &quot;secondary&quot; system
+              — the toggles below drive every banner in this card, RenewalBanner included.
+            </p>
+          </div>
           <div className="flex flex-wrap items-center gap-6">
             <div className="flex items-center gap-2">
               <Switch id="toggle-appearance" checked={appearance === "primary"} onCheckedChange={(c) => setAppearance(c ? "primary" : "secondary")} />
@@ -93,10 +118,71 @@ export default function FeedbackComponentsPage() {
             action={showCTA ? { label: <span className="flex items-center">View candidate <ChevronRight className="size-4 ml-0.5" /></span>, onClick: () => toast("Action clicked") } : undefined}
             onClose={showClose ? () => toast("Close clicked") : undefined}
           />
+
+          <AlertBanner
+            variant="success"
+            appearance={appearance}
+            icon={
+              showIcon ? (
+                <Badge
+                  size="lg"
+                  variant="outline"
+                  className={cn(
+                    "bg-transparent font-bold",
+                    appearance === "primary" ? "border-white/40 text-white" : "border-success/30 text-success"
+                  )}
+                >
+                  <Sparkles /> Special offer for you
+                </Badge>
+              ) : undefined
+            }
+            title={
+              <span
+                className={cn(
+                  "text-base font-bold",
+                  // Tied to the banner's own appearance, not the app theme:
+                  // yellow on the solid gradient, black/foreground on the
+                  // subtle tint. Known caveat — on the light-theme gradient
+                  // (green-500->700) gold only clears ~2.1-2.8:1 contrast,
+                  // below the 3:1 floor even for large bold text; it only
+                  // passes comfortably (~4.6-5.5:1) once the gradient is the
+                  // darker green-700->900 dark-theme pairing.
+                  appearance === "primary" ? "text-highlight" : "text-foreground"
+                )}
+              >
+                Upgrade to 12 months at the price of 4!
+              </span>
+            }
+            cta={showCTA ? <Button variant="secondary" size="sm">Upgrade @ ₹9,999/yr</Button> : undefined}
+          />
+
+          <RenewalBanner
+            variant="destructive"
+            appearance={appearance}
+            icon={showIcon ? <RefreshCw /> : undefined}
+            title="0 job credits remaining."
+            subtitle="Renew now! Same discount applied!"
+            items={[{ label: "6 Job credits" }, { label: "90 days validity" }]}
+            price="₹3,649"
+            mrp="₹4,306"
+            badge={<DiscountBadge appearance={appearance} />}
+            cta={<Button variant="secondary" trailingIcon={<ChevronRight />}>Renew now</Button>}
+          />
+
+          <RenewalBanner
+            variant="warning"
+            appearance={appearance}
+            icon={showIcon ? <RefreshCw /> : undefined}
+            title="Just 1 job credit remaining."
+            subtitle="Renew now - same price as before!"
+            items={[{ label: "6 Job credits" }, { label: "90 days validity" }]}
+            price="₹3,649"
+            mrp="₹4,306"
+            badge={<DiscountBadge appearance={appearance} />}
+            cta={<Button variant="secondary" trailingIcon={<ChevronRight />}>Renew now</Button>}
+          />
         </div>
       </div>
-
-
 
       {/* Sonner Toasts */}
       <div className="rounded-xl border border-border bg-card p-6 space-y-4">

@@ -331,12 +331,22 @@
                         var(--color-apna-gold-400) 0%,
                         var(--color-apna-gold-600) 100%);
 
-  /* Alert Banner Gradients */
+  /* Alert Banner Gradients — darker overall than the original "500/700"
+   * pair, but spread WIDE (600->950, not 700->900): moving both stops
+   * down by the same one or two steps compressed the visible range into a
+   * narrow, nearly-flat dark band (every ramp's steps converge toward
+   * black, so e.g. sky-700->900 is a much smaller perceptual jump than
+   * sky-500->700 despite being "the same number of steps"). Anchoring the
+   * dark end at each ramp's darkest step (950) while only moderately
+   * darkening the light end keeps the diagonal clearly visible while still
+   * reading darker on average. `warning` is the exception — it pairs with
+   * fixed dark text (`text-gray-950`, see `primaryBgMap`), so its darkest
+   * stop stays light enough (gold-600) to hold that text's contrast. */
   --gradient-banner-default:     linear-gradient(135deg, var(--color-gray-800) 0%, var(--color-gray-950) 100%);
-  --gradient-banner-info:        linear-gradient(135deg, var(--color-apna-sky-500) 0%, var(--color-apna-sky-700) 100%);
-  --gradient-banner-success:     linear-gradient(135deg, var(--color-apna-green-500) 0%, var(--color-apna-green-700) 100%);
-  --gradient-banner-warning:     linear-gradient(135deg, var(--color-apna-gold-300) 0%, var(--color-apna-gold-500) 100%);
-  --gradient-banner-destructive: linear-gradient(135deg, var(--color-red-500) 0%, var(--color-red-700) 100%);
+  --gradient-banner-info:        linear-gradient(135deg, var(--color-apna-sky-600) 0%, var(--color-apna-sky-950) 100%);
+  --gradient-banner-success:     linear-gradient(135deg, var(--color-apna-green-600) 0%, var(--color-apna-green-950) 100%);
+  --gradient-banner-warning:     linear-gradient(135deg, var(--color-apna-gold-400) 0%, var(--color-apna-gold-600) 100%);
+  --gradient-banner-destructive: linear-gradient(135deg, var(--color-red-600) 0%, var(--color-red-950) 100%);
 
   /* Checkout hero — soft multi-tone ambient mesh, used behind the
    * self-checkout / pricing page hero + tab selector. Matches the
@@ -562,12 +572,16 @@
   --chart-4: var(--color-gray-400);
   --chart-5: var(--color-apna-green-700);
 
-  /* Alert Banner Gradients (Dark) */
+  /* Alert Banner Gradients (Dark) — same "wide spread, dark end pinned to
+   * 950" reasoning as the light block above, one step darker at the light
+   * end than its light-mode counterpart so dark mode still reads deeper.
+   * `warning` again stays lighter at its darkest stop to protect the fixed
+   * `text-gray-950` it's paired with in `primaryBgMap`. */
   --gradient-banner-default:     linear-gradient(135deg, var(--color-apna-plum-800) 0%, var(--color-apna-plum-950) 100%);
-  --gradient-banner-info:        linear-gradient(135deg, var(--color-apna-sky-700) 0%, var(--color-apna-sky-900) 100%);
-  --gradient-banner-success:     linear-gradient(135deg, var(--color-apna-green-700) 0%, var(--color-apna-green-900) 100%);
-  --gradient-banner-warning:     linear-gradient(135deg, var(--color-apna-gold-600) 0%, var(--color-apna-gold-800) 100%);
-  --gradient-banner-destructive: linear-gradient(135deg, var(--color-red-700) 0%, var(--color-red-900) 100%);
+  --gradient-banner-info:        linear-gradient(135deg, var(--color-apna-sky-700) 0%, var(--color-apna-sky-950) 100%);
+  --gradient-banner-success:     linear-gradient(135deg, var(--color-apna-green-700) 0%, var(--color-apna-green-950) 100%);
+  --gradient-banner-warning:     linear-gradient(135deg, var(--color-apna-gold-500) 0%, var(--color-apna-gold-700) 100%);
+  --gradient-banner-destructive: linear-gradient(135deg, var(--color-red-800) 0%, var(--color-red-950) 100%);
 
   /* Checkout hero (dark) — the source has no dark design to port, so this is
    * an original dark treatment: soft white glows over a dark diagonal wash,
