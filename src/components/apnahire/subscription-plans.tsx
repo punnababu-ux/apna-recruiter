@@ -21,9 +21,9 @@ import {
   Check,
   ChipTabs,
   LogoApnaUnlimited,
-  MessageCircle,
   Sparkles,
   UserSearch,
+  WhatsApp,
   type ChipTabItem,
 } from "@apna/design-system"
 import { cn } from "@/lib/utils"
@@ -141,7 +141,7 @@ function PlanCard({
             <span>{dbLine}</span>
           </span>
           <span className="flex items-start gap-3 text-sm">
-            <MessageCircle className="size-5 shrink-0" aria-hidden />
+            <WhatsApp className="size-5 shrink-0" aria-hidden />
             <span>WhatsApp outreach to matched candidates for more applications</span>
           </span>
         </div>

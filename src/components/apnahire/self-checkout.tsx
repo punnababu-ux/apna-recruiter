@@ -25,8 +25,6 @@
 
 import * as React from "react"
 import { useRouter } from "next/navigation"
-import { Wallet } from "@apna/design-system"
-import { ApnaLogo, Button, BackButton } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 
 import {
@@ -44,6 +42,7 @@ import { FaqSection } from "@/components/apnahire/faq-section"
 import { TrustBar } from "@/components/apnahire/trust-bar"
 import { TestimonialGrid } from "@/components/apnahire/testimonial-grid"
 import { UnlimitedSideCard } from "@/components/apnahire/unlimited-side-card"
+import { CheckoutTopBar } from "@/components/apnahire/checkout-top-bar"
 import {
   CheckoutDrawer,
   type CartLine,
@@ -70,16 +69,8 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   // hero's own (full-size) tab switcher scrolls out from under it. Timing
   // and thresholds match the source self-checkout site's header exactly
   // (scrollY > 5, 250ms cubic-bezier(0.16,1,0.3,1)).
-  const [isScrolled, setIsScrolled] = React.useState(false)
   const [showCompactTabs, setShowCompactTabs] = React.useState(false)
   const heroTabsRef = React.useRef<HTMLDivElement>(null)
-
-  React.useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 5)
-    onScroll()
-    window.addEventListener("scroll", onScroll, { passive: true })
-    return () => window.removeEventListener("scroll", onScroll)
-  }, [])
 
   React.useEffect(() => {
     const el = heroTabsRef.current
@@ -262,76 +253,34 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
              Logged-out has no bar of its own here at all: SiteHeader (from
              the (marketing) layout) is the header, and compactTabSwitcher
              above is published into it rather than rendered here. ── */
-        <header
-          className={cn(
-            "sticky top-0 z-40 border-b transition-[background-color,border-color,box-shadow] duration-300 ease-standard",
-            isScrolled
-              ? "border-border bg-card shadow-sm"
-              : "border-checkout-track bg-transparent shadow-none"
-          )}
-        >
-          {/* Same gutter + column as the hero and the tab bodies, so the back
-              arrow and the credits pill line up with the H1 and the cards
-              rather than hugging the viewport edge. */}
-          <div className="px-4 sm:px-8 lg:px-12">
-            <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between">
-              {/* -ml-2 pulls the 24px glyph flush with the column edge; the
-                  remaining gap-1 plus the button's own 8px inset is the 12px
-                  Figma measures from glyph edge to logo edge. */}
-              <div className="flex flex-1 items-center gap-1">
-                <BackButton
-                  variant="ghost"
-                  onClick={() => router.push("/apnahire/dashboard")}
-                  aria-label="Back to dashboard"
-                  className="-ml-2 text-checkout-hero-fg"
-                />
-                <ApnaLogo />
-              </div>
-
-              {/* Revealed from lg, not md: with the logo and the full-size
-                  credits pill in the row, four chips no longer fit between
-                  them at tablet widths. */}
-              <div
-                className={cn(
-                  "hidden items-center gap-1 rounded-full border border-border bg-muted p-1 transition-[opacity,translate] duration-300 ease-standard lg:flex",
-                  showCompactTabs
-                    ? "translate-y-0 opacity-100"
-                    : "pointer-events-none -translate-y-2 opacity-0"
-                )}
-              >
-                {PRICING_TABS.map((tab) => (
-                  <button
-                    key={tab.value}
-                    type="button"
-                    onClick={() => setActiveTab(tab.value)}
-                    className={cn(
-                      "inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-sm font-semibold transition-colors [&_svg]:size-5",
-                      activeTab === tab.value
-                        ? "bg-card text-checkout-primary shadow-sm"
-                        : "text-muted-foreground hover:text-foreground"
-                    )}
-                  >
-                    {tab.icon}
-                    {PRICING_TAB_SHORT_LABELS[tab.value]}
-                  </button>
-                ))}
-              </div>
-
-              <div className="flex flex-1 justify-end">
-                {/* `outline` ships bg-background plus dark: overrides; this
-                    surface stays light in both themes and Figma shows no
-                    fill, hence the transparent overrides. */}
-                <Button
-                  variant="outline"
-                  className="gap-1 bg-transparent text-checkout-hero-fg-secondary dark:border-border dark:bg-transparent"
+        <CheckoutTopBar
+          onBack={() => router.push("/apnahire/dashboard")}
+          backLabel="Back to dashboard"
+          showCenter={showCompactTabs}
+          // Revealed from lg, not md: with the logo and the full-size
+          // credits pill in the row, four chips no longer fit between
+          // them at tablet widths.
+          center={
+            <div className="hidden items-center gap-1 rounded-full border border-border bg-muted p-1 lg:flex">
+              {PRICING_TABS.map((tab) => (
+                <button
+                  key={tab.value}
+                  type="button"
+                  onClick={() => setActiveTab(tab.value)}
+                  className={cn(
+                    "inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-sm font-semibold transition-colors [&_svg]:size-5",
+                    activeTab === tab.value
+                      ? "bg-card text-checkout-primary shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
                 >
-                  <Wallet className="size-5" aria-hidden />
-                  Available credits
-                </Button>
-              </div>
+                  {tab.icon}
+                  {PRICING_TAB_SHORT_LABELS[tab.value]}
+                </button>
+              ))}
             </div>
-          </div>
-        </header>
+          }
+        />
       )}
 
       {/* ── Hero + pricing body share the page-level ambient-gradient canvas ── */}

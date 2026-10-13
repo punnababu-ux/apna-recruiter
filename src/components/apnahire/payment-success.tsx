@@ -17,6 +17,10 @@ interface PaymentSuccessProps {
   orderId: string
   onSearchCandidates?: () => void
   onPostJob?: () => void
+  /** Set when this payment was the last step of posting a job: the job is
+   *  already live, so the screen says so and doesn't ask them to post again
+   *  (paid-but-not-posted jobs were a recurring support issue). */
+  postedJob?: { title: string; onViewJobs: () => void }
 }
 
 export function PaymentSuccess({
@@ -25,6 +29,7 @@ export function PaymentSuccess({
   orderId,
   onSearchCandidates,
   onPostJob,
+  postedJob,
 }: PaymentSuccessProps) {
   const subtotal = lines.reduce((sum, l) => sum + l.price, 0)
   const gst = total - subtotal >= 0 ? total - subtotal : Math.round(subtotal * 0.18)
@@ -36,8 +41,13 @@ export function PaymentSuccess({
 
         <div className="flex flex-col items-center gap-1 text-center">
           <h1 className="text-h3 font-heading font-bold text-foreground">
-            Payment successful
+            {postedJob ? "Your job is live" : "Payment successful"}
           </h1>
+          {postedJob && (
+            <p className="text-sm text-foreground">
+              {postedJob.title} is now visible to candidates. Nothing else to do.
+            </p>
+          )}
           <p className="text-sm text-muted-foreground">Order ID: {orderId}</p>
         </div>
 
@@ -75,9 +85,15 @@ export function PaymentSuccess({
           <Button variant="outline" className="flex-1 font-semibold" onClick={onSearchCandidates}>
             Search candidates
           </Button>
-          <Button variant="success" className="flex-1 font-semibold" onClick={onPostJob}>
-            Post a job now
-          </Button>
+          {postedJob ? (
+            <Button variant="success" className="flex-1 font-semibold" onClick={postedJob.onViewJobs}>
+              View my jobs
+            </Button>
+          ) : (
+            <Button variant="success" className="flex-1 font-semibold" onClick={onPostJob}>
+              Post a job now
+            </Button>
+          )}
         </div>
       </div>
     </div>

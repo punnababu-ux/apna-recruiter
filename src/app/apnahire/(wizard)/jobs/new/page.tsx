@@ -1,5 +1,5 @@
-import { CreateJobWizard } from "@/components/onlyrounds/create-job-wizard"
+import { PostJobFlow } from "@/components/apnahire/post-job/post-job-flow"
 
 export default function CreateJobPage() {
-  return <CreateJobWizard />
+  return <PostJobFlow />
 }
