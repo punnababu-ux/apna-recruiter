@@ -16,14 +16,34 @@
  * the shared tone-map module): `"secondary"` (default) is a subtle tint, `"primary"`
  * is the solid gradient treatment for a higher-emphasis promo placement.
  *
- * `badge` (discount pill), `cta` and `icon` are passed as pre-styled nodes
- * rather than styled by this component — the same "pass pre-styled nodes"
- * rule `PricingCard` and `LogoWall` already follow, so this component owns
- * layout only and never a parallel colour palette. For `badge`, prefer a
- * translucent neutral overlay over an opaque or tone-coloured chip: the card
- * itself already sits on a subtle (or, in `primary`, saturated) tint of the
- * same tone, so a same-tone badge washes out, and a solid white/black chip
- * reads as a stark block dropped on top rather than part of the surface.
+ * RULE: every banner content pair supports both appearances — the `appearance`
+ * prop must actually flip its look, the same way a component that only
+ * renders in light mode isn't finished. The showcase proves this with ONE
+ * example per content pair wired to a shared toggle, not two separate
+ * hardcoded copies sitting side by side — the toggle is the test; a second
+ * static copy is just noise once the first one responds correctly.
+ * Exception: a banner that's deliberately a fixed, single-tone treatment by
+ * design (e.g. the "Unlimited hiring" promo below, always the dark/primary
+ * gradient) is exempt — it was never meant to flip, so there's no secondary
+ * state to demonstrate.
+ *
+
+ * `badge`, `cta`, `icon` and `ribbon` are passed as pre-styled nodes rather
+ * than styled by this component — the same "pass pre-styled nodes" rule
+ * `PricingCard` and `LogoWall` already follow, so this component owns
+ * layout only and never a parallel colour palette. `icon` is the one
+ * exception with a built-in default: every icon gets a circular backdrop
+ * (`bg-card` secondary, `bg-white/15` primary) and the usual tone colour,
+ * sized to match (`size-14` circle, `size-8` glyph) — pass a bare icon
+ * (`<RefreshCw />`) to get it. To override the circle's colour (e.g. the
+ * gold "Unlimited hiring" accent below, distinct from the generic default),
+ * pass your own identically-sized `size-14 rounded-full` wrapper instead —
+ * it paints over the built-in one rather than nesting a second ring, since
+ * both end up the same size and shape. For `badge`, prefer a translucent
+ * neutral overlay over an opaque or tone-coloured chip: the card itself
+ * already sits on a subtle (or, in `primary`, saturated) tint of the same
+ * tone, so a same-tone badge washes out, and a solid white/black chip reads
+ * as a stark block dropped on top rather than part of the surface.
  * `bg-foreground/15 text-foreground` (secondary) and `bg-white/15 text-white`
  * (primary) — as in the example below — soften or lighten the card locally
  * instead, the same overlay logic `appearance="primary"` itself uses for text.
@@ -42,6 +62,8 @@
  *     price="₹3,649"
  *     mrp="₹4,306"                                   // optional, line-through
  *     badge={<Badge variant="outline" className="border-transparent bg-foreground/15 text-foreground">22% OFF</Badge>}
+ *     priceCaption="For 3 months · That's just ₹1,800 /month"  // optional, below the price row
+ *     ribbon={<Badge variant="outline" className="rounded-none rounded-bl-xl border-transparent bg-foreground/10 text-foreground"><Clock /> Offer ends in 4 days</Badge>}  // optional, pinned top-right
  *     cta={<Button variant="secondary" trailingIcon={<ArrowRight />}>Renew now</Button>}
  *   />
  */
@@ -78,14 +100,35 @@ export interface RenewalBannerProps extends Omit<React.ComponentProps<typeof Ale
   price: React.ReactNode
   mrp?: React.ReactNode
   badge?: React.ReactNode
+  /** Small muted line below the price row — e.g. "For 3 months · That's just ₹1,800 /month". */
+  priceCaption?: React.ReactNode
   cta: React.ReactNode
+  /** Pinned to the card's top-right corner, overlapping the rounded edge —
+   *  e.g. a limited-time-offer countdown. Same absolute corner treatment
+   *  `PricingCard`'s `ribbon` slot uses. */
+  ribbon?: React.ReactNode
   /** Style appearance. 'secondary' (default) is a subtle tint, 'primary' is a solid gradient. */
   appearance?: "primary" | "secondary"
 }
 
 const RenewalBanner = React.forwardRef<HTMLDivElement, RenewalBannerProps>(
   (
-    { className, variant, icon, title, subtitle, items, price, mrp, badge, cta, appearance = "secondary", ...props },
+    {
+      className,
+      variant,
+      icon,
+      title,
+      subtitle,
+      items,
+      price,
+      mrp,
+      badge,
+      priceCaption,
+      cta,
+      ribbon,
+      appearance = "secondary",
+      ...props
+    },
     ref
   ) => {
     const isPrimary = appearance === "primary"
@@ -119,16 +162,30 @@ const RenewalBanner = React.forwardRef<HTMLDivElement, RenewalBannerProps>(
           // headline to near-zero on a "wide" viewport that doesn't
           // actually give this card much room, or sit stacked on a wide,
           // roomy one.
-          "@container/renewal-banner rounded-xl border-0 p-4 text-left shadow-none",
+          "@container/renewal-banner relative overflow-hidden rounded-xl border-0 p-4 text-left shadow-none",
           isPrimary && cn("bg-transparent", bannerPrimaryBgMap[safeVariant]),
           className
         )}
         {...props}
       >
+        {ribbon && (
+          // Same absolute top-right corner treatment as PricingCard's
+          // `ribbon` slot — `flex` (block-level) is load-bearing: without it
+          // this div sizes as an inline formatting context around `ribbon`,
+          // which reserves baseline/line-height space above it.
+          <div className="absolute right-0 top-0 flex rounded-bl-xl">{ribbon}</div>
+        )}
+
         <div className="flex flex-col flex-wrap gap-4 @5xl/renewal-banner:flex-row @5xl/renewal-banner:items-center @5xl/renewal-banner:gap-8">
           <div className="flex min-w-0 flex-1 items-center gap-4">
             {icon && (
-              <div className={cn("flex shrink-0 items-center justify-center [&>svg]:size-8", accentColor)}>
+              <div
+                className={cn(
+                  "flex size-14 shrink-0 items-center justify-center rounded-full [&>svg]:size-8",
+                  isPrimary ? "bg-white/15" : "bg-card",
+                  accentColor
+                )}
+              >
                 {icon}
               </div>
             )}
@@ -151,7 +208,17 @@ const RenewalBanner = React.forwardRef<HTMLDivElement, RenewalBannerProps>(
               dividerBorderColor
             )}
           >
-            <ul className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <ul
+              className={cn(
+                "flex flex-wrap items-center gap-x-4 gap-y-2",
+                // Reserve clearance from the ribbon on this one row (the
+                // row physically nearest it) instead of padding the whole
+                // card from the top — that pushed everything down and left
+                // an odd gap above the icon even when the ribbon's own
+                // corner had room to spare.
+                ribbon && "@5xl/renewal-banner:pr-12"
+              )}
+            >
               {items.map((item, i) => (
                 <li key={i} className={cn("flex items-center gap-1.5 text-sm", textColor)}>
                   <Check className={cn("size-4 shrink-0", mutedTextColor)} aria-hidden />
@@ -161,10 +228,13 @@ const RenewalBanner = React.forwardRef<HTMLDivElement, RenewalBannerProps>(
             </ul>
 
             <div className="flex w-full flex-wrap items-center justify-between gap-3">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className={cn("text-2xl leading-tight font-semibold", textColor)}>{price}</span>
-                {mrp && <span className={cn("text-sm line-through", mutedTextColor)}>{mrp}</span>}
-                {badge && <div className="shrink-0">{badge}</div>}
+              <div className="flex flex-col gap-0.5">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className={cn("text-2xl leading-tight font-semibold", textColor)}>{price}</span>
+                  {mrp && <span className={cn("text-sm line-through", mutedTextColor)}>{mrp}</span>}
+                  {badge && <div className="shrink-0">{badge}</div>}
+                </div>
+                {priceCaption && <p className={cn("text-xs", mutedTextColor)}>{priceCaption}</p>}
               </div>
               <div className="shrink-0">{cta}</div>
             </div>

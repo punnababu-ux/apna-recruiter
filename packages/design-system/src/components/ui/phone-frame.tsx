@@ -1,0 +1,49 @@
+/**
+ * PhoneFrame — a phone-shaped bezel for previewing mobile screens inside
+ * a desktop page (e.g. "how candidates will see your job").
+ *
+ * The screen scrolls independently of the page. Width is capped at
+ * `max-w-xs`; the frame keeps a phone aspect ratio. Purely presentational.
+ *
+ * API
+ *   <PhoneFrame label="Candidate view">{screen}</PhoneFrame>
+ *
+ * Accessibility: `label` becomes the region's accessible name.
+ */
+
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+interface PhoneFrameProps extends React.ComponentProps<"div"> {
+  label?: string
+  screenClassName?: string
+}
+
+function PhoneFrame({ label, className, screenClassName, children, ...props }: PhoneFrameProps) {
+  return (
+    <div
+      data-slot="phone-frame"
+      role="region"
+      aria-label={label}
+      className={cn(
+        "relative mx-auto w-full max-w-xs overflow-hidden rounded-4xl border-8 border-foreground bg-foreground shadow-xl",
+        className
+      )}
+      {...props}
+    >
+      <div aria-hidden className="absolute left-1/2 top-0 z-10 h-5 w-24 -translate-x-1/2 rounded-b-xl bg-foreground" />
+      <div
+        data-slot="phone-frame-screen"
+        className={cn(
+          "no-scrollbar aspect-[9/19] overflow-y-auto rounded-3xl bg-background",
+          screenClassName
+        )}
+      >
+        {children}
+      </div>
+    </div>
+  )
+}
+
+export { PhoneFrame }

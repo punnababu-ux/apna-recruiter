@@ -20,6 +20,7 @@ import {
   Database,
   InfinityIcon,
   Building2,
+  Stepper,
 } from "@apna/design-system"
 
 const SEGMENTED_DEMO_ITEMS: SegmentedTabItem[] = [
@@ -69,7 +70,29 @@ export default function NavigationComponentsPage() {
       </div>
 
       <div className="rounded-xl border border-border bg-card p-4 font-mono text-xs text-muted-foreground">
-        <code>{'import { Tabs, ChipTabs, SegmentedTabSwitcher, Breadcrumb, Sidebar } from "@apna/design-system"'}</code>
+        <code>{'import { Tabs, ChipTabs, SegmentedTabSwitcher, Stepper, Breadcrumb, Sidebar } from "@apna/design-system"'}</code>
+      </div>
+
+      {/* Stepper */}
+      <div className="rounded-xl border border-border bg-card p-6 space-y-6">
+        <h2 className="text-base font-semibold text-foreground font-heading border-b border-border/60 pb-2">
+          Stepper
+        </h2>
+        <Stepper
+          orientation="horizontal"
+          steps={[
+            { id: "describe", label: "Describe the role", status: "completed" },
+            { id: "review", label: "Review & preview", status: "current" },
+            { id: "plan", label: "Select plan", status: "pending" },
+          ]}
+        />
+        <Stepper
+          steps={[
+            { id: "a", label: "Job description", description: "Write or generate the JD", status: "completed" },
+            { id: "b", label: "Job details", description: "Experience, pay and location", status: "current" },
+            { id: "c", label: "Review & publish", status: "pending" },
+          ]}
+        />
       </div>
 
       {/* Breadcrumb */}

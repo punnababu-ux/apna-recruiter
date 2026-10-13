@@ -21,9 +21,13 @@ import {
   Badge,
   Slider,
   SearchFilterBar,
+  PromptInput,
+  Button,
+  Mic,
 } from "@apna/design-system"
 
 export default function InputsComponentsPage() {
+  const [prompt, setPrompt] = React.useState("")
   return (
     <div className="space-y-10">
       <div>
@@ -228,6 +232,28 @@ export default function InputsComponentsPage() {
               <Slider defaultValue={50} disabled />
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Prompt input */}
+      <div className="space-y-6">
+        <h2 className="text-base font-semibold text-foreground font-heading border-b border-border/60 pb-2">
+          Prompt Input (AI)
+        </h2>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <PromptInput
+            size="lg"
+            value={prompt}
+            onValueChange={setPrompt}
+            onSubmit={() => setPrompt("")}
+            placeholder="Describe who you want to hire…"
+            actions={
+              <Button type="button" size="icon" variant="outline" className="rounded-full" aria-label="Speak">
+                <Mic />
+              </Button>
+            }
+          />
+          <PromptInput value="" onValueChange={() => {}} onSubmit={() => {}} loading placeholder="Ask AI to change anything" />
         </div>
       </div>
     </div>

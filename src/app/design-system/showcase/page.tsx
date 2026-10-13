@@ -203,7 +203,7 @@ import { ArrowUpRight, Briefcase, Download, Share2, UserPlus } from "@apna/desig
 // import { AIInsightChip } from "@/components/onlyrounds/ai-insight-chip"
 // import { ScorePill } from "@/components/onlyrounds/score-pill"
 // import { RadioCard } from "@/components/onlyrounds/radio-card"
-import { Stepper } from "@/components/onlyrounds/stepper"
+import { Stepper } from "@apna/design-system"
 // import { InfoBanner } from "@/components/onlyrounds/info-banner"
 // import { SplitButton } from "@/components/onlyrounds/split-button"
 import { PageHeader } from "@/components/onlyrounds/page-header"
@@ -1729,7 +1729,7 @@ export default function Home() {
                 {[
                   { href: "/apnahire/jobs",                      label: "Jobs list",        desc: "List + status tabs + actions" },
                   { href: "/apnahire/jobs/manual-tester-profile", label: "Job detail",  desc: "Candidate pipeline w/ filters" },
-                  { href: "/apnahire/jobs/new",                  label: "Create job",       desc: "4-step wizard" },
+                  { href: "/apnahire/jobs/new",                  label: "Create job",       desc: "AI-first: describe → review → plan" },
                   { href: "/apnahire/dashboard",                 label: "Dashboard",        desc: "Recruiter overview & metrics" },
                 ].map((l) => (
                   <Link
@@ -2073,7 +2073,7 @@ export default function Home() {
                     icon: Share2,
                   },
                   {
-                    href: "/onlyrounds/jobs/new",
+                    href: "/apnahire/jobs/rounds/new",
                     title: "Create Job wizard",
                     body: "4-step Stepper wizard with ScreeningConfigurator.",
                     icon: UserPlus,

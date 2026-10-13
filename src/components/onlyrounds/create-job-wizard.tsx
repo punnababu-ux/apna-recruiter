@@ -47,7 +47,7 @@ import type {
   WorkMode,
 } from "@/types/onlyrounds"
 import { ReviewStep } from "@/components/onlyrounds/review-step"
-import { Stepper, type Step } from "@/components/onlyrounds/stepper"
+import { Stepper, type Step } from "@apna/design-system"
 import { toast } from "sonner"
 import {
   AlertDialog,

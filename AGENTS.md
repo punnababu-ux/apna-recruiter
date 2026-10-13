@@ -195,6 +195,13 @@ Reject the PR if you see any of:
 - Duplicated variant enums: product component has `type Tone = "info" |
   "warning" | "success" | "destructive"` identical to the primitive's.
   Re-export the primitive's type or pass the string through.
+- The same navigation control drawn two ways in two flows — e.g. a bare
+  arrow back button in one header and an outlined circle in another. A
+  recruiter crosses flows (self-checkout → job posting → plan step); shared
+  chrome must look and sit the same in all of them. `BackButton` has exactly
+  one form and one placement (first in the row, `gap-3` before the
+  title/logo) — see the rule in its JSDoc. Don't add a variant to make one
+  page different; change it everywhere or not at all.
 
 ### Semi-allowed exception
 

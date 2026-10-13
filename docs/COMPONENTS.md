@@ -12,7 +12,7 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 |------------------|------------------------------------------------------------------------|--------------------------------------------------|
 | Button           | `import { Button } from "@apna/design-system"`                         | Primary action surface. 9 variants × 4 sizes — includes `checkout` / `checkout-inset` for the fixed-light self-checkout surface. |
 | ButtonGroup      | `import { ButtonGroup, ButtonGroupText } from "@apna/design-system"`   | Horizontally grouped buttons with shared border. |
-| BackButton       | `import { BackButton } from "@apna/design-system"`                     | Back navigation. `variant="outline"` (default) is a bordered circle + ChevronLeft; `"ghost"` is a bare 24px ArrowLeft in a 40px hit box, for product headers. |
+| BackButton       | `import { BackButton } from "@apna/design-system"`                     | Back navigation — the only back control in the product: a 32px outlined circle + ChevronLeft, no variants. First item in a header row, `gap-3` before the title/logo. See the rule in its JSDoc. |
 | Toggle           | `import { Toggle } from "@apna/design-system"`                         | On/off button. Use for formatting toolbars.      |
 | ToggleGroup      | `import { ToggleGroup, ToggleGroupItem } from "@apna/design-system"`   | Multiple toggles, single- or multi-select.       |
 
@@ -24,6 +24,7 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 | Label            | `import { Label } from "@apna/design-system"`                         | Accessible form label.                           |
 | Input            | `import { Input } from "@apna/design-system"`                         | Single-line text input.                          |
 | Textarea         | `import { Textarea } from "@apna/design-system"`                       | Multi-line input.                                |
+| PromptInput      | `import { PromptInput } from "@apna/design-system"`                    | AI prompt box: auto-growing textarea + footer actions (mic) + round submit. Enter submits, Shift+Enter newlines. `size="lg"` hero / `"default"` bar; `loading`, `active` (voice writing into it); `submitText` for a labelled submit instead of the arrow. |
 | Checkbox         | `import { Checkbox } from "@apna/design-system"`                       | Binary toggle with `indeterminate` support.      |
 | RadioGroup       | `import { RadioGroup, RadioGroupItem } from "@apna/design-system"`     | Single-select from 2+ options.                   |
 | Switch           | `import { Switch } from "@apna/design-system"`                         | Instant on/off. Persist on change.               |
@@ -50,6 +51,7 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 | Tabs             | `import { Tabs, TabsList, TabsTrigger, TabsContent } from "@apna/design-system"` | Sectioned view switcher.            |
 | ChipTabs         | `import { ChipTabs } from "@apna/design-system"`                      | Segmented control / pill-shaped choice tabs (`variant`: "default" · "choice" · "solid"; `itemClassName` for layout-only chip overrides). |
 | SegmentedTabSwitcher | `import { SegmentedTabSwitcher } from "@apna/design-system"`      | Responsive section switcher — two-line desktop pill, horizontal-scroll mobile chip carousel. Extracted from self-checkout. `activeItemClassName` themes the active pill; `mobileBleedClassName` / `mobileGutterClassName` must mirror the parent's gutter, or the full-bleed carousel over/undershoots. |
+| Stepper          | `import { Stepper, type Step } from "@apna/design-system"`             | Wizard progress rail, vertical or horizontal. Steps are `{ id, label, status: "completed"\|"current"\|"pending" }`; `onStepClick` makes non-pending steps clickable. Below `sm` only the current step keeps its label. |
 | Breadcrumb       | `import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@apna/design-system"` | Hierarchical location trail. |
 | Sidebar          | `import { Sidebar, SidebarContent, SidebarHeader, SidebarFooter, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@apna/design-system"` | Persistent app sidebar primitives. |
 | ReusableSidebar  | `import { ReusableSidebar } from "@apna/design-system"`                | High-level configurable sidebar shell.           |
@@ -82,6 +84,7 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 | Table            | `import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell, TableCaption, TableFooter } from "@apna/design-system"` | Semantic tabular data. |
 | Accordion        | `import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@apna/design-system"` | Expand/collapse grouped content. |
 | JobCard          | `import { JobCard } from "@apna/design-system"`                        | Candidate-facing job post card.                  |
+| PhoneFrame       | `import { PhoneFrame } from "@apna/design-system"`                     | Phone bezel for previewing a mobile screen inside a desktop page; the screen scrolls on its own. `label` names the region. |
 | PricingCard      | `import { PricingCard } from "@apna/design-system"`                    | Plan/bundle card — ribbon, one or more meta rows, price+MRP+badge, CTA slot. Pure layout; caller supplies coloured ribbon/badge/cta. `emphasis`: "price" (default) or "title" picks which line leads. `surface="inset"` for a card nested in an always-dark surface. |
 | ApnaLogo         | `import { ApnaLogo } from "@apna/design-system"`                       | Brand mark lockup with gradient and wordmark.    |
 | LogoApnaUnlimited | `import { LogoApnaUnlimited } from "@apna/design-system"`             | "apna ∞ Unlimited" wordmark — `variant="default\|white\|gradient"` (dark/light/Accent-Gradient fill). |

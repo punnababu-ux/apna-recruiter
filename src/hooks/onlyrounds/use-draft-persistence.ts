@@ -19,15 +19,20 @@ export function useDraftPersistence<T>(
   isDirty: boolean
   persistDraft: (form: T) => void
   clearDraft: () => void
+  /** True once the saved draft (if any) has been read. Auto-save must wait
+   *  for this, or it overwrites the saved draft with the empty baseline. */
+  hydrated: boolean
 } {
   const [form, setForm] = React.useState<T>(empty)
   const [lastSavedJson, setLastSavedJson] = React.useState<string>(
     () => JSON.stringify(empty),
   )
+  const [hydrated, setHydrated] = React.useState(false)
 
   // Load draft once on the client.
   React.useEffect(() => {
     if (typeof window === "undefined") return
+    setHydrated(true)
     try {
       const raw = window.localStorage.getItem(key)
       if (!raw) return
@@ -70,5 +75,5 @@ export function useDraftPersistence<T>(
     }
   }, [key])
 
-  return { form, setForm, isDirty, persistDraft, clearDraft }
+  return { form, setForm, isDirty, persistDraft, clearDraft, hydrated }
 }

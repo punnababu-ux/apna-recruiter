@@ -39,6 +39,44 @@
  * CTA to the bottom (`mt-auto` on the rule), so a row of cards with unequal
  * copy still lines those three up.
  *
+ * RULE — structural parity across a comparison row. `h-full` + `mt-auto`
+ * only equalise what comes AFTER the divider (the rule, price, CTA); they
+ * do nothing for the rows ABOVE it. If one card in a row gets a `subtitle`
+ * (or an extra `meta` row, or anything else) that its siblings don't have,
+ * every row below that point shifts down in THAT card only — titles no
+ * longer line up, feature rows no longer line up, and the card reads as
+ * broken even though each card is individually correct. A "recommended"
+ * card should get its emphasis from `ribbon` + `className` (both already
+ * layout-neutral — `ribbon` is `absolute`-positioned, `className` only
+ * reaches border/ring), never from giving that one card content the others
+ * don't have. If every card's content is structurally identical — same
+ * number of lines, same slots filled — the row stays aligned automatically;
+ * no per-card measuring or compensating margin required. When composing a
+ * grid of these (see `TieredJobPlans`/`SubscriptionJobPlans` in
+ * `src/components/apnahire/job-plan-cards.tsx` for a worked example), also
+ * give each card `className="flex-1"` so it actually stretches to fill its
+ * grid cell's row height — `h-full` alone only fills a flex/grid PARENT
+ * that already stretched to the row height, which won't happen if that
+ * parent is itself a plain `flex-col` wrapper (e.g. one adding a caption
+ * below the card) without `flex-1` on the card inside it. And once a card
+ * is `flex-1` inside that wrapper, any SIBLING of the card inside the same
+ * wrapper (a caption, a social-proof chip below it) must exist on every
+ * card's wrapper too, even empty — otherwise the one card with a real
+ * sibling element has less room left for its own `flex-1` card (the
+ * sibling eats part of the stretched wrapper height), making that one card
+ * shorter than the others instead of matching them.
+ *
+ * `layout="price-first"` — reorders the card to (title + price row) → CTA →
+ * divider → meta (feature list) → `footer`, for plan comparisons where the
+ * decision (price + CTA) should sit at the top and the feature list below.
+ * Title and price share one tight group, as on the Subscription tab's plan
+ * cards. Titles get no reserved height, so pick grid breakpoints at which
+ * every title in the row fits one line, or that card's price and CTA drop
+ * below its siblings'. `footer` is a quiet left-aligned line pinned to the
+ * card's bottom edge behind a dashed rule (the meta list absorbs any spare
+ * height above it) — for something that isn't a permanent part of the plan,
+ * like a limited-time add-on.
+ *
  * API
  *   <PricingCard
  *     ribbon={<Badge variant="ribbon" size="ribbon">Recommended</Badge>}
@@ -75,6 +113,10 @@ export interface PricingCardProps extends Omit<React.ComponentProps<"div">, "tit
   emphasis?: "price" | "title"
   /** `"inset"` = fixed light card for nesting inside an always-dark surface. */
   surface?: "card" | "inset"
+  /** `"price-first"` = title → price → CTA → divider → meta → footer. */
+  layout?: "stacked" | "price-first"
+  /** Bottom-pinned line under the meta list (price-first only). */
+  footer?: React.ReactNode
 }
 
 export function PricingCard({
@@ -89,6 +131,8 @@ export function PricingCard({
   cta,
   emphasis = "price",
   surface = "card",
+  layout = "stacked",
+  footer,
   className,
   ...props
 }: PricingCardProps) {
@@ -115,18 +159,81 @@ export function PricingCard({
     </div>
   )
 
+  const priceBlock = (
+    <div className={cn("flex flex-col", titleLed ? "gap-1" : "gap-2")}>
+      <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+        <div className="flex items-center gap-2">
+          <span
+            className={cn(
+              "font-semibold",
+              // 24px — matches the price size on the Subscription and
+              // Enterprise cards (text-2xl / text-h3), so every plan
+              // price on the page reads at one size regardless of which
+              // component draws the card.
+              titleLed ? "text-base" : "text-2xl leading-tight",
+              fg
+            )}
+          >
+            {price}
+          </span>
+          {mrp && (
+            <span className={cn("text-sm line-through", fgMuted)}>{mrp}</span>
+          )}
+        </div>
+        {badge && <div className="shrink-0">{badge}</div>}
+      </div>
+      {priceSuffix && (
+        <p className={cn("text-xs italic leading-6", fgMuted)}>{priceSuffix}</p>
+      )}
+    </div>
+  )
+
+  const rootClassName = cn(
+    // `card-hover-lift` is the shared card interaction (see styles/index.css).
+    "card-hover-lift relative flex h-full flex-col gap-4 overflow-hidden rounded-xl border p-4 pt-8",
+    inset ? "border-checkout-inset-border bg-checkout-inset" : "border-border bg-card",
+    props.onClick && "cursor-pointer",
+    className
+  )
+
+  if (layout === "price-first") {
+    return (
+      <div
+        data-slot="pricing-card"
+        data-layout="price-first"
+        data-surface={surface}
+        className={rootClassName}
+        {...props}
+      >
+        {ribbon && <div className="absolute right-0 top-0 flex rounded-bl-xl">{ribbon}</div>}
+
+        <div className="flex flex-col gap-2">
+          <p className={cn("text-base font-semibold leading-5", fg)}>{title}</p>
+          {subtitle && <p className={cn("text-xs", fgMuted)}>{subtitle}</p>}
+          {priceBlock}
+        </div>
+
+        <div>{cta}</div>
+
+        <hr className={rule} />
+
+        <div className="flex flex-1 flex-col">{metaBlock}</div>
+
+        {/* Dashed rule: the footer is set apart from the meta list rather than
+            read as one more feature (e.g. a limited-time add-on). */}
+        {footer && (
+          <div className={cn("flex border-t border-dashed pt-3 text-xs", rule, fgMuted)}>{footer}</div>
+        )}
+      </div>
+    )
+  }
+
   return (
     <div
       data-slot="pricing-card"
       data-emphasis={emphasis}
       data-surface={surface}
-      className={cn(
-        // `card-hover-lift` is the shared card interaction (see styles/index.css).
-        "card-hover-lift relative flex h-full flex-col gap-4 overflow-hidden rounded-xl border p-4 pt-8",
-        inset ? "border-checkout-inset-border bg-checkout-inset" : "border-border bg-card",
-        props.onClick && "cursor-pointer",
-        className
-      )}
+      className={rootClassName}
       {...props}
     >
       {ribbon && (
@@ -158,32 +265,7 @@ export function PricingCard({
             the rule, price and CTA stay aligned across a row of cards. */}
         <hr className={cn("mt-auto", rule)} />
 
-        <div className={cn("flex flex-col", titleLed ? "gap-1" : "gap-2")}>
-          <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
-            <div className="flex items-center gap-2">
-              <span
-                className={cn(
-                  "font-semibold",
-                  // 24px — matches the price size on the Subscription and
-                  // Enterprise cards (text-2xl / text-h3), so every plan
-                  // price on the page reads at one size regardless of which
-                  // component draws the card.
-                  titleLed ? "text-base" : "text-2xl leading-tight",
-                  fg
-                )}
-              >
-                {price}
-              </span>
-              {mrp && (
-                <span className={cn("text-sm line-through", fgMuted)}>{mrp}</span>
-              )}
-            </div>
-            {badge && <div className="shrink-0">{badge}</div>}
-          </div>
-          {priceSuffix && (
-            <p className={cn("text-xs italic leading-6", fgMuted)}>{priceSuffix}</p>
-          )}
-        </div>
+        {priceBlock}
       </div>
 
       <div>{cta}</div>

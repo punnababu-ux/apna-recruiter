@@ -6,13 +6,25 @@
  * API
  *   <BackButton onClick={...} /> // optional custom click handler (e.g. exit wizard check)
  *
+ * RULE — one back affordance, everywhere. Every back action in the product
+ * (wizard headers, checkout top bars, detail pages) is this component as-is:
+ * a 32px outlined circle with a ChevronLeft. No variants, no size/icon
+ * overrides, no hand-rolled `<Button><ArrowLeft/></Button>`. A recruiter
+ * moving from self-checkout into the job-posting flow and its plan step must
+ * meet the same control in the same place. Header placement is fixed too:
+ * the button is the first item in the row, followed at `gap-3` by the page
+ * title or logo. `className` is for surface adaptation only (e.g. a
+ * transparent fill on a fixed-light surface), never for shape or glyph.
+ * (A `ghost` bare-arrow variant existed for self-checkout and was removed
+ * for exactly this reason — it made the two flows' back buttons differ.)
+ *
  * Accessibility (a11y)
  *   - Implements `aria-label="Go back"` by default so screen readers announce its purpose.
  *   - Fully supports standard keyboard navigation focus/active states.
  */
 
 import * as React from "react"
-import { ArrowLeft, ChevronLeft } from "@/icons/icons"
+import { ChevronLeft } from "@/icons/icons"
 import { useRouter } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
@@ -21,15 +33,8 @@ import { cn } from "@/lib/utils"
 function BackButton({
   onClick,
   className,
-  variant = "outline",
   ...props
-}: Omit<React.ComponentProps<typeof Button>, "children" | "variant" | "size"> & {
-  /** "outline" (default) — a 32px bordered circle with a chevron, for
-   *  in-page and wizard back actions.
-   *  "ghost" — a bare 24px arrow in a 40px hit box, for a product header
-   *  where the glyph sits directly on the page surface. */
-  variant?: "outline" | "ghost"
-}) {
+}: Omit<React.ComponentProps<typeof Button>, "children" | "variant" | "size">) {
   const router = useRouter()
 
   const handleBack = (e: Parameters<NonNullable<React.ComponentProps<typeof Button>["onClick"]>>[0]) => {
@@ -40,18 +45,16 @@ function BackButton({
     }
   }
 
-  const ghost = variant === "ghost"
-
   return (
     <Button
-      variant={variant}
-      size={ghost ? "icon-lg" : "icon-sm"}
+      variant="outline"
+      size="icon-sm"
       aria-label="Go back"
       onClick={handleBack}
       className={cn("shrink-0", className)}
       {...props}
     >
-      {ghost ? <ArrowLeft className="size-6" /> : <ChevronLeft className="size-4" />}
+      <ChevronLeft className="size-4" />
     </Button>
   )
 }

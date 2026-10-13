@@ -17,6 +17,7 @@ import {
   Badge,
   Button,
   JobCard,
+  PhoneFrame,
   PricingCard,
   ClockFading,
   Switch,
@@ -56,6 +57,20 @@ export default function DataLayoutComponentsPage() {
             postedAt="2 days ago"
           />
         </div>
+      </div>
+
+      {/* Phone frame */}
+      <div className="rounded-xl border border-border bg-card p-6 space-y-4">
+        <h2 className="text-base font-semibold text-foreground font-heading border-b border-border/60 pb-2">
+          Phone Frame
+        </h2>
+        <PhoneFrame label="Example mobile screen" className="max-w-56">
+          <div className="flex flex-col gap-3 p-4 pt-8">
+            <p className="text-base font-semibold text-foreground">Telecaller</p>
+            <p className="text-xs text-muted-foreground">Koramangala, Bengaluru · ₹15,000 – ₹20,000</p>
+            <Button className="w-full">Apply for job</Button>
+          </div>
+        </PhoneFrame>
       </div>
 
       {/* Pricing Card */}

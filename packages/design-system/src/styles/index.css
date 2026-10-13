@@ -518,6 +518,34 @@
   }
 }
 
+/* --------------------------------------------------------------------------
+ * AI-change flash — a brief brand-tint wash that fades out, for a value the
+ * AI just wrote or changed, so the eye finds what moved without a toast.
+ * Re-trigger by re-keying the element.
+ * -------------------------------------------------------------------------- */
+@keyframes ai-flash {
+  0%   { background-color: color-mix(in srgb, var(--color-primary) 16%, transparent); }
+  100% { background-color: transparent; }
+}
+
+@utility animate-ai-flash {
+  animation: ai-flash 1.6s var(--ease-standard) both;
+}
+
+/* --------------------------------------------------------------------------
+ * Voice bars — one bar of a live "listening" waveform. Stagger siblings with
+ * animation-delay so the bars move out of phase.
+ * -------------------------------------------------------------------------- */
+@keyframes voice-bar {
+  0%, 100% { transform: scaleY(0.3); }
+  50%      { transform: scaleY(1); }
+}
+
+@utility animate-voice-bar {
+  animation: voice-bar 0.9s ease-in-out infinite;
+  transform-origin: center;
+}
+
 @utility animate-ai-shimmer {
   /* Pastel multi-hue wave (green → gold → green) — visible but not loud.
      Dark-theme override below remaps to the same hues in the 800 tier so

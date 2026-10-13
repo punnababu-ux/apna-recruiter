@@ -13,7 +13,7 @@ export type { LucideIcon as IconComponent, LucideProps as IconProps } from "luci
 
 export {
   Activity, AlertCircle, AlertTriangle, ArrowDown, ArrowLeft,
-  ArrowRight, ArrowUp, ArrowUpDown, ArrowUpRight, AtSign,
+  ArrowRight, ArrowUp, ArrowUpDown, ArrowUpRight, AtSign, AudioLines,
   Award, Ban, BarChart2, Bell, Bold, BookOpen,
   Bookmark, BookmarkPlus, Bot, Brain, Briefcase,
   BriefcaseBusiness,
@@ -34,7 +34,7 @@ export {
   LinkIcon, ListChecks, ListTodo, Loader2, Loader2Icon,
   Lock, Mail, MapPin, Mars, Maximize2,
   Menu, MessageCircle, MessageCircleQuestion, MessageSquare, MessagesSquare,
-  Mic, Minus, Monitor, Moon, MoreHorizontal,
+  Mic, MicOff, Minus, Monitor, Moon, MoreHorizontal,
   MoreHorizontalIcon, MoreVertical, Navigation, OctagonXIcon, Palette,
   PanelLeft, PanelLeftIcon, Paperclip, Pause, Pencil,
   Phone, PhoneCall, PhoneIncoming, PhoneOff, PhoneOutgoing,
@@ -51,3 +51,19 @@ export {
   XCircle, XIcon, Zap,
   Tag as Sell,
 } from "lucide-react"
+
+import { createLucideIcon } from "lucide-react"
+
+/** Lucide ships no brand glyphs. This is Tabler's `brand-whatsapp` (MIT,
+ *  tabler.io/icons) — same 24px grid, 2px round stroke as Lucide, so it sits
+ *  in a feature list next to Check/Flame without looking like a pasted logo. */
+export const WhatsApp = createLucideIcon("whatsapp", [
+  ["path", { d: "M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21", key: "bubble" }],
+  [
+    "path",
+    {
+      d: "M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1",
+      key: "handset",
+    },
+  ],
+])

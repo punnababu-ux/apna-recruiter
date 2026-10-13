@@ -3,7 +3,7 @@
 import * as React from "react"
 import { AlertBanner, RenewalBanner, Button, Badge, Switch, Label } from "@apna/design-system"
 import { toast } from "sonner"
-import { AlertCircle, Info, CreditCard, ChevronRight, RefreshCw, Sparkles } from "@apna/design-system"
+import { AlertCircle, Info, CreditCard, ChevronRight, RefreshCw, Sparkles, InfinityIcon, ArrowUp, Clock } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 
 // A translucent overlay rather than an opaque chip — `bg-foreground/15` reads
@@ -12,14 +12,39 @@ import { cn } from "@/lib/utils"
 // light tint card or lightens a dark one instead of sitting on top of it as
 // a stark white/black block. `bg-white/15` is used on the primary (solid
 // gradient) appearance instead, matching the gradient's own fixed white text.
-function DiscountBadge({ appearance }: { appearance: "primary" | "secondary" }) {
+function DiscountBadge({
+  appearance,
+  children = "22% OFF",
+}: {
+  appearance: "primary" | "secondary"
+  children?: React.ReactNode
+}) {
   return appearance === "primary" ? (
     <Badge variant="outline" className="border-transparent bg-white/15 text-white">
-      22% OFF
+      {children}
     </Badge>
   ) : (
     <Badge variant="outline" className="border-transparent bg-foreground/15 text-foreground">
-      22% OFF
+      {children}
+    </Badge>
+  )
+}
+
+// Same translucent-overlay logic as DiscountBadge, in the ribbon's corner shape.
+function RibbonBadge({
+  appearance,
+  children,
+}: {
+  appearance: "primary" | "secondary"
+  children: React.ReactNode
+}) {
+  return appearance === "primary" ? (
+    <Badge size="ribbon" variant="outline" className="border-transparent bg-white/10 text-white">
+      {children}
+    </Badge>
+  ) : (
+    <Badge size="ribbon" variant="outline" className="border-transparent bg-foreground/10 text-foreground">
+      {children}
     </Badge>
   )
 }
@@ -180,6 +205,42 @@ export default function FeedbackComponentsPage() {
             mrp="₹4,306"
             badge={<DiscountBadge appearance={appearance} />}
             cta={<Button variant="secondary" trailingIcon={<ChevronRight />}>Renew now</Button>}
+          />
+
+          {/* Fixed single-state exception to the "both appearances" rule —
+              a deliberately dark, premium promo treatment, not a tone that's
+              meant to flip with the toggle. See the file header's note. */}
+          <RenewalBanner
+            variant="default"
+            appearance="primary"
+            icon={
+              <div className="flex size-14 items-center justify-center rounded-full bg-highlight/15">
+                <InfinityIcon className="size-8 text-highlight" />
+              </div>
+            }
+            title="Unlimited hiring for 3 months."
+            subtitle="0 job credits left. Repost any job, any time."
+            items={[{ label: "1 Active job slot for 3 months" }, { label: "600 database credits" }]}
+            price="₹5,400"
+            mrp="₹5,999"
+            badge={<DiscountBadge appearance="primary">10% OFF</DiscountBadge>}
+            priceCaption="For 3 months · That's just ₹1,800 /month"
+            ribbon={<RibbonBadge appearance="primary"><Clock className="size-3.5" /> Offer ends in 4 days</RibbonBadge>}
+            cta={<Button variant="secondary" trailingIcon={<ChevronRight />}>Buy now</Button>}
+          />
+
+          <RenewalBanner
+            variant="success"
+            appearance={appearance}
+            icon={showIcon ? <ArrowUp /> : undefined}
+            title="Get 3 classic jobs"
+            subtitle="Same job type, lower price per job."
+            items={[{ label: "3 Job credits" }, { label: "180 days validity" }]}
+            price="₹1,949"
+            mrp="₹2,499"
+            badge={<DiscountBadge appearance={appearance} />}
+            ribbon={<RibbonBadge appearance={appearance}><Clock className="size-3.5" /> Offer ends in 4 days</RibbonBadge>}
+            cta={<Button variant="secondary" trailingIcon={<ChevronRight />}>Buy now</Button>}
           />
         </div>
       </div>

@@ -1,19 +1,20 @@
 "use client"
 
 /**
- * Stepper — vertical wizard progress rail.
+ * Stepper — wizard progress rail, vertical or horizontal.
  *
- * Minimal composition: ordered list of steps, each with a status glyph
- * (completed ✓ / current ● / pending ○), label, and optional description.
- * Steps are purely presentational — the parent drives navigation.
+ * Ordered list of steps, each with a status glyph (completed ✓ / current
+ * numbered / pending numbered-outline), label, and optional description.
+ * Purely presentational — the parent drives navigation; pass `onStepClick`
+ * to make completed/current steps clickable.
  *
- * Used by the Create Job wizard (Job Description → Job Details → Who
- * you're hiring → Company & Benefits).
+ * API
+ *   <Stepper orientation="horizontal" steps={[{ id, label, status }]} />
  */
 
-import { Check } from "@apna/design-system"
 import * as React from "react"
 
+import { Check } from "@/icons/icons"
 import { cn } from "@/lib/utils"
 
 export type StepStatus = "completed" | "current" | "pending"
@@ -67,11 +68,15 @@ export function Stepper({
                   )}
                 >
                   <StepGlyph status={step.status} index={idx + 1} />
+                  {/* Below sm only the current step keeps its label (the
+                      others stay as numbered glyphs, still announced), so a
+                      3–5 step rail fits a phone without scrolling sideways. */}
                   <span
                     className={cn(
                       "text-sm font-medium leading-tight",
                       step.status === "current" && "text-primary",
                       step.status === "pending" && "text-muted-foreground",
+                      step.status !== "current" && "max-sm:sr-only",
                     )}
                   >
                     {step.label}
