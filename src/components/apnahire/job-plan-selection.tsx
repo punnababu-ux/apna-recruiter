@@ -27,8 +27,9 @@
  *
  * `planLayout` and `creditBalance` have no real data source yet (segment
  * rules / account balance, respectively) — both are previewed via
- * `JobPlanPreviewSwitcher`, the same dev-only-control pattern as
- * `AuthStateSwitcher`.
+ * `JobPlanPreviewSwitcher`, a floating control like `AuthStateSwitcher` —
+ * but unlike that one it also shows in deployed builds, so the page's
+ * states can be reviewed on Vercel.
  *
  * Bundle-offer and subscription-upgrade upsell popups (Figma's "Job bundle
  * offer" / "Special upgrade offer" frames) are Phase 2 — the CTAs below go
@@ -226,14 +227,15 @@ export function JobPlanSelection() {
         onFailure={handlePaymentFailure}
       />
 
-      {process.env.NODE_ENV !== "production" && (
-        <JobPlanPreviewSwitcher
-          layout={layout}
-          onLayoutChange={setLayout}
-          creditBalance={creditBalance}
-          onCreditBalanceChange={setCreditBalance}
-        />
-      )}
+      {/* Shown in every build, deployed ones included: this page has no real
+          layout or balance data yet, so the switcher is the only way to review
+          its states. Remove once segment rules and balances are wired up. */}
+      <JobPlanPreviewSwitcher
+        layout={layout}
+        onLayoutChange={setLayout}
+        creditBalance={creditBalance}
+        onCreditBalanceChange={setCreditBalance}
+      />
     </div>
   )
 }

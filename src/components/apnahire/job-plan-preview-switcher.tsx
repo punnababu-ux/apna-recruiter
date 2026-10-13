@@ -1,7 +1,7 @@
 "use client"
 
 /**
- * JobPlanPreviewSwitcher — floating dev-only control for the two conditions
+ * JobPlanPreviewSwitcher — floating preview control for the two conditions
  * `job-plan-selection.tsx` has no real data source for yet: which plan
  * layout to show (tiered vs. subscription — normally decided by user
  * segment/conditions TBD) and the recruiter's credit balance (normally the
