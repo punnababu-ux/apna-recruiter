@@ -40,7 +40,14 @@ import {
   BUNDLES,
   type Bundle,
 } from "@/components/apnahire/job-credit-bundles"
-import { DatabaseCreditBundles } from "@/components/apnahire/database-credit-bundles"
+import {
+  DatabaseCreditBundles,
+  type DbBundle,
+} from "@/components/apnahire/database-credit-bundles"
+import {
+  ComboBundles,
+  type ComboBundle,
+} from "@/components/apnahire/combo-bundles"
 import { ContactSalesCard } from "@/components/apnahire/contact-sales-card"
 import { SubscriptionPlans } from "@/components/apnahire/subscription-plans"
 import { EnterprisePricingTable } from "@/components/apnahire/enterprise-pricing-table"
@@ -65,11 +72,19 @@ function randomOrderId() {
   return Math.random().toString(36).slice(2, 10).toUpperCase()
 }
 
+type SelectedPackage =
+  | { kind: "job"; bundle: Bundle }
+  | { kind: "db"; bundle: DbBundle }
+  | { kind: "combo"; bundle: ComboBundle }
+
 export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   const router = useRouter()
   const isLoggedOut = authState === "logged-out"
   const [activeTab, setActiveTab] = React.useState<PricingTab>("jobs")
-  const [selectedBundle, setSelectedBundle] = React.useState<Bundle>(BUNDLES[1])
+  const [selectedPackage, setSelectedPackage] = React.useState<SelectedPackage>({
+    kind: "job",
+    bundle: BUNDLES[1],
+  })
 
   // Sticky header — starts transparent over the gradient hero, turns solid
   // once the page scrolls; the compact tab switcher fades in once the
@@ -174,6 +189,29 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
       discountAmount: bundle.mrp - bundle.price,
     })
     setDrawerOpen(true)
+  }
+
+  const handleBuyComboBundle = (bundle: ComboBundle) => {
+    setCheckoutItem({
+      id: `combo-${bundle.id}`,
+      label: bundle.title,
+      sublabel: `Valid for ${bundle.validDays} days`,
+      price: bundle.price,
+      mrp: bundle.mrp,
+      discountLabel: `Bundle discount (${bundle.discountPct}% OFF)`,
+      discountAmount: bundle.mrp - bundle.price,
+    })
+    setDrawerOpen(true)
+  }
+
+  const handleStickyCtaClick = () => {
+    if (selectedPackage.kind === "job") {
+      handleBuyBundle(selectedPackage.bundle)
+    } else if (selectedPackage.kind === "db") {
+      handleBuyDatabaseBundle(selectedPackage.bundle)
+    } else {
+      handleBuyComboBundle(selectedPackage.bundle)
+    }
   }
 
   // `renewAfterDays` is what switches the drawer into its subscription
@@ -298,10 +336,8 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
           {activeTab === "jobs" ? (
             <div className="mx-auto flex max-w-6xl flex-col gap-3">
               <div className="flex flex-col gap-5">
-                {/* Side by side only from xl: the 20px price row needs ~219px
-                    of card, which three columns plus a 328px side card can't
-                    give below that. */}
-                <div className="flex flex-col gap-4 xl:flex-row">
+                {/* Desktop: side by side from xl */}
+                <div className="hidden sm:flex sm:flex-col sm:gap-4 xl:flex-row">
                   {/* Each column owns its own caption, so the caption sits
                       under its card rather than spanning both columns. */}
                   <div className="flex min-w-0 flex-1 flex-col gap-3">
@@ -309,8 +345,8 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                       className="flex-1"
                       onBuyNow={handleBuyBundle}
                       onBuySingleCredit={handleBuySingleCredit}
-                      selectedBundleId={selectedBundle.id}
-                      onSelectBundle={setSelectedBundle}
+                      selectedBundleId={selectedPackage.kind === "job" ? selectedPackage.bundle.id : undefined}
+                      onSelectBundle={(bundle) => setSelectedPackage({ kind: "job", bundle })}
                     />
                     <p className="text-xs text-checkout-hero-fg">
                       1 job credit = 1 classic job ・ 2 credits = 1 premium job ・ 4
@@ -333,6 +369,55 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                       Note: This plan is valid in a single city.
                     </p>
                   </div>
+                </div>
+
+                {/* Mobile: unified Packages information architecture */}
+                <div className="flex flex-col gap-4 sm:hidden">
+                  {/* 1. Job credits section */}
+                  <div className="flex flex-col gap-3">
+                    <JobCreditBundles
+                      onBuyNow={handleBuyBundle}
+                      onBuySingleCredit={handleBuySingleCredit}
+                      selectedBundleId={selectedPackage.kind === "job" ? selectedPackage.bundle.id : undefined}
+                      onSelectBundle={(bundle) => setSelectedPackage({ kind: "job", bundle })}
+                    />
+                    <p className="text-xs text-checkout-hero-fg">
+                      1 job credit = 1 classic job ・ 2 credits = 1 premium job ・ 4
+                      credits = 1 super premium job.{" "}
+                      <button
+                        type="button"
+                        className="font-semibold underline underline-offset-2"
+                      >
+                        Need more info?
+                      </button>
+                    </p>
+                  </div>
+
+                  {/* 2. apna Unlimited Inset Card */}
+                  <UnlimitedSideCard onBuyNow={handleBuyUnlimitedQuarterly} />
+
+                  <div className="my-1 h-px bg-border/40" />
+
+                  {/* 3. Database credits section */}
+                  <div className="flex flex-col gap-3">
+                    <DatabaseCreditBundles
+                      onBuyNow={handleBuyDatabaseBundle}
+                      selectedBundleId={selectedPackage.kind === "db" ? selectedPackage.bundle.id : undefined}
+                      onSelectBundle={(bundle) => setSelectedPackage({ kind: "db", bundle })}
+                    />
+                    <p className="text-xs text-checkout-hero-fg">
+                      1 database credit = 1 candidate profile unlock
+                    </p>
+                  </div>
+
+                  <div className="my-1 h-px bg-border/40" />
+
+                  {/* 4. Bundles (Combo) section */}
+                  <ComboBundles
+                    onBuyNow={handleBuyComboBundle}
+                    selectedBundleId={selectedPackage.kind === "combo" ? selectedPackage.bundle.id : undefined}
+                    onSelectBundle={(bundle) => setSelectedPackage({ kind: "combo", bundle })}
+                  />
                 </div>
 
                 {/* Both auth states — the updated Jobs frame draws this card
@@ -405,7 +490,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
           at the trust bar because the product shell owns navigation from
           there — same reasoning, different chrome. */}
 
-      {/* Mobile sticky bottom CTA dock for Jobs tab */}
+      {/* Mobile sticky bottom CTA dock for Packages tab */}
       {activeTab === "jobs" && (
         <div className="fixed inset-x-0 bottom-0 z-sticky border-t border-border bg-card/95 p-3.5 backdrop-blur-md sm:hidden">
           <Button
@@ -413,9 +498,13 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
             variant="checkout"
             size="lg"
             className="h-12 w-full rounded-full text-base font-semibold shadow-md"
-            onClick={() => handleBuyBundle(selectedBundle)}
+            onClick={handleStickyCtaClick}
           >
-            Buy {selectedBundle.credits} job credits • ₹{selectedBundle.price.toLocaleString("en-IN")}
+            {selectedPackage.kind === "job"
+              ? `Buy ${selectedPackage.bundle.credits} job credits • ₹${selectedPackage.bundle.price.toLocaleString("en-IN")}`
+              : selectedPackage.kind === "db"
+                ? `Buy ${selectedPackage.bundle.credits} database credits • ₹${selectedPackage.bundle.price.toLocaleString("en-IN")}`
+                : `Buy bundle • ₹${selectedPackage.bundle.price.toLocaleString("en-IN")}`}
           </Button>
         </div>
       )}
