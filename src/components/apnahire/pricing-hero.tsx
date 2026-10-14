@@ -110,24 +110,65 @@ export function PricingHero({
             `tabsRef`'s bounding box is measurable by the page's
             IntersectionObserver; `contents` would collapse it to zero size. */}
         <div ref={tabsRef} className="w-full">
-          <SegmentedTabSwitcher
-            items={PRICING_TABS}
-            value={activeTab}
-            onValueChange={onTabChange}
-            trackClassName="bg-checkout-track"
-            activeClassName="text-checkout-primary"
-            mobileActiveClassName="text-checkout-primary"
-            inactiveClassName="text-checkout-hero-fg-secondary"
-            mutedClassName="text-checkout-hero-fg-secondary"
-            // Figma's active pill has a 1px INSIDE stroke and no shadow. An
-            // inset ring reproduces that without growing the pill — a real
-            // border would add 2px to every chip and so to the whole track.
-            activeItemClassName="bg-card inset-ring-1 inset-ring-border shadow-none"
-            // The carousel's full-bleed trick has to cancel THIS section's
-            // gutter, not the primitive's default one.
-            mobileBleedClassName="-mx-4 sm:-mx-8"
-            mobileGutterClassName="px-4 sm:px-8"
-          />
+          {/* Mobile chips (< md) following Figma mobile information architecture */}
+          <div className="flex items-center gap-2 md:hidden">
+            <button
+              type="button"
+              onClick={() => onTabChange("jobs")}
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all",
+                activeTab === "jobs" || activeTab === "database"
+                  ? "bg-card text-checkout-primary shadow-xs ring-1 ring-border"
+                  : "bg-black/5 text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <Briefcase className="size-4 shrink-0" aria-hidden />
+              Packages
+            </button>
+            <button
+              type="button"
+              onClick={() => onTabChange("unlimited")}
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all",
+                activeTab === "unlimited"
+                  ? "bg-card text-checkout-primary shadow-xs ring-1 ring-border"
+                  : "bg-black/5 text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <InfinityIcon className="size-4 shrink-0" aria-hidden />
+              Unlimited
+            </button>
+            <button
+              type="button"
+              onClick={() => onTabChange("enterprise")}
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all",
+                activeTab === "enterprise"
+                  ? "bg-card text-checkout-primary shadow-xs ring-1 ring-border"
+                  : "bg-black/5 text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <Building2 className="size-4 shrink-0" aria-hidden />
+              Enterprise
+            </button>
+          </div>
+
+          {/* Desktop full switcher (≥ md) */}
+          <div className="hidden md:block">
+            <SegmentedTabSwitcher
+              items={PRICING_TABS}
+              value={activeTab}
+              onValueChange={onTabChange}
+              trackClassName="bg-checkout-track"
+              activeClassName="text-checkout-primary"
+              mobileActiveClassName="text-checkout-primary"
+              inactiveClassName="text-checkout-hero-fg-secondary"
+              mutedClassName="text-checkout-hero-fg-secondary"
+              activeItemClassName="bg-card inset-ring-1 inset-ring-border shadow-none"
+              mobileBleedClassName="-mx-4 sm:-mx-8"
+              mobileGutterClassName="px-4 sm:px-8"
+            />
+          </div>
         </div>
       </div>
     </section>

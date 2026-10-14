@@ -90,6 +90,7 @@ export const JOB_PLAN_TIERS: Record<JobPlanTierId, JobPlanTier> = {
     aiCallingAgent: false,
     dbCredits: 30,
     credit: { kind: "job", count: 2 },
+    socialProof: "105K+ recruiters posted in last 1 month",
   },
   "premium-ai": {
     id: "premium-ai",
@@ -128,18 +129,18 @@ export const JOB_PLAN_TIERS: Record<JobPlanTierId, JobPlanTier> = {
   },
 }
 
-/** Tiered layout (Figma `2472:19068`): all four tiers, AI Calling Agent tier recommended. */
-export const TIERED_PLAN_ORDER: JobPlanTierId[] = ["classic", "premium", "premium-ai", "super-premium"]
+/** Tiered layout: three tiers (Classic, Premium, Super Premium), Premium recommended.
+ *  Note: "Premium + AI Calling Agent" was dropped per mobile-first scope decision;
+ *  AI Calling will be offered as an add-on later. */
+export const TIERED_PLAN_ORDER: JobPlanTierId[] = ["classic", "premium", "super-premium"]
 
-/** Subscription layout (Figma `2490:43116`): three tiers + a monthly subscription card. */
+/** Subscription layout: three tiers + a monthly subscription card. */
 export const SUBSCRIPTION_PLAN_ORDER: JobPlanTierId[] = ["classic", "premium", "super-premium"]
 
 /** Every layout recommends exactly one tier — it gets the ribbon AND the
- *  primary CTA, in both the zero-credit and has-credits states. Per layout,
- *  not per tier: Premium + AI isn't offered in the subscription layout, so
- *  that layout recommends Premium (the tier Figma highlights there). */
+ *  primary CTA, in both the zero-credit and has-credits states. */
 export const RECOMMENDED_TIER = {
-  tiered: "premium-ai",
+  tiered: "premium",
   subscription: "premium",
 } as const satisfies Record<string, JobPlanTierId>
 

@@ -14,7 +14,8 @@ export function AvailableCreditsButton({ onClick }: { onClick?: () => void }) {
   return (
     <Button type="button" variant="outline" size="sm" onClick={onClick}>
       <Wallet className="size-4" aria-hidden />
-      Available credits
+      <span className="hidden sm:inline">Available credits</span>
+      <span className="sm:hidden">Credits</span>
     </Button>
   )
 }

@@ -50,6 +50,7 @@ import {
   creditLabel,
   type CreditBalance,
   type JobPlanTier,
+  type JobPlanTierId,
 } from "@/content/job-plans"
 
 const inr = (n: number) => `₹${n.toLocaleString("en-IN")}`
@@ -253,27 +254,231 @@ function PlanFrame({ title, className, children }: { title: string; className?: 
   )
 }
 
-/** 4-card layout: Classic / Premium / Premium + AI Calling Agent (recommended) / Super Premium. */
+interface MobileJobPlanRadioGroupProps {
+  tiers: JobPlanTier[]
+  creditBalance: CreditBalance
+  onSelectTier: (tier: JobPlanTier) => void
+  recommendedId: JobPlanTierId
+}
+
+function MobileJobPlanRadioGroup({
+  tiers,
+  creditBalance,
+  onSelectTier,
+  recommendedId,
+}: MobileJobPlanRadioGroupProps) {
+  const [selectedKey, setSelectedKey] = React.useState<JobPlanTierId>(recommendedId)
+  const creditMode = hasAnyCredits(creditBalance)
+
+  const selectedTier = tiers.find((t) => t.id === selectedKey) ?? tiers[0]
+  const plan = creditPlan(selectedTier, creditBalance)
+
+  let ctaText = ""
+  if (plan.state === "covered") {
+    ctaText = `Post now (${creditLabel(selectedTier.credit)} used)`
+  } else if (plan.state === "partial") {
+    ctaText = `Buy ${plan.shortfall} credit${plan.shortfall === 1 ? "" : "s"} & post • ${inr(plan.price)}`
+  } else {
+    ctaText = `Buy & post • ${inr(selectedTier.price)}`
+  }
+
+  return (
+    <>
+      <div className="flex flex-col gap-3 sm:hidden">
+        {tiers.map((tier) => {
+          const isSelected = selectedKey === tier.id
+          const isRecommended = tier.id === recommendedId
+          const discountPct =
+            tier.mrp && tier.mrp > tier.price
+              ? Math.round((1 - tier.price / tier.mrp) * 100)
+              : null
+          const tierPlan = creditPlan(tier, creditBalance)
+          const creditStatus =
+            tierPlan.state === "covered"
+              ? "Covered by balance"
+              : tierPlan.state === "partial"
+                ? `Buy ${tierPlan.shortfall} for ${inr(tierPlan.price)}`
+                : inr(tier.price)
+
+          return (
+            <div key={tier.id} className="relative pt-1.5">
+              {isRecommended && (
+                <div className="absolute -top-1 left-3 z-10">
+                  <span className="rounded-full bg-checkout-info px-2.5 py-0.5 text-xs font-semibold text-checkout-info-foreground shadow-xs">
+                    Recommended
+                  </span>
+                </div>
+              )}
+              <div
+                onClick={() => setSelectedKey(tier.id)}
+                role="radio"
+                aria-checked={isSelected}
+                tabIndex={0}
+                className={cn(
+                  "flex cursor-pointer items-center justify-between rounded-xl bg-card p-3.5 shadow-xs transition-all",
+                  isSelected
+                    ? "border-2 border-checkout-primary ring-1 ring-checkout-primary/20"
+                    : "border border-border hover:border-border/80"
+                )}
+              >
+                <div className="flex flex-col gap-1">
+                  <span className="text-sm font-semibold text-foreground">
+                    {tier.title}
+                  </span>
+                  <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <ClockFading className="size-3.5 shrink-0" aria-hidden />
+                    Active for {tier.jobActiveDays} days · {tier.dbCredits} free DB
+                  </span>
+                  {!creditMode && discountPct ? (
+                    <div className="pt-0.5">
+                      <Badge variant="discount" size="sm">
+                        {discountPct}% OFF
+                      </Badge>
+                    </div>
+                  ) : creditMode ? (
+                    <div className="pt-0.5">
+                      <span className="text-xs font-semibold text-checkout-info">
+                        Consumes {creditLabel(tier.credit)}
+                      </span>
+                    </div>
+                  ) : null}
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="flex flex-col items-end text-right">
+                    <div className="flex items-center justify-end gap-1.5">
+                      {!creditMode && tier.mrp && tier.mrp > tier.price && (
+                        <span className="text-xs text-muted-foreground line-through">
+                          ₹{tier.mrp.toLocaleString("en-IN")}
+                        </span>
+                      )}
+                      <span className="text-base font-bold text-foreground">
+                        {creditMode ? creditLabel(tier.credit) : inr(tier.price)}
+                      </span>
+                    </div>
+                    {creditMode ? (
+                      <span className="text-xs italic text-muted-foreground">
+                        {creditStatus}
+                      </span>
+                    ) : tier.mrp && tier.mrp > tier.price ? (
+                      <span className="text-xs italic text-muted-foreground">
+                        Save {inr(tier.mrp - tier.price)}
+                      </span>
+                    ) : null}
+                  </div>
+                  <div
+                    className={cn(
+                      "flex size-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
+                      isSelected
+                        ? "border-checkout-primary"
+                        : "border-muted-foreground/30"
+                    )}
+                  >
+                    {isSelected && <div className="size-2.5 rounded-full bg-checkout-primary" />}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Mobile Sticky Bottom CTA Dock for selected single job tier */}
+      <div className="fixed inset-x-0 bottom-0 z-sticky border-t border-border bg-card/95 p-3.5 backdrop-blur-md sm:hidden">
+        <Button
+          type="button"
+          variant="checkout"
+          size="lg"
+          className="h-12 w-full rounded-full text-base font-semibold shadow-md"
+          onClick={() => onSelectTier(selectedTier)}
+        >
+          {ctaText}
+        </Button>
+      </div>
+    </>
+  )
+}
+
+/** Distinct mobile card for Apna Unlimited subscription offering in Express Checkout */
+function MobileSubscriptionCard({ onSelect }: { onSelect: () => void }) {
+  const plan = MONTHLY_SUBSCRIPTION_PLAN
+  return (
+    <div className="flex flex-col gap-3 rounded-2xl bg-gradient-checkout-unlimited p-4 text-surface-inverted-fg sm:hidden">
+      <div className="flex h-5 items-start">
+        <LogoApnaUnlimited variant="gradient" className="h-4 w-auto" />
+      </div>
+
+      <div className="rounded-xl bg-card p-4 text-card-foreground shadow-xs">
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex flex-col gap-0.5">
+            <span className="text-sm font-bold text-foreground">Unlimited monthly plan</span>
+            <span className="text-xs text-muted-foreground">Active job slots · Cancel anytime</span>
+          </div>
+          <div className="flex flex-col items-end text-right">
+            <span className="text-base font-bold text-foreground">{inr(plan.price)}</span>
+            <span className="text-xs font-semibold text-checkout-primary">/month</span>
+          </div>
+        </div>
+
+        <div className="mt-3 flex flex-col gap-2 border-t border-border/60 pt-3 text-xs text-muted-foreground">
+          <div className="flex items-center gap-2">
+            <BriefcaseBusiness className="size-3.5 shrink-0 text-foreground" aria-hidden />
+            <span><strong>1 active job slot</strong> for 30 days (unlimited reposts)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Database className="size-3.5 shrink-0 text-foreground" aria-hidden />
+            <span>{plan.dbCreditsPerMonth} database credits every month</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <WhatsApp className="size-3.5 shrink-0 text-success" aria-hidden />
+            <span>WhatsApp outreach to matched candidates</span>
+          </div>
+        </div>
+
+        <div className="mt-3 flex items-center justify-between border-t border-border/60 pt-3">
+          <span className="text-xs italic text-muted-foreground">
+            {plan.note}
+          </span>
+          <Button
+            type="button"
+            variant="checkout-inset"
+            size="sm"
+            className="h-8 rounded-full px-3.5 text-xs font-semibold"
+            onClick={onSelect}
+          >
+            Get Unlimited
+          </Button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/** 3-card layout: Classic / Premium (recommended) / Super Premium. */
 export function TieredJobPlans({ creditBalance, onSelectTier }: Omit<JobPlanSelectProps, "onSelectSubscription">) {
   const tiers = TIERED_PLAN_ORDER.map((id) => JOB_PLAN_TIERS[id])
   const reserveSocialProof = tiers.some((t) => t.socialProof)
   return (
-    // No PlanFrame here: the frame exists to set one-time tiers against the
-    // subscription card; with nothing to compare against, it's just chrome.
-    // 4-up only from xl: below that "Premium job + AI Calling Agent" wraps,
-    // which would drop that card's price and CTA below its siblings'.
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      {tiers.map((tier) => (
-        <JobPlanGridCard
-          key={tier.id}
-          tier={tier}
-          recommended={tier.id === RECOMMENDED_TIER.tiered}
-          creditBalance={creditBalance}
-          onSelect={onSelectTier}
-          reserveSocialProof={reserveSocialProof}
-        />
-      ))}
-    </div>
+    <>
+      <MobileJobPlanRadioGroup
+        tiers={tiers}
+        creditBalance={creditBalance}
+        onSelectTier={onSelectTier}
+        recommendedId={RECOMMENDED_TIER.tiered}
+      />
+      <div className="hidden sm:grid sm:gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {tiers.map((tier) => (
+          <JobPlanGridCard
+            key={tier.id}
+            tier={tier}
+            recommended={tier.id === RECOMMENDED_TIER.tiered}
+            creditBalance={creditBalance}
+            onSelect={onSelectTier}
+            reserveSocialProof={reserveSocialProof}
+          />
+        ))}
+      </div>
+    </>
   )
 }
 
@@ -282,36 +487,44 @@ export function SubscriptionJobPlans({ creditBalance, onSelectTier, onSelectSubs
   const tiers = SUBSCRIPTION_PLAN_ORDER.map((id) => JOB_PLAN_TIERS[id])
   const reserveSocialProof = tiers.some((t) => t.socialProof)
   return (
-    // Side by side only from xl, same breakpoint as self-checkout's Jobs tab.
-    // No captions under either column (unlike self-checkout): a caption on
-    // one side only eats into that side's stretched height and its cards
-    // come out shorter. The city note lives in the card's footer instead.
-    <div className="flex flex-col gap-4 xl:flex-row">
-      <div className="flex min-w-0 flex-1 flex-col">
-        <PlanFrame className="flex-1" title="Single job posting">
-          <div className="grid flex-1 grid-cols-1 gap-4 lg:grid-cols-3">
-            {tiers.map((tier) => (
-              <JobPlanGridCard
-                key={tier.id}
-                tier={tier}
-                recommended={tier.id === RECOMMENDED_TIER.subscription}
-                creditBalance={creditBalance}
-                onSelect={onSelectTier}
-                reserveSocialProof={reserveSocialProof}
-              />
-            ))}
-          </div>
-        </PlanFrame>
+    <>
+      <div className="flex flex-col gap-4 sm:hidden">
+        <MobileJobPlanRadioGroup
+          tiers={tiers}
+          creditBalance={creditBalance}
+          onSelectTier={onSelectTier}
+          recommendedId={RECOMMENDED_TIER.subscription}
+        />
+        <MobileSubscriptionCard onSelect={onSelectSubscription} />
       </div>
 
-      <div className="flex w-full flex-col xl:w-82">
-        <MonthlySubscriptionCard
-          className="flex-1"
-          reservePriceSuffix={hasAnyCredits(creditBalance)}
-          onSelect={onSelectSubscription}
-        />
+      <div className="hidden sm:flex sm:flex-col sm:gap-4 xl:flex-row">
+        <div className="flex min-w-0 flex-1 flex-col">
+          <PlanFrame className="flex-1" title="Single job posting">
+            <div className="grid flex-1 grid-cols-1 gap-4 lg:grid-cols-3">
+              {tiers.map((tier) => (
+                <JobPlanGridCard
+                  key={tier.id}
+                  tier={tier}
+                  recommended={tier.id === RECOMMENDED_TIER.subscription}
+                  creditBalance={creditBalance}
+                  onSelect={onSelectTier}
+                  reserveSocialProof={reserveSocialProof}
+                />
+              ))}
+            </div>
+          </PlanFrame>
+        </div>
+
+        <div className="flex w-full flex-col xl:w-82">
+          <MonthlySubscriptionCard
+            className="flex-1"
+            reservePriceSuffix={hasAnyCredits(creditBalance)}
+            onSelect={onSelectSubscription}
+          />
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 
