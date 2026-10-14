@@ -10,7 +10,7 @@
  */
 
 import * as React from "react"
-import { ClockFading, ArrowRight, Sparkles } from "@apna/design-system"
+import { ClockFading, ArrowRight, Briefcase, Sparkles } from "@apna/design-system"
 import { Badge, Button, PricingCard } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 
@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils"
 
 export type BundleId = "3" | "6" | "13"
 
-interface Bundle {
+export interface Bundle {
   id: BundleId
   credits: number
   subcopy: string
@@ -84,68 +84,146 @@ export const SINGLE_CREDIT: Bundle = {
 
 /* ─────────────────────────────────────── component ──────────────────── */
 
-interface JobCreditBundlesProps {
+export interface JobCreditBundlesProps {
   onBuyNow: (bundle: Bundle) => void
   onBuySingleCredit: () => void
+  selectedBundleId?: BundleId
+  onSelectBundle?: (bundle: Bundle) => void
   className?: string
 }
 
 export function JobCreditBundles({
   onBuyNow,
   onBuySingleCredit,
+  selectedBundleId,
+  onSelectBundle,
   className,
 }: JobCreditBundlesProps) {
+  const [internalSelectedId, setInternalSelectedId] = React.useState<BundleId>("6")
+  const currentSelectedId = selectedBundleId ?? internalSelectedId
+
+  const handleSelect = (bundle: Bundle) => {
+    setInternalSelectedId(bundle.id)
+    onSelectBundle?.(bundle)
+  }
+
   return (
-    // Card-group frame — an alpha-black panel wrapping the header + cards.
-    // This IS the component's root (the job-type legend is NOT part of it):
-    // the legend renders directly under this frame, in the left column of
-    // self-checkout.tsx, so the frame itself can stretch to match the
-    // Unlimited side-card next to it.
     <div
       data-slot="job-credit-bundles"
-      className={cn("flex flex-col gap-5 rounded-2xl bg-checkout-track p-4", className)}
+      className={cn("flex flex-col gap-3 sm:gap-5 sm:rounded-2xl sm:bg-checkout-track sm:p-4", className)}
     >
-      {/* Section header — fixed min-height so it lines up with the
-          Unlimited side-card's header, keeping both inner-card rows
-          starting at the same top edge regardless of copy length.
-          `leading-6` on the title is deliberate: text-h4's snug 1.3 line
-          renders 26px, which makes this header 50px against the Unlimited
-          header's 48px and knocks the two card columns 2px out of line.
-          Below sm the link drops under the title so the subtitle keeps a
-          readable measure. */}
-      <div className="flex min-h-12 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-1">
-        <div className="flex min-w-0 flex-col gap-1">
-          <h2 className="font-heading text-xl font-semibold leading-6 text-checkout-hero-fg">
-            Job credits
-          </h2>
-          <p className="text-sm text-checkout-hero-fg-muted">
-            Pick a bundle. Choose the job type later, when you post.
-          </p>
+      {/* ── Mobile-first selectable radio cards (< sm) ── */}
+      <div className="flex flex-col gap-3 sm:hidden">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Briefcase className="size-4 text-checkout-hero-fg" aria-hidden />
+            <h2 className="font-heading text-base font-semibold text-checkout-hero-fg">
+              Job credits
+            </h2>
+          </div>
+          <button
+            type="button"
+            onClick={onBuySingleCredit}
+            className="flex shrink-0 items-center gap-1 text-xs font-semibold text-checkout-info hover:opacity-80"
+          >
+            Buy 1 job credit
+            <ArrowRight className="size-3.5" aria-hidden />
+          </button>
         </div>
-        {/* `text-checkout-info` is the checkout surface's fixed blue-500
-            (apna-sky-500) — the same ink the design gives this link and the
-            Recommended ribbon. `--info` is apna-sky-600 and remaps in dark,
-            so it is wrong on a surface drawn light in both themes. */}
-        <button
-          type="button"
-          onClick={onBuySingleCredit}
-          className="flex shrink-0 items-center gap-1 text-sm font-semibold text-checkout-info hover:opacity-80"
-        >
-          I need a single job credit
-          <ArrowRight className="size-5" aria-hidden />
-        </button>
+
+        <div className="flex flex-col gap-3">
+          {BUNDLES.map((bundle) => {
+            const isSelected = currentSelectedId === bundle.id
+            return (
+              <div key={bundle.id} className="relative pt-1.5">
+                {bundle.recommended && (
+                  <div className="absolute -top-1 left-3 z-10">
+                    <span className="rounded-full bg-checkout-info px-2.5 py-0.5 text-xs font-semibold text-checkout-info-foreground shadow-xs">
+                      Recommended
+                    </span>
+                  </div>
+                )}
+                <div
+                  onClick={() => handleSelect(bundle)}
+                  role="radio"
+                  aria-checked={isSelected}
+                  tabIndex={0}
+                  className={cn(
+                    "flex cursor-pointer items-center justify-between rounded-xl bg-card p-3.5 shadow-xs transition-all",
+                    isSelected
+                      ? "border-2 border-checkout-primary ring-1 ring-checkout-primary/20"
+                      : "border border-border hover:border-border/80"
+                  )}
+                >
+                  <div className="flex flex-col gap-1">
+                    <span className="text-sm font-semibold text-foreground">
+                      {bundle.credits} Job credits
+                    </span>
+                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <ClockFading className="size-3.5 shrink-0" aria-hidden />
+                      Valid for {bundle.validDays} days
+                    </span>
+                    <div>
+                      <Badge variant="discount" size="sm">
+                        {bundle.discountPct}% OFF
+                      </Badge>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <div className="flex flex-col items-end text-right">
+                      <div className="flex items-center gap-1.5 justify-end">
+                        <span className="text-xs text-muted-foreground line-through">
+                          ₹{bundle.mrp.toLocaleString("en-IN")}
+                        </span>
+                        <span className="text-base font-bold text-foreground">
+                          ₹{bundle.price.toLocaleString("en-IN")}
+                        </span>
+                      </div>
+                      <span className="text-xs italic text-muted-foreground">
+                        ₹{bundle.pricePerCredit} /credit
+                      </span>
+                    </div>
+                    <div
+                      className={cn(
+                        "flex size-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
+                        isSelected
+                          ? "border-checkout-primary"
+                          : "border-muted-foreground/30"
+                      )}
+                    >
+                      {isSelected && <div className="size-2.5 rounded-full bg-checkout-primary" />}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
       </div>
 
-      {/* Credit bundle cards — whole card is clickable (card click and the
-          "Buy now" button trigger the same action). PricingCard is the
-          shared design-system layout primitive; the accent (ribbon,
-          discount pill, filled CTA) is passed in as pre-styled primitives.
-          `flex-1` is load-bearing: it lets the grid absorb the frame's
-          spare height so all four dividers, price rows and CTAs line up
-          with the Unlimited card's. The 3-up breakpoint is `lg`, not `sm`
-          — below that the 20px price row plus the discount pill overflows
-          a ~170px card. */}
-      <div className="grid flex-1 grid-cols-1 gap-4 lg:grid-cols-3">
+      {/* ── Desktop view (sm and up) ── */}
+      <div className="hidden sm:flex sm:flex-col sm:gap-5">
+        <div className="flex min-h-12 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-1">
+          <div className="flex min-w-0 flex-col gap-1">
+            <h2 className="font-heading text-xl font-semibold leading-6 text-checkout-hero-fg">
+              Job credits
+            </h2>
+            <p className="text-sm text-checkout-hero-fg-muted">
+              Pick a bundle. Choose the job type later, when you post.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onBuySingleCredit}
+            className="flex shrink-0 items-center gap-1 text-sm font-semibold text-checkout-info hover:opacity-80"
+          >
+            I need a single job credit
+            <ArrowRight className="size-5" aria-hidden />
+          </button>
+        </div>
+
+        <div className="grid flex-1 grid-cols-1 gap-4 lg:grid-cols-3">
         {BUNDLES.map((bundle) => (
           <PricingCard
             key={bundle.id}
@@ -182,6 +260,7 @@ export function JobCreditBundles({
             }
           />
         ))}
+        </div>
       </div>
     </div>
   )

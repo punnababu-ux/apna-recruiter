@@ -193,9 +193,9 @@ export function JobPlanSelection() {
         actions={hasAnyCredits(creditBalance) ? <AvailableCreditsButton /> : undefined}
       />
 
-      <div className="flex-1 px-6 py-6 pb-12">
+      <div className="flex-1 px-4 py-4 pb-28 sm:px-6 sm:py-6 sm:pb-12">
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-5">
-          <h1 className="text-xl font-semibold text-foreground">Choose a job basis your hiring needs</h1>
+          <h1 className="text-lg font-semibold text-foreground sm:text-xl">Choose a job basis your hiring needs</h1>
           {layout === "tiered" ? (
             <TieredJobPlans creditBalance={creditBalance} onSelectTier={handleSelectTier} />
           ) : (

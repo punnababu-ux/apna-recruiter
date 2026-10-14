@@ -33,7 +33,13 @@ import {
   PRICING_TAB_SHORT_LABELS,
   type PricingTab,
 } from "@/components/apnahire/pricing-hero"
-import { JobCreditBundles, SINGLE_CREDIT } from "@/components/apnahire/job-credit-bundles"
+import { Button } from "@apna/design-system"
+import {
+  JobCreditBundles,
+  SINGLE_CREDIT,
+  BUNDLES,
+  type Bundle,
+} from "@/components/apnahire/job-credit-bundles"
 import { DatabaseCreditBundles } from "@/components/apnahire/database-credit-bundles"
 import { ContactSalesCard } from "@/components/apnahire/contact-sales-card"
 import { SubscriptionPlans } from "@/components/apnahire/subscription-plans"
@@ -63,6 +69,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   const router = useRouter()
   const isLoggedOut = authState === "logged-out"
   const [activeTab, setActiveTab] = React.useState<PricingTab>("jobs")
+  const [selectedBundle, setSelectedBundle] = React.useState<Bundle>(BUNDLES[1])
 
   // Sticky header — starts transparent over the gradient hero, turns solid
   // once the page scrolls; the compact tab switcher fades in once the
@@ -287,7 +294,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
       <div className="flex-1">
         <PricingHero activeTab={activeTab} onTabChange={setActiveTab} tabsRef={heroTabsRef} />
 
-        <div className="px-4 pb-12 sm:px-8 lg:px-12">
+        <div className={cn("px-4 pb-12 sm:px-8 lg:px-12", activeTab === "jobs" && "pb-28 sm:pb-12")}>
           {activeTab === "jobs" ? (
             <div className="mx-auto flex max-w-6xl flex-col gap-3">
               <div className="flex flex-col gap-5">
@@ -302,6 +309,8 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                       className="flex-1"
                       onBuyNow={handleBuyBundle}
                       onBuySingleCredit={handleBuySingleCredit}
+                      selectedBundleId={selectedBundle.id}
+                      onSelectBundle={setSelectedBundle}
                     />
                     <p className="text-xs text-checkout-hero-fg">
                       1 job credit = 1 classic job ・ 2 credits = 1 premium job ・ 4
@@ -395,6 +404,21 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
           renders SiteFooter below this component. The logged-in page ends
           at the trust bar because the product shell owns navigation from
           there — same reasoning, different chrome. */}
+
+      {/* Mobile sticky bottom CTA dock for Jobs tab */}
+      {activeTab === "jobs" && (
+        <div className="fixed inset-x-0 bottom-0 z-sticky border-t border-border bg-card/95 p-3.5 backdrop-blur-md sm:hidden">
+          <Button
+            type="button"
+            variant="checkout"
+            size="lg"
+            className="h-12 w-full rounded-full text-base font-semibold shadow-md"
+            onClick={() => handleBuyBundle(selectedBundle)}
+          >
+            Buy {selectedBundle.credits} job credits • ₹{selectedBundle.price.toLocaleString("en-IN")}
+          </Button>
+        </div>
+      )}
 
       <CheckoutDrawer
         open={drawerOpen}

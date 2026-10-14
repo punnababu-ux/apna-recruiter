@@ -40,13 +40,13 @@ export function JobPostingChrome({ current, onStepClick, actions, onSaveExit }: 
 
   return (
     <div className="sticky top-0 z-sticky border-b border-border bg-card">
-      <div className="border-b border-border px-6 py-3">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
+      <div className="border-b border-border px-4 py-2.5 sm:px-6 sm:py-3">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <BackButton onClick={() => router.push("/apnahire/jobs")} aria-label="Back to jobs" />
-            <span className="text-base font-semibold text-foreground">Create new job</span>
+            <span className="text-sm font-semibold text-foreground sm:text-base">Create new job</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             {actions}
             <Button
               type="button"
@@ -59,12 +59,13 @@ export function JobPostingChrome({ current, onStepClick, actions, onSaveExit }: 
               }}
             >
               <Save className="size-4" aria-hidden />
-              Save &amp; exit
+              <span className="hidden sm:inline">Save &amp; exit</span>
+              <span className="sm:hidden">Save</span>
             </Button>
           </div>
         </div>
       </div>
-      <div className="px-6 py-3">
+      <div className="px-4 py-2 sm:px-6 sm:py-3">
         <div className="mx-auto w-full max-w-6xl">
           <Stepper
             orientation="horizontal"
