@@ -16,7 +16,7 @@
  */
 
 import * as React from "react"
-import { ClockFading, UserSearch, LogoApnaUnlimited } from "@apna/design-system"
+import { ArrowRight, Briefcase, ClockFading, UserSearch, LogoApnaUnlimited } from "@apna/design-system"
 import { Button, PricingCard } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 
@@ -49,56 +49,98 @@ export function UnlimitedSideCard({
       data-slot="unlimited-side-card"
       onClick={onBuyNow}
       className={cn(
-        "flex w-full cursor-pointer flex-col gap-5 overflow-hidden rounded-2xl bg-gradient-checkout-unlimited p-4",
+        "flex w-full cursor-pointer flex-col overflow-hidden rounded-2xl bg-gradient-checkout-unlimited p-4",
         className
       )}
     >
-      {/* Dark header — the official wordmark, gold Accent Gradient variant.
-          Fixed min-height matches JobCreditBundles' header so both
-          inner-card rows start at the same top edge; the 24px logo row with
-          6px of lead sets the 16px-tall art at the drawing's optical
-          position. */}
-      <div className="flex min-h-12 flex-col gap-1">
-        <div className="flex h-6 items-start pt-1.5">
+      {/* ── Mobile layout (< sm) matching user reference image ── */}
+      <div className="flex flex-col gap-3 sm:hidden">
+        <div className="flex h-5 items-start">
           <LogoApnaUnlimited variant="gradient" className="h-4 w-auto" />
         </div>
-        <p className="text-sm text-surface-inverted-fg/80">
-          Unlimited hiring for {jobSlotMonths} months
-        </p>
+
+        <div className="rounded-xl bg-card p-4 text-card-foreground shadow-xs">
+          <div className="flex items-start justify-between gap-2">
+            <span className="text-base font-bold text-foreground">Unlimited job posts</span>
+            <div className="flex flex-col items-end text-right">
+              <span className="text-base font-bold text-foreground">₹{price.toLocaleString("en-IN")}</span>
+              <span className="text-xs font-semibold text-checkout-primary">
+                ₹{monthlyPrice.toLocaleString("en-IN")} /month
+              </span>
+            </div>
+          </div>
+
+          <div className="mt-3 flex flex-col gap-2 border-t border-border/60 pt-3 text-xs text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <ClockFading className="size-3.5 shrink-0" aria-hidden />
+              <span>1 job slot for {jobSlotMonths} months</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Briefcase className="size-3.5 shrink-0" aria-hidden />
+              <span>Free job reposts and swapping</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <UserSearch className="size-3.5 shrink-0" aria-hidden />
+              <span>{dbCredits} database credits worth ₹{dbCreditsWorth.toLocaleString("en-IN")}</span>
+            </div>
+          </div>
+
+          <div className="mt-3 flex items-center justify-between border-t border-border/60 pt-3">
+            <span className="text-xs italic text-muted-foreground">
+              Note: This plan is valid in a single city.
+            </span>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-8 rounded-full px-3 text-xs font-semibold"
+              onClick={onBuyNow}
+            >
+              Buy now
+              <ArrowRight className="size-3" aria-hidden />
+            </Button>
+          </div>
+        </div>
       </div>
 
-      {/* Fixed-white inner card. `surface="inset"` keeps it (and its text)
-          light in BOTH themes — the theme-aware card roles would render
-          near-invisible text on this always-dark surface.
-          Deliberately NO `onClick` here: the outer card already owns the
-          whole-card click, and a second handler would fire twice as the
-          Buy now click bubbles through. */}
-      <PricingCard
-        surface="inset"
-        className="flex-1 border-transparent"
-        title="Unlimited job posts"
-        subtitle="Free job reposts and swapping"
-        meta={[
-          <>
-            <ClockFading aria-hidden />1 Active job slot for {jobSlotMonths} months
-          </>,
-          <>
-            <UserSearch aria-hidden />
-            {dbCredits} database credits worth ₹{dbCreditsWorth.toLocaleString("en-IN")}
-          </>,
-        ]}
-        price={`₹${price.toLocaleString("en-IN")}`}
-        priceSuffix={
-          <span className="text-checkout-primary">
-            That&apos;s just ₹{monthlyPrice.toLocaleString("en-IN")} /month
-          </span>
-        }
-        cta={
-          <Button type="button" variant="checkout-inset" className="h-10 w-full font-semibold">
-            Buy now
-          </Button>
-        }
-      />
+      {/* ── Desktop view (sm and up) ── */}
+      <div className="hidden sm:flex sm:flex-col sm:gap-5">
+        <div className="flex min-h-12 flex-col gap-1">
+          <div className="flex h-6 items-start pt-1.5">
+            <LogoApnaUnlimited variant="gradient" className="h-4 w-auto" />
+          </div>
+          <p className="text-sm text-surface-inverted-fg/80">
+            Unlimited hiring for {jobSlotMonths} months
+          </p>
+        </div>
+
+        <PricingCard
+          surface="inset"
+          className="flex-1 border-transparent"
+          title="Unlimited job posts"
+          subtitle="Free job reposts and swapping"
+          meta={[
+            <>
+              <ClockFading aria-hidden />1 Active job slot for {jobSlotMonths} months
+            </>,
+            <>
+              <UserSearch aria-hidden />
+              {dbCredits} database credits worth ₹{dbCreditsWorth.toLocaleString("en-IN")}
+            </>,
+          ]}
+          price={`₹${price.toLocaleString("en-IN")}`}
+          priceSuffix={
+            <span className="text-checkout-primary">
+              That&apos;s just ₹{monthlyPrice.toLocaleString("en-IN")} /month
+            </span>
+          }
+          cta={
+            <Button type="button" variant="checkout-inset" className="h-10 w-full font-semibold">
+              Buy now
+            </Button>
+          }
+        />
+      </div>
     </div>
   )
 }

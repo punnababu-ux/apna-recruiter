@@ -329,7 +329,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                       className="flex-1"
                       onBuyNow={handleBuyUnlimitedQuarterly}
                     />
-                    <p className="text-xs text-checkout-hero-fg-muted">
+                    <p className="hidden text-xs text-checkout-hero-fg-muted sm:block">
                       Note: This plan is valid in a single city.
                     </p>
                   </div>
