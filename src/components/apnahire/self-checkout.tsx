@@ -69,6 +69,7 @@ import {
 } from "@/components/apnahire/checkout-drawer"
 import { PaymentModal } from "@/components/apnahire/payment-modal"
 import { PaymentSuccess } from "@/components/apnahire/payment-success"
+import { setActiveSubscription } from "@/hooks/use-active-subscription"
 import { useHeaderSlot } from "@/components/marketing/header-slot"
 import { AuthStateSwitcher } from "@/components/apnahire/auth-state-switcher"
 import { ExitOfferDialog } from "@/components/apnahire/offers/exit-offer-dialog"
@@ -304,6 +305,8 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
 
   const handlePaymentSuccess = () => {
     setPaymentOpen(false)
+    // A subscription bought here makes the sidebar's plan CTA "Manage plans".
+    if (checkoutItem?.renewAfterDays) setActiveSubscription(true)
     // The 10% offer is single-use.
     offer.expire()
     setOrder({

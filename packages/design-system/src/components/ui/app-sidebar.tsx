@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { AlertCircle, Check, ChevronDown, ChevronsUpDown, X } from "@/icons/icons"
+import { AlertCircle, Check, ChevronDown, ChevronRight, ChevronsUpDown, X } from "@/icons/icons"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
@@ -15,7 +15,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { AlertBanner } from "@/components/ui/alert-banner"
-import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 import {
@@ -77,6 +76,8 @@ export type ReusableSidebarProps = {
   activeWorkspaceId: string
   onWorkspaceChange: (w: SidebarWorkspace) => void
   navItems: SidebarNavItem[]
+  /** One promoted destination at the very bottom, under the alert banner
+   *  (e.g. "View plans"): a dark nav row with a chevron. */
   bottomCta?: {
     label: string
     icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
@@ -384,25 +385,6 @@ export function ReusableSidebar({
             </div>
           )}
 
-          {/* Bottom CTA */}
-          {bottomCta && (
-            <div className="px-3 py-2 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:px-3">
-              <Button
-                variant="default"
-                className="w-full justify-start gap-2.5 h-10 group-data-[collapsible=icon]:size-10 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:rounded-lg"
-                render={<Link href={bottomCta.href} />}
-                onClick={() => setOpenMobile(false)}
-              >
-                <span className="flex items-center gap-2.5 w-full justify-start group-data-[collapsible=icon]:justify-center">
-                  <bottomCta.icon className="size-4 shrink-0" />
-                  <span className="group-data-[collapsible=icon]:hidden truncate">
-                    {bottomCta.label}
-                  </span>
-                </span>
-              </Button>
-            </div>
-          )}
-
           {/* Alert Banner composed directly from AlertBanner design system primitive */}
           {alertBanner && !alertDismissed && (
             <div className="p-3 group-data-[collapsible=icon]:p-2 pt-0 group-data-[collapsible=icon]:pt-0">
@@ -433,6 +415,27 @@ export function ReusableSidebar({
                   <p className="font-semibold text-xs text-foreground">{alertBanner.title}</p>
                 </TooltipContent>
               </Tooltip>
+            </div>
+          )}
+
+          {/* Bottom link — under the banner, the last thing in the sidebar.
+              A destination, not an action: shaped like a nav row (left-aligned,
+              chevron = "goes to another page"), on the dark emphasis surface so
+              it stands out from the plain nav items without competing with the
+              page's own green CTA. Collapsed: an icon tile like the others. */}
+          {bottomCta && (
+            <div className="px-3 pb-3 group-data-[collapsible=icon]:px-2 group-data-[collapsible=icon]:pb-2">
+              <Link
+                href={bottomCta.href}
+                aria-label={isCollapsed ? bottomCta.label : undefined}
+                title={isCollapsed ? bottomCta.label : undefined}
+                onClick={() => setOpenMobile(false)}
+                className="ink press-subtle relative flex h-10 w-full items-center gap-2.5 rounded-lg bg-cta-emphasis px-3 text-sm font-medium text-cta-emphasis-foreground outline-none transition-interactive hover:bg-cta-emphasis-hover focus-visible:ring-3 focus-visible:ring-ring/50 group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0"
+              >
+                <bottomCta.icon className="size-4 shrink-0" />
+                <span className="truncate group-data-[collapsible=icon]:hidden">{bottomCta.label}</span>
+                <ChevronRight className="ml-auto size-4 shrink-0 group-data-[collapsible=icon]:hidden" aria-hidden />
+              </Link>
             </div>
           )}
         </div>

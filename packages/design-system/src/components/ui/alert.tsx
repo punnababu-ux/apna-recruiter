@@ -9,6 +9,9 @@ const alertVariants = cva(
     variants: {
       variant: {
         default: "bg-card text-card-foreground",
+        /* Neutral, but visible on a card — e.g. a job card's "finish
+         * posting" note. `default` is the card colour itself. */
+        muted: "bg-muted text-foreground border-border",
         destructive:
           "bg-destructive-subtle text-destructive border-destructive/20 *:data-[slot=alert-description]:text-destructive/90 *:[svg]:text-current",
         success:

@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Briefcase, CreditCard, Database, HelpCircle, Mail, BarChart2, Trophy } from "@apna/design-system"
+import { Briefcase, CreditCard, Database, HelpCircle, IndianRupee, Mail, BarChart2, Trophy } from "@apna/design-system"
 
 import {
   ReusableSidebar,
@@ -10,6 +10,7 @@ import {
   type SidebarNavItem,
 } from "@apna/design-system"
 import { Badge } from "@apna/design-system"
+import { useActiveSubscription } from "@/hooks/use-active-subscription"
 
 const WORKSPACES: SidebarWorkspace[] = [
   {
@@ -76,18 +77,24 @@ export interface ApnaHireSidebarProps {
   alertVariant?: "warning" | "info" | "destructive" | "success" | "default"
   alertAppearance?: "primary" | "secondary"
   alertShowClose?: boolean
+  /** Overrides the account's subscription state (the specs page's toggle). */
+  hasActiveSubscription?: boolean
 }
 
 export function ApnaHireSidebar({
   activeWorkspaceId: controlledId,
   onWorkspaceChange,
-  showAlert = false,
+  // Account-level: shown on every product page until verified.
+  showAlert = true,
   alertTitle = "Verify Identity: Complete tax verification to post jobs.",
   alertCtaText = "Verify",
   alertVariant = "warning",
   alertAppearance = "secondary",
   alertShowClose = true,
+  hasActiveSubscription,
 }: ApnaHireSidebarProps) {
+  const subscribed = useActiveSubscription()
+  const hasPlan = hasActiveSubscription ?? subscribed
   const [internalId, setInternalId] = React.useState(WORKSPACES[0].id)
   const activeWorkspaceId = controlledId ?? internalId
   const handleWorkspaceChange = (w: SidebarWorkspace) => {
@@ -117,6 +124,13 @@ export function ApnaHireSidebar({
               showClose: alertShowClose,
             }
           : undefined
+      }
+      // Under the banner: plans, always one tap away. With an active
+      // subscription it manages that plan instead of selling one.
+      bottomCta={
+        hasPlan
+          ? { label: "Manage plans", icon: IndianRupee, href: "/apnahire/credits" }
+          : { label: "View plans", icon: IndianRupee, href: "/pricing" }
       }
       footerItems={[
         {

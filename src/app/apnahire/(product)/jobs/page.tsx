@@ -1,108 +1,109 @@
 "use client"
 
 /**
- * /apnahire/jobs — Jobs list surface.
+ * /apnahire/jobs — "All your jobs": the recruiter's job list. Tabs filter by
+ * apna hire's four job states (under review, active, draft, expired), then
+ * search and filters, then the cards (JobList).
  */
 
-import { Plus, Briefcase, Users, CalendarCheck, TrendingUp } from "@apna/design-system"
+import { Plus } from "@apna/design-system"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Suspense, useMemo, useState } from "react"
 
-import { MetricCard, SearchFilterBar, Button, Tabs, TabsList, TabsTrigger } from "@apna/design-system"
-import { JobsTable, type JobRow, type JobStatus } from "@/components/onlyrounds/jobs-table"
+import { SearchFilterBar, Button, Tabs, TabsList, TabsTrigger } from "@apna/design-system"
+import { JobList, STATUS_LABELS, type ApnaJob, type ApnaJobStatus } from "@/components/apnahire/jobs/job-list"
 import { PageHeader } from "@/components/onlyrounds/page-header"
+import { COMPANY_NAME } from "@/lib/apnahire/job-draft"
 
-const MOCK: JobRow[] = [
+/** Sample jobs — one per state and per banner, so every case shows. */
+const MOCK: ApnaJob[] = [
   {
-    id: "product-designer",
-    title: "Senior Product Designer",
+    id: "field-sales-pune-review",
+    title: "Field Sales Executive",
+    status: "under_review",
+    company: COMPANY_NAME,
+    area: "Salunkhe Vihar",
+    city: "Pune",
+    postedAt: "14 Oct 2026",
+    postedBy: "Alok Singh",
+    applied: 0,
+    activeLeads: 0,
+    dbMatches: 82312,
+  },
+  {
+    id: "telecaller-koramangala",
+    title: "Telecaller",
     status: "active",
-    client: "Flipkart",
-    clientLogo: "https://www.google.com/s2/favicons?domain=flipkart.com&sz=128",
-    location: "Bengaluru, IN",
-    createdAt: "21 Apr 2026",
-    owner: "Mitushi Agarwal",
-    screening: 24,
-    interview: 6,
-    shortlisted: 2,
+    company: COMPANY_NAME,
+    area: "Koramangala",
+    city: "Bengaluru",
+    postedAt: "12 Oct 2026",
+    postedBy: "Alok Singh",
+    applied: 0,
+    activeLeads: 5,
+    activeLeadsNew: 4,
+    dbMatches: 4325,
   },
   {
-    id: "manual-tester-profile",
-    title: "Lead QA Automation Engineer",
+    id: "delivery-andheri",
+    title: "Delivery Executive",
     status: "active",
-    client: "Swiggy",
-    clientLogo: "https://www.google.com/s2/favicons?domain=swiggy.com&sz=128",
-    location: "Hyderabad, IN",
-    createdAt: "17 Apr 2026",
-    owner: "Mitushi Agarwal",
-    screening: 12,
-    interview: 3,
-    shortlisted: 1,
+    company: COMPANY_NAME,
+    area: "Andheri East",
+    city: "Mumbai",
+    postedAt: "8 Oct 2026",
+    postedBy: "Priya Shah",
+    applied: 6,
+    activeLeads: 15,
+    dbMatches: 72312,
+    nudge: "active-leads",
   },
   {
-    id: "manual-tester-ravi-english",
-    title: "Frontend React Architect",
-    status: "published",
-    client: "Amazon",
-    clientLogo: "https://www.google.com/s2/favicons?domain=amazon.com&sz=128",
-    location: "Bengaluru, IN",
-    createdAt: "17 Apr 2026",
-    owner: "Ravi Kumar",
-    screening: 58,
-    interview: 14,
-    shortlisted: 4,
+    id: "back-office-pune",
+    title: "Back Office Executive",
+    status: "active",
+    company: COMPANY_NAME,
+    area: "Hinjewadi",
+    city: "Pune",
+    postedAt: "2 Oct 2026",
+    postedBy: "Alok Singh",
+    applied: 12,
+    appliedPending: 5,
+    activeLeads: 8,
+    dbMatches: 82312,
+    nudge: "improve-reach",
   },
   {
-    id: "full-stack-developer",
-    title: "Senior Full Stack Engineer (Node + Next.js)",
+    id: "customer-support-draft",
+    title: "Customer Support Executive",
     status: "draft",
-    client: "Zomato",
-    clientLogo: "https://www.google.com/s2/favicons?domain=zomato.com&sz=128",
-    location: "Remote",
-    createdAt: "12 Apr 2026",
-    owner: "Priya Shah",
-    screening: 0,
-    interview: 0,
-    shortlisted: 0,
+    company: COMPANY_NAME,
+    area: "HSR Layout",
+    city: "Bengaluru",
+    postedAt: "1 Oct 2026",
+    postedBy: "Alok Singh",
+    applied: 0,
+    activeLeads: 0,
+    dbMatches: 0,
   },
   {
-    id: "mobile-dev-lead",
-    title: "iOS Lead Engineer (SwiftUI)",
-    status: "active",
-    client: "Razorpay",
-    clientLogo: "https://www.google.com/s2/favicons?domain=razorpay.com&sz=128",
-    location: "Bengaluru, IN",
-    createdAt: "10 Apr 2026",
-    owner: "Ravi Kumar",
-    screening: 31,
-    interview: 8,
-    shortlisted: 3,
-  },
-  {
-    id: "devops-specialist",
-    title: "Principal Cloud DevOps Lead",
-    status: "inactive",
-    client: "Uber",
-    clientLogo: "https://www.google.com/s2/favicons?domain=uber.com&sz=128",
-    location: "Gurugram, IN",
-    createdAt: "05 Apr 2026",
-    owner: "Priya Shah",
-    screening: 18,
-    interview: 2,
-    shortlisted: 1,
+    id: "field-sales-expired",
+    title: "Field Sales Executive",
+    status: "expired",
+    company: COMPANY_NAME,
+    area: "Salunkhe Vihar",
+    city: "Pune",
+    postedAt: "30 Aug 2026",
+    postedBy: "Alok Singh",
+    applied: 12,
+    activeLeads: 8,
+    dbMatches: 82312,
   },
 ]
 
-type JobTab = JobStatus | "all"
-
-const TABS: { value: JobTab; label: string; count: number }[] = [
-  { value: "all",       label: "All Jobs",   count: 266 },
-  { value: "active",    label: "Active",     count: 166 },
-  { value: "published", label: "Published",  count: 4 },
-  { value: "inactive",  label: "Inactive",   count: 2 },
-  { value: "draft",     label: "Drafts",     count: 94 },
-]
+type JobTab = ApnaJobStatus | "all"
+const TAB_ORDER: JobTab[] = ["all", "active", "under_review", "draft", "expired"]
 
 export default function JobsPage() {
   return (
@@ -118,8 +119,7 @@ function JobsPageInner() {
   const searchParams = useSearchParams()
   const tab = (searchParams.get("tab") as JobTab | null) ?? "all"
 
-  const [clientFilters, setClientFilters] = useState<string[]>([])
-  const [locationFilters, setLocationFilters] = useState<string[]>([])
+  const [cityFilters, setCityFilters] = useState<string[]>([])
   const [searchQuery, setSearchQuery] = useState("")
 
   const setTab = (next: JobTab) => {
@@ -128,48 +128,32 @@ function JobsPageInner() {
     router.replace(`${pathname}?${params.toString()}`, { scroll: false })
   }
 
-  const clients = useMemo(
-    () => Array.from(new Set(MOCK.map((j) => j.client))).sort(),
-    [],
-  )
-  const locations = useMemo(
-    () => Array.from(new Set(MOCK.map((j) => j.location))).sort(),
-    [],
-  )
+  const cities = useMemo(() => Array.from(new Set(MOCK.map((j) => j.city))).sort(), [])
+  const counts = useMemo(() => {
+    const c = Object.fromEntries(TAB_ORDER.map((t) => [t, 0])) as Record<JobTab, number>
+    MOCK.forEach((j) => {
+      c.all++
+      c[j.status]++
+    })
+    return c
+  }, [])
 
   const toggle = (list: string[], value: string) =>
     list.includes(value) ? list.filter((v) => v !== value) : [...list, value]
 
   const filtered = MOCK.filter((j) => {
     if (tab !== "all" && j.status !== tab) return false
-    if (clientFilters.length > 0 && !clientFilters.includes(j.client)) return false
-    if (locationFilters.length > 0 && !locationFilters.includes(j.location)) return false
+    if (cityFilters.length > 0 && !cityFilters.includes(j.city)) return false
     if (searchQuery.trim() && !j.title.toLowerCase().includes(searchQuery.toLowerCase())) return false
     return true
   })
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 p-4 sm:gap-6 sm:p-6">
-      {/* Page Title & Action Bar */}
       <PageHeader
         variant="transparent"
         className="px-0 pt-0"
-        title="Jobs Directory"
-        description="Manage active job openings, candidate evaluation pipelines, and recruiter assignments."
-        tabs={
-          <Tabs
-            value={tab}
-            onValueChange={(v) => setTab(v as JobTab)}
-          >
-            <TabsList variant="inverted">
-              {TABS.map((t) => (
-                <TabsTrigger key={t.value} value={t.value}>
-                  {t.label} ({t.count})
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
-        }
+        title="All your jobs"
         actions={
           <Button
             size="sm"
@@ -184,64 +168,37 @@ function JobsPageInner() {
         }
       />
 
-      {/* Overview Metrics Cards */}
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 sm:gap-4">
-        <MetricCard
-          label="Active Postings"
-          value="166"
-          icon={<Briefcase />}
-          trend={<span className="flex items-center gap-0.5"><TrendingUp className="size-3" /> +12% this mo</span>}
-          trendVariant="success"
-        />
-        <MetricCard
-          label="Candidates Screened"
-          value="143"
-          icon={<Users />}
-          trend="Across active roles"
-          trendVariant="neutral"
-        />
-        <MetricCard
-          label="Interviews Today"
-          value="23"
-          icon={<CalendarCheck />}
-          trend="6 pending feedback"
-          trendVariant="warning"
-        />
-        <MetricCard
-          label="Offer Conversion"
-          value="88%"
-          icon={<TrendingUp />}
-          trend="High conversion"
-          trendVariant="success"
+      {/* Tabs, then search — narrow by state first, then by words. */}
+      <div className="flex flex-col gap-3">
+        <Tabs value={tab} onValueChange={(v) => setTab(v as JobTab)}>
+          <TabsList variant="inverted">
+            {TAB_ORDER.map((t) => (
+              <TabsTrigger key={t} value={t}>
+                {t === "all" ? "All" : STATUS_LABELS[t]} ({counts[t]})
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+
+        <SearchFilterBar
+          className="px-0 pt-0"
+          placeholder="Search by job title…"
+          value={searchQuery}
+          onChange={setSearchQuery}
+          filterGroups={[
+            {
+              label: "City",
+              options: cities,
+              selected: cityFilters,
+              onToggle: (v) => setCityFilters((prev) => toggle(prev, v)),
+            },
+          ]}
+          onClearFilters={() => setCityFilters([])}
         />
       </div>
 
-      {/* Filter and Search Bar */}
-      <SearchFilterBar
-        className="px-0 pt-0"
-        placeholder="Search by job title or client…"
-        value={searchQuery}
-        onChange={setSearchQuery}
-        filterGroups={[
-          {
-            label: "Client",
-            options: clients,
-            selected: clientFilters,
-            onToggle: (v) => setClientFilters((prev) => toggle(prev, v)),
-          },
-          {
-            label: "Location",
-            options: locations,
-            selected: locationFilters,
-            onToggle: (v) => setLocationFilters((prev) => toggle(prev, v)),
-          },
-        ]}
-        onClearFilters={() => { setClientFilters([]); setLocationFilters([]) }}
-      />
-
-      {/* Main Jobs Table List */}
       <main className="flex-1">
-        <JobsTable rows={filtered} />
+        <JobList jobs={filtered} />
       </main>
     </div>
   )

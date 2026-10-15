@@ -79,7 +79,7 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 
 | Component        | Import                                                                 | tldr                                             |
 |------------------|------------------------------------------------------------------------|--------------------------------------------------|
-| Alert            | `import { Alert, AlertTitle, AlertDescription } from "@apna/design-system"` | Static banner. Use for persistent messages. |
+| Alert            | `import { Alert, AlertTitle, AlertDescription } from "@apna/design-system"` | Static banner. Use for persistent messages. Variants: default · muted (neutral but visible on a card) · destructive · success · warning · info. |
 | AlertBanner      | `import { AlertBanner } from "@apna/design-system"`                   | High-emphasis action banner with icon, title, and action link or standalone CTA. |
 | RenewalBanner    | `import { RenewalBanner } from "@apna/design-system"`                 | Richer banner: icon + headline/subline, checklist, price + MRP + discount, CTA. For "renew your plan" reminders. |
 | Sonner (toast)   | `import { toast } from "sonner"`                                       | Transient toast. Mounted via `<Toaster />` in root layout. |

@@ -11,6 +11,7 @@ export default function InteractiveSpecsPage() {
   const [activeAHWorkspace, setActiveAHWorkspace] = React.useState<string>("ah-corp")
 
   const [showAlert, setShowAlert] = React.useState(true)
+  const [hasPlan, setHasPlan] = React.useState(false)
   const [alertVariant, setAlertVariant] = React.useState<"warning" | "info" | "destructive" | "success" | "default">("warning")
   const [alertAppearance, setAlertAppearance] = React.useState<"primary" | "secondary">("secondary")
   const [customAlertTitle, setCustomAlertTitle] = React.useState("Verify Identity: Complete tax verification to post jobs.")
@@ -24,6 +25,7 @@ export default function InteractiveSpecsPage() {
         activeWorkspaceId={activeAHWorkspace}
         onWorkspaceChange={(w) => setActiveAHWorkspace(w.id)}
         showAlert={showAlert}
+        hasActiveSubscription={hasPlan}
         alertTitle={customAlertTitle}
         alertCtaText={customCtaText}
         alertVariant={alertVariant}
@@ -88,6 +90,19 @@ export default function InteractiveSpecsPage() {
                   />
                   <label htmlFor="play-show-alert" className="text-xs text-muted-foreground cursor-pointer select-none font-medium">
                     Show Alert Banner
+                  </label>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <input
+                    id="play-has-plan"
+                    type="checkbox"
+                    checked={hasPlan}
+                    onChange={(e) => setHasPlan(e.target.checked)}
+                    className="rounded border-border cursor-pointer"
+                  />
+                  <label htmlFor="play-has-plan" className="text-xs text-muted-foreground cursor-pointer select-none font-medium">
+                    Active subscription (CTA reads &ldquo;Manage plans&rdquo;)
                   </label>
                 </div>
 

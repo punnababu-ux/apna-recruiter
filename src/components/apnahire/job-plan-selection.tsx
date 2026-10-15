@@ -51,6 +51,7 @@ import {
 import { PaymentModal } from "@/components/apnahire/payment-modal"
 import { GstNote } from "@/components/apnahire/gst-note"
 import { PaymentSuccess } from "@/components/apnahire/payment-success"
+import { setActiveSubscription } from "@/hooks/use-active-subscription"
 import { JobPlanPreviewSwitcher } from "@/components/apnahire/job-plan-preview-switcher"
 import { BUNDLES } from "@/components/apnahire/job-credit-bundles"
 import { ExitOfferDialog } from "@/components/apnahire/offers/exit-offer-dialog"
@@ -258,6 +259,8 @@ export function JobPlanSelection() {
   // job can never be left sitting at Select Plan.
   const handlePaymentSuccess = () => {
     setPaymentOpen(false)
+    // A subscription bought here makes the sidebar's plan CTA "Manage plans".
+    if (checkoutItem?.renewAfterDays) setActiveSubscription(true)
     setPostedTitle(readDraftTitle())
     clearDraft()
     // The 10% offer is single-use.
