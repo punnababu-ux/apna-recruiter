@@ -6,7 +6,7 @@
  * search and filters, then the cards (JobList).
  */
 
-import { Plus } from "@apna/design-system"
+import { CircleCheck, Clock, FileText, History, LayoutList, Plus } from "@apna/design-system"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Suspense, useMemo, useState } from "react"
@@ -112,6 +112,15 @@ const MOCK: ApnaJob[] = [
 type JobTab = ApnaJobStatus | "all"
 const TAB_ORDER: JobTab[] = ["all", "active", "under_review", "draft", "expired"]
 
+/** Phone chips carry an icon, as self-checkout's do. */
+const TAB_ICONS: Record<JobTab, React.ReactNode> = {
+  all: <LayoutList />,
+  active: <CircleCheck />,
+  under_review: <Clock />,
+  draft: <FileText />,
+  expired: <History />,
+}
+
 export default function JobsPage() {
   return (
     <Suspense fallback={null}>
@@ -179,16 +188,25 @@ function JobsPageInner() {
       <div className="flex flex-col gap-3">
         {/* Phones: five tabs don't fit across, so they become self-checkout's
             scrolling chip row (SegmentedTabSwitcher's mobile layout, which
-            hides itself from md). Its bleed mirrors this page's p-4 / sm:p-6
-            gutter. From md: the tab bar. */}
+            hides itself from md), styled exactly as there: icon chips, grey
+            track fill, white active chip with an inset ring and green label
+            (the same classes as pricing-hero.tsx). Its bleed mirrors this
+            page's p-4 / sm:p-6 gutter. From md: the tab bar. */}
         <SegmentedTabSwitcher
           className="md:hidden"
           items={TAB_ORDER.map((t) => ({
             value: t,
             label: `${t === "all" ? "All" : STATUS_LABELS[t]} (${counts[t]})`,
+            icon: TAB_ICONS[t],
           }))}
           value={tab}
           onValueChange={setTab}
+          trackClassName="bg-checkout-track"
+          activeClassName="text-checkout-primary"
+          mobileActiveClassName="text-checkout-primary"
+          inactiveClassName="text-checkout-hero-fg-secondary"
+          mutedClassName="text-checkout-hero-fg-secondary"
+          activeItemClassName="bg-card inset-ring-1 inset-ring-border shadow-none"
           mobileBleedClassName="-mx-4 sm:-mx-6"
           mobileGutterClassName="px-4 sm:px-6"
         />

@@ -10,10 +10,12 @@
  *
  * The description is drafted once; every later screen arrives answered and
  * marked "From your description" until the recruiter changes it (aiFilled).
- * Every screen shares one layout (WIZARD_LAYOUT): the question column, and
- * from `lg` the candidate preview beside it, scrolled to the part being
- * edited (phones see it on the review screen). The footer spans that whole
- * content area: Back on its left edge, Next on its right.
+ * The question screens share one layout (WIZARD_LAYOUT): the question
+ * column, and from `lg` the candidate preview beside it, scrolled to the part
+ * being edited (phones see it on the review screen). Describe and drafting
+ * have no preview (there's no job to show yet): one centred column
+ * (SOLO_LAYOUT), about as wide as the question column. The footer spans the
+ * screen's content area: Back on its left edge, Next on its right.
  *
  * Guards against losing work:
  *   - Drafting again over a draft the recruiter has worked on asks first; an
@@ -87,13 +89,17 @@ export const JOB_DRAFT_STORAGE_KEY = "apnahire:job-draft"
 
 const STAGES: StageId[] = ["job", "candidates", "setup"]
 
-/** The one content area every screen uses: the question column + the
- *  candidate preview (from `lg`), together. The footer spans the same area,
- *  so Back sits on its left edge and Next on its right — under the preview
- *  on desktop. DraftingState repeats the grid (it can't import from here —
- *  this file imports it). */
+/** The question screens' content area: the question column + the candidate
+ *  preview (from `lg`), together. The footer spans the same area, so Back
+ *  sits on its left edge and Next on its right — under the preview on
+ *  desktop. */
 const CONTENT_WIDTH = "mx-auto w-full max-w-5xl"
 const WIZARD_LAYOUT = `${CONTENT_WIDTH} grid gap-12 lg:grid-cols-[minmax(0,1fr)_20rem]`
+/** Describe (and DraftingState, which repeats it — it can't import from
+ *  here): no preview yet, so one centred column, ~ the question column's
+ *  width (656px at lg), so the text doesn't change width when the preview
+ *  arrives on the first question. */
+const SOLO_WIDTH = "mx-auto w-full max-w-2xl"
 
 /** The answers a job description talks about. When these change, the
  *  description may be out of date. */
@@ -401,7 +407,7 @@ export function PostJobFlow() {
         {state.screen === "drafting" ? (
           <DraftingState prompt={state.prompt} result={draftResult} onComplete={finishDrafting} />
         ) : (
-          <div className={WIZARD_LAYOUT}>
+          <div className={state.screen === "describe" ? SOLO_WIDTH : WIZARD_LAYOUT}>
             <div
               key={state.screen}
               className={cn(
@@ -418,14 +424,16 @@ export function PostJobFlow() {
               )}
               <def.Render {...ctx} />
             </div>
-            {/* On every screen — on Describe it's the empty job the
-                description will fill. */}
-            <aside className="hidden lg:block">
-              <div className="sticky top-36 flex flex-col gap-3">
-                <p className="text-center text-xs font-medium text-muted-foreground">Candidate view</p>
-                <CandidateJobPreview draft={state.draft} flashKey={flashKey} focus={def.preview} />
-              </div>
-            </aside>
+            {/* From the first question on: on Describe there's no job yet,
+                only an empty card that squeezed the description box. */}
+            {state.screen !== "describe" && (
+              <aside className="hidden lg:block">
+                <div className="sticky top-36 flex flex-col gap-3">
+                  <p className="text-center text-xs font-medium text-muted-foreground">Candidate view</p>
+                  <CandidateJobPreview draft={state.draft} flashKey={flashKey} focus={def.preview} />
+                </div>
+              </aside>
+            )}
           </div>
         )}
       </main>
@@ -434,7 +442,7 @@ export function PostJobFlow() {
         <WizardFooter
           progress={stage ? stageProgress(state.screen) : undefined}
           progressClassName="sm:hidden"
-          innerClassName={CONTENT_WIDTH}
+          innerClassName={state.screen === "describe" ? SOLO_WIDTH : CONTENT_WIDTH}
           onBack={back}
           backLabel={state.returnTo ? "Cancel" : "Back"}
           secondary={
