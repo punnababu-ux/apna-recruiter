@@ -352,7 +352,7 @@ export default function IconsPage() {
               <div
                 key={ic.name}
                 onClick={() => copyIconSnippet(ic.name)}
-                className="group cursor-pointer rounded-xl border border-border bg-card p-3 space-y-2 text-center shadow-xs hover:border-primary/50 hover:shadow-sm transition-all"
+                className="group cursor-pointer rounded-xl border border-border bg-card p-3 space-y-2 text-center shadow-xs hover:border-primary/50 hover:shadow-sm transition-interactive"
               >
                 <div className="h-10 w-full rounded-lg bg-muted/50 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
                   <IconComponent className="size-4 text-foreground group-hover:text-primary transition-colors" />

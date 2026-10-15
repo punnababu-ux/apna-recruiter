@@ -8,6 +8,14 @@ import {
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
+  Checkbox,
+  Label,
+  Slider,
+  Switch,
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  Toggle,
 } from "@apna/design-system"
 import { Play, Sparkles, Zap, Layers } from "@apna/design-system"
 
@@ -45,6 +53,14 @@ export default function RadiusMotionPage() {
     { token: "duration-1000", val: "1000ms", usage: "Progress bars & ambient loops" },
   ]
 
+  const liveSurfaceUtilities = [
+    { name: "ink", what: "While pressed, an ink spreads from the touch point; on release it fills the surface and fades into the hover state.", tokens: "--duration-ink · --duration-ink-fade · --ink-opacity" },
+    { name: "press", what: "The control compresses the moment it is pressed. press-subtle is the gentler step for cards.", tokens: "--press-scale · --press-scale-subtle" },
+    { name: "transition-interactive", what: "Colour, border, shadow, focus ring and transform changes ease instead of snapping.", tokens: "--duration-hover · --ease-standard" },
+    { name: "transition-select", what: "Selection lands with a slight spring: checkbox ticks, radio dots, switch thumbs, chevrons.", tokens: "--duration-select · --ease-select" },
+    { name: "tab-indicator · sliding-indicator", what: "One selection pill glides to the active option — tabs, segmented switchers, chip tabs. Never a cross-fade.", tokens: "--duration-slide · --ease-slide" },
+  ]
+
   const easingCurves = [
     { name: "ease-standard", curve: "cubic-bezier(0.2, 0, 0, 1)", desc: "Material-style default for balanced transitions" },
     { name: "ease-decel", curve: "cubic-bezier(0.05, 0.7, 0.1, 1)", desc: "Egress / enter curve — decelerates into view" },
@@ -64,6 +80,96 @@ export default function RadiusMotionPage() {
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
           Modular corner radiuses, transition duration steps, and intent-based easing curves.
+        </p>
+      </div>
+
+      {/* Live surfaces — the interaction language */}
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center justify-between border-b border-border/60 pb-2">
+          <div>
+            <h2 className="text-lg font-semibold text-foreground font-heading">
+              Live Surfaces — Micro-interactions
+            </h2>
+            <p className="text-2xs text-muted-foreground">
+              Built into the primitives, so every screen gets them for free. Press and hold anything below.
+            </p>
+          </div>
+          <Badge variant="secondary">Interactive</Badge>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-5">
+            <p className="text-overline text-muted-foreground">Press · ink · focus</p>
+            <div className="flex flex-wrap gap-2">
+              <Button>Primary</Button>
+              <Button variant="outline">Outline</Button>
+              <Button variant="secondary">Secondary</Button>
+              <Button variant="ghost">Ghost</Button>
+              <Button variant="destructive">Destructive</Button>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <Toggle aria-label="Bold" variant="outline">Bold</Toggle>
+              <Toggle aria-label="Italic" variant="outline">Italic</Toggle>
+              <Button size="icon" variant="outline" aria-label="Replay">
+                <Play />
+              </Button>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-5">
+            <p className="text-overline text-muted-foreground">Selection glides</p>
+            <Tabs defaultValue="all">
+              <TabsList>
+                <TabsTrigger value="all">All</TabsTrigger>
+                <TabsTrigger value="shortlisted">Shortlisted</TabsTrigger>
+                <TabsTrigger value="hired">Hired</TabsTrigger>
+              </TabsList>
+            </Tabs>
+            <div className="flex flex-wrap items-center gap-6">
+              <Label className="flex items-center gap-2">
+                <Checkbox defaultChecked /> Remote
+              </Label>
+              <Label className="flex items-center gap-2">
+                <Switch defaultChecked /> Notify me
+              </Label>
+            </div>
+            <Slider defaultValue={40} aria-label="Salary range" />
+          </div>
+
+          <button
+            type="button"
+            className="ink press-subtle card-hover-lift relative flex flex-col gap-1 rounded-xl border border-border bg-card p-5 text-left lg:col-span-2"
+          >
+            <span className="text-sm font-semibold text-foreground">A clickable card</span>
+            <span className="text-xs text-muted-foreground">
+              Lifts on hover, gives under the press, and inks from where you touched it.
+            </span>
+          </button>
+        </div>
+
+        <div className="overflow-x-auto rounded-xl border border-border">
+          <table className="w-full text-left text-xs">
+            <thead className="bg-muted text-muted-foreground">
+              <tr>
+                <th className="px-4 py-2 font-semibold">Utility</th>
+                <th className="px-4 py-2 font-semibold">What the user sees</th>
+                <th className="px-4 py-2 font-semibold">Tokens</th>
+              </tr>
+            </thead>
+            <tbody>
+              {liveSurfaceUtilities.map((u) => (
+                <tr key={u.name} className="border-t border-border">
+                  <td className="px-4 py-2 font-mono font-semibold text-foreground">{u.name}</td>
+                  <td className="px-4 py-2 text-muted-foreground">{u.what}</td>
+                  <td className="px-4 py-2 font-mono text-muted-foreground">{u.tokens}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="text-2xs text-muted-foreground">
+          Reduced motion keeps the feedback (a held tint on press) and drops the movement. Mount{" "}
+          <code>&lt;InkProvider /&gt;</code> once at the root so the ink knows where you pressed.
         </p>
       </div>
 

@@ -218,7 +218,7 @@ export default function ColorsPage() {
             <div
               key={c.token}
               onClick={(e) => copySwatch(e, c.token)}
-              className="group cursor-pointer rounded-xl border border-border bg-card overflow-hidden shadow-xs hover:border-primary/50 transition-all flex flex-col"
+              className="group cursor-pointer rounded-xl border border-border bg-card overflow-hidden shadow-xs hover:border-primary/50 transition-interactive flex flex-col"
             >
               <div className={`h-20 w-full ${c.token} border-b border-border/40 relative flex items-end justify-end p-2`}>
                 <div className="rounded-md bg-card/80 p-1 backdrop-blur-xs opacity-0 group-hover:opacity-100 transition-opacity">
@@ -252,7 +252,7 @@ export default function ColorsPage() {
               <div
                 key={g.token}
                 onClick={(e) => copySwatch(e, g.token)}
-                className="group cursor-pointer rounded-xl border border-border bg-card overflow-hidden shadow-xs hover:border-primary/50 transition-all flex flex-col"
+                className="group cursor-pointer rounded-xl border border-border bg-card overflow-hidden shadow-xs hover:border-primary/50 transition-interactive flex flex-col"
               >
                 <div className={`h-20 w-full ${g.token} border-b border-border/40 relative flex items-end justify-end p-2`}>
                   <div className="rounded-md bg-card/80 p-1 backdrop-blur-xs opacity-0 group-hover:opacity-100 transition-opacity">
@@ -306,7 +306,7 @@ export default function ColorsPage() {
                       <div
                         key={step.name}
                         onClick={(e) => copySwatch(e, `${ramp.name} step ${step.name}`)}
-                        className={`group cursor-pointer h-14 rounded-lg flex flex-col justify-between p-1.5 transition-all hover:scale-105 hover:shadow-md ${step.bg}`}
+                        className={`group cursor-pointer h-14 rounded-lg flex flex-col justify-between p-1.5 transition-interactive hover:scale-105 hover:shadow-md ${step.bg}`}
                       >
                         <div className="flex justify-end opacity-0 group-hover:opacity-100 transition-opacity">
                           <Copy className={`size-3 ${step.darkText ? "text-slate-900" : "text-white"}`} />

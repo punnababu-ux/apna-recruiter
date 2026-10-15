@@ -110,8 +110,8 @@ export function DatabaseCreditBundles({
       data-slot="database-credit-bundles"
       className={cn("flex flex-col gap-3 sm:gap-5", className)}
     >
-      {/* ── Mobile-first selectable radio cards (< sm) ── */}
-      <div className="flex flex-col gap-3 sm:hidden">
+      {/* ── Mobile-first selectable radio cards (< md) ── */}
+      <div className="flex flex-col gap-3 md:hidden">
         <div className="flex items-center gap-2">
           <UserSearch className="size-4 text-checkout-hero-fg" aria-hidden />
           <h2 className="font-heading text-base font-semibold text-checkout-hero-fg">
@@ -137,7 +137,7 @@ export function DatabaseCreditBundles({
                   aria-checked={isSelected}
                   tabIndex={0}
                   className={cn(
-                    "flex cursor-pointer items-center justify-between rounded-xl bg-card p-3.5 shadow-xs transition-all",
+                    "ink press-subtle relative flex cursor-pointer items-center justify-between rounded-xl bg-card p-3.5 shadow-xs transition-interactive",
                     isSelected
                       ? "border-2 border-checkout-primary ring-1 ring-checkout-primary/20"
                       : "border border-border hover:border-border/80"
@@ -190,8 +190,8 @@ export function DatabaseCreditBundles({
         </div>
       </div>
 
-      {/* ── Desktop view (sm and up) ── */}
-      <div className="hidden sm:flex sm:flex-col sm:gap-5">
+      {/* ── Desktop view (md and up) ── */}
+      <div className="hidden md:flex md:flex-col md:gap-5">
         <div className="flex flex-col gap-1">
           <h2 className="text-xl font-semibold leading-tight text-checkout-hero-fg">
             Database credits

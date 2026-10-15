@@ -24,6 +24,7 @@
  */
 
 import * as React from "react"
+import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 
@@ -42,12 +43,9 @@ import {
 } from "@/components/apnahire/job-credit-bundles"
 import {
   DatabaseCreditBundles,
+  DB_BUNDLES,
   type DbBundle,
 } from "@/components/apnahire/database-credit-bundles"
-import {
-  ComboBundles,
-  type ComboBundle,
-} from "@/components/apnahire/combo-bundles"
 import { ContactSalesCard } from "@/components/apnahire/contact-sales-card"
 import { SubscriptionPlans } from "@/components/apnahire/subscription-plans"
 import { EnterprisePricingTable } from "@/components/apnahire/enterprise-pricing-table"
@@ -65,8 +63,24 @@ import { PaymentModal } from "@/components/apnahire/payment-modal"
 import { PaymentSuccess } from "@/components/apnahire/payment-success"
 import { useHeaderSlot } from "@/components/marketing/header-slot"
 import { AuthStateSwitcher } from "@/components/apnahire/auth-state-switcher"
+import { ExitOfferDialog } from "@/components/apnahire/offers/exit-offer-dialog"
+import { useExtraOff } from "@/components/apnahire/offers/use-extra-off"
+import {
+  AnnualUpgradeDialog,
+  CreditPackOfferDialog,
+  type CreditQuote,
+  type SubscriptionQuote,
+} from "@/components/apnahire/offers/upsell-dialogs"
+import { ANNUAL_PLAN, EXTRA_OFF } from "@/content/offers"
 
 export type CheckoutAuthState = "logged-in" | "logged-out"
+
+const creditQuote = (b: Bundle): CreditQuote => ({
+  credits: b.credits,
+  price: b.price,
+  mrp: b.mrp,
+  validDays: b.validDays,
+})
 
 function randomOrderId() {
   return Math.random().toString(36).slice(2, 10).toUpperCase()
@@ -75,7 +89,6 @@ function randomOrderId() {
 type SelectedPackage =
   | { kind: "job"; bundle: Bundle }
   | { kind: "db"; bundle: DbBundle }
-  | { kind: "combo"; bundle: ComboBundle }
 
 export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   const router = useRouter()
@@ -85,6 +98,19 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
     kind: "job",
     bundle: BUNDLES[1],
   })
+
+  // The mobile sticky CTA buys whatever is selected on the current tab, so
+  // switching between Jobs and Database pre-selects that tab's recommended
+  // bundle — the button never offers job credits on the Database tab.
+  const changeTab = React.useCallback((tab: PricingTab) => {
+    setActiveTab(tab)
+    setSelectedPackage((current) => {
+      if (tab === "database" && current.kind !== "db") return { kind: "db", bundle: DB_BUNDLES[1] }
+      if (tab === "jobs" && current.kind === "db") return { kind: "job", bundle: BUNDLES[1] }
+      return current
+    })
+  }, [])
+  const hasMobileDock = activeTab === "jobs" || activeTab === "database"
 
   // Sticky header — starts transparent over the gradient hero, turns solid
   // once the page scrolls; the compact tab switcher fades in once the
@@ -119,7 +145,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
           <button
             key={tab.value}
             type="button"
-            onClick={() => setActiveTab(tab.value)}
+            onClick={() => changeTab(tab.value)}
             className={cn(
               "inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-semibold transition-colors [&_svg]:size-5",
               activeTab === tab.value
@@ -133,7 +159,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
         ))}
       </div>
     ),
-    [activeTab]
+    [activeTab, changeTab]
   )
   useHeaderSlot(isLoggedOut ? compactTabSwitcher : null, showCompactTabs)
 
@@ -151,13 +177,40 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
     null
   )
 
-  const handleBuyBundle = (bundle: {
+  // Upsells + exit loop (Figma 2472:19068 / 2490:43116 / 2525:23488).
+  const offer = useExtraOff()
+  const [packUpsell, setPackUpsell] = React.useState<{ from: Bundle; to: Bundle } | null>(null)
+  const [annualFrom, setAnnualFrom] = React.useState<
+    (SubscriptionQuote & { checkout: () => void }) | null
+  >(null)
+  const [exitPrompt, setExitPrompt] = React.useState<{ proceed: () => void } | null>(null)
+
+  // Closing the order summary goes through the exit nudge first, until the
+  // offer is claimed or turned down.
+  const attemptExit = (proceed: () => void) => {
+    if (offer.nudgeAvailable) setExitPrompt({ proceed })
+    else proceed()
+  }
+
+  /** Every job-credit purchase is offered the next pack up first: single →
+   *  3, 3 → 6, 6 → 13. The largest pack goes straight to checkout. */
+  const nextPack = (bundle: Bundle): Bundle | undefined =>
+    bundle.credits === 1 ? BUNDLES[0] : BUNDLES[BUNDLES.findIndex((b) => b.credits === bundle.credits) + 1]
+
+  const handleBuyBundle = (bundle: Bundle) => {
+    const to = nextPack(bundle)
+    if (to) setPackUpsell({ from: bundle, to })
+    else checkoutJobBundle(bundle)
+  }
+
+  const checkoutJobBundle = (bundle: {
     credits: number
     validDays: number
     price: number
     mrp: number
     discountPct: number
   }) => {
+    setPackUpsell(null)
     setCheckoutItem({
       id: `job-${bundle.credits}`,
       label: `${bundle.credits} Job credit${bundle.credits > 1 ? "s" : ""}`,
@@ -191,33 +244,37 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
     setDrawerOpen(true)
   }
 
-  const handleBuyComboBundle = (bundle: ComboBundle) => {
-    setCheckoutItem({
-      id: `combo-${bundle.id}`,
-      label: bundle.title,
-      sublabel: `Valid for ${bundle.validDays} days`,
-      price: bundle.price,
-      mrp: bundle.mrp,
-      discountLabel: `Bundle discount (${bundle.discountPct}% OFF)`,
-      discountAmount: bundle.mrp - bundle.price,
-    })
-    setDrawerOpen(true)
-  }
-
   const handleStickyCtaClick = () => {
     if (selectedPackage.kind === "job") {
       handleBuyBundle(selectedPackage.bundle)
-    } else if (selectedPackage.kind === "db") {
-      handleBuyDatabaseBundle(selectedPackage.bundle)
     } else {
-      handleBuyComboBundle(selectedPackage.bundle)
+      handleBuyDatabaseBundle(selectedPackage.bundle)
     }
   }
 
   // `renewAfterDays` is what switches the drawer into its subscription
   // variant, and what the renewal date is computed from. The parenthesised
   // sublabel is verbatim from the drawer's own frames (1236:22188).
-  const handleBuyUnlimitedQuarterly = () => {
+  // Monthly and quarterly Unlimited are both offered the annual plan first.
+  const handleBuyUnlimitedQuarterly = () =>
+    setAnnualFrom({ label: "Quarterly plan", price: 5999, months: 3, checkout: checkoutQuarterly })
+  const handleBuyUnlimitedMonthly = () =>
+    setAnnualFrom({ label: "Monthly plan", price: 2499, months: 1, checkout: checkoutMonthly })
+
+  const checkoutAnnual = () => {
+    setAnnualFrom(null)
+    setCheckoutItem({
+      id: "unlimited_annual_1",
+      label: "Annual plan",
+      sublabel: `(1 active job slot + ${(ANNUAL_PLAN.dbCreditsPerMonth * 12).toLocaleString("en-IN")} Database credits + Valid for 365 days)`,
+      price: ANNUAL_PLAN.price,
+      renewAfterDays: 365,
+    })
+    setDrawerOpen(true)
+  }
+
+  const checkoutQuarterly = () => {
+    setAnnualFrom(null)
     setCheckoutItem({
       id: "unlimited_quarterly_1",
       label: "Quarterly plan",
@@ -228,7 +285,8 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
     setDrawerOpen(true)
   }
 
-  const handleBuyUnlimitedMonthly = () => {
+  const checkoutMonthly = () => {
+    setAnnualFrom(null)
     setCheckoutItem({
       id: "unlimited_monthly_1",
       label: "Monthly plan",
@@ -254,6 +312,8 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
 
   const handlePaymentSuccess = () => {
     setPaymentOpen(false)
+    // The 10% offer is single-use.
+    offer.expire()
     setOrder({
       lines: checkoutItem ? [checkoutItem] : [],
       total: paymentAmount,
@@ -311,7 +371,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                 <button
                   key={tab.value}
                   type="button"
-                  onClick={() => setActiveTab(tab.value)}
+                  onClick={() => changeTab(tab.value)}
                   className={cn(
                     "inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-sm font-semibold transition-colors [&_svg]:size-5",
                     activeTab === tab.value
@@ -330,14 +390,16 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
 
       {/* ── Hero + pricing body share the page-level ambient-gradient canvas ── */}
       <div className="flex-1">
-        <PricingHero activeTab={activeTab} onTabChange={setActiveTab} tabsRef={heroTabsRef} />
+        <PricingHero activeTab={activeTab} onTabChange={changeTab} tabsRef={heroTabsRef} />
 
-        <div className={cn("px-4 pb-12 sm:px-8 lg:px-12", activeTab === "jobs" && "pb-28 sm:pb-12")}>
+        <div className={cn("px-4 pb-12 sm:px-8 lg:px-12", hasMobileDock && "pb-28 md:pb-12")}>
           {activeTab === "jobs" ? (
             <div className="mx-auto flex max-w-6xl flex-col gap-3">
               <div className="flex flex-col gap-5">
-                {/* Desktop: side by side from xl */}
-                <div className="hidden sm:flex sm:flex-col sm:gap-4 xl:flex-row">
+                {/* Desktop: side by side from xl. The mobile/desktop split is at
+                    md everywhere on this page (hero switcher, bundle lists,
+                    sticky CTA) so 640–767px gets one consistent layout. */}
+                <div className="hidden md:flex md:flex-col md:gap-4 xl:flex-row">
                   {/* Each column owns its own caption, so the caption sits
                       under its card rather than spanning both columns. */}
                   <div className="flex min-w-0 flex-1 flex-col gap-3">
@@ -365,14 +427,15 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                       className="flex-1"
                       onBuyNow={handleBuyUnlimitedQuarterly}
                     />
-                    <p className="hidden text-xs text-checkout-hero-fg-muted sm:block">
+                    <p className="hidden text-xs text-checkout-hero-fg-muted md:block">
                       Note: This plan is valid in a single city.
                     </p>
                   </div>
                 </div>
 
-                {/* Mobile: unified Packages information architecture */}
-                <div className="flex flex-col gap-4 sm:hidden">
+                {/* Mobile: tap-to-select job bundles + the sticky CTA. Database
+                    credits live on their own tab, as on desktop. */}
+                <div className="flex flex-col gap-4 md:hidden">
                   {/* 1. Job credits section */}
                   <div className="flex flex-col gap-3">
                     <JobCreditBundles
@@ -395,29 +458,6 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
 
                   {/* 2. apna Unlimited Inset Card */}
                   <UnlimitedSideCard onBuyNow={handleBuyUnlimitedQuarterly} />
-
-                  <div className="my-1 h-px bg-border/40" />
-
-                  {/* 3. Database credits section */}
-                  <div className="flex flex-col gap-3">
-                    <DatabaseCreditBundles
-                      onBuyNow={handleBuyDatabaseBundle}
-                      selectedBundleId={selectedPackage.kind === "db" ? selectedPackage.bundle.id : undefined}
-                      onSelectBundle={(bundle) => setSelectedPackage({ kind: "db", bundle })}
-                    />
-                    <p className="text-xs text-checkout-hero-fg">
-                      1 database credit = 1 candidate profile unlock
-                    </p>
-                  </div>
-
-                  <div className="my-1 h-px bg-border/40" />
-
-                  {/* 4. Bundles (Combo) section */}
-                  <ComboBundles
-                    onBuyNow={handleBuyComboBundle}
-                    selectedBundleId={selectedPackage.kind === "combo" ? selectedPackage.bundle.id : undefined}
-                    onSelectBundle={(bundle) => setSelectedPackage({ kind: "combo", bundle })}
-                  />
                 </div>
 
                 {/* Both auth states — the updated Jobs frame draws this card
@@ -432,7 +472,11 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
           ) : activeTab === "database" ? (
             <div className="mx-auto flex max-w-6xl flex-col gap-4">
               <div className="flex flex-col gap-3">
-                <DatabaseCreditBundles onBuyNow={handleBuyDatabaseBundle} />
+                <DatabaseCreditBundles
+                  onBuyNow={handleBuyDatabaseBundle}
+                  selectedBundleId={selectedPackage.kind === "db" ? selectedPackage.bundle.id : undefined}
+                  onSelectBundle={(bundle) => setSelectedPackage({ kind: "db", bundle })}
+                />
                 <p className="text-xs text-checkout-hero-fg">
                   1 credit = 1 candidate profile unlock ・ 2 credits = 1 candidate
                   profile export to excel
@@ -490,9 +534,9 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
           at the trust bar because the product shell owns navigation from
           there — same reasoning, different chrome. */}
 
-      {/* Mobile sticky bottom CTA dock for Packages tab */}
-      {activeTab === "jobs" && (
-        <div className="fixed inset-x-0 bottom-0 z-sticky border-t border-border bg-card/95 p-3.5 backdrop-blur-md sm:hidden">
+      {/* Mobile sticky bottom CTA dock — Jobs and Database tabs */}
+      {hasMobileDock && (
+        <div className="fixed inset-x-0 bottom-0 z-sticky border-t border-border bg-card/95 p-3.5 pb-safe-3.5 backdrop-blur-md md:hidden">
           <Button
             type="button"
             variant="checkout"
@@ -502,18 +546,54 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
           >
             {selectedPackage.kind === "job"
               ? `Buy ${selectedPackage.bundle.credits} job credits • ₹${selectedPackage.bundle.price.toLocaleString("en-IN")}`
-              : selectedPackage.kind === "db"
-                ? `Buy ${selectedPackage.bundle.credits} database credits • ₹${selectedPackage.bundle.price.toLocaleString("en-IN")}`
-                : `Buy bundle • ₹${selectedPackage.bundle.price.toLocaleString("en-IN")}`}
+              : `Buy ${selectedPackage.bundle.credits} database credits • ₹${selectedPackage.bundle.price.toLocaleString("en-IN")}`}
           </Button>
         </div>
       )}
 
       <CheckoutDrawer
         open={drawerOpen}
-        onOpenChange={setDrawerOpen}
+        onOpenChange={(next) => (next ? setDrawerOpen(true) : attemptExit(() => setDrawerOpen(false)))}
         item={checkoutItem}
         onProceedToPay={handleProceedToPay}
+        extraOffer={offer.deadline ? { code: EXTRA_OFF.code, deadline: offer.deadline } : undefined}
+        onExtraOfferExpired={offer.expire}
+      />
+
+      <CreditPackOfferDialog
+        open={packUpsell !== null}
+        need={packUpsell ? creditQuote(packUpsell.from) : null}
+        needNote={packUpsell ? `Valid for ${packUpsell.from.validDays} days` : undefined}
+        pack={packUpsell ? creditQuote(packUpsell.to) : null}
+        extraOff={offer.claimed}
+        onClose={() => setPackUpsell(null)}
+        onStay={() => packUpsell && checkoutJobBundle(packUpsell.from)}
+        onTake={() => packUpsell && checkoutJobBundle(packUpsell.to)}
+      />
+
+      <AnnualUpgradeDialog
+        open={annualFrom !== null}
+        from={annualFrom}
+        extraOff={offer.claimed}
+        onClose={() => setAnnualFrom(null)}
+        onStay={() => annualFrom?.checkout()}
+        onTake={checkoutAnnual}
+      />
+
+      <ExitOfferDialog
+        open={exitPrompt !== null}
+        onDismiss={() => setExitPrompt(null)}
+        onDecline={() => {
+          const proceed = exitPrompt?.proceed
+          offer.dismiss()
+          setExitPrompt(null)
+          proceed?.()
+        }}
+        onClaim={(deadline) => {
+          offer.claim(deadline)
+          setExitPrompt(null)
+          toast.success("10% extra off applied", { description: "Valid for 24 hours on any plan." })
+        }}
       />
 
       <PaymentModal

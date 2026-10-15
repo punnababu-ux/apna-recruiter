@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils"
  * string — they share only the idea of "one number, one label."
  */
 
-const metricCardVariants = cva("rounded-xl text-left transition-all", {
+const metricCardVariants = cva("rounded-xl text-left transition-interactive", {
   variants: {
     variant: {
       // Unchanged from before this had variants — no card-hover-lift here,

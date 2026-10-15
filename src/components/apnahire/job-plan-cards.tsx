@@ -31,16 +31,17 @@ import {
   Flame,
   LogoApnaUnlimited,
   MapPin,
-  PhoneCall,
   PricingCard,
   Sparkles,
   TrendingUp,
   WhatsApp,
   X,
   type IconComponent,
+  BadgePercent,
 } from "@apna/design-system"
 import { SINGLE_CREDIT } from "@/components/apnahire/job-credit-bundles"
 import { cn } from "@/lib/utils"
+import { EXTRA_OFF, withExtraOff } from "@/content/offers"
 import {
   JOB_PLAN_TIERS,
   MONTHLY_SUBSCRIPTION_PLAN,
@@ -55,9 +56,49 @@ import {
 
 const inr = (n: number) => `₹${n.toLocaleString("en-IN")}`
 
+/** The claimed exit offer, as the plan lists see it: prices already carry
+ *  the 10% (the lists render a discounted copy of each tier), each card
+ *  says so, and a one-time shimmer marks the moment it landed. */
+const PlanOfferContext = React.createContext({ extraOff: false, shimmerKey: 0 })
+
+function offerTier(tier: JobPlanTier, extraOff: boolean): JobPlanTier {
+  if (!extraOff) return tier
+  return { ...tier, price: withExtraOff(tier.price), mrp: tier.mrp ?? tier.price }
+}
+
+function ExtraOffLine() {
+  return (
+    <span className="flex items-center gap-1 text-xs not-italic text-success">
+      <BadgePercent className="size-3.5 shrink-0" aria-hidden />
+      {EXTRA_OFF.applied}
+    </span>
+  )
+}
+
+/** Visibility at a glance on the mobile plan rows: the tier's label next to
+ *  a three-bar signal meter (1 / 2 / 3 bars lit). */
+function VisibilityLine({ tier }: { tier: JobPlanTier }) {
+  return (
+    <span className="flex items-center gap-1.5 text-xs font-medium text-foreground">
+      <span className="flex h-3.5 w-3.5 items-end justify-center gap-0.5" aria-hidden>
+        {([1, 2, 3] as const).map((bar) => (
+          <span
+            key={bar}
+            className={cn(
+              "w-0.5 rounded-full",
+              bar === 1 ? "h-1.5" : bar === 2 ? "h-2.5" : "h-3.5",
+              bar <= tier.visibilityLevel ? "bg-checkout-primary" : "bg-border"
+            )}
+          />
+        ))}
+      </span>
+      {tier.visibilityLabel}
+    </span>
+  )
+}
+
 /** Each available feature gets its own glyph and colour; an unavailable one
- *  gets the same ✕ as the AI calling agent row, so "not included" reads the
- *  same everywhere on the card. */
+ *  gets a ✕, so "not included" reads the same everywhere on the card. */
 function featureIcon(label: string, enabled: boolean): React.ReactNode {
   if (!enabled) return <X className="shrink-0" aria-hidden />
   const lower = label.toLowerCase()
@@ -134,7 +175,10 @@ export function creditPlan(tier: JobPlanTier, balance: CreditBalance): CreditPla
   }
 }
 
-export const hasAnyCredits = (balance: CreditBalance) => balance.job > 0 || balance["ai-calling"] > 0
+/** Plan cards switch to credit pricing on JOB credits only. AI calling
+ *  credits belong to the add-on in the order summary, so holding just an AI
+ *  credit must not turn every plan into "0 credits". */
+export const hasAnyCredits = (balance: CreditBalance) => balance.job > 0
 
 interface JobPlanGridCardProps {
   tier: JobPlanTier
@@ -142,16 +186,14 @@ interface JobPlanGridCardProps {
   recommended: boolean
   creditBalance: CreditBalance
   onSelect: (tier: JobPlanTier) => void
-  /** Reserve the social-proof slot under the card — true when ANY card in
-   *  the row has one (structural parity; see PricingCard's rule). */
-  reserveSocialProof: boolean
 }
 
-function JobPlanGridCard({ tier, recommended, creditBalance, onSelect, reserveSocialProof }: JobPlanGridCardProps) {
+function JobPlanGridCard({ tier, recommended, creditBalance, onSelect }: JobPlanGridCardProps) {
   // Credit mode is all-or-nothing across the row: once the recruiter holds
   // any credits, every card speaks credits (no mixing ₹ and credits), and a
   // status line + CTA say exactly what "posting" will cost.
   const creditMode = hasAnyCredits(creditBalance)
+  const { extraOff, shimmerKey } = React.useContext(PlanOfferContext)
   const plan = creditPlan(tier, creditBalance)
   const discountPct = tier.mrp ? Math.round((1 - tier.price / tier.mrp) * 100) : null
 
@@ -171,10 +213,11 @@ function JobPlanGridCard({ tier, recommended, creditBalance, onSelect, reserveSo
         : "Buy & post"
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col">
       <PricingCard
+        key={shimmerKey}
         layout="price-first"
-        className="flex-1 border-transparent"
+        className={cn("flex-1 border-transparent", shimmerKey > 0 && "animate-shimmer-once")}
         ribbon={
           recommended ? (
             <Badge variant="ribbon" size="ribbon">
@@ -188,7 +231,13 @@ function JobPlanGridCard({ tier, recommended, creditBalance, onSelect, reserveSo
         mrp={!creditMode && tier.mrp ? inr(tier.mrp) : undefined}
         badge={!creditMode && discountPct ? <Badge variant="discount">{discountPct}% OFF</Badge> : undefined}
         // On every card in credit mode, none outside it — structural parity.
-        priceSuffix={creditMode ? <span className="not-italic">{creditStatus}</span> : undefined}
+        priceSuffix={
+          creditMode ? (
+            <span className="not-italic">{creditStatus}</span>
+          ) : extraOff ? (
+            <ExtraOffLine />
+          ) : undefined
+        }
         cta={
           <Button
             type="button"
@@ -217,28 +266,23 @@ function JobPlanGridCard({ tier, recommended, creditBalance, onSelect, reserveSo
               </SubPoint>
             ))}
           </FeatureGroup>,
-          <span key="ai" className={cn("flex items-start gap-2", !tier.aiCallingAgent && "text-muted-foreground/60")}>
-            {tier.aiCallingAgent ? <PhoneCall className="text-checkout-info" aria-hidden /> : <X aria-hidden />}
-            AI calling agent
-          </span>,
         ]}
         footer={dbCreditsLine(tier.dbCredits)}
       />
-      {reserveSocialProof && (
-        // Rendered on every card in the row, filled only on the one with
-        // social proof — otherwise that card's flex-1 shrinks to make room.
-        <div className="flex h-5 items-center justify-center">
-          {tier.socialProof && <Badge variant="success">{tier.socialProof}</Badge>}
-        </div>
-      )}
     </div>
   )
 }
 
 export interface JobPlanSelectProps {
   creditBalance: CreditBalance
+  /** Always called with the catalogue tier (undiscounted) — checkout takes
+   *  the extra 10% off as the FIRST10 coupon. */
   onSelectTier: (tier: JobPlanTier) => void
   onSelectSubscription: () => void
+  /** The claimed exit offer: show it in every price. */
+  extraOff?: boolean
+  /** Bump to play the one-time shimmer across the cards. */
+  shimmerKey?: number
 }
 
 /** Self-checkout's card-group frame (`JobCreditBundles`): translucent
@@ -269,6 +313,7 @@ function MobileJobPlanRadioGroup({
 }: MobileJobPlanRadioGroupProps) {
   const [selectedKey, setSelectedKey] = React.useState<JobPlanTierId>(recommendedId)
   const creditMode = hasAnyCredits(creditBalance)
+  const { extraOff, shimmerKey } = React.useContext(PlanOfferContext)
 
   const selectedTier = tiers.find((t) => t.id === selectedKey) ?? tiers[0]
   const plan = creditPlan(selectedTier, creditBalance)
@@ -301,7 +346,7 @@ function MobileJobPlanRadioGroup({
                 : inr(tier.price)
 
           return (
-            <div key={tier.id} className="relative pt-1.5">
+            <div key={`${tier.id}-${shimmerKey}`} className="relative pt-1.5">
               {isRecommended && (
                 <div className="absolute -top-1 left-3 z-10">
                   <span className="rounded-full bg-checkout-info px-2.5 py-0.5 text-xs font-semibold text-checkout-info-foreground shadow-xs">
@@ -315,7 +360,8 @@ function MobileJobPlanRadioGroup({
                 aria-checked={isSelected}
                 tabIndex={0}
                 className={cn(
-                  "flex cursor-pointer items-center justify-between rounded-xl bg-card p-3.5 shadow-xs transition-all",
+                  "ink press-subtle relative flex cursor-pointer items-center justify-between overflow-hidden rounded-xl bg-card p-3.5 shadow-xs transition-interactive",
+                  shimmerKey > 0 && "animate-shimmer-once",
                   isSelected
                     ? "border-2 border-checkout-primary ring-1 ring-checkout-primary/20"
                     : "border border-border hover:border-border/80"
@@ -325,10 +371,12 @@ function MobileJobPlanRadioGroup({
                   <span className="text-sm font-semibold text-foreground">
                     {tier.title}
                   </span>
+                  <VisibilityLine tier={tier} />
                   <span className="flex items-center gap-1 text-xs text-muted-foreground">
                     <ClockFading className="size-3.5 shrink-0" aria-hidden />
                     Active for {tier.jobActiveDays} days · {tier.dbCredits} free DB
                   </span>
+                  {extraOff && !creditMode && <ExtraOffLine />}
                   {!creditMode && discountPct ? (
                     <div className="pt-0.5">
                       <Badge variant="discount" size="sm">
@@ -430,7 +478,7 @@ function MobileSubscriptionCard({ onSelect }: { onSelect: () => void }) {
             <span>{plan.dbCreditsPerMonth} database credits every month</span>
           </div>
           <div className="flex items-center gap-2">
-            <WhatsApp className="size-3.5 shrink-0 text-success" aria-hidden />
+            <WhatsApp className="size-3.5 shrink-0 text-foreground" aria-hidden />
             <span>WhatsApp outreach to matched candidates</span>
           </div>
         </div>
@@ -455,11 +503,16 @@ function MobileSubscriptionCard({ onSelect }: { onSelect: () => void }) {
 }
 
 /** 3-card layout: Classic / Premium (recommended) / Super Premium. */
-export function TieredJobPlans({ creditBalance, onSelectTier }: Omit<JobPlanSelectProps, "onSelectSubscription">) {
-  const tiers = TIERED_PLAN_ORDER.map((id) => JOB_PLAN_TIERS[id])
-  const reserveSocialProof = tiers.some((t) => t.socialProof)
+export function TieredJobPlans({
+  creditBalance,
+  onSelectTier: selectCatalogueTier,
+  extraOff = false,
+  shimmerKey = 0,
+}: Omit<JobPlanSelectProps, "onSelectSubscription">) {
+  const tiers = TIERED_PLAN_ORDER.map((id) => offerTier(JOB_PLAN_TIERS[id], extraOff))
+  const onSelectTier = (tier: JobPlanTier) => selectCatalogueTier(JOB_PLAN_TIERS[tier.id])
   return (
-    <>
+    <PlanOfferContext.Provider value={{ extraOff, shimmerKey }}>
       <MobileJobPlanRadioGroup
         tiers={tiers}
         creditBalance={creditBalance}
@@ -474,20 +527,25 @@ export function TieredJobPlans({ creditBalance, onSelectTier }: Omit<JobPlanSele
             recommended={tier.id === RECOMMENDED_TIER.tiered}
             creditBalance={creditBalance}
             onSelect={onSelectTier}
-            reserveSocialProof={reserveSocialProof}
           />
         ))}
       </div>
-    </>
+    </PlanOfferContext.Provider>
   )
 }
 
 /** Self-checkout Jobs-tab structure: framed one-time tiers + Unlimited monthly side card. */
-export function SubscriptionJobPlans({ creditBalance, onSelectTier, onSelectSubscription }: JobPlanSelectProps) {
-  const tiers = SUBSCRIPTION_PLAN_ORDER.map((id) => JOB_PLAN_TIERS[id])
-  const reserveSocialProof = tiers.some((t) => t.socialProof)
+export function SubscriptionJobPlans({
+  creditBalance,
+  onSelectTier: selectCatalogueTier,
+  onSelectSubscription,
+  extraOff = false,
+  shimmerKey = 0,
+}: JobPlanSelectProps) {
+  const tiers = SUBSCRIPTION_PLAN_ORDER.map((id) => offerTier(JOB_PLAN_TIERS[id], extraOff))
+  const onSelectTier = (tier: JobPlanTier) => selectCatalogueTier(JOB_PLAN_TIERS[tier.id])
   return (
-    <>
+    <PlanOfferContext.Provider value={{ extraOff, shimmerKey }}>
       <div className="flex flex-col gap-4 sm:hidden">
         <MobileJobPlanRadioGroup
           tiers={tiers}
@@ -509,7 +567,6 @@ export function SubscriptionJobPlans({ creditBalance, onSelectTier, onSelectSubs
                   recommended={tier.id === RECOMMENDED_TIER.subscription}
                   creditBalance={creditBalance}
                   onSelect={onSelectTier}
-                  reserveSocialProof={reserveSocialProof}
                 />
               ))}
             </div>
@@ -524,7 +581,7 @@ export function SubscriptionJobPlans({ creditBalance, onSelectTier, onSelectSubs
           />
         </div>
       </div>
-    </>
+    </PlanOfferContext.Provider>
   )
 }
 
@@ -588,7 +645,7 @@ function MonthlySubscriptionCard({
             {inr(plan.dbCreditsWorth)} every month
           </>,
           <>
-            <WhatsApp className="text-success" aria-hidden /> WhatsApp outreach to matched candidates
+            <WhatsApp aria-hidden /> WhatsApp outreach to matched candidates
           </>,
         ]}
         footer={

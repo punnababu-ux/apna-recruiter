@@ -10,7 +10,8 @@ are strict.
 
 **Compose from existing components and tokens. Never style from scratch.**
 
-If what you need does not exist in `src/components/ui/`, you **build the
+If what you need does not exist in `packages/design-system/src/components/ui/`
+(imported as `@/components/ui/*` or `@apna/design-system`), you **build the
 component first**, commit it, and *then* use it in a template or page.
 You never reach for raw Tailwind values, raw colors, raw sizes, raw
 spacing on ad-hoc JSX.
@@ -22,12 +23,12 @@ spacing on ad-hoc JSX.
 These are enforced by `npm run lint:tokens` and block CI. Don't argue with
 the script; fix the violation.
 
-**Scope.** The lint runs over `src/app/**` and `src/components/**`, **excluding
-`src/components/ui/**`**. The `ui/` folder is the design system itself —
-vetted shadcn/Base UI primitives that occasionally need arbitrary Tailwind
-values for third-party DOM (`[&_.recharts-*]` selectors, CSS system colors
-like `bg-[Canvas]`, native-control ring widths). Changes there go through
-design-system review. Everywhere else — pages, templates, any component you
+**Scope.** The lint runs over `src/app/**`, `src/components/**` **and the
+design system itself** (`packages/design-system/src/**`), skipping only the
+token files and the colour check on `logo-*.tsx` brand marks. Primitives that
+genuinely need an arbitrary value for third-party DOM (`[&_.recharts-*]`
+selectors, CSS system colours like `bg-[Canvas]`) use the
+`token-lint-ignore` pragma and go through design-system review. Everywhere else — pages, templates, any component you
 author on top of the system — is held to the rules below.
 
 ### ❌ Forbidden
@@ -56,12 +57,13 @@ author on top of the system — is held to the rules below.
 | Font weight           | `font-regular` · `font-medium` · `font-semibold` · `font-bold` |
 | Text size (atomic)    | `text-xs` · `text-sm` · `text-base` · `text-lg` · `text-xl` … `text-6xl` |
 | Text preset (composite) | `text-display` · `text-h1…h6` · `text-body` · `text-body-sm` · `text-caption` · `text-overline` |
-| Padding / margin      | T-shirt: `p-xs` · `p-sm` · `p-md` · `p-lg` · `p-xl`     |
 | Padding / margin      | Context: `p-inset` · `p-inline` · `p-stack`             |
 | Padding / margin      | Numeric: `p-1 … p-64` (sanctioned steps only)           |
-| Gap                   | `gap-inline` · `gap-stack` · `gap-md` · `gap-6`         |
+| Gap                   | `gap-inline` · `gap-stack` · `gap-field` · `gap-6`      |
 | Radius                | `rounded-xs` · `rounded-sm` · `rounded-md` · `rounded-lg` · `rounded-xl` · `rounded-2xl` · `rounded-full` |
-| Duration              | `duration-150` · `duration-200` · `duration-300`        |
+| Duration              | `duration-hover` · `duration-enter` · `duration-exit` · `duration-select` |
+| Easing                | `ease-standard` · `ease-out-ui` · `ease-in-ui` · `ease-select` |
+| Interaction feedback  | Primitives carry it. Hand-rolled surfaces: `ink relative transition-interactive` (+ `press`) — see "Live surfaces" |
 
 ### "But I need a value that isn't on the scale"
 
@@ -83,18 +85,18 @@ The scale is not a suggestion. It is the system.
 Three foundations, all two-tier (primitives → semantics).
 
 ```
-Tier 1 — Primitives   src/styles/tokens/primitives.css
+Tier 1 — Primitives   packages/design-system/src/styles/tokens/primitives.css
    raw atoms: color ramps, type scale, weight 100–900, size steps,
    radius scale, motion, shadow, z-index, breakpoints
    NEVER consumed by components
 
-Tier 2 — Semantics    src/styles/tokens/semantic.css
+Tier 2 — Semantics    packages/design-system/src/styles/tokens/semantic.css
    intent aliases:
      colour roles      (--background, --primary, --destructive, …)
      font roles        (--font-body, --font-heading, --font-mono)
      weight roles      (--font-weight-regular … --font-weight-extrabold)
      size roles        (--text-xs … --text-6xl)
-     spacing t-shirt   (--space-2xs … --space-5xl)
+     spacing t-shirt   (--space-2xs … --space-5xl; tokens only, no utilities)
      spacing context   (--space-inline, --space-stack, --space-inset,
                         --space-field, --space-section, --space-page)
    every value references a primitive
@@ -112,7 +114,8 @@ Tier 2 — Semantics    src/styles/tokens/semantic.css
    - ✅ `font-body`, `font-heading`, `font-bold`, `text-lg`, `text-h2`, `text-body`.
    - ❌ `style={{ fontFamily: "Inter" }}`, `font-[500]`, `text-[15px]`.
 4. **No arbitrary spacing.**
-   - ✅ `p-md`, `p-inset`, `gap-stack`, `gap-6`.
+   - ✅ `p-inset`, `gap-stack`, `p-4`, `gap-6`. (T-shirt steps like `p-md` are
+     deliberately not generated — they collide with Tailwind's own scale.)
    - ❌ `p-[13px]`, `gap-[9px]`, `style={{ padding: "0.6rem" }}`.
 5. **New intent → new semantic token.** If you want a role that isn't
    listed, add a semantic alias (pointing to a primitive) first. Document
@@ -142,7 +145,7 @@ Tier 2 — Semantics    src/styles/tokens/semantic.css
 ## Composition over re-invention — the tier-0 rule
 
 **Before adding any tone / variant / colour-carrying style, ask: is there
-already a primitive in `src/components/ui/` that does this, and what variant
+already a primitive in `packages/design-system/src/components/ui/` that does this, and what variant
 does it expose?** If the answer is yes, you MUST use that variant. No
 parallel palette maps, no `className={TONE[...]}` lookups, no `bg-foo/10
 text-foo-bar` hand-paint jobs layered on top of an existing primitive.
@@ -175,7 +178,7 @@ namespace) falls into one of exactly three shapes:
 If your component needs a tone the primitive doesn't expose:
 
 1. **Stop.** Don't hand-paint it locally.
-2. Add the tone to the primitive in `src/components/ui/<primitive>.tsx`.
+2. Add the tone to the primitive in `packages/design-system/src/components/ui/<primitive>.tsx`.
 3. Come back and compose from the new variant.
 
 ### Red flags during code review
@@ -223,14 +226,54 @@ signal to add the new variant to the primitive.
 
 ---
 
+## Live surfaces — interaction is part of the system
+
+Anything a user can press, toggle or select answers immediately. The
+primitives already do this; product code gets it by composing them.
+
+| Utility | Effect | Where it lives |
+|---|---|---|
+| `ink` | While pressed, an ink spreads from the touch point, then fills the surface and fades into the hover state | Button, Toggle, ToggleGroup, ChipTabs, SegmentedTabSwitcher, TabsTrigger, menu + select items, SidebarMenuButton, BottomNav, clickable PricingCard |
+| `press` / `press-subtle` | Compresses while held (`--press-scale`, `--press-scale-subtle` for cards) | Buttons, chips, checkbox, radio, switch |
+| `transition-interactive` | Colour, border, shadow, focus ring and transform ease (`--duration-hover`) | Every interactive primitive |
+| `transition-select` | Selection lands with a slight spring (`--duration-select`, `--ease-select`) | Checkbox tick, radio dot, switch thumb, chevrons |
+| `tab-indicator` / `sliding-indicator` | One selection pill glides to the active option, never a cross-fade (`--duration-slide`, `--ease-slide`) | TabsList (Base UI indicator); SegmentedTabSwitcher, ChipTabs and hand-built segmented controls via `useSlidingIndicator` |
+
+Rules:
+
+1. **Never `transition-all`.** It animates layout properties. Use
+   `transition-interactive` (or `transition-select` for state changes).
+2. **Hand-rolling an interactive surface?** First ask whether it should be a
+   primitive. If it truly can't be, give it `ink relative
+   transition-interactive`, plus `press` for buttons and chips or
+   `press-subtle` for cards. `ink` paints on `::before`, so the host must not
+   use its own `::before`.
+3. **Hover effects stay hover-only.** Tailwind's `hover:` already sits behind
+   `@media (hover: hover)`, so a tap never leaves a stuck hover state.
+4. **Reduced motion is handled once,** in the base layer. A press still shows
+   as a held tint. Don't add per-component motion opt-outs.
+5. **Segmented controls slide, they don't swap backgrounds.** If you build
+   one by hand, don't give the active option its own background. Render one
+   `sliding-indicator` element and let `useSlidingIndicator(value)` move it
+   onto the option marked `data-indicator-active`.
+6. **`<InkProvider />` is mounted once in the root layout.** It tells the ink
+   where you pressed. Without it the ink grows from the centre.
+
+Mobile: bottom-fixed bars use `pb-safe` (no padding of their own) or
+`pb-safe-<n>` (in place of `pb-<n>`) to clear the home indicator. Inputs use
+`text-base md:text-sm` so iOS Safari doesn't zoom on focus.
+
+---
+
 ## Adding a new component
 
 Trigger: you need a UI pattern that doesn't exist yet.
 
-1. Confirm it's not already there. Run `ls src/components/ui/` and grep for
+1. Confirm it's not already there. Run `ls packages/design-system/src/components/ui/` and grep for
    near-synonyms. Re-use beats re-build. **Re-read the composition rule
    above before you touch a colour.**
-2. Create `src/components/ui/<name>.tsx`. Follow the house pattern:
+2. Create `packages/design-system/src/components/ui/<name>.tsx` and export it from
+   `packages/design-system/src/index.ts`. Follow the house pattern:
    - `"use client"` only if the component uses state, effects, or context.
    - Built on Base UI primitives (`@base-ui/react/*`) when possible.
    - `data-slot="<name>"` on the root element for styling hooks.
@@ -269,27 +312,30 @@ Primitives do not change. If a new surface needs a dark variant, add it in
 ## File map
 
 ```
-src/
-  app/                      Next.js App Router — pages, layouts, route handlers
-    globals.css             Orchestrator. Tailwind + @theme wiring + @utility presets.
-                            Do not add token values here.
-    layout.tsx              Root layout. Wraps with TooltipProvider + Toaster.
-    page.tsx                Showcase / visual regression index.
-  components/
-    ui/                     Every design-system component lives here.
-  hooks/                    Cross-cutting React hooks.
-  lib/
-    utils.ts                `cn()` helper. Add cross-cutting utilities here.
+packages/design-system/src/   The design system (@apna/design-system)
+  components/ui/              Every design-system component lives here.
   styles/
+    index.css                 Tailwind wiring: @theme inline + @utility presets
+                              (typography, gradients, live-surface interaction).
     tokens/
-      primitives.css        Tier 1. Raw scales.
-      semantic.css          Tier 2. Intent aliases, light + dark.
+      primitives.css          Tier 1. Raw scales.
+      semantic.css            Tier 2. Intent aliases, light + dark.
+  index.ts                    Package exports — add every new component here.
+src/
+  app/                        Next.js App Router — pages, layouts, route handlers
+    globals.css               Thin wrapper: Tailwind layers + imports the package CSS.
+    layout.tsx                Root layout: ThemeProvider, TooltipProvider, Toaster, InkProvider.
+    (marketing)/              Public homepage + pricing.
+    apnahire/                 ApnaHire product (recruiter app, job posting, checkout).
+    design-system/            Docs site — foundations + component category pages.
+  components/                 Product components (apnahire, onlyrounds, marketing).
+  hooks/ lib/ content/        App hooks, utilities, copy/content.
 scripts/
-  lint-tokens.sh            Token lint — blocks CI on arbitrary values.
+  lint-tokens.sh              Token lint (npm run lint:tokens).
 docs/
-  TOKENS.md                 Every semantic token with its primitive target.
-  COMPONENTS.md             Component inventory + API snippets.
-AGENTS.md                   ← you are here.
+  TOKENS.md                   Every semantic token with its primitive target.
+  COMPONENTS.md               Component inventory + API snippets.
+AGENTS.md                     ← you are here.
 ```
 
 ---

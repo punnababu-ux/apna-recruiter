@@ -16,6 +16,7 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { useSlidingIndicator } from "../../hooks/use-sliding-indicator"
 
 export type ChipTabItem<V extends string = string> = {
   value: V
@@ -61,18 +62,35 @@ export function ChipTabs<V extends string = string>({
    *  destructive outline to signal a selection is needed. */
   "aria-invalid"?: boolean
 }) {
+  // Segmented variants share one pill that slides to the selection. "choice"
+  // is a form field where every chip is filled, so it keeps per-chip
+  // highlighting.
+  const slides = variant !== "choice"
+  const { containerRef, indicatorRef } = useSlidingIndicator(value)
+
   return (
     <div
+      ref={containerRef}
       role="tablist"
       aria-label={ariaLabel}
-      className={cn("flex flex-wrap items-center gap-2", className)}
+      className={cn("relative isolate flex flex-wrap items-center gap-2", className)}
     >
+      {slides && (
+        <span
+          ref={indicatorRef}
+          aria-hidden
+          className={cn(
+            "sliding-indicator rounded-full",
+            variant === "solid" ? "bg-chip-solid" : "bg-secondary"
+          )}
+        />
+      )}
       {items.map((item) => {
         const active = value === item.value
         const stateClass =
           variant === "solid"
             ? active
-              ? "border-transparent bg-chip-solid font-semibold text-chip-solid-foreground"
+              ? "border-transparent font-semibold text-chip-solid-foreground"
               : "border-transparent font-regular text-muted-foreground hover:text-foreground"
             : variant === "choice"
             ? active
@@ -81,7 +99,7 @@ export function ChipTabs<V extends string = string>({
                 ? "border-destructive/60 bg-destructive/5 text-destructive hover:bg-destructive/10"
                 : "border-border bg-muted text-muted-foreground hover:text-foreground"
             : active
-              ? "border-transparent bg-secondary text-secondary-foreground"
+              ? "border-transparent text-secondary-foreground"
               : ariaInvalid
                 ? "border-destructive/60 text-destructive hover:bg-destructive/10"
                 : "border-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -91,10 +109,11 @@ export function ChipTabs<V extends string = string>({
             type="button"
             role="tab"
             aria-selected={active}
+            data-indicator-active={(slides && active) || undefined}
             disabled={item.disabled}
             onClick={() => onValueChange(item.value)}
             className={cn(
-              "inline-flex items-center justify-center gap-1 rounded-full border font-medium transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-40",
+              "ink press relative inline-flex items-center justify-center gap-1 rounded-full border font-medium transition-interactive outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-40",
               size === "sm" ? "h-7 px-2.5 text-xs" : "h-8 px-3 text-sm",
               variant === "solid" && size === "md" && "px-4",
               stateClass,

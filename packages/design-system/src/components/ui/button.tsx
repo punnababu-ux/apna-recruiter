@@ -9,6 +9,12 @@
  *           loading         // shows spinner, disables pointer events
  *           loadingText />  // optional replacement label during loading
  *
+ * Interaction (live surfaces — see styles/index.css):
+ *   - `ink`: a press spreads an ink from the touch point that settles into
+ *     the hover state. `press`: compresses to --press-scale while held.
+ *   - `transition-interactive`: colour, border, shadow and focus ring ease
+ *     instead of snapping.
+ *
  * Loading behaviour:
  *   - A Spinner renders in the leading icon slot.
  *   - `aria-busy="true"` is set so assistive tech announces the state.
@@ -27,7 +33,7 @@ import { cn } from "@/lib/utils"
 import { Spinner } from "@/components/ui/spinner"
 
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center rounded-full border border-transparent bg-clip-padding font-heading whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button ink press relative inline-flex shrink-0 items-center justify-center rounded-full border border-transparent bg-clip-padding font-heading whitespace-nowrap transition-interactive outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
@@ -43,7 +49,8 @@ const buttonVariants = cva(
           "bg-destructive/10 text-destructive border border-destructive/20 hover:bg-destructive/20 hover:border-destructive/40 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         success:
           "bg-success/10 text-success border border-success/30 hover:bg-success/20 hover:border-success/50 focus-visible:border-success/50 focus-visible:ring-success/20 dark:bg-success/20 dark:hover:bg-success/30 dark:focus-visible:ring-success/40",
-        link: "text-primary underline-offset-4 hover:underline",
+        // A text link has no surface to fill — no ink, no compression.
+        link: "text-primary underline-offset-4 hover:underline before:hidden active:scale-100",
         /* Self-checkout CTAs. `--checkout-primary` is fixed across themes
          * (--primary brightens a step in dark), matching a surface that is
          * deliberately light in both. */

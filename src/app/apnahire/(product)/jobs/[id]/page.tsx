@@ -1371,8 +1371,10 @@ function JobDetailPageInner({ id }: { id: string }) {
         }
         description={null}
         tabs={
-          <div className="flex items-center justify-between">
-            <Tabs value={mainTab} onValueChange={(v) => { setMainTab(v as Stage); setFilters({}); setSearchQuery(""); setIsDialing(false) }}>
+          <div className="flex items-center justify-between gap-3">
+            {/* min-w-0 lets the tab strip scroll on narrow screens instead of
+             * pushing the view toggle (and the page) past the viewport. */}
+            <Tabs className="min-w-0" value={mainTab} onValueChange={(v) => { setMainTab(v as Stage); setFilters({}); setSearchQuery(""); setIsDialing(false) }}>
               <TabsList variant="line">
                 {(["screening", "interview", "selected"] as Stage[]).map((s) => {
                   const count = candidates.filter((c) => c.stage === s).length
@@ -1388,7 +1390,7 @@ function JobDetailPageInner({ id }: { id: string }) {
             </Tabs>
 
             {/* View toggle — lives at the far-right of the tab row */}
-            <div className="flex items-center gap-1.5 pb-1">
+            <div className="flex shrink-0 items-center gap-1.5 pb-1">
               <ButtonGroup>
                 <Button
                   variant="outline"

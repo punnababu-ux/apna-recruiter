@@ -175,6 +175,7 @@ function JobsPageInner() {
             size="sm"
             nativeButton={false}
             render={<Link href="/apnahire/jobs/new" />}
+            aria-label="Create new job"
             className="gap-2 cursor-pointer font-semibold shadow-xs"
           >
             <Plus className="size-4" />

@@ -10,7 +10,8 @@ export const bannerAccentColorMap: Record<string, string> = {
   default: "text-foreground",
   destructive: "text-destructive",
   success: "text-success",
-  warning: "text-warning",
+  // gold-500 text on a light card is ~2:1 — use the tint pairing instead.
+  warning: "text-warning-subtle-foreground",
   info: "text-info",
 }
 

@@ -18,10 +18,10 @@
  * Checkout reuses `CheckoutDrawer` directly (the same slide-in-from-the-right
  * sheet `self-checkout.tsx` already uses), rather than a bespoke full-page
  * checkout — one order-summary structure for both surfaces, not two to keep
- * in sync. `CheckoutDrawer`'s job-credit upsell section only shows for an
- * item id starting with `"job-"`; every id here (`classic`, `premium`,
- * `premium-ai`, `super-premium`, `unlimited_monthly`) deliberately avoids
- * that prefix, so it never appears on this flow. Same
+ * in sync. The drawer's database upsell is replaced here by the AI calling
+ * add-on (`aiAddon`). Every plan pick opens the summary — even one fully
+ * covered by credits — so the add-on is always offered; when the cart costs
+ * nothing, the drawer's CTA reads "Post job" and posting skips payment. Same
  * `handleProceedToPay` → `PaymentModal` → `PaymentSuccess` wiring as
  * `self-checkout.tsx`.
  *
@@ -51,13 +51,25 @@ import {
 import { PaymentModal } from "@/components/apnahire/payment-modal"
 import { PaymentSuccess } from "@/components/apnahire/payment-success"
 import { JobPlanPreviewSwitcher } from "@/components/apnahire/job-plan-preview-switcher"
+import { BUNDLES } from "@/components/apnahire/job-credit-bundles"
+import { ExitOfferDialog } from "@/components/apnahire/offers/exit-offer-dialog"
+import { useExtraOff } from "@/components/apnahire/offers/use-extra-off"
+import {
+  AnnualUpgradeDialog,
+  CreditPackOfferDialog,
+  JobBundleOfferDialog,
+  bundleQuote,
+} from "@/components/apnahire/offers/upsell-dialogs"
+import { ANNUAL_PLAN, EXTRA_OFF } from "@/content/offers"
 import {
   TieredJobPlans,
   SubscriptionJobPlans,
   creditPlan,
   hasAnyCredits,
+  type CreditPlan,
 } from "@/components/apnahire/job-plan-cards"
 import {
+  AI_CALLING_ADDON,
   MONTHLY_SUBSCRIPTION_PLAN,
   NO_CREDITS,
   creditLabel,
@@ -66,6 +78,16 @@ import {
 } from "@/content/job-plans"
 
 export type JobPlanLayout = "tiered" | "subscription"
+
+/** Which upsell is showing (Figma 2472:19068 / 2490:43116). */
+type Upsell =
+  | { kind: "bundle"; tier: JobPlanTier }
+  | { kind: "credits"; tier: JobPlanTier; plan: Extract<CreditPlan, { state: "partial" }> }
+  | { kind: "annual" }
+  | null
+
+/** The pack the "short on credits" upsell offers (the board's 6 credits). */
+const CREDIT_UPSELL_PACK = BUNDLES.find((b) => b.credits === 6) ?? BUNDLES[0]
 
 function randomOrderId() {
   return Math.random().toString(36).slice(2, 10).toUpperCase()
@@ -102,57 +124,129 @@ export function JobPlanSelection() {
   const [paymentAmount, setPaymentAmount] = React.useState(0)
   const [mandateMethod, setMandateMethod] = React.useState<SubscriptionPaymentMethod | null>(null)
   const [order, setOrder] = React.useState<{ lines: CartLine[]; total: number; id: string } | null>(null)
+  const [cartLines, setCartLines] = React.useState<CartLine[]>([])
   const [postedTitle, setPostedTitle] = React.useState("Your job")
+
+  // Upsells + exit loop.
+  const offer = useExtraOff()
+  const [upsell, setUpsell] = React.useState<Upsell>(null)
+  const [exitPrompt, setExitPrompt] = React.useState<{ proceed: () => void } | null>(null)
+  const [shimmerKey, setShimmerKey] = React.useState(0)
+
+  const openCheckout = (item: CartLine) => {
+    setUpsell(null)
+    setCheckoutItem(item)
+    setDrawerOpen(true)
+  }
+
+  // Leaving — back, Save & exit, or closing the order summary — goes through
+  // the exit nudge first, until the offer is claimed or turned down.
+  const attemptExit = (proceed: () => void) => {
+    if (offer.nudgeAvailable) setExitPrompt({ proceed })
+    else proceed()
+  }
+
+  const singleJobLine = (tier: JobPlanTier): CartLine => ({
+    id: tier.id,
+    label: tier.title,
+    sublabel: `${tier.jobActiveDays} days · ${tier.dbCredits} database credits`,
+    price: tier.price,
+    mrp: tier.mrp,
+  })
+
+  const bundleLine = (tier: JobPlanTier): CartLine => {
+    const q = bundleQuote(tier)
+    return {
+      id: `${tier.id}-bundle`,
+      label: `${tier.title} × ${q.jobs}`,
+      sublabel: `Post this job now · ${q.jobs - 1} more within ${q.validDays} days`,
+      price: q.price,
+      mrp: q.mrp,
+    }
+  }
 
 
   const handleSelectTier = (tier: JobPlanTier) => {
     const plan = creditPlan(tier, creditBalance)
-    // Covered: posting just spends credits — nothing to pay, no order summary.
+    // Covered: the job line costs nothing, but the summary still opens so the
+    // AI calling add-on is offered. With no paid add-on it posts from there.
     if (plan.state === "covered") {
-      toast.success(`${readDraftTitle()} is live`, {
-        description: `${creditLabel(tier.credit)} used from your balance.`,
-      })
-      clearDraft()
-      router.push("/apnahire/jobs")
-      return
-    }
-    // Partial: the whole balance is used and only the shortfall is bought.
-    // The id avoids the "job-" prefix so the drawer shows no bundle upsell.
-    if (plan.state === "partial") {
+      const count = tier.credit.count
       setCheckoutItem({
-        id: "credit-topup",
-        label: creditLabel({ kind: tier.credit.kind, count: plan.shortfall }),
-        sublabel: `For ${tier.title} · ${plan.held} from your balance + ${plan.shortfall} to buy`,
-        price: plan.price,
-        mrp: plan.mrp,
+        id: `${tier.id}-covered`,
+        label: tier.title,
+        sublabel: `${creditLabel(tier.credit)} from your balance`,
+        price: 0,
+        priceLabel: `${count} credit${count === 1 ? "" : "s"}`,
       })
       setDrawerOpen(true)
       return
     }
-
-    setCheckoutItem({
-      id: tier.id,
-      label: tier.title,
-      sublabel: `${tier.jobActiveDays} days · ${tier.dbCredits} database credits`,
-      price: tier.price,
-      mrp: tier.mrp,
-    })
-    setDrawerOpen(true)
+    // Partial: offer a bigger credit pack before topping up the shortfall.
+    if (plan.state === "partial") {
+      setUpsell({ kind: "credits", tier, plan })
+      return
+    }
+    // No credits: offer 3 of this job before checkout.
+    setUpsell({ kind: "bundle", tier })
   }
 
-  const handleSelectSubscription = () => {
+  // Partial, either way the whole balance is used. The ids avoid the
+  // "job-" prefix so the drawer shows no database upsell.
+  const topupLine = (tier: JobPlanTier, plan: Extract<CreditPlan, { state: "partial" }>): CartLine => ({
+    id: "credit-topup",
+    label: creditLabel({ kind: tier.credit.kind, count: plan.shortfall }),
+    sublabel: `For ${tier.title} · ${plan.held} from your balance + ${plan.shortfall} to buy`,
+    price: plan.price,
+    mrp: plan.mrp,
+  })
+
+  const creditPackLine = (tier: JobPlanTier, plan: Extract<CreditPlan, { state: "partial" }>): CartLine => {
+    const left = plan.held + CREDIT_UPSELL_PACK.credits - tier.credit.count
+    return {
+      id: "credit-pack",
+      label: `${CREDIT_UPSELL_PACK.credits} Job credits`,
+      sublabel: `${plan.shortfall} for ${tier.title} · ${left} left for later, valid ${CREDIT_UPSELL_PACK.validDays} days`,
+      price: CREDIT_UPSELL_PACK.price,
+      mrp: CREDIT_UPSELL_PACK.mrp,
+    }
+  }
+
+  // Monthly Unlimited: offer the annual plan first.
+  const handleSelectSubscription = () => setUpsell({ kind: "annual" })
+
+  const monthlyLine = (): CartLine => {
     const plan = MONTHLY_SUBSCRIPTION_PLAN
-    setCheckoutItem({
+    return {
       id: "unlimited_monthly",
       label: "Monthly plan",
       sublabel: `1 active job slot + ${plan.dbCreditsPerMonth} Database credits + Valid for ${plan.jobSlotMonths * 30} days`,
       price: plan.price,
       renewAfterDays: plan.jobSlotMonths * 30,
-    })
-    setDrawerOpen(true)
+    }
   }
 
-  const handleProceedToPay = (total: number, _lines: CartLine[], method?: SubscriptionPaymentMethod) => {
+  const annualLine = (): CartLine => ({
+    id: "unlimited_annual",
+    label: "Annual plan",
+    sublabel: `1 active job slot + ${ANNUAL_PLAN.dbCreditsPerMonth} Database credits every month + Valid for 365 days`,
+    price: ANNUAL_PLAN.price,
+    renewAfterDays: 365,
+  })
+
+  const handleProceedToPay = (total: number, lines: CartLine[], method?: SubscriptionPaymentMethod) => {
+    // Everything paid with credits (job and/or AI): post now, no payment.
+    if (total === 0) {
+      const used = lines.map((l) => l.priceLabel && `${l.priceLabel} (${l.label})`).filter(Boolean)
+      toast.success(`${readDraftTitle()} is live`, {
+        description: used.length ? `Used ${used.join(" + ")} from your balance.` : undefined,
+      })
+      setDrawerOpen(false)
+      clearDraft()
+      router.push("/apnahire/jobs")
+      return
+    }
+    setCartLines(lines)
     setPaymentAmount(total)
     setMandateMethod(method ?? null)
     setDrawerOpen(false)
@@ -165,7 +259,9 @@ export function JobPlanSelection() {
     setPaymentOpen(false)
     setPostedTitle(readDraftTitle())
     clearDraft()
-    setOrder({ lines: checkoutItem ? [checkoutItem] : [], total: paymentAmount, id: randomOrderId() })
+    // The 10% offer is single-use.
+    offer.expire()
+    setOrder({ lines: cartLines.length ? cartLines : checkoutItem ? [checkoutItem] : [], total: paymentAmount, id: randomOrderId() })
   }
 
   const handlePaymentFailure = () => {
@@ -186,35 +282,101 @@ export function JobPlanSelection() {
   }
 
   return (
-    <div className="flex min-h-svh flex-col bg-muted">
+    // Same ambient-mesh canvas as self-checkout, so buying a plan mid-posting
+    // looks like the same checkout. Text on it uses the checkout-hero tokens,
+    // which flip with the canvas (light mesh / dark plum).
+    <div className="flex min-h-svh flex-col bg-gradient-checkout-hero">
       <JobPostingChrome
         current="plan"
         onStepClick={(step) => step !== "plan" && router.push("/apnahire/jobs/new")}
         // Zero-credit users haven't met the credit model yet.
         actions={hasAnyCredits(creditBalance) ? <AvailableCreditsButton /> : undefined}
+        onExitAttempt={attemptExit}
       />
 
       <div className="flex-1 px-4 py-4 pb-28 sm:px-6 sm:py-6 sm:pb-12">
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-5">
-          <h1 className="text-lg font-semibold text-foreground sm:text-xl">Choose a job basis your hiring needs</h1>
+          <h1 className="text-lg font-semibold text-checkout-hero-fg sm:text-xl">Choose a job basis your hiring needs</h1>
           {layout === "tiered" ? (
-            <TieredJobPlans creditBalance={creditBalance} onSelectTier={handleSelectTier} />
+            <TieredJobPlans
+              creditBalance={creditBalance}
+              onSelectTier={handleSelectTier}
+              extraOff={offer.claimed}
+              shimmerKey={shimmerKey}
+            />
           ) : (
             <SubscriptionJobPlans
               creditBalance={creditBalance}
               onSelectTier={handleSelectTier}
               onSelectSubscription={handleSelectSubscription}
+              extraOff={offer.claimed}
+              shimmerKey={shimmerKey}
             />
           )}
-          <p className="text-xs text-muted-foreground">* 18% GST will be added at checkout</p>
+          <p className="text-xs text-checkout-hero-fg-muted">* 18% GST will be added at checkout</p>
         </div>
       </div>
 
       <CheckoutDrawer
         open={drawerOpen}
-        onOpenChange={setDrawerOpen}
+        onOpenChange={(next) => (next ? setDrawerOpen(true) : attemptExit(() => setDrawerOpen(false)))}
         item={checkoutItem}
         onProceedToPay={handleProceedToPay}
+        aiAddon={{ price: AI_CALLING_ADDON.price, creditsAvailable: creditBalance["ai-calling"] }}
+        extraOffer={offer.deadline ? { code: EXTRA_OFF.code, deadline: offer.deadline } : undefined}
+        onExtraOfferExpired={offer.expire}
+      />
+
+      <JobBundleOfferDialog
+        open={upsell?.kind === "bundle"}
+        tier={upsell?.kind === "bundle" ? upsell.tier : null}
+        extraOff={offer.claimed}
+        onClose={() => setUpsell(null)}
+        onStay={() => upsell?.kind === "bundle" && openCheckout(singleJobLine(upsell.tier))}
+        onTake={() => upsell?.kind === "bundle" && openCheckout(bundleLine(upsell.tier))}
+      />
+
+      <CreditPackOfferDialog
+        open={upsell?.kind === "credits"}
+        need={
+          upsell?.kind === "credits"
+            ? { credits: upsell.plan.shortfall, price: upsell.plan.price, mrp: upsell.plan.mrp }
+            : null
+        }
+        needNote={upsell?.kind === "credits" ? `Needed to post ${upsell.tier.title.toLowerCase()}` : undefined}
+        pack={CREDIT_UPSELL_PACK}
+        extraOff={offer.claimed}
+        onClose={() => setUpsell(null)}
+        onStay={() => upsell?.kind === "credits" && openCheckout(topupLine(upsell.tier, upsell.plan))}
+        onTake={() => upsell?.kind === "credits" && openCheckout(creditPackLine(upsell.tier, upsell.plan))}
+      />
+
+      <AnnualUpgradeDialog
+        open={upsell?.kind === "annual"}
+        from={{ label: "Monthly plan", price: MONTHLY_SUBSCRIPTION_PLAN.price, months: 1 }}
+        extraOff={offer.claimed}
+        onClose={() => setUpsell(null)}
+        onStay={() => openCheckout(monthlyLine())}
+        onTake={() => openCheckout(annualLine())}
+      />
+
+      <ExitOfferDialog
+        open={exitPrompt !== null}
+        onDismiss={() => setExitPrompt(null)}
+        onDecline={() => {
+          const proceed = exitPrompt?.proceed
+          offer.dismiss()
+          setExitPrompt(null)
+          proceed?.()
+        }}
+        onClaim={(deadline) => {
+          offer.claim(deadline)
+          setExitPrompt(null)
+          setShimmerKey((k) => k + 1)
+          toast.success("10% extra off applied", {
+            description: "Valid for 24 hours on any plan.",
+          })
+        }}
       />
 
       <PaymentModal
@@ -235,6 +397,7 @@ export function JobPlanSelection() {
         onLayoutChange={setLayout}
         creditBalance={creditBalance}
         onCreditBalanceChange={setCreditBalance}
+        offer={{ claimed: offer.claimed, onExpireSoon: offer.expireSoon, onReset: offer.reset }}
       />
     </div>
   )

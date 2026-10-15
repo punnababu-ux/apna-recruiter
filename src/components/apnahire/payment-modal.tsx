@@ -128,8 +128,8 @@ export function PaymentModal({
                       className={cn(
                         "rounded-full px-2 py-0.5 text-2xs font-semibold",
                         option.tagVariant === "destructive"
-                          ? "bg-destructive-subtle text-destructive-subtle-fg"
-                          : "bg-success-subtle text-success-subtle-fg"
+                          ? "bg-destructive-subtle text-destructive-subtle-foreground"
+                          : "bg-success-subtle text-success-subtle-foreground"
                       )}
                     >
                       {option.tag}

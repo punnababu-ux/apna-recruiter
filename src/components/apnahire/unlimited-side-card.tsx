@@ -53,8 +53,8 @@ export function UnlimitedSideCard({
         className
       )}
     >
-      {/* ── Mobile layout (< sm) matching user reference image ── */}
-      <div className="flex flex-col gap-3 sm:hidden">
+      {/* ── Mobile layout (< md) matching user reference image ── */}
+      <div className="flex flex-col gap-3 md:hidden">
         <div className="flex h-5 items-start">
           <LogoApnaUnlimited variant="gradient" className="h-4 w-auto" />
         </div>
@@ -103,8 +103,10 @@ export function UnlimitedSideCard({
         </div>
       </div>
 
-      {/* ── Desktop view (sm and up) ── */}
-      <div className="hidden sm:flex sm:flex-col sm:gap-5">
+      {/* ── Desktop view (md and up) ── `md:flex-1` lets the inner card's
+          `flex-1` stretch to the row height, so its price and CTA line up
+          with the job credit cards beside it. Split at md like the page. */}
+      <div className="hidden md:flex md:flex-1 md:flex-col md:gap-5">
         <div className="flex min-h-12 flex-col gap-1">
           <div className="flex h-6 items-start pt-1.5">
             <LogoApnaUnlimited variant="gradient" className="h-4 w-auto" />

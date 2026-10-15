@@ -37,10 +37,14 @@
 
 import * as React from "react"
 import { cn } from "@/lib/utils"
+import { useSlidingIndicator } from "../../hooks/use-sliding-indicator"
 
 export interface SegmentedTabItem<V extends string = string> {
   value: V
   label: string
+  /** Shorter label for the mobile chip row, where four full labels
+   *  ("Enterprise plans") don't fit. Falls back to `label`. */
+  shortLabel?: string
   description?: string
   icon?: React.ReactNode
 }
@@ -66,8 +70,9 @@ export interface SegmentedTabSwitcherProps<V extends string = string> {
   /** Desktop description-line colour (both states). Defaults to
    *  `text-muted-foreground`. */
   mutedClassName?: string
-  /** Surface treatment for the active desktop pill, replacing the default
-   *  `bg-card shadow-sm` outright. Pass the complete string — a partial
+  /** Surface treatment for the active desktop pill — the single indicator
+   *  that slides between items — replacing the default `bg-card shadow-sm`
+   *  outright. Pass the complete string — a partial
    *  override (say `"shadow-none"`) would drop the fill rather than merge
    *  with it. Use an inset ring, not `border`, for a stroke: a real border
    *  grows the pill and therefore the whole track. */
@@ -97,6 +102,11 @@ export function SegmentedTabSwitcher<V extends string = string>({
   mobileGutterClassName = "px-4 sm:px-10",
   className,
 }: SegmentedTabSwitcherProps<V>) {
+  // One pill per layout that glides to the active item, rather than each
+  // item painting its own active background (which read as a cross-fade).
+  const { containerRef: desktopTrackRef, indicatorRef: desktopPillRef } = useSlidingIndicator(value)
+  const { containerRef: mobileRowRef, indicatorRef: mobilePillRef } = useSlidingIndicator(value)
+
   return (
     <div data-slot="segmented-tab-switcher" className={cn("w-full", className)}>
       {/* Desktop — full-width segmented pill, two-line items. `items-stretch`
@@ -104,11 +114,18 @@ export function SegmentedTabSwitcher<V extends string = string>({
           wraps to a second line, every pill must grow to match its height,
           not just the wrapped one — stretch achieves that for free. */}
       <div
+        ref={desktopTrackRef}
         className={cn(
-          "hidden w-full items-stretch gap-2 rounded-full bg-muted p-2 md:flex",
+          "relative isolate hidden w-full items-stretch gap-2 rounded-full bg-muted p-2 md:flex",
           trackClassName
         )}
       >
+        <span
+          ref={desktopPillRef}
+          aria-hidden
+          data-slot="segmented-tab-indicator"
+          className={cn("sliding-indicator rounded-full", activeItemClassName)}
+        />
         {items.map(({ value: v, label, description, icon }) => {
           const active = v === value
           return (
@@ -117,9 +134,10 @@ export function SegmentedTabSwitcher<V extends string = string>({
               type="button"
               onClick={() => onValueChange(v)}
               aria-pressed={active}
+              data-indicator-active={active || undefined}
               className={cn(
-                "flex flex-1 flex-col items-start justify-center gap-1 rounded-full px-8 py-3 text-left transition-all duration-200 outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
-                active ? activeItemClassName : "hover:bg-card/60"
+                "flex flex-1 flex-col items-start justify-center gap-1 rounded-full px-8 py-3 text-left ink relative transition-interactive outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+                !active && "hover:bg-card/60"
               )}
             >
               {/* 18px/28 label with 24px glyphs — the switcher sets the icon
@@ -170,8 +188,16 @@ export function SegmentedTabSwitcher<V extends string = string>({
             at max scroll. `w-max` makes the row grow to fit all children
             (+ both paddings), which is what the scrollable area should be
             measuring in the first place. */}
-        <div className={cn("flex w-max gap-2", mobileGutterClassName)}>
-          {items.map(({ value: v, label, icon }) => {
+        <div
+          ref={mobileRowRef}
+          className={cn("relative isolate flex w-max gap-2", mobileGutterClassName)}
+        >
+          <span
+            ref={mobilePillRef}
+            aria-hidden
+            className="sliding-indicator rounded-full bg-card shadow-sm"
+          />
+          {items.map(({ value: v, label, shortLabel, icon }) => {
             const active = v === value
             return (
               <button
@@ -179,15 +205,16 @@ export function SegmentedTabSwitcher<V extends string = string>({
                 type="button"
                 onClick={() => onValueChange(v)}
                 aria-pressed={active}
+                data-indicator-active={active || undefined}
                 className={cn(
-                  "flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors [&_svg]:size-5",
+                  "flex shrink-0 items-center gap-1.5 ink press relative rounded-full border px-4 py-2 text-sm font-medium whitespace-nowrap transition-interactive [&_svg]:size-5",
                   active
-                    ? cn("border-transparent bg-card font-bold shadow-sm", mobileActiveClassName ?? activeClassName)
+                    ? cn("border-transparent font-bold", mobileActiveClassName ?? activeClassName)
                     : cn("border-transparent bg-muted hover:bg-muted", inactiveClassName, trackClassName)
                 )}
               >
                 {icon}
-                {label}
+                {shortLabel ?? label}
               </button>
             )
           })}

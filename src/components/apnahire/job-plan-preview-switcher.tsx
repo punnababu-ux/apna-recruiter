@@ -18,7 +18,7 @@ import type { JobPlanLayout } from "@/components/apnahire/job-plan-selection"
 import type { CreditBalance } from "@/content/job-plans"
 
 const LAYOUTS: { value: JobPlanLayout; label: string }[] = [
-  { value: "tiered", label: "Tiered (4 plans)" },
+  { value: "tiered", label: "Tiered (3 plans)" },
   { value: "subscription", label: "Subscription (3 plans + monthly)" },
 ]
 
@@ -28,6 +28,7 @@ const CREDIT_BALANCES: { label: string; balance: CreditBalance }[] = [
   { label: "No credits", balance: { job: 0, "ai-calling": 0 } },
   { label: "1 job credit (top-up for most)", balance: { job: 1, "ai-calling": 0 } },
   { label: "4 job credits (enough for any)", balance: { job: 4, "ai-calling": 0 } },
+  { label: "1 job + 1 AI calling credit", balance: { job: 1, "ai-calling": 1 } },
   { label: "1 AI calling credit", balance: { job: 0, "ai-calling": 1 } },
   { label: "4 job + 1 AI calling credit", balance: { job: 4, "ai-calling": 1 } },
 ]
@@ -40,6 +41,8 @@ export interface JobPlanPreviewSwitcherProps {
   onLayoutChange: (layout: JobPlanLayout) => void
   creditBalance: CreditBalance
   onCreditBalanceChange: (balance: CreditBalance) => void
+  /** 10% exit-offer demo controls. Omit to hide the section. */
+  offer?: { claimed: boolean; onExpireSoon: () => void; onReset: () => void }
 }
 
 export function JobPlanPreviewSwitcher({
@@ -47,6 +50,7 @@ export function JobPlanPreviewSwitcher({
   onLayoutChange,
   creditBalance,
   onCreditBalanceChange,
+  offer,
 }: JobPlanPreviewSwitcherProps) {
   const [open, setOpen] = React.useState(false)
 
@@ -97,6 +101,29 @@ export function JobPlanPreviewSwitcher({
               </button>
             ))}
           </div>
+
+          {offer && (
+            <div className="flex flex-col gap-1 border-t border-border pt-2">
+              <p className="text-xs font-semibold text-muted-foreground">
+                10% exit offer · {offer.claimed ? "claimed" : "not claimed"}
+              </p>
+              <button
+                type="button"
+                disabled={!offer.claimed}
+                onClick={offer.onExpireSoon}
+                className="rounded-lg px-3 py-1.5 text-left text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50"
+              >
+                Expire in 5 seconds
+              </button>
+              <button
+                type="button"
+                onClick={offer.onReset}
+                className="rounded-lg px-3 py-1.5 text-left text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+              >
+                Reset offer and exit nudge
+              </button>
+            </div>
+          )}
         </div>
       )}
 

@@ -54,15 +54,19 @@
   --color-destructive:             var(--destructive);
   --color-destructive-foreground:  var(--destructive-foreground);
   --color-destructive-subtle:      var(--destructive-subtle);
+  --color-destructive-subtle-foreground: var(--destructive-subtle-fg);
   --color-success:                 var(--success);
   --color-success-foreground:      var(--success-foreground);
   --color-success-subtle:          var(--success-subtle);
+  --color-success-subtle-foreground: var(--success-subtle-fg);
   --color-warning:                 var(--warning);
   --color-warning-foreground:      var(--warning-foreground);
   --color-warning-subtle:          var(--warning-subtle);
+  --color-warning-subtle-foreground: var(--warning-subtle-fg);
   --color-info:                    var(--info);
   --color-info-foreground:         var(--info-foreground);
   --color-info-subtle:             var(--info-subtle);
+  --color-info-subtle-foreground:  var(--info-subtle-fg);
 
   /* Inverted surfaces */
   --color-surface-inverted:    var(--surface-inverted);
@@ -241,22 +245,27 @@
   --shadow-marketing: var(--shadow-marketing);
 
   /* --------------------------------------------------------------------
-   * Motion — duration + easing utilities. Enables `duration-enter`,
-   * `ease-out-ui`, `transition-standard`, etc.
+   * Motion — duration + easing utilities. Enables `duration-hover`,
+   * `duration-enter`, `ease-out-ui`, `ease-select`, etc. Durations must sit
+   * in the `--transition-duration-*` namespace: that is the one Tailwind's
+   * `duration-*` utility reads. (They used to be `--animate-duration-*`,
+   * which generated nothing, so every semantic duration class was dead.)
    * -------------------------------------------------------------------- */
-  --animate-duration-instant: var(--duration-instant);
-  --animate-duration-75:      var(--duration-75);
-  --animate-duration-100:     var(--duration-100);
-  --animate-duration-150:     var(--duration-150);
-  --animate-duration-200:     var(--duration-200);
-  --animate-duration-300:     var(--duration-300);
-  --animate-duration-500:     var(--duration-500);
-  --animate-duration-700:     var(--duration-700);
-  --animate-duration-1000:    var(--duration-1000);
-  --animate-duration-hover:   var(--duration-hover);
-  --animate-duration-enter:   var(--duration-enter);
-  --animate-duration-exit:    var(--duration-exit);
-  --animate-duration-large:   var(--duration-large);
+  --transition-duration-instant: var(--duration-instant);
+  --transition-duration-75:      var(--duration-75);
+  --transition-duration-100:     var(--duration-100);
+  --transition-duration-150:     var(--duration-150);
+  --transition-duration-200:     var(--duration-200);
+  --transition-duration-300:     var(--duration-300);
+  --transition-duration-500:     var(--duration-500);
+  --transition-duration-700:     var(--duration-700);
+  --transition-duration-1000:    var(--duration-1000);
+  --transition-duration-hover:   var(--duration-hover);
+  --transition-duration-enter:   var(--duration-enter);
+  --transition-duration-exit:    var(--duration-exit);
+  --transition-duration-large:   var(--duration-large);
+  --transition-duration-press:   var(--duration-press);
+  --transition-duration-select:  var(--duration-select);
 
   --ease-linear:   var(--ease-linear);
   --ease-standard: var(--ease-standard);
@@ -265,6 +274,7 @@
   --ease-spring:   var(--ease-spring);
   --ease-in-ui:    var(--ease-in-ui);
   --ease-out-ui:   var(--ease-out-ui);
+  --ease-select:   var(--ease-select);
 
   /* --------------------------------------------------------------------
    * Typography — line-height + tracking. Enables `leading-snug`,
@@ -426,6 +436,174 @@
  * Interaction utilities
  * ========================================================================== */
 
+/* ----------------------------------------------------------------------------
+ * Live surfaces — the system's micro-interaction language.
+ *
+ * Four utilities. The primitives apply them, so product code gets them
+ * without asking:
+ *
+ *   ink                     While pressed, an ink spreads from the exact touch
+ *                           point; on release it fills the surface and fades
+ *                           into the hover state. Painted on ::before in
+ *                           currentColor, so it is right on every variant and
+ *                           theme with no palette of its own.
+ *   press / press-subtle    Instant compression while pressed. `press-subtle`
+ *                           is for cards and other large surfaces.
+ *   transition-interactive  Colour, border, shadow, opacity and transform
+ *                           changes ease instead of snapping. Use it instead of
+ *                           `transition-all`, which also animates layout.
+ *   transition-select       Selection lands with a slight spring: checkbox
+ *                           ticks, radio dots, switch thumbs, chevrons.
+ *
+ * `ink` needs a containing block on the host (`relative`, or any
+ * non-static position) and must be the only user of the host's ::before. It
+ * sets `isolation: isolate`, which puts the ink between the host's
+ * background and its content. <InkProvider/> supplies the pointer position
+ * through one document listener; without it the ink grows from the centre.
+ *
+ * Reduced motion: the global floor in @layer base collapses the spread and
+ * the fade, so a press still shows as a held tint. The feedback stays and
+ * the movement goes. Press compression is turned off entirely.
+ * -------------------------------------------------------------------------- */
+@keyframes ink-spread {
+  from { clip-path: circle(0% at var(--ink-x, 50%) var(--ink-y, 50%)); }
+  to   { clip-path: circle(150% at var(--ink-x, 50%) var(--ink-y, 50%)); }
+}
+
+@utility ink {
+  isolation: isolate;
+  -webkit-tap-highlight-color: transparent;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background-color: currentColor;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--duration-ink-fade) var(--ease-standard);
+  }
+
+  &:active:not(:disabled, [aria-disabled="true"], [data-disabled])::before {
+    opacity: var(--ink-opacity);
+    transition-duration: 0ms;
+    animation: ink-spread var(--duration-ink) var(--ease-standard) both;
+  }
+}
+
+@utility press {
+  &:active:not(:disabled, [aria-disabled="true"], [data-disabled]) {
+    scale: var(--press-scale);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &:active { scale: none; }
+  }
+}
+
+@utility press-subtle {
+  &:active:not(:disabled, [aria-disabled="true"], [data-disabled]) {
+    scale: var(--press-scale-subtle);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &:active { scale: none; }
+  }
+}
+
+@utility transition-interactive {
+  transition-property: color, background-color, border-color, outline-color,
+    text-decoration-color, fill, stroke, box-shadow, opacity, scale, translate,
+    rotate;
+  transition-duration: var(--duration-hover);
+  transition-timing-function: var(--ease-standard);
+}
+
+@utility transition-select {
+  transition-property: color, background-color, border-color, box-shadow,
+    opacity, scale, translate, rotate, transform;
+  transition-duration: var(--duration-select);
+  transition-timing-function: var(--ease-select);
+}
+
+/* A selection indicator that glides between options (Tabs). It moves with
+ * left/width rather than a transform because Base UI measures the active
+ * tab into --active-tab-* — it is absolutely positioned, so only the
+ * indicator itself reflows. */
+@utility tab-indicator {
+  transition-property: left, top, width, height, background-color, box-shadow;
+  transition-duration: var(--duration-slide);
+  transition-timing-function: var(--ease-slide);
+}
+
+/* The same glide for hand-built segmented controls, driven by the
+ * useSlidingIndicator hook (hooks/use-sliding-indicator.ts), which measures
+ * the active option into --indicator-*. It stays invisible until first
+ * placed, places instantly, and only animates after that ("ready"), so it
+ * never flies in from the corner on mount. Host: `relative isolate`. */
+@utility sliding-indicator {
+  position: absolute;
+  z-index: -1;
+  left: var(--indicator-left, 0);
+  top: var(--indicator-top, 0);
+  width: var(--indicator-width, 0);
+  height: var(--indicator-height, 0);
+  pointer-events: none;
+  opacity: 0;
+
+  &[data-state] {
+    opacity: 1;
+  }
+
+  &[data-state="ready"] {
+    transition-property: left, top, width, height, background-color, box-shadow;
+    transition-duration: var(--duration-slide);
+    transition-timing-function: var(--ease-slide);
+  }
+}
+
+/* One gold glint that sweeps across a surface once, e.g. plan cards the
+ * moment a discount lands on them (Figma "Shimmer animation", 2540:8645).
+ * Painted on ::after, so the host needs `relative overflow-hidden` and a
+ * free ::after. Re-trigger by re-keying the element. Reduced motion
+ * collapses it to nothing via the base-layer floor. */
+@keyframes shimmer-sweep {
+  from { translate: -100% 0; }
+  to   { translate: 100% 0; }
+}
+
+@utility animate-shimmer-once {
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: linear-gradient(
+      100deg,
+      transparent 25%,
+      color-mix(in srgb, var(--highlight) 35%, transparent) 50%,
+      transparent 75%
+    );
+    animation: shimmer-sweep var(--duration-1000) var(--ease-standard) both;
+  }
+}
+
+/* Bottom-fixed bars (BottomNav, sticky CTA docks) clear the home indicator
+ * on notched phones. Needs `viewport-fit=cover` on the page's viewport,
+ * which the app's root layout sets; the inset is 0 everywhere else.
+ *   pb-safe     inset only — for bars with no bottom padding of their own
+ *   pb-safe-4   the spacing step PLUS the inset (pb-4 on a desktop, more
+ *               on a notched phone) — use instead of pb-4, not with it */
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@utility pb-safe-* {
+  padding-bottom: calc(var(--spacing) * --value(number) + env(safe-area-inset-bottom));
+}
+
 /* Card hover lift — the system-wide "this card is interactive" cue: a 2px
  * rise onto the --shadow-elevated step (the semantic "hovered cards" role).
  * One utility rather than per-component classes, because every card surface
@@ -433,9 +611,9 @@
  * standalone `translate` property, not `transform`, to match the Tailwind v4
  * translate utilities it sits alongside. */
 @utility card-hover-lift {
-  transition-property: box-shadow, translate;
-  transition-duration: 220ms;
-  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  transition-property: box-shadow, translate, scale;
+  transition-duration: var(--duration-enter);
+  transition-timing-function: var(--ease-out-ui);
 
   &:hover {
     translate: 0 -2px;
@@ -489,6 +667,14 @@
      neutral middle: the pink disappears entirely. */
   background-attachment: fixed;
 }
+@utility bg-gradient-offer {
+  background-image: var(--gradient-offer);
+}
+
+@utility bg-gradient-ai-subtle {
+  background-image: var(--gradient-ai-subtle);
+}
+
 @utility bg-gradient-checkout-unlimited {
   background-image: var(--gradient-checkout-unlimited);
 }
