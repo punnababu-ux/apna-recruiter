@@ -5,9 +5,10 @@
  * summary. It takes the slot that the database-credit upsell holds in
  * self-checkout.
  *
- * Structure (from the design reference):
- *   AI wash   sparkle + headline, then three benefit ticks
- *   Footer    "How it works" (explainer dialog) · price block · Add CTA
+ * Structure:
+ *   AI wash   sparkle + headline (wraps to 2–3 lines as needed) · "How it
+ *             works" (explainer dialog) opposite it, then three benefit ticks
+ *   Footer    price block at the far left · Add CTA at the far right
  *
  * The price block has two states, depending on the recruiter's AI calling
  * balance:
@@ -57,9 +58,23 @@ export function AiCallingAddonCard({
     <section data-slot="ai-calling-addon" className="bg-card p-4 shadow-card">
       <div className="overflow-hidden rounded-2xl border border-border">
         <div className="flex flex-col gap-3 bg-gradient-ai-subtle p-4">
-          <div className="flex items-start gap-2">
-            <Sparkles className="mt-0.5 size-5 shrink-0 text-checkout-info" aria-hidden />
-            <p className="text-sm font-semibold text-foreground">{AI_CALLING_ADDON.headline}</p>
+          {/* The headline gives: it wraps to two or three lines while
+              "How it works" keeps its width opposite, on every screen. */}
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex min-w-0 items-start gap-2">
+              <Sparkles className="mt-0.5 size-5 shrink-0 text-checkout-info" aria-hidden />
+              <p className="text-sm font-semibold text-foreground">{AI_CALLING_ADDON.headline}</p>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="shrink-0"
+              leadingIcon={<Play className="fill-current" />}
+              onClick={() => setExplainerOpen(true)}
+            >
+              How it works
+            </Button>
           </div>
           <ul className="flex flex-wrap gap-x-4 gap-y-1.5">
             {AI_CALLING_ADDON.benefits.map((benefit) => (
@@ -71,34 +86,22 @@ export function AiCallingAddonCard({
           </ul>
         </div>
 
-        {/* Wraps on a narrow drawer: "How it works" stays left, and the
-            price + CTA pair drops to its own right-aligned row. */}
-        <div className="flex flex-wrap items-center gap-3 bg-card p-4">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            leadingIcon={<Play className="fill-current" />}
-            onClick={() => setExplainerOpen(true)}
-          >
-            How it works
-          </Button>
-
-          <div className="ml-auto flex items-center gap-3">
-            <div className="flex flex-col items-end text-right">
-              <span className="text-sm font-semibold text-foreground">
-                {useCredit ? "1 AI calling credit" : inr(offer.price)}
-              </span>
-              <span className="text-xs text-muted-foreground">
-                {useCredit ? "Available" : "for this job"}
-              </span>
-            </div>
-            {/* Dark gray, not green: "Proceed to pay" below is this screen's one
-                primary CTA (Button's one-primary rule). */}
-            <Button type="button" variant="emphasis" size="sm" onClick={onAdd}>
-              Add AI calling agent
-            </Button>
+        {/* Price at the far left, the CTA opposite: one row on every
+            screen, so nothing wraps under anything else. */}
+        <div className="flex items-center justify-between gap-3 bg-card p-4">
+          <div className="flex min-w-0 flex-col">
+            <span className="text-sm font-semibold whitespace-nowrap text-foreground">
+              {useCredit ? "1 AI calling credit" : inr(offer.price)}
+            </span>
+            <span className="text-xs text-muted-foreground">
+              {useCredit ? "Available" : "for this job"}
+            </span>
           </div>
+          {/* Dark gray, not green: "Proceed to pay" below is this screen's one
+              primary CTA (Button's one-primary rule). */}
+          <Button type="button" variant="emphasis" size="sm" className="shrink-0" onClick={onAdd}>
+            Add AI calling agent
+          </Button>
         </div>
       </div>
 
