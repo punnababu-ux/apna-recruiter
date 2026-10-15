@@ -117,10 +117,14 @@ export function DraftingState({
   )
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 py-8 lg:flex-row lg:items-start" aria-live="polite">
-      <div className="flex min-w-0 flex-1 flex-col gap-6">
-        <div className="flex max-w-xl flex-col gap-2 self-end rounded-2xl rounded-br-sm bg-card px-4 py-3 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-300">
-          <span className="text-xs font-medium text-muted-foreground">You asked for</span>
+    // The wizard's layout (WIZARD_LAYOUT in post-job-flow.tsx), so the
+    // column and the preview don't jump when drafting hands over.
+    <div className="mx-auto grid w-full max-w-5xl gap-12 lg:grid-cols-[minmax(0,1fr)_20rem]" aria-live="polite">
+      <div className="flex min-w-0 flex-col gap-6">
+        {/* The recruiter's own words, quoted on the column's left edge like
+            everything else — not a right-aligned chat bubble. */}
+        <div className="flex flex-col gap-2 rounded-xl border border-border bg-muted px-4 py-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
+          <span className="text-xs font-medium text-muted-foreground">Your description</span>
           <p className="text-sm text-foreground">{prompt}</p>
         </div>
 
@@ -130,10 +134,10 @@ export function DraftingState({
           </span>
           <div className="flex flex-col">
             <h1 className="text-h4 text-foreground">
-              {done < STAGES.length ? "Drafting your job…" : "Your draft is ready"}
+              {done < STAGES.length ? "Drafting…" : "Ready"}
             </h1>
             <p className="text-body-sm text-muted-foreground">
-              {done < STAGES.length ? "Pulling out the details from what you said." : "Opening it for your review."}
+              {done < STAGES.length ? "Reading your description." : "Let’s check it."}
             </p>
           </div>
         </div>
@@ -174,7 +178,7 @@ export function DraftingState({
                         )}
                         style={{ animationDelay: `${j * 70}ms` }}
                       >
-                        {v.missing ? `${v.label} — you'll add this next` : v.label}
+                        {v.missing ? `${v.label} · add next` : v.label}
                       </Badge>
                     ))}
                   </div>
@@ -185,8 +189,8 @@ export function DraftingState({
         </ol>
       </div>
 
-      <aside className="flex w-full shrink-0 flex-col gap-3 animate-in fade-in slide-in-from-right-4 fill-mode-both duration-700 lg:w-80">
-        <p className="text-center text-xs font-medium text-muted-foreground">How candidates will see your job</p>
+      <aside className="flex w-full flex-col gap-3 animate-in fade-in slide-in-from-right-4 fill-mode-both duration-700">
+        <p className="text-center text-xs font-medium text-muted-foreground">Candidate view</p>
         <CandidateJobPreview draft={revealed} loading={done < STAGES.length} />
       </aside>
     </div>

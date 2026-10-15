@@ -3,20 +3,23 @@
 /**
  * JobPostingChrome — sticky header for every step of "Create new job":
  * back + title row (Save & exit on the right) over a horizontal stepper.
- * Shared by the AI posting flow and the plan step so the three steps read
- * as one flow.
+ * Shared by the posting wizard and the plan step so the four steps read as
+ * one flow.
  */
 
 import * as React from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { BackButton, Button, Save, Stepper, type Step } from "@apna/design-system"
+import { cn } from "@/lib/utils"
 
-export type JobPostingStep = "describe" | "review" | "plan"
+/** The wizard's three stages, then the plan page. */
+export type JobPostingStep = "job" | "candidates" | "setup" | "plan"
 
 const STEPS: { id: JobPostingStep; label: string }[] = [
-  { id: "describe", label: "Describe the role" },
-  { id: "review", label: "Review & preview" },
+  { id: "job", label: "Job details" },
+  { id: "candidates", label: "Who can apply" },
+  { id: "setup", label: "Hiring setup" },
   { id: "plan", label: "Select plan" },
 ]
 
@@ -31,9 +34,19 @@ interface JobPostingChromeProps {
    *  in first, e.g. the express-checkout exit nudge. Call `proceed` to
    *  carry on leaving. Without it, both leave straight away. */
   onExitAttempt?: (proceed: () => void) => void
+  /** E.g. "max-sm:hidden" when the page shows progress elsewhere on phones
+   *  (the wizard footer's bar) — one progress indicator per screen. */
+  stepperClassName?: string
 }
 
-export function JobPostingChrome({ current, onStepClick, actions, onSaveExit, onExitAttempt }: JobPostingChromeProps) {
+export function JobPostingChrome({
+  current,
+  onStepClick,
+  actions,
+  onSaveExit,
+  onExitAttempt,
+  stepperClassName,
+}: JobPostingChromeProps) {
   const router = useRouter()
   const currentIdx = STEPS.findIndex((s) => s.id === current)
   const steps: Step[] = STEPS.map((s, i) => ({
@@ -46,7 +59,7 @@ export function JobPostingChrome({ current, onStepClick, actions, onSaveExit, on
 
   return (
     <div className="sticky top-0 z-sticky border-b border-border bg-card">
-      <div className="border-b border-border px-4 py-2.5 sm:px-6 sm:py-3">
+      <div className={cn("border-b border-border px-4 py-2.5 sm:px-6 sm:py-3", stepperClassName && "max-sm:border-b-0")}>
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-2 sm:gap-3">
           <div className="flex items-center gap-2 sm:gap-3">
             <BackButton onClick={() => leave(() => router.push("/apnahire/jobs"))} aria-label="Back to jobs" />
@@ -73,7 +86,7 @@ export function JobPostingChrome({ current, onStepClick, actions, onSaveExit, on
           </div>
         </div>
       </div>
-      <div className="px-4 py-2 sm:px-6 sm:py-3">
+      <div className={cn("px-4 py-2 sm:px-6 sm:py-3", stepperClassName)}>
         <div className="mx-auto w-full max-w-6xl">
           <Stepper
             orientation="horizontal"

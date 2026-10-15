@@ -48,6 +48,9 @@ export interface ScreeningQuestion {
 }
 
 export interface JobPostDraft {
+  /** Hiring for the recruiter's own company, or on behalf of a client. */
+  hiringFor: "own" | "client"
+  clientCompany: string
   title: string
   category: string
   industry: string
@@ -66,6 +69,9 @@ export interface JobPostDraft {
   incentive: number | null
   perks: string[]
   joiningFee: boolean
+  /** The recruiter has answered the joining-fee question. It's never
+   *  defaulted — a candidate-safety question must be a real answer. */
+  joiningFeeAnswered: boolean
   joiningFeeDetails: JoiningFeeDetails
   education: Education | ""
   english: EnglishLevel | ""
@@ -104,7 +110,3 @@ export type RequiredField =
   | "walkIn"
   | "otherRecruiter"
   | "description"
-
-/** Fields that decide who sees the job or can't be changed after posting —
- *  the recruiter confirms each one explicitly before the plan step. */
-export type KeyField = "title" | "category" | "industry" | "location" | "pay"

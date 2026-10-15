@@ -16,7 +16,6 @@ import {
   Badge,
   Bookmark,
   Briefcase,
-  Button,
   Clock,
   GraduationCap,
   IndianRupee,
@@ -27,13 +26,13 @@ import {
   Skeleton,
 } from "@apna/design-system"
 import {
-  COMPANY_NAME,
   EDUCATION_LABELS,
   ENGLISH_LABELS,
   JOB_TYPE_LABELS,
   LOCATION_TYPE_LABELS,
   experienceLabel,
   locationLabel,
+  companyName,
   salaryLabel,
 } from "@/lib/apnahire/job-draft"
 import { cn } from "@/lib/utils"
@@ -85,9 +84,11 @@ const fmtDate = (iso: string) => {
   return Number.isNaN(d.getTime()) ? iso : d.toLocaleDateString("en-IN", { day: "numeric", month: "short" })
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+export type PreviewSection = "top" | "description" | "requirements" | "interview"
+
+function Section({ title, id, children }: { title: string; id?: PreviewSection; children: React.ReactNode }) {
   return (
-    <section className="flex flex-col gap-2 border-t border-border px-4 py-3">
+    <section data-preview-section={id} className="flex flex-col gap-2 border-t border-border px-4 py-3">
       <h3 className="text-sm font-semibold text-foreground">{title}</h3>
       {children}
     </section>
@@ -107,13 +108,28 @@ export function CandidateJobPreview({
   draft,
   loading = false,
   flashKey,
+  focus,
 }: {
   draft: JobPostDraft
   /** Drafting in progress — placeholders shimmer. */
   loading?: boolean
   /** Changing this replays a brief highlight over the screen (AI edits). */
   flashKey?: number
+  /** Scrolls the phone screen to the part the recruiter is editing. */
+  focus?: PreviewSection
 }) {
+  const rootRef = React.useRef<HTMLDivElement>(null)
+  React.useEffect(() => {
+    const root = rootRef.current
+    const screen = root?.closest<HTMLElement>("[data-slot=phone-frame-screen]")
+    if (!root || !screen) return
+    const target = focus && focus !== "top" ? root.querySelector<HTMLElement>(`[data-preview-section="${focus}"]`) : null
+    const top = target
+      ? target.getBoundingClientRect().top - screen.getBoundingClientRect().top + screen.scrollTop - 8
+      : 0
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    screen.scrollTo({ top, behavior: reduce ? "auto" : "smooth" })
+  }, [focus])
   const salary = salaryLabel(draft)
   const location = locationLabel(draft)
   const experience = experienceLabel(draft)
@@ -129,8 +145,8 @@ export function CandidateJobPreview({
   return (
     <PreviewLoadingContext.Provider value={loading}>
       <PhoneFrame label="How candidates will see your job">
-        <div key={flashKey} className={cn("flex min-h-full flex-col", flashKey ? "animate-ai-flash" : undefined)}>
-          <div className="flex items-center justify-between px-4 pb-2 pt-7 text-foreground">
+        <div ref={rootRef} key={flashKey} className={cn("flex min-h-full flex-col", flashKey ? "animate-ai-flash" : undefined)}>
+          <div className="flex items-center justify-between px-4 pb-2 pt-4 text-foreground">
             <ArrowLeft className="size-5" aria-hidden />
             <div className="flex items-center gap-3">
               <Bookmark className="size-5" aria-hidden />
@@ -141,14 +157,14 @@ export function CandidateJobPreview({
           <div className="flex flex-col gap-3 px-4 pb-3">
             <div className="flex items-center gap-3">
               <Avatar className="rounded-lg">
-                <AvatarFallback className="rounded-lg">{COMPANY_NAME[0]}</AvatarFallback>
+                <AvatarFallback className="rounded-lg">{companyName(draft)[0]}</AvatarFallback>
               </Avatar>
               <div className="min-w-0">
                 <p className="truncate text-base font-semibold text-foreground">
                   {draft.title || <Placeholder>Job title</Placeholder>}
                 </p>
                 <p className="truncate text-xs text-muted-foreground">
-                  {COMPANY_NAME}
+                  {companyName(draft)}
                   {draft.industry && draft.industry !== "Other" && ` · ${draft.industry}`}
                 </p>
               </div>
@@ -186,7 +202,7 @@ export function CandidateJobPreview({
             </Section>
           )}
 
-          <Section title="Job description">
+          <Section title="Job description" id="description">
             {draft.description.trim() ? (
               <Description text={draft.description} />
             ) : (
@@ -196,7 +212,7 @@ export function CandidateJobPreview({
             )}
           </Section>
 
-          <Section title="Requirements">
+          <Section title="Requirements" id="requirements">
             <div className="flex flex-col gap-1.5">
               <Row icon={GraduationCap}>
                 {draft.education ? (
@@ -247,7 +263,7 @@ export function CandidateJobPreview({
             </Section>
           )}
 
-          <Section title="Interview">
+          <Section title="Interview" id="interview">
             {draft.walkIn ? (
               <div className="flex flex-col gap-1.5">
                 <Row icon={Clock}>
@@ -274,11 +290,6 @@ export function CandidateJobPreview({
             )}
           </Section>
 
-          <div className="sticky bottom-0 mt-auto border-t border-border bg-background p-3">
-            <Button className="w-full" tabIndex={-1}>
-              Apply for job
-            </Button>
-          </div>
         </div>
       </PhoneFrame>
     </PreviewLoadingContext.Provider>

@@ -6,7 +6,6 @@ import type {
   JobType,
   JoiningFeeReason,
   JoiningFeeWhen,
-  KeyField,
   LocationType,
   PayType,
   RequiredField,
@@ -18,6 +17,8 @@ import { CATEGORY_RULES } from "@/lib/apnahire/prompt-parse"
  *  AI only has to ask about things it genuinely can't infer. Nothing that
  *  narrows who can apply is defaulted on. */
 export const EMPTY_JOB_DRAFT: JobPostDraft = {
+  hiringFor: "own",
+  clientCompany: "",
   title: "",
   category: "",
   industry: "",
@@ -34,6 +35,7 @@ export const EMPTY_JOB_DRAFT: JobPostDraft = {
   incentive: null,
   perks: [],
   joiningFee: false,
+  joiningFeeAnswered: false,
   joiningFeeDetails: { amount: null, reason: "", when: "" },
   education: "",
   english: "",
@@ -70,6 +72,10 @@ export function normalizeDraft(d: Partial<JobPostDraft> | undefined): JobPostDra
 
 /** Account data — in production these come from the recruiter's profile. */
 export const COMPANY_NAME = "PixelVeda Studios"
+
+/** The company candidates see on the post. */
+export const companyName = (d: JobPostDraft) =>
+  d.hiringFor === "client" && d.clientCompany.trim() ? d.clientCompany.trim() : COMPANY_NAME
 export const ACCOUNT_PHONE = "+91 97040 94435"
 
 export const JOB_TYPE_LABELS: Record<JobType, string> = {
@@ -313,104 +319,6 @@ export function missingRequired(d: JobPostDraft): RequiredField[] {
   }
   if (!d.description.trim()) missing.push("description")
   return missing
-}
-
-export const REQUIRED_FIELD_LABELS: Record<RequiredField, string> = {
-  title: "Job title",
-  industry: "Industry",
-  jobType: "Job type",
-  location: "Location",
-  pay: "Salary",
-  joiningFee: "Joining fee details",
-  education: "Minimum education",
-  english: "English level",
-  experience: "Experience",
-  walkIn: "Walk-in details",
-  otherRecruiter: "Recruiter's contact details",
-  description: "Job description",
-}
-
-/** One-line value for a required field — what the "AI needs" strip shows
- *  once a field is answered. */
-export function requiredFieldSummary(f: RequiredField, d: JobPostDraft): string {
-  switch (f) {
-    case "title":
-      return d.title
-    case "industry":
-      return d.industry
-    case "jobType":
-      return d.jobType ? JOB_TYPE_LABELS[d.jobType] : ""
-    case "location":
-      return [d.locationType && LOCATION_TYPE_LABELS[d.locationType], locationLabel(d)].filter(Boolean).join(" · ")
-    case "pay":
-      return salaryLabel(d) ?? ""
-    case "joiningFee":
-      return d.joiningFeeDetails.amount != null ? inr(d.joiningFeeDetails.amount) : ""
-    case "education":
-      return d.education ? EDUCATION_LABELS[d.education] : ""
-    case "english":
-      return d.english ? ENGLISH_LABELS[d.english] : ""
-    case "experience":
-      return experienceLabel(d) ?? ""
-    case "walkIn":
-      return d.walkInDetails.startDate ? `From ${d.walkInDetails.startDate}` : "Added"
-    case "otherRecruiter":
-      return d.otherRecruiter.name
-    case "description":
-      return "Added"
-  }
-}
-
-// ── Key fields: confirmed explicitly before the plan step ──────────────────
-
-export const KEY_FIELDS: KeyField[] = ["title", "category", "industry", "location", "pay"]
-
-export const KEY_FIELD_LABELS: Record<KeyField, string> = {
-  title: "Job title",
-  category: "Job category",
-  industry: "Industry",
-  location: "Location",
-  pay: "Salary",
-}
-
-/** Why each key field matters — shown next to it, so confirming isn't a
- *  rubber stamp. */
-export const KEY_FIELD_WHY: Record<KeyField, string> = {
-  title: "Only similar edits are allowed after posting",
-  category: "Can't be changed after posting",
-  industry: "Decides which candidates see your job",
-  location: "Candidates are matched by distance",
-  pay: "Candidates filter and apply by salary",
-}
-
-/** Which draft keys belong to each key field — editing any of them counts
- *  as the recruiter confirming it; the AI changing one un-confirms it. */
-export const KEY_FIELD_KEYS: Record<KeyField, (keyof JobPostDraft)[]> = {
-  title: ["title"],
-  category: ["category"],
-  industry: ["industry"],
-  location: ["locationType", "city", "area"],
-  pay: ["payType", "salaryMin", "salaryMax", "incentive"],
-}
-
-export const keyFieldOf = (key: keyof JobPostDraft): KeyField | undefined =>
-  KEY_FIELDS.find((f) => KEY_FIELD_KEYS[f].includes(key))
-
-export function keyFieldValue(f: KeyField, d: JobPostDraft): string | null {
-  switch (f) {
-    case "title":
-      return d.title || null
-    case "category":
-      return d.category || null
-    case "industry":
-      return d.industry || null
-    case "location":
-      return [d.locationType && LOCATION_TYPE_LABELS[d.locationType], locationLabel(d)].filter(Boolean).join(" · ") || null
-    case "pay": {
-      const s = salaryLabel(d)
-      return s ? `${s} / month` : null
-    }
-  }
 }
 
 // ── Job checks: rule-based, no data model needed ───────────────────────────

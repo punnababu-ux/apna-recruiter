@@ -1,14 +1,16 @@
 "use client"
 
 /**
- * Step 1 — "Who do you want to hire?". One prompt box; voice is a first-class
- * way in (a labelled "Speak" pill with a live waveform, not a bare icon).
- * Example chips fill the box and focus it so they read as a starting point to
- * edit, not a menu to pick from. "Fill the form instead" skips the AI.
+ * The wizard's "Describe the job" screen: one prompt box, and every later
+ * screen arrives answered from it. Voice is a first-class way in (a labelled
+ * "Speak" pill with a live waveform, not a bare icon). Example chips fill the
+ * box and focus it, so they read as a starting point to edit, not a menu.
+ * The CTA ("Draft my job") and "Fill it in myself" live in the wizard
+ * footer; Enter in the box submits too.
  */
 
 import * as React from "react"
-import { Badge, Button, Check, Mic, Plus, PromptInput, Sparkles } from "@apna/design-system"
+import { Badge, Button, Check, Mic, Plus, PromptInput, WizardQuestion } from "@apna/design-system"
 import { promptSignals, type PromptSignals } from "@/lib/apnahire/prompt-parse"
 import { useSpeechRecognition } from "@/hooks/use-speech-recognition"
 
@@ -31,7 +33,6 @@ interface DescribeStepProps {
   prompt: string
   onPromptChange: (value: string) => void
   onSubmit: () => void
-  onFillManually: () => void
 }
 
 /** Staggered entrance — each block rises in a beat after the previous. */
@@ -90,7 +91,7 @@ function PromptCoverage({ prompt }: { prompt: string }) {
   )
 }
 
-export function DescribeStep({ prompt, onPromptChange, onSubmit, onFillManually }: DescribeStepProps) {
+export function DescribeStep({ prompt, onPromptChange, onSubmit }: DescribeStepProps) {
   const speech = useSpeechRecognition()
   const baseRef = React.useRef("")
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
@@ -102,6 +103,10 @@ export function DescribeStep({ prompt, onPromptChange, onSubmit, onFillManually 
     // onPromptChange is a state setter from the parent; only the transcript drives this.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [speech.transcript])
+
+  // Leaving the screen (Draft my job / Fill it in myself) stops the mic.
+  const { stop } = speech
+  React.useEffect(() => stop, [stop])
 
   const toggleMic = () => {
     if (speech.listening) return speech.stop()
@@ -129,34 +134,21 @@ export function DescribeStep({ prompt, onPromptChange, onSubmit, onFillManually 
       onClick={toggleMic}
     >
       {speech.listening ? <VoiceWave /> : <Mic className="size-4" aria-hidden />}
-      {speech.listening ? "Listening — tap to stop" : "Speak"}
+      {speech.listening ? "Stop" : "Speak"}
     </Button>
   ) : (
     <span />
   )
 
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-col items-center gap-8 py-10 sm:py-16">
-      <div className="flex flex-col items-center gap-3 text-center">
-        <span
-          {...rise(0)}
-          className={`${rise(0).className} flex size-12 items-center justify-center rounded-2xl bg-accent text-accent-foreground`}
-        >
-          <Sparkles className="size-6" aria-hidden />
-        </span>
-        <h1 {...rise(1)} className={`${rise(1).className} text-h2 text-balance text-foreground`}>
-          Describe the job, we&apos;ll write the post
-        </h1>
-        <p
-          {...rise(2)}
-          className={`${rise(2).className} max-w-prose text-pretty text-body text-muted-foreground`}
-        >
-          Not a search — tell us about the job like you&apos;d tell a colleague. Type it or say it, and you
-          review everything before it goes live.
-        </p>
-      </div>
+    <div className="flex flex-col gap-6">
+      <WizardQuestion
+        {...rise(0)}
+        title="Describe the job"
+        description="Type or speak. We’ll fill in the details for you to check."
+      />
 
-      <div {...rise(3)} className={`${rise(3).className} flex w-full flex-col gap-2`}>
+      <div {...rise(1)} className={`${rise(1).className} flex w-full flex-col gap-2`}>
         <label htmlFor="job-prompt" className="text-sm font-medium text-foreground">
           About the job
         </label>
@@ -164,6 +156,7 @@ export function DescribeStep({ prompt, onPromptChange, onSubmit, onFillManually 
           id="job-prompt"
           ref={inputRef}
           size="lg"
+          hideSubmit
           value={prompt}
           onValueChange={onPromptChange}
           onSubmit={() => {
@@ -173,18 +166,16 @@ export function DescribeStep({ prompt, onPromptChange, onSubmit, onFillManually 
           active={speech.listening}
           placeholder={
             speech.listening
-              ? "Listening… e.g. “Telecaller in Koramangala, fifteen to twenty thousand, graduate”"
-              : "e.g. I need a telecaller for my real estate office in Koramangala. ₹15–20k a month, graduate, should speak Hindi, 1 year calling experience."
+              ? "Listening…"
+              : "e.g. Telecaller in Koramangala, ₹15–20k, graduate, Hindi, 1 year experience"
           }
-          submitLabel="Draft my job"
-          submitText="Draft my job"
           footerStart={voiceControl}
         />
         <PromptCoverage prompt={prompt} />
         {speech.error && <p className="text-xs text-destructive">{speech.error}</p>}
       </div>
 
-      <div {...rise(4)} className={`${rise(4).className} flex flex-wrap items-center justify-center gap-2`}>
+      <div {...rise(2)} className={`${rise(2).className} flex flex-wrap items-center gap-2`}>
         <span className="text-xs font-medium text-muted-foreground">Try:</span>
         {EXAMPLES.map((ex) => (
           <Button
@@ -200,10 +191,6 @@ export function DescribeStep({ prompt, onPromptChange, onSubmit, onFillManually 
           </Button>
         ))}
       </div>
-
-      <Button {...rise(5)} className={rise(5).className} variant="link" onClick={onFillManually}>
-        Fill the form instead
-      </Button>
     </div>
   )
 }

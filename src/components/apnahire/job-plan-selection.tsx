@@ -10,7 +10,7 @@
  *
  * This is step 3 ("Select plan") of the AI-first Create new job flow
  * (`post-job/post-job-flow.tsx`), so it shares that flow's
- * `JobPostingChrome` — title row, Save & exit, 3-step stepper — on the same
+ * `JobPostingChrome` — title row, Save & exit, 4-step stepper — on the same
  * plain `bg-muted` page. Earlier steps are clickable and return to
  * `/apnahire/jobs/new`, which resumes the saved draft. Width is max-w-6xl:
  * four plan cards need it, or the longest title wraps.
