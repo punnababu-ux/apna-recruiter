@@ -204,13 +204,17 @@ Reject the PR if you see any of:
   chrome must look and sit the same in all of them. `BackButton` has exactly
   one form and one placement (first in the row, `gap-3` before the
   title/logo) — see the rule in its JSDoc. Don't add a variant to make one
-  page different; change it everywhere or not at all.
+  page different; change it everywhere or not at all. (A wizard's footer
+  "Back" is a different action — previous question, not leave — and is
+  always WizardFooter's outline button; see `wizard.tsx`.)
 - Two primary (green) CTAs on one screen. There is exactly one primary
   action per screen ("Proceed to pay", the recommended plan's "Buy now").
   Something else that must still be pushed hard — an add-on or upsell like
   "Add AI calling agent" — uses `Button variant="emphasis"` (dark gray),
   never a second `default`/`checkout`. `emphasis` is only a companion: never
-  the only CTA on a screen, at most one per section. See Button's JSDoc.
+  the only CTA on a screen, at most one per section. Exception: in a
+  step-by-step flow (WizardFooter) every step's CTA is `emphasis`, and green
+  is kept for the one committing action (post / pay). See Button's JSDoc.
 - A card that lifts on hover (`card-hover-lift`, PricingCard) but isn't
   clickable as a whole, or a lifting card with `overflow-hidden`. See the
   rule on `card-hover-lift` in the design system's `styles/index.css`.

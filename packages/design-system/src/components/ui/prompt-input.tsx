@@ -9,6 +9,9 @@
  * variant (first screen of an AI flow); `"default"` is the compact bar used
  * for follow-up instructions.
  *
+ * The submit is `emphasis` (dark gray), never green: asking the AI is a step,
+ * not the commit — green is kept for post / pay (Button's one-primary rule).
+ *
  * API
  *   <PromptInput
  *     value={text}
@@ -49,6 +52,9 @@ interface PromptInputProps
   submitText?: string
   /** Highlights the box while an external input (voice) is writing into it. */
   active?: boolean
+  /** Hide the submit button when the page has its own CTA for it (a wizard
+   *  footer's "Draft my job"). Enter still submits. */
+  hideSubmit?: boolean
 }
 
 function PromptInput({
@@ -62,6 +68,7 @@ function PromptInput({
   submitLabel = "Submit",
   submitText,
   active = false,
+  hideSubmit = false,
   disabled,
   placeholder,
   className,
@@ -107,14 +114,15 @@ function PromptInput({
         <div className="flex min-w-0 flex-1 items-center gap-2">{footerStart}</div>
         <div className="flex shrink-0 items-center gap-1.5">
           {actions}
-          {submitText ? (
-            <Button type="button" size={lg ? "default" : "sm"} className="rounded-full" disabled={!canSubmit} onClick={onSubmit}>
+          {hideSubmit ? null : submitText ? (
+            <Button type="button" variant="emphasis" size={lg ? "default" : "sm"} className="rounded-full" disabled={!canSubmit} onClick={onSubmit}>
               {loading ? <Spinner /> : <Sparkles />}
               {submitText}
             </Button>
           ) : (
             <Button
               type="button"
+              variant="emphasis"
               size={lg ? "icon" : "icon-sm"}
               className="rounded-full"
               disabled={!canSubmit}

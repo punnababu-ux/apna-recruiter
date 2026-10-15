@@ -24,10 +24,25 @@ import {
   PromptInput,
   Button,
   Mic,
+  OptionCard,
+  OptionCardGroup,
+  NumberStepper,
+  RangeSlider,
+  Building2,
+  Home,
+  Route,
+  Store,
+  Headset,
+  Truck,
+  Laptop,
 } from "@apna/design-system"
 
 export default function InputsComponentsPage() {
   const [prompt, setPrompt] = React.useState("")
+  const [workplace, setWorkplace] = React.useState("office")
+  const [industry, setIndustry] = React.useState("Retail")
+  const [years, setYears] = React.useState(1)
+  const [salary, setSalary] = React.useState([15000, 25000])
   return (
     <div className="space-y-10">
       <div>
@@ -259,6 +274,73 @@ export default function InputsComponentsPage() {
             }
           />
           <PromptInput value="" onValueChange={() => {}} onSubmit={() => {}} loading placeholder="Ask AI to change anything" />
+        </div>
+      </div>
+
+      {/* Wizard answers */}
+      <div className="space-y-6">
+        <h2 className="text-base font-semibold text-foreground font-heading border-b border-border/60 pb-2">
+          Option Card, Number Stepper, Range Slider (wizard answers)
+        </h2>
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+          <OptionCardGroup aria-label="Where will they work?">
+            {[
+              ["office", "Work from office", "At your office or store every day", <Building2 key="i" />],
+              ["home", "Work from home", "Fully remote", <Home key="i" />],
+              ["field", "Field job", "Mostly travelling — sales visits, deliveries", <Route key="i" />],
+            ].map(([v, t, d, icon]) => (
+              <OptionCard
+                key={v as string}
+                icon={icon}
+                title={t}
+                description={d}
+                selected={workplace === v}
+                onSelect={() => setWorkplace(v as string)}
+              />
+            ))}
+          </OptionCardGroup>
+          <OptionCardGroup aria-label="Industry" columns={2}>
+            {[
+              ["Retail", <Store key="i" />],
+              ["BPO / Call Centre", <Headset key="i" />],
+              ["E-commerce & Logistics", <Truck key="i" />],
+              ["IT & Software", <Laptop key="i" />],
+            ].map(([v, icon]) => (
+              <OptionCard
+                key={v as string}
+                layout="tile"
+                icon={icon}
+                title={v}
+                selected={industry === v}
+                onSelect={() => setIndustry(v as string)}
+              />
+            ))}
+          </OptionCardGroup>
+          <NumberStepper
+            label="Minimum experience"
+            value={years}
+            onValueChange={setYears}
+            min={1}
+            max={30}
+            format={(n) => `${n} yr${n === 1 ? "" : "s"}`}
+          />
+          <div className="flex flex-col gap-2">
+            <span className="text-sm font-medium text-foreground">
+              Salary ₹{salary[0].toLocaleString("en-IN")} – ₹{salary[1].toLocaleString("en-IN")}
+            </span>
+            <RangeSlider
+              min={5000}
+              max={60000}
+              step={500}
+              value={[salary[0], salary[1]]}
+              onValueChange={(v) => setSalary(v)}
+              ticks={{ minor: 2500, major: 10000 }}
+              scale={[5000, 20000, 40000, 60000]}
+              formatValue={(n) => `₹${n.toLocaleString("en-IN")}`}
+              formatScale={(n) => `₹${n / 1000}k`}
+              thumbLabels={["Minimum salary", "Maximum salary"]}
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -21,6 +21,9 @@ import {
   InfinityIcon,
   Building2,
   Stepper,
+  StepIntro,
+  WizardFooter,
+  WizardQuestion,
 } from "@apna/design-system"
 
 const SEGMENTED_DEMO_ITEMS: SegmentedTabItem[] = [
@@ -93,6 +96,33 @@ export default function NavigationComponentsPage() {
             { id: "c", label: "Review & publish", status: "pending" },
           ]}
         />
+      </div>
+
+      {/* Wizard */}
+      <div className="rounded-xl border border-border bg-card p-6 space-y-6">
+        <h2 className="text-base font-semibold text-foreground font-heading border-b border-border/60 pb-2">
+          Wizard — question, step intro, footer
+        </h2>
+        <p className="text-sm text-muted-foreground">
+          One question per screen. The footer CTA is the dark <code>emphasis</code> button on every step; green is
+          kept for the action that commits (post / pay).
+        </p>
+        <WizardQuestion
+          eyebrow={<Badge variant="info">From your description — check it</Badge>}
+          title="What type of job is it?"
+          description="Answered from the recruiter's description; one tap to confirm."
+        />
+        <StepIntro step="Step 2" title="Decide who can apply" description="Must-haves filter applicants; preferences only rank them." />
+        <div className="overflow-hidden rounded-xl border border-border">
+          <WizardFooter
+            className="static"
+            progress={[1, 0.4, 0]}
+            onBack={() => {}}
+            nextLabel="Next"
+            onNext={() => {}}
+            error="Choose the English level"
+          />
+        </div>
       </div>
 
       {/* Breadcrumb */}

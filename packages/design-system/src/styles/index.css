@@ -107,6 +107,11 @@
   --color-checkout-discount-bg:        var(--checkout-discount-bg);
   --color-checkout-info:               var(--checkout-info);
   --color-checkout-info-foreground:    var(--checkout-info-foreground);
+  --color-night-sky-fg:       var(--night-sky-fg);
+  --color-night-sky-fg-muted: var(--night-sky-fg-muted);
+  --color-night-sky-border:   var(--night-sky-border);
+  --color-night-sky-cloud:    var(--night-sky-cloud);
+  --color-night-sky-star:     var(--night-sky-star);
   --color-checkout-unlimited-line:      var(--checkout-unlimited-border);
   --color-checkout-unlimited-line-hover: var(--checkout-unlimited-border-hover);
   --color-checkout-unlimited-cta:       var(--checkout-unlimited-cta-bg);
@@ -662,6 +667,53 @@
   }
 }
 
+/* A star twinkling: a slow fade between dim and bright with a slight
+ * scale. Stagger with an inline animation-delay so a field of them never
+ * pulses in step (e.g. the night-shift card's sky). */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; scale: 0.8; }
+  50% { opacity: 1; scale: 1.15; }
+}
+
+@utility animate-twinkle {
+  animation: twinkle 2.4s ease-in-out infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    opacity: 0.8;
+  }
+}
+
+/* A cloud drifting: a slow sideways sway, back and forth. Stagger with an
+ * inline animation-delay. */
+@keyframes drift {
+  from { translate: -12% 0; }
+  to   { translate: 12% 0; }
+}
+
+@utility animate-drift {
+  animation: drift 9s ease-in-out infinite alternate;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+/* "Not yet" — a short side-to-side nudge on a button whose action was
+ * refused (WizardFooter's Next on an unanswered screen). Re-key to replay. */
+@keyframes nudge {
+  20%, 60% { translate: -4px 0; }
+  40%, 80% { translate: 4px 0; }
+}
+
+@utility animate-nudge {
+  animation: nudge 320ms var(--ease-standard);
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
 /* Bottom-fixed bars (BottomNav, sticky CTA docks) clear the home indicator
  * on notched phones. Needs `viewport-fit=cover` on the page's viewport,
  * which the app's root layout sets; the inset is 0 everywhere else.
@@ -777,6 +829,10 @@
 
 @utility bg-gradient-offer-premium {
   background-image: var(--gradient-offer-premium);
+}
+
+@utility bg-gradient-night-sky {
+  background-image: var(--gradient-night-sky);
 }
 
 @utility bg-gradient-ai-subtle {

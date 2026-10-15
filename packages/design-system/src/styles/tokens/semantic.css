@@ -507,6 +507,19 @@
   --checkout-unlimited-border-hover:  rgba(255, 255, 255, 0.3);
   --checkout-unlimited-cta-bg:        rgba(255, 255, 255, 0.16);
   --checkout-unlimited-cta-bg-hover:  rgba(255, 255, 255, 0.26);
+
+  /* Night sky — a small moment of delight, e.g. the job wizard's night-shift
+   * card once switched on: deep royal → sky navy, with soft clouds and warm
+   * starlight. Fixed across themes (it's night in both). */
+  --gradient-night-sky: linear-gradient(160deg,
+                          var(--color-apna-royal-900) 0%,
+                          var(--color-apna-sky-950) 55%,
+                          var(--color-apna-royal-950) 100%);
+  --night-sky-fg:       var(--color-gray-0);
+  --night-sky-fg-muted: var(--color-apna-sky-200);
+  --night-sky-border:   var(--color-apna-royal-800);
+  --night-sky-cloud:    color-mix(in srgb, var(--color-gray-0) 14%, transparent);
+  --night-sky-star:     var(--color-apna-gold-100);
 }
 
 

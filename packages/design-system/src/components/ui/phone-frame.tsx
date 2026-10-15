@@ -4,6 +4,8 @@
  *
  * The screen scrolls independently of the page. Width is capped at
  * `max-w-xs`; the frame keeps a phone aspect ratio. Purely presentational.
+ * No notch: it hid the top line of whatever scrolled under it, and the
+ * bezel alone already reads as a phone.
  *
  * API
  *   <PhoneFrame label="Candidate view">{screen}</PhoneFrame>
@@ -32,7 +34,6 @@ function PhoneFrame({ label, className, screenClassName, children, ...props }: P
       )}
       {...props}
     >
-      <div aria-hidden className="absolute left-1/2 top-0 z-10 h-5 w-24 -translate-x-1/2 rounded-b-xl bg-foreground" />
       <div
         data-slot="phone-frame-screen"
         className={cn(

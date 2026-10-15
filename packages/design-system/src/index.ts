@@ -68,6 +68,10 @@ export * from "./components/ui/logo-apna-unlimited"
 export * from "./components/ui/job-card"
 export * from "./components/ui/pricing-card"
 export * from "./components/ui/phone-frame"
+export * from "./components/ui/option-card"
+export * from "./components/ui/number-stepper"
+export * from "./components/ui/range-slider"
+export * from "./components/ui/wizard"
 
 // 8. Marketing & Layout
 export * from "./components/ui/card"

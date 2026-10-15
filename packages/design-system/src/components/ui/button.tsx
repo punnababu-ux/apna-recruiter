@@ -24,6 +24,12 @@
  * CTA on a screen and never more than one per section; anything less
  * important than that is `outline`.
  *
+ * Exception — step-by-step flows (WizardFooter): every step's CTA ("Next",
+ * "Get started", "Draft my job") is `emphasis`, even as the screen's only
+ * CTA, and green is kept for the single action that commits (post / pay).
+ * A flow of twenty green "Next"s would leave the commit nothing to stand
+ * out with.
+ *
  * Loading behaviour:
  *   - A Spinner renders in the leading icon slot.
  *   - `aria-busy="true"` is set so assistive tech announces the state.

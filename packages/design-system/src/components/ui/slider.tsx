@@ -12,8 +12,14 @@ function Slider({
   min = 0,
   max = 100,
   step = 1,
+  thumbLabels,
   ...props
-}: SliderPrimitive.Root.Props) {
+}: SliderPrimitive.Root.Props & {
+  /** Accessible names for the thumbs, e.g. ["Minimum salary", "Maximum salary"]. */
+  thumbLabels?: string[]
+}) {
+  const current = value ?? defaultValue
+  const thumbs = Array.isArray(current) ? current.length : 1
   return (
     <SliderPrimitive.Root
       data-slot="slider"
@@ -41,10 +47,16 @@ function Slider({
             className="absolute h-full bg-primary data-[orientation=vertical]:w-full"
           />
         </SliderPrimitive.Track>
-        <SliderPrimitive.Thumb
-          data-slot="slider-thumb"
-          className="block size-5 rounded-full border-2 border-primary bg-background transition-interactive hover:ring-4 hover:ring-primary/15 has-focus-visible:ring-3 has-focus-visible:ring-ring/50 data-dragging:scale-110 data-dragging:ring-4 data-dragging:ring-primary/20 data-disabled:cursor-not-allowed"
-        />
+        {/* One thumb per value: pass an array (`[min, max]`) for a range. */}
+        {Array.from({ length: thumbs }, (_, i) => (
+          <SliderPrimitive.Thumb
+            key={i}
+            index={i}
+            data-slot="slider-thumb"
+            getAriaLabel={thumbLabels ? () => thumbLabels[i] ?? "" : undefined}
+            className="block size-5 rounded-full border-2 border-primary bg-background transition-interactive hover:ring-4 hover:ring-primary/15 has-focus-visible:ring-3 has-focus-visible:ring-ring/50 data-dragging:scale-110 data-dragging:ring-4 data-dragging:ring-primary/20 data-disabled:cursor-not-allowed"
+          />
+        ))}
       </SliderPrimitive.Control>
     </SliderPrimitive.Root>
   )

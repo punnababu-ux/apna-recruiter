@@ -42,7 +42,8 @@ export function ChipTabs<V extends string = string>({
   value: V
   onValueChange: (next: V) => void
   className?: string
-  size?: "sm" | "md"
+  /** `lg` (40px) is the touch size for answers in a wizard screen. */
+  size?: "sm" | "md" | "lg"
   /**
    * Visual treatment:
    * - "default" — segmented control: active chip on the `secondary`
@@ -114,7 +115,7 @@ export function ChipTabs<V extends string = string>({
             onClick={() => onValueChange(item.value)}
             className={cn(
               "ink press relative inline-flex items-center justify-center gap-1 rounded-full border font-medium transition-interactive outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-40",
-              size === "sm" ? "h-7 px-2.5 text-xs" : "h-8 px-3 text-sm",
+              size === "sm" ? "h-7 px-2.5 text-xs" : size === "lg" ? "h-10 px-4 text-sm" : "h-8 px-3 text-sm",
               variant === "solid" && size === "md" && "px-4",
               stateClass,
               itemClassName
