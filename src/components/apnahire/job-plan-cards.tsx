@@ -29,6 +29,7 @@ import {
   ClockFading,
   Database,
   Flame,
+  SignalLevel,
   LogoApnaUnlimited,
   MapPin,
   PricingCard,
@@ -74,35 +75,10 @@ function offerTier(tier: JobPlanTier, extraOff: boolean): JobPlanTier {
 
 /** Visibility at a glance on the mobile plan rows: the tier's label next to
  *  a three-bar signal meter (1 / 2 / 3 bars lit). */
-/** The visibility meter: three rising bars, filled up to the tier's level
- *  (Basic 1, Higher 2, Maximum 3). One icon for phone rows (`sm`, 14px) and
- *  desktop cards (`md`, 20px, the card's icon size), so the two read alike. */
-function SignalBars({ level, size = "sm" }: { level: number; size?: "sm" | "md" }) {
-  const md = size === "md"
-  return (
-    <span
-      className={cn("flex shrink-0 items-end justify-center gap-0.5", md ? "size-5 pb-0.5" : "size-3.5")}
-      aria-hidden
-    >
-      {([1, 2, 3] as const).map((bar) => (
-        <span
-          key={bar}
-          className={cn(
-            "rounded-full",
-            md ? "w-1" : "w-0.5",
-            bar === 1 ? "h-1.5" : bar === 2 ? (md ? "h-3" : "h-2.5") : md ? "h-4" : "h-3.5",
-            bar <= level ? "bg-checkout-primary" : "bg-border"
-          )}
-        />
-      ))}
-    </span>
-  )
-}
-
 function VisibilityLine({ tier }: { tier: JobPlanTier }) {
   return (
     <span className="flex items-center gap-1.5 text-xs font-medium text-foreground">
-      <SignalBars level={tier.visibilityLevel} />
+      <SignalLevel level={tier.visibilityLevel} className="size-3.5 shrink-0 text-checkout-primary" />
       {tier.visibilityLabel}
     </span>
   )
@@ -270,7 +246,7 @@ function JobPlanGridCard({ tier, recommended, creditBalance, onSelect }: JobPlan
               <>
                 {/* The phone rows' meter, not a check: it shows how much
                     visibility, which a tick can't. */}
-                <SignalBars level={tier.visibilityLevel} size="md" /> {tier.visibilityLabel}
+                <SignalLevel level={tier.visibilityLevel} className="text-checkout-primary" /> {tier.visibilityLabel}
               </>
             }
           >

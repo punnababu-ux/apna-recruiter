@@ -7,7 +7,8 @@
  * either a real lucide-react export or one of its own built-in "*Icon"
  * aliases, so nothing downstream needs to change.
  *
- * `Sell` has no Lucide equivalent and is mapped to `Tag`.
+ * `Sell` has no Lucide equivalent and is mapped to `Tag`. Two custom glyphs
+ * follow the same grid and stroke: `WhatsApp` and `SignalLevel`.
  */
 export type { LucideIcon as IconComponent, LucideProps as IconProps } from "lucide-react"
 
@@ -53,7 +54,9 @@ export {
   Tag as Sell,
 } from "lucide-react"
 
+import * as React from "react"
 import { createLucideIcon } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 /** Lucide ships no brand glyphs. This is Tabler's `brand-whatsapp` (MIT,
  *  tabler.io/icons) — same 24px grid, 2px round stroke as Lucide, so it sits
@@ -68,3 +71,35 @@ export const WhatsApp = createLucideIcon("whatsapp", [
     },
   ],
 ])
+
+/** A signal meter for a level from 0–3: Lucide's `chart-no-axes-column-
+ *  increasing` (same 24px grid and 2px round stroke as every icon here), with
+ *  the bars up to `level` in the current colour and the rest in the border
+ *  colour. Size and colour it like any icon (`size-5 text-checkout-primary`).
+ *  Plan visibility: Basic 1, Higher 2, Maximum 3. */
+export function SignalLevel({
+  level,
+  className,
+  ...props
+}: Omit<React.SVGProps<SVGSVGElement>, "children"> & { level: 0 | 1 | 2 | 3 }) {
+  const bars = ["M5 21v-6", "M12 21V9", "M19 21V3"]
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={24}
+      height={24}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={cn("lucide lucide-signal-level", className)}
+      {...props}
+    >
+      {bars.map((d, i) => (
+        <path key={d} d={d} className={i < level ? undefined : "stroke-border"} />
+      ))}
+    </svg>
+  )
+}
