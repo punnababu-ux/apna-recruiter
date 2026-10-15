@@ -13,6 +13,9 @@ import * as React from "react"
 import { ClockFading, ArrowRight, Briefcase, Sparkles } from "@apna/design-system"
 import { Badge, Button, PricingCard } from "@apna/design-system"
 import { cn } from "@/lib/utils"
+import { withExtraOffBundle } from "@/content/offers"
+import { ExtraOffLine } from "@/components/apnahire/offers/extra-off-line"
+import { MobileDiscountRow, MobileMetaLine, MobilePlanRow } from "@/components/apnahire/mobile-plan-row"
 
 /* ─────────────────────────────────────── types ───────────────────────── */
 
@@ -85,6 +88,8 @@ export const SINGLE_CREDIT: Bundle = {
 /* ─────────────────────────────────────── component ──────────────────── */
 
 export interface JobCreditBundlesProps {
+  /** The claimed 10% exit offer: show it in every price. */
+  extraOff?: boolean
   onBuyNow: (bundle: Bundle) => void
   onBuySingleCredit: () => void
   selectedBundleId?: BundleId
@@ -93,6 +98,7 @@ export interface JobCreditBundlesProps {
 }
 
 export function JobCreditBundles({
+  extraOff = false,
   onBuyNow,
   onBuySingleCredit,
   selectedBundleId,
@@ -134,69 +140,33 @@ export function JobCreditBundles({
         <div className="flex flex-col gap-3">
           {BUNDLES.map((bundle) => {
             const isSelected = currentSelectedId === bundle.id
+            // Display figures; selection and checkout keep the base bundle.
+            const view = withExtraOffBundle(bundle, extraOff)
             return (
-              <div key={bundle.id} className="relative pt-1.5">
-                {bundle.recommended && (
-                  <div className="absolute -top-1 left-3 z-10">
-                    <span className="rounded-full bg-checkout-info px-2.5 py-0.5 text-xs font-semibold text-checkout-info-foreground shadow-xs">
-                      Recommended
-                    </span>
-                  </div>
-                )}
-                <div
-                  onClick={() => handleSelect(bundle)}
-                  role="radio"
-                  aria-checked={isSelected}
-                  tabIndex={0}
-                  className={cn(
-                    "ink press-subtle relative flex cursor-pointer items-center justify-between rounded-xl bg-card p-3.5 shadow-xs transition-interactive",
-                    isSelected
-                      ? "border-2 border-checkout-primary ring-1 ring-checkout-primary/20"
-                      : "border border-border hover:border-border/80"
-                  )}
-                >
-                  <div className="flex flex-col gap-1">
-                    <span className="text-sm font-semibold text-foreground">
-                      {bundle.credits} Job credits
-                    </span>
-                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                      <ClockFading className="size-3.5 shrink-0" aria-hidden />
+              <MobilePlanRow
+                key={bundle.id}
+                title={`${bundle.credits} Job credits`}
+                selected={isSelected}
+                onSelect={() => handleSelect(bundle)}
+                recommended={bundle.recommended}
+                meta={
+                  <>
+                    <MobileMetaLine icon={<ClockFading aria-hidden />}>
                       Valid for {bundle.validDays} days
+                    </MobileMetaLine>
+                    {/* pt-1: 12px under the validity line, not the column's
+                        8px, so the unit cost reads as its own line. */}
+                    <span className="pt-1 text-xs whitespace-nowrap italic text-muted-foreground">
+                      ₹{view.pricePerCredit}{"\u00A0"}/credit
                     </span>
-                    <div>
-                      <Badge variant="discount" size="sm">
-                        {bundle.discountPct}% OFF
-                      </Badge>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <div className="flex flex-col items-end text-right">
-                      <div className="flex items-center gap-1.5 justify-end">
-                        <span className="text-xs text-muted-foreground line-through">
-                          ₹{bundle.mrp.toLocaleString("en-IN")}
-                        </span>
-                        <span className="text-base font-bold text-foreground">
-                          ₹{bundle.price.toLocaleString("en-IN")}
-                        </span>
-                      </div>
-                      <span className="text-xs italic text-muted-foreground">
-                        ₹{bundle.pricePerCredit} /credit
-                      </span>
-                    </div>
-                    <div
-                      className={cn(
-                        "flex size-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
-                        isSelected
-                          ? "border-checkout-primary"
-                          : "border-muted-foreground/30"
-                      )}
-                    >
-                      {isSelected && <div className="size-2.5 rounded-full bg-checkout-primary" />}
-                    </div>
-                  </div>
-                </div>
-              </div>
+                  </>
+                }
+                mrp={`₹${bundle.mrp.toLocaleString("en-IN")}`}
+                price={`₹${view.price.toLocaleString("en-IN")}`}
+                belowPrice={
+                  <MobileDiscountRow pct={view.discountPct} note={extraOff ? "Incl. 10% extra" : undefined} />
+                }
+              />
             )
           })}
         </div>
@@ -227,7 +197,9 @@ export function JobCreditBundles({
         </div>
 
         <div className="grid flex-1 grid-cols-1 gap-4 lg:grid-cols-3">
-        {BUNDLES.map((bundle) => (
+        {BUNDLES.map((bundle) => {
+          const view = withExtraOffBundle(bundle, extraOff)
+          return (
           <PricingCard
             key={bundle.id}
             className="border-transparent"
@@ -248,10 +220,16 @@ export function JobCreditBundles({
                 Valid for {bundle.validDays} days
               </>,
             ]}
-            price={`₹${bundle.price.toLocaleString("en-IN")}`}
+            price={`₹${view.price.toLocaleString("en-IN")}`}
             mrp={`₹${bundle.mrp.toLocaleString("en-IN")}`}
-            badge={<Badge variant="discount">{bundle.discountPct}% OFF</Badge>}
-            priceSuffix={`₹${bundle.pricePerCredit} /credit`}
+            badge={<Badge variant="discount">{view.discountPct}% OFF</Badge>}
+            priceSuffix={
+              // The claimed offer's line sits under the per-credit price.
+              <span className="flex flex-col gap-1">
+                <span>₹{view.pricePerCredit}{"\u00A0"}/credit</span>
+                {extraOff && <ExtraOffLine />}
+              </span>
+            }
             cta={
               <Button
                 type="button"
@@ -262,7 +240,8 @@ export function JobCreditBundles({
               </Button>
             }
           />
-        ))}
+          )
+        })}
         </div>
       </div>
     </div>

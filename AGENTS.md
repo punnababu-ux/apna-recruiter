@@ -296,6 +296,9 @@ every line may break; never let the width of a string decide it.**
    number side is `shrink-0` and the text side wraps. If the text side is
    short metadata ("Active for 15 days"), it must not break mid-phrase
    either. Move it under the title on narrow screens instead of squeezing it.
+   When the layout depends on a card's width rather than the screen's, switch
+   it with a container query (`@container` on the card, `@2xs:flex` /
+   `@2xs:hidden` on the two layouts) rather than a viewport breakpoint.
 4. **Short copy for narrow, full copy from `sm`.** When a label can't fit a
    phone tile, swap it rather than wrap it (`<span className="sm:hidden">`
    short / `<span className="hidden sm:inline">` full), as with
@@ -311,6 +314,22 @@ every line may break; never let the width of a string decide it.**
    375px, a six-digit price (₹12,99,999) and the longest plan name. If
    anything splits, overflows or misaligns, the layout is wrong, not the
    copy.
+
+---
+
+## Tax disclaimer — one wording, one component
+
+Under any price, the tax note reads exactly **"\*GST applicable"** and is
+rendered by `GstNote` (`src/components/apnahire/gst-note.tsx`). Never write
+your own: no "18% GST will be added at checkout", "+ GST", "excl. GST" or a
+rate. The order summary shows the actual GST line; plan pages only say it
+applies.
+
+- One per pricing section, at its end. On the checkout pages that is under
+  the last card (the Contact sales card on the Jobs, Database and Unlimited
+  tabs).
+- Restyle it only through `className` (e.g. `text-muted-foreground` on a
+  white card). Never change the text.
 
 ---
 

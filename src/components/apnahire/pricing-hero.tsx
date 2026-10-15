@@ -101,10 +101,15 @@ export function PricingHero({
         className
       )}
     >
-      <div className="flex w-full max-w-6xl flex-col gap-8">
+      <div className="@container flex w-full max-w-6xl flex-col gap-8">
         {/* Heading — source has no subtitle under the H1. `text-h1` already
-            carries font-heading and bold. */}
-        <h1 className="text-h1 text-checkout-hero-fg">Everything you need to hire</h1>
+            carries font-heading and bold. Phones keep it to one line: 24px
+            when the column has 320px (360px phones and up), 20px below
+            that; the 36px preset from sm. Scoped to max-sm so the container
+            steps never reach desktop. */}
+        <h1 className="text-h1 text-checkout-hero-fg max-sm:text-xl max-sm:@xs:text-2xl">
+          Everything you need to hire
+        </h1>
 
         {/* Plain block wrapper (not `display: contents`) — needed so
             `tabsRef`'s bounding box is measurable by the page's

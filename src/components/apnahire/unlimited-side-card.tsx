@@ -13,12 +13,19 @@
  * Note that the column, not this component, owns the width and the
  * "Note: This plan is valid in a single city." caption below the card —
  * both live in self-checkout.tsx's right column.
+ *
+ * Phones (< md) get `MobileUnlimitedCard` instead, the card express
+ * checkout uses, so both checkouts show one structure.
  */
 
 import * as React from "react"
-import { ArrowRight, Briefcase, ClockFading, UserSearch, LogoApnaUnlimited } from "@apna/design-system"
-import { Button, PricingCard } from "@apna/design-system"
+import { BriefcaseBusiness, ClockFading, Database, LogoApnaUnlimited, UserSearch, WhatsApp } from "@apna/design-system"
+import { Badge, Button, PricingCard } from "@apna/design-system"
+import { withExtraOff } from "@/content/offers"
+import { ExtraOffLine } from "@/components/apnahire/offers/extra-off-line"
+import { MobileDiscountRow } from "@/components/apnahire/mobile-plan-row"
 import { cn } from "@/lib/utils"
+import { MobileUnlimitedCard } from "@/components/apnahire/mobile-plan-row"
 
 interface UnlimitedSideCardProps {
   price?: number
@@ -28,6 +35,9 @@ interface UnlimitedSideCardProps {
   jobSlotMonths?: number
   dbCredits?: number
   dbCreditsWorth?: number
+  /** The claimed 10% exit offer: the price drops by it, the old price is
+   *  struck through with its % OFF, and the per-month figure follows. */
+  extraOff?: boolean
   onBuyNow?: () => void
   className?: string
 }
@@ -38,113 +48,107 @@ export function UnlimitedSideCard({
   jobSlotMonths = 3,
   dbCredits = 600,
   dbCreditsWorth = 6000,
+  extraOff = false,
   onBuyNow,
   className,
 }: UnlimitedSideCardProps) {
+  const basePrice = price
+  price = extraOff ? withExtraOff(basePrice) : basePrice
+  // Truncated, as the design does for ₹5,999 / 3 = ₹1,999.
+  if (extraOff) monthlyPrice = Math.floor(price / jobSlotMonths)
+  const pct = extraOff ? Math.round((1 - price / basePrice) * 100) : null
+  const strike = extraOff ? `₹${basePrice.toLocaleString("en-IN")}` : undefined
   return (
-    // No border: the design draws no stroke here, and the hover affordance
-    // is the inner card's own lift. `overflow-hidden` keeps the inner
-    // card's radius clipped against the gradient.
-    <div
-      data-slot="unlimited-side-card"
-      onClick={onBuyNow}
-      className={cn(
-        "flex w-full cursor-pointer flex-col overflow-hidden rounded-2xl bg-gradient-checkout-unlimited p-4",
-        className
-      )}
-    >
-      {/* ── Mobile layout (< md) matching user reference image ── */}
-      <div className="flex flex-col gap-3 md:hidden">
-        <div className="flex h-5 items-start">
-          <LogoApnaUnlimited variant="gradient" className="h-4 w-auto" />
-        </div>
+    <>
+      {/* ── Mobile (< md): the shared phone card, the same one express
+          checkout uses, so the two checkouts read alike. ── */}
+      <MobileUnlimitedCard
+        className={cn("md:hidden", className)}
+        // Same card, same structure as express checkout's Monthly plan: name
+        // and price with its unit on top, the reposts promise as subtitle,
+        // three plan lines, then the note and CTA.
+        title="Quarterly plan"
+        subtitle="Unlimited job reposts"
+        mrp={strike}
+        price={`₹${price.toLocaleString("en-IN")}`}
+        unit="/quarter"
+        belowPrice={<MobileDiscountRow pct={pct} note={extraOff ? "Incl. 10% extra" : undefined} />}
+        features={[
+          [<BriefcaseBusiness key="i" aria-hidden />, <><strong>1 active job slot</strong> for {jobSlotMonths * 30} days</>],
+          [<Database key="i" aria-hidden />, `${dbCredits} database credits worth ₹${dbCreditsWorth.toLocaleString("en-IN")}`],
+          [<WhatsApp key="i" aria-hidden />, "WhatsApp outreach to matched candidates"],
+        ]}
+        note="Valid in a single city"
+        cta={
+          <Button
+            type="button"
+            variant="checkout-inset"
+            size="sm"
+            className="h-8 shrink-0 rounded-full px-3.5 text-xs font-semibold"
+            onClick={onBuyNow}
+          >
+            Get Unlimited
+          </Button>
+        }
+      />
 
-        <div className="rounded-xl bg-card p-4 text-card-foreground shadow-xs">
-          <div className="flex items-start justify-between gap-2">
-            <span className="text-base font-bold text-foreground">Unlimited job posts</span>
-            {/* The price column never shrinks and "₹1,999 /month" never
-                splits; the title wraps first. */}
-            <div className="flex shrink-0 flex-col items-end text-right">
-              <span className="text-base font-bold text-foreground">₹{price.toLocaleString("en-IN")}</span>
-              <span className="text-xs font-semibold whitespace-nowrap text-checkout-primary">
-                ₹{monthlyPrice.toLocaleString("en-IN")} /month
+      {/* No border: the design draws no stroke here, and the hover affordance
+          is the inner card's own lift. `overflow-hidden` keeps the inner
+          card's radius clipped against the gradient. */}
+      <div
+        data-slot="unlimited-side-card"
+        onClick={onBuyNow}
+        className={cn(
+          "hidden w-full cursor-pointer flex-col overflow-hidden rounded-2xl bg-gradient-checkout-unlimited p-4 md:flex",
+          className
+        )}
+      >
+        {/* ── Desktop view (md and up) ── `md:flex-1` lets the inner card's
+            `flex-1` stretch to the row height, so its price and CTA line up
+            with the job credit cards beside it. Split at md like the page. */}
+        <div className="hidden md:flex md:flex-1 md:flex-col md:gap-5">
+          <div className="flex min-h-12 flex-col gap-1">
+            <div className="flex h-6 items-start pt-1.5">
+              <LogoApnaUnlimited variant="gradient" className="h-4 w-auto" />
+            </div>
+            <p className="text-sm text-surface-inverted-fg/80">
+              Unlimited hiring for {jobSlotMonths} months
+            </p>
+          </div>
+
+          <PricingCard
+            surface="inset"
+            className="flex-1 border-transparent"
+            title="Unlimited job posts"
+            subtitle="Free job reposts and swapping"
+            meta={[
+              <>
+                <ClockFading aria-hidden />1 Active job slot for {jobSlotMonths} months
+              </>,
+              <>
+                <UserSearch aria-hidden />
+                {dbCredits} database credits worth ₹{dbCreditsWorth.toLocaleString("en-IN")}
+              </>,
+            ]}
+            price={`₹${price.toLocaleString("en-IN")}`}
+            mrp={strike}
+            badge={pct ? <Badge variant="discount">{pct}% OFF</Badge> : undefined}
+            priceSuffix={
+              <span className="flex flex-col gap-1">
+                <span className="text-checkout-primary">
+                  That&apos;s just ₹{monthlyPrice.toLocaleString("en-IN")}{"\u00A0"}/month
+                </span>
+                {extraOff && <ExtraOffLine />}
               </span>
-            </div>
-          </div>
-
-          <div className="mt-3 flex flex-col gap-2 border-t border-border/60 pt-3 text-xs text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <ClockFading className="size-3.5 shrink-0" aria-hidden />
-              <span>1 job slot for {jobSlotMonths} months</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Briefcase className="size-3.5 shrink-0" aria-hidden />
-              <span>Free job reposts and swapping</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <UserSearch className="size-3.5 shrink-0" aria-hidden />
-              <span>{dbCredits} database credits worth ₹{dbCreditsWorth.toLocaleString("en-IN")}</span>
-            </div>
-          </div>
-
-          <div className="mt-3 flex items-center justify-between border-t border-border/60 pt-3">
-            <span className="text-xs italic text-muted-foreground">
-              Note: This plan is valid in a single city.
-            </span>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="h-8 rounded-full px-3 text-xs font-semibold"
-              onClick={onBuyNow}
-            >
-              Buy now
-              <ArrowRight className="size-3" aria-hidden />
-            </Button>
-          </div>
+            }
+            cta={
+              <Button type="button" variant="checkout-inset" className="h-10 w-full font-semibold">
+                Buy now
+              </Button>
+            }
+          />
         </div>
       </div>
-
-      {/* ── Desktop view (md and up) ── `md:flex-1` lets the inner card's
-          `flex-1` stretch to the row height, so its price and CTA line up
-          with the job credit cards beside it. Split at md like the page. */}
-      <div className="hidden md:flex md:flex-1 md:flex-col md:gap-5">
-        <div className="flex min-h-12 flex-col gap-1">
-          <div className="flex h-6 items-start pt-1.5">
-            <LogoApnaUnlimited variant="gradient" className="h-4 w-auto" />
-          </div>
-          <p className="text-sm text-surface-inverted-fg/80">
-            Unlimited hiring for {jobSlotMonths} months
-          </p>
-        </div>
-
-        <PricingCard
-          surface="inset"
-          className="flex-1 border-transparent"
-          title="Unlimited job posts"
-          subtitle="Free job reposts and swapping"
-          meta={[
-            <>
-              <ClockFading aria-hidden />1 Active job slot for {jobSlotMonths} months
-            </>,
-            <>
-              <UserSearch aria-hidden />
-              {dbCredits} database credits worth ₹{dbCreditsWorth.toLocaleString("en-IN")}
-            </>,
-          ]}
-          price={`₹${price.toLocaleString("en-IN")}`}
-          priceSuffix={
-            <span className="text-checkout-primary">
-              That&apos;s just ₹{monthlyPrice.toLocaleString("en-IN")}{"\u00A0"}/month
-            </span>
-          }
-          cta={
-            <Button type="button" variant="checkout-inset" className="h-10 w-full font-semibold">
-              Buy now
-            </Button>
-          }
-        />
-      </div>
-    </div>
+    </>
   )
 }

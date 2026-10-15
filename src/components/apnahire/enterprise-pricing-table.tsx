@@ -27,6 +27,12 @@ import * as React from "react"
 import { Check, ClockFading } from "@apna/design-system"
 import { Button, Card, CardTitle, Separator } from "@apna/design-system"
 import { cn } from "@/lib/utils"
+import { GstNote } from "@/components/apnahire/gst-note"
+import {
+  MobileMetaLine,
+  MobilePlanDetails,
+  MobilePlanRow,
+} from "@/components/apnahire/mobile-plan-row"
 
 /* ─────────────────────────────────────── types ───────────────────────── */
 
@@ -115,11 +121,20 @@ interface EnterprisePricingTableProps {
    * yet and the buttons are inert by design — see the spec's Gaps.
    */
   onContactSales?: (tierName: string) => void
+  /** Phones: the selected radio row (Starter by default). The page's sticky
+   *  "Contact sales" CTA is the only CTA there. */
+  selectedTier?: string
+  onSelectTier?: (tierName: string) => void
   className?: string
 }
 
+/** The tier the phone list selects first. */
+export const DEFAULT_ENTERPRISE_TIER = "Starter"
+
 export function EnterprisePricingTable({
   onContactSales,
+  selectedTier = DEFAULT_ENTERPRISE_TIER,
+  onSelectTier,
   className,
 }: EnterprisePricingTableProps) {
   return (
@@ -134,9 +149,37 @@ export function EnterprisePricingTable({
         </p>
       </div>
 
-      {/* Figma is one 1136px row of four. Below `lg` the cards pair up, and
-          below `sm` they stack — matching the Jobs / Database bundle grids. */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {/* Phones (< md): the Jobs / Database radio rows. Collapsed, a tier
+          is its name, price and validity; the selected one reveals what it
+          includes. The page's sticky CTA ("Contact sales") replaces the
+          four per-card buttons. */}
+      <div className="flex flex-col gap-3 md:hidden">
+        {TIERS.map((tier) => (
+          <MobilePlanRow
+            key={tier.name}
+            title={tier.name}
+            selected={selectedTier === tier.name}
+            onSelect={() => onSelectTier?.(tier.name)}
+            meta={<MobileMetaLine icon={<ClockFading aria-hidden />}>{tier.validity}</MobileMetaLine>}
+            price={tier.price}
+            details={
+              <MobilePlanDetails
+                items={tier.features.map((feature) => [
+                  <Check key="i" className="text-checkout-primary" aria-hidden />,
+                  <>
+                    {feature.bold && <strong>{feature.bold} </strong>}
+                    {feature.label}
+                  </>,
+                ])}
+              />
+            }
+          />
+        ))}
+      </div>
+
+      {/* Figma is one 1136px row of four. From md the cards pair up, and
+          from lg they sit in one row. */}
+      <div className="hidden gap-4 md:grid md:grid-cols-2 lg:grid-cols-4">
         {TIERS.map((tier) => (
           <Card
             key={tier.name}
@@ -194,7 +237,7 @@ export function EnterprisePricingTable({
         ))}
       </div>
 
-      <p className="text-xs text-checkout-hero-fg-muted">*GST applicable</p>
+      <GstNote />
     </div>
   )
 }

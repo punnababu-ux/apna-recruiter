@@ -49,6 +49,7 @@ import {
   type SubscriptionPaymentMethod,
 } from "@/components/apnahire/checkout-drawer"
 import { PaymentModal } from "@/components/apnahire/payment-modal"
+import { GstNote } from "@/components/apnahire/gst-note"
 import { PaymentSuccess } from "@/components/apnahire/payment-success"
 import { JobPlanPreviewSwitcher } from "@/components/apnahire/job-plan-preview-switcher"
 import { BUNDLES } from "@/components/apnahire/job-credit-bundles"
@@ -229,7 +230,7 @@ export function JobPlanSelection() {
   const annualLine = (): CartLine => ({
     id: "unlimited_annual",
     label: "Annual plan",
-    sublabel: `1 active job slot + ${ANNUAL_PLAN.dbCreditsPerMonth} Database credits every month + Valid for 365 days`,
+    sublabel: `1 active job slot + ${ANNUAL_PLAN.dbCredits.toLocaleString("en-IN")} Database credits + Valid for ${ANNUAL_PLAN.slotDays} days`,
     price: ANNUAL_PLAN.price,
     renewAfterDays: 365,
   })
@@ -313,7 +314,7 @@ export function JobPlanSelection() {
               shimmerKey={shimmerKey}
             />
           )}
-          <p className="text-xs text-checkout-hero-fg-muted">* 18% GST will be added at checkout</p>
+          <GstNote />
         </div>
       </div>
 

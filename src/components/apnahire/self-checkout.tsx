@@ -27,6 +27,7 @@ import * as React from "react"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
+import { GstNote } from "@/components/apnahire/gst-note"
 
 import {
   PricingHero,
@@ -47,8 +48,15 @@ import {
   type DbBundle,
 } from "@/components/apnahire/database-credit-bundles"
 import { ContactSalesCard } from "@/components/apnahire/contact-sales-card"
-import { SubscriptionPlans } from "@/components/apnahire/subscription-plans"
-import { EnterprisePricingTable } from "@/components/apnahire/enterprise-pricing-table"
+import {
+  SUBSCRIPTION_PLANS,
+  SubscriptionPlans,
+  type SubscriptionPlanId,
+} from "@/components/apnahire/subscription-plans"
+import {
+  DEFAULT_ENTERPRISE_TIER,
+  EnterprisePricingTable,
+} from "@/components/apnahire/enterprise-pricing-table"
 import { FaqSection } from "@/components/apnahire/faq-section"
 import { TrustBar } from "@/components/apnahire/trust-bar"
 import { TestimonialGrid } from "@/components/apnahire/testimonial-grid"
@@ -65,22 +73,9 @@ import { useHeaderSlot } from "@/components/marketing/header-slot"
 import { AuthStateSwitcher } from "@/components/apnahire/auth-state-switcher"
 import { ExitOfferDialog } from "@/components/apnahire/offers/exit-offer-dialog"
 import { useExtraOff } from "@/components/apnahire/offers/use-extra-off"
-import {
-  AnnualUpgradeDialog,
-  CreditPackOfferDialog,
-  type CreditQuote,
-  type SubscriptionQuote,
-} from "@/components/apnahire/offers/upsell-dialogs"
-import { ANNUAL_PLAN, EXTRA_OFF } from "@/content/offers"
+import { ANNUAL_PLAN, EXTRA_OFF, withExtraOff } from "@/content/offers"
 
 export type CheckoutAuthState = "logged-in" | "logged-out"
-
-const creditQuote = (b: Bundle): CreditQuote => ({
-  credits: b.credits,
-  price: b.price,
-  mrp: b.mrp,
-  validDays: b.validDays,
-})
 
 function randomOrderId() {
   return Math.random().toString(36).slice(2, 10).toUpperCase()
@@ -110,7 +105,9 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
       return current
     })
   }, [])
-  const hasMobileDock = activeTab === "jobs" || activeTab === "database"
+  // Phones: every tab is a radio list with one sticky CTA for its selection.
+  const [subscriptionPlan, setSubscriptionPlan] = React.useState<SubscriptionPlanId>("quarterly")
+  const [enterpriseTier, setEnterpriseTier] = React.useState(DEFAULT_ENTERPRISE_TIER)
 
   // Sticky header — starts transparent over the gradient hero, turns solid
   // once the page scrolls; the compact tab switcher fades in once the
@@ -177,40 +174,25 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
     null
   )
 
-  // Upsells + exit loop (Figma 2472:19068 / 2490:43116 / 2525:23488).
+  // Exit loop (Figma 2525:23488). Self-checkout has no upsells (product
+  // decision): every Buy goes straight to the order summary.
   const offer = useExtraOff()
-  const [packUpsell, setPackUpsell] = React.useState<{ from: Bundle; to: Bundle } | null>(null)
-  const [annualFrom, setAnnualFrom] = React.useState<
-    (SubscriptionQuote & { checkout: () => void }) | null
-  >(null)
   const [exitPrompt, setExitPrompt] = React.useState<{ proceed: () => void } | null>(null)
 
-  // Closing the order summary goes through the exit nudge first, until the
-  // offer is claimed or turned down.
+  // Leaving (the top bar's back button, closing the order summary) goes
+  // through the exit nudge first, until the offer is claimed or turned down.
   const attemptExit = (proceed: () => void) => {
     if (offer.nudgeAvailable) setExitPrompt({ proceed })
     else proceed()
   }
 
-  /** Every job-credit purchase is offered the next pack up first: single →
-   *  3, 3 → 6, 6 → 13. The largest pack goes straight to checkout. */
-  const nextPack = (bundle: Bundle): Bundle | undefined =>
-    bundle.credits === 1 ? BUNDLES[0] : BUNDLES[BUNDLES.findIndex((b) => b.credits === bundle.credits) + 1]
-
-  const handleBuyBundle = (bundle: Bundle) => {
-    const to = nextPack(bundle)
-    if (to) setPackUpsell({ from: bundle, to })
-    else checkoutJobBundle(bundle)
-  }
-
-  const checkoutJobBundle = (bundle: {
+  const handleBuyBundle = (bundle: {
     credits: number
     validDays: number
     price: number
     mrp: number
     discountPct: number
   }) => {
-    setPackUpsell(null)
     setCheckoutItem({
       id: `job-${bundle.credits}`,
       label: `${bundle.credits} Job credit${bundle.credits > 1 ? "s" : ""}`,
@@ -244,8 +226,26 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
     setDrawerOpen(true)
   }
 
+  const shownPrice = (n: number) =>
+    `₹${(offer.claimed ? withExtraOff(n) : n).toLocaleString("en-IN")}`
+  const stickyCtaLabel =
+    activeTab === "enterprise"
+      ? "Contact sales"
+      : activeTab === "unlimited"
+        ? `Buy ${subscriptionPlan} plan • ${shownPrice(SUBSCRIPTION_PLANS[subscriptionPlan].price)}`
+        : selectedPackage.kind === "job"
+          ? `Buy ${selectedPackage.bundle.credits} job credits • ${shownPrice(selectedPackage.bundle.price)}`
+          : `Buy ${selectedPackage.bundle.credits} database credits • ${shownPrice(selectedPackage.bundle.price)}`
+
   const handleStickyCtaClick = () => {
-    if (selectedPackage.kind === "job") {
+    if (activeTab === "unlimited") {
+      if (subscriptionPlan === "monthly") handleBuyUnlimitedMonthly()
+      else if (subscriptionPlan === "annual") handleBuyUnlimitedAnnual()
+      else handleBuyUnlimitedQuarterly()
+    } else if (activeTab === "enterprise") {
+      // Figma defines no destination for "Contact sales" (the desktop
+      // cards' buttons are inert too).
+    } else if (selectedPackage.kind === "job") {
       handleBuyBundle(selectedPackage.bundle)
     } else {
       handleBuyDatabaseBundle(selectedPackage.bundle)
@@ -255,26 +255,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   // `renewAfterDays` is what switches the drawer into its subscription
   // variant, and what the renewal date is computed from. The parenthesised
   // sublabel is verbatim from the drawer's own frames (1236:22188).
-  // Monthly and quarterly Unlimited are both offered the annual plan first.
-  const handleBuyUnlimitedQuarterly = () =>
-    setAnnualFrom({ label: "Quarterly plan", price: 5999, months: 3, checkout: checkoutQuarterly })
-  const handleBuyUnlimitedMonthly = () =>
-    setAnnualFrom({ label: "Monthly plan", price: 2499, months: 1, checkout: checkoutMonthly })
-
-  const checkoutAnnual = () => {
-    setAnnualFrom(null)
-    setCheckoutItem({
-      id: "unlimited_annual_1",
-      label: "Annual plan",
-      sublabel: `(1 active job slot + ${(ANNUAL_PLAN.dbCreditsPerMonth * 12).toLocaleString("en-IN")} Database credits + Valid for 365 days)`,
-      price: ANNUAL_PLAN.price,
-      renewAfterDays: 365,
-    })
-    setDrawerOpen(true)
-  }
-
-  const checkoutQuarterly = () => {
-    setAnnualFrom(null)
+  const handleBuyUnlimitedQuarterly = () => {
     setCheckoutItem({
       id: "unlimited_quarterly_1",
       label: "Quarterly plan",
@@ -285,8 +266,19 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
     setDrawerOpen(true)
   }
 
-  const checkoutMonthly = () => {
-    setAnnualFrom(null)
+  const handleBuyUnlimitedAnnual = () => {
+    setCheckoutItem({
+      id: "unlimited_annual_1",
+      label: "Annual plan",
+      sublabel: `(1 active job slot + ${ANNUAL_PLAN.dbCredits.toLocaleString("en-IN")} Database credits + Valid for ${ANNUAL_PLAN.slotDays} days)`,
+      price: ANNUAL_PLAN.price,
+      mrp: ANNUAL_PLAN.mrp,
+      renewAfterDays: ANNUAL_PLAN.slotDays,
+    })
+    setDrawerOpen(true)
+  }
+
+  const handleBuyUnlimitedMonthly = () => {
     setCheckoutItem({
       id: "unlimited_monthly_1",
       label: "Monthly plan",
@@ -359,7 +351,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
              the (marketing) layout) is the header, and compactTabSwitcher
              above is published into it rather than rendered here. ── */
         <CheckoutTopBar
-          onBack={() => router.push("/apnahire/dashboard")}
+          onBack={() => attemptExit(() => router.push("/apnahire/dashboard"))}
           backLabel="Back to dashboard"
           showCenter={showCompactTabs}
           // Revealed from lg, not md: with the logo and the full-size
@@ -392,7 +384,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
       <div className="flex-1">
         <PricingHero activeTab={activeTab} onTabChange={changeTab} tabsRef={heroTabsRef} />
 
-        <div className={cn("px-4 pb-12 sm:px-8 lg:px-12", hasMobileDock && "pb-28 md:pb-12")}>
+        <div className={"px-4 pb-28 sm:px-8 md:pb-12 lg:px-12"}>
           {activeTab === "jobs" ? (
             <div className="mx-auto flex max-w-6xl flex-col gap-3">
               <div className="flex flex-col gap-5">
@@ -404,6 +396,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                       under its card rather than spanning both columns. */}
                   <div className="flex min-w-0 flex-1 flex-col gap-3">
                     <JobCreditBundles
+                      extraOff={offer.claimed}
                       className="flex-1"
                       onBuyNow={handleBuyBundle}
                       onBuySingleCredit={handleBuySingleCredit}
@@ -424,6 +417,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
 
                   <div className="flex w-full flex-col gap-3 xl:w-82">
                     <UnlimitedSideCard
+                      extraOff={offer.claimed}
                       className="flex-1"
                       onBuyNow={handleBuyUnlimitedQuarterly}
                     />
@@ -439,6 +433,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                   {/* 1. Job credits section */}
                   <div className="flex flex-col gap-3">
                     <JobCreditBundles
+                      extraOff={offer.claimed}
                       onBuyNow={handleBuyBundle}
                       onBuySingleCredit={handleBuySingleCredit}
                       selectedBundleId={selectedPackage.kind === "job" ? selectedPackage.bundle.id : undefined}
@@ -457,7 +452,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                   </div>
 
                   {/* 2. apna Unlimited Inset Card */}
-                  <UnlimitedSideCard onBuyNow={handleBuyUnlimitedQuarterly} />
+                  <UnlimitedSideCard extraOff={offer.claimed} onBuyNow={handleBuyUnlimitedQuarterly} />
                 </div>
 
                 {/* Both auth states — the updated Jobs frame draws this card
@@ -465,14 +460,13 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                 <ContactSalesCard />
               </div>
 
-              <p className="text-xs text-checkout-hero-fg-muted">
-                * 18% GST will be added at checkout
-              </p>
+              <GstNote />
             </div>
           ) : activeTab === "database" ? (
             <div className="mx-auto flex max-w-6xl flex-col gap-4">
               <div className="flex flex-col gap-3">
                 <DatabaseCreditBundles
+                  extraOff={offer.claimed}
                   onBuyNow={handleBuyDatabaseBundle}
                   selectedBundleId={selectedPackage.kind === "db" ? selectedPackage.bundle.id : undefined}
                   onSelectBundle={(bundle) => setSelectedPackage({ kind: "db", bundle })}
@@ -485,22 +479,29 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
 
               <div className="flex flex-col gap-3">
                 <ContactSalesCard />
-                <p className="text-xs text-checkout-hero-fg-muted">
-                  * 18% GST will be added at checkout
-                </p>
+                <GstNote />
               </div>
             </div>
           ) : activeTab === "unlimited" ? (
             <div className="mx-auto flex max-w-6xl flex-col gap-4">
               <SubscriptionPlans
+                extraOff={offer.claimed}
+                selectedPlan={subscriptionPlan}
+                onSelectPlan={setSubscriptionPlan}
                 onBuyMonthly={handleBuyUnlimitedMonthly}
                 onBuyQuarterly={handleBuyUnlimitedQuarterly}
+                onBuyAnnual={handleBuyUnlimitedAnnual}
               />
-              <ContactSalesCard />
+              {/* Phones: GST under the Contact sales card, as on the Database
+                  tab. Desktop keeps it beside the single-city note above. */}
+              <div className="flex flex-col gap-3">
+                <ContactSalesCard />
+                <GstNote className="md:hidden" />
+              </div>
             </div>
           ) : (
             <div className="mx-auto flex max-w-6xl flex-col gap-4">
-              <EnterprisePricingTable />
+              <EnterprisePricingTable selectedTier={enterpriseTier} onSelectTier={setEnterpriseTier} />
             </div>
           )}
         </div>
@@ -534,22 +535,20 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
           at the trust bar because the product shell owns navigation from
           there — same reasoning, different chrome. */}
 
-      {/* Mobile sticky bottom CTA dock — Jobs and Database tabs */}
-      {hasMobileDock && (
-        <div className="fixed inset-x-0 bottom-0 z-sticky border-t border-border bg-card/95 p-3.5 pb-safe-3.5 backdrop-blur-md md:hidden">
-          <Button
-            type="button"
-            variant="checkout"
-            size="lg"
-            className="h-12 w-full rounded-full text-base font-semibold shadow-md"
-            onClick={handleStickyCtaClick}
-          >
-            {selectedPackage.kind === "job"
-              ? `Buy ${selectedPackage.bundle.credits} job credits • ₹${selectedPackage.bundle.price.toLocaleString("en-IN")}`
-              : `Buy ${selectedPackage.bundle.credits} database credits • ₹${selectedPackage.bundle.price.toLocaleString("en-IN")}`}
-          </Button>
-        </div>
-      )}
+      {/* Mobile sticky bottom CTA dock: buys the current tab's selection
+          (Enterprise: Contact sales). Prices carry the claimed offer, as the
+          rows above do. */}
+      <div className="fixed inset-x-0 bottom-0 z-sticky border-t border-border bg-card/95 p-3.5 pb-safe-3.5 backdrop-blur-md md:hidden">
+        <Button
+          type="button"
+          variant="checkout"
+          size="lg"
+          className="h-12 w-full rounded-full text-base font-semibold shadow-md"
+          onClick={handleStickyCtaClick}
+        >
+          {stickyCtaLabel}
+        </Button>
+      </div>
 
       <CheckoutDrawer
         open={drawerOpen}
@@ -558,26 +557,6 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
         onProceedToPay={handleProceedToPay}
         extraOffer={offer.deadline ? { code: EXTRA_OFF.code, deadline: offer.deadline } : undefined}
         onExtraOfferExpired={offer.expire}
-      />
-
-      <CreditPackOfferDialog
-        open={packUpsell !== null}
-        need={packUpsell ? creditQuote(packUpsell.from) : null}
-        needNote={packUpsell ? `Valid for ${packUpsell.from.validDays} days` : undefined}
-        pack={packUpsell ? creditQuote(packUpsell.to) : null}
-        extraOff={offer.claimed}
-        onClose={() => setPackUpsell(null)}
-        onStay={() => packUpsell && checkoutJobBundle(packUpsell.from)}
-        onTake={() => packUpsell && checkoutJobBundle(packUpsell.to)}
-      />
-
-      <AnnualUpgradeDialog
-        open={annualFrom !== null}
-        from={annualFrom}
-        extraOff={offer.claimed}
-        onClose={() => setAnnualFrom(null)}
-        onStay={() => annualFrom?.checkout()}
-        onTake={checkoutAnnual}
       />
 
       <ExitOfferDialog
@@ -606,9 +585,14 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
         onFailure={handlePaymentFailure}
       />
 
-      {/* Prototype-only affordance for comparing the two Figma states side
-          by side without hand-typing URLs — never meant to ship. */}
-      {process.env.NODE_ENV !== "production" && <AuthStateSwitcher current={authState} />}
+      {/* Prototype-only settings: auth state and the exit offer's demo
+          controls. Shown in every build, deployed ones included, like
+          express checkout's switcher, so the states can be reviewed on the
+          live site. Remove once real auth and offer rules are wired up. */}
+      <AuthStateSwitcher
+        current={authState}
+        offer={{ claimed: offer.claimed, onExpireSoon: offer.expireSoon, onReset: offer.reset }}
+      />
     </div>
   )
 }

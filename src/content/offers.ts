@@ -1,6 +1,7 @@
 /**
- * Offers — the upsell and exit-loop content for express checkout
- * (`/apnahire/jobs/new/plans`) and self-checkout (`/pricing`).
+ * Offers — the upsells for express checkout (`/apnahire/jobs/new/plans`),
+ * and the exit loop for both express checkout and self-checkout (`/pricing`).
+ * Self-checkout has no upsells (product decision).
  *
  * Structure, copy and triggers come from Figma `92gU18d45olE04ATyhhVHD`:
  *   2472:19068  Job upselling          (bundle offer, zero / some credits)
@@ -31,6 +32,27 @@ export const EXTRA_OFF = {
 
 export const withExtraOff = (price: number) => Math.round(price * (1 - EXTRA_OFF.pct / 100))
 
+/** A credit bundle's display figures with the claimed offer: the price drops
+ *  by 10%, the struck MRP stays, and the % OFF and per-credit price are
+ *  recalculated from the new price. Per-credit keeps the design's precision
+ *  (whole rupees for job credits, one decimal for database credits). Only for
+ *  display: checkout gets the base bundle and applies the coupon itself. */
+export function withExtraOffBundle<
+  B extends { credits: number; price: number; mrp: number; discountPct: number; pricePerCredit: number },
+>(bundle: B, extraOff: boolean): B {
+  if (!extraOff) return bundle
+  const price = withExtraOff(bundle.price)
+  const perCredit = price / bundle.credits
+  return {
+    ...bundle,
+    price,
+    discountPct: Math.round((1 - price / bundle.mrp) * 100),
+    pricePerCredit: Number.isInteger(bundle.pricePerCredit)
+      ? Math.round(perCredit)
+      : Math.round(perCredit * 10) / 10,
+  }
+}
+
 /** "Pay less when you buy 3" — offered on every job tier when the
  *  recruiter has no credits. DEMO prices: about 21% off three single posts,
  *  which is the board's Premium ratio (₹1,399 → ₹1,099 /job). */
@@ -40,12 +62,17 @@ export const JOB_BUNDLE_OFFERS: Record<JobPlanTierId, { jobs: number; pricePerJo
   "super-premium": { jobs: 3, pricePerJob: 2199, validDays: 90 },
 }
 
-/** The 12-month Unlimited plan the monthly / quarterly purchase is upsold
- *  to. DEMO price from the board: ₹9,999 a year, i.e. 8 of 12 months free
- *  against the ₹2,499 monthly price. */
+/** The 12-month Unlimited plan: sold on self-checkout's Subscription tab and
+ *  the plan express checkout's monthly purchase is upsold to. ₹9,999 a year
+ *  against an MRP of ₹15,999 (product, 2026-10-15); 8 of 12 months free
+ *  against the ₹2,499 monthly price. Unlimited job postings, 1 active job
+ *  slot for 365 days, 2,000 database credits worth ₹20,000. */
 export const ANNUAL_PLAN = {
   price: 9999,
+  mrp: 15999,
   months: 12,
   monthsFree: 8,
-  dbCreditsPerMonth: 200,
+  slotDays: 365,
+  dbCredits: 2000,
+  dbCreditsWorth: 20000,
 } as const

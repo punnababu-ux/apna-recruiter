@@ -161,11 +161,14 @@ export function PricingCard({
 
   const priceBlock = (
     <div className={cn("flex flex-col", titleLed ? "gap-1" : "gap-2")}>
-      <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+      {/* 6px gaps, not 8: in a 248px card (Jobs tab at xl, beside the
+          Unlimited card) "₹6,389 ₹8,999 29% OFF" missed one line by 1px in
+          Inter. The badge still wraps if a price outgrows the card. */}
+      <div className="flex flex-wrap items-center justify-between gap-x-1.5 gap-y-1">
         {/* Baseline, not centre: the small struck price then sits on the
             same line as the price's own suffix ("/month"), not floating at
             the big figure's mid-height. */}
-        <div className="flex items-baseline gap-2">
+        <div className="flex items-baseline gap-1.5">
           <span
             className={cn(
               "font-semibold",

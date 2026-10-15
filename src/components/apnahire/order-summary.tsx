@@ -11,6 +11,7 @@ import * as React from "react"
 import { ArrowRight } from "@apna/design-system"
 import { Button, Separator } from "@apna/design-system"
 import { cn } from "@/lib/utils"
+import { GstNote } from "@/components/apnahire/gst-note"
 
 export interface OrderLine {
   label: string
@@ -103,9 +104,7 @@ export function OrderSummary({
         <ArrowRight className="size-4" aria-hidden />
       </Button>
 
-      <p className="text-center text-xs text-muted-foreground">
-        GST will be added at checkout
-      </p>
+      <GstNote className="text-center text-muted-foreground" />
     </div>
   )
 }

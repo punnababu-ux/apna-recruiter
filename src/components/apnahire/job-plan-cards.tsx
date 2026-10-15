@@ -37,11 +37,17 @@ import {
   WhatsApp,
   X,
   type IconComponent,
-  BadgePercent,
 } from "@apna/design-system"
 import { SINGLE_CREDIT } from "@/components/apnahire/job-credit-bundles"
+import { ExtraOffLine } from "@/components/apnahire/offers/extra-off-line"
+import {
+  MobileDiscountRow,
+  MobileMetaLine,
+  MobilePlanRow,
+  MobileUnlimitedCard,
+} from "@/components/apnahire/mobile-plan-row"
 import { cn } from "@/lib/utils"
-import { EXTRA_OFF, withExtraOff } from "@/content/offers"
+import { withExtraOff } from "@/content/offers"
 import {
   JOB_PLAN_TIERS,
   MONTHLY_SUBSCRIPTION_PLAN,
@@ -64,15 +70,6 @@ const PlanOfferContext = React.createContext({ extraOff: false, shimmerKey: 0 })
 function offerTier(tier: JobPlanTier, extraOff: boolean): JobPlanTier {
   if (!extraOff) return tier
   return { ...tier, price: withExtraOff(tier.price), mrp: tier.mrp ?? tier.price }
-}
-
-function ExtraOffLine() {
-  return (
-    <span className="flex items-center gap-1 text-xs not-italic text-success">
-      <BadgePercent className="size-3.5 shrink-0" aria-hidden />
-      {EXTRA_OFF.applied}
-    </span>
-  )
 }
 
 /** Visibility at a glance on the mobile plan rows: the tier's label next to
@@ -349,130 +346,73 @@ function MobileJobPlanRadioGroup({
                 : inr(tier.price)
 
           return (
-            <div key={`${tier.id}-${shimmerKey}`} className="relative pt-1.5">
-              {isRecommended && (
-                <div className="absolute -top-1 left-3 z-10">
-                  <span className="rounded-full bg-checkout-info px-2.5 py-0.5 text-xs font-semibold text-checkout-info-foreground shadow-xs">
-                    Recommended
-                  </span>
-                </div>
-              )}
-              <div
-                onClick={() => setSelectedKey(tier.id)}
-                role="radio"
-                aria-checked={isSelected}
-                tabIndex={0}
-                className={cn(
-                  "ink press-subtle relative flex cursor-pointer flex-col gap-3 overflow-hidden rounded-xl bg-card p-4 shadow-xs transition-interactive",
-                  shimmerKey > 0 && "animate-shimmer-once",
-                  isSelected
-                    ? "border-2 border-checkout-primary ring-1 ring-checkout-primary/20"
-                    : "border border-border hover:border-border/80"
-                )}
-              >
-                {/* Header: plan name paired with its radio (the standard
-                    radio-card reading). Body: what you get on the left, what
-                    you pay on the right, with the full width the radio no
-                    longer takes from the price column. */}
-                <div className="flex items-center justify-between gap-3">
-                  <span className="text-base font-semibold text-foreground">{tier.title}</span>
-                  <div
-                    className={cn(
-                      "flex size-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
-                      isSelected ? "border-checkout-primary" : "border-muted-foreground/30"
-                    )}
-                  >
-                    {isSelected && <div className="size-2.5 rounded-full bg-checkout-primary" />}
-                  </div>
-                </div>
-
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex min-w-0 flex-col gap-2">
-                    <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                      <ClockFading className="size-3.5 shrink-0" aria-hidden />
-                      Active for {tier.jobActiveDays} days
+            <MobilePlanRow
+              key={`${tier.id}-${shimmerKey}`}
+              title={tier.title}
+              selected={isSelected}
+              onSelect={() => setSelectedKey(tier.id)}
+              recommended={isRecommended}
+              className={cn(shimmerKey > 0 && "animate-shimmer-once")}
+              meta={
+                <>
+                  <MobileMetaLine icon={<ClockFading aria-hidden />}>
+                    Active for {tier.jobActiveDays} days
+                  </MobileMetaLine>
+                  <VisibilityLine tier={tier} />
+                  {creditMode && (
+                    <span className="text-xs font-semibold text-checkout-info">
+                      Consumes {creditLabel(tier.credit)}
                     </span>
-                    <VisibilityLine tier={tier} />
-                    {creditMode && (
-                      <span className="text-xs font-semibold text-checkout-info">
-                        Consumes {creditLabel(tier.credit)}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="flex shrink-0 flex-col items-end text-right">
-                    <div className="flex items-baseline justify-end gap-1.5">
-                      {!creditMode && tier.mrp && tier.mrp > tier.price && (
-                        <span className="text-xs text-muted-foreground line-through">
-                          ₹{tier.mrp.toLocaleString("en-IN")}
-                        </span>
-                      )}
-                      {/* The price leads the row (20px, over the 16px plan
-                          name); tabular figures keep the column steady. */}
-                      <span className="text-xl font-bold tabular-nums text-foreground">
-                        {creditMode ? creditLabel(tier.credit) : inr(tier.price)}
-                      </span>
-                    </div>
-                    {creditMode ? (
-                      <span className="text-xs italic text-muted-foreground">{creditStatus}</span>
-                    ) : discountPct ? (
-                      // One discount signal under the price, in place of
-                      // "Save ₹X" (which said the same thing).
-                      <div className="mt-1 flex items-center gap-1.5">
-                        {/* The badge already counts the claimed 10%; this
-                            says why it went up, beside the price it changed. */}
-                        {extraOff && (
-                          <span className="text-xs font-medium text-success">Incl. 10% extra</span>
-                        )}
-                        <Badge variant="discount" size="sm">
-                          {discountPct}% OFF
-                        </Badge>
-                      </div>
-                    ) : null}
-                  </div>
-                </div>
-
-                {/* Explain on selection: only the chosen plan lists what it
-                    includes, so the unselected rows stay scannable. The
-                    signal meter carries the comparison between plans. */}
-                {isSelected && (
-                  // With no feature points (Classic), the credits line is the
-                  // only content: its divider is the dashed "offer" rule used
-                  // everywhere else for the credits, instead of a solid one.
-                  <ul
+                  )}
+                </>
+              }
+              mrp={!creditMode && tier.mrp && tier.mrp > tier.price ? inr(tier.mrp) : undefined}
+              price={creditMode ? creditLabel(tier.credit) : inr(tier.price)}
+              belowPrice={
+                creditMode ? (
+                  <span className="text-xs italic text-muted-foreground">{creditStatus}</span>
+                ) : (
+                  // One discount signal under the price. The badge already
+                  // counts the claimed 10%; the note says why it went up.
+                  <MobileDiscountRow pct={discountPct} note={extraOff && discountPct ? "Incl. 10% extra" : undefined} />
+                )
+              }
+              details={
+                // Explain on selection. With no feature points (Classic),
+                // the credits line is the only content: its divider is the
+                // dashed "offer" rule, instead of a solid one.
+                <ul
+                  className={cn(
+                    "flex flex-col gap-2 border-t border-border pt-3 text-xs text-foreground animate-in fade-in-0",
+                    !tier.features.some((f) => f.enabled) && "border-dashed"
+                  )}
+                >
+                  {tier.features
+                    .filter((f) => f.enabled)
+                    .map((f) => (
+                      <li key={f.label} className="flex items-center gap-2 [&_svg]:size-4">
+                        {featureIcon(f.label, true)}
+                        {f.label}
+                      </li>
+                    ))}
+                  {/* Last: the free credits are a limited-time offer, not
+                      the plan. The dashed rule sets them apart only when
+                      feature points sit above. */}
+                  <li
                     className={cn(
-                      "flex flex-col gap-2 border-t border-border pt-3 text-xs text-foreground animate-in fade-in-0",
-                      !tier.features.some((f) => f.enabled) && "border-dashed"
+                      "flex items-center gap-2 text-foreground",
+                      tier.features.some((f) => f.enabled) && "border-t border-dashed border-border pt-2"
                     )}
                   >
-                    {tier.features
-                      .filter((f) => f.enabled)
-                      .map((f) => (
-                        <li key={f.label} className="flex items-center gap-2 [&_svg]:size-4">
-                          {featureIcon(f.label, true)}
-                          {f.label}
-                        </li>
-                      ))}
-                    {/* Last: the free credits are a limited-time offer, not
-                        the plan. The dashed rule sets them apart only when
-                        feature points sit above (Classic has none, so it
-                        would double up with the solid rule). */}
-                    <li
-                      className={cn(
-                        "flex items-center gap-2 text-foreground",
-                        tier.features.some((f) => f.enabled) && "border-t border-dashed border-border pt-2"
-                      )}
-                    >
-                      <Database className="size-4 shrink-0 text-muted-foreground" aria-hidden />
-                      <span>
-                        {tier.dbCredits} free database credits
-                        <span className="text-muted-foreground"> · Limited offer</span>
-                      </span>
-                    </li>
-                  </ul>
-                )}
-              </div>
-            </div>
+                    <Database className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+                    <span>
+                      {tier.dbCredits} free database credits
+                      <span className="text-muted-foreground"> · Limited offer</span>
+                    </span>
+                  </li>
+                </ul>
+              }
+            />
           )
         })}
       </div>
@@ -504,85 +444,34 @@ function MobileSubscriptionCard({ onSelect }: { onSelect: () => void }) {
   const strike = plan.mrp ?? (extraOff ? plan.price : undefined)
   const discountPct = strike && strike > price ? Math.round((1 - price / strike) * 100) : null
   return (
-    // Slimmer frame at the sides and bottom (2.5) so the white card gets the
-    // width; the top keeps its breathing room above and below the logo.
-    // The logo is inset by the card's own padding (px-4) so it starts on
-    // the same line as "Monthly plan" inside the card.
-    <div className="flex flex-col gap-3 rounded-2xl bg-gradient-checkout-unlimited px-2.5 pt-5 pb-2.5 text-surface-inverted-fg sm:hidden">
-      <div className="flex h-5 items-start px-4">
-        <LogoApnaUnlimited variant="gradient" className="h-4 w-auto" />
-      </div>
-
-      <div
-        key={shimmerKey}
-        className={cn(
-          "relative overflow-hidden rounded-xl bg-card p-4 text-card-foreground shadow-xs",
-          shimmerKey > 0 && "animate-shimmer-once"
-        )}
-      >
-        {/* Same structure and scale as the job plan rows above it: the
-            16px name on its own line, then details left and the 20px price
-            right, so neither wraps. */}
-        {/* "Monthly plan" (the apna Unlimited logo above already names the
-            product) is short enough to share its line with the price: name
-            and price on top, subtitle and the discount row under them. */}
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex min-w-0 flex-col gap-1.5">
-            <span className="text-base font-semibold text-foreground">Monthly plan</span>
-            <span className="text-xs text-muted-foreground">Unlimited job reposts</span>
-          </div>
-          <div className="flex shrink-0 flex-col items-end gap-1 text-right">
-            <span className="flex items-baseline gap-1.5">
-              {strike && (
-                <span className="text-xs text-muted-foreground line-through">{inr(strike)}</span>
-              )}
-              <span className="text-xl font-bold tabular-nums text-foreground">{inr(price)}</span>
-              {/* Neutral, as on the desktop card — the price carries it. */}
-              <span className="text-xs font-regular text-foreground">/month</span>
-            </span>
-            {discountPct ? (
-              <div className="flex items-center gap-1.5">
-                {extraOff && <span className="text-xs font-medium text-success">Incl. 10% extra</span>}
-                <Badge variant="discount" size="sm">
-                  {discountPct}% OFF
-                </Badge>
-              </div>
-            ) : null}
-          </div>
-        </div>
-
-        <div className="mt-3 flex flex-col gap-2 border-t border-border/60 pt-3 text-xs text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <BriefcaseBusiness className="size-3.5 shrink-0 text-foreground" aria-hidden />
-            {/* "Unlimited reposts" now leads as the plan's subtitle. */}
-            <span><strong>1 active job slot</strong> for 30 days</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Database className="size-3.5 shrink-0 text-foreground" aria-hidden />
-            <span>{plan.dbCreditsPerMonth} database credits every month</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <WhatsApp className="size-3.5 shrink-0 text-foreground" aria-hidden />
-            <span>WhatsApp outreach to matched candidates</span>
-          </div>
-        </div>
-
-        <div className="mt-3 flex items-center justify-between border-t border-border/60 pt-3">
-          <span className="text-xs italic text-muted-foreground">
-            {plan.note}
-          </span>
-          <Button
-            type="button"
-            variant="checkout-inset"
-            size="sm"
-            className="h-8 rounded-full px-3.5 text-xs font-semibold"
-            onClick={onSelect}
-          >
-            Get Unlimited
-          </Button>
-        </div>
-      </div>
-    </div>
+    <MobileUnlimitedCard
+      key={shimmerKey}
+      className="sm:hidden"
+      cardClassName={cn(shimmerKey > 0 && "animate-shimmer-once")}
+      title="Monthly plan"
+      subtitle="Unlimited job reposts"
+      mrp={strike ? inr(strike) : undefined}
+      price={inr(price)}
+      unit="/month"
+      belowPrice={<MobileDiscountRow pct={discountPct} note={extraOff && discountPct ? "Incl. 10% extra" : undefined} />}
+      features={[
+        [<BriefcaseBusiness key="i" aria-hidden />, <><strong>1 active job slot</strong> for 30 days</>],
+        [<Database key="i" aria-hidden />, `${plan.dbCreditsPerMonth} database credits every month`],
+        [<WhatsApp key="i" aria-hidden />, "WhatsApp outreach to matched candidates"],
+      ]}
+      note={plan.note}
+      cta={
+        <Button
+          type="button"
+          variant="checkout-inset"
+          size="sm"
+          className="h-8 shrink-0 rounded-full px-3.5 text-xs font-semibold"
+          onClick={onSelect}
+        >
+          Get Unlimited
+        </Button>
+      }
+    />
   )
 }
 
