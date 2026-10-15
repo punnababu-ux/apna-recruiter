@@ -70,6 +70,7 @@ export function JobBundleOfferDialog({ tier, ...props }: UpsellCallbacks & { tie
           badge: pctOff(single, tier.mrp),
           extraOff: props.extraOff,
           ctaLabel: "Continue with 1 job",
+          ctaShortLabel: "Continue",
           onSelect: props.onStay,
         }}
         upgrade={{
@@ -81,6 +82,7 @@ export function JobBundleOfferDialog({ tier, ...props }: UpsellCallbacks & { tie
           validDays: bundle.validDays,
           extraOff: props.extraOff,
           ctaLabel: `Get ${bundle.jobs} jobs for ${inr(bundle.price)}`,
+          ctaShortLabel: `Get ${bundle.jobs} jobs`,
           onSelect: props.onTake,
         }}
       />
@@ -132,6 +134,7 @@ export function CreditPackOfferDialog({
           note: needNote,
           extraOff: props.extraOff,
           ctaLabel: `Continue with ${credits(need.credits)}`,
+          ctaShortLabel: "Continue",
           onSelect: props.onStay,
         }}
         upgrade={{
@@ -143,6 +146,7 @@ export function CreditPackOfferDialog({
           validDays: pack.validDays,
           extraOff: props.extraOff,
           ctaLabel: `Get ${credits(pack.credits)} for ${inr(packPrice)}`,
+          ctaShortLabel: `Get ${pack.credits} credits`,
           onSelect: props.onTake,
         }}
       />
@@ -195,6 +199,7 @@ export function AnnualUpgradeDialog({ from, ...props }: UpsellCallbacks & { from
           note: from.months === 1 ? "Billed monthly" : "Billed every 3 months",
           extraOff: props.extraOff,
           ctaLabel: `Continue with ${from.label.toLowerCase()}`,
+          ctaShortLabel: "Continue",
           onSelect: props.onStay,
         }}
         upgrade={{
@@ -206,6 +211,7 @@ export function AnnualUpgradeDialog({ from, ...props }: UpsellCallbacks & { from
           note: `That's just ${inr(annual.perMonth)} /month`,
           extraOff: props.extraOff,
           ctaLabel: `Get yearly plan for ${inr(annual.price)}`,
+          ctaShortLabel: "Get yearly plan",
           onSelect: props.onTake,
         }}
       />

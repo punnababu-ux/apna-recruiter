@@ -9,9 +9,10 @@
  *   upgrade  the offer: brand-tinted tile with a corner ribbon
  *            ("27% OFF", "8 MONTHS FREE") and the primary CTA
  *
- * The upgrade tile is wider from sm, as on the board. On phones both tiles
- * get equal width, as in the Mweb frames. CTAs are pinned to the tile
- * bottoms so the two line up, and labels may wrap on narrow sheets.
+ * Side by side at every size (the upgrade tile wider from sm, as on the
+ * board), CTAs pinned to the tile bottoms so they line up. On phones a tile
+ * is ~160px wide, so CTAs switch to `ctaShortLabel` ("Continue",
+ * "Get 3 jobs") to stay on one line. The price is already right above.
  */
 
 import * as React from "react"
@@ -34,6 +35,8 @@ export interface OfferOption {
   /** Show the "10% extra off applied" line. */
   extraOff?: boolean
   ctaLabel: string
+  /** Phone label (< sm), where the tile is too narrow for `ctaLabel`. */
+  ctaShortLabel?: string
   onSelect: () => void
 }
 
@@ -45,6 +48,9 @@ function OptionTile({ option, kind }: { option: OfferOption; kind: "stay" | "upg
     <div
       className={cn(
         "relative flex min-w-0 flex-col gap-4 overflow-hidden rounded-xl border p-3.5 sm:p-4",
+        // The corner ribbon gets its own band: the title starts below it
+        // rather than squeezing in beside it.
+        option.badge && "pt-8 sm:pt-9",
         upgrade ? "border-checkout-primary bg-accent sm:col-span-3" : "border-border bg-card sm:col-span-2"
       )}
     >
@@ -62,9 +68,7 @@ function OptionTile({ option, kind }: { option: OfferOption; kind: "stay" | "upg
       )}
 
       <div className="flex flex-col gap-2">
-        {/* Clear the corner ribbon only when there is one — otherwise the
-            reserved space wraps short titles ("1 Super premium job"). */}
-        <p className={cn("text-sm font-semibold text-foreground", option.badge && "pr-12")}>{option.title}</p>
+        <p className="text-sm font-semibold text-foreground">{option.title}</p>
         <p className="flex flex-wrap items-baseline gap-x-1.5">
           <span className="text-xl font-semibold text-foreground sm:text-2xl">{inr(option.price)}</span>
           {option.unit && <span className="text-sm text-muted-foreground">{option.unit}</span>}
@@ -102,7 +106,14 @@ function OptionTile({ option, kind }: { option: OfferOption; kind: "stay" | "upg
         className="mt-auto h-auto min-h-10 w-full py-2 whitespace-normal"
         onClick={option.onSelect}
       >
-        {option.ctaLabel}
+        {option.ctaShortLabel ? (
+          <>
+            <span className="sm:hidden">{option.ctaShortLabel}</span>
+            <span className="hidden sm:inline">{option.ctaLabel}</span>
+          </>
+        ) : (
+          option.ctaLabel
+        )}
       </Button>
     </div>
   )
