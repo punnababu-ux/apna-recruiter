@@ -31,7 +31,7 @@
  */
 
 import * as React from "react"
-import { Badge, LogoApnaUnlimited } from "@apna/design-system"
+import { Badge, BadgePercent, LogoApnaUnlimited } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 
 /* ── Radio row ──────────────────────────────────────────────────────── */
@@ -201,24 +201,27 @@ export function MobilePlanDetails({ items }: { items: Array<[React.ReactNode, Re
 
 /** "Incl. 10% extra" (when the exit offer is claimed) + the % OFF badge.
  *  With the note, it announces the offer like ExtraOffLine: the words
- *  shimmer and the badge rocks. */
+ *  shimmer and the discount icon rocks. The discount badge stays steady. */
 export function MobileDiscountRow({
   pct,
   note,
-  announce = Boolean(note),
 }: {
   pct?: number | null
   note?: React.ReactNode
-  /** Rock the badge (offer is on). Defaults to on when there's a
-   *  note; pass it when the note is drawn elsewhere (Subscription rows). */
+  /** @deprecated Badge stays static; kept for caller compatibility */
   announce?: boolean
 }) {
   if (!pct && !note) return null
   return (
     <div className="flex items-center gap-1.5 whitespace-nowrap">
-      {note && <span className="animate-text-shimmer text-xs font-medium text-success">{note}</span>}
+      {note && (
+        <span className="flex items-center gap-1 text-xs font-medium text-success">
+          <BadgePercent className="size-3.5 shrink-0 animate-wiggle" aria-hidden />
+          <span className="animate-text-shimmer">{note}</span>
+        </span>
+      )}
       {pct ? (
-        <Badge variant="discount" size="sm" className={announce ? "animate-wiggle" : undefined}>
+        <Badge variant="discount" size="sm">
           {pct}% OFF
         </Badge>
       ) : null}

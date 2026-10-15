@@ -16,6 +16,7 @@
 import * as React from "react"
 import {
   Badge,
+  BadgePercent,
   BriefcaseBusiness,
   Button,
   Check,
@@ -327,10 +328,13 @@ export function SubscriptionPlans({
                 mrp={strike ? inr(strike) : undefined}
                 price={inr(price)}
                 unit={UNITS[plan.months]}
-                belowPrice={pct ? <MobileDiscountRow pct={pct} announce={extraOff} /> : undefined}
+                belowPrice={pct ? <MobileDiscountRow pct={pct} /> : undefined}
                 priceNote={
                   extraOff ? (
-                    <span className="animate-text-shimmer text-xs font-medium text-success">Incl. 10% extra</span>
+                    <span className="flex items-center gap-1 text-xs font-medium text-success">
+                      <BadgePercent className="size-3.5 shrink-0 animate-wiggle" aria-hidden />
+                      <span className="animate-text-shimmer">Incl. 10% extra</span>
+                    </span>
                   ) : undefined
                 }
                 details={
