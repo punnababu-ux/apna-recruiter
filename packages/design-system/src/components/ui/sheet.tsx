@@ -5,6 +5,7 @@ import { Dialog as SheetPrimitive } from "@base-ui/react/dialog"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { CloseBubble } from "@/components/ui/close-bubble"
 import { XIcon } from "@/icons/icons"
 
 function Sheet({ ...props }: SheetPrimitive.Root.Props) {
@@ -59,7 +60,17 @@ function SheetContent({
         {...props}
       >
         {children}
-        {showCloseButton && (
+        {/* A bottom sheet is a pop-up: its close is the CloseBubble, 8px
+            above its top-right corner (so the sheet must not clip — no
+            overflow-hidden on it). Side and top sheets are panels and keep
+            the inside X. */}
+        {showCloseButton && side === "bottom" && (
+          <SheetPrimitive.Close
+            data-slot="sheet-close"
+            render={<CloseBubble className="absolute -top-10 right-4" />}
+          />
+        )}
+        {showCloseButton && side !== "bottom" && (
           <SheetPrimitive.Close
             data-slot="sheet-close"
             render={

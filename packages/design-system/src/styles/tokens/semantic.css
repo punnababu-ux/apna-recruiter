@@ -469,6 +469,14 @@
    * rather than an opaque colour, and needed a lighter base to darken
    * against — plum-800/900/950 left too little headroom for the overlay
    * to read as a distinct, lifted layer. */
+  /* Close bubble — the pop-up close control that sits outside the card's
+   * top-right corner (Figma "close-button-bubble"). A dark translucent disc
+   * with a white X, the same in both themes: it sits on the dimmed
+   * backdrop, never on the card. */
+  --close-bubble:            var(--color-alpha-black-50);
+  --close-bubble-hover:      var(--color-alpha-black-60);
+  --close-bubble-foreground: var(--color-gray-0);
+
   /* Offer pop-ups (bundle upsell, exit nudge) — a light ambient mesh in
    * the same voice as the checkout page behind it: a warm gold bloom
    * top-left, a sky bloom top-right, over white→gray. Dark text sits on

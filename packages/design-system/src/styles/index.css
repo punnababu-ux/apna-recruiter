@@ -51,6 +51,9 @@
   --color-highlight-foreground: var(--highlight-foreground);
 
   /* Status */
+  --color-close-bubble:            var(--close-bubble);
+  --color-close-bubble-hover:      var(--close-bubble-hover);
+  --color-close-bubble-foreground: var(--close-bubble-foreground);
   --color-destructive:             var(--destructive);
   --color-destructive-foreground:  var(--destructive-foreground);
   --color-destructive-subtle:      var(--destructive-subtle);
