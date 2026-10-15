@@ -362,36 +362,33 @@ function MobileJobPlanRadioGroup({
                 aria-checked={isSelected}
                 tabIndex={0}
                 className={cn(
-                  "ink press-subtle relative flex cursor-pointer items-center justify-between overflow-hidden rounded-xl bg-card p-3.5 shadow-xs transition-interactive",
+                  "ink press-subtle relative flex cursor-pointer flex-col gap-3 overflow-hidden rounded-xl bg-card p-4 shadow-xs transition-interactive",
                   shimmerKey > 0 && "animate-shimmer-once",
                   isSelected
                     ? "border-2 border-checkout-primary ring-1 ring-checkout-primary/20"
                     : "border border-border hover:border-border/80"
                 )}
               >
-                <div className="flex flex-col gap-1">
-                  <span className="text-sm font-semibold text-foreground">
+                <div className="flex items-center justify-between gap-3">
+                <div className="flex min-w-0 flex-col gap-2">
+                  <span className="text-base font-semibold text-foreground">
                     {tier.title}
                   </span>
                   <VisibilityLine tier={tier} />
-                  <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <ClockFading className="size-3.5 shrink-0" aria-hidden />
-                    Active for {tier.jobActiveDays} days · {tier.dbCredits} free DB
-                  </span>
                   {extraOff && !creditMode && <ExtraOffLine />}
-                  {!creditMode && discountPct ? (
-                    <div className="pt-0.5">
-                      <Badge variant="discount" size="sm">
-                        {discountPct}% OFF
-                      </Badge>
-                    </div>
-                  ) : creditMode ? (
-                    <div className="pt-0.5">
-                      <span className="text-xs font-semibold text-checkout-info">
-                        Consumes {creditLabel(tier.credit)}
-                      </span>
-                    </div>
-                  ) : null}
+                  {creditMode && (
+                    <span className="text-xs font-semibold text-checkout-info">
+                      Consumes {creditLabel(tier.credit)}
+                    </span>
+                  )}
+                  {/* What you get: the free database credits, a limited-time
+                      offer rather than a permanent part of the plan, so a
+                      chip. The discount lives with the price on the right. */}
+                  <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                    <Badge variant="discount" size="sm">
+                      <Database aria-hidden />+{tier.dbCredits} free DB credits
+                    </Badge>
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-3">
@@ -402,7 +399,9 @@ function MobileJobPlanRadioGroup({
                           ₹{tier.mrp.toLocaleString("en-IN")}
                         </span>
                       )}
-                      <span className="text-base font-bold text-foreground">
+                      {/* The price leads the row (20px, over the 16px plan
+                          name); tabular figures keep the column steady. */}
+                      <span className="text-xl font-bold tabular-nums text-foreground">
                         {creditMode ? creditLabel(tier.credit) : inr(tier.price)}
                       </span>
                     </div>
@@ -410,10 +409,12 @@ function MobileJobPlanRadioGroup({
                       <span className="text-xs italic text-muted-foreground">
                         {creditStatus}
                       </span>
-                    ) : tier.mrp && tier.mrp > tier.price ? (
-                      <span className="text-xs italic text-muted-foreground">
-                        Save {inr(tier.mrp - tier.price)}
-                      </span>
+                    ) : discountPct ? (
+                      // One discount signal beside the struck price, in
+                      // place of "Save ₹X" (which said the same thing).
+                      <Badge variant="discount" size="sm" className="mt-1">
+                        {discountPct}% OFF
+                      </Badge>
                     ) : null}
                   </div>
                   <div
@@ -427,6 +428,27 @@ function MobileJobPlanRadioGroup({
                     {isSelected && <div className="size-2.5 rounded-full bg-checkout-primary" />}
                   </div>
                 </div>
+                </div>
+
+                {/* Explain on selection: only the chosen plan lists what it
+                    includes, so the unselected rows stay scannable. The
+                    signal meter carries the comparison between plans. */}
+                {isSelected && (
+                  <ul className="flex flex-col gap-2 border-t border-border pt-3 text-xs text-foreground animate-in fade-in-0">
+                    <li className="flex items-center gap-2">
+                      <ClockFading className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+                      Active for {tier.jobActiveDays} days
+                    </li>
+                    {tier.features
+                      .filter((f) => f.enabled)
+                      .map((f) => (
+                        <li key={f.label} className="flex items-center gap-2 [&_svg]:size-4">
+                          {featureIcon(f.label, true)}
+                          {f.label}
+                        </li>
+                      ))}
+                  </ul>
+                )}
               </div>
             </div>
           )
@@ -452,20 +474,34 @@ function MobileJobPlanRadioGroup({
 /** Distinct mobile card for Apna Unlimited subscription offering in Express Checkout */
 function MobileSubscriptionCard({ onSelect }: { onSelect: () => void }) {
   const plan = MONTHLY_SUBSCRIPTION_PLAN
+  const { extraOff, shimmerKey } = React.useContext(PlanOfferContext)
+  const price = extraOff ? withExtraOff(plan.price) : plan.price
   return (
     <div className="flex flex-col gap-3 rounded-2xl bg-gradient-checkout-unlimited p-4 text-surface-inverted-fg sm:hidden">
       <div className="flex h-5 items-start">
         <LogoApnaUnlimited variant="gradient" className="h-4 w-auto" />
       </div>
 
-      <div className="rounded-xl bg-card p-4 text-card-foreground shadow-xs">
+      <div
+        key={shimmerKey}
+        className={cn(
+          "relative overflow-hidden rounded-xl bg-card p-4 text-card-foreground shadow-xs",
+          shimmerKey > 0 && "animate-shimmer-once"
+        )}
+      >
         <div className="flex items-start justify-between gap-2">
           <div className="flex flex-col gap-0.5">
             <span className="text-sm font-bold text-foreground">Unlimited monthly plan</span>
             <span className="text-xs text-muted-foreground">Active job slots · Cancel anytime</span>
+            {extraOff && <ExtraOffLine />}
           </div>
           <div className="flex flex-col items-end text-right">
-            <span className="text-base font-bold text-foreground">{inr(plan.price)}</span>
+            <span className="flex items-baseline gap-1.5">
+              {extraOff && (
+                <span className="text-xs text-muted-foreground line-through">{inr(plan.price)}</span>
+              )}
+              <span className="text-base font-bold text-foreground">{inr(price)}</span>
+            </span>
             <span className="text-xs font-semibold text-checkout-primary">/month</span>
           </div>
         </div>
@@ -600,6 +636,11 @@ function MonthlySubscriptionCard({
   className?: string
 }) {
   const plan = MONTHLY_SUBSCRIPTION_PLAN
+  // The claimed 10% applies to Unlimited too: same discounted price, struck
+  // list price and "10% extra off applied" line as the tier cards, in the
+  // same priceSuffix slot so the lines sit level across the row.
+  const { extraOff, shimmerKey } = React.useContext(PlanOfferContext)
+  const price = extraOff ? withExtraOff(plan.price) : plan.price
   return (
     <div className={cn("flex flex-col gap-5 overflow-hidden rounded-2xl bg-gradient-checkout-unlimited p-4", className)}>
       {/* Logo row as in UnlimitedSideCard; 24px tall to match PlanFrame's
@@ -609,17 +650,25 @@ function MonthlySubscriptionCard({
       </div>
 
       <PricingCard
+        key={shimmerKey}
         layout="price-first"
         surface="inset"
-        className="flex-1 border-transparent"
+        className={cn("flex-1 border-transparent", shimmerKey > 0 && "animate-shimmer-once")}
         title="Monthly plan"
         price={
           <>
-            {inr(plan.price)}
+            {inr(price)}
             <span className="text-sm font-regular">/month</span>
           </>
         }
-        priceSuffix={reservePriceSuffix ? <span aria-hidden>&nbsp;</span> : undefined}
+        mrp={extraOff ? inr(plan.price) : undefined}
+        priceSuffix={
+          extraOff ? (
+            <ExtraOffLine />
+          ) : reservePriceSuffix ? (
+            <span aria-hidden>&nbsp;</span>
+          ) : undefined
+        }
         cta={
           <Button type="button" variant="checkout-inset" className="h-10 w-full font-semibold" onClick={onSelect}>
             Get apna unlimited

@@ -198,8 +198,9 @@ export function AnnualUpgradeDialog({ from, ...props }: UpsellCallbacks & { from
           unit,
           note: from.months === 1 ? "Billed monthly" : "Billed every 3 months",
           extraOff: props.extraOff,
-          ctaLabel: `Continue with ${from.label.toLowerCase()}`,
-          ctaShortLabel: "Continue",
+          // "Continue with monthly plan" wrapped; the tile title already
+          // says which plan.
+          ctaLabel: "Continue",
           onSelect: props.onStay,
         }}
         upgrade={{

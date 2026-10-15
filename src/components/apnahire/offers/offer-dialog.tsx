@@ -10,12 +10,13 @@
  *   Body    white panel. Usually OfferChoice, the two option tiles.
  *
  * Tones:
- *   brand    light ambient mesh (`bg-gradient-offer`), the checkout page's
- *            own voice: dark text, the new price in checkout green. Job
- *            bundles and the exit nudge.
- *   premium  the Unlimited card's plum (`bg-gradient-checkout-unlimited`),
- *            white text, gold price, "Special upgrade offer" tag:
- *            subscription upgrades, so they match the card they upsell
+ *   brand    the apna-green sweep (`bg-gradient-offer`): job bundles,
+ *            credit packs and the exit nudge
+ *   premium  a gold bloom on plum (`bg-gradient-offer-premium`), the
+ *            Unlimited card and logo's colours, plus a "Special upgrade
+ *            offer" tag: subscription upgrades
+ * Both are dark: white text, the old price struck through in soft white,
+ * the new price in gold.
  *
  * Responsive like the board's Mweb frames: a centred dialog from md, a
  * bottom sheet below it, with the same content in both. The close control
@@ -72,7 +73,9 @@ export function OfferDialog({
 }: OfferDialogProps) {
   const isMobile = useIsMobile()
   const Title = isMobile ? SheetTitle : DialogTitle
-  const dark = tone === "premium"
+  // Both tones are dark headers; kept as a flag so a light tone can come
+  // back without re-plumbing every colour below.
+  const dark = true
 
   const body = (
     <>
@@ -81,9 +84,8 @@ export function OfferDialog({
           // rounded-t: the bottom sheet can't clip (its close bubble sits
           // outside it), so the header rounds its own top corners.
           "flex flex-col gap-3 rounded-t-2xl border-b border-border px-5 pt-5 pb-6 sm:px-6 sm:pt-6 sm:pb-7",
-          dark
-            ? "border-transparent bg-gradient-checkout-unlimited text-surface-inverted-fg"
-            : "bg-gradient-offer text-foreground"
+          dark ? "border-transparent text-surface-inverted-fg" : "text-foreground",
+          tone === "premium" ? "bg-gradient-offer-premium" : "bg-gradient-offer"
         )}
       >
         <div className="flex items-start justify-between gap-3">
@@ -114,15 +116,15 @@ export function OfferDialog({
         )}
         {priceDrop && (
           <p className="flex flex-wrap items-center gap-x-3 gap-y-1">
-            {/* The old price is struck through on the light tone so the
-                saving reads at a glance; on plum it stays white. */}
-            <span className={cn("flex items-baseline gap-1.5", !dark && "text-muted-foreground")}>
-              <span className={cn("text-2xl font-semibold sm:text-3xl", !dark && "line-through decoration-1")}>
+            {/* The old price is struck through so the saving reads at a
+                glance. */}
+            <span className={cn("flex items-baseline gap-1.5", dark ? "text-surface-inverted-fg/70" : "text-muted-foreground")}>
+              <span className="text-2xl font-semibold line-through decoration-1 sm:text-3xl">
                 {priceDrop.from}
               </span>
               <span className="text-sm sm:text-base">{priceDrop.unit}</span>
             </span>
-            <ArrowRight className={cn("size-6", !dark && "text-muted-foreground")} aria-label="now" />
+            <ArrowRight className={cn("size-6", dark ? "text-surface-inverted-fg/70" : "text-muted-foreground")} aria-label="now" />
             <span className={cn("flex items-baseline gap-1.5", dark ? "text-highlight" : "text-checkout-primary")}>
               <span className="text-3xl font-bold sm:text-4xl">{priceDrop.to}</span>
               <span className="text-sm sm:text-base">{priceDrop.unit}</span>

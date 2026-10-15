@@ -42,15 +42,26 @@ export interface OfferOption {
 
 const inr = (n: number) => `₹${n.toLocaleString("en-IN")}`
 
-function OptionTile({ option, kind }: { option: OfferOption; kind: "stay" | "upgrade" }) {
+function OptionTile({
+  option,
+  kind,
+  reserveRibbon,
+}: {
+  option: OfferOption
+  kind: "stay" | "upgrade"
+  /** Either tile in the pair has a corner ribbon: keep the band on both. */
+  reserveRibbon: boolean
+}) {
   const upgrade = kind === "upgrade"
   return (
     <div
       className={cn(
         "relative flex min-w-0 flex-col gap-4 overflow-hidden rounded-xl border p-3.5 sm:p-4",
-        // The corner ribbon gets its own band: the title starts below it
-        // rather than squeezing in beside it.
-        option.badge && "pt-8 sm:pt-9",
+        // The corner ribbon gets its own band, so the title starts below it
+        // rather than squeezing in beside it. The band is reserved on BOTH
+        // tiles when either has a ribbon, so titles and prices line up
+        // across the pair (the monthly plan has none; annual does).
+        reserveRibbon && "pt-8 sm:pt-9",
         upgrade ? "border-checkout-primary bg-accent sm:col-span-3" : "border-border bg-card sm:col-span-2"
       )}
     >
@@ -83,47 +94,53 @@ function OptionTile({ option, kind }: { option: OfferOption; kind: "stay" | "upg
         )}
       </div>
 
-      {(option.validDays != null || option.extraOff) && (
-        <div className="flex flex-col gap-1.5 text-xs">
-          {option.validDays != null && (
-            <span className="flex items-center gap-1.5 text-muted-foreground">
-              <ClockFading className="size-4 shrink-0" aria-hidden />
-              Valid for {option.validDays} days
-            </span>
-          )}
-          {option.extraOff && (
-            <span className="flex items-center gap-1.5 text-success">
-              <BadgePercent className="size-4 shrink-0" aria-hidden />
-              {EXTRA_OFF.applied}
-            </span>
-          )}
-        </div>
-      )}
-
-      <Button
-        type="button"
-        variant={upgrade ? "checkout" : "outline"}
-        className="mt-auto h-auto min-h-10 w-full py-2 whitespace-normal"
-        onClick={option.onSelect}
-      >
-        {option.ctaShortLabel ? (
-          <>
-            <span className="sm:hidden">{option.ctaShortLabel}</span>
-            <span className="hidden sm:inline">{option.ctaLabel}</span>
-          </>
-        ) : (
-          option.ctaLabel
+      {/* Details + CTA are one bottom-pinned group, so the CTAs line up
+          across both tiles and so does the last detail line ("10% extra
+          off applied"), whether or not a tile also has a validity line. */}
+      <div className="mt-auto flex flex-col gap-4">
+        {(option.validDays != null || option.extraOff) && (
+          <div className="flex flex-col gap-2.5 text-xs">
+            {option.validDays != null && (
+              <span className="flex items-center gap-1.5 text-muted-foreground">
+                <ClockFading className="size-4 shrink-0" aria-hidden />
+                Valid for {option.validDays} days
+              </span>
+            )}
+            {option.extraOff && (
+              <span className="flex items-center gap-1.5 text-success">
+                <BadgePercent className="size-4 shrink-0" aria-hidden />
+                {EXTRA_OFF.applied}
+              </span>
+            )}
+          </div>
         )}
-      </Button>
+
+        <Button
+          type="button"
+          variant={upgrade ? "checkout" : "outline"}
+          className="h-auto min-h-10 w-full py-2 whitespace-normal"
+          onClick={option.onSelect}
+        >
+          {option.ctaShortLabel ? (
+            <>
+              <span className="sm:hidden">{option.ctaShortLabel}</span>
+              <span className="hidden sm:inline">{option.ctaLabel}</span>
+            </>
+          ) : (
+            option.ctaLabel
+          )}
+        </Button>
+      </div>
     </div>
   )
 }
 
 export function OfferChoice({ stay, upgrade }: { stay: OfferOption; upgrade: OfferOption }) {
+  const reserveRibbon = Boolean(stay.badge || upgrade.badge)
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
-      <OptionTile option={stay} kind="stay" />
-      <OptionTile option={upgrade} kind="upgrade" />
+      <OptionTile option={stay} kind="stay" reserveRibbon={reserveRibbon} />
+      <OptionTile option={upgrade} kind="upgrade" reserveRibbon={reserveRibbon} />
     </div>
   )
 }

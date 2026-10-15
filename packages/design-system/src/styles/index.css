@@ -674,6 +674,10 @@
   background-image: var(--gradient-offer);
 }
 
+@utility bg-gradient-offer-premium {
+  background-image: var(--gradient-offer-premium);
+}
+
 @utility bg-gradient-ai-subtle {
   background-image: var(--gradient-ai-subtle);
 }
