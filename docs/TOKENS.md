@@ -471,7 +471,7 @@ through every preset. `--font-quote` maps `--font-family-serif`, which
 existed as a primitive but was never registered — meaning `font-serif` in a
 component silently fell through to the browser's default serif.
 
-`--font-heading` and `--font-body` resolving to the same family (Figtree) is
+`--font-heading` and `--font-body` resolving to the same family (Inter) is
 a decision, not an oversight: a second webfont is a real cost, and the
 display voice is carried by weight (800) and tracking (-0.04em) instead.
 

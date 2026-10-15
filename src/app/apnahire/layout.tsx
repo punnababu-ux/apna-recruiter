@@ -7,11 +7,9 @@ import type { Metadata } from "next"
  * sidebar shell inside `(product)/layout.tsx`; spec/showcase pages like
  * `/apnahire/sidebar-specs` render without a shell.
  *
- * Typeface: Figtree, inherited from the design system's `--font-body` /
- * `--font-heading` roles — no scope-local override. Apna Hire's Figma files
- * are drawn in Inter and this layout used to re-root the font tokens to
- * match them, but the brand typeface is the source of truth; if Inter wins
- * that argument it should change globally in the token layer, not here.
+ * Typeface: Inter, inherited from the design system's `--font-body` /
+ * `--font-heading` roles — no scope-local override. The typeface is set once,
+ * globally (root layout + `--font-family-sans`), never per surface.
  *
  * This is the authenticated in-product surface (dashboard, jobs, credits —
  * reached from a session, not from search), so it's excluded from indexing

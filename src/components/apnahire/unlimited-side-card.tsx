@@ -62,9 +62,11 @@ export function UnlimitedSideCard({
         <div className="rounded-xl bg-card p-4 text-card-foreground shadow-xs">
           <div className="flex items-start justify-between gap-2">
             <span className="text-base font-bold text-foreground">Unlimited job posts</span>
-            <div className="flex flex-col items-end text-right">
+            {/* The price column never shrinks and "₹1,999 /month" never
+                splits; the title wraps first. */}
+            <div className="flex shrink-0 flex-col items-end text-right">
               <span className="text-base font-bold text-foreground">₹{price.toLocaleString("en-IN")}</span>
-              <span className="text-xs font-semibold text-checkout-primary">
+              <span className="text-xs font-semibold whitespace-nowrap text-checkout-primary">
                 ₹{monthlyPrice.toLocaleString("en-IN")} /month
               </span>
             </div>
@@ -133,7 +135,7 @@ export function UnlimitedSideCard({
           price={`₹${price.toLocaleString("en-IN")}`}
           priceSuffix={
             <span className="text-checkout-primary">
-              That&apos;s just ₹{monthlyPrice.toLocaleString("en-IN")} /month
+              That&apos;s just ₹{monthlyPrice.toLocaleString("en-IN")}{"\u00A0"}/month
             </span>
           }
           cta={

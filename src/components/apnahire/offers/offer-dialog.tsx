@@ -49,7 +49,7 @@ export interface OfferDialogProps {
   onOpenChange: (open: boolean) => void
   tone?: "brand" | "premium"
   illustration: keyof typeof ILLUSTRATIONS
-  /** Top-right pill in the header, e.g. "Special upgrade offer". */
+  /** Corner ribbon on the header's top-right, e.g. "Special upgrade offer". */
   tag?: React.ReactNode
   eyebrow: string
   headline?: string
@@ -83,26 +83,26 @@ export function OfferDialog({
         className={cn(
           // rounded-t: the bottom sheet can't clip (its close bubble sits
           // outside it), so the header rounds its own top corners.
-          "flex flex-col gap-3 rounded-t-2xl border-b border-border px-5 pt-5 pb-6 sm:px-6 sm:pt-6 sm:pb-7",
+          "relative flex flex-col gap-3 rounded-t-2xl border-b border-border px-5 pt-5 pb-6 sm:px-6 sm:pt-6 sm:pb-7",
           dark ? "border-transparent text-surface-inverted-fg" : "text-foreground",
           tone === "premium" ? "bg-gradient-offer-premium" : "bg-gradient-offer"
         )}
       >
-        <div className="flex items-start justify-between gap-3">
-          <Image src={ILLUSTRATIONS[illustration]} alt="" width={56} height={56} className="size-14" />
-          <div className="flex items-center gap-2">
-            {tag && (
-              <span
-                className={cn(
-                  "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold sm:text-sm",
-                  dark ? "bg-surface-inverted-fg/10" : "bg-card/70"
-                )}
-              >
-                {tag}
-              </span>
+        {/* Corner ribbon, the same shape and spot as the option tiles'
+            "8 MONTHS FREE" ribbon: flush with the card's top-right corner (rounded
+            to match it on the sheet, clipped by the dialog), out of the
+            illustration row so long tag copy never pushes it around. */}
+        {tag && (
+          <span
+            className={cn(
+              "absolute top-0 right-0 inline-flex items-center gap-1.5 rounded-tr-2xl rounded-bl-xl px-3 py-1.5 text-xs font-semibold whitespace-nowrap",
+              dark ? "bg-surface-inverted-fg/15" : "bg-card/70"
             )}
-          </div>
-        </div>
+          >
+            {tag}
+          </span>
+        )}
+        <Image src={ILLUSTRATIONS[illustration]} alt="" width={56} height={56} className="size-14" />
         <Title
           className={cn(
             "font-body text-lg font-regular sm:text-xl",

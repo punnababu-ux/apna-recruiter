@@ -9,8 +9,8 @@
  *   upgrade  the offer: brand-tinted tile with a corner ribbon
  *            ("27% OFF", "8 MONTHS FREE") and the primary CTA
  *
- * Side by side at every size (the upgrade tile wider from sm, as on the
- * board), CTAs pinned to the tile bottoms so they line up. On phones a tile
+ * Side by side at every size (the upgrade tile wider from sm, 4:5), CTAs
+ * pinned to the tile bottoms so they line up. On phones a tile
  * is ~160px wide, so CTAs switch to `ctaShortLabel` ("Continue",
  * "Get 3 jobs") to stay on one line. The price is already right above.
  */
@@ -62,7 +62,7 @@ function OptionTile({
         // tiles when either has a ribbon, so titles and prices line up
         // across the pair (the monthly plan has none; annual does).
         reserveRibbon && "pt-8 sm:pt-9",
-        upgrade ? "border-checkout-primary bg-accent sm:col-span-3" : "border-border bg-card sm:col-span-2"
+        upgrade ? "border-checkout-primary bg-accent sm:col-span-5" : "border-border bg-card sm:col-span-4"
       )}
     >
       {option.badge && (
@@ -80,11 +80,21 @@ function OptionTile({
 
       <div className="flex flex-col gap-2">
         <p className="text-sm font-semibold text-foreground">{option.title}</p>
-        <p className="flex flex-wrap items-baseline gap-x-1.5">
+        {/* One line from sm (price, unit, struck price) so the two tiles
+            compare like for like; phone sheets may wrap. */}
+        <p className="flex flex-wrap items-baseline gap-x-1.5 sm:flex-nowrap sm:whitespace-nowrap">
           <span className="text-xl font-semibold text-foreground sm:text-2xl">{inr(option.price)}</span>
-          {option.unit && <span className="text-sm text-muted-foreground">{option.unit}</span>}
-          {option.mrp != null && option.mrp > option.price && (
-            <span className="text-sm text-muted-foreground line-through">{inr(option.mrp)}</span>
+          {/* Unit and struck price never split. On phones they ALWAYS take
+              the second line under the price, in every tile — left to text
+              width, "/year" fitted beside its price and "/month" didn't, so
+              the two tiles looked different. One line from sm. */}
+          {(option.unit || (option.mrp != null && option.mrp > option.price)) && (
+            <span className="inline-flex w-full items-baseline gap-1.5 whitespace-nowrap sm:w-auto">
+              {option.unit && <span className="text-sm text-muted-foreground">{option.unit}</span>}
+              {option.mrp != null && option.mrp > option.price && (
+                <span className="text-sm text-muted-foreground line-through">{inr(option.mrp)}</span>
+              )}
+            </span>
           )}
         </p>
         {option.note && (
@@ -103,13 +113,14 @@ function OptionTile({
             {option.validDays != null && (
               <span className="flex items-center gap-1.5 text-muted-foreground">
                 <ClockFading className="size-4 shrink-0" aria-hidden />
-                Valid for {option.validDays} days
+                Valid for {option.validDays}{"\u00A0"}days
               </span>
             )}
             {option.extraOff && (
               <span className="flex items-center gap-1.5 text-success">
                 <BadgePercent className="size-4 shrink-0" aria-hidden />
-                {EXTRA_OFF.applied}
+                <span className="whitespace-nowrap sm:hidden">{EXTRA_OFF.appliedShort}</span>
+                <span className="hidden sm:inline">{EXTRA_OFF.applied}</span>
               </span>
             )}
           </div>
@@ -138,7 +149,10 @@ function OptionTile({
 export function OfferChoice({ stay, upgrade }: { stay: OfferOption; upgrade: OfferOption }) {
   const reserveRibbon = Boolean(stay.badge || upgrade.badge)
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+    // 4:5 from sm: the offer tile stays wider, but the stay tile is wide
+    // enough to keep "₹2,249 /month ₹2,499" on one line, so the two price
+    // rows read side by side.
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-9">
       <OptionTile option={stay} kind="stay" reserveRibbon={reserveRibbon} />
       <OptionTile option={upgrade} kind="upgrade" reserveRibbon={reserveRibbon} />
     </div>

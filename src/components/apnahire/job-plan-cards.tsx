@@ -110,15 +110,16 @@ function featureIcon(label: string, enabled: boolean): React.ReactNode {
   return <Icon className={cn("shrink-0", colorClass)} aria-hidden />
 }
 
-/** Quiet and bottom-left, behind PricingCard's dashed footer rule, and
- *  labelled "Limited time": the free credits are a temporary offer, so they
- *  must not read as a permanent feature of the plan — but must not out-shout
- *  the price either. */
+/** Quiet and bottom-left, behind PricingCard's dashed footer rule. Same
+ *  line as the mobile rows: the credits first, then a muted "· Limited
+ *  offer", so it reads as a temporary extra, not a feature of the plan, and
+ *  never out-shouts the price. */
 const dbCreditsLine = (credits: number) => (
-  <span className="flex items-center gap-1.5">
-    <Database className="size-4" aria-hidden />
+  <span className="flex items-center gap-2 text-foreground">
+    <Database className="size-4 shrink-0 text-muted-foreground" aria-hidden />
     <span>
-      <span className="font-semibold">Limited time offer:</span> {credits} free database credits
+      {credits} free database credits
+      <span className="text-muted-foreground"> · Limited offer</span>
     </span>
   </span>
 )
@@ -497,9 +498,18 @@ function MobileSubscriptionCard({ onSelect }: { onSelect: () => void }) {
   const plan = MONTHLY_SUBSCRIPTION_PLAN
   const { extraOff, shimmerKey } = React.useContext(PlanOfferContext)
   const price = extraOff ? withExtraOff(plan.price) : plan.price
+  // Struck price + % OFF follow the same rules as the job rows: a plan list
+  // price (plan.mrp, if a discount is ever run) or, with the claimed 10%,
+  // the undiscounted price.
+  const strike = plan.mrp ?? (extraOff ? plan.price : undefined)
+  const discountPct = strike && strike > price ? Math.round((1 - price / strike) * 100) : null
   return (
-    <div className="flex flex-col gap-3 rounded-2xl bg-gradient-checkout-unlimited p-4 text-surface-inverted-fg sm:hidden">
-      <div className="flex h-5 items-start">
+    // Slimmer frame at the sides and bottom (2.5) so the white card gets the
+    // width; the top keeps its breathing room above and below the logo.
+    // The logo is inset by the card's own padding (px-4) so it starts on
+    // the same line as "Monthly plan" inside the card.
+    <div className="flex flex-col gap-3 rounded-2xl bg-gradient-checkout-unlimited px-2.5 pt-5 pb-2.5 text-surface-inverted-fg sm:hidden">
+      <div className="flex h-5 items-start px-4">
         <LogoApnaUnlimited variant="gradient" className="h-4 w-auto" />
       </div>
 
@@ -510,27 +520,42 @@ function MobileSubscriptionCard({ onSelect }: { onSelect: () => void }) {
           shimmerKey > 0 && "animate-shimmer-once"
         )}
       >
-        <div className="flex items-start justify-between gap-2">
-          <div className="flex flex-col gap-0.5">
-            <span className="text-sm font-bold text-foreground">Unlimited monthly plan</span>
-            <span className="text-xs text-muted-foreground">Active job slots · Cancel anytime</span>
-            {extraOff && <ExtraOffLine />}
+        {/* Same structure and scale as the job plan rows above it: the
+            16px name on its own line, then details left and the 20px price
+            right, so neither wraps. */}
+        {/* "Monthly plan" (the apna Unlimited logo above already names the
+            product) is short enough to share its line with the price: name
+            and price on top, subtitle and the discount row under them. */}
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex min-w-0 flex-col gap-1.5">
+            <span className="text-base font-semibold text-foreground">Monthly plan</span>
+            <span className="text-xs text-muted-foreground">Unlimited job reposts</span>
           </div>
-          <div className="flex flex-col items-end text-right">
+          <div className="flex shrink-0 flex-col items-end gap-1 text-right">
             <span className="flex items-baseline gap-1.5">
-              {extraOff && (
-                <span className="text-xs text-muted-foreground line-through">{inr(plan.price)}</span>
+              {strike && (
+                <span className="text-xs text-muted-foreground line-through">{inr(strike)}</span>
               )}
-              <span className="text-base font-bold text-foreground">{inr(price)}</span>
+              <span className="text-xl font-bold tabular-nums text-foreground">{inr(price)}</span>
+              {/* Neutral, as on the desktop card — the price carries it. */}
+              <span className="text-xs font-regular text-foreground">/month</span>
             </span>
-            <span className="text-xs font-semibold text-checkout-primary">/month</span>
+            {discountPct ? (
+              <div className="flex items-center gap-1.5">
+                {extraOff && <span className="text-xs font-medium text-success">Incl. 10% extra</span>}
+                <Badge variant="discount" size="sm">
+                  {discountPct}% OFF
+                </Badge>
+              </div>
+            ) : null}
           </div>
         </div>
 
         <div className="mt-3 flex flex-col gap-2 border-t border-border/60 pt-3 text-xs text-muted-foreground">
           <div className="flex items-center gap-2">
             <BriefcaseBusiness className="size-3.5 shrink-0 text-foreground" aria-hidden />
-            <span><strong>1 active job slot</strong> for 30 days (unlimited reposts)</span>
+            {/* "Unlimited reposts" now leads as the plan's subtitle. */}
+            <span><strong>1 active job slot</strong> for 30 days</span>
           </div>
           <div className="flex items-center gap-2">
             <Database className="size-3.5 shrink-0 text-foreground" aria-hidden />
@@ -662,6 +687,10 @@ function MonthlySubscriptionCard({
   // same priceSuffix slot so the lines sit level across the row.
   const { extraOff, shimmerKey } = React.useContext(PlanOfferContext)
   const price = extraOff ? withExtraOff(plan.price) : plan.price
+  // Same rule as the mobile card and the tier cards: whenever a struck price
+  // shows, so does its % OFF badge.
+  const strike = plan.mrp ?? (extraOff ? plan.price : undefined)
+  const discountPct = strike && strike > price ? Math.round((1 - price / strike) * 100) : null
   return (
     <div className={cn("flex flex-col gap-5 overflow-hidden rounded-2xl bg-gradient-checkout-unlimited p-4", className)}>
       {/* Logo row as in UnlimitedSideCard; 24px tall to match PlanFrame's
@@ -682,7 +711,8 @@ function MonthlySubscriptionCard({
             <span className="text-sm font-regular">/month</span>
           </>
         }
-        mrp={extraOff ? inr(plan.price) : undefined}
+        mrp={strike ? inr(strike) : undefined}
+        badge={discountPct ? <Badge variant="discount">{discountPct}% OFF</Badge> : undefined}
         priceSuffix={
           extraOff ? (
             <ExtraOffLine />

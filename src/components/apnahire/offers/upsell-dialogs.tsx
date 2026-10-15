@@ -23,6 +23,8 @@ import { OfferChoice } from "@/components/apnahire/offers/offer-choice"
 import { OfferDialog } from "@/components/apnahire/offers/offer-dialog"
 
 const inr = (n: number) => `₹${n.toLocaleString("en-IN")}`
+// Notes glue a value to its unit with a no-break space (\u00A0): on a
+// narrow tile "₹989 /job" may move to the next line, but never splits.
 const pctOff = (price: number, mrp?: number) =>
   mrp && mrp > price ? `${Math.round((1 - price / mrp) * 100)}% OFF` : undefined
 
@@ -78,7 +80,7 @@ export function JobBundleOfferDialog({ tier, ...props }: UpsellCallbacks & { tie
           price: bundle.price,
           mrp: bundle.mrp,
           badge: pctOff(bundle.price, bundle.mrp),
-          note: `That's just ${inr(bundle.perJob)} /job`,
+          note: `That's just ${inr(bundle.perJob)}\u00A0/job`,
           validDays: bundle.validDays,
           extraOff: props.extraOff,
           ctaLabel: `Get ${bundle.jobs} jobs for ${inr(bundle.price)}`,
@@ -142,7 +144,7 @@ export function CreditPackOfferDialog({
           price: packPrice,
           mrp: pack.mrp,
           badge: pctOff(packPrice, pack.mrp),
-          note: `That's just ${inr(perPack)} /job credit`,
+          note: `That's just ${inr(perPack)}\u00A0/job\u00A0credit`,
           validDays: pack.validDays,
           extraOff: props.extraOff,
           ctaLabel: `Get ${credits(pack.credits)} for ${inr(packPrice)}`,
@@ -196,7 +198,6 @@ export function AnnualUpgradeDialog({ from, ...props }: UpsellCallbacks & { from
           price: fromPrice,
           mrp: props.extraOff ? from.price : undefined,
           unit,
-          note: from.months === 1 ? "Billed monthly" : "Billed every 3 months",
           extraOff: props.extraOff,
           // "Continue with monthly plan" wrapped; the tile title already
           // says which plan.
@@ -209,7 +210,7 @@ export function AnnualUpgradeDialog({ from, ...props }: UpsellCallbacks & { from
           mrp: props.extraOff ? ANNUAL_PLAN.price : undefined,
           unit: "/year",
           badge: `${ANNUAL_PLAN.monthsFree} MONTHS FREE`,
-          note: `That's just ${inr(annual.perMonth)} /month`,
+          note: `That's just ${inr(annual.perMonth)}\u00A0/month`,
           extraOff: props.extraOff,
           ctaLabel: `Get yearly plan for ${inr(annual.price)}`,
           ctaShortLabel: "Get yearly plan",

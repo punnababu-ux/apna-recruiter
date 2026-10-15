@@ -274,6 +274,46 @@ Mobile: bottom-fixed bars use `pb-safe` (no padding of their own) or
 
 ---
 
+## Text that grows — layouts decide where lines break, not copy
+
+Copy changes: a price gains a digit, a plan gets a longer name, the font
+changes, Hindi copy runs 30–40% longer. A layout that only works because
+today's strings happen to fit is broken, just not yet. **Decide where
+every line may break; never let the width of a string decide it.**
+
+1. **Things that belong together never split.** A value and its unit
+   ("₹2,249 /month"), a unit and its struck price ("/month ₹2,499"),
+   "90 days". Group them in one `whitespace-nowrap` element, or glue them
+   with a no-break space (` `) inside running copy. The group may
+   move to the next line as a whole; it never breaks in the middle.
+2. **Wrapping is deterministic across siblings.** If a group fits in one
+   tile and not in the next, sibling cards stop matching. Pick one layout
+   per breakpoint and force it: on phones, put the group on its own line in
+   every tile (`w-full sm:w-auto`); from `sm`, keep the row on one line
+   (`sm:flex-nowrap sm:whitespace-nowrap`). Never leave it to `flex-wrap`
+   and the string's width.
+3. **Name which side gives.** In a two-sided row (title | price), the
+   number side is `shrink-0` and the text side wraps. If the text side is
+   short metadata ("Active for 15 days"), it must not break mid-phrase
+   either. Move it under the title on narrow screens instead of squeezing it.
+4. **Short copy for narrow, full copy from `sm`.** When a label can't fit a
+   phone tile, swap it rather than wrap it (`<span className="sm:hidden">`
+   short / `<span className="hidden sm:inline">` full), as with
+   `ctaShortLabel` and `EXTRA_OFF.appliedShort`.
+5. **Siblings share reserved space.** If one tile has a corner ribbon,
+   reserve its band on every tile in the row. Bottom-pin footers and CTAs
+   as one group (`mt-auto flex flex-col gap-4`), so lines align whatever is
+   above them.
+6. **Mixed sizes align on the baseline.** Price rows that mix a large
+   amount with a small unit or struck price use `items-baseline`, not
+   `items-center`.
+7. **Test at 320px with the longest realistic string.** Check 320, 360 and
+   375px, a six-digit price (₹12,99,999) and the longest plan name. If
+   anything splits, overflows or misaligns, the layout is wrong, not the
+   copy.
+
+---
+
 ## Adding a new component
 
 Trigger: you need a UI pattern that doesn't exist yet.

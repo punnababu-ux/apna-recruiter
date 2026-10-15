@@ -25,6 +25,8 @@ export const EXTRA_OFF = {
   headline: "Order now to get 10% extra off",
   validity: "Valid online for 24 hrs only",
   applied: "10% extra off applied",
+  /** Phone tiles (~130px of text): the full line wraps to two in Inter. */
+  appliedShort: "10% extra off",
 } as const
 
 export const withExtraOff = (price: number) => Math.round(price * (1 - EXTRA_OFF.pct / 100))

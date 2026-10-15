@@ -233,7 +233,7 @@ export function SubscriptionPlans({
             title="Quarterly"
             price="₹5,999"
             priceSuffix="/quarter"
-            note="That's just ₹1,999 /month"
+            note={"That's just ₹1,999\u00A0/month"}
             ctaLabel="Buy quarterly plan"
             recommended
             slotDays={90}

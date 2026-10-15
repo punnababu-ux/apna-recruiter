@@ -162,7 +162,10 @@ export function PricingCard({
   const priceBlock = (
     <div className={cn("flex flex-col", titleLed ? "gap-1" : "gap-2")}>
       <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
-        <div className="flex items-center gap-2">
+        {/* Baseline, not centre: the small struck price then sits on the
+            same line as the price's own suffix ("/month"), not floating at
+            the big figure's mid-height. */}
+        <div className="flex items-baseline gap-2">
           <span
             className={cn(
               "font-semibold",

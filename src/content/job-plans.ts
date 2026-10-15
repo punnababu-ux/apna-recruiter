@@ -124,7 +124,18 @@ export const RECOMMENDED_TIER = {
 } as const satisfies Record<string, JobPlanTierId>
 
 /** The 4th card on the subscription layout — a distinct monthly apna Unlimited subscription, not a one-time job tier. */
-export const MONTHLY_SUBSCRIPTION_PLAN = {
+export const MONTHLY_SUBSCRIPTION_PLAN: {
+  price: number
+  /** Optional list price. Set it to run a discount on the monthly plan:
+   *  cards then show it struck through with a % OFF badge (and the claimed
+   *  10% stacks on top). Unset = no plan discount. */
+  mrp?: number
+  jobSlotMonths: number
+  dbCreditsPerMonth: number
+  dbCreditsWorth: number
+  features: string[]
+  note: string
+} = {
   price: 2499,
   jobSlotMonths: 1,
   dbCreditsPerMonth: 200,

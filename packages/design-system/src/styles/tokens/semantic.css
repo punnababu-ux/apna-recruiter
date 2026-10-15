@@ -249,7 +249,7 @@
    * ======================================================================== */
 
   /* Family roles. Heading and body deliberately resolve to the SAME family
-   * today — Figtree carries both. That is a decision, not an oversight: a
+   * today — Inter carries both. That is a decision, not an oversight: a
    * second webfont is a real cost and the display voice is currently carried
    * by weight and tracking instead (see the display presets). --font-display
    * exists as its own role so introducing a display face later is one line
