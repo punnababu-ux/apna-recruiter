@@ -18,21 +18,21 @@
  *            subscription upgrades, so they match the card they upsell
  *
  * Responsive like the board's Mweb frames: a centred dialog from md, a
- * bottom sheet below it, with the same content in both.
+ * bottom sheet below it, with the same content in both. The close control
+ * is the system CloseBubble that both primitives render outside the card,
+ * not a button of this component's own.
  */
 
 import * as React from "react"
 import Image from "next/image"
 import {
   ArrowRight,
-  Button,
   Dialog,
   DialogContent,
   DialogTitle,
   Sheet,
   SheetContent,
   SheetTitle,
-  X,
 } from "@apna/design-system"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
@@ -78,7 +78,9 @@ export function OfferDialog({
     <>
       <div
         className={cn(
-          "flex flex-col gap-3 border-b border-border px-5 pt-5 pb-6 sm:px-6 sm:pt-6 sm:pb-7",
+          // rounded-t: the bottom sheet can't clip (its close bubble sits
+          // outside it), so the header rounds its own top corners.
+          "flex flex-col gap-3 rounded-t-2xl border-b border-border px-5 pt-5 pb-6 sm:px-6 sm:pt-6 sm:pb-7",
           dark
             ? "border-transparent bg-gradient-checkout-unlimited text-surface-inverted-fg"
             : "bg-gradient-offer text-foreground"
@@ -97,20 +99,6 @@ export function OfferDialog({
                 {tag}
               </span>
             )}
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon-sm"
-              aria-label="Close"
-              onClick={() => onOpenChange(false)}
-              className={cn(
-                dark
-                  ? "text-surface-inverted-fg hover:bg-surface-inverted-fg/10 hover:text-surface-inverted-fg"
-                  : "text-muted-foreground hover:bg-card/70 hover:text-foreground"
-              )}
-            >
-              <X />
-            </Button>
           </div>
         </div>
         <Title
@@ -151,8 +139,7 @@ export function OfferDialog({
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent
           side="bottom"
-          showCloseButton={false}
-          className="gap-0 overflow-hidden rounded-t-2xl border-t-0 p-0 pb-safe"
+          className="gap-0 rounded-t-2xl border-t-0 p-0 pb-safe"
         >
           {body}
         </SheetContent>
@@ -163,7 +150,6 @@ export function OfferDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        showCloseButton={false}
         className={cn("gap-0 overflow-hidden rounded-2xl p-0 shadow-dialog", size === "sm" ? "sm:max-w-md" : "sm:max-w-xl")}
       >
         {body}

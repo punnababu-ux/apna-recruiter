@@ -259,6 +259,15 @@ Rules:
 6. **`<InkProvider />` is mounted once in the root layout.** It tells the ink
    where you pressed. Without it the ink grows from the centre.
 
+Pop-ups close the same way everywhere. `DialogContent` and bottom
+`SheetContent` render the **CloseBubble**: a 32px dark translucent disc
+with a white X, OUTSIDE the card, 8px above its top-right corner (Figma
+"close-button-bubble"). Never add your own close button inside a pop-up,
+and don't put `overflow-hidden` on a bottom sheet, because it would clip
+the bubble. Round the inner corners instead. Side drawers (right and left
+sheets) are panels and keep their inside X. Pass `showCloseButton={false}`
+only for a forced choice.
+
 Mobile: bottom-fixed bars use `pb-safe` (no padding of their own) or
 `pb-safe-<n>` (in place of `pb-<n>`) to clear the home indicator. Inputs use
 `text-base md:text-sm` so iOS Safari doesn't zoom on focus.

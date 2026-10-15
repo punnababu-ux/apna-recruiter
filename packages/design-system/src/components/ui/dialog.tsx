@@ -5,7 +5,7 @@ import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { XIcon } from "@/icons/icons"
+import { CloseBubble } from "@/components/ui/close-bubble"
 
 function Dialog({ ...props }: DialogPrimitive.Root.Props) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />
@@ -39,6 +39,32 @@ function DialogOverlay({
   )
 }
 
+/** Classes that size or time the whole pop-up, so they belong on the frame
+ *  (the positioned wrapper) rather than the card: widths and the enter/exit
+ *  timing. Everything else in `className` styles the card. */
+const FRAME_CLASS = /^(?:[\w-]+:)*-?(?:max-w|min-w|w|duration|ease)-/
+
+function splitFrameClasses(className?: string) {
+  const frame: string[] = []
+  const card: string[] = []
+  for (const token of (className ?? "").split(/\s+/).filter(Boolean)) {
+    ;(FRAME_CLASS.test(token) ? frame : card).push(token)
+  }
+  return { frame: frame.join(" "), card: card.join(" ") }
+}
+
+/**
+ * The pop-up. Structure (the system rule for every dialog):
+ *
+ *   frame  fixed, centred, sized: widths and timing from `className`
+ *     CloseBubble   OUTSIDE the card, 8px above its top-right corner
+ *     card          surface, padding, layout; scrolls when taller than
+ *                   the viewport, without clipping the bubble
+ *
+ * `className` keeps working as before: widths (`sm:max-w-md`) land on the
+ * frame, and everything else (padding, gap, radius, background) on the card.
+ * `showCloseButton={false}` drops the bubble, e.g. for a forced choice.
+ */
 function DialogContent({
   className,
   children,
@@ -47,34 +73,30 @@ function DialogContent({
 }: DialogPrimitive.Popup.Props & {
   showCloseButton?: boolean
 }) {
+  const { frame, card } = splitFrameClasses(typeof className === "string" ? className : undefined)
   return (
     <DialogPortal>
       <DialogOverlay />
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         className={cn(
-          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 overflow-y-auto max-h-[calc(100dvh-2rem)] rounded-xl bg-popover p-4 text-sm text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
-          className
+          "fixed top-1/2 left-1/2 z-50 flex w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col items-end gap-2 outline-none duration-100 sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          frame
         )}
         {...props}
       >
-        {children}
         {showCloseButton && (
-          <DialogPrimitive.Close
-            data-slot="dialog-close"
-            render={
-              <Button
-                variant="ghost"
-                className="absolute top-2 right-2"
-                size="icon-sm"
-              />
-            }
-          >
-            <XIcon
-            />
-            <span className="sr-only">Close</span>
-          </DialogPrimitive.Close>
+          <DialogPrimitive.Close data-slot="dialog-close" render={<CloseBubble />} />
         )}
+        <div
+          data-slot="dialog-card"
+          className={cn(
+            "grid max-h-[calc(100dvh-5rem)] w-full gap-4 overflow-y-auto rounded-xl bg-popover p-4 text-sm text-popover-foreground ring-1 ring-foreground/10",
+            card
+          )}
+        >
+          {children}
+        </div>
       </DialogPrimitive.Popup>
     </DialogPortal>
   )
