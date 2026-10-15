@@ -24,6 +24,9 @@ export default function ActionsComponentsPage() {
 
   const variants = [
     { name: "Primary / Default", variant: "default" as const },
+    // The companion to the one primary: an add-on/upsell push on a screen
+    // whose green CTA is taken. See the one-primary rule in button.tsx.
+    { name: "Emphasis (add-on push, never a 2nd primary)", variant: "emphasis" as const },
     { name: "Secondary", variant: "secondary" as const },
     { name: "Outline", variant: "outline" as const },
     { name: "Ghost", variant: "ghost" as const },

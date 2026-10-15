@@ -93,7 +93,9 @@ export function AiCallingAddonCard({
                 {useCredit ? "Available" : "for this job"}
               </span>
             </div>
-            <Button type="button" variant="checkout" size="sm" onClick={onAdd}>
+            {/* Dark gray, not green: "Proceed to pay" below is this screen's one
+                primary CTA (Button's one-primary rule). */}
+            <Button type="button" variant="emphasis" size="sm" onClick={onAdd}>
               Add AI calling agent
             </Button>
           </div>

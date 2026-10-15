@@ -118,9 +118,9 @@ function OptionTile({
             )}
             {option.extraOff && (
               <span className="flex items-center gap-1.5 text-success">
-                <BadgePercent className="size-4 shrink-0" aria-hidden />
-                <span className="whitespace-nowrap sm:hidden">{EXTRA_OFF.appliedShort}</span>
-                <span className="hidden sm:inline">{EXTRA_OFF.applied}</span>
+                <BadgePercent className="size-4 shrink-0 animate-wiggle" aria-hidden />
+                <span className="animate-text-shimmer whitespace-nowrap sm:hidden">{EXTRA_OFF.appliedShort}</span>
+                <span className="animate-text-shimmer hidden sm:inline">{EXTRA_OFF.applied}</span>
               </span>
             )}
           </div>

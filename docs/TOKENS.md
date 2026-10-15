@@ -182,6 +182,9 @@ while `--primary`/`--success` brighten one step in dark mode
 | `--checkout-primary`           | apna-green-600 (#1F8268) | apna-green-600 (fixed) | checkout CTAs |
 | `--checkout-primary-hover`     | apna-green-700 (#186954) | apna-green-700 (fixed) | checkout CTA hover |
 | `--checkout-primary-foreground`| gray-0                 | gray-0                   | text/icon on checkout-primary             |
+| `--cta-emphasis`               | gray-800               | gray-700                 | emphasis CTA (`Button variant="emphasis"`) — an add-on/upsell push on a screen whose primary CTA is taken |
+| `--cta-emphasis-hover`         | gray-900               | gray-600                 | emphasis CTA hover                         |
+| `--cta-emphasis-foreground`    | gray-0                 | gray-0                   | text/icon on cta-emphasis                  |
 | `--checkout-discount-fg`       | apna-green-700 (#186954) | apna-green-700 (fixed) | discount-pill and itemized discount text (drawer, cards). Consumed via `<Badge variant="discount">` |
 | `--checkout-discount-bg`       | gray-200                | gray-200 (fixed)         | discount pill background                  |
 | `--checkout-info`              | apna-sky-500 (#3B82F6)  | apna-sky-500 (fixed)     | the checkout surface's fixed accent blue — the "Recommended" ribbon (`<Badge variant="ribbon">`) and the single-credit link. Not `--info`: that is apna-sky-600 and remaps in dark, while this surface stays light in both themes |

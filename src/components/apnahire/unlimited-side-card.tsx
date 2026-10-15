@@ -92,14 +92,16 @@ export function UnlimitedSideCard({
         }
       />
 
-      {/* No border: the design draws no stroke here, and the hover affordance
-          is the inner card's own lift. `overflow-hidden` keeps the inner
-          card's radius clipped against the gradient. */}
+      {/* No border: the design draws no stroke here. The whole frame is the
+          click target but stays put; hovering anywhere in it lifts the card
+          inside (`data-card-lift-group`, card-hover-lift rule). No
+          `overflow-hidden`: it would clip that card's lifted shadow. */}
       <div
         data-slot="unlimited-side-card"
+        data-card-lift-group
         onClick={onBuyNow}
         className={cn(
-          "hidden w-full cursor-pointer flex-col overflow-hidden rounded-2xl bg-gradient-checkout-unlimited p-4 md:flex",
+          "hidden w-full cursor-pointer flex-col rounded-2xl bg-gradient-checkout-unlimited p-4 md:flex",
           className
         )}
       >

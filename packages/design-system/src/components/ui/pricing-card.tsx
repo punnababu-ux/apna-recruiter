@@ -117,6 +117,9 @@ export interface PricingCardProps extends Omit<React.ComponentProps<"div">, "tit
   layout?: "stacked" | "price-first"
   /** Bottom-pinned line under the meta list (price-first only). */
   footer?: React.ReactNode
+  /** The hover lift (default on). Off for a card that isn't a click target
+   *  as a whole (see the card-hover-lift rule in styles/index.css). */
+  interactive?: boolean
 }
 
 export function PricingCard({
@@ -133,6 +136,7 @@ export function PricingCard({
   surface = "card",
   layout = "stacked",
   footer,
+  interactive = true,
   className,
   ...props
 }: PricingCardProps) {
@@ -196,7 +200,10 @@ export function PricingCard({
 
   const rootClassName = cn(
     // `card-hover-lift` is the shared card interaction (see styles/index.css).
-    "card-hover-lift relative flex h-full flex-col gap-4 overflow-hidden rounded-xl border p-4 pt-8",
+    // No `overflow-hidden`: it would clip the lift's hit strip; the ribbon
+    // clips its own corner instead.
+    "relative flex h-full flex-col gap-4 rounded-xl border p-4 pt-8",
+    interactive && "card-hover-lift",
     inset ? "border-checkout-inset-border bg-checkout-inset" : "border-border bg-card",
     // A clickable card answers a press like every other surface.
     props.onClick && "cursor-pointer ink press-subtle",
@@ -212,7 +219,7 @@ export function PricingCard({
         className={rootClassName}
         {...props}
       >
-        {ribbon && <div className="absolute right-0 top-0 flex rounded-bl-xl">{ribbon}</div>}
+        {ribbon && <div className="absolute right-0 top-0 flex overflow-hidden rounded-tr-xl rounded-bl-xl">{ribbon}</div>}
 
         <div className="flex flex-col gap-2">
           <p className={cn("text-base font-semibold leading-5", fg)}>{title}</p>
@@ -248,7 +255,7 @@ export function PricingCard({
         // as an inline formatting context around `ribbon`, which reserves
         // baseline/line-height space above the badge — a visible gap
         // between the card's top edge and the ribbon itself.
-        <div className="absolute right-0 top-0 flex rounded-bl-xl">{ribbon}</div>
+        <div className="absolute right-0 top-0 flex overflow-hidden rounded-tr-xl rounded-bl-xl">{ribbon}</div>
       )}
 
       <div className="flex flex-1 flex-col gap-5">

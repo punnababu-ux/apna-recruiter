@@ -205,6 +205,15 @@ Reject the PR if you see any of:
   one form and one placement (first in the row, `gap-3` before the
   title/logo) — see the rule in its JSDoc. Don't add a variant to make one
   page different; change it everywhere or not at all.
+- Two primary (green) CTAs on one screen. There is exactly one primary
+  action per screen ("Proceed to pay", the recommended plan's "Buy now").
+  Something else that must still be pushed hard — an add-on or upsell like
+  "Add AI calling agent" — uses `Button variant="emphasis"` (dark gray),
+  never a second `default`/`checkout`. `emphasis` is only a companion: never
+  the only CTA on a screen, at most one per section. See Button's JSDoc.
+- A card that lifts on hover (`card-hover-lift`, PricingCard) but isn't
+  clickable as a whole, or a lifting card with `overflow-hidden`. See the
+  rule on `card-hover-lift` in the design system's `styles/index.css`.
 
 ### Semi-allowed exception
 

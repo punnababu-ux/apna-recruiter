@@ -436,6 +436,15 @@
   --checkout-primary:            var(--color-apna-green-600);
   --checkout-primary-hover:       var(--color-apna-green-700);
   --checkout-primary-foreground: var(--color-gray-0);
+
+  /* Emphasis CTA — dark gray. The "push this, but it isn't THE action"
+   * button: an add-on or upsell CTA on a screen whose primary (green) CTA is
+   * already taken, e.g. "Add AI calling agent" above "Proceed to pay". Never
+   * a second primary, never the only CTA on a screen. See Button's
+   * `variant="emphasis"` for the rule. */
+  --cta-emphasis:            var(--color-gray-800);
+  --cta-emphasis-hover:      var(--color-gray-900);
+  --cta-emphasis-foreground: var(--color-gray-0);
   /* Discount pill — the finalized designs pair a neutral gray-200 chip with
    * apna-green-700 text, not the green-on-green tint this used to carry.
    * `--color-apna-green-700` (#186954) is Figma's value exactly; gray-200
@@ -684,6 +693,11 @@
   --surface-checkout-inset-fg:     var(--card-foreground);
   --surface-checkout-inset-fg-muted: var(--muted-foreground);
   --surface-checkout-inset-hover:  var(--color-alpha-black-40);
+
+  /* Emphasis CTA: gray-800 vanishes on a dark card, so it steps up to a
+   * raised gray-700 — still dark gray, still clearly not the green primary. */
+  --cta-emphasis:       var(--color-gray-700);
+  --cta-emphasis-hover: var(--color-gray-600);
 
   /* No dark override for --checkout-discount-fg/-bg (or --checkout-primary,
    * --checkout-info, --checkout-ribbon below it in :root): every checkout-*

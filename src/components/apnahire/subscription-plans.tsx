@@ -140,13 +140,15 @@ function PlanCard({
   // Truncated, like the design's ₹5,999 / 3 = ₹1,999.
   const note = months > 1 ? `That's just ${inr(Math.floor(price / months))}\u00A0/month` : undefined
   return (
+    // The whole card buys (the CTA's click bubbles here), like the Jobs-tab
+    // PricingCards — the card-hover-lift rule. No `overflow-hidden`: it would
+    // clip the lift's hit strip; the ribbon clips its own corner.
     <div
-      className={cn(
-        "card-hover-lift relative flex flex-1 flex-col justify-between gap-5 overflow-hidden rounded-xl border border-border bg-card px-4 pb-5 pt-8"
-      )}
+      onClick={onBuy}
+      className="card-hover-lift ink press-subtle relative flex flex-1 cursor-pointer flex-col justify-between gap-5 rounded-xl border border-border bg-card px-4 pb-5 pt-8"
     >
       {recommended && (
-        <div className="absolute right-0 top-0 flex">
+        <div className="absolute right-0 top-0 flex overflow-hidden rounded-tr-xl rounded-bl-xl">
           <Badge variant="ribbon" size="ribbon">
             Recommended
             <Sparkles aria-hidden />
@@ -225,7 +227,6 @@ function PlanCard({
         type="button"
         variant={recommended ? "checkout" : "outline"}
         className="h-10 w-full font-semibold"
-        onClick={onBuy}
       >
         {ctaLabel}
       </Button>
@@ -326,9 +327,11 @@ export function SubscriptionPlans({
                 mrp={strike ? inr(strike) : undefined}
                 price={inr(price)}
                 unit={UNITS[plan.months]}
-                belowPrice={pct ? <MobileDiscountRow pct={pct} /> : undefined}
+                belowPrice={pct ? <MobileDiscountRow pct={pct} announce={extraOff} /> : undefined}
                 priceNote={
-                  extraOff ? <span className="text-xs font-medium text-success">Incl. 10% extra</span> : undefined
+                  extraOff ? (
+                    <span className="animate-text-shimmer text-xs font-medium text-success">Incl. 10% extra</span>
+                  ) : undefined
                 }
                 details={
                   // The Jobs tab's Unlimited card points: three short lines.

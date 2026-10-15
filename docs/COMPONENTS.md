@@ -10,7 +10,7 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 
 | Component        | Import                                                                 | tldr                                             |
 |------------------|------------------------------------------------------------------------|--------------------------------------------------|
-| Button           | `import { Button } from "@apna/design-system"`                         | Primary action surface. 9 variants × 4 sizes — includes `checkout` / `checkout-inset` for the fixed-light self-checkout surface. |
+| Button           | `import { Button } from "@apna/design-system"`                         | Primary action surface. 10 variants × 4 sizes — includes `checkout` / `checkout-inset` for the fixed-light self-checkout surface, and `emphasis` (dark gray) for an add-on/upsell push on a screen whose primary CTA is taken. One primary CTA per screen — see the rule in its JSDoc. |
 | ButtonGroup      | `import { ButtonGroup, ButtonGroupText } from "@apna/design-system"`   | Horizontally grouped buttons with shared border. |
 | BackButton       | `import { BackButton } from "@apna/design-system"`                     | Back navigation — the only back control in the product: a 32px outlined circle + ChevronLeft, no variants. First item in a header row, `gap-3` before the title/logo. See the rule in its JSDoc. |
 | Toggle           | `import { Toggle } from "@apna/design-system"`                         | On/off button. Use for formatting toolbars.      |

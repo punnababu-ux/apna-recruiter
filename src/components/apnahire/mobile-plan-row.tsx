@@ -199,14 +199,26 @@ export function MobilePlanDetails({ items }: { items: Array<[React.ReactNode, Re
   )
 }
 
-/** "Incl. 10% extra" (when the exit offer is claimed) + the % OFF badge. */
-export function MobileDiscountRow({ pct, note }: { pct?: number | null; note?: React.ReactNode }) {
+/** "Incl. 10% extra" (when the exit offer is claimed) + the % OFF badge.
+ *  With the note, it announces the offer like ExtraOffLine: the words
+ *  shimmer and the badge rocks. */
+export function MobileDiscountRow({
+  pct,
+  note,
+  announce = Boolean(note),
+}: {
+  pct?: number | null
+  note?: React.ReactNode
+  /** Rock the badge (offer is on). Defaults to on when there's a
+   *  note; pass it when the note is drawn elsewhere (Subscription rows). */
+  announce?: boolean
+}) {
   if (!pct && !note) return null
   return (
     <div className="flex items-center gap-1.5 whitespace-nowrap">
-      {note && <span className="text-xs font-medium text-success">{note}</span>}
+      {note && <span className="animate-text-shimmer text-xs font-medium text-success">{note}</span>}
       {pct ? (
-        <Badge variant="discount" size="sm">
+        <Badge variant="discount" size="sm" className={announce ? "animate-wiggle" : undefined}>
           {pct}% OFF
         </Badge>
       ) : null}

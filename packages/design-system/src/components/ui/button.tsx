@@ -2,7 +2,7 @@
  * Button — base interactive surface.
  *
  * API
- *   <Button variant="default|outline|secondary|ghost|destructive|success|link"
+ *   <Button variant="default|outline|secondary|ghost|destructive|success|link|checkout|checkout-inset|emphasis"
  *           size="xs|sm|default|lg|icon|icon-xs|icon-sm|icon-lg"
  *           leadingIcon={<Plus />}     // optional leading icon
  *           trailingIcon={<ArrowRight />} // optional trailing icon
@@ -14,6 +14,15 @@
  *     the hover state. `press`: compresses to --press-scale while held.
  *   - `transition-interactive`: colour, border, shadow and focus ring ease
  *     instead of snapping.
+ *
+ * RULE — one primary CTA per screen. `default` / `checkout` (green) is the
+ * single action the screen exists for: "Proceed to pay", "Post job", the
+ * recommended plan's "Buy now". When something else on the same screen
+ * must still be pushed hard — an add-on or upsell ("Add AI calling agent",
+ * database credits' "Add") — use `variant="emphasis"` (dark gray), never a
+ * second green button. `emphasis` is only ever a companion: never the only
+ * CTA on a screen and never more than one per section; anything less
+ * important than that is `outline`.
  *
  * Loading behaviour:
  *   - A Spinner renders in the leading icon slot.
@@ -62,6 +71,10 @@ const buttonVariants = cva(
          * a box that stays white. */
         "checkout-inset":
           "border-checkout-inset-border bg-checkout-inset text-checkout-inset-fg hover:bg-checkout-inset-hover",
+        /* Dark-gray push for a screen whose green primary is already taken
+         * (add-ons, upsells) — see the one-primary RULE above. */
+        emphasis:
+          "bg-cta-emphasis text-cta-emphasis-foreground hover:bg-cta-emphasis-hover active:bg-cta-emphasis-hover",
       },
       size: {
         default:

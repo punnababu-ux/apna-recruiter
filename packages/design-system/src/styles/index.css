@@ -98,6 +98,11 @@
   --color-checkout-primary:            var(--checkout-primary);
   --color-checkout-primary-hover:      var(--checkout-primary-hover);
   --color-checkout-primary-foreground: var(--checkout-primary-foreground);
+
+  /* Emphasis CTA — dark gray, for the push that isn't the primary action */
+  --color-cta-emphasis:            var(--cta-emphasis);
+  --color-cta-emphasis-hover:      var(--cta-emphasis-hover);
+  --color-cta-emphasis-foreground: var(--cta-emphasis-foreground);
   --color-checkout-discount-fg:        var(--checkout-discount-fg);
   --color-checkout-discount-bg:        var(--checkout-discount-bg);
   --color-checkout-info:               var(--checkout-info);
@@ -569,12 +574,15 @@
 
 /* One gold glint that sweeps across a surface once, e.g. plan cards the
  * moment a discount lands on them (Figma "Shimmer animation", 2540:8645).
- * Painted on ::after, so the host needs `relative overflow-hidden` and a
- * free ::after. Re-trigger by re-keying the element. Reduced motion
- * collapses it to nothing via the base-layer floor. */
+ * Painted on ::after, so the host needs `relative` and a free ::after. The
+ * glint moves by background-position inside a static, inset-0 layer — not by
+ * translating the layer — so it stays inside the card without the host
+ * clipping its overflow (cards can't: see card-hover-lift). Re-trigger by
+ * re-keying the element. Reduced motion collapses it to nothing via the
+ * base-layer floor. */
 @keyframes shimmer-sweep {
-  from { translate: -100% 0; }
-  to   { translate: 100% 0; }
+  from { background-position: 100% 0; }
+  to   { background-position: 0% 0; }
 }
 
 @utility animate-shimmer-once {
@@ -582,14 +590,75 @@
     content: "";
     position: absolute;
     inset: 0;
+    border-radius: inherit;
     pointer-events: none;
     background-image: linear-gradient(
       100deg,
-      transparent 25%,
+      transparent 42%,
       color-mix(in srgb, var(--highlight) 35%, transparent) 50%,
-      transparent 75%
+      transparent 58%
     );
+    /* 3× wide, so at either end of the sweep the glint sits off the card. */
+    background-size: 300% 100%;
+    background-repeat: no-repeat;
     animation: shimmer-sweep var(--duration-1000) var(--ease-standard) both;
+  }
+}
+
+/* "You got the discount" — for the claimed exit offer's line ("10% extra off
+ * applied" / "Incl. 10% extra"). A bright band runs through the text itself
+ * (gradient clipped to the glyphs, in the text's own colour), then the text
+ * rests in its plain colour, and again — for as long as the offer is on
+ * screen. One 3s cycle: ~1.2s sweep, ~1.8s rest, so it keeps catching the
+ * eye without strobing. Put it on the span holding the words only: an icon
+ * inside would be painted over. Pair with `animate-wiggle` on the offer's
+ * icon or % OFF badge — same cycle, so the two land together. Reduced
+ * motion shows the plain text. */
+@keyframes text-shimmer {
+  0% {
+    background-position: 100% 0;
+    animation-timing-function: var(--ease-standard);
+  }
+  40%, 100% { background-position: 0% 0; }
+}
+
+@utility animate-text-shimmer {
+  background-image: linear-gradient(
+    100deg,
+    currentColor 40%,
+    color-mix(in srgb, var(--highlight) 75%, currentColor) 50%,
+    currentColor 60%
+  );
+  background-size: 300% 100%;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: text-shimmer 3s linear 300ms infinite both;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    background-image: none;
+    -webkit-text-fill-color: currentColor;
+  }
+}
+
+/* A small rocking turn for the discount icon / % OFF badge, on the same 3s
+ * cycle as `animate-text-shimmer`: it rocks as each sweep starts (~0.75s),
+ * then holds still through the rest. Animates the standalone `rotate`. */
+@keyframes wiggle {
+  0%, 25%, 100% { rotate: 0deg; }
+  5% { rotate: -18deg; }
+  11% { rotate: 14deg; }
+  17% { rotate: -8deg; }
+  21% { rotate: 4deg; }
+}
+
+@utility animate-wiggle {
+  animation: wiggle 3s var(--ease-standard) 300ms infinite both;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
   }
 }
 
@@ -612,21 +681,53 @@
  * One utility rather than per-component classes, because every card surface
  * shares it — pricing, plan, quote, FAQ and stat cards alike. Animates the
  * standalone `translate` property, not `transform`, to match the Tailwind v4
- * translate utilities it sits alongside. */
+ * translate utilities it sits alongside.
+ *
+ * RULE — a card that lifts is a click target as a whole: the root takes the
+ * click (its CTA button just bubbles to it), so the lift never promises more
+ * than the card does. A card holding several separate actions (links, menus)
+ * doesn't lift. When a card sits in a clickable frame (the Unlimited cards),
+ * the frame stays put and only the card inside lifts — on hover anywhere in
+ * the frame: mark the frame `data-card-lift-group`.
+ *
+ * The card moves as one piece: `will-change: translate` gives it its own
+ * compositor layer, so the lift slides the already-painted card instead of
+ * re-rasterising it every frame — which snapped text and borders to the
+ * pixel grid separately, so the text visibly shimmied inside the card.
+ *
+ * Hit strip: the lift moves the card's bottom edge 2px up, out from under a
+ * cursor resting on it — the card un-hovers, drops back, re-hovers, and
+ * flickers. While hovered, a transparent strip fills that 2px so the card
+ * stays hovered. So the strip can catch the cursor, the card must not clip
+ * its overflow (no `overflow-hidden` — clip a corner ribbon on the ribbon
+ * itself). It's an `::after` because `ink` owns `::before`; a card running
+ * `animate-shimmer-once` (also `::after`) skips it for that one second. */
 @utility card-hover-lift {
+  position: relative;
+  will-change: translate;
   transition-property: box-shadow, translate, scale;
   transition-duration: var(--duration-enter);
   transition-timing-function: var(--ease-out-ui);
 
-  &:hover {
+  &:hover,
+  :where([data-card-lift-group]:hover) & {
     translate: 0 -2px;
     box-shadow: var(--shadow-elevated);
+  }
+
+  &:hover:not(.animate-shimmer-once)::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: 100%;
+    height: 2px;
   }
 
   @media (prefers-reduced-motion: reduce) {
     transition-duration: 0ms;
 
-    &:hover {
+    &:hover,
+    :where([data-card-lift-group]:hover) & {
       translate: none;
     }
   }

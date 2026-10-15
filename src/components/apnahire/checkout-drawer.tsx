@@ -657,8 +657,10 @@ export function CheckoutDrawer({
                         ),
                     }))}
                   />
+                  {/* Dark gray, not green: the pay button is this drawer's
+                      one primary CTA (Button's one-primary rule). */}
                   <Button
-                    variant="checkout"
+                    variant="emphasis"
                     size="sm"
                     className="shrink-0 px-3 text-sm"
                     onClick={() => setAddonCredits(selectedPack.credits)}

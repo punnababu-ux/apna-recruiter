@@ -206,6 +206,9 @@ function JobPlanGridCard({ tier, recommended, creditBalance, onSelect }: JobPlan
         key={shimmerKey}
         layout="price-first"
         className={cn("flex-1 border-transparent", shimmerKey > 0 && "animate-shimmer-once")}
+        // The whole card selects (the CTA's click bubbles here), as on
+        // self-checkout — the card-hover-lift rule.
+        onClick={() => onSelect(tier)}
         ribbon={
           recommended ? (
             <Badge variant="ribbon" size="ribbon">
@@ -231,7 +234,6 @@ function JobPlanGridCard({ tier, recommended, creditBalance, onSelect }: JobPlan
             type="button"
             variant={recommended ? "checkout" : "outline"}
             className="h-10 w-full font-semibold"
-            onClick={() => onSelect(tier)}
           >
             {ctaLabel}
           </Button>
@@ -573,7 +575,17 @@ function MonthlySubscriptionCard({
   const strike = plan.mrp ?? (extraOff ? plan.price : undefined)
   const discountPct = strike && strike > price ? Math.round((1 - price / strike) * 100) : null
   return (
-    <div className={cn("flex flex-col gap-5 overflow-hidden rounded-2xl bg-gradient-checkout-unlimited p-4", className)}>
+    // The frame is the click target but stays put; hovering anywhere in it
+    // lifts the card inside (card-hover-lift rule) — same as self-checkout's
+    // UnlimitedSideCard.
+    <div
+      data-card-lift-group
+      onClick={onSelect}
+      className={cn(
+        "flex cursor-pointer flex-col gap-5 rounded-2xl bg-gradient-checkout-unlimited p-4",
+        className
+      )}
+    >
       {/* Logo row as in UnlimitedSideCard; 24px tall to match PlanFrame's
           heading so both columns' cards start level. */}
       <div className="flex h-6 items-start pt-1.5">
@@ -602,7 +614,7 @@ function MonthlySubscriptionCard({
           ) : undefined
         }
         cta={
-          <Button type="button" variant="checkout-inset" className="h-10 w-full font-semibold" onClick={onSelect}>
+          <Button type="button" variant="checkout-inset" className="h-10 w-full font-semibold">
             Get apna unlimited
           </Button>
         }
