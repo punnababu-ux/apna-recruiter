@@ -369,31 +369,38 @@ function MobileJobPlanRadioGroup({
                     : "border border-border hover:border-border/80"
                 )}
               >
+                {/* Header: plan name paired with its radio (the standard
+                    radio-card reading). Body: what you get on the left, what
+                    you pay on the right, with the full width the radio no
+                    longer takes from the price column. */}
                 <div className="flex items-center justify-between gap-3">
-                <div className="flex min-w-0 flex-col gap-2">
-                  <span className="text-base font-semibold text-foreground">
-                    {tier.title}
-                  </span>
-                  <VisibilityLine tier={tier} />
-                  {extraOff && !creditMode && <ExtraOffLine />}
-                  {creditMode && (
-                    <span className="text-xs font-semibold text-checkout-info">
-                      Consumes {creditLabel(tier.credit)}
-                    </span>
-                  )}
-                  {/* What you get: the free database credits, a limited-time
-                      offer rather than a permanent part of the plan, so a
-                      chip. The discount lives with the price on the right. */}
-                  <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
-                    <Badge variant="discount" size="sm">
-                      <Database aria-hidden />+{tier.dbCredits} free DB credits
-                    </Badge>
+                  <span className="text-base font-semibold text-foreground">{tier.title}</span>
+                  <div
+                    className={cn(
+                      "flex size-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
+                      isSelected ? "border-checkout-primary" : "border-muted-foreground/30"
+                    )}
+                  >
+                    {isSelected && <div className="size-2.5 rounded-full bg-checkout-primary" />}
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <div className="flex flex-col items-end text-right">
-                    <div className="flex items-center justify-end gap-1.5">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex min-w-0 flex-col gap-2">
+                    <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                      <ClockFading className="size-3.5 shrink-0" aria-hidden />
+                      Active for {tier.jobActiveDays} days
+                    </span>
+                    <VisibilityLine tier={tier} />
+                    {creditMode && (
+                      <span className="text-xs font-semibold text-checkout-info">
+                        Consumes {creditLabel(tier.credit)}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="flex shrink-0 flex-col items-end text-right">
+                    <div className="flex items-baseline justify-end gap-1.5">
                       {!creditMode && tier.mrp && tier.mrp > tier.price && (
                         <span className="text-xs text-muted-foreground line-through">
                           ₹{tier.mrp.toLocaleString("en-IN")}
@@ -406,39 +413,37 @@ function MobileJobPlanRadioGroup({
                       </span>
                     </div>
                     {creditMode ? (
-                      <span className="text-xs italic text-muted-foreground">
-                        {creditStatus}
-                      </span>
+                      <span className="text-xs italic text-muted-foreground">{creditStatus}</span>
                     ) : discountPct ? (
-                      // One discount signal beside the struck price, in
-                      // place of "Save ₹X" (which said the same thing).
-                      <Badge variant="discount" size="sm" className="mt-1">
-                        {discountPct}% OFF
-                      </Badge>
+                      // One discount signal under the price, in place of
+                      // "Save ₹X" (which said the same thing).
+                      <div className="mt-1 flex items-center gap-1.5">
+                        {/* The badge already counts the claimed 10%; this
+                            says why it went up, beside the price it changed. */}
+                        {extraOff && (
+                          <span className="text-xs font-medium text-success">Incl. 10% extra</span>
+                        )}
+                        <Badge variant="discount" size="sm">
+                          {discountPct}% OFF
+                        </Badge>
+                      </div>
                     ) : null}
                   </div>
-                  <div
-                    className={cn(
-                      "flex size-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
-                      isSelected
-                        ? "border-checkout-primary"
-                        : "border-muted-foreground/30"
-                    )}
-                  >
-                    {isSelected && <div className="size-2.5 rounded-full bg-checkout-primary" />}
-                  </div>
-                </div>
                 </div>
 
                 {/* Explain on selection: only the chosen plan lists what it
                     includes, so the unselected rows stay scannable. The
                     signal meter carries the comparison between plans. */}
                 {isSelected && (
-                  <ul className="flex flex-col gap-2 border-t border-border pt-3 text-xs text-foreground animate-in fade-in-0">
-                    <li className="flex items-center gap-2">
-                      <ClockFading className="size-4 shrink-0 text-muted-foreground" aria-hidden />
-                      Active for {tier.jobActiveDays} days
-                    </li>
+                  // With no feature points (Classic), the credits line is the
+                  // only content: its divider is the dashed "offer" rule used
+                  // everywhere else for the credits, instead of a solid one.
+                  <ul
+                    className={cn(
+                      "flex flex-col gap-2 border-t border-border pt-3 text-xs text-foreground animate-in fade-in-0",
+                      !tier.features.some((f) => f.enabled) && "border-dashed"
+                    )}
+                  >
                     {tier.features
                       .filter((f) => f.enabled)
                       .map((f) => (
@@ -447,6 +452,22 @@ function MobileJobPlanRadioGroup({
                           {f.label}
                         </li>
                       ))}
+                    {/* Last: the free credits are a limited-time offer, not
+                        the plan. The dashed rule sets them apart only when
+                        feature points sit above (Classic has none, so it
+                        would double up with the solid rule). */}
+                    <li
+                      className={cn(
+                        "flex items-center gap-2 text-foreground",
+                        tier.features.some((f) => f.enabled) && "border-t border-dashed border-border pt-2"
+                      )}
+                    >
+                      <Database className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+                      <span>
+                        {tier.dbCredits} free database credits
+                        <span className="text-muted-foreground"> · Limited offer</span>
+                      </span>
+                    </li>
                   </ul>
                 )}
               </div>
