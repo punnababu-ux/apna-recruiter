@@ -35,7 +35,7 @@ export function JobCard({
   return (
     <div 
       className={cn(
-        "flex flex-col gap-5 rounded-xl border border-border bg-card p-5 sm:p-6 transition-all hover:border-border/80 hover:shadow-xs",
+        "flex flex-col gap-5 rounded-xl border border-border bg-card p-5 sm:p-6 transition-interactive hover:border-border/80 hover:shadow-xs",
         className
       )}
       {...props}

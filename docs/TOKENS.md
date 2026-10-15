@@ -162,6 +162,8 @@ Composed from primitives only, exposed as `bg-gradient-<name>` utilities
 |------------------------------|---------------------------------------------------------------------|--------------------------------------------------|
 | `--gradient-checkout-hero`  | Light: radial blooms (apna-gold-100, apna-navy-100, apna-sky-100/50) over a gray-0→gray-100 diagonal. Dark: soft alpha-white glows over an apna-plum-950→plum-800 diagonal (an original dark treatment — the source has no dark design; re-pointed from a hard-coded gray-950→gray-800 to the same plum ramp `--background`/`--card`/`--muted` now use, 2026-09-28, so the hero backdrop and the page it sits above share one hue) | ambient mesh background for the self-checkout / pricing page (`bg-gradient-checkout-hero`), pairs with `--surface-checkout-hero-fg(-muted)` / `--surface-checkout-track(-border)` |
 | `--gradient-checkout-unlimited` | `linear-gradient(180deg, apna-plum-800 → apna-plum-900 → apna-plum-950)` | dark noir card background for the "apna Unlimited" promo banner (`bg-gradient-checkout-unlimited`) — fixed across themes, it's a deliberately-dark card in both. Pair with `--surface-inverted-fg` for its (white) text and `--checkout-unlimited-border(-hover)` / `--checkout-unlimited-cta(-hover)` for its border/CTA |
+| `--gradient-offer` | Light: radial apna-gold-100 (top-left) + apna-sky-100 (top-right) + apna-plum-50 blooms over gray-0→gray-100. Dark: alpha-white glows over apna-plum-950→800 | header of the offer pop-ups — job bundle upsell and exit nudge (`bg-gradient-offer`). Same voice as the checkout page mesh; `text-foreground`, the new price in `text-checkout-primary`. Subscription upgrades keep `--gradient-checkout-unlimited` (white text, gold price) |
+| `--gradient-ai-subtle` | Light: `linear-gradient(100deg, apna-plum-50 → apna-sky-50 → apna-green-50)`. Dark: the 950 steps of the same ramps at 45–70% over the surface | soft "AI" wash behind the AI calling add-on in the express-checkout order summary (`bg-gradient-ai-subtle`); quiet enough for body text on top |
 
 ### Checkout brand
 
@@ -185,8 +187,13 @@ while `--primary`/`--success` brighten one step in dark mode
 
 ### Status
 
-Each status role has `--<role>`, `--<role>-foreground`, and a `-subtle`
-variant for quiet badges and banners.
+Each status role has `--<role>`, `--<role>-foreground` (text on the solid
+role colour), `--<role>-subtle` (a quiet tint) and `--<role>-subtle-fg`
+(text on that tint, exposed as `text-<role>-subtle-foreground`). Pair tints
+with `-subtle-foreground`, never `-foreground`: the `-foreground` tokens are
+sized for solid surfaces. Warning in particular: `text-warning` on a light
+tint is about 2:1. Every `-subtle-fg` has a dark-mode value (a 200 step);
+before October 2026 it didn't, and dark warning text was about 1:1.
 
 | Role          | Light (`--role`) | Subtle           | Dark (`--role`) | Dark subtle      |
 |---------------|------------------|------------------|-----------------|------------------|
@@ -388,6 +395,31 @@ Use `gap-inline`, `p-inset`, `gap-stack`, etc. These read as intent and shift
 globally if the system's rhythm is re-aliased.
 
 ---
+
+### Motion — live surfaces
+
+| Token | Value | Intent |
+|---|---|---|
+| `--duration-hover` | 150ms | Hover / colour / focus-ring changes (`duration-hover`, `transition-interactive`) |
+| `--duration-enter` / `--duration-exit` | 200ms / 150ms | Small surfaces entering / leaving |
+| `--duration-large` | 500ms | Sheets, drawers, large panels |
+| `--duration-press` | 100ms | Press compression |
+| `--duration-ink` | 500ms | Ink spreading from the touch point |
+| `--duration-ink-fade` | 300ms | Ink settling into the hover state after release |
+| `--duration-select` | 200ms | Selection changes: tab indicator, tick, thumb (`duration-select`) |
+| `--ease-out-ui` / `--ease-in-ui` | decel / emphasis | Enter / exit curves |
+| `--ease-select` | spring | Selection lands with a nudge (`ease-select`) |
+| `--duration-slide` / `--ease-slide` | 300ms / standard | A selection pill travelling between options (`tab-indicator`, `sliding-indicator`) |
+| `--press-scale` / `--press-scale-subtle` | 0.97 / 0.99 | Press compression for controls / cards |
+| `--ink-opacity` | 0.12 (dark 0.16) | Ink strength over `currentColor` |
+
+The semantic durations are wired to Tailwind as `--transition-duration-*`,
+the namespace `duration-*` reads. They used to be `--animate-duration-*`,
+which generated no classes. Utilities: `ink`, `press`, `press-subtle`,
+`transition-interactive`, `transition-select`, `tab-indicator`,
+`sliding-indicator` (with the `useSlidingIndicator` hook), `animate-shimmer-once`
+(one gold glint across a surface, e.g. plan cards when a discount lands), `pb-safe`,
+`pb-safe-<n>`. See the "Live surfaces" section of AGENTS.md.
 
 ## How to add a token
 

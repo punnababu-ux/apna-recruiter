@@ -72,6 +72,10 @@ import {
   SheetTitle,
 } from "@apna/design-system"
 import { cn } from "@/lib/utils"
+import { AiCallingAddonCard, type AiAddonOffer } from "@/components/apnahire/ai-calling-addon-card"
+import { CountdownChip, useCountdown } from "@/components/apnahire/offers/countdown-chip"
+import { CouponExpiredDialog } from "@/components/apnahire/offers/coupon-expired-dialog"
+import { EXTRA_OFF } from "@/content/offers"
 
 export interface CartLine {
   id: string
@@ -82,6 +86,9 @@ export interface CartLine {
   /** List price. Rendered struck-through immediately before `price` when it
    *  is greater than `price` (Figma hides the strike otherwise). */
   mrp?: number
+  /** Shown instead of the rupee price when the line is paid in credits
+   *  (e.g. "2 credits"); `price` is then 0 so it adds nothing to the bill. */
+  priceLabel?: string
   /** Subscription purchases only. Setting this switches the drawer to the
    *  recurring variant: no add-on upsell, a payment-method step, and an
    *  auto-renew disclosure. The value is the plan's own billing period in
@@ -155,6 +162,9 @@ const SUBSCRIPTION_TRUST_ITEMS = [
  *  whose rendered text is `STAY20`. */
 const COUPONS: Record<string, { label: string; discountPct: number; maxDiscount: number }> = {
   STAY20: { label: "STAY20", discountPct: 20, maxDiscount: 300 },
+  // The exit loop's claimed offer (Figma 2525:23488): 10% off the whole
+  // cart, uncapped, auto-applied while its 24-hour window is open.
+  [EXTRA_OFF.code]: { label: EXTRA_OFF.code, discountPct: EXTRA_OFF.pct, maxDiscount: Number.POSITIVE_INFINITY },
 }
 
 /** Figma's trigger row reads "3 offers" in all three instances, including on
@@ -181,6 +191,17 @@ interface CheckoutDrawerProps {
     lines: CartLine[],
     paymentMethod?: SubscriptionPaymentMethod
   ) => void
+  /** Express checkout only: offer AI calling as the add-on instead of the
+   *  database-credit upsell. When everything in the cart is paid with
+   *  credits, the footer turns into "Post job" — `onProceedToPay` is then
+   *  called with a total of 0 and the caller posts without a payment step. */
+  aiAddon?: AiAddonOffer
+  /** The claimed exit offer. While its deadline is in the future the
+   *  coupon is applied automatically, with a live countdown; when it runs
+   *  out mid-checkout the coupon drops off, "Coupon expired" shows and
+   *  `onExtraOfferExpired` fires. */
+  extraOffer?: { code: string; deadline: number }
+  onExtraOfferExpired?: () => void
 }
 
 const inr = (n: number) => `₹${n.toLocaleString("en-IN")}`
@@ -209,7 +230,7 @@ function renewalDateFrom(days: number) {
  * board — so the monthly suffix is derived rather than sourced.
  */
 function periodLabelFor(days: number) {
-  return days >= 90 ? "/quarter" : "/month"
+  return days >= 365 ? "/year" : days >= 90 ? "/quarter" : "/month"
 }
 
 /**
@@ -304,10 +325,12 @@ function CartLineRow({ line, onRemove }: { line: CartLine; onRemove?: () => void
       <div className="flex items-center justify-between gap-3">
         <p className="text-base font-semibold text-foreground">{line.label}</p>
         <div className="flex shrink-0 items-center gap-3">
-          {line.mrp != null && line.mrp > line.price && (
+          {!line.priceLabel && line.mrp != null && line.mrp > line.price && (
             <span className="text-sm text-muted-foreground line-through">{inr(line.mrp)}</span>
           )}
-          <span className="text-base font-semibold text-foreground">{inr(line.price)}</span>
+          <span className="text-base font-semibold text-foreground">
+            {line.priceLabel ?? inr(line.price)}
+          </span>
         </div>
       </div>
       {(line.sublabel || onRemove) && (
@@ -338,7 +361,22 @@ function BillRow({ label, children }: { label: React.ReactNode; children: React.
   )
 }
 
-export function CheckoutDrawer({ open, onOpenChange, item, onProceedToPay }: CheckoutDrawerProps) {
+export function CheckoutDrawer({
+  open,
+  onOpenChange,
+  item,
+  onProceedToPay,
+  aiAddon,
+  extraOffer,
+  onExtraOfferExpired,
+}: CheckoutDrawerProps) {
+  const [expiredOpen, setExpiredOpen] = React.useState(false)
+  // Primitives, not the object: callers build `extraOffer` inline, and an
+  // effect keyed on its identity would re-apply a coupon the user removed.
+  const extraCode = extraOffer?.code
+  const extraDeadline = extraOffer?.deadline
+  const extraRemaining = useCountdown(extraDeadline ?? null)
+  const [aiAdded, setAiAdded] = React.useState(false)
   const [packValue, setPackValue] = React.useState(DEFAULT_PACK)
   const [addonCredits, setAddonCredits] = React.useState<number | null>(null)
   const [couponInput, setCouponInput] = React.useState("")
@@ -356,6 +394,7 @@ export function CheckoutDrawer({ open, onOpenChange, item, onProceedToPay }: Che
     if (open) {
       setPackValue(DEFAULT_PACK)
       setAddonCredits(null)
+      setAiAdded(false)
       setCouponInput("")
       setAppliedCoupon(null)
       setGstin("")
@@ -365,6 +404,21 @@ export function CheckoutDrawer({ open, onOpenChange, item, onProceedToPay }: Che
     }
   }, [open, item?.id])
 
+  // On open, and when claimed while the summary is open (the exit nudge on
+  // close): apply the offer's coupon.
+  React.useEffect(() => {
+    if (open && extraCode && extraDeadline && extraDeadline > Date.now()) setAppliedCoupon(extraCode)
+  }, [open, extraCode, extraDeadline])
+
+  // Ran out mid-checkout: drop the coupon and say so.
+  React.useEffect(() => {
+    if (open && extraCode && appliedCoupon === extraCode && extraRemaining === 0) {
+      setAppliedCoupon(null)
+      setExpiredOpen(true)
+      onExtraOfferExpired?.()
+    }
+  }, [open, extraCode, appliedCoupon, extraRemaining, onExtraOfferExpired])
+
   if (!item) return null
 
   const selectedPack =
@@ -373,10 +427,32 @@ export function CheckoutDrawer({ open, onOpenChange, item, onProceedToPay }: Che
     ? DATABASE_PACKS.find((p) => p.credits === addonCredits) ?? null
     : null
 
-  const lines: CartLine[] =
-    addon && addon.price != null
+  const isSubscription = item.renewAfterDays != null
+
+  // The AI add-on spends one AI calling credit when there is one, otherwise
+  // it's bought for this job.
+  const aiLine: CartLine | null =
+    aiAddon && aiAdded
+      ? aiAddon.creditsAvailable > 0
+        ? {
+            id: "ai-calling",
+            label: "AI calling agent",
+            sublabel: "1 AI calling credit from your balance",
+            price: 0,
+            priceLabel: "1 credit",
+          }
+        : {
+            id: "ai-calling",
+            label: "AI calling agent",
+            sublabel: "Calls and screens applicants for this job",
+            price: aiAddon.price,
+          }
+      : null
+
+  const lines: CartLine[] = [
+    item,
+    ...(addon && addon.price != null
       ? [
-          item,
           {
             id: `db-${addon.credits}`,
             label: `${addon.credits} Database credits`,
@@ -385,7 +461,9 @@ export function CheckoutDrawer({ open, onOpenChange, item, onProceedToPay }: Che
             mrp: addon.mrp,
           },
         ]
-      : [item]
+      : []),
+    ...(aiLine ? [aiLine] : []),
+  ]
 
   // itemsNet = Σ price · itemsMrp = Σ (mrp ?? price)
   const itemsNet = lines.reduce((sum, l) => sum + l.price, 0)
@@ -401,8 +479,10 @@ export function CheckoutDrawer({ open, onOpenChange, item, onProceedToPay }: Che
 
   // Figma only ever draws the upsell over a job-credit primary item; the
   // Quarterly-plan frames on the same board carry no upsell block at all.
-  const isSubscription = item.renewAfterDays != null
-  const showUpsell = !addon && !isSubscription && item.id.startsWith("job-")
+  const showUpsell = !aiAddon && !addon && !isSubscription && item.id.startsWith("job-")
+  const showAiAddon = !!aiAddon && !aiAdded && !isSubscription
+  // Everything paid with credits: no coupon, no bill, and the CTA posts.
+  const nothingToPay = itemsNet === 0
 
   // The renewal charge does NOT follow the coupon: both frames print ₹7,079
   // even though the coupon frame's total is ₹6,725. It is the plan's own price
@@ -496,7 +576,13 @@ export function CheckoutDrawer({ open, onOpenChange, item, onProceedToPay }: Che
                   )}
                   <CartLineRow
                     line={line}
-                    onRemove={i > 0 ? () => setAddonCredits(null) : undefined}
+                    onRemove={
+                      i === 0
+                        ? undefined
+                        : line.id === "ai-calling"
+                          ? () => setAiAdded(false)
+                          : () => setAddonCredits(null)
+                    }
                   />
                 </React.Fragment>
               ))}
@@ -584,8 +670,14 @@ export function CheckoutDrawer({ open, onOpenChange, item, onProceedToPay }: Che
             </section>
           )}
 
-          {/* 3 — Coupon: trigger, expanded panel, or applied row */}
-          {appliedCoupon ? (
+          {/* 2b — AI calling add-on (express checkout) */}
+          {showAiAddon && aiAddon && (
+            <AiCallingAddonCard offer={aiAddon} onAdd={() => setAiAdded(true)} />
+          )}
+
+          {/* 3 — Coupon: trigger, expanded panel, or applied row. Nothing to
+              discount when credits cover everything. */}
+          {nothingToPay ? null : appliedCoupon ? (
             <section className="flex items-center justify-between gap-3 bg-card p-4 shadow-card">
               <div className="flex items-start gap-2">
                 <Tag className="mt-0.5 size-5 shrink-0 text-checkout-primary" aria-hidden />
@@ -602,12 +694,16 @@ export function CheckoutDrawer({ open, onOpenChange, item, onProceedToPay }: Che
                   </button>
                 </div>
               </div>
+              {extraOffer && appliedCoupon === extraOffer.code ? (
+                <CountdownChip deadline={extraOffer.deadline} />
+              ) : (
               <div className="flex shrink-0 items-start gap-1.5">
                 {/* Material's `check_circle` is a filled disc; lucide's is an
                     outline, so it is filled against the card. */}
                 <CircleCheck className="size-4 fill-checkout-primary text-card" aria-hidden />
                 <span className="text-xs text-checkout-primary">Applied</span>
               </div>
+              )}
             </section>
           ) : expanded === "coupon" ? (
             // Bordered and genuinely shadowless in both S3 and S4.
@@ -684,7 +780,9 @@ export function CheckoutDrawer({ open, onOpenChange, item, onProceedToPay }: Che
 
           {/* 4 — Bill details. `flex-1 justify-end` reproduces Figma's slack
               white space above "Bill details", which collapses as the GSTIN
-              card grows. */}
+              card grows. Dropped entirely when credits cover the cart — the
+              footer's one line already says there's nothing to pay. */}
+          {nothingToPay ? null : (
           <section className="flex flex-1 flex-col justify-end gap-4 bg-card shadow-card">
             <div className="flex flex-col gap-4 px-4 pt-3 pb-4">
               <p className="text-sm font-semibold text-foreground">Bill details</p>
@@ -763,12 +861,16 @@ export function CheckoutDrawer({ open, onOpenChange, item, onProceedToPay }: Che
               </div>
             </div>
           </section>
+          )}
         </div>
 
         {/* Footer stays pinned outside the scroll body — Figma's tallest
             frames (913 px) overflow a typical viewport. `border-t` stands in
             for Figma's upward drop shadow, which has no token. */}
         <div className="flex flex-col gap-4 border-t border-border bg-card p-5 sm:rounded-bl-2xl">
+          {/* No "Total ₹0" when credits cover everything — the line under
+              "Post job" says it once. */}
+          {!nothingToPay && (
           <div className="flex items-center justify-between gap-3">
             <span className="flex items-center gap-2">
               <span className="text-base text-foreground">Total</span>
@@ -776,6 +878,7 @@ export function CheckoutDrawer({ open, onOpenChange, item, onProceedToPay }: Che
             </span>
             <span className="text-2xl font-semibold text-foreground">{inr(total)}</span>
           </div>
+          )}
           {isSubscription ? (
             <>
               {/* The method is chosen here, not in the payment step: Razorpay
@@ -848,16 +951,23 @@ export function CheckoutDrawer({ open, onOpenChange, item, onProceedToPay }: Che
                 className="h-12 w-full text-base font-semibold"
                 onClick={() => onProceedToPay(total, lines)}
               >
-                Proceed to pay {inr(total)}
+                {nothingToPay ? "Post job" : `Proceed to pay ${inr(total)}`}
               </Button>
-              <p className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-                <Lock className="size-4" aria-hidden />
-                100% safe and secure checkout
-              </p>
+              {nothingToPay ? (
+                <p className="text-center text-xs text-muted-foreground">
+                  No payment needed — credits are used when the job goes live
+                </p>
+              ) : (
+                <p className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+                  <Lock className="size-4" aria-hidden />
+                  100% safe and secure checkout
+                </p>
+              )}
             </>
           )}
         </div>
       </SheetContent>
+      <CouponExpiredDialog open={expiredOpen} onClose={() => setExpiredOpen(false)} />
     </Sheet>
   )
 }

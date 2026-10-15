@@ -212,6 +212,23 @@
   --ease-in-ui:  var(--ease-emphasis); /* exit curve — fast out of view      */
   --ease-out-ui: var(--ease-decel);    /* enter curve — decelerate in        */
 
+  /* Live surfaces — the system-wide feedback language (see the `ink`,
+   * `press`, `transition-interactive` and `transition-select` utilities in
+   * index.css). Every interactive element acknowledges a press instantly,
+   * an ink spreads from the touch point and settles into the hover state,
+   * and selection changes glide instead of snapping. */
+  --duration-press:    var(--duration-100); /* press compression in/out      */
+  --duration-ink:      var(--duration-500); /* ink spreading from the touch  */
+  --duration-ink-fade: var(--duration-300); /* ink settling after release    */
+  --duration-select:   var(--duration-200); /* indicator / check / thumb move */
+  --ease-select:       var(--ease-spring);  /* selection lands with a nudge  */
+  --duration-slide:    var(--duration-300); /* selection pill travelling    */
+  --ease-slide:        var(--ease-standard); /* quick start, soft landing   */
+
+  --press-scale:        var(--scale-97);    /* buttons, chips, controls      */
+  --press-scale-subtle: var(--scale-99);    /* cards and large surfaces      */
+  --ink-opacity:        var(--opacity-12);  /* ink strength over currentColor */
+
   /* ==========================================================================
    * Ring width — intent roles for focus + invalid indicators.
    * ======================================================================== */
@@ -452,6 +469,19 @@
    * rather than an opaque colour, and needed a lighter base to darken
    * against — plum-800/900/950 left too little headroom for the overlay
    * to read as a distinct, lifted layer. */
+  /* Offer pop-ups (bundle upsell, exit nudge) — a light ambient mesh in
+   * the same voice as the checkout page behind it: a warm gold bloom
+   * top-left, a sky bloom top-right, over white→gray. Dark text sits on
+   * it, and the green is left to the price and the CTA. Dark mode
+   * re-points it to the plum canvas (see .dark). */
+  --gradient-offer:
+    radial-gradient(circle at 6% 0%,   var(--color-apna-gold-100) 0%, transparent 55%),
+    radial-gradient(circle at 96% 8%,  var(--color-apna-sky-100) 0%, transparent 60%),
+    radial-gradient(circle at 60% 120%, var(--color-apna-plum-50) 0%, transparent 60%),
+    linear-gradient(135deg, var(--color-gray-0) 0%, var(--color-gray-100) 100%);
+  /* AI add-on wash — plum → sky → green, the soft "AI" tint behind the
+   * AI calling upsell in the order summary. Quiet enough for body text. */
+  --gradient-ai-subtle: linear-gradient(100deg, var(--color-apna-plum-50) 0%, var(--color-apna-sky-50) 55%, var(--color-apna-green-50) 100%);
   --gradient-checkout-unlimited: linear-gradient(180deg,
                                    var(--color-apna-plum-700) 0%,
                                    var(--color-apna-plum-800) 60%,
@@ -537,18 +567,26 @@
   --destructive:            var(--color-red-400);
   --destructive-foreground: var(--color-gray-50);
   --destructive-subtle:     var(--color-red-900);
+  --destructive-subtle-fg:  var(--color-red-200);
 
   --success:                var(--color-apna-green-500);
   --success-foreground:     var(--color-gray-50);
   --success-subtle:         var(--color-apna-green-900);
+  --success-subtle-fg:      var(--color-apna-green-200);
 
   --warning:                var(--color-apna-gold-400);
   --warning-foreground:     var(--color-gray-950);
   --warning-subtle:         var(--color-apna-gold-900);
+  /* Without these the light-mode 900 text sat on a 900 tint (~1:1). */
+  --warning-subtle-fg:      var(--color-apna-gold-200);
+
+  /* Ink reads lighter against dark surfaces — lift it a step. */
+  --ink-opacity:            var(--opacity-16);
 
   --info:                   var(--color-apna-sky-400);
   --info-foreground:        var(--color-gray-950);
   --info-subtle:            var(--color-apna-sky-900);
+  --info-subtle-fg:         var(--color-apna-sky-200);
 
   /* Lines — translucent on dark for softer hairlines */
   --border: var(--color-alpha-white-10);
@@ -599,6 +637,11 @@
     radial-gradient(circle at 90% 18%, var(--color-alpha-white-10) 0%, transparent 55%),
     radial-gradient(circle at 50% 90%, var(--color-alpha-white-5)  0%, transparent 60%),
     linear-gradient(135deg, var(--color-apna-plum-950) 0%, var(--color-apna-plum-900) 50%, var(--color-apna-plum-800) 100%);
+  --gradient-offer:
+    radial-gradient(circle at 6% 0%,  var(--color-alpha-white-10) 0%, transparent 50%),
+    radial-gradient(circle at 96% 8%, var(--color-alpha-white-10) 0%, transparent 55%),
+    linear-gradient(135deg, var(--color-apna-plum-950) 0%, var(--color-apna-plum-900) 55%, var(--color-apna-plum-800) 100%);
+  --gradient-ai-subtle: linear-gradient(100deg, color-mix(in srgb, var(--color-apna-plum-950) 70%, transparent) 0%, color-mix(in srgb, var(--color-apna-sky-950) 45%, transparent) 55%, color-mix(in srgb, var(--color-apna-green-950) 60%, transparent) 100%);
   --surface-checkout-hero-fg:       var(--color-gray-50);
   --surface-checkout-hero-fg-muted: var(--color-gray-400);
   /* Sits between the two, as it does in light. No dark design exists to

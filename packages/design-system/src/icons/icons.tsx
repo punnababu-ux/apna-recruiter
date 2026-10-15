@@ -12,6 +12,7 @@
 export type { LucideIcon as IconComponent, LucideProps as IconProps } from "lucide-react"
 
 export {
+  BadgePercent, CircleAlert,
   Activity, AlertCircle, AlertTriangle, ArrowDown, ArrowLeft,
   ArrowRight, ArrowUp, ArrowUpDown, ArrowUpRight, AtSign, AudioLines,
   Award, Ban, BarChart2, Bell, Bold, BookOpen,

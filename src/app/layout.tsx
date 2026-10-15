@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Figtree, Geist_Mono } from "next/font/google";
 
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { InkProvider } from "@/components/ui/ink-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
@@ -56,6 +57,12 @@ export const metadata: Metadata = {
   },
 };
 
+// viewport-fit=cover lets bottom-fixed bars read the notch / home-indicator
+// insets through env(safe-area-inset-*) — see the `pb-safe` utility.
+export const viewport: Viewport = {
+  viewportFit: "cover",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -71,6 +78,7 @@ export default function RootLayout({
         <ThemeProvider>
           <TooltipProvider>{children}</TooltipProvider>
           <Toaster />
+          <InkProvider />
         </ThemeProvider>
       </body>
     </html>

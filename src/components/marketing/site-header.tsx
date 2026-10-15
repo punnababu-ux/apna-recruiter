@@ -25,7 +25,17 @@
 import * as React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { ApnaLogo, ArrowUpRight, Button, ChevronDown } from "@apna/design-system"
+import {
+  ApnaLogo,
+  ArrowUpRight,
+  Button,
+  ChevronDown,
+  Menu,
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@apna/design-system"
 import { cn } from "@/lib/utils"
 import {
   HEADER_ACTIONS,
@@ -76,7 +86,7 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
     <header className="sticky top-0 z-40" onMouseLeave={() => setOpenPanel(null)}>
       <div
         className={cn(
-          "flex h-16 items-center justify-between gap-8 border-b px-4 transition-[background-color,border-color,box-shadow] duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] sm:px-8 lg:px-12",
+          "flex h-16 items-center justify-between gap-8 border-b px-4 transition-interactive duration-enter sm:px-8 lg:px-12",
           isScrolled || openPanel || mobileOpen
             ? "border-border bg-card shadow-sm"
             : "border-transparent bg-transparent shadow-none"
@@ -92,7 +102,7 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
               {MAIN_NAV.map((group) => {
                 const current = isCurrent(group)
                 const shared = cn(
-                  "inline-flex items-center gap-1.5 self-stretch px-3 py-1.5 text-sm font-semibold transition-colors",
+                  "ink relative inline-flex items-center gap-1.5 self-stretch px-3 py-1.5 text-sm font-semibold transition-interactive",
                   current
                     ? "border-b-2 border-primary text-primary"
                     : "rounded-full text-foreground hover:bg-muted"
@@ -124,7 +134,7 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
                   >
                     {group.label}
                     <ChevronDown
-                      className={cn("size-5 transition-transform", open && "rotate-180")}
+                      className={cn("size-5 transition-select", open && "rotate-180")}
                       aria-hidden
                     />
                   </button>
@@ -133,7 +143,7 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
 
               <a
                 href={LOOKING_FOR_A_JOB.href}
-                className="inline-flex items-center gap-1.5 self-stretch rounded-full px-3 py-1.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+                className="ink relative inline-flex items-center gap-1.5 self-stretch rounded-full px-3 py-1.5 text-sm font-semibold text-foreground transition-interactive hover:bg-muted"
               >
                 {LOOKING_FOR_A_JOB.label}
                 <ArrowUpRight className="size-5" aria-hidden />
@@ -160,8 +170,81 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
           >
             {HEADER_ACTIONS.primary.label}
           </Button>
+          {variant === "default" && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="lg:hidden"
+              aria-label="Open menu"
+              aria-expanded={mobileOpen}
+              onClick={() => setMobileOpen(true)}
+            >
+              <Menu className="size-5" />
+            </Button>
+          )}
         </div>
       </div>
+
+      {/* ── Mobile menu ── below lg the inline nav is hidden; the same groups
+           open in a sheet. Product links are listed flat (no hover panel on
+           touch). */}
+      {variant === "default" && (
+        <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+          <SheetContent side="right" className="w-full max-w-sm gap-0 p-0">
+            <SheetHeader className="border-b border-border p-4">
+              <SheetTitle>Menu</SheetTitle>
+            </SheetHeader>
+            <nav aria-label="Main" className="flex flex-col gap-1 overflow-y-auto p-2">
+              {MAIN_NAV.map((group) =>
+                group.items ? (
+                  <div key={group.label} className="flex flex-col gap-1 py-2">
+                    <span className="px-3 text-overline text-muted-foreground">{group.label}</span>
+                    {group.items.map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={() => setMobileOpen(false)}
+                        className="ink relative flex flex-col gap-0.5 rounded-lg px-3 py-2.5 transition-interactive hover:bg-muted"
+                      >
+                        <span className="text-sm font-semibold text-foreground">{item.label}</span>
+                        {item.description && (
+                          <span className="text-xs text-muted-foreground">{item.description}</span>
+                        )}
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  <Link
+                    key={group.label}
+                    href={group.href!}
+                    aria-current={isCurrent(group) ? "page" : undefined}
+                    onClick={() => setMobileOpen(false)}
+                    className="ink relative rounded-lg px-3 py-3 text-sm font-semibold text-foreground transition-interactive hover:bg-muted aria-[current=page]:text-primary"
+                  >
+                    {group.label}
+                  </Link>
+                )
+              )}
+              <a
+                href={LOOKING_FOR_A_JOB.href}
+                className="ink relative inline-flex items-center gap-1.5 rounded-lg px-3 py-3 text-sm font-semibold text-foreground transition-interactive hover:bg-muted"
+              >
+                {LOOKING_FOR_A_JOB.label}
+                <ArrowUpRight className="size-4" aria-hidden />
+              </a>
+            </nav>
+            <div className="mt-auto flex flex-col gap-2 border-t border-border p-4 pb-safe-4 sm:hidden">
+              <Button
+                variant="outline"
+                className="w-full rounded-full font-semibold"
+                render={<Link href={HEADER_ACTIONS.secondary.href} />}
+              >
+                {HEADER_ACTIONS.secondary.label}
+              </Button>
+            </div>
+          </SheetContent>
+        </Sheet>
+      )}
 
       {/* ── Mega-menu panel ── */}
       {MAIN_NAV.filter((g) => g.items).map((group) => (
@@ -176,7 +259,7 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex flex-col gap-1 rounded-lg p-4 transition-colors hover:bg-muted"
+                className="ink relative flex flex-col gap-1 rounded-lg p-4 transition-interactive hover:bg-muted"
               >
                 <span className="text-sm font-semibold text-foreground">{item.label}</span>
                 {item.description && (
@@ -192,9 +275,9 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
            mounted once published so it can slide rather than pop. */}
       {slot && (
         <div
-          aria-hidden={!slot.showSubNav}
+          inert={!slot.showSubNav}
           className={cn(
-            "absolute inset-x-0 top-full -z-10 hidden h-16 items-center justify-center bg-card px-4 shadow-sm transition-[opacity,translate] duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] md:flex",
+            "absolute inset-x-0 top-full -z-10 hidden h-16 items-center justify-center bg-card px-4 shadow-sm transition-interactive duration-enter ease-out-ui md:flex",
             slot.showSubNav
               ? "translate-y-0 opacity-100"
               : "pointer-events-none -translate-y-full opacity-0"

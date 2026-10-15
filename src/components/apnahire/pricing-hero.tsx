@@ -110,53 +110,12 @@ export function PricingHero({
             `tabsRef`'s bounding box is measurable by the page's
             IntersectionObserver; `contents` would collapse it to zero size. */}
         <div ref={tabsRef} className="w-full">
-          {/* Mobile chips (< md) following Figma mobile information architecture */}
-          <div className="flex items-center gap-2 md:hidden">
-            <button
-              type="button"
-              onClick={() => onTabChange("jobs")}
-              className={cn(
-                "inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all",
-                activeTab === "jobs" || activeTab === "database"
-                  ? "bg-card text-checkout-primary shadow-xs ring-1 ring-border"
-                  : "bg-black/5 text-muted-foreground hover:text-foreground"
-              )}
-            >
-              <Briefcase className="size-4 shrink-0" aria-hidden />
-              Packages
-            </button>
-            <button
-              type="button"
-              onClick={() => onTabChange("unlimited")}
-              className={cn(
-                "inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all",
-                activeTab === "unlimited"
-                  ? "bg-card text-checkout-primary shadow-xs ring-1 ring-border"
-                  : "bg-black/5 text-muted-foreground hover:text-foreground"
-              )}
-            >
-              <InfinityIcon className="size-4 shrink-0" aria-hidden />
-              Unlimited
-            </button>
-            <button
-              type="button"
-              onClick={() => onTabChange("enterprise")}
-              className={cn(
-                "inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all",
-                activeTab === "enterprise"
-                  ? "bg-card text-checkout-primary shadow-xs ring-1 ring-border"
-                  : "bg-black/5 text-muted-foreground hover:text-foreground"
-              )}
-            >
-              <Building2 className="size-4 shrink-0" aria-hidden />
-              Enterprise
-            </button>
-          </div>
-
-          {/* Desktop full switcher (≥ md) */}
-          <div className="hidden md:block">
+          {/* One switcher for every viewport: a two-line pill row from md,
+              a scrolling chip row below it with the short labels. All four
+              tabs on both — Jobs and Database are separate products. */}
+          <div>
             <SegmentedTabSwitcher
-              items={PRICING_TABS}
+              items={PRICING_TABS.map((tab) => ({ ...tab, shortLabel: PRICING_TAB_SHORT_LABELS[tab.value] }))}
               value={activeTab}
               onValueChange={onTabChange}
               trackClassName="bg-checkout-track"

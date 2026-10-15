@@ -15,6 +15,8 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 | BackButton       | `import { BackButton } from "@apna/design-system"`                     | Back navigation — the only back control in the product: a 32px outlined circle + ChevronLeft, no variants. First item in a header row, `gap-3` before the title/logo. See the rule in its JSDoc. |
 | Toggle           | `import { Toggle } from "@apna/design-system"`                         | On/off button. Use for formatting toolbars.      |
 | ToggleGroup      | `import { ToggleGroup, ToggleGroupItem } from "@apna/design-system"`   | Multiple toggles, single- or multi-select.       |
+| InkProvider      | `import { InkProvider } from "@apna/design-system"`                    | Mount once in the root layout. Feeds the press position to every `ink` surface (the live-surface ripple). Renders nothing. |
+| useSlidingIndicator | `import { useSlidingIndicator } from "@apna/design-system"`         | Hook for hand-built segmented controls: moves one `sliding-indicator` pill onto the option marked `data-indicator-active`, so selection slides instead of cross-fading. |
 
 ## 2. Form & Inputs
 

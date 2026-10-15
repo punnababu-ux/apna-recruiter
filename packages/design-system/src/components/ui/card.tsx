@@ -39,7 +39,9 @@ const cardVariants = cva(
         md: "p-6",
         lg: "p-8",
       },
-      /** Adds the system-wide hover lift. Use only when the whole card is a link. */
+      /** Adds the system-wide hover lift. Use when the whole card is a link, or
+       *  for a selectable/plan card in a set where its siblings lift too
+       *  (PricingCard and the checkout plan cards all do). */
       interactive: {
         true: "card-hover-lift",
         false: "",

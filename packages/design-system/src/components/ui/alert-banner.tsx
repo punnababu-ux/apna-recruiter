@@ -51,8 +51,11 @@ const AlertBanner = React.forwardRef<HTMLDivElement, AlertBannerProps>(
   ) => {
     const isPrimary = appearance === "primary"
     const safeVariant = variant || "default"
-    const accentColor = isPrimary ? "text-white" : bannerAccentColorMap[safeVariant]
-    const textColor = isPrimary ? "text-white" : "text-foreground"
+    // The warning gradient is light gold (its token comment says so): white
+    // text on it fails contrast, so it takes the dark warning foreground.
+    const onPrimary = safeVariant === "warning" ? "text-warning-foreground" : "text-white"
+    const accentColor = isPrimary ? onPrimary : bannerAccentColorMap[safeVariant]
+    const textColor = isPrimary ? onPrimary : "text-foreground"
     // A standalone `cta` (a Button) is a fixed-width block, unlike `action`'s
     // inline underlined link which flows with the text — on a narrow card it
     // can't share a row with an icon pill and a headline without overflowing
@@ -67,7 +70,7 @@ const AlertBanner = React.forwardRef<HTMLDivElement, AlertBannerProps>(
           ref={ref}
           variant={isPrimary ? undefined : variant}
           className={cn(
-            "flex size-10 items-center justify-center p-0 rounded-xl transition-all duration-200 shrink-0 mx-auto",
+            "flex size-10 items-center justify-center p-0 rounded-xl transition-interactive shrink-0 mx-auto",
             borderless && "border-0 shadow-none",
             isPrimary && cn("bg-transparent", bannerPrimaryBgMap[safeVariant]),
             className
@@ -127,7 +130,7 @@ const AlertBanner = React.forwardRef<HTMLDivElement, AlertBannerProps>(
                   type="button"
                   onClick={action.onClick}
                   className={cn(
-                    "group inline-flex items-center font-semibold underline underline-offset-4 hover:opacity-80 focus-visible:outline-none rounded-sm align-baseline cursor-pointer whitespace-nowrap",
+                    "group inline-flex items-center font-semibold underline underline-offset-4 transition-interactive hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm align-baseline cursor-pointer whitespace-nowrap",
                     accentColor
                   )}
                 >
@@ -144,7 +147,7 @@ const AlertBanner = React.forwardRef<HTMLDivElement, AlertBannerProps>(
               type="button"
               onClick={onClose}
               className={cn(
-                "shrink-0 rounded-md p-1 opacity-70 hover:opacity-100 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer -mr-1",
+                "ink press relative shrink-0 rounded-md p-1 opacity-70 hover:opacity-100 transition-interactive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer -mr-1",
                 textColor
               )}
             >

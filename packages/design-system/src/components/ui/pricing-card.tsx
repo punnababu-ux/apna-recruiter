@@ -192,7 +192,8 @@ export function PricingCard({
     // `card-hover-lift` is the shared card interaction (see styles/index.css).
     "card-hover-lift relative flex h-full flex-col gap-4 overflow-hidden rounded-xl border p-4 pt-8",
     inset ? "border-checkout-inset-border bg-checkout-inset" : "border-border bg-card",
-    props.onClick && "cursor-pointer",
+    // A clickable card answers a press like every other surface.
+    props.onClick && "cursor-pointer ink press-subtle",
     className
   )
 

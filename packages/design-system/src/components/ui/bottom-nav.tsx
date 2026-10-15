@@ -51,7 +51,7 @@ export function BottomNav({ items, className }: BottomNavProps) {
       className={cn(
         // Fixed bar — hidden on desktop where sidebar is present
         "fixed bottom-0 left-0 right-0 z-50 md:hidden",
-        "flex h-16 items-stretch border-t border-border bg-card",
+        "box-content flex h-16 items-stretch border-t border-border bg-card pb-safe",
         className
       )}
     >
@@ -61,10 +61,15 @@ export function BottomNav({ items, className }: BottomNavProps) {
         const inner = (
           <>
             {/* Icon with optional badge */}
-            <div className="relative">
+            <div
+              className={cn(
+                "relative flex h-7 w-14 items-center justify-center rounded-full transition-select",
+                item.active && "bg-accent"
+              )}
+            >
               <Icon
                 className={cn(
-                  "size-5 transition-colors",
+                  "size-5 transition-interactive",
                   item.active ? "text-primary" : "text-muted-foreground"
                 )}
                 aria-hidden
@@ -79,8 +84,8 @@ export function BottomNav({ items, className }: BottomNavProps) {
             {/* Label */}
             <span
               className={cn(
-                "text-2xs font-medium leading-none transition-colors",
-                item.active ? "text-primary" : "text-muted-foreground"
+                "text-2xs leading-none transition-interactive",
+                item.active ? "font-semibold text-primary" : "font-medium text-muted-foreground"
               )}
             >
               {item.label}
@@ -89,7 +94,7 @@ export function BottomNav({ items, className }: BottomNavProps) {
         )
 
         const sharedClass =
-          "flex flex-1 flex-col items-center justify-center gap-1 py-2 touch-manipulation"
+          "ink relative flex flex-1 flex-col items-center justify-center gap-1 py-2 touch-manipulation"
 
         if (item.href) {
           return (

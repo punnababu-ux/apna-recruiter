@@ -18,7 +18,7 @@
  * preserving pixel-for-pixel for a Phase 1 build.
  */
 
-export type JobPlanTierId = "classic" | "premium" | "premium-ai" | "super-premium"
+export type JobPlanTierId = "classic" | "premium" | "super-premium"
 
 export interface JobPlanFeatureRow {
   label: string
@@ -34,18 +34,18 @@ export interface JobPlanTier {
   mrp?: number
   jobActiveDays: number
   visibilityLabel: string
+  /** 1 basic · 2 higher · 3 maximum — drives the compact signal meter on the
+   *  mobile plan rows, where the full feature list doesn't fit. */
+  visibilityLevel: 1 | 2 | 3
   features: JobPlanFeatureRow[]
-  aiCallingAgent: boolean
   dbCredits: number
   /** Credits this plan consumes when posted from an existing balance. */
   credit: JobPlanCredit
-  /** Social-proof line under the card, e.g. "105K+ recruiters…" */
-  socialProof?: string
 }
 
 /** Recruiters hold two separate balances: job credits (Classic 1, Premium 2,
- *  Super premium 4) and AI calling credits (Premium + AI, 1). A plan only
- *  ever draws on its own kind. */
+ *  Super premium 4), which plans draw on, and AI calling credits, which only
+ *  the AI calling add-on draws on (1 per job). */
 export type JobCreditKind = "job" | "ai-calling"
 export type CreditBalance = Record<JobCreditKind, number>
 export interface JobPlanCredit {
@@ -66,12 +66,12 @@ export const JOB_PLAN_TIERS: Record<JobPlanTierId, JobPlanTier> = {
     mrp: 899,
     jobActiveDays: 15,
     visibilityLabel: "Basic visibility",
+    visibilityLevel: 1,
     features: [
       { label: "WhatsApp notifications to candidates", enabled: false },
       { label: "Featured with 'Urgently hiring' tag", enabled: false },
       { label: "Top placements in job listings", enabled: false },
     ],
-    aiCallingAgent: false,
     dbCredits: 10,
     credit: { kind: "job", count: 1 },
   },
@@ -82,35 +82,14 @@ export const JOB_PLAN_TIERS: Record<JobPlanTierId, JobPlanTier> = {
     mrp: 1699,
     jobActiveDays: 15,
     visibilityLabel: "Higher visibility",
+    visibilityLevel: 2,
     features: [
       { label: "WhatsApp notifications to candidates", enabled: true },
       { label: "Featured with 'Urgently hiring' tag", enabled: true },
       { label: "Top placements in job listings", enabled: false },
     ],
-    aiCallingAgent: false,
     dbCredits: 30,
     credit: { kind: "job", count: 2 },
-    socialProof: "105K+ recruiters posted in last 1 month",
-  },
-  "premium-ai": {
-    id: "premium-ai",
-    title: "Premium job + AI Calling Agent",
-    price: 2999,
-    mrp: 4499,
-    jobActiveDays: 15,
-    visibilityLabel: "Higher visibility",
-    features: [
-      { label: "WhatsApp notifications to candidates", enabled: true },
-      { label: "Featured with 'Urgently hiring' tag", enabled: true },
-      { label: "Top placements in job listings", enabled: false },
-    ],
-    aiCallingAgent: true,
-    dbCredits: 30,
-    credit: { kind: "ai-calling", count: 1 },
-    // Figma's "Recommended for busy professionals" subtitle was dropped —
-    // a line only this card has throws off every row below it relative to
-    // its siblings. See PricingCard's structural-parity rule.
-    socialProof: "105K+ recruiters posted in last 1 month",
   },
   "super-premium": {
     id: "super-premium",
@@ -118,20 +97,20 @@ export const JOB_PLAN_TIERS: Record<JobPlanTierId, JobPlanTier> = {
     price: 2799,
     jobActiveDays: 15,
     visibilityLabel: "Maximum visibility",
+    visibilityLevel: 3,
     features: [
       { label: "2x Priority WhatsApp notifications to candidates", enabled: true },
       { label: "Featured with 'Urgently hiring' tag", enabled: true },
-      { label: "Top placements in job listings", enabled: false },
+      { label: "Top placements in job listings", enabled: true },
     ],
-    aiCallingAgent: false,
     dbCredits: 60,
     credit: { kind: "job", count: 4 },
   },
 }
 
 /** Tiered layout: three tiers (Classic, Premium, Super Premium), Premium recommended.
- *  Note: "Premium + AI Calling Agent" was dropped per mobile-first scope decision;
- *  AI Calling will be offered as an add-on later. */
+ *  AI calling is not a tier — it's an add-on in the order summary
+ *  (`AI_CALLING_ADDON`). */
 export const TIERED_PLAN_ORDER: JobPlanTierId[] = ["classic", "premium", "super-premium"]
 
 /** Subscription layout: three tiers + a monthly subscription card. */
@@ -157,3 +136,18 @@ export const MONTHLY_SUBSCRIPTION_PLAN = {
   ],
   note: "Valid in a single city",
 }
+
+/** AI calling, sold as an add-on in the express-checkout order summary
+ *  rather than as its own plan. One AI calling credit covers one job; with
+ *  none in the balance it's bought at `price` for this job. */
+export const AI_CALLING_ADDON = {
+  price: 1600,
+  headline: "Save your time – use AI calling to interview candidates",
+  benefits: ["30% higher call pickup", "Ready to interview candidates", "Hindi & English calling"],
+  /** "How it works" explainer — placeholder copy until product signs it off. */
+  steps: [
+    "AI calls every applicant within minutes of them applying.",
+    "It asks your screening questions in Hindi or English.",
+    "You get a shortlist with call recordings and answers.",
+  ],
+} as const

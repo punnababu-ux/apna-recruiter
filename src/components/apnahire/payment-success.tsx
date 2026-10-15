@@ -58,7 +58,7 @@ export function PaymentSuccess({
               <li key={line.id} className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">{line.label}</span>
                 <span className="font-medium text-foreground">
-                  ₹{line.price.toLocaleString("en-IN")}
+                  {line.priceLabel ?? `₹${line.price.toLocaleString("en-IN")}`}
                 </span>
               </li>
             ))}

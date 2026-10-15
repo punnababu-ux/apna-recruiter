@@ -249,7 +249,7 @@ export function CandidateCard({
 
       {/* Action bar */}
       {candidate.stage !== "selected" && (
-        <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-2.5">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border px-4 py-2.5">
           <div className="flex items-center gap-1.5">
             <Button
               variant="outline"
@@ -280,7 +280,7 @@ export function CandidateCard({
               </Button>
             ) : null}
           </div>
-          <div className="flex items-center gap-2">
+          <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
             <Button
               variant="outline"
               size="sm"

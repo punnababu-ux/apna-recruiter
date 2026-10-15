@@ -56,6 +56,7 @@ export function Stepper({
               <li className="flex shrink-0 items-center">
                 <button
                   type="button"
+                  aria-current={step.status === "current" ? "step" : undefined}
                   onClick={
                     onStepClick ? () => onStepClick(step.id) : undefined
                   }
@@ -111,6 +112,7 @@ export function Stepper({
             <StepGlyph status={step.status} index={idx + 1} />
             <button
               type="button"
+              aria-current={step.status === "current" ? "step" : undefined}
               onClick={onStepClick ? () => onStepClick(step.id) : undefined}
               disabled={!onStepClick || step.status === "pending"}
               className={cn(

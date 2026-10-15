@@ -112,8 +112,8 @@ export function JobCreditBundles({
       data-slot="job-credit-bundles"
       className={cn("flex flex-col gap-3 sm:gap-5 sm:rounded-2xl sm:bg-checkout-track sm:p-4", className)}
     >
-      {/* ── Mobile-first selectable radio cards (< sm) ── */}
-      <div className="flex flex-col gap-3 sm:hidden">
+      {/* ── Mobile-first selectable radio cards (< md) ── */}
+      <div className="flex flex-col gap-3 md:hidden">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Briefcase className="size-4 text-checkout-hero-fg" aria-hidden />
@@ -149,7 +149,7 @@ export function JobCreditBundles({
                   aria-checked={isSelected}
                   tabIndex={0}
                   className={cn(
-                    "flex cursor-pointer items-center justify-between rounded-xl bg-card p-3.5 shadow-xs transition-all",
+                    "ink press-subtle relative flex cursor-pointer items-center justify-between rounded-xl bg-card p-3.5 shadow-xs transition-interactive",
                     isSelected
                       ? "border-2 border-checkout-primary ring-1 ring-checkout-primary/20"
                       : "border border-border hover:border-border/80"
@@ -202,8 +202,11 @@ export function JobCreditBundles({
         </div>
       </div>
 
-      {/* ── Desktop view (sm and up) ── */}
-      <div className="hidden sm:flex sm:flex-col sm:gap-5">
+      {/* ── Desktop view (md and up) ── `md:flex-1` is load-bearing: the
+          wrapper must fill the frame so the grid's `flex-1` can stretch the
+          cards to the Unlimited card's height, which keeps prices and CTAs
+          on one line across both. */}
+      <div className="hidden md:flex md:flex-1 md:flex-col md:gap-5">
         <div className="flex min-h-12 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-1">
           <div className="flex min-w-0 flex-col gap-1">
             <h2 className="font-heading text-xl font-semibold leading-6 text-checkout-hero-fg">

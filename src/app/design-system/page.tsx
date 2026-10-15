@@ -128,7 +128,7 @@ export default function DesignSystemOverviewPage() {
               <Link
                 key={cat.href}
                 href={cat.href}
-                className="group flex flex-col justify-between rounded-xl border border-border bg-card p-5 transition-all hover:border-primary/50 hover:shadow-md"
+                className="group ink press-subtle relative flex flex-col justify-between rounded-xl border border-border bg-card p-5 transition-interactive hover:border-primary/50 hover:shadow-md"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
@@ -171,7 +171,7 @@ export default function DesignSystemOverviewPage() {
               <Link
                 key={f.href}
                 href={f.href}
-                className="flex items-center gap-3 rounded-xl border border-border bg-card p-4 transition-all hover:border-primary/40 hover:bg-accent/40"
+                className="ink press-subtle relative flex items-center gap-3 rounded-xl border border-border bg-card p-4 transition-interactive hover:border-primary/40 hover:bg-accent/40"
               >
                 <div className="rounded-lg border border-border bg-muted p-2 text-muted-foreground">
                   <Icon className="size-4" />
