@@ -378,10 +378,10 @@ export function JobPlanSelection() {
         onClaim={(deadline) => {
           offer.claim(deadline)
           setExitPrompt(null)
+          // No toast: the order summary shows the applied coupon and its
+          // countdown, the cards shimmer, and a bottom toast covered the
+          // pay button on phones.
           setShimmerKey((k) => k + 1)
-          toast.success("10% extra off applied", {
-            description: "Valid for 24 hours on any plan.",
-          })
         }}
       />
 

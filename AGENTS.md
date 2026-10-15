@@ -285,6 +285,11 @@ Mobile: bottom-fixed bars use `pb-safe` (no padding of their own) or
 `pb-safe-<n>` (in place of `pb-<n>`) to clear the home indicator. Inputs use
 `text-base md:text-sm` so iOS Safari doesn't zoom on focus.
 
+Toasts appear top-centre (the `Toaster` default). Never move them to the
+bottom: on phones that is where the primary CTA lives, and a toast there
+blocks it for seconds. Don't toast what the screen already shows (an
+applied coupon, a price that just changed).
+
 ---
 
 ## Text that grows — layouts decide where lines break, not copy

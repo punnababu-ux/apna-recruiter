@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { AlertBanner } from "@/components/ui/alert-banner"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
 import {
   Sidebar,
@@ -385,52 +385,71 @@ export function ReusableSidebar({
             </div>
           )}
 
-          {/* Alert Banner composed directly from AlertBanner design system primitive */}
-          {alertBanner && !alertDismissed && (
-            <div className="p-3 group-data-[collapsible=icon]:p-2 pt-0 group-data-[collapsible=icon]:pt-0">
-              <Tooltip>
-                <TooltipTrigger
-                  render={
-                      <AlertBanner
-                        collapsed={isCollapsed}
-                        variant={alertBanner.variant || "warning"}
-                        appearance={alertBanner.appearance || "secondary"}
-                        icon={<AlertCircle className="size-4 shrink-0" />}
-                        title={alertBanner.title}
-                        action={
-                          alertBanner.ctaText
-                            ? { label: alertBanner.ctaText, onClick: alertBanner.onCtaClick || (() => {}) }
-                            : undefined
-                        }
-                        onClose={alertBanner.showClose !== false ? () => setAlertDismissed(true) : undefined}
-                      />
-                  }
-                />
-                <TooltipContent
-                  side="right"
-                  align="center"
-                  hidden={!isCollapsed || isMobile}
-                  className="max-w-xs p-3 text-left"
-                >
-                  <p className="font-semibold text-xs text-foreground">{alertBanner.title}</p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
-          )}
+          {/* Alert Banner composed directly from AlertBanner design system
+              primitive. Collapsed, the banner is an icon tile; hovering (or
+              focusing / tapping) it opens the full banner beside it, CTA and
+              close included. It used to open a tooltip, which drew the title
+              in foreground text on the tooltip's foreground fill: a blank
+              black box. A popover, not a tooltip, because the banner has a
+              button in it. */}
+          {alertBanner && !alertDismissed && (() => {
+            const banner = (collapsed: boolean) => (
+              <AlertBanner
+                collapsed={collapsed}
+                variant={alertBanner.variant || "warning"}
+                appearance={alertBanner.appearance || "secondary"}
+                icon={<AlertCircle className="size-4 shrink-0" />}
+                title={alertBanner.title}
+                action={
+                  alertBanner.ctaText
+                    ? { label: alertBanner.ctaText, onClick: alertBanner.onCtaClick || (() => {}) }
+                    : undefined
+                }
+                onClose={alertBanner.showClose !== false ? () => setAlertDismissed(true) : undefined}
+              />
+            )
+            return (
+              <div className="p-3 group-data-[collapsible=icon]:p-2 pt-0 group-data-[collapsible=icon]:pt-0">
+                {isCollapsed ? (
+                  <Popover>
+                    <PopoverTrigger
+                      openOnHover
+                      delay={100}
+                      nativeButton={false}
+                      aria-label={alertBanner.title}
+                      render={banner(true)}
+                    />
+                    <PopoverContent
+                      side="right"
+                      align="center"
+                      sideOffset={12}
+                      className="w-72 gap-0 overflow-hidden rounded-xl p-0"
+                    >
+                      {banner(false)}
+                    </PopoverContent>
+                  </Popover>
+                ) : (
+                  banner(false)
+                )}
+              </div>
+            )
+          })()}
 
           {/* Bottom link — under the banner, the last thing in the sidebar.
               A destination, not an action: shaped like a nav row (left-aligned,
               chevron = "goes to another page"), on the dark emphasis surface so
               it stands out from the plain nav items without competing with the
-              page's own green CTA. Collapsed: an icon tile like the others. */}
+              page's own green CTA. Collapsed: an icon tile the size and inset
+              of the nav buttons above (40px, 12px in), so its icon sits on
+              the same centre line; a 32px tile 8px in sat 8px to the left. */}
           {bottomCta && (
-            <div className="px-3 pb-3 group-data-[collapsible=icon]:px-2 group-data-[collapsible=icon]:pb-2">
+            <div className="px-3 pb-3 group-data-[collapsible=icon]:pb-2">
               <Link
                 href={bottomCta.href}
                 aria-label={isCollapsed ? bottomCta.label : undefined}
                 title={isCollapsed ? bottomCta.label : undefined}
                 onClick={() => setOpenMobile(false)}
-                className="ink press-subtle relative flex h-10 w-full items-center gap-2.5 rounded-lg bg-cta-emphasis px-3 text-sm font-medium text-cta-emphasis-foreground outline-none transition-interactive hover:bg-cta-emphasis-hover focus-visible:ring-3 focus-visible:ring-ring/50 group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0"
+                className="ink press-subtle relative flex h-10 w-full items-center gap-2.5 rounded-lg bg-cta-emphasis px-3 text-sm font-medium text-cta-emphasis-foreground outline-none transition-interactive hover:bg-cta-emphasis-hover focus-visible:ring-3 focus-visible:ring-ring/50 group-data-[collapsible=icon]:size-10 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0"
               >
                 <bottomCta.icon className="size-4 shrink-0" />
                 <span className="truncate group-data-[collapsible=icon]:hidden">{bottomCta.label}</span>

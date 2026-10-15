@@ -4,12 +4,16 @@ import { useTheme } from "next-themes"
 import { Toaster as Sonner, type ToasterProps } from "sonner"
 import { CircleCheckIcon, InfoIcon, TriangleAlertIcon, OctagonXIcon, Loader2Icon } from "@/icons/icons"
 
+/** Toasts appear top-centre: the bottom of the screen holds the primary CTA
+ *  on phones (sticky docks, the order summary's pay button), and a toast
+ *  there blocked it for seconds. */
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme()
 
   return (
     <Sonner
       theme={theme as ToasterProps["theme"]}
+      position="top-center"
       className="toaster group"
       icons={{
         success: (

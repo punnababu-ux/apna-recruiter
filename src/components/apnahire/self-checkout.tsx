@@ -24,7 +24,6 @@
  */
 
 import * as React from "react"
-import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { GstNote } from "@/components/apnahire/gst-note"
@@ -574,7 +573,8 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
         onClaim={(deadline) => {
           offer.claim(deadline)
           setExitPrompt(null)
-          toast.success("10% extra off applied", { description: "Valid for 24 hours on any plan." })
+          // No toast: the order summary shows the applied coupon and its
+          // countdown, and a bottom toast covered the pay button on phones.
         }}
       />
 
