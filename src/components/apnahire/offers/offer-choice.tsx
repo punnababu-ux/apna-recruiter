@@ -62,7 +62,9 @@ function OptionTile({ option, kind }: { option: OfferOption; kind: "stay" | "upg
       )}
 
       <div className="flex flex-col gap-2">
-        <p className="pr-12 text-sm font-semibold text-foreground">{option.title}</p>
+        {/* Clear the corner ribbon only when there is one — otherwise the
+            reserved space wraps short titles ("1 Super premium job"). */}
+        <p className={cn("text-sm font-semibold text-foreground", option.badge && "pr-12")}>{option.title}</p>
         <p className="flex flex-wrap items-baseline gap-x-1.5">
           <span className="text-xl font-semibold text-foreground sm:text-2xl">{inr(option.price)}</span>
           {option.unit && <span className="text-sm text-muted-foreground">{option.unit}</span>}

@@ -292,7 +292,9 @@ export interface JobPlanSelectProps {
 function PlanFrame({ title, className, children }: { title: string; className?: string; children: React.ReactNode }) {
   return (
     <div className={cn("flex flex-col gap-5 rounded-2xl bg-checkout-track p-4", className)}>
-      <h2 className="font-heading text-xl font-semibold leading-6 text-foreground">{title}</h2>
+      {/* A group label, not a heading to compete with the page title: 16px,
+          on the same 24px line as the apna Unlimited logo row beside it. */}
+      <h2 className="font-heading text-base font-semibold leading-6 text-foreground">{title}</h2>
       {children}
     </div>
   )
