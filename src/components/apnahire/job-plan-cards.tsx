@@ -368,7 +368,7 @@ function MobileJobPlanRadioGroup({
                 ) : (
                   // One discount signal under the price. The badge already
                   // counts the claimed 10%; the note says why it went up.
-                  <MobileDiscountRow pct={discountPct} note={extraOff && discountPct ? "Incl. 10% extra" : undefined} />
+                  <MobileDiscountRow pct={discountPct} note={extraOff ? "Incl. 10% extra" : undefined} />
                 )
               }
               details={
@@ -447,7 +447,7 @@ function MobileSubscriptionCard({ onSelect }: { onSelect: () => void }) {
       mrp={strike ? inr(strike) : undefined}
       price={inr(price)}
       unit="/month"
-      belowPrice={<MobileDiscountRow pct={discountPct} note={extraOff && discountPct ? "Incl. 10% extra" : undefined} />}
+      belowPrice={<MobileDiscountRow pct={discountPct} note={extraOff ? "Incl. 10% extra" : undefined} />}
       features={[
         [<BriefcaseBusiness key="i" aria-hidden />, <><strong>1 active job slot</strong> for 30 days</>],
         [<Database key="i" aria-hidden />, `${plan.dbCreditsPerMonth} database credits every month`],
