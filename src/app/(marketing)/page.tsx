@@ -16,6 +16,7 @@ import Link from "next/link"
 import {
   ArrowRight,
   Badge,
+  Button,
   Card,
   CheckCircle2,
   LogoWall,
@@ -164,12 +165,16 @@ export default function HomePage() {
                       </li>
                     ))}
                   </ul>
-                  <Link
-                    href={hrefFor(product.name)}
-                    className="inline-flex w-fit items-center gap-1 text-sm font-semibold text-primary"
+                  {/* The card's one action: the primary button. */}
+                  <Button
+                    size="lg"
+                    className="w-fit"
+                    nativeButton={false}
+                    render={<Link href={hrefFor(product.name)} />}
+                    trailingIcon={<ArrowRight aria-hidden />}
                   >
-                    Learn more <ArrowRight className="size-4" aria-hidden />
-                  </Link>
+                    Learn more
+                  </Button>
                 </div>
                 {/* Phones: the illustration leads, the copy follows. */}
                 <ProductIllustration
