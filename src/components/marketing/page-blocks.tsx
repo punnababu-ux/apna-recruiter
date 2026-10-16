@@ -22,10 +22,9 @@
  */
 
 import type { ReactNode } from "react"
+import Image from "next/image"
 import {
   ArrowUpRight,
-  Avatar,
-  AvatarFallback,
   Badge,
   Button,
   Card,
@@ -199,37 +198,76 @@ export function StatementBand({
   )
 }
 
-const initials = (name: string) =>
-  name
-    .split(" ")
-    .map((part) => part[0])
-    .slice(0, 2)
-    .join("")
+/**
+ * PersonCard — a leader. Two shapes:
+ *   "row"   (Leadership) a large portrait beside their own words in the
+ *           serif quote voice, name, role, LinkedIn; `reverse` flips the
+ *           sides so a list alternates
+ *   "card"  (Management) portrait on top, name, role, a short bio, LinkedIn
+ */
+export function PersonCard({
+  person,
+  shape = "card",
+  reverse = false,
+}: {
+  person: Person
+  shape?: "row" | "card"
+  reverse?: boolean
+}) {
+  const linkedIn = (
+    <Button
+      variant="link-inline"
+      className="self-start"
+      nativeButton={false}
+      render={<a href={person.linkedin} target="_blank" rel="noreferrer noopener" />}
+      trailingIcon={<ArrowUpRight aria-hidden />}
+    >
+      LinkedIn
+    </Button>
+  )
 
-export function PersonCard({ person, quote = false }: { person: Person; quote?: boolean }) {
-  return (
-    <Card padding="lg" className="h-full gap-5">
-      <div className="flex items-center gap-4">
-        <Avatar className="size-14">
-          <AvatarFallback className="text-base font-semibold">{initials(person.name)}</AvatarFallback>
-        </Avatar>
-        <div className="flex min-w-0 flex-col gap-0.5">
-          <h3 className="text-h6 text-foreground">{person.name}</h3>
-          <p className="text-sm text-muted-foreground">{person.role}</p>
+  if (shape === "row") {
+    return (
+      <article className="grid items-center gap-8 md:grid-cols-12 lg:gap-16">
+        <Image
+          src={person.photo}
+          alt={person.name}
+          width={560}
+          height={700}
+          className={cn(
+            "aspect-4/5 w-full max-w-xs justify-self-center rounded-card object-cover shadow-card md:col-span-4 md:max-w-none",
+            reverse && "md:order-last"
+          )}
+        />
+        <div className="flex flex-col gap-6 md:col-span-8">
+          <p className="text-quote text-pretty text-foreground">&ldquo;{person.bio}&rdquo;</p>
+          <div className="flex flex-col gap-0.5">
+            <h3 className="text-h5 text-foreground">{person.name}</h3>
+            <p className="text-overline text-muted-foreground">{person.role}</p>
+          </div>
+          {linkedIn}
         </div>
+      </article>
+    )
+  }
+
+  return (
+    <Card padding="none" className="h-full overflow-hidden">
+      <Image
+        src={person.photo}
+        alt={person.name}
+        width={480}
+        height={600}
+        className="aspect-4/5 w-full object-cover"
+      />
+      <div className="flex flex-1 flex-col gap-3 p-5">
+        <div className="flex flex-col gap-0.5">
+          <h3 className="text-h6 text-foreground">{person.name}</h3>
+          <p className="text-overline text-muted-foreground">{person.role}</p>
+        </div>
+        <p className="text-sm text-pretty text-muted-foreground">{person.bio}</p>
+        <div className="mt-auto">{linkedIn}</div>
       </div>
-      <p className={cn("text-sm text-muted-foreground text-pretty", quote && "text-base text-foreground")}>
-        {quote ? <>&ldquo;{person.bio}&rdquo;</> : person.bio}
-      </p>
-      <Button
-        variant="link-inline"
-        className="mt-auto self-start"
-        nativeButton={false}
-        render={<a href={person.linkedin} target="_blank" rel="noreferrer noopener" />}
-        trailingIcon={<ArrowUpRight aria-hidden />}
-      >
-        LinkedIn
-      </Button>
     </Card>
   )
 }

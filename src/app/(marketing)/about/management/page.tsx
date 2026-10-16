@@ -1,4 +1,8 @@
-/** /about/management — Management team. Copy: content/company.ts ABOUT_MANAGEMENT. */
+/**
+ * /about/management — Management team. Copy: content/company.ts
+ * ABOUT_MANAGEMENT (Lovable "Management Team"). Portrait cards, four to a
+ * row on desktop, two on tablets, one on phones.
+ */
 
 import type { Metadata } from "next"
 import { Section } from "@apna/design-system"

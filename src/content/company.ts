@@ -216,6 +216,8 @@ export interface Person {
   role: string
   bio: string
   linkedin: string
+  /** Their portrait (public/images/company/people, from the prototype). */
+  photo: string
 }
 
 export const ABOUT_LEADERSHIP = {
@@ -227,18 +229,21 @@ export const ABOUT_LEADERSHIP = {
   people: [
     {
       name: "Nirmit Parikh",
+      photo: "/images/company/people/nirmit-parikh.jpg",
       role: "Founder, Group CEO",
       bio: "We started apna with a simple belief: that talent is everywhere, but opportunity isn't. Everything we build is in service of closing that gap, using technology to put dignified, life-changing work within reach of every Indian, and to help businesses find the people who will define their next decade.",
       linkedin: "https://www.linkedin.com/in/nirmitparikh/",
     },
     {
       name: "Kartik Narayan",
+      photo: "/images/company/people/kartik-narayan.jpg",
       role: "CEO",
       bio: "I believe the future of work will be shaped by how intelligently we connect people, opportunity, and technology. At apna, I'm focused on using AI to make hiring more accessible, efficient, and outcome-driven, building for Bharat at scale and redefining what's possible for the future of work.",
       linkedin: "https://www.linkedin.com/in/kartik/",
     },
     {
       name: "Karna Chokshi",
+      photo: "/images/company/people/karna-chokshi.jpg",
       role: "Group COO",
       bio: "Great execution is what turns ambition into impact. As Group COO, I'm focused on building the operating rigour, systems, and teams that let apna scale with speed and consistency, so every business we serve and every job seeker we reach experiences the same standard of excellence.",
       linkedin: "https://www.linkedin.com/in/karnachokshi/",
@@ -259,48 +264,56 @@ export const ABOUT_MANAGEMENT = {
   people: [
     {
       name: "Abhishek Ranjan",
+      photo: "/images/company/people/abhishek-ranjan.jpg",
       role: "Chief Technology Officer",
       bio: "Building technology that works in the real world. At apna, I'm focused on creating AI-native systems that make hiring faster, smarter, and more reliable at Bharat-scale, backed by engineering built for performance, ownership, and relentless execution.",
       linkedin: "https://www.linkedin.com/in/abhishek-ranjan-engg/",
     },
     {
       name: "Yuvraj Khemani",
+      photo: "/images/company/people/yuvraj-khemani.jpg",
       role: "Head of Finance",
       bio: "Numbers tell the story. I make sure the story adds up. At apna, I build the financial discipline, rigour, and clarity that enable an ambitious AI-native business to scale boldly, responsibly, and sustainably.",
       linkedin: "https://www.linkedin.com/in/yuvraj-khemani-22496081/",
     },
     {
       name: "Akshayita Saxena",
+      photo: "/images/company/people/akshayita-saxena.jpg",
       role: "Head of Growth & Marketing",
       bio: "I believe the most meaningful careers are built around convictions worth pursuing. At apna, I'm focused on taking the future of work deeper into Bharat, using growth, technology, and AI to unlock opportunity across every city, every collar, and every ambition.",
       linkedin: "https://www.linkedin.com/in/saxenaakshayita/",
     },
     {
       name: "Sonu Abhinandan",
+      photo: "/images/company/people/sonu-abhinandan.jpg",
       role: "Head of SMB Business",
       bio: "Building for the businesses that power Bharat. At apna, I'm focused on taking smarter, AI-powered hiring deeper into the SMB ecosystem, helping businesses across cities find the right talent, grow faster, and build for what's next.",
       linkedin: "https://www.linkedin.com/in/sonuabhinandan/",
     },
     {
       name: "Mayuresh Shinde",
+      photo: "/images/company/people/mayuresh-shinde.jpg",
       role: "Head of Enterprise Business",
       bio: "Enterprise hiring should be more than functional; it should be intelligent, seamless, and outcome-driven. At apna, I'm focused on scaling our AI-native enterprise business and delivering an end-to-end hiring experience that transforms how organisations discover, engage, and hire talent.",
       linkedin: "https://www.linkedin.com/in/mayuresh-shinde-ms-66293a7/",
     },
     {
       name: "Sumit Bajaj",
+      photo: "/images/company/people/sumit-bajaj.jpg",
       role: "Head of Product",
       bio: "I believe the future of hiring is about making the right opportunity discoverable, and the right talent easier to find. At apna, I'm building AI-native products that make hiring smarter, simpler, and more meaningful at Bharat-scale.",
       linkedin: "https://www.linkedin.com/in/sumit-bajaj-6b688624/",
     },
     {
       name: "Kathak Mehta",
+      photo: "/images/company/people/kathak-mehta.jpg",
       role: "Strategy, CEO's Office",
       bio: "I strategise initiatives at apna, bringing expertise in technology commercialisation, innovation, and entrepreneurship to shape growth and long-term business strategy.",
       linkedin: "https://www.linkedin.com/in/kathak-mehta/",
     },
     {
       name: "Apoorva Patwa",
+      photo: "/images/company/people/apoorva-patwa.jpg",
       role: "Head of HR",
       bio: "Building great companies starts with building great teams. At apna, I'm focused on creating a culture where exceptional talent can thrive, leaders can build with purpose, and people are empowered to shape the future of work.",
       linkedin: "https://www.linkedin.com/in/apoorva-patwa/",
