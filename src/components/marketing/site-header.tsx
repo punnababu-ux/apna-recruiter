@@ -213,7 +213,10 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
     >
       <div
         className={cn(
-          "relative mx-auto flex h-14 w-full max-w-band items-center justify-between gap-4 rounded-full border px-2 backdrop-blur-xl transition-interactive duration-enter",
+          // An even inset round the last button: 56px pill − 1px border − the
+          // 36px button leaves 10px above and below, so 1px + pr-2.25 (9px)
+          // gives 10px on the right too.
+          "relative mx-auto flex h-14 w-full max-w-band items-center justify-between gap-4 rounded-full border pr-2.25 pl-2 backdrop-blur-xl transition-interactive duration-enter",
           // Frosted at rest; a touch more solid once the page scrolls under it.
           isScrolled || openPanel || mobileOpen || searchOpen
             ? "border-border bg-card/85 shadow-popover"
@@ -335,7 +338,6 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
           {pathname === "/" && (
             <Button
               variant="outline"
-              size="sm"
               className="shrink-0 rounded-full font-semibold sm:hidden"
               render={<Link href={HEADER_ACTIONS.primary.href} />}
             >
@@ -343,7 +345,6 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
             </Button>
           )}
           <Button
-            size="sm"
             className={cn("shrink-0 rounded-full font-semibold", pathname === "/" && "max-sm:hidden")}
             render={<Link href={HEADER_ACTIONS.primary.href} />}
           >
