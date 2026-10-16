@@ -80,14 +80,8 @@ export function ContactSection() {
         className="flex flex-col items-center gap-8 rounded-3xl border-card/60 bg-card/60 text-center shadow-card backdrop-blur-xl sm:p-12"
       >
         {/* The page's closing line: the h1 type preset (it stays an h2 —
-            the hero owns the h1), broken into its two sentences on purpose. */}
-        <h2 className="text-h1 text-balance text-foreground">
-          {CONTACT.title.map((line) => (
-            <span key={line} className="block">
-              {line}
-            </span>
-          ))}
-        </h2>
+            the hero owns the h1). One line on desktop; phones wrap it. */}
+        <h2 className="text-h1 text-balance text-foreground">{CONTACT.title}</h2>
         <Button
           variant="emphasis"
           size="lg"
