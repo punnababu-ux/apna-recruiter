@@ -97,8 +97,8 @@ export function SearchFilterBar({
  * FilterControl — the Filters trigger and what it opens: a popover from md,
  * a bottom sheet on phones (staged picks, "Apply filters", "Clear filters").
  * SearchFilterBar uses it beside the search (or, on phones, inside it as
- * `variant="icon"`: an icon button at the field's end with the applied
- * count); a page can place it on its own (`variant="chip"`: a 32px pill).
+ * `variant="icon"`: a boxed, slightly raised icon button at the field's
+ * end with the applied count); a page can place it on its own (`variant="chip"`: a 32px pill).
  */
 export function FilterControl({
   groups,
@@ -120,7 +120,9 @@ export function FilterControl({
   const label = activeFilterCount ? `Filters, ${activeFilterCount} applied` : "Filters"
   const trigger =
     variant === "icon" ? (
-      <Button variant="ghost" size="icon-sm" className="relative cursor-pointer text-muted-foreground" aria-label={label}>
+      // A boxed, slightly raised button inside the field, so it reads as a
+      // control rather than part of the text.
+      <Button variant="outline" size="icon-sm" className="relative cursor-pointer bg-card text-foreground shadow-card" aria-label={label}>
         <SlidersHorizontal className="size-4" />
         {activeFilterCount > 0 && (
           <Badge variant="count" size="count" className="absolute -top-0.5 -right-0.5 ring-2 ring-card">
