@@ -102,11 +102,12 @@ export function SlotsFullDialog({
                     <span className="text-base font-semibold text-foreground">{job.title}</span>
                     <Badge variant="success">Active</Badge>
                   </div>
-                  <p className="flex flex-wrap items-center gap-x-2 text-sm text-muted-foreground">
+                  {/* A div, not a p: the Separator renders a div. */}
+                  <div className="flex flex-wrap items-center gap-x-2 text-sm text-muted-foreground">
                     <span className="whitespace-nowrap">{job.location}</span>
                     <Separator orientation="vertical" className="h-3.5" />
                     <span className="whitespace-nowrap">Posted on : {job.postedAt}</span>
-                  </p>
+                  </div>
                 </div>
                 {/* Phones: "Applied candidates … 12" on its own row; from sm the
                     count sits over its label at the right. */}
