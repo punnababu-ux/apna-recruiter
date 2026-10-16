@@ -71,18 +71,13 @@ export function ProductPage({ content }: { content: ProductPageContent }) {
   const { product, eyebrow, heading, description, cta, stats, steps, features } = content
 
   return (
-    // The product's colour is the page's secondary (brand green stays the
-    // primary): its gradient in the hero, its accent on icons and numbers,
-    // its tint on the stats band. Set once here; the roles do the rest.
-    <div data-product={PRODUCT_KEY[product]}>
-      {/* The hero wears the product's own gradient (its homepage card's), so
-          "Learn more" lands on the colour it was clicked from. Starts behind
-          the header and melts into the page at its foot. */}
-      <div className="relative isolate">
-        <div
-          aria-hidden
-          className="absolute inset-x-0 -top-18 bottom-0 -z-10 bg-gradient-product mask-fade-b"
-        />
+    // The product's colour is the page's identity, header to footer: the
+    // shell paints its canvas (the homepage gradient re-tinted in the
+    // product's hue, data-product-canvas), and the product roles colour
+    // icons and numbers (data-product). Brand green stays the primary. The
+    // bands are transparent so the canvas runs through; cards float on it.
+    <div data-product={PRODUCT_KEY[product]} data-product-canvas={PRODUCT_KEY[product]}>
+      <div>
         <Section size="lg" className="relative max-md:pt-8">
           <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-12">
             <div className="flex flex-col gap-8">
@@ -113,7 +108,7 @@ export function ProductPage({ content }: { content: ProductPageContent }) {
       </div>
 
       {stats && (
-        <Section size="sm" className="bg-product-tint">
+        <Section size="sm">
           <dl className="grid gap-8 sm:grid-cols-3">
             {stats.map((stat) => (
               <div key={stat.label} className="flex flex-col gap-1">
@@ -138,7 +133,7 @@ export function ProductPage({ content }: { content: ProductPageContent }) {
             <ol className="grid gap-6 md:grid-cols-3">
               {steps.items.map((step, i) => (
                 <li key={step.title}>
-                  <Card padding="lg" className="h-full gap-4">
+                  <Card padding="lg" className="h-full gap-4 border-card/60 bg-card/70 backdrop-blur-xl">
                     <span className="font-heading text-h3 font-semibold text-product-accent tabular-nums">
                       {String(i + 1).padStart(2, "0")}
                     </span>
@@ -152,7 +147,7 @@ export function ProductPage({ content }: { content: ProductPageContent }) {
         </Section>
       )}
 
-      <Section size="md" tone={steps ? "card" : "transparent"}>
+      <Section size="md">
         <div className="flex flex-col gap-10">
           <SectionHeading level={2} align="center" voice="editorial" title={features.title} />
           <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -160,7 +155,7 @@ export function ProductPage({ content }: { content: ProductPageContent }) {
               const Icon = ICONS[feature.icon]
               return (
                 <li key={feature.title}>
-                  <Card padding="lg" tone={steps ? "muted" : "default"} className="h-full gap-3">
+                  <Card padding="lg" className="h-full gap-3 border-card/60 bg-card/70 backdrop-blur-xl">
                     <Icon className="size-6 text-product-accent" aria-hidden />
                     <h3 className="text-h6 text-foreground">{feature.title}</h3>
                     <p className="text-sm text-muted-foreground">{feature.description}</p>

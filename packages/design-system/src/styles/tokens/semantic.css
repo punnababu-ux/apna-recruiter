@@ -415,6 +415,43 @@
     radial-gradient(circle at 85% 15%, rgba(239, 246, 255, 0.70) 0%, rgba(240, 249, 255, 0.50) 40%, transparent 65%),
     radial-gradient(circle at 92% 88%, rgba(255, 255, 255, 1)    0%, rgba(248, 250, 252, 0.80) 45%, transparent 70%),
     linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 40%, #F1F5F9 80%, #E2E8F0 100%);
+  /* Product canvases — the page background of a product page, header to
+   * footer: the homepage canvas (--gradient-checkout-hero, "the mother
+   * gradient": the same mesh, white wash and corner geometry) re-tinted in
+   * the product's hue: the product's washes lie OVER the mother's mesh (the
+   * mesh JPEG is opaque, so anything under it never shows), and the mesh's
+   * own peach, pink and sky still show between them — so every product page
+   * is visibly from the same family.
+   * Switched by the marketing shell when the page holds a
+   * [data-product-canvas] (see the rule at the end of this file). */
+  --gradient-canvas-smart-jobs:
+    radial-gradient(ellipse 70% 40% at 10% 0%,  color-mix(in srgb, var(--color-apna-sky-200) 75%, transparent) 0%, color-mix(in srgb, var(--color-apna-sky-100) 45%, transparent) 45%, transparent 75%),
+    radial-gradient(ellipse 60% 35% at 95% 45%, color-mix(in srgb, var(--color-apna-sky-100) 60%, transparent) 0%, transparent 70%),
+    radial-gradient(ellipse 70% 40% at 15% 95%, color-mix(in srgb, var(--color-apna-sky-100) 65%, transparent) 0%, transparent 70%),
+    linear-gradient(180deg, color-mix(in srgb, var(--color-apna-sky-100) 55%, transparent) 0%, color-mix(in srgb, var(--color-apna-sky-50) 45%, transparent) 50%, color-mix(in srgb, var(--color-apna-sky-100) 55%, transparent) 100%),
+    linear-gradient(rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25)),
+    url("/bg-ambient-mesh.jpg");
+  --gradient-canvas-ai-calling:
+    radial-gradient(ellipse 70% 40% at 10% 0%,  color-mix(in srgb, var(--color-apna-green-200) 75%, transparent) 0%, color-mix(in srgb, var(--color-apna-green-100) 45%, transparent) 45%, transparent 75%),
+    radial-gradient(ellipse 60% 35% at 95% 45%, color-mix(in srgb, var(--color-apna-green-100) 60%, transparent) 0%, transparent 70%),
+    radial-gradient(ellipse 70% 40% at 15% 95%, color-mix(in srgb, var(--color-apna-green-100) 65%, transparent) 0%, transparent 70%),
+    linear-gradient(180deg, color-mix(in srgb, var(--color-apna-green-100) 55%, transparent) 0%, color-mix(in srgb, var(--color-apna-green-50) 45%, transparent) 50%, color-mix(in srgb, var(--color-apna-green-100) 55%, transparent) 100%),
+    linear-gradient(rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25)),
+    url("/bg-ambient-mesh.jpg");
+  --gradient-canvas-database:
+    radial-gradient(ellipse 70% 40% at 10% 0%,  color-mix(in srgb, var(--color-apna-plum-200) 75%, transparent) 0%, color-mix(in srgb, var(--color-apna-plum-100) 45%, transparent) 45%, transparent 75%),
+    radial-gradient(ellipse 60% 35% at 95% 45%, color-mix(in srgb, var(--color-apna-plum-100) 60%, transparent) 0%, transparent 70%),
+    radial-gradient(ellipse 70% 40% at 15% 95%, color-mix(in srgb, var(--color-apna-plum-100) 65%, transparent) 0%, transparent 70%),
+    linear-gradient(180deg, color-mix(in srgb, var(--color-apna-plum-100) 55%, transparent) 0%, color-mix(in srgb, var(--color-apna-plum-50) 45%, transparent) 50%, color-mix(in srgb, var(--color-apna-plum-100) 55%, transparent) 100%),
+    linear-gradient(rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25)),
+    url("/bg-ambient-mesh.jpg");
+  --gradient-canvas-unlimited:
+    radial-gradient(ellipse 70% 40% at 10% 0%,  color-mix(in srgb, var(--color-apna-gold-200) 75%, transparent) 0%, color-mix(in srgb, var(--color-apna-gold-100) 45%, transparent) 45%, transparent 75%),
+    radial-gradient(ellipse 60% 35% at 95% 45%, color-mix(in srgb, var(--color-apna-gold-100) 60%, transparent) 0%, transparent 70%),
+    radial-gradient(ellipse 70% 40% at 15% 95%, color-mix(in srgb, var(--color-apna-gold-100) 65%, transparent) 0%, transparent 70%),
+    linear-gradient(180deg, color-mix(in srgb, var(--color-apna-gold-100) 55%, transparent) 0%, color-mix(in srgb, var(--color-apna-gold-50) 45%, transparent) 50%, color-mix(in srgb, var(--color-apna-gold-100) 55%, transparent) 100%),
+    linear-gradient(rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25)),
+    url("/bg-ambient-mesh.jpg");
   /* Ambient backdrop (AmbientBackdrop) — the slow-moving blobs, cursor glow
    * and grain laid over this canvas on the homepage hero. The blob hues are
    * the mesh's own, sampled from /bg-ambient-mesh.jpg (peach top-left, pink
@@ -739,6 +776,29 @@
     radial-gradient(circle at 90% 18%, var(--color-alpha-white-10) 0%, transparent 55%),
     radial-gradient(circle at 50% 90%, var(--color-alpha-white-5)  0%, transparent 60%),
     linear-gradient(135deg, var(--color-apna-plum-950) 0%, var(--color-apna-plum-900) 50%, var(--color-apna-plum-800) 100%);
+  /* Product canvases — the page background of a product page, header to
+   * footer: the homepage canvas (--gradient-checkout-hero, "the mother
+   * gradient": the same mesh, white wash and corner geometry) re-tinted in
+   * the product's hue, keeping a little of the mother's own pink, lavender
+   * and sky so every product page is still visibly from the same family.
+   * Switched by the marketing shell when the page holds a
+   * [data-product-canvas] (see the rule at the end of this file). */
+  --gradient-canvas-smart-jobs:
+    radial-gradient(circle at 8% 12%,  color-mix(in srgb, var(--color-apna-sky-800) 55%, transparent) 0%, transparent 50%),
+    radial-gradient(circle at 90% 75%, color-mix(in srgb, var(--color-apna-sky-900) 60%, transparent) 0%, transparent 60%),
+    var(--gradient-checkout-hero);
+  --gradient-canvas-ai-calling:
+    radial-gradient(circle at 8% 12%,  color-mix(in srgb, var(--color-apna-green-800) 55%, transparent) 0%, transparent 50%),
+    radial-gradient(circle at 90% 75%, color-mix(in srgb, var(--color-apna-green-900) 60%, transparent) 0%, transparent 60%),
+    var(--gradient-checkout-hero);
+  --gradient-canvas-database:
+    radial-gradient(circle at 8% 12%,  color-mix(in srgb, var(--color-apna-plum-800) 55%, transparent) 0%, transparent 50%),
+    radial-gradient(circle at 90% 75%, color-mix(in srgb, var(--color-apna-plum-900) 60%, transparent) 0%, transparent 60%),
+    var(--gradient-checkout-hero);
+  --gradient-canvas-unlimited:
+    radial-gradient(circle at 8% 12%,  color-mix(in srgb, var(--color-apna-gold-800) 55%, transparent) 0%, transparent 50%),
+    radial-gradient(circle at 90% 75%, color-mix(in srgb, var(--color-apna-gold-900) 60%, transparent) 0%, transparent 60%),
+    var(--gradient-checkout-hero);
   --gradient-ai-subtle: linear-gradient(100deg, color-mix(in srgb, var(--color-apna-plum-950) 70%, transparent) 0%, color-mix(in srgb, var(--color-apna-sky-950) 45%, transparent) 55%, color-mix(in srgb, var(--color-apna-green-950) 60%, transparent) 100%);
   --gradient-ai-demo: linear-gradient(90deg, color-mix(in srgb, var(--color-apna-navy-950) 70%, transparent) 0%, color-mix(in srgb, var(--color-apna-green-950) 70%, transparent) 100%);
   --ambient-blob-1: color-mix(in srgb, var(--color-apna-plum-600) 45%, transparent);
@@ -861,3 +921,11 @@
   --product-accent: var(--color-apna-gold-300);
   --product-tint:   color-mix(in srgb, var(--color-apna-gold-900) 35%, transparent);
 }
+
+/* The marketing shell's canvas: the mother gradient, or — when the page is a
+ * product page — that product's canvas, header to footer. */
+[data-slot="marketing-canvas"] { background-image: var(--gradient-checkout-hero); }
+[data-slot="marketing-canvas"]:has([data-product-canvas="smart-jobs"]) { background-image: var(--gradient-canvas-smart-jobs); }
+[data-slot="marketing-canvas"]:has([data-product-canvas="ai-calling"]) { background-image: var(--gradient-canvas-ai-calling); }
+[data-slot="marketing-canvas"]:has([data-product-canvas="database"])   { background-image: var(--gradient-canvas-database); }
+[data-slot="marketing-canvas"]:has([data-product-canvas="unlimited"])  { background-image: var(--gradient-canvas-unlimited); }

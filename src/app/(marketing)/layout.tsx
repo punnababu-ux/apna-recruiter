@@ -28,7 +28,9 @@ export default function MarketingLayout({
     // tab switcher) up into SiteHeader — see header-slot.tsx. Wraps SiteHeader
     // too, since SiteHeader is the thing reading the published value.
     <HeaderSlotProvider>
-      <div className="bg-gradient-checkout-hero flex min-h-dvh flex-col">
+      {/* The canvas: the homepage's mesh gradient, or a product page's own
+          re-tint of it (semantic.css, [data-slot=marketing-canvas]). */}
+      <div data-slot="marketing-canvas" className="flex min-h-dvh flex-col bg-cover bg-top bg-no-repeat">
         <SiteHeader />
         <main className="flex-1">{children}</main>
         <div className="px-4 sm:px-8 lg:px-12">

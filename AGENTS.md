@@ -360,6 +360,12 @@ To change how round the cards feel, retune `--radius-card` in
   sky, AI Calling Agent green, apna Database plum, apna Unlimited gold. Use
   it only with that product: its homepage card, its product page hero, its
   illustration. Company pages (About, Newsroom, Careers, …) use none.
+- **A product page is its colour, top to bottom.** Its canvas — header,
+  every band, footer — is the homepage gradient re-tinted in the product's
+  hue (`--gradient-canvas-*`, set by `data-product-canvas`). Bands stay
+  transparent so it runs through; cards float on it (frosted). The
+  product's accent (`text-product-accent`) is the secondary colour; brand
+  green stays the primary.
 
 ---
 
