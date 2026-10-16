@@ -297,7 +297,7 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
                 "p" descender fills the bottom of the box, so the letters sit
                 ~2.6px high — nudged down 3px to line up with the nav text. */}
             <Link href="/" aria-label="apna for employers, home" className="shrink-0 rounded-full px-3 py-2">
-              <LogoApnaWordmark className="h-5 w-auto translate-y-0.75 dark:hidden" />
+              <LogoApnaWordmark variant="deep" className="h-5 w-auto translate-y-0.75 dark:hidden" />
               <LogoApnaWordmark variant="white" className="hidden h-5 w-auto translate-y-0.75 dark:block" />
             </Link>
 

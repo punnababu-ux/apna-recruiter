@@ -10,7 +10,7 @@
  */
 
 import Link from "next/link"
-import { ApnaLogo } from "@apna/design-system"
+import { LogoApnaWordmark } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 import {
   FOOTER_COLUMNS,
@@ -40,8 +40,11 @@ export function SiteFooter({ className }: { className?: string }) {
     <footer data-slot="site-footer" className={cn("pt-20 pb-8", className)}>
       <div className="grid grid-cols-2 gap-x-8 gap-y-10 lg:grid-cols-4">
         <div className="col-span-2 flex flex-col gap-6 lg:col-span-1">
+          {/* The "apna" wordmark, as in the header (darkest plum; white in
+              dark mode), rather than the square app icon. */}
           <Link href="/" aria-label="apna for employers, home" className="w-fit">
-            <ApnaLogo className="size-14" />
+            <LogoApnaWordmark variant="deep" className="h-7 w-auto dark:hidden" />
+            <LogoApnaWordmark variant="white" className="hidden h-7 w-auto dark:block" />
           </Link>
           <div className="flex items-center gap-6">
             {SOCIAL_LINKS.map(({ label, href, icon }) => {
