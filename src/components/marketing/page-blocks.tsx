@@ -107,9 +107,12 @@ export function PageHero({
  */
 export function StatGrid({
   stats,
+  size = "default",
   className,
 }: {
   stats: readonly { value: string; label: string }[]
+  /** "lg" for a page that is about its numbers (By the numbers). */
+  size?: "default" | "lg"
   className?: string
 }) {
   return (
@@ -124,10 +127,15 @@ export function StatGrid({
         )}
       >
         {stats.map((stat) => (
-          <div key={stat.label} className="flex flex-col gap-2 p-5 sm:p-6 lg:p-8">
+          <div key={stat.label} className={cn("flex flex-col gap-2 p-5 sm:p-6 lg:p-8", size === "lg" && "lg:p-10")}>
             <span aria-hidden className="h-1 w-8 rounded-full bg-product-accent" />
             <dt className="order-3 text-sm text-pretty text-muted-foreground">{stat.label}</dt>
-            <dd className="order-2 font-heading text-h3 font-semibold whitespace-nowrap text-foreground tabular-nums sm:text-h2">
+            <dd
+              className={cn(
+                "order-2 font-heading text-h3 font-semibold whitespace-nowrap text-foreground tabular-nums sm:text-h2",
+                size === "lg" && "sm:text-h1 lg:text-display"
+              )}
+            >
               {stat.value}
             </dd>
           </div>

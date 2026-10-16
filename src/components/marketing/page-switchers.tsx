@@ -19,6 +19,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
+  SectionHeading,
   SelectValue,
 } from "@apna/design-system"
 import { StatGrid } from "@/components/marketing/page-blocks"
@@ -32,14 +33,20 @@ export function NumbersSwitcher() {
   const group = ABOUT_NUMBERS.groups.find((g) => g.key === key)!
   return (
     <div className="flex w-full flex-col items-center gap-10">
+      <SectionHeading
+        level={2}
+        align="center"
+        title={ABOUT_NUMBERS.sectionTitle}
+        // The line follows the tab (Lovable's own per-tab blurb).
+        description={group.blurb}
+      />
       <ChipTabs
         aria-label="Numbers for"
         items={ABOUT_NUMBERS.groups.map((g) => ({ value: g.key, label: g.label }))}
         value={key}
         onValueChange={setKey}
       />
-      <p className="text-center text-muted-foreground">{group.blurb}</p>
-      <StatGrid stats={group.stats} />
+      <StatGrid stats={group.stats} size="lg" />
     </div>
   )
 }

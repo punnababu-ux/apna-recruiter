@@ -162,8 +162,10 @@ export const ABOUT_VALUES = {
 
 export const ABOUT_NUMBERS = {
   meta: { title: "apna by the numbers", description: "The scale of India's largest early-career hiring marketplace." },
-  eyebrow: "By the numbers",
+  eyebrow: "About apna",
   title: "apna by the numbers.",
+  /** The switcher's section — Lovable's "By the numbers" block. */
+  sectionTitle: "By the numbers",
   description:
     "The scale of India's largest early-career hiring marketplace, measured across candidates, recruiters, and the towns and cities we reach.",
   groups: [
