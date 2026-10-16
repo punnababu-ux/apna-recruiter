@@ -16,7 +16,7 @@ import {
   TableRow,
 } from "@apna/design-system"
 import { ContactSection } from "@/components/marketing/contact-section"
-import { PageHero } from "@/components/marketing/page-blocks"
+import { PageHero, StatGrid } from "@/components/marketing/page-blocks"
 import { STORY_PWC } from "@/content/company"
 
 export const metadata: Metadata = STORY_PWC.meta
@@ -25,16 +25,16 @@ export default function PwcStoryPage() {
   const { eyebrow, title, description, facts, headline, sections, solution, results, impact, closing } = STORY_PWC
   return (
     <>
-      <PageHero eyebrow={eyebrow} title={title} description={description}>
-        <dl className="grid w-full gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {facts.map((fact) => (
-            <Card key={fact.label} padding="md" className="gap-1">
-              <dt className="text-overline text-muted-foreground">{fact.label}</dt>
-              <dd className="text-base font-semibold text-foreground">{fact.value}</dd>
-            </Card>
-          ))}
-        </dl>
-      </PageHero>
+      <PageHero eyebrow={eyebrow} title={title} description={description} />
+
+      {/* The campaign at a glance: one anchored card under the hero. */}
+      <Section size="none" className="relative -mt-8 pb-8 md:-mt-12 md:pb-12">
+        <StatGrid
+          size="facts"
+          stats={facts.map((f) => ({ label: f.label, value: f.value }))}
+          className="lg:grid-cols-4 lg:[&>*]:border-t-0"
+        />
+      </Section>
 
       <Section tone="card" size="md" width="narrow">
         <article className="flex flex-col gap-12">
@@ -48,9 +48,10 @@ export default function PwcStoryPage() {
             All customer stories
           </Button>
 
-          <Card tone="ink" padding="lg" className="gap-2">
-            <span className="font-heading text-display font-semibold">{headline.value}</span>
-            <span className="text-lead text-ink-fg-muted">{headline.label}</span>
+          {/* The result, big, in the mother gradient (no dark band). */}
+          <Card padding="none" className="gap-2 border-card/60 bg-gradient-checkout-hero p-8 shadow-card sm:p-10">
+            <span className="text-display-lg font-heading text-foreground tabular-nums">{headline.value}</span>
+            <span className="text-lead text-pretty text-muted-foreground">{headline.label}</span>
           </Card>
 
           {sections.map((section) => (

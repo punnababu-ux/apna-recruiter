@@ -475,7 +475,8 @@ export const CUSTOMER_STORIES = {
 export const STORY_PWC = {
   meta: { title: "PwC × apna CampusAI", description: "How PwC turned Campus Contender into an employer branding moment with apna CampusAI." },
   eyebrow: "Customer story · CampusAI",
-  title: "43% more quality campus registrations for PwC's Campus Contender",
+  // Lovable's own line for this story (its featured-card copy).
+  title: "43% more quality campus registrations by turning Campus Contender into an employer branding moment.",
   description:
     "Campus Contender went from a reliable registration driver to a differentiated employer branding moment for top MBA talent.",
   facts: [

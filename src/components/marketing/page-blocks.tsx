@@ -111,10 +111,13 @@ export function StatGrid({
   className,
 }: {
   stats: readonly { value: string; label: string }[]
-  /** "lg" for a page that is about its numbers (By the numbers). */
-  size?: "default" | "lg"
+  /** "lg" for a page that is about its numbers (By the numbers); "facts"
+   *  for short text values (a case study's client / industry / …): label
+   *  first as an overline, the value in body weight. */
+  size?: "default" | "lg" | "facts"
   className?: string
 }) {
+  const facts = size === "facts"
   return (
     <Card padding="none" className="w-full border-card/60 bg-card/70 shadow-card backdrop-blur-xl">
       <dl
@@ -128,11 +131,15 @@ export function StatGrid({
       >
         {stats.map((stat) => (
           <div key={stat.label} className={cn("flex flex-col gap-2 p-5 sm:p-6 lg:p-8", size === "lg" && "lg:p-10")}>
-            <span aria-hidden className="h-1 w-8 rounded-full bg-product-accent" />
-            <dt className="order-3 text-sm text-pretty text-muted-foreground">{stat.label}</dt>
+            {!facts && <span aria-hidden className="h-1 w-8 rounded-full bg-product-accent" />}
+            <dt className={cn("text-pretty", facts ? "text-overline text-muted-foreground" : "order-3 text-sm text-muted-foreground")}>
+              {stat.label}
+            </dt>
             <dd
               className={cn(
-                "order-2 font-heading text-h3 font-semibold whitespace-nowrap text-foreground tabular-nums sm:text-h2",
+                facts
+                  ? "text-base font-semibold text-pretty text-foreground"
+                  : "order-2 font-heading text-h3 font-semibold whitespace-nowrap text-foreground tabular-nums sm:text-h2",
                 size === "lg" && "sm:text-h1 lg:text-display"
               )}
             >
