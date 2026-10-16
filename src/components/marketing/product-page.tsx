@@ -31,6 +31,7 @@ import {
   MapPin,
   PhoneCall,
   RefreshCw,
+  ScrollStack,
   Search,
   Section,
   SectionHeading,
@@ -42,7 +43,7 @@ import {
   Zap,
 } from "@apna/design-system"
 import { ContactSection } from "@/components/marketing/contact-section"
-import { HeroChip, StatGrid } from "@/components/marketing/page-blocks"
+import { HeroChip, StackCard, StatGrid, deckPosition } from "@/components/marketing/page-blocks"
 import { PRODUCT_KEY, ProductIllustration } from "@/components/marketing/product-illustrations"
 import { CONTACT_ANCHOR } from "@/content/contact"
 import type { ProductIconName, ProductPageContent } from "@/content/products"
@@ -122,19 +123,20 @@ export function ProductPage({ content }: { content: ProductPageContent }) {
               eyebrow={<span className="text-overline text-muted-foreground">{steps.title}</span>}
               title={steps.heading}
             />
-            <ol className="grid gap-6 md:grid-cols-3">
+            <ScrollStack>
               {steps.items.map((step, i) => (
-                <li key={step.title}>
-                  <Card padding="lg" className="h-full gap-4 border-card/60 bg-card/70 backdrop-blur-xl">
-                    <span className="font-heading text-h3 font-semibold text-product-accent tabular-nums">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <h3 className="text-h6 text-foreground">{step.title}</h3>
-                    <p className="text-sm text-muted-foreground">{step.description}</p>
-                  </Card>
-                </li>
+                <StackCard
+                  key={step.title}
+                  watermark={String(i + 1).padStart(2, "0")}
+                  overline={deckPosition(i, steps.items.length)}
+                  title={step.title}
+                >
+                  <p className="max-w-2xl text-lg leading-relaxed text-pretty text-foreground sm:text-xl">
+                    {step.description}
+                  </p>
+                </StackCard>
               ))}
-            </ol>
+            </ScrollStack>
           </div>
         </Section>
       )}

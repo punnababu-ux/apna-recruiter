@@ -11,7 +11,8 @@
  *               `children` go under it
  *   StatGrid    numbers over their labels (value first visually, label
  *               first for screen readers)
- *   StackCard   one card of a ScrollStack: the mother gradient, a very
+ *   StackCard   one card of a ScrollStack: the mother gradient (the
+ *               product's on a product page), a very
  *               large light watermark (a year, a number) the copy reads
  *               over, an overline, an Inter title and the body
  *   StatementBand  a full-width band in the mother gradient carrying one
@@ -164,7 +165,10 @@ export function StackCard({
   children?: ReactNode
 }) {
   return (
-    <ScrollStackItem className="relative isolate overflow-hidden bg-gradient-checkout-hero">
+    <ScrollStackItem
+      // The mother gradient — or, on a product page, that product's own.
+      className="relative isolate overflow-hidden bg-gradient-checkout-hero [[data-product]_&]:bg-gradient-product"
+    >
       <span
         aria-hidden
         className="text-watermark pointer-events-none absolute -right-6 -bottom-10 -z-10 select-none lg:-bottom-16"
