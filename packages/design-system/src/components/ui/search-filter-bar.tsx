@@ -141,8 +141,9 @@ export function SearchFilterBar({
           </Button>
         )}
         {inside && !focused && (
-          // The Filters pill, inset 2px from the field's right, top and bottom.
-          <div className="absolute inset-y-0.5 right-0.5 flex">
+          // The Filters pill: a visible 2px of field inside the 1px border on
+          // its right, top and bottom (3px from the outer edge).
+          <div className="absolute inset-y-0.75 right-0.75 flex">
             {React.cloneElement(pillTrigger, { onClick: openSheet })}
           </div>
         )}
