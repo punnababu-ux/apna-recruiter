@@ -190,11 +190,14 @@ export function NotificationList({ variant }: { variant: "panel" | "page" }) {
   )
 
   return (
-    <div data-slot="notification-list" className="flex flex-col gap-3">
+    // No gap and no card shadows: header and list read as one surface, the
+    // grey day bands are the only separators (a grey gap above "Today" read
+    // as extra space, a card shadow as a stray line).
+    <div data-slot="notification-list" className="flex flex-col">
       {variant === "page" && <JoinTopBar />}
       {/* 1 — Header + filters: the order summary's first card. */}
       {variant === "panel" ? (
-        <section className="flex flex-col gap-4 bg-card py-5 shadow-card">
+        <section className="flex flex-col gap-4 bg-card py-5">
           <SheetPanelHeader title="Notifications" action={menu} />
           <Separator />
           {/* The jobs page's filter component: Tabs, `default` variant (the
@@ -218,7 +221,7 @@ export function NotificationList({ variant }: { variant: "panel" | "page" }) {
         // drops its own line, useFlushHeader), sticky under it, one line
         // below; 8px above the chips and 12px below (the scroller adds 4px
         // under them, hence pt-2 pb-2).
-        <section className={cn("sticky top-16 z-docked flex items-center gap-2 border-b bg-card transition-interactive", scrolled ? "border-border" : "border-transparent", "pt-2 pr-2 pb-2 pl-4 md:static md:border-b-0 md:py-3 md:shadow-card")}>
+        <section className={cn("sticky top-16 z-docked flex items-center gap-2 border-b bg-card transition-interactive", scrolled ? "border-border" : "border-transparent", "pt-2 pr-2 pb-2 pl-4 md:static md:border-b-0 md:py-3")}>
           <div className="min-w-0 flex-1">
             <MobileChipRow items={filterItems} value={filter} onValueChange={setFilter} gutter="page-start" />
             <Tabs className="hidden md:flex" value={filter} onValueChange={(v) => setFilter(v as Filter)}>
@@ -235,9 +238,8 @@ export function NotificationList({ variant }: { variant: "panel" | "page" }) {
         </section>
       )}
 
-      {/* 2 — The list, one card, grouped by day. On the phone page no
-          shadow: its top edge drew a line above the first day band. */}
-      <section className={cn("bg-card", variant === "page" ? "md:shadow-card" : "shadow-card")}>
+      {/* 2 — The list, grouped by day. */}
+      <section className="bg-card">
         {shown.length === 0 ? (
           <p className={cn("py-10 text-center text-sm text-muted-foreground", gutter)}>
             {filter === "unread" ? "You're all caught up." : "Nothing here yet."}
