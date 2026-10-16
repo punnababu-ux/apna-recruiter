@@ -3,7 +3,7 @@
 /**
  * ContactSection — the homepage's closing "Contact us" band (`#contact-us`,
  * where every "Contact us" link lands now that the header doesn't carry
- * one): a card with the eyebrow, the title and one Contact us button, which
+ * one): a card with the title centred and one Contact us button under it, which
  * opens the contact form in a pop-up (user call, 2026-10-16 — the form
  * inline made the band heavy).
  *
@@ -69,26 +69,25 @@ export function ContactSection() {
   const [round, setRound] = React.useState(0)
 
   return (
-    <Section id={CONTACT_ANCHOR} size="md" className="scroll-mt-20">
-      {/* rounded-3xl: the page's large cards share one corner. */}
-      <Card padding="lg" className="rounded-3xl sm:p-10">
-        <SectionHeading
-          level={2}
-          eyebrow={<span className="text-overline text-primary">{CONTACT.eyebrow}</span>}
-          title={CONTACT.title}
-          actions={
-            <Button
-              size="lg"
-              className="w-full sm:w-auto"
-              onClick={() => {
-                setRound((r) => r + 1)
-                setOpen(true)
-              }}
-            >
-              {CONTACT.eyebrow}
-            </Button>
-          }
-        />
+    // No bottom padding: the card sits right above the footer, whose own
+    // 80px top padding is the gap (with the band's padding too it was 176px).
+    <Section id={CONTACT_ANCHOR} size="md" className="scroll-mt-20 pb-0 md:pb-0">
+      {/* rounded-3xl: the page's large cards share one corner. Title centred,
+          the button under it — the dark emphasis button, like the product
+          cards' "Learn more" (green stays with the hero's sign-up). */}
+      <Card padding="lg" className="flex flex-col items-center gap-6 rounded-3xl text-center sm:p-10">
+        <SectionHeading level={2} align="center" title={CONTACT.title} />
+        <Button
+          variant="emphasis"
+          size="lg"
+          className="w-full sm:w-auto"
+          onClick={() => {
+            setRound((r) => r + 1)
+            setOpen(true)
+          }}
+        >
+          {CONTACT.cta}
+        </Button>
       </Card>
 
       <Dialog open={open} onOpenChange={setOpen}>

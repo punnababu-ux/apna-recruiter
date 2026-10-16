@@ -10,7 +10,7 @@
 export const CONTACT_ANCHOR = "contact-us"
 
 export const CONTACT = {
-  eyebrow: "Contact us",
+  cta: "Contact us",
   title: "Join over 7 Lakhs+ employers. We're happy to help.",
   steps: [
     "Submit this simple form.",
