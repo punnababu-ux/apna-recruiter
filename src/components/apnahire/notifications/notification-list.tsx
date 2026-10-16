@@ -133,7 +133,22 @@ function JoinTopBar() {
   return null
 }
 
+/** Phones page: true once the list has scrolled, so the sticky chip bar
+ *  shows its bottom line only when rows pass beneath it (at rest the grey
+ *  day band below already separates it). */
+function useScrolledPast() {
+  const [scrolled, setScrolled] = React.useState(false)
+  React.useEffect(() => {
+    const update = () => setScrolled(window.scrollY > 2)
+    update()
+    window.addEventListener("scroll", update, { passive: true })
+    return () => window.removeEventListener("scroll", update)
+  }, [])
+  return scrolled
+}
+
 export function NotificationList({ variant }: { variant: "panel" | "page" }) {
+  const scrolled = useScrolledPast()
   const { notifications, unreadCount, markRead, markAllRead } = useNotifications()
   const [filter, setFilter] = React.useState<Filter>("all")
 
@@ -203,7 +218,7 @@ export function NotificationList({ variant }: { variant: "panel" | "page" }) {
         // drops its own line, useFlushHeader), sticky under it, one line
         // below; 8px above the chips and 12px below (the scroller adds 4px
         // under them, hence pt-2 pb-2).
-        <section className="sticky top-16 z-docked flex items-center gap-2 border-b border-border bg-card pt-2 pr-2 pb-2 pl-4 md:static md:border-b-0 md:py-3 md:shadow-card">
+        <section className={cn("sticky top-16 z-docked flex items-center gap-2 border-b bg-card transition-interactive", scrolled ? "border-border" : "border-transparent", "pt-2 pr-2 pb-2 pl-4 md:static md:border-b-0 md:py-3 md:shadow-card")}>
           <div className="min-w-0 flex-1">
             <MobileChipRow items={filterItems} value={filter} onValueChange={setFilter} gutter="page-start" />
             <Tabs className="hidden md:flex" value={filter} onValueChange={(v) => setFilter(v as Filter)}>
@@ -220,8 +235,9 @@ export function NotificationList({ variant }: { variant: "panel" | "page" }) {
         </section>
       )}
 
-      {/* 2 — The list, one card, grouped by day. */}
-      <section className="bg-card shadow-card">
+      {/* 2 — The list, one card, grouped by day. On the phone page no
+          shadow: its top edge drew a line above the first day band. */}
+      <section className={cn("bg-card", variant === "page" ? "md:shadow-card" : "shadow-card")}>
         {shown.length === 0 ? (
           <p className={cn("py-10 text-center text-sm text-muted-foreground", gutter)}>
             {filter === "unread" ? "You're all caught up." : "Nothing here yet."}

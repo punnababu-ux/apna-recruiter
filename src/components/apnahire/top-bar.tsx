@@ -33,6 +33,7 @@ import { NotificationsButton } from "@/components/apnahire/notifications/notific
 import { ApnaHireBreadcrumb, sectionTitle } from "@/components/apnahire/breadcrumb"
 import { HOME, isDrillDown, isFullScreenPage, useAppBack } from "@/lib/apnahire/nav"
 import { signOut, useSession } from "@/hooks/use-session"
+import { useIsMobile } from "@/hooks/use-mobile"
 import {
   Avatar,
   AvatarFallback,
@@ -43,6 +44,10 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
   SidebarTrigger,
   UserRound,
 } from "@apna/design-system"
@@ -63,6 +68,7 @@ export function ApnaHireTopBar({
   useAppBack()
   const router = useRouter()
   const [profileOpen, setProfileOpen] = React.useState(false)
+  const isMobile = useIsMobile()
   const session = useSession()
   const signedInAs = session?.kind === "phone" ? `+91 ${session.phone}` : session?.email
   const fullScreen = isFullScreenPage(pathname)
@@ -122,30 +128,34 @@ export function ApnaHireTopBar({
 
         <AvailableCreditsButton plansCta />
 
-        {/* Profile Avatar → logout popover */}
-        <Popover open={profileOpen} onOpenChange={setProfileOpen}>
-          <PopoverTrigger
-            render={
-              <button className="rounded-full ring-offset-background transition-interactive hover:ring-2 hover:ring-ring/40 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 shrink-0">
-                <Avatar className="size-8">
-                  <AvatarFallback className="bg-accent text-xs font-semibold text-accent-foreground">
-                    {user.initial}
-                  </AvatarFallback>
-                </Avatar>
-              </button>
-            }
-          />
-          <PopoverContent align="end" className="w-60 p-4">
-            <div className="flex flex-col gap-4">
-              <div className="flex flex-col gap-0.5 text-left">
-                <span className="text-sm font-semibold text-foreground">{user.name}</span>
-                {/* Who is signed in: the number or the enterprise email. */}
-                <span className="text-xs text-muted-foreground">{signedInAs ?? user.email}</span>
-              </div>
+        {/* Profile: a popover from md, a bottom sheet on phones (the
+            Available credits button's pattern); same content in both. */}
+        {(() => {
+          const avatar = (
+            <button
+              aria-label="Your account"
+              className="rounded-full ring-offset-background transition-interactive hover:ring-2 hover:ring-ring/40 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 shrink-0"
+            >
+              <Avatar className="size-8">
+                <AvatarFallback className="bg-accent text-xs font-semibold text-accent-foreground">
+                  {user.initial}
+                </AvatarFallback>
+              </Avatar>
+            </button>
+          )
+          const who = (
+            <div className="flex flex-col gap-0.5 text-left">
+              <span className={cn("font-semibold text-foreground", isMobile ? "text-lg" : "text-sm")}>{user.name}</span>
+              {/* Who is signed in: the number or the enterprise email. */}
+              <span className={cn("text-muted-foreground", isMobile ? "text-sm" : "text-xs")}>{signedInAs ?? user.email}</span>
+            </div>
+          )
+          const actions = (
+            <>
               {/* Goes to a page, so it reads as a row with a chevron, not a button. */}
               <Button
                 variant="ghost"
-                size="sm"
+                size={isMobile ? "lg" : "sm"}
                 className="-mx-2 w-auto justify-start gap-2"
                 nativeButton={false}
                 render={<Link href="/apnahire/profile" />}
@@ -157,7 +167,7 @@ export function ApnaHireTopBar({
               </Button>
               <Button
                 variant="destructive"
-                size="sm"
+                size={isMobile ? "lg" : "sm"}
                 className="w-full"
                 onClick={() => {
                   signOut()
@@ -166,9 +176,33 @@ export function ApnaHireTopBar({
               >
                 Log out
               </Button>
-            </div>
-          </PopoverContent>
-        </Popover>
+            </>
+          )
+          if (isMobile) {
+            return (
+              <Sheet open={profileOpen} onOpenChange={setProfileOpen}>
+                <SheetTrigger render={avatar} />
+                {/* The system CloseBubble sits outside the sheet; no overflow-hidden. */}
+                <SheetContent side="bottom" className="gap-4 rounded-t-2xl border-t-0 p-5 pb-safe-5">
+                  <SheetTitle className="sr-only">Your account</SheetTitle>
+                  {who}
+                  {actions}
+                </SheetContent>
+              </Sheet>
+            )
+          }
+          return (
+            <Popover open={profileOpen} onOpenChange={setProfileOpen}>
+              <PopoverTrigger render={avatar} />
+              <PopoverContent align="end" className="w-60 p-4">
+                <div className="flex flex-col gap-4">
+                  {who}
+                  {actions}
+                </div>
+              </PopoverContent>
+            </Popover>
+          )
+        })()}
       </div>
     </div>
   )
