@@ -358,54 +358,65 @@ export const CAREERS = {
 
 export const AWARDS = {
   meta: { title: "Awards and certifications", description: "Recognition for hiring built with trust, security and scale for Bharat." },
-  eyebrow: "Awards and certifications",
+  eyebrow: "The awards room",
+  /** The prototype's "awards room" picture, under the hero. */
+  heroImage: "/images/company/awards/hero-room.jpg",
+  shelf: { eyebrow: "8 recognitions", title: "On the shelf" },
   title: "Recognition that belongs to everyone we empower",
   description:
     "Every trophy, certification, and accreditation is a marker of the same thing: hiring built with trust, security, and scale for Bharat.",
   items: [
     {
+      image: "/images/company/awards/openai-hero.jpg",
       by: "OpenAI",
       title: "Honoured for passing 10 billion tokens",
       year: "2025",
       description: "One of the largest AI deployments in Indian hiring, recognised directly by OpenAI.",
     },
     {
+      image: "/images/company/awards/freshworks.jpg",
       by: "Freshworks",
       title: "Customer Excellence",
       year: "2025",
       description: "Recognised for the quality of service and outcomes we deliver to our customers.",
     },
     {
+      image: "/images/company/awards/workplace-women.jpg",
       by: "Marksmen Daily",
       title: "Most Preferred Workplace for Women 2025-26",
       year: "2025",
       description: "Certified for building an inclusive workplace where women can build long careers.",
     },
     {
+      image: "/images/company/awards/workplace-5th.jpg",
       by: "Marksmen Daily, 5th edition",
       title: "Most Preferred Workplace 2025-26",
       year: "2025",
       description: "Certified across five consecutive editions as one of India's most preferred places to work.",
     },
     {
+      image: "/images/company/awards/srif.jpg",
       by: "SRIF, Staffing and Recruitment Industry Federation",
       title: "Title Partner, SRIF HR Summit 2025",
       year: "2025",
       description: "Presented with gratitude for our support of India's staffing and recruitment community.",
     },
     {
+      image: "/images/company/awards/shrm.jpg",
       by: "SHRM, presented to Nirmit Parikh",
       title: "SHRM Trailblazer 2026",
       year: "2026",
       description: "In recognition of exceptional leadership and contribution to shaping progressive people practices.",
     },
     {
+      image: "/images/company/awards/retail-hrtech.jpg",
       by: "Retailers Association of India",
       title: "Distinguished Speaker, Retail HR Tech Summit",
       year: "2024",
       description: "Recognising apna's voice in shaping the future of retail hiring and HR technology.",
     },
     {
+      image: "/images/company/awards/bts-unicorn.jpg",
       by: "Bengaluru Tech Summit, Government of Karnataka",
       title: "Bengaluru Impact Award, Unicorn 2020-21",
       year: "2021",
