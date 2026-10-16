@@ -27,6 +27,7 @@ import { ArrowRight, Badge, BadgePercent, Button, Check, RadioCard, RadioCardGro
 import { OfferDialog } from "@/components/apnahire/offers/offer-dialog"
 import { SLOT_UPGRADE } from "@/content/offers"
 import { ordinal, type JobSlots } from "@/hooks/use-job-slots"
+import { useIsMobile } from "@/hooks/use-mobile"
 import { inr } from "@/lib/format"
 
 const pad2 = (n: number) => String(n).padStart(2, "0")
@@ -47,6 +48,9 @@ export function SlotsFullDialog({
   const [picked, setPicked] = React.useState(slots.jobs[0]?.id)
   const nextSlot = slots.total + 1
   const pct = Math.round((1 - SLOT_UPGRADE.price / SLOT_UPGRADE.mrp) * 100)
+  // Phones (the bottom sheet): the small CTA leaves the price, struck price
+  // and % OFF room for one line.
+  const isMobile = useIsMobile()
 
   return (
     <OfferDialog
@@ -65,17 +69,19 @@ export function SlotsFullDialog({
       priceDrop={{ from: inr(SLOT_UPGRADE.perSlotMrp), to: inr(SLOT_UPGRADE.perSlot), unit: "/slot" }}
       headerFooter={
         // The CTA sits opposite the price, so the plan's lines below get the
-        // full width and each stays on one line.
+        // full width and each stays on one line. Price, struck price and
+        // % OFF are one group that never wraps; on the narrowest phones
+        // (320px) the CTA moves under it rather than squeezing it.
         <div className="flex flex-col gap-3">
-          <div className="flex items-center justify-between gap-4">
-            <p className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1">
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+            <p className="flex items-center gap-1.5 whitespace-nowrap">
               <span className="text-xl font-semibold">{inr(SLOT_UPGRADE.price)}</span>
               <span className="text-xs text-surface-inverted-fg/70 line-through">{inr(SLOT_UPGRADE.mrp)}</span>
               <Badge variant="on-dark" size="sm">
                 {pct}% OFF
               </Badge>
             </p>
-            <Button variant="emphasis" size="lg" className="shrink-0" trailingIcon={<ArrowRight />} onClick={onUpgrade}>
+            <Button variant="emphasis" size={isMobile ? "sm" : "lg"} className="shrink-0" trailingIcon={<ArrowRight />} onClick={onUpgrade}>
               Upgrade now
             </Button>
           </div>
