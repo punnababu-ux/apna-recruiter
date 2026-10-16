@@ -4,8 +4,8 @@
  *   Hero       the chip ("Founded in 2019"), the serif headline, the intro
  *              and the founding story — no numbers
  *              (the founding story sits in the hero, under the intro)
- *   Story      the four beats as the homepage's stacking cards, each on a
- *              mother-gradient wash with its year as a large watermark
+ *   Story      the four beats as the homepage's stacking cards, in the
+ *              mother gradient, each year a large watermark
  *   Mission    its own full-width band in the mother gradient, no card
  *   Recruiters the offers as a ProgressAccordion that walks itself, the
  *              picture beside it following the open one (FeatureShowcase)
@@ -25,17 +25,9 @@ import { ContactSection } from "@/components/marketing/contact-section"
 import { FeatureShowcase } from "@/components/marketing/feature-showcase"
 import { PageHero, withAccent } from "@/components/marketing/page-blocks"
 import { ABOUT_OVERVIEW } from "@/content/company"
-import { cn } from "@/lib/utils"
 
 export const metadata: Metadata = ABOUT_OVERVIEW.meta
 
-/** The four story cards' washes: the homepage canvas's own hues, in turn. */
-const STORY_WASH = [
-  "bg-gradient-mother-peach",
-  "bg-gradient-mother-pink",
-  "bg-gradient-mother-lavender",
-  "bg-gradient-mother-sky",
-] as const
 
 export default function AboutPage() {
   const { eyebrow, title, titleAccent, intro, storyEyebrow, storyTitle, body, story, mission, audiences } = ABOUT_OVERVIEW
@@ -63,11 +55,11 @@ export default function AboutPage() {
           <ScrollStack>
             {story.map((beat, i) => (
               // The marker is a watermark: very large, very light, behind the
-              // copy, which reads straight over it. Each card one of the
-              // mother gradient's own hues (no product colour on About).
+              // copy, which reads straight over it. Every card wears the
+              // homepage gradient (the mother gradient), like the mission band.
               <ScrollStackItem
                 key={beat.marker}
-                className={cn("relative isolate overflow-hidden", STORY_WASH[i % STORY_WASH.length])}
+                className="relative isolate overflow-hidden bg-gradient-checkout-hero"
               >
                 <span aria-hidden className="text-watermark pointer-events-none absolute -right-6 -bottom-10 -z-10 select-none lg:-bottom-16">
                   {beat.marker}

@@ -1147,11 +1147,6 @@
 @utility bg-gradient-product-unlimited {
   background-image: var(--gradient-product-unlimited);
 }
-@utility bg-gradient-mother-peach { background-image: var(--gradient-mother-peach); }
-@utility bg-gradient-mother-pink { background-image: var(--gradient-mother-pink); }
-@utility bg-gradient-mother-lavender { background-image: var(--gradient-mother-lavender); }
-@utility bg-gradient-mother-sky { background-image: var(--gradient-mother-sky); }
-
 /* A very large, very light number behind a card's text (About's story
  * cards: "2019", "400M"). Inter, tabular, at 6% of the ink, so the copy
  * reads straight over it (at 5% of the ink). Sized to the viewport, capped. Decorative —
