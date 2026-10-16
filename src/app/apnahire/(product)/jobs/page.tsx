@@ -17,6 +17,11 @@ import { Suspense, useMemo, useState } from "react"
 import {
   SearchFilterBar,
   Button,
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyTitle,
   Tabs,
   TabsList,
   TabsTrigger,
@@ -159,6 +164,42 @@ function JobsPageInner() {
   })
   const filtered = matched.filter((j) => tab === "all" || j.status === tab)
 
+  const clearFilters = () => {
+    setCityFilters([])
+    setPosterFilters([])
+  }
+  // Search and filters combine (a job must match both); neither overrides
+  // the other. When nothing matches, say which narrowed it and offer to undo
+  // exactly that.
+  const filterCount = cityFilters.length + posterFilters.length
+  const query = searchQuery.trim()
+  const emptyState =
+    query || filterCount ? (
+      <Empty className="rounded-lg border border-dashed border-border bg-card">
+        <EmptyHeader>
+          <EmptyTitle>No jobs match</EmptyTitle>
+          <EmptyDescription>
+            {query && <>Nothing for &ldquo;{query}&rdquo;</>}
+            {query && filterCount ? " with " : null}
+            {filterCount ? `${filterCount} filter${filterCount > 1 ? "s" : ""} applied` : null}
+            {tab !== "all" ? ` in ${STATUS_LABELS[tab].toLowerCase()} jobs` : null}.
+          </EmptyDescription>
+        </EmptyHeader>
+        <EmptyContent className="flex-row justify-center gap-3">
+          {query && (
+            <Button variant="outline" size="sm" onClick={() => setSearchQuery("")}>
+              Clear search
+            </Button>
+          )}
+          {filterCount > 0 && (
+            <Button variant="outline" size="sm" onClick={clearFilters}>
+              Clear filters
+            </Button>
+          )}
+        </EmptyContent>
+      </Empty>
+    ) : undefined
+
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 p-4 sm:gap-6 sm:p-6">
       <PageHeader
@@ -202,10 +243,9 @@ function JobsPageInner() {
               onToggle: (v) => setPosterFilters((prev) => toggle(prev, v)),
             },
           ]}
-          onClearFilters={() => {
-            setCityFilters([])
-            setPosterFilters([])
-          }}
+          onClearFilters={clearFilters}
+          // Phones: a pill field with the Filters pill inside it.
+          mobileFilters="inside"
         />
         {/* Phones: five tabs don't fit across, so they become self-checkout's
             scrolling chip row (MobileChipRow, text only). From md: the tab
@@ -232,7 +272,7 @@ function JobsPageInner() {
       </div>
 
       <main className="flex-1">
-        <JobList jobs={filtered} />
+        <JobList jobs={filtered} empty={emptyState} />
         {/* Room for the floating button, so the last card scrolls clear. */}
         <div aria-hidden className="h-20 md:hidden" />
       </main>

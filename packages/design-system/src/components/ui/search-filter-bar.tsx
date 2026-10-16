@@ -15,7 +15,7 @@
  */
 
 import * as React from "react"
-import { Search, SlidersHorizontal } from "@/icons/icons"
+import { Search, SlidersHorizontal, X } from "@/icons/icons"
 
 import { Badge } from "./badge"
 import { Button } from "./button"
@@ -41,6 +41,11 @@ export interface SearchFilterBarProps {
   filterGroups?: FilterGroup[]
   /** Called by "Clear filters" (popover and sheet). */
   onClearFilters?: () => void
+  /** Phones (< md): Filters as a button "beside" the field, or "inside" it —
+   *  a fully rounded field with a grey Filters pill inset 2px at its end,
+   *  which steps aside while you type (a clear ✕ takes its place). Search
+   *  and filters always combine: a result must match both. */
+  mobileFilters?: "beside" | "inside"
   className?: string
 }
 
@@ -50,15 +55,18 @@ export function SearchFilterBar({
   onChange,
   filterGroups,
   onClearFilters,
+  mobileFilters = "beside",
   className,
 }: SearchFilterBarProps) {
   const isMobile = useIsMobile()
+  const [focused, setFocused] = React.useState(false)
   const [sheetOpen, setSheetOpen] = React.useState(false)
   // The sheet's staged picks, by group label; committed on Apply.
   const [draft, setDraft] = React.useState<Record<string, string[]>>({})
   const activeFilterCount =
     filterGroups?.reduce((sum, g) => sum + g.selected.length, 0) ?? 0
   const hasFilters = (filterGroups?.length ?? 0) > 0
+  const inside = hasFilters && isMobile && mobileFilters === "inside"
 
   const trigger = (
     // The search field's 40px height, with a 14px label.
@@ -73,6 +81,28 @@ export function SearchFilterBar({
     </Button>
   )
 
+  // Phones, inside the field: a grey pill like an unselected chip.
+  const pillTrigger = (
+    <Button
+      variant="secondary"
+      className="h-full cursor-pointer gap-1.5 rounded-full px-3"
+      aria-label={activeFilterCount ? `Filters, ${activeFilterCount} applied` : "Filters"}
+    >
+      <SlidersHorizontal className="size-4" />
+      <span>Filters</span>
+      {activeFilterCount > 0 && (
+        <Badge variant="success" className="h-5 min-w-5 px-1.5 text-2xs">
+          {activeFilterCount}
+        </Badge>
+      )}
+    </Button>
+  )
+
+  const openSheet = () => {
+    setDraft(Object.fromEntries(filterGroups!.map((g) => [g.label, g.selected])))
+    setSheetOpen(true)
+  }
+
   return (
     <div className={cn("flex items-center gap-3", className)}>
       {/* Search Input */}
@@ -85,18 +115,41 @@ export function SearchFilterBar({
           placeholder={placeholder}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="bg-card pl-9"
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          className={cn(
+            "bg-card pl-9",
+            // inside: a pill; room on the right for the Filters pill, or for
+            // the clear ✕ while typing
+            inside && "rounded-full",
+            inside && (focused ? (value ? "pr-11" : "pr-4") : "pr-32")
+          )}
         />
+        {inside && focused && value && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            className="absolute top-1/2 right-1 -translate-y-1/2 rounded-full text-muted-foreground"
+            aria-label="Clear search"
+            // Keep the field focused while clearing.
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => onChange("")}
+          >
+            <X />
+          </Button>
+        )}
+        {inside && !focused && (
+          // The Filters pill, inset 2px from the field's right, top and bottom.
+          <div className="absolute inset-y-0.5 right-0.5 flex">
+            {React.cloneElement(pillTrigger, { onClick: openSheet })}
+          </div>
+        )}
       </div>
 
       {hasFilters && isMobile && (
         <>
-          {React.cloneElement(trigger, {
-            onClick: () => {
-              setDraft(Object.fromEntries(filterGroups!.map((g) => [g.label, g.selected])))
-              setSheetOpen(true)
-            },
-          })}
+          {!inside && React.cloneElement(trigger, { onClick: openSheet })}
           <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
             {/* No overflow-hidden: it would clip the close bubble. */}
             <SheetContent side="bottom" className="max-h-5/6 gap-0 rounded-t-2xl border-t-0 p-0 pb-safe">
