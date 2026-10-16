@@ -448,6 +448,12 @@
    * already taken, e.g. "Add AI calling agent" above "Proceed to pay". Never
    * a second primary, never the only CTA on a screen. See Button's
    * `variant="emphasis"` for the rule. */
+  /* Inverted CTA — a solid white pill on a dark surface (offer headers):
+   * "Upgrade now" on the slot upgrade. Fixed in both themes, like the dark
+   * surfaces it sits on. */
+  --cta-inverted:            var(--color-gray-0);
+  --cta-inverted-hover:      var(--color-gray-100);
+  --cta-inverted-foreground: var(--color-gray-900);
   --cta-emphasis:            var(--color-gray-800);
   --cta-emphasis-hover:      var(--color-gray-900);
   --cta-emphasis-foreground: var(--color-gray-0);
@@ -496,8 +502,9 @@
    * white text, gold "new price".
    *   offer          job bundles, credit packs, exit nudge: the apna-green
    *                  sweep (Figma "offer-gradeint")
-   *   offer-premium  subscription upgrades: a gold bloom on plum, the
-   *                  Unlimited card and logo's own colours */
+   *   offer-premium  subscription upgrades — the subscription upsell and the
+   *                  slot upgrade alike: a gold bloom on plum, the Unlimited
+   *                  card and logo's own colours */
   --gradient-offer: linear-gradient(137deg, var(--color-apna-green-500) 5%, var(--color-apna-green-800) 50%, var(--color-apna-green-950) 112%);
   --gradient-offer-premium:
     radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--color-apna-gold-500) 55%, transparent) 0%, transparent 55%),

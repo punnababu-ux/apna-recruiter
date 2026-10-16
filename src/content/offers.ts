@@ -76,3 +76,16 @@ export const ANNUAL_PLAN = {
   dbCredits: 2000,
   dbCreditsWorth: 20000,
 } as const
+
+/** Adding a job slot when every slot is in use (Figma 3308:148419): the
+ *  next slot at a per-slot price, sold as the plan with one more slot.
+ *  Prorated against the current plan; numbers are the design's. */
+export const SLOT_UPGRADE = {
+  perSlot: 1800,
+  perSlotMrp: 2499,
+  /** The plan with the extra slot. */
+  price: 5400,
+  mrp: 5999,
+  validDays: 30,
+  dbCredits: 400,
+}

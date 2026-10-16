@@ -14,9 +14,14 @@
  *            credit packs and the exit nudge
  *   premium  a gold bloom on plum (`bg-gradient-offer-premium`), the
  *            Unlimited card and logo's colours, plus a "Special upgrade
- *            offer" tag: subscription upgrades
+ *            offer" tag: every subscription upgrade — the subscription
+ *            upsell and the "All job slots are in use" slot upgrade, so the
+ *            two read as one family
  * Both are dark: white text, the old price struck through in soft white,
  * the new price in gold.
+ *
+ * `headerFooter` adds a block under a divider at the header's foot (the
+ * slot upgrade's plan on offer and its CTA).
  *
  * Responsive like the board's Mweb frames: a centred dialog from md, a
  * bottom sheet below it, with the same content in both. The close control
@@ -42,6 +47,7 @@ import { cn } from "@/lib/utils"
 const ILLUSTRATIONS = {
   wallet: "/illustrations/offer-wallet.png",
   party: "/illustrations/offer-party-popper.png",
+  briefcase: "/illustrations/offer-briefcase.png",
 } as const
 
 export interface OfferDialogProps {
@@ -53,10 +59,13 @@ export interface OfferDialogProps {
   /** Corner ribbon on the header's top-right, e.g. "Special upgrade offer". */
   tag?: React.ReactNode
   eyebrow: string
-  headline?: string
+  headline?: React.ReactNode
   priceDrop?: { from: string; to: string; unit: string }
-  /** "sm" for the compact exit nudge, "md" for the two-tile upsells. */
-  size?: "sm" | "md"
+  /** Under a divider at the header's foot. */
+  headerFooter?: React.ReactNode
+  /** "sm" the compact exit nudge, "md" the two-tile upsells, "lg" the slot
+   *  upgrade's list of jobs (672px). */
+  size?: "sm" | "md" | "lg"
   children: React.ReactNode
 }
 
@@ -69,6 +78,7 @@ export function OfferDialog({
   eyebrow,
   headline,
   priceDrop,
+  headerFooter,
   size = "md",
   children,
 }: OfferDialogProps) {
@@ -133,6 +143,9 @@ export function OfferDialog({
             </span>
           </p>
         )}
+        {headerFooter && (
+          <div className="flex flex-col gap-4 border-t border-surface-inverted-fg/15 pt-4">{headerFooter}</div>
+        )}
       </div>
       <div className="bg-card p-4 sm:p-6">{children}</div>
     </>
@@ -154,7 +167,7 @@ export function OfferDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className={cn("gap-0 overflow-hidden rounded-2xl p-0 shadow-dialog", size === "sm" ? "sm:max-w-md" : "sm:max-w-xl")}
+        className={cn("gap-0 overflow-hidden rounded-2xl p-0 shadow-dialog", size === "sm" ? "sm:max-w-md" : size === "lg" ? "sm:max-w-2xl" : "sm:max-w-xl")}
       >
         {body}
       </DialogContent>

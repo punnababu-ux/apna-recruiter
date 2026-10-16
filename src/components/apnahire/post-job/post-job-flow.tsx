@@ -58,7 +58,11 @@ import {
   type ScreenId,
   type StageId,
 } from "@/components/apnahire/post-job/wizard-screens"
-import { EMPTY_JOB_DRAFT, mergeDraft, normalizeDraft } from "@/lib/apnahire/job-draft"
+import { EMPTY_JOB_DRAFT, locationLabel, mergeDraft, normalizeDraft } from "@/lib/apnahire/job-draft"
+import { toast } from "sonner"
+import { SlotsFullDialog } from "@/components/apnahire/slots/slots-full-dialog"
+import { JobSlotsControls, PrototypeSettings } from "@/components/apnahire/prototype-settings"
+import { freeSlots, setJobSlots, todayLabel, useJobSlots } from "@/hooks/use-job-slots"
 import { cn } from "@/lib/utils"
 import type { JobPostDraft } from "@/types/apnahire-job"
 
@@ -329,6 +333,37 @@ export function PostJobFlow() {
     [setState],
   )
 
+  // Subscribers post into a job slot at the end instead of buying a plan.
+  const slots = useJobSlots()
+  const [slotsFullOpen, setSlotsFullOpen] = React.useState(false)
+
+  /** Post into a slot (freeing `expireId`'s first), then off to Jobs. */
+  const postInSlot = (expireId?: string) => {
+    if (!slots) return
+    const title = state.draft.title.trim() || "Your job"
+    const expired = expireId ? slots.jobs.find((j) => j.id === expireId) : undefined
+    const kept = expired ? slots.jobs.filter((j) => j.id !== expired.id) : slots.jobs
+    setJobSlots({
+      ...slots,
+      jobs: [
+        ...kept,
+        { id: `job-${Date.now().toString(36)}`, title, location: locationLabel(state.draft) ?? "", postedAt: todayLabel(), applied: 0 },
+      ],
+    })
+    toast.success(`${title} is live`, {
+      description: expired
+        ? `${expired.title} was expired to free its slot.`
+        : `Posted with your ${slots.plan.toLowerCase()} · ${kept.length + 1} of ${slots.total} job slots in use.`,
+    })
+    setSlotsFullOpen(false)
+    router.push("/apnahire/jobs")
+    try {
+      window.localStorage.removeItem(JOB_DRAFT_STORAGE_KEY)
+    } catch {
+      // Storage blocked — nothing to clear.
+    }
+  }
+
   const next = () => {
     if (state.screen === "describe") return submitPrompt()
     const problem = def.check?.(state.draft)
@@ -340,6 +375,11 @@ export function PostJobFlow() {
     if (state.returnTo) return goTo(state.returnTo)
     if (state.screen === "review") {
       persistDraft(state)
+      if (slots) {
+        // A free slot posts now; with every slot taken, expire or upgrade.
+        if (freeSlots(slots) > 0) return postInSlot()
+        return setSlotsFullOpen(true)
+      }
       router.push("/apnahire/jobs/new/plans")
       return
     }
@@ -380,11 +420,15 @@ export function PostJobFlow() {
   const stage = def.stage
   const chromeStep: JobPostingStep = stage ?? "job"
   const firstOfStage = stage !== null && SCREENS.find((s) => s.stage === stage)?.id === state.screen
+  // Subscribers' last step commits: "Post job", the flow's one green CTA.
+  const postsNow = state.screen === "review" && !state.returnTo && !!slots
   const nextLabel = state.returnTo
     ? "Done"
-    : def.isEmpty?.(state.draft)
-      ? "Skip"
-      : (def.cta ?? "Next")
+    : postsNow
+      ? "Post job"
+      : def.isEmpty?.(state.draft)
+        ? "Skip"
+        : (def.cta ?? "Next")
 
   // Wait for the saved draft before rendering, so a resumed flow doesn't
   // flash the first screen.
@@ -453,11 +497,30 @@ export function PostJobFlow() {
             ) : undefined
           }
           nextLabel={nextLabel}
+          nextVariant={postsNow ? "default" : "emphasis"}
           onNext={next}
           error={error}
           errorKey={attempts}
         />
       )}
+
+      {slots && slots.jobs.length > 0 && (
+        <SlotsFullDialog
+          open={slotsFullOpen}
+          onOpenChange={setSlotsFullOpen}
+          slots={slots}
+          onExpireAndPost={(id) => postInSlot(id)}
+          onUpgrade={() => {
+            persistDraft(state)
+            router.push("/apnahire/jobs/new/plans?upgrade=slot")
+          }}
+        />
+      )}
+
+      {/* Prototype: preview the subscription states that change how posting ends. */}
+      <PrototypeSettings label="Preview job posting state">
+        <JobSlotsControls />
+      </PrototypeSettings>
 
       <AlertDialog open={confirmRedraft} onOpenChange={setConfirmRedraft}>
         <AlertDialogContent>

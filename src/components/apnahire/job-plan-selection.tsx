@@ -62,7 +62,8 @@ import {
   JobBundleOfferDialog,
   bundleQuote,
 } from "@/components/apnahire/offers/upsell-dialogs"
-import { ANNUAL_PLAN, EXTRA_OFF } from "@/content/offers"
+import { ANNUAL_PLAN, EXTRA_OFF, SLOT_UPGRADE } from "@/content/offers"
+import { setJobSlots, todayLabel, useJobSlots } from "@/hooks/use-job-slots"
 import {
   TieredJobPlans,
   SubscriptionJobPlans,
@@ -141,6 +142,27 @@ export function JobPlanSelection() {
     setCheckoutItem(item)
     setDrawerOpen(true)
   }
+
+  // "Upgrade now" from the slots-full pop-up (?upgrade=slot): the order
+  // summary for the plan with one more slot. Paying adds the slot and posts.
+  const slots = useJobSlots()
+  const [slotUpgrade, setSlotUpgrade] = React.useState(false)
+  React.useEffect(() => {
+    if (!slots || new URLSearchParams(window.location.search).get("upgrade") !== "slot") return
+    const total = slots.total + 1
+    setSlotUpgrade(true)
+    setCheckoutItem({
+      id: `slot_upgrade_${total}`,
+      label: `${slots.plan} · ${total} job slots`,
+      sublabel: `(${total} active job slots + ${SLOT_UPGRADE.dbCredits} Database credits + Valid for ${SLOT_UPGRADE.validDays} days)`,
+      price: SLOT_UPGRADE.price,
+      mrp: SLOT_UPGRADE.mrp,
+      renewAfterDays: SLOT_UPGRADE.validDays,
+    })
+    setDrawerOpen(true)
+    // Once, on arrival — not again when the slots change after paying.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // Leaving — back, Save & exit, or closing the order summary — goes through
   // the exit nudge first, until the offer is claimed or turned down.
@@ -262,7 +284,16 @@ export function JobPlanSelection() {
     setPaymentOpen(false)
     // A subscription bought here makes the sidebar's plan CTA "Manage plans".
     if (checkoutItem?.renewAfterDays) setActiveSubscription(true)
-    setPostedTitle(readDraftTitle())
+    const title = readDraftTitle()
+    setPostedTitle(title)
+    // A slot upgrade: the new slot is taken by the job just posted.
+    if (slotUpgrade && slots) {
+      setJobSlots({
+        ...slots,
+        total: slots.total + 1,
+        jobs: [...slots.jobs, { id: `job-${Date.now().toString(36)}`, title, location: "", postedAt: todayLabel(), applied: 0 }],
+      })
+    }
     clearDraft()
     // The 10% offer is single-use.
     offer.expire()

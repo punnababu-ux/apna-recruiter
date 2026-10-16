@@ -2,7 +2,7 @@
  * Button — base interactive surface.
  *
  * API
- *   <Button variant="default|outline|secondary|ghost|destructive|success|link|link-inline|checkout|checkout-inset|emphasis"
+ *   <Button variant="default|outline|secondary|ghost|destructive|success|link|link-inline|checkout|checkout-inset|emphasis|inverted"
  *           size="xs|sm|default|lg|xl|icon|icon-xs|icon-sm|icon-lg"
  *           leadingIcon={<Plus />}     // optional leading icon
  *           trailingIcon={<ArrowRight />} // optional trailing icon
@@ -102,6 +102,9 @@ const buttonVariants = cva(
          * (add-ons, upsells) — see the one-primary RULE above. */
         emphasis:
           "bg-cta-emphasis text-cta-emphasis-foreground hover:bg-cta-emphasis-hover active:bg-cta-emphasis-hover",
+        /* A white pill on a dark surface (offer headers): "Upgrade now". */
+        inverted:
+          "bg-cta-inverted text-cta-inverted-foreground hover:bg-cta-inverted-hover active:bg-cta-inverted-hover",
       },
       size: {
         default:

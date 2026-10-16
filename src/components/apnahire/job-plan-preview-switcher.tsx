@@ -11,7 +11,7 @@
  * pages.
  */
 
-import { ExitOfferControls, PrototypeOption, PrototypeSection, PrototypeSettings } from "@/components/apnahire/prototype-settings"
+import { ExitOfferControls, JobSlotsControls, PrototypeOption, PrototypeSection, PrototypeSettings } from "@/components/apnahire/prototype-settings"
 import type { JobPlanLayout } from "@/components/apnahire/job-plan-selection"
 import type { CreditBalance } from "@/content/job-plans"
 
@@ -70,6 +70,7 @@ export function JobPlanPreviewSwitcher({
           </PrototypeOption>
         ))}
       </PrototypeSection>
+      <JobSlotsControls />
       {offer && <ExitOfferControls offer={offer} />}
     </PrototypeSettings>
   )

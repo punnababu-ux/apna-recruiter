@@ -20,6 +20,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { Button, Popover, PopoverContent, PopoverTrigger, Settings } from "@apna/design-system"
+import { SLOT_PRESETS, setJobSlots, slotPresetOf, useJobSlots, type SlotPreset } from "@/hooks/use-job-slots"
 
 export function PrototypeSettings({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -91,6 +92,21 @@ export function ExitOfferControls({
         Expire in 5 seconds
       </PrototypeOption>
       <PrototypeOption onClick={offer.onReset}>Reset offer and exit nudge</PrototypeOption>
+    </PrototypeSection>
+  )
+}
+
+/** Subscription job slots: none (buy a plan) / a free slot / all in use. */
+export function JobSlotsControls() {
+  const slots = useJobSlots()
+  const current = slotPresetOf(slots)
+  return (
+    <PrototypeSection title="Job slots">
+      {(Object.keys(SLOT_PRESETS) as SlotPreset[]).map((key) => (
+        <PrototypeOption key={key} active={current === key} onClick={() => setJobSlots(SLOT_PRESETS[key].slots)}>
+          {SLOT_PRESETS[key].label}
+        </PrototypeOption>
+      ))}
     </PrototypeSection>
   )
 }

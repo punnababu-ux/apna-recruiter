@@ -102,6 +102,9 @@
 
   /* Emphasis CTA — dark gray, for the push that isn't the primary action */
   --color-cta-emphasis:            var(--cta-emphasis);
+  --color-cta-inverted: var(--cta-inverted);
+  --color-cta-inverted-hover: var(--cta-inverted-hover);
+  --color-cta-inverted-foreground: var(--cta-inverted-foreground);
   --color-cta-emphasis-hover:      var(--cta-emphasis-hover);
   --color-cta-emphasis-foreground: var(--cta-emphasis-foreground);
   --color-checkout-discount-fg:        var(--checkout-discount-fg);
