@@ -205,6 +205,28 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
     else proceed()
   }
 
+  // Nothing is bought signed out. On the logged-out page (/pricing) a Buy
+  // goes straight to login, carrying the order: back on the logged-in Plans
+  // page the order summary reopens with it (the effect above). Signed in,
+  // a Buy opens the order summary.
+  const goToLoginWith = (item: CartLine) => {
+    const pending: PendingCheckout = { tab: activeTab, item, selectedPackage, subscriptionPlan }
+    try {
+      window.sessionStorage.setItem(PENDING_CHECKOUT_KEY, JSON.stringify(pending))
+    } catch {
+      // Storage blocked: they land on Plans and pick again.
+    }
+    router.push(`/login?${new URLSearchParams({ next: "/apnahire/credits" })}`)
+  }
+  const openOrder = (item: CartLine) => {
+    if (isLoggedOut && !session) {
+      goToLoginWith(item)
+      return
+    }
+    setCheckoutItem(item)
+    setDrawerOpen(true)
+  }
+
   const handleBuyBundle = (bundle: {
     credits: number
     validDays: number
@@ -212,7 +234,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
     mrp: number
     discountPct: number
   }) => {
-    setCheckoutItem({
+    openOrder({
       id: `job-${bundle.credits}`,
       label: `${bundle.credits} Job credit${bundle.credits > 1 ? "s" : ""}`,
       sublabel: `Valid for ${bundle.validDays} days`,
@@ -221,7 +243,6 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
       discountLabel: `Job plan discount (${bundle.discountPct}% OFF)`,
       discountAmount: bundle.mrp - bundle.price,
     })
-    setDrawerOpen(true)
   }
 
   const handleBuySingleCredit = () => handleBuyBundle(SINGLE_CREDIT)
@@ -233,7 +254,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
     mrp: number
     discountPct: number
   }) => {
-    setCheckoutItem({
+    openOrder({
       id: `db-${bundle.credits}`,
       label: `${bundle.credits} Database credits`,
       sublabel: `Valid for ${bundle.validDays} days`,
@@ -242,7 +263,6 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
       discountLabel: `Database plan discount (${bundle.discountPct}% OFF)`,
       discountAmount: bundle.mrp - bundle.price,
     })
-    setDrawerOpen(true)
   }
 
   const shownPrice = (n: number) =>
@@ -275,18 +295,17 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   // variant, and what the renewal date is computed from. The parenthesised
   // sublabel is verbatim from the drawer's own frames (1236:22188).
   const handleBuyUnlimitedQuarterly = () => {
-    setCheckoutItem({
+    openOrder({
       id: "unlimited_quarterly_1",
       label: "Quarterly plan",
       sublabel: "(1 active job slot + 600 Database credits + Valid for 90 days)",
       price: 5999,
       renewAfterDays: 90,
     })
-    setDrawerOpen(true)
   }
 
   const handleBuyUnlimitedAnnual = () => {
-    setCheckoutItem({
+    openOrder({
       id: "unlimited_annual_1",
       label: "Annual plan",
       sublabel: `(1 active job slot + ${num(ANNUAL_PLAN.dbCredits)} Database credits + Valid for ${ANNUAL_PLAN.slotDays} days)`,
@@ -294,18 +313,16 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
       mrp: ANNUAL_PLAN.mrp,
       renewAfterDays: ANNUAL_PLAN.slotDays,
     })
-    setDrawerOpen(true)
   }
 
   const handleBuyUnlimitedMonthly = () => {
-    setCheckoutItem({
+    openOrder({
       id: "unlimited_monthly_1",
       label: "Monthly plan",
       sublabel: "(1 active job slot + 200 Database credits + Valid for 30 days)",
       price: 2499,
       renewAfterDays: 30,
     })
-    setDrawerOpen(true)
   }
 
   const handleProceedToPay = (
@@ -315,16 +332,11 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   ) => {
     // Nothing is bought signed out: keep the order, log in, come back to the
     // logged-in Plans page with this order summary open again.
+    // Belt and braces — a signed-out Buy already went to login (openOrder).
+    // Navigate with the summary still open: closing it first would pop its
+    // Back entry (useBackToClose) and undo this navigation.
     if (isLoggedOut && !session && checkoutItem) {
-      const pending: PendingCheckout = { tab: activeTab, item: checkoutItem, selectedPackage, subscriptionPlan }
-      try {
-        window.sessionStorage.setItem(PENDING_CHECKOUT_KEY, JSON.stringify(pending))
-      } catch {
-        // Storage blocked: they land on Plans and pick again.
-      }
-      // Navigate with the summary still open: closing it first would pop
-      // its Back entry (useBackToClose) and undo this navigation.
-      router.push(`/login?${new URLSearchParams({ next: "/apnahire/credits" })}`)
+      goToLoginWith(checkoutItem)
       return
     }
     setPaymentAmount(total)
