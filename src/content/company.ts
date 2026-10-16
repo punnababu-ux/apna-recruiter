@@ -9,7 +9,8 @@
  * its code, since the rendered text reads "0" until they animate. Layout
  * and look are this site's own. "apna" is lower case, as everywhere here.
  *
- * About overview: the prototype's "Built for every job seeker" block is
+ * About overview: each recruiter offer names the picture shown beside it
+ * while it's open (FeatureShowcase). The prototype's "Built for every job seeker" block is
  * left out by design (user call, 2026-10-17): this is the recruiter site.
  *
  * Customer Stories: the per-company results (PwC, HDFC Bank, …) are the
@@ -75,30 +76,35 @@ export const ABOUT_OVERVIEW = {
       items: [
         {
           title: "Full-funnel hiring, automated",
+          picture: "Smart Jobs",
           tagline: "From sourcing to shortlist, hands-free.",
           description:
             "AI runs the entire hiring workflow end to end, sourcing, interviewing, and shortlisting candidates without manual intervention, cutting average hiring time by up to 50%.",
         },
         {
           title: "AI that calls, screens & never gives up",
+          picture: "AI Calling Agent",
           tagline: "Every candidate, followed through.",
           description:
             "AI-led calling engages candidates 24/7, conducting screening interviews and shortlisting in real time, with up to 5 automated follow-ups per candidate, driving response rates as high as 80%.",
         },
         {
           title: "Precision candidate discovery",
+          picture: "Hyperlocal Database",
           tagline: "Not just nearby. Exactly right.",
           description:
             "Radius-based search combined with 22+ advanced filters lets recruiters pinpoint candidates by location, skill, experience, and intent, surfacing the most relevant match instead of the widest possible list.",
         },
         {
           title: "Recruiter workflows, simplified",
+          picture: "apna Unlimited",
           tagline: "Post, manage, hire, without the friction.",
           description:
             "Ready-to-use AI templates strip the manual effort out of job posting and candidate management, giving recruiters hours back in their day.",
         },
         {
           title: "Trust & verification built in",
+          picture: "Trust",
           tagline: "Safety first, always.",
           description:
             "Rigorous verification protocols and scam-free safeguards protect both sides of the marketplace, built from the ground up for millions of first-time job seekers and the recruiters hiring them.",

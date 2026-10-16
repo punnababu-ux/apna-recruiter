@@ -69,6 +69,7 @@ export * from "./components/ui/sonner"
 // 7. Data & Layout
 export * from "./components/ui/table"
 export * from "./components/ui/accordion"
+export * from "./components/ui/progress-accordion"
 export * from "./components/ui/logo-apna"
 export * from "./components/ui/logo-apna-hire"
 export * from "./components/ui/logo-onlyrounds"

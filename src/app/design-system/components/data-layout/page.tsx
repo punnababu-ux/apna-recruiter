@@ -12,6 +12,7 @@ import {
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
+  ProgressAccordion,
   ApnaLogo,
   LogoApnaUnlimited,
   Badge,
@@ -222,6 +223,25 @@ export default function DataLayoutComponentsPage() {
             </AccordionContent>
           </AccordionItem>
         </Accordion>
+      </div>
+
+      {/* ProgressAccordion */}
+      <div className="rounded-xl border border-border bg-card p-6 space-y-4">
+        <h2 className="text-base font-semibold text-foreground font-heading border-b border-border/60 pb-2">
+          Progress Accordion
+        </h2>
+        <p className="text-sm text-muted-foreground">
+          Walks itself: the open item&apos;s loader fills, then the next opens. Hover to pause, click to jump.
+        </p>
+        <ProgressAccordion
+          className="w-full max-w-xl"
+          interval={4000}
+          items={[
+            { value: "a", title: "Full-funnel hiring", subtitle: "From sourcing to shortlist", content: "AI runs the hiring workflow end to end." },
+            { value: "b", title: "AI that calls", subtitle: "Every candidate, followed through", content: "Screening calls 24/7 with automated follow-ups." },
+            { value: "c", title: "Precision discovery", subtitle: "Not just nearby. Exactly right.", content: "Radius search with 22+ filters." },
+          ]}
+        />
       </div>
     </div>
   )

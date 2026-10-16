@@ -659,6 +659,19 @@
  * clipping its overflow (cards can't: see card-hover-lift). Re-trigger by
  * re-keying the element. Reduced motion collapses it to nothing via the
  * base-layer floor. */
+/* ProgressAccordion's loader: fills left → right over --progress-duration
+ * (set per instance), paused while the list is hovered / focused / off
+ * screen ([data-paused]). Transform only, so it never re-lays-out. */
+@keyframes progress-fill {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+@utility progress-fill {
+  transform-origin: left center;
+  animation: progress-fill var(--progress-duration, 6s) linear forwards;
+  &[data-paused] { animation-play-state: paused; }
+}
+
 @keyframes shimmer-sweep {
   from { background-position: 100% 0; }
   to   { background-position: 0% 0; }

@@ -7,8 +7,8 @@
  *   Story      the four beats as the homepage's stacking cards, each on a
  *              mother-gradient wash with its year as a large watermark
  *   Mission    its own full-width band in the mother gradient, no card
- *   Recruiters the offers (each opening to its detail) beside the AI
- *              Calling Agent illustration, on a white band
+ *   Recruiters the offers as a ProgressAccordion that walks itself, the
+ *              picture beside it following the open one (FeatureShowcase)
  *
  * Neutral throughout: product gradients belong to their products, so the
  * only colour here is the AI Calling Agent's own, on its illustration.
@@ -16,18 +16,14 @@
 
 import type { Metadata } from "next"
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
   ScrollStack,
   ScrollStackItem,
   Section,
   SectionHeading,
 } from "@apna/design-system"
 import { ContactSection } from "@/components/marketing/contact-section"
+import { FeatureShowcase } from "@/components/marketing/feature-showcase"
 import { PageHero, withAccent } from "@/components/marketing/page-blocks"
-import { ProductIllustration } from "@/components/marketing/product-illustrations"
 import { ABOUT_OVERVIEW } from "@/content/company"
 import { cn } from "@/lib/utils"
 
@@ -50,13 +46,8 @@ export default function AboutPage() {
         eyebrow={eyebrow}
         title={withAccent(title, titleAccent)}
         // The founding story belongs with the claim it explains: one
-        // description, the intro then the story.
-        description={
-          <span className="flex flex-col gap-4">
-            <span>{intro}</span>
-            <span className="text-base">{body}</span>
-          </span>
-        }
+        // paragraph, one text style — the intro, then the story.
+        description={`${intro} ${body}`}
       />
 
       {/* How we got here: the homepage's stacking cards, one beat each, on
@@ -107,32 +98,20 @@ export default function AboutPage() {
         />
       </Section>
 
-      {/* Built for recruiters: the offers beside the illustration. */}
+      {/* Built for recruiters: the offers walk themselves (each opens, its
+          loader fills, the next opens) and the picture follows. */}
       <Section tone="card" size="md">
-        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-          <div className="flex flex-col gap-8">
+        <FeatureShowcase
+          heading={
             <SectionHeading
               level={2}
               eyebrow={<span className="text-overline text-muted-foreground">{recruiters.label}</span>}
               title={recruiters.title}
               description={recruiters.description}
             />
-            <Accordion defaultValue={[recruiters.items[0].title]} className="border-t border-border">
-              {recruiters.items.map((item) => (
-                <AccordionItem key={item.title} value={item.title} className="border-b border-border">
-                  <AccordionTrigger className="py-4 hover:no-underline">
-                    <span className="flex flex-col gap-0.5">
-                      <span className="text-base font-semibold text-foreground">{item.title}</span>
-                      <span className="text-sm font-regular text-muted-foreground">{item.tagline}</span>
-                    </span>
-                  </AccordionTrigger>
-                  <AccordionContent className="pb-4 text-muted-foreground">{item.description}</AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </div>
-          <ProductIllustration product="AI Calling Agent" size="lg" className="h-80 rounded-card sm:h-112" />
-        </div>
+          }
+          items={recruiters.items}
+        />
       </Section>
 
       <ContactSection />

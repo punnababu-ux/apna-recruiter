@@ -26,6 +26,7 @@ import {
   MapPin,
   PhoneCall,
   Search,
+  ShieldCheck,
 } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 
@@ -38,6 +39,8 @@ export const ILLUSTRATION_TONE = {
   green: "bg-gradient-illustration-green",
   plum: "bg-gradient-illustration-plum",
   gold: "bg-gradient-illustration-gold",
+  /** No product's colour: for a picture that isn't one product's. */
+  neutral: "bg-muted",
 } as const
 export type IllustrationTone = keyof typeof ILLUSTRATION_TONE
 
@@ -250,5 +253,33 @@ export function ProductIllustration({
         <Snippet />
       </div>
     </div>
+  )
+}
+
+/** Trust & verification: a verified recruiter and a passed scam check.
+ *  Neutral — it's every product's promise, not one product's. */
+export function TrustIllustration({ size = "default", className }: { size?: "default" | "lg"; className?: string }) {
+  return (
+    <IllustrationTile tone="neutral" size={size} className={className}>
+      <div className="flex w-64 flex-col gap-2">
+        <Float className="flex items-center gap-3">
+          <Avatar>
+            <AvatarFallback>KS</AvatarFallback>
+          </Avatar>
+          <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+            <span className="truncate text-sm font-semibold text-foreground">Kiran Stores</span>
+            <Lines widths={["w-16"]} />
+          </div>
+          <Badge variant="success" className="shrink-0">
+            <ShieldCheck />
+            Verified
+          </Badge>
+        </Float>
+        <Float className="ml-6 flex items-center gap-2 py-2">
+          <CheckCircle2 className="size-4 shrink-0 text-success" />
+          <span className="text-xs font-semibold text-foreground">Scam check passed</span>
+        </Float>
+      </div>
+    </IllustrationTile>
   )
 }
