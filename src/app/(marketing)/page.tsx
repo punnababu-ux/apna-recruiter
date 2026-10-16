@@ -19,6 +19,7 @@ import {
   Button,
   Card,
   CheckCircle2,
+  LogoApnaUnlimited,
   LogoWall,
   Quote,
   ScrollStack,
@@ -164,7 +165,13 @@ export default function HomePage() {
               // the card's rounded-3xl (19.5px).
               <ScrollStackItem key={product.name} className="group grid gap-2 p-2 lg:grid-cols-2">
                 <div className="flex flex-col gap-5 p-4 sm:p-6 lg:p-8">
-                  <span className="text-overline text-primary">{product.eyebrow}</span>
+                  {/* apna Unlimited is a brand with its own wordmark — show the
+                      "apna ∞ Unlimited" logo, not the eyebrow text. */}
+                  {product.name === "apna Unlimited" ? (
+                    <LogoApnaUnlimited variant="theme" className="h-4 w-auto self-start text-foreground" />
+                  ) : (
+                    <span className="text-overline text-primary">{product.eyebrow}</span>
+                  )}
                   <h3 className="text-h4 text-foreground">{product.heading}</h3>
                   <ul className="flex flex-col gap-4">
                     {product.features.map((feature) => (
