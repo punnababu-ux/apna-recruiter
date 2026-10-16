@@ -42,7 +42,7 @@ import {
   Zap,
 } from "@apna/design-system"
 import { ContactSection } from "@/components/marketing/contact-section"
-import { HeroChip } from "@/components/marketing/page-blocks"
+import { HeroChip, StatGrid } from "@/components/marketing/page-blocks"
 import { PRODUCT_KEY, ProductIllustration } from "@/components/marketing/product-illustrations"
 import { CONTACT_ANCHOR } from "@/content/contact"
 import type { ProductIconName, ProductPageContent } from "@/content/products"
@@ -106,16 +106,10 @@ export function ProductPage({ content }: { content: ProductPageContent }) {
         </Section>
       </div>
 
+      {/* The numbers, anchored to the hero: one card, right under it. */}
       {stats && (
-        <Section size="sm">
-          <dl className="grid gap-8 sm:grid-cols-3">
-            {stats.map((stat) => (
-              <div key={stat.label} className="flex flex-col gap-1">
-                <dt className="order-2 text-sm text-muted-foreground">{stat.label}</dt>
-                <dd className="order-1 font-heading text-h2 font-semibold text-foreground">{stat.value}</dd>
-              </div>
-            ))}
-          </dl>
+        <Section size="none" className="relative -mt-8 pb-8 md:-mt-12 md:pb-12">
+          <StatGrid stats={stats} />
         </Section>
       )}
 

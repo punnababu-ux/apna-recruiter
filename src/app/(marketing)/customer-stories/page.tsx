@@ -20,7 +20,7 @@ export default function CustomerStoriesPage() {
   return (
     <>
       <PageHero eyebrow={eyebrow} title={title} description={description}>
-        <StatGrid stats={stats} className="lg:grid-cols-5" />
+        <StatGrid stats={stats} className="lg:grid-cols-5 lg:[&>*]:border-t-0" />
       </PageHero>
 
       <Section tone="card" size="md">
