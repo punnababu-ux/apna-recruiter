@@ -233,7 +233,7 @@
   /* Ambient backdrop: one blob's full loop. Long on purpose — the motion
    * should register as "the light is shifting", never as "something moved".
    * Blobs run at 0.8–1.2× this so the pattern never visibly repeats. */
-  --duration-ambient:  32s;
+  --duration-ambient:  24s;
   /* How far the cursor glow lags the pointer. */
   --duration-ambient-follow: var(--duration-700);
 
@@ -405,11 +405,11 @@
    * left, periwinkle bottom-left, sky top-right), so the motion re-mixes the
    * gradient rather than adding a colour. Alphas keep it a whisper: text
    * contrast on the hero is unchanged. */
-  --ambient-blob-1: rgba(253, 226, 214, 0.85);
-  --ambient-blob-2: rgba(244, 196, 210, 0.75);
-  --ambient-blob-3: rgba(134, 151, 205, 0.55);
-  --ambient-blob-4: rgba(169, 195, 228, 0.70);
-  --ambient-glow:   rgba(255, 255, 255, 0.70);
+  --ambient-blob-1: rgba(253, 226, 214, 1);
+  --ambient-blob-2: rgba(244, 196, 210, 0.95);
+  --ambient-blob-3: rgba(134, 151, 205, 0.75);
+  --ambient-blob-4: rgba(169, 195, 228, 0.90);
+  --ambient-glow:   rgba(255, 255, 255, 0.85);
   --ambient-grain-opacity: 0.06;
   --surface-checkout-hero-fg:       var(--color-gray-900);
   --surface-checkout-hero-fg-muted: var(--color-gray-500);

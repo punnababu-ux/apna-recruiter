@@ -724,13 +724,13 @@
  * -------------------------------------------------------------------------- */
 @keyframes ambient-float-a {
   0%, 100% { translate: 0 0; scale: 1; }
-  33%      { translate: 14% 9%; scale: 1.12; }
-  66%      { translate: -9% 15%; scale: 0.92; }
+  33%      { translate: 22% 14%; scale: 1.18; }
+  66%      { translate: -14% 22%; scale: 0.88; }
 }
 @keyframes ambient-float-b {
   0%, 100% { translate: 0 0; scale: 1; }
-  33%      { translate: -15% 7%; scale: 0.9; }
-  66%      { translate: 7% -11%; scale: 1.1; }
+  33%      { translate: -22% 10%; scale: 0.86; }
+  66%      { translate: 10% -16%; scale: 1.16; }
 }
 
 @utility ambient-backdrop {
