@@ -276,7 +276,11 @@ function JobsPageInner() {
           list scrolls (self-checkout's chip row). A child of the page column,
           not the search block, so it stays sticky for the whole list. From
           md: the tab bar above. */}
-      <div className="sticky top-16 z-docked -my-2 bg-muted py-2 md:hidden">
+      {/* Full-bleed (-mx-4 px-4). Once scrolled, it's a white bar with a line
+          under it, as self-checkout's sticky chips are; at the top it sits
+          on the page's grey. pt-2 / pb-1: the chip scroller adds 4px under
+          the chips, so the chips sit 8px from the bar's top and bottom. */}
+      <div className="sticky top-16 z-docked -mx-4 -my-2 border-b border-transparent bg-muted px-4 pt-2 pb-1 transition-interactive [[data-header-scrolled]_&]:border-border [[data-header-scrolled]_&]:bg-card md:hidden">
         <MobileChipRow
           items={TAB_ORDER.map((t) => ({
             value: t,

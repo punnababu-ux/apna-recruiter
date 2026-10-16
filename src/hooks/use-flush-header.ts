@@ -1,32 +1,33 @@
 "use client"
 
 /**
- * useFlushHeader — for a page whose first block continues the top bar (the
- * Jobs search band on phones): while the page is scrolled to the top, the
- * bar drops its bottom line so bar and band read as one header; once the
- * band scrolls under the bar, the line comes back to separate the pinned
- * bar from the content passing beneath it.
+ * useFlushHeader — for a page whose header continues below the top bar on
+ * phones (Jobs: the search band at the top, the sticky chip bar once
+ * scrolled). Two attributes on <html>, cleared on unmount:
  *
- * Sets `data-header-flush` on <html>; the top bar reads it
- * (`max-md:[[data-header-flush]_&]:border-transparent`). Cleared on unmount.
+ *   data-header-joined   while the page is mounted: the top bar drops its
+ *                        bottom line (whatever sits under it carries one)
+ *   data-header-scrolled once the page has scrolled: the sticky row turns
+ *                        into a white bar with its own line (self-checkout's
+ *                        sticky chips)
  */
 
 import * as React from "react"
 
-const ATTR = "data-header-flush"
-
 export function useFlushHeader() {
   React.useEffect(() => {
     const root = document.documentElement
+    root.setAttribute("data-header-joined", "")
     const update = () => {
-      if (window.scrollY <= 2) root.setAttribute(ATTR, "")
-      else root.removeAttribute(ATTR)
+      if (window.scrollY > 2) root.setAttribute("data-header-scrolled", "")
+      else root.removeAttribute("data-header-scrolled")
     }
     update()
     window.addEventListener("scroll", update, { passive: true })
     return () => {
       window.removeEventListener("scroll", update)
-      root.removeAttribute(ATTR)
+      root.removeAttribute("data-header-joined")
+      root.removeAttribute("data-header-scrolled")
     }
   }, [])
 }
