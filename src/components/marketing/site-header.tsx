@@ -22,8 +22,11 @@
  *    Prep Lounge prototype uses exactly that, so it's needed on day one
  *    rather than retrofitted.
  *
- * Transparent over the page canvas at rest, solid once scrolled — same timing
- * as the checkout header so the two surfaces feel like one site.
+ * A floating glass pill (2026-10-16): frosted white, 8px from the top and
+ * the page's content width, a touch more solid once the page scrolls under
+ * it. Search is an icon that opens the field over the end of the nav; the
+ * right side is just Login/Sign up (support gets its own floating button,
+ * not a "Contact us" here).
  */
 
 import * as React from "react"
@@ -34,7 +37,7 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-  ApnaLogo,
+  LogoApnaWordmark,
   ArrowUpRight,
   Briefcase,
   Building2,
@@ -45,6 +48,7 @@ import {
   Headset,
   Award,
   Menu,
+  Search,
   Sheet,
   SheetContent,
   SheetHeader,
@@ -147,6 +151,36 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
   // The menu sheet focuses its body, not the search field: focusing the
   // field would raise the phone keyboard over the menu the moment it opens.
   const mobileBodyRef = React.useRef<HTMLDivElement>(null)
+  // Desktop search lives behind an icon (the pill can't spare a field's
+  // width next to every menu). Open, it lays the field over the end of the
+  // nav; Escape or a click elsewhere puts it away.
+  const [searchOpen, setSearchOpen] = React.useState(false)
+  const searchRef = React.useRef<HTMLDivElement>(null)
+  React.useEffect(() => {
+    if (!searchOpen) return
+    const away = (e: PointerEvent) => {
+      const target = e.target as Element
+      // The results list is portalled — a pick there isn't "elsewhere".
+      if (searchRef.current?.contains(target) || target.closest("[data-slot=autocomplete-content]")) return
+      setSearchOpen(false)
+    }
+    // Escape closes the field even when the results list swallowed the key
+    // on its way to the header.
+    const esc = (e: KeyboardEvent) => e.key === "Escape" && setSearchOpen(false)
+    document.addEventListener("pointerdown", away)
+    document.addEventListener("keydown", esc, true)
+    return () => {
+      document.removeEventListener("pointerdown", away)
+      document.removeEventListener("keydown", esc, true)
+    }
+  }, [searchOpen])
+  // One overlay at a time: a menu card and the search field never stack.
+  React.useEffect(() => {
+    if (openPanel) setSearchOpen(false)
+  }, [openPanel])
+  React.useEffect(() => {
+    if (searchOpen) setOpenPanel(null)
+  }, [searchOpen])
 
   // Close everything on navigation — otherwise a panel stays open behind the
   // new page.
@@ -154,32 +188,46 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
   React.useEffect(() => {
     setOpenPanel(null)
     setMobileOpen(false)
+    setSearchOpen(false)
   }, [pathname])
 
   const navItemClass = (current: boolean) =>
     cn(
       "ink relative inline-flex items-center gap-1 self-stretch px-2.5 py-1.5 text-sm font-semibold whitespace-nowrap transition-interactive",
-      current ? "border-b-2 border-primary text-primary" : "rounded-full text-foreground hover:bg-muted"
+      "rounded-full",
+      current ? "bg-primary/10 text-primary" : "text-foreground hover:bg-foreground/5"
     )
 
   return (
+    // A floating glass pill (8px from the top, the page's content width),
+    // not an edge-to-edge bar. 8px + the 56px pill keeps the header 64px,
+    // which sticky offsets on the pricing page are measured against.
     <header
-      className="sticky top-0 z-sticky"
+      className="sticky top-0 z-sticky px-3 pt-2 sm:px-6"
       onKeyDown={(e) => {
-        if (e.key === "Escape") setOpenPanel(null)
+        if (e.key === "Escape") {
+          setOpenPanel(null)
+          setSearchOpen(false)
+        }
       }}
     >
       <div
         className={cn(
-          "flex h-16 items-center justify-between gap-6 border-b px-4 transition-interactive duration-enter sm:px-8 lg:px-12",
-          isScrolled || openPanel || mobileOpen
-            ? "border-border bg-card shadow-card"
-            : "border-transparent bg-transparent shadow-none"
+          "relative mx-auto flex h-14 w-full max-w-band items-center justify-between gap-4 rounded-full border px-2 backdrop-blur-xl transition-interactive duration-enter",
+          // Frosted at rest; a touch more solid once the page scrolls under it.
+          isScrolled || openPanel || mobileOpen || searchOpen
+            ? "border-border bg-card/85 shadow-popover"
+            : "border-card/60 bg-card/60 shadow-card"
         )}
       >
-        <div className="flex shrink-0 items-center gap-4 lg:gap-6">
-          <Link href="/" aria-label="apna for employers, home" className="shrink-0">
-            <ApnaLogo className="size-10" />
+        <div className="flex shrink-0 items-center gap-3 lg:gap-4">
+          {/* The "apna" wordmark the collapsed product sidebar uses; plum on
+              the light pill, white on the dark one. Optically centred: the
+              "p" descender fills the bottom of the box, so the letters sit
+              ~2.6px high — nudged down 3px to line up with the nav text. */}
+          <Link href="/" aria-label="apna for employers, home" className="shrink-0 rounded-full px-3 py-2">
+            <LogoApnaWordmark className="h-5 w-auto translate-y-0.75 dark:hidden" />
+            <LogoApnaWordmark variant="white" className="hidden h-5 w-auto translate-y-0.75 dark:block" />
           </Link>
 
           {variant === "default" && (
@@ -187,7 +235,7 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
             // so moving on to search or the buttons never leaves one open.
             <nav
               aria-label="Main"
-              className="relative hidden items-center gap-0.5 xl:flex"
+              className="relative hidden items-center gap-0.5 self-stretch py-2 xl:flex"
               onMouseLeave={() => setOpenPanel(null)}
             >
               {MAIN_NAV.map((group) => {
@@ -234,10 +282,10 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
                 <ArrowUpRight className="size-4" aria-hidden />
               </a>
 
-              {/* ── Menu card ── under the nav, left-aligned to it (a card
-                   anchored to its own trigger runs off the right edge for
-                   the later, wider menus). The top padding bridges the gap
-                   so the pointer can travel from trigger to card. */}
+              {/* ── Menu card ── hangs below the pill, left-aligned to the
+                   nav (a card anchored to its own trigger runs off the right
+                   edge for the later, wider menus). The top padding bridges
+                   the gap so the pointer can travel from trigger to card. */}
               {MAIN_NAV.filter((g) => g.sections).map((group) => (
                 <div
                   key={group.label}
@@ -245,7 +293,7 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
                   hidden={openPanel !== group.label}
                   className="absolute top-full left-0 pt-4"
                 >
-                  <div className="flex divide-x divide-border rounded-xl bg-popover p-6 shadow-popover ring-1 ring-foreground/10">
+                  <div className="flex divide-x divide-border rounded-2xl bg-popover p-6 shadow-popover ring-1 ring-foreground/10">
                     {group.sections!.map((section) => (
                       <div key={section.heading} className="min-w-48 px-6 first:pl-0 last:pr-0">
                         <MenuSection section={section} onNavigate={() => setOpenPanel(null)} />
@@ -258,20 +306,29 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
           )}
         </div>
 
-        {/* Search takes what the nav leaves (it shrinks before anything
-            wraps); the buttons never shrink. */}
-        <div className="flex min-w-0 flex-1 items-center justify-end gap-3">
-          {variant === "default" && <SiteSearch className="hidden w-full max-w-56 min-w-24 xl:block" />}
+        <div className="flex shrink-0 items-center gap-2">
           {variant === "default" && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="hidden shrink-0 rounded-full font-semibold sm:inline-flex"
-              render={<Link href={HEADER_ACTIONS.secondary.href} />}
-            >
-              {HEADER_ACTIONS.secondary.label}
-            </Button>
+            <div ref={searchRef} className="relative hidden xl:block">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-full"
+                aria-label="Search the site"
+                aria-expanded={searchOpen}
+                onClick={() => setSearchOpen((v) => !v)}
+              >
+                <Search className="size-5" aria-hidden />
+              </Button>
+              {searchOpen && (
+                // Laid over the end of the nav, right-aligned to the icon.
+                <div className="absolute top-1/2 right-0 w-72 -translate-y-1/2 animate-in fade-in-0 duration-enter">
+                  <SiteSearch autoFocus onNavigate={() => setSearchOpen(false)} />
+                </div>
+              )}
+            </div>
           )}
+          {/* No "Contact us" here: support gets its own floating button
+              (user call, 2026-10-16). */}
           {/* One green CTA per screen: on the homepage the hero's sign-up
               form is the primary, and on phones it sits right under this bar
               — so here, there, this login steps down to the outline button. */}
@@ -296,7 +353,7 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
             <Button
               variant="ghost"
               size="icon"
-              className="xl:hidden"
+              className="rounded-full xl:hidden"
               aria-label="Open menu"
               aria-expanded={mobileOpen}
               onClick={() => setMobileOpen(true)}
@@ -364,15 +421,6 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
                   <ArrowUpRight className="size-4" aria-hidden />
                 </a>
               </nav>
-            </div>
-            <div className="flex flex-col gap-2 border-t border-border p-4 pb-safe-4 sm:hidden">
-              <Button
-                variant="outline"
-                className="w-full rounded-full font-semibold"
-                render={<Link href={HEADER_ACTIONS.secondary.href} />}
-              >
-                {HEADER_ACTIONS.secondary.label}
-              </Button>
             </div>
           </SheetContent>
         </Sheet>

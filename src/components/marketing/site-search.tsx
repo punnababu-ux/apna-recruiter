@@ -74,10 +74,13 @@ const SEARCH_GROUPS: SearchGroup[] = [
 export function SiteSearch({
   className,
   onNavigate,
+  autoFocus,
 }: {
   className?: string
   /** Called after a result is picked — the mobile menu closes itself. */
   onNavigate?: () => void
+  /** Focus the field on mount (the header's search icon opens it). */
+  autoFocus?: boolean
 }) {
   const router = useRouter()
   const [query, setQuery] = React.useState("")
@@ -99,6 +102,7 @@ export function SiteSearch({
       <AutocompleteInput
         aria-label="Search the site"
         placeholder="Search"
+        autoFocus={autoFocus}
         containerClassName={className}
         className="rounded-full border-transparent bg-muted"
       />
