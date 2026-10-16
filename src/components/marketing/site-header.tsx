@@ -49,8 +49,6 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
-  UserRound,
-  UserSearch,
   Users,
   type IconComponent,
 } from "@apna/design-system"
@@ -77,16 +75,13 @@ const SECTION_ICONS: Record<NavIcon, IconComponent> = {
   building: Building2,
   people: Users,
   recruiters: Briefcase,
-  candidates: UserSearch,
   universities: GraduationCap,
   newsroom: FileText,
   recognition: Award,
-  "job-seekers": UserRound,
   support: Headset,
 }
 
-const groupLinks = (group: NavGroup) =>
-  (group.sections ?? []).flatMap((s) => [...s.items, ...(s.subgroups?.flatMap((g) => g.items) ?? [])])
+const groupLinks = (group: NavGroup) => (group.sections ?? []).flatMap((s) => s.items)
 
 /** A top-level item is "current" when its href is the page or its ancestor. */
 function useIsCurrent() {
@@ -123,7 +118,7 @@ function MenuLink({ link, onNavigate }: { link: NavLink; onNavigate?: () => void
   )
 }
 
-/** A labelled column: icon + heading, its links, then any sub-clusters. */
+/** A labelled column: icon + heading, then its links. */
 function MenuSection({ section, onNavigate }: { section: NavSection; onNavigate?: () => void }) {
   const Icon = SECTION_ICONS[section.icon]
   return (
@@ -139,18 +134,6 @@ function MenuSection({ section, onNavigate }: { section: NavSection; onNavigate?
           </li>
         ))}
       </ul>
-      {section.subgroups?.map((sub) => (
-        <div key={sub.label} className="flex flex-col gap-1">
-          <div className="text-overline text-muted-foreground">{sub.label}</div>
-          <ul className="flex flex-col pl-2">
-            {sub.items.map((link) => (
-              <li key={link.label}>
-                <MenuLink link={link} onNavigate={onNavigate} />
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
     </div>
   )
 }

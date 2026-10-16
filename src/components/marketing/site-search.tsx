@@ -49,7 +49,7 @@ const SEARCH_GROUPS: SearchGroup[] = [
       return [{ label: group.label, items: [{ id: group.href!, label: group.label, hint: "Page", href: group.href! }] }]
     }
     const items = group.sections.flatMap((section) =>
-      [...section.items, ...(section.subgroups?.flatMap((s) => s.items) ?? [])].map((link) => ({
+      section.items.map((link) => ({
         id: `${group.label}:${section.heading}:${link.label}`,
         label: link.label,
         hint: section.heading,

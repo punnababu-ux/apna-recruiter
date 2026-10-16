@@ -7,8 +7,10 @@
  * changes.
  *
  * Structure follows the apnatime.lovable.app prototype (user call,
- * 2026-10-16): About Us · Product · apna In The News · Resources · Customer
- * Stories, each menu split into labelled sections, then our own "Looking
+ * 2026-10-16): About Us · Product · News · Resources · Customer
+ * Stories, each menu split into labelled sections (Product and Resources
+ * without the prototype's "For Candidates" / "For Job Seekers" columns, and "News" for "Apna In The News" —
+ * user calls, 2026-10-16), then our own "Looking
  * for a job?" link (kept on purpose). Its own header actions
  * ("Sign Up" menu, "Get In Touch") are NOT taken: the right side stays
  * Contact us + Login/Sign up (`HEADER_ACTIONS`).
@@ -33,11 +35,9 @@ export type NavIcon =
   | "building"
   | "people"
   | "recruiters"
-  | "candidates"
   | "universities"
   | "newsroom"
   | "recognition"
-  | "job-seekers"
   | "support"
 
 /** One labelled column of a menu: "For Recruiters", "Support", … */
@@ -45,8 +45,6 @@ export interface NavSection {
   heading: string
   icon: NavIcon
   items: NavLink[]
-  /** A further labelled cluster under the items ("Resume tools"). */
-  subgroups?: { label: string; items: NavLink[] }[]
 }
 
 export interface NavGroup {
@@ -126,21 +124,6 @@ export const MAIN_NAV: NavGroup[] = [
         ],
       },
       {
-        heading: "For Candidates",
-        icon: "candidates",
-        items: [{ label: "Find Your Dream Job", href: "https://apna.co/jobs", external: true }],
-        subgroups: [
-          {
-            label: "Resume tools",
-            items: [
-              { label: "AI Resume Builder", href: "https://apna.co/resume-builder", external: true },
-              { label: "AI Resume Checker", href: "https://apna.co/resume-checker", external: true },
-              { label: "AI Cover Letter Generator", href: "https://apna.co/cover-letter", external: true },
-            ],
-          },
-        ],
-      },
-      {
         heading: "For Universities",
         icon: "universities",
         items: [{ label: "AI Interview Preparation Lounge", href: "/interview-prep-lounge" }],
@@ -148,7 +131,7 @@ export const MAIN_NAV: NavGroup[] = [
     ],
   },
   {
-    label: "apna In The News",
+    label: "News",
     sections: [
       {
         heading: "Newsroom",
@@ -179,14 +162,6 @@ export const MAIN_NAV: NavGroup[] = [
           },
           { label: "Product Guides", href: "/resources/product-guides" },
           { label: "Reports and Insights", href: "/resources/reports" },
-        ],
-      },
-      {
-        heading: "For Job Seekers",
-        icon: "job-seekers",
-        items: [
-          { label: "Blogs", href: "https://apna.co/career-central/", external: true },
-          { label: "Community", href: "/resources/community" },
         ],
       },
       {
