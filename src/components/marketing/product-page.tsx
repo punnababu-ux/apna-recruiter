@@ -43,8 +43,7 @@ import {
 } from "@apna/design-system"
 import { ContactSection } from "@/components/marketing/contact-section"
 import { HeroChip } from "@/components/marketing/page-blocks"
-import { PRODUCT_GRADIENT, ProductIllustration } from "@/components/marketing/product-illustrations"
-import { cn } from "@/lib/utils"
+import { PRODUCT_KEY, ProductIllustration } from "@/components/marketing/product-illustrations"
 import { CONTACT_ANCHOR } from "@/content/contact"
 import type { ProductIconName, ProductPageContent } from "@/content/products"
 
@@ -72,14 +71,17 @@ export function ProductPage({ content }: { content: ProductPageContent }) {
   const { product, eyebrow, heading, description, cta, stats, steps, features } = content
 
   return (
-    <>
+    // The product's colour is the page's secondary (brand green stays the
+    // primary): its gradient in the hero, its accent on icons and numbers,
+    // its tint on the stats band. Set once here; the roles do the rest.
+    <div data-product={PRODUCT_KEY[product]}>
       {/* The hero wears the product's own gradient (its homepage card's), so
           "Learn more" lands on the colour it was clicked from. Starts behind
           the header and melts into the page at its foot. */}
       <div className="relative isolate">
         <div
           aria-hidden
-          className={cn("absolute inset-x-0 -top-18 bottom-0 -z-10 mask-fade-b", PRODUCT_GRADIENT[product])}
+          className="absolute inset-x-0 -top-18 bottom-0 -z-10 bg-gradient-product mask-fade-b"
         />
         <Section size="lg" className="relative max-md:pt-8">
           <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-12">
@@ -111,7 +113,7 @@ export function ProductPage({ content }: { content: ProductPageContent }) {
       </div>
 
       {stats && (
-        <Section tone="card" size="sm">
+        <Section size="sm" className="bg-product-tint">
           <dl className="grid gap-8 sm:grid-cols-3">
             {stats.map((stat) => (
               <div key={stat.label} className="flex flex-col gap-1">
@@ -137,7 +139,7 @@ export function ProductPage({ content }: { content: ProductPageContent }) {
               {steps.items.map((step, i) => (
                 <li key={step.title}>
                   <Card padding="lg" className="h-full gap-4">
-                    <span className="font-heading text-h3 font-semibold text-primary tabular-nums">
+                    <span className="font-heading text-h3 font-semibold text-product-accent tabular-nums">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     <h3 className="text-h6 text-foreground">{step.title}</h3>
@@ -159,7 +161,7 @@ export function ProductPage({ content }: { content: ProductPageContent }) {
               return (
                 <li key={feature.title}>
                   <Card padding="lg" tone={steps ? "muted" : "default"} className="h-full gap-3">
-                    <Icon className="size-6 text-primary" aria-hidden />
+                    <Icon className="size-6 text-product-accent" aria-hidden />
                     <h3 className="text-h6 text-foreground">{feature.title}</h3>
                     <p className="text-sm text-muted-foreground">{feature.description}</p>
                   </Card>
@@ -171,6 +173,6 @@ export function ProductPage({ content }: { content: ProductPageContent }) {
       </Section>
 
       <ContactSection />
-    </>
+    </div>
   )
 }

@@ -78,6 +78,10 @@
 
   /* Ink — the deliberately dark card on a light canvas */
   --color-ink:           var(--surface-ink);
+  /* Product colour roles (semantic.css): text-product-accent,
+   * bg-product-tint — neutral outside a [data-product] surface. */
+  --color-product-accent: var(--product-accent);
+  --color-product-tint:   var(--product-tint);
   --color-ink-fg:        var(--surface-ink-fg);
   --color-ink-fg-muted:  var(--surface-ink-fg-muted);
   --color-ink-border:    var(--surface-ink-border);
@@ -1125,6 +1129,10 @@
 }
 @utility bg-gradient-product-unlimited {
   background-image: var(--gradient-product-unlimited);
+}
+/* The enclosing [data-product]'s gradient (none outside one). */
+@utility bg-gradient-product {
+  background-image: var(--product-gradient);
 }
 /* Fades a full-bleed band out at its foot, so a product hero's gradient
  * melts into the page instead of ending on a hard edge. */

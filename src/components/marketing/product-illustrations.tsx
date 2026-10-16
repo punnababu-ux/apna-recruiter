@@ -63,6 +63,15 @@ export function IllustrationTile({
   )
 }
 
+/** Each product's `data-product` key: set it on a product surface and the
+ *  product colour roles (text-product-accent, bg-product-tint, …) follow. */
+export const PRODUCT_KEY: Record<Product, string> = {
+  "Smart Jobs": "smart-jobs",
+  "AI Calling Agent": "ai-calling",
+  "Hyperlocal Database": "database",
+  "apna Unlimited": "unlimited",
+}
+
 /** Each product's own gradient (the product identity tokens). */
 export const PRODUCT_GRADIENT: Record<Product, string> = {
   "Smart Jobs": "bg-gradient-product-smart-jobs",
@@ -144,7 +153,7 @@ function AiCalling() {
           <span className="truncate text-sm font-semibold text-foreground">AI agent calling…</span>
           <span className="text-xs text-muted-foreground">Priya S.</span>
         </div>
-        <span className="flex h-4 items-center gap-0.5 text-primary">
+        <span className="flex h-4 items-center gap-0.5 text-product-accent">
           {[0, 1, 2, 3].map((i) => (
             <span
               key={i}
@@ -176,7 +185,7 @@ function Database() {
         </Badge>
       </Float>
       <Float className="flex items-center gap-2 self-end py-2">
-        <MapPin className="size-4 shrink-0 text-primary" />
+        <MapPin className="size-4 shrink-0 text-product-accent" />
         <span className="text-xs font-semibold text-foreground">960 active jobseekers nearby</span>
       </Float>
     </div>
@@ -196,7 +205,7 @@ function Unlimited() {
         </Float>
       ))}
       <Badge variant="outline" className="self-start bg-card shadow-card">
-        <InfinityIcon className="text-primary" />
+        <InfinityIcon className="text-product-accent" />
         Unlimited job posts
       </Badge>
     </div>
@@ -229,6 +238,8 @@ export function ProductIllustration({
   return (
     <div
       aria-hidden
+      // The art always wears its own product's colour, wherever it's shown.
+      data-product={PRODUCT_KEY[product]}
       className={cn(
         "flex items-center justify-center overflow-hidden rounded-xl p-4",
         !bare && PRODUCT_GRADIENT[product],

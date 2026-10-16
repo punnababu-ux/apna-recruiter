@@ -806,3 +806,58 @@
    * changed colour between light and dark instead of staying put like the
    * rest of this surface. */
 }
+
+/* ==========================================================================
+ * Product colour roles — a product's own colour as the page's SECONDARY
+ * (brand green stays primary: CTAs, links, the one green button).
+ *
+ * A product surface sets `data-product="smart-jobs" | "ai-calling" |
+ * "database" | "unlimited"` once (its product page, its homepage card) and
+ * everything inside reads the roles; outside one they fall back to neutral,
+ * so company pages stay calm.
+ *   --product-accent    solid: icons, step numbers, small highlights
+ *   --product-tint      the light wash behind a band or a tile
+ *   --product-gradient  the product's gradient (hero, illustration tile)
+ * Smart Jobs sky · AI Calling Agent green · Database plum · Unlimited gold.
+ * ======================================================================== */
+:root {
+  --product-accent:   var(--muted-foreground);
+  --product-tint:     var(--muted);
+  --product-gradient: none;
+}
+[data-product="smart-jobs"] {
+  --product-accent:   var(--color-apna-sky-600);
+  --product-tint:     var(--color-apna-sky-50);
+  --product-gradient: var(--gradient-product-smart-jobs);
+}
+[data-product="ai-calling"] {
+  --product-accent:   var(--color-apna-green-600);
+  --product-tint:     var(--color-apna-green-50);
+  --product-gradient: var(--gradient-product-ai-calling);
+}
+[data-product="database"] {
+  --product-accent:   var(--color-apna-plum-400); /* the logo plum; the ramp has no brighter mid-tone */
+  --product-tint:     var(--color-apna-plum-50);
+  --product-gradient: var(--gradient-product-database);
+}
+[data-product="unlimited"] {
+  --product-accent:   var(--color-apna-gold-700);
+  --product-tint:     var(--color-apna-gold-50);
+  --product-gradient: var(--gradient-product-unlimited);
+}
+.dark [data-product="smart-jobs"] {
+  --product-accent: var(--color-apna-sky-300);
+  --product-tint:   color-mix(in srgb, var(--color-apna-sky-900) 35%, transparent);
+}
+.dark [data-product="ai-calling"] {
+  --product-accent: var(--color-apna-green-300);
+  --product-tint:   color-mix(in srgb, var(--color-apna-green-900) 35%, transparent);
+}
+.dark [data-product="database"] {
+  --product-accent: var(--color-apna-plum-300);
+  --product-tint:   color-mix(in srgb, var(--color-apna-plum-900) 35%, transparent);
+}
+.dark [data-product="unlimited"] {
+  --product-accent: var(--color-apna-gold-300);
+  --product-tint:   color-mix(in srgb, var(--color-apna-gold-900) 35%, transparent);
+}

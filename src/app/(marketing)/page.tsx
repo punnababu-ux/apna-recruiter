@@ -30,7 +30,7 @@ import {
 import { ContactSection } from "@/components/marketing/contact-section"
 import { HeroBackdrop } from "@/components/marketing/hero-backdrop"
 import { HeroLeadCard } from "@/components/marketing/hero-lead-card"
-import { ProductIllustration } from "@/components/marketing/product-illustrations"
+import { PRODUCT_KEY, ProductIllustration } from "@/components/marketing/product-illustrations"
 import {
   HOME_HERO,
   HOME_PRESS,
@@ -166,7 +166,11 @@ export default function HomePage() {
               // p-2 insets the tile 8px from the card edge on three sides, so
               // the corners nest: tile rounded-xl (12.5px) + 8px + border ≈
               // the card's rounded-card (19.5px).
-              <ScrollStackItem key={product.name} className="group grid gap-2 p-2 lg:grid-cols-2">
+              <ScrollStackItem
+                key={product.name}
+                data-product={PRODUCT_KEY[product.name as ProductName]}
+                className="group grid gap-2 p-2 lg:grid-cols-2"
+              >
                 <div className="flex flex-col gap-5 p-4 sm:p-6 lg:p-8">
                   {/* apna Unlimited is a brand with its own wordmark — show the
                       "apna ∞ Unlimited" logo, not the eyebrow text. */}
@@ -179,7 +183,7 @@ export default function HomePage() {
                   <ul className="flex flex-col gap-4">
                     {product.features.map((feature) => (
                       <li key={feature.title} className="flex items-start gap-3">
-                        <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden />
+                        <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-product-accent" aria-hidden />
                         <div className="flex flex-col gap-0.5">
                           <p className="text-sm font-semibold text-foreground">{feature.title}</p>
                           <p className="text-sm text-muted-foreground">{feature.description}</p>
