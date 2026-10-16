@@ -26,12 +26,12 @@
 
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { toast } from "sonner"
 
 import { AvailableCreditsButton } from "@/components/apnahire/available-credits-button"
 import { NotificationsButton } from "@/components/apnahire/notifications/notifications-button"
 import { ApnaHireBreadcrumb, sectionTitle } from "@/components/apnahire/breadcrumb"
 import { HOME, isDrillDown, isFullScreenPage, useAppBack } from "@/lib/apnahire/nav"
+import { signOut, useSession } from "@/hooks/use-session"
 import {
   Avatar,
   AvatarFallback,
@@ -59,6 +59,8 @@ export function ApnaHireTopBar({
   // Called for its in-app history tracking (drill-downs read it).
   useAppBack()
   const router = useRouter()
+  const session = useSession()
+  const signedInAs = session?.kind === "phone" ? `+91 ${session.phone}` : session?.email
   const fullScreen = isFullScreenPage(pathname)
   return (
     <div
@@ -127,18 +129,24 @@ export function ApnaHireTopBar({
             }
           />
           <PopoverContent align="end" className="w-60 p-4">
-            <div className="flex flex-col gap-0.5 mb-4 text-left">
-              <span className="font-semibold text-foreground text-sm">{user.name}</span>
-              <span className="text-2xs text-muted-foreground">{user.email}</span>
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-0.5 text-left">
+                <span className="text-sm font-semibold text-foreground">{user.name}</span>
+                {/* Who is signed in: the number or the enterprise email. */}
+                <span className="text-xs text-muted-foreground">{signedInAs ?? user.email}</span>
+              </div>
+              <Button
+                variant="destructive"
+                size="sm"
+                className="w-full"
+                onClick={() => {
+                  signOut()
+                  router.push("/")
+                }}
+              >
+                Log out
+              </Button>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full text-xs h-8 text-destructive border-border hover:bg-destructive/10 hover:text-destructive active:bg-destructive/20"
-              onClick={() => toast.success("Logged out successfully")}
-            >
-              Log out
-            </Button>
           </PopoverContent>
         </Popover>
       </div>

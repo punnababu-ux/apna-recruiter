@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import {
+  OtpInput,
   Field,
   FieldLabel,
   FieldDescription,
@@ -43,6 +44,7 @@ export default function InputsComponentsPage() {
   const [industry, setIndustry] = React.useState("Retail")
   const [years, setYears] = React.useState(1)
   const [salary, setSalary] = React.useState([15000, 25000])
+  const [otp, setOtp] = React.useState("")
   return (
     <div className="space-y-10">
       <div>
@@ -60,6 +62,15 @@ export default function InputsComponentsPage() {
 
       <div className="rounded-xl border border-border bg-card p-4 font-mono text-xs text-muted-foreground">
         <code>{'import { Field, Input, Textarea, Select, Checkbox, Switch, RadioGroup, Slider } from "@apna/design-system"'}</code>
+      </div>
+
+      {/* One-time code */}
+      <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-6">
+        <h2 className="border-b border-border/60 pb-2 text-h6 text-foreground">One-time code (OtpInput)</h2>
+        <OtpInput value={otp} onChange={setOtp} invalid={otp === "000000"} aria-label="Demo code" />
+        <span className="text-xs text-muted-foreground">
+          Type, paste or SMS-autofill a code; 000000 shows the invalid state. Used on /login/otp.
+        </span>
       </div>
 
       {/* Field Wrappers */}

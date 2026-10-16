@@ -26,6 +26,7 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 | Field            | `import { Field, FieldLabel, FieldDescription, FieldError } from "@apna/design-system"` | Label + control + help/error wrapper. |
 | Label            | `import { Label } from "@apna/design-system"`                         | Accessible form label.                           |
 | Input            | `import { Input } from "@apna/design-system"`                         | Single-line text input.                          |
+| OtpInput         | `import { OtpInput } from "@apna/design-system"` | One box per digit for a login code: auto-advance, Backspace back, arrows, paste / SMS autofill fills all boxes, `onComplete` when full, `invalid` state. Boxes narrow on small phones. |
 | Textarea         | `import { Textarea } from "@apna/design-system"`                       | Multi-line input.                                |
 | PromptInput      | `import { PromptInput } from "@apna/design-system"`                    | AI prompt box: auto-growing textarea + footer actions (mic) + round submit. Enter submits, Shift+Enter newlines. `size="lg"` hero / `"default"` bar; `loading`, `active` (voice writing into it); `submitText` for a labelled submit instead of the arrow; `hideSubmit` when the page's own CTA submits. The submit is dark gray (`emphasis`) — asking AI is never the commit. |
 | Checkbox         | `import { Checkbox } from "@apna/design-system"`                       | Binary toggle with `indeterminate` support.      |

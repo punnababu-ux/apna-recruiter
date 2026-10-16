@@ -6,14 +6,16 @@
  * lead-capture card (screenshot supplied by the user), rebuilt on `Card` —
  * white, `tone="default"`, no dark-surface complications.
  *
- * No real backend exists yet, so `onContinue` and `onEnterpriseLogin` are
- * optional and default to no-ops — the same pattern `ContactSalesCard` and
- * other prototype CTAs in this codebase already use. The phone field is
- * genuinely validated (10 digits, numeric-only) so the disabled state on
- * `Continue` is real, not decorative.
+ * It is also the login page (/login). Continue goes to the OTP step
+ * (/login/otp) and "Enterprise login" to email + password
+ * (/login/enterprise), both carrying `next`, the page to return to once
+ * signed in. Pass `onContinue` / `onEnterpriseLogin` to override. The phone
+ * field is genuinely validated (10 digits, numeric-only) so the disabled
+ * state on `Continue` is real, not decorative.
  */
 
 import * as React from "react"
+import { useRouter } from "next/navigation"
 import {
   Building2,
   Button,
@@ -31,28 +33,49 @@ const PRIVACY_HREF = LEGAL_LINKS.find((l) => l.label === "Privacy Policy")!.href
 
 export interface HeroLeadCardProps {
   className?: string
+  /** Heading; "Let's get started" on the homepage. */
+  title?: string
+  subtitle?: string
+  /** Where to go once signed in (passed through the login steps). */
+  next?: string
+  /** Prefill, e.g. when coming back from the OTP step to change the number. */
+  defaultPhone?: string
   onContinue?: (phone: string) => void
   onEnterpriseLogin?: () => void
 }
 
-export function HeroLeadCard({ className, onContinue, onEnterpriseLogin }: HeroLeadCardProps) {
-  const [phone, setPhone] = React.useState("")
+const withNext = (path: string, next?: string, extra?: Record<string, string>) => {
+  const q = new URLSearchParams({ ...extra, ...(next ? { next } : {}) }).toString()
+  return q ? `${path}?${q}` : path
+}
+
+export function HeroLeadCard({
+  className,
+  title = "Let's get started",
+  subtitle = "Hire top talent faster with apna",
+  next,
+  defaultPhone = "",
+  onContinue,
+  onEnterpriseLogin,
+}: HeroLeadCardProps) {
+  const router = useRouter()
+  const [phone, setPhone] = React.useState(defaultPhone)
+  const continueTo = onContinue ?? ((p: string) => router.push(withNext("/login/otp", next, { phone: p })))
+  const enterprise = onEnterpriseLogin ?? (() => router.push(withNext("/login/enterprise", next)))
   const isValid = phone.length === 10
 
   return (
     <Card padding="lg" className={cn("flex w-full max-w-md flex-col gap-6", className)}>
       <div className="flex flex-col gap-1">
-        <h2 className="text-h3 font-heading font-bold text-foreground">
-          Let&apos;s get started
-        </h2>
-        <p className="text-base text-muted-foreground">Hire top talent faster with apna</p>
+        <h2 className="text-h3 font-heading font-bold text-foreground">{title}</h2>
+        <p className="text-base text-muted-foreground">{subtitle}</p>
       </div>
 
       <form
         className="flex flex-col gap-4"
         onSubmit={(e) => {
           e.preventDefault()
-          if (isValid) onContinue?.(phone)
+          if (isValid) continueTo(phone)
         }}
       >
         <Field>
@@ -75,8 +98,8 @@ export function HeroLeadCard({ className, onContinue, onEnterpriseLogin }: HeroL
               type="tel"
               inputMode="numeric"
               autoComplete="tel-national"
-              placeholder="Enter 10 digit mobile number"
-              className="w-full min-w-0 border-0 bg-transparent p-0 text-sm outline-none placeholder:text-muted-foreground"
+              placeholder="10-digit mobile number"
+              className="w-full min-w-0 border-0 bg-transparent p-0 text-base outline-none placeholder:text-muted-foreground md:text-sm"
               value={phone}
               onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
             />
@@ -94,7 +117,7 @@ export function HeroLeadCard({ className, onContinue, onEnterpriseLogin }: HeroL
         type="button"
         variant="link-inline"
         className="self-start text-foreground"
-        onClick={onEnterpriseLogin}
+        onClick={enterprise}
         leadingIcon={<Building2 aria-hidden />}
       >
         Enterprise login

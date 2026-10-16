@@ -70,5 +70,5 @@ export const LOOKING_FOR_A_JOB: NavLink = {
 
 export const HEADER_ACTIONS = {
   secondary: { label: "Contact us", href: "/contact-us" } satisfies NavLink,
-  primary: { label: "Post a Job", href: "/post-a-job" } satisfies NavLink,
+  primary: { label: "Post a Job", href: "/apnahire/jobs/new" } satisfies NavLink,
 }

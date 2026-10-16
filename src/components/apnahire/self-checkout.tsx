@@ -62,6 +62,7 @@ import { TestimonialGrid } from "@/components/apnahire/testimonial-grid"
 import { UnlimitedSideCard } from "@/components/apnahire/unlimited-side-card"
 import { CheckoutTopBar } from "@/components/apnahire/checkout-top-bar"
 import { HOME } from "@/lib/apnahire/nav"
+import { useSession } from "@/hooks/use-session"
 import {
   CheckoutDrawer,
   type CartLine,
@@ -86,6 +87,16 @@ function randomOrderId() {
 type SelectedPackage =
   | { kind: "job"; bundle: Bundle }
   | { kind: "db"; bundle: DbBundle }
+
+/** A signed-out "Proceed to pay": what was being bought, kept across the
+ *  login steps so the logged-in Plans page can reopen the same order. */
+const PENDING_CHECKOUT_KEY = "apnahire:pending-checkout"
+type PendingCheckout = {
+  tab: PricingTab
+  item: CartLine
+  selectedPackage: SelectedPackage
+  subscriptionPlan: SubscriptionPlanId
+}
 
 export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   const router = useRouter()
@@ -148,6 +159,26 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
 
   const [drawerOpen, setDrawerOpen] = React.useState(false)
   const [checkoutItem, setCheckoutItem] = React.useState<CartLine | null>(null)
+  const session = useSession()
+
+  // Back from login with an order in hand: reopen it.
+  React.useEffect(() => {
+    if (isLoggedOut) return
+    let pending: PendingCheckout | null = null
+    try {
+      const raw = window.sessionStorage.getItem(PENDING_CHECKOUT_KEY)
+      window.sessionStorage.removeItem(PENDING_CHECKOUT_KEY)
+      pending = raw ? (JSON.parse(raw) as PendingCheckout) : null
+    } catch {
+      pending = null
+    }
+    if (!pending) return
+    setActiveTab(pending.tab)
+    setSelectedPackage(pending.selectedPackage)
+    setSubscriptionPlan(pending.subscriptionPlan)
+    setCheckoutItem(pending.item)
+    setDrawerOpen(true)
+  }, [isLoggedOut])
 
   const [paymentOpen, setPaymentOpen] = React.useState(false)
   const [paymentAmount, setPaymentAmount] = React.useState(0)
@@ -280,6 +311,20 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
     _lines: CartLine[],
     method?: SubscriptionPaymentMethod
   ) => {
+    // Nothing is bought signed out: keep the order, log in, come back to the
+    // logged-in Plans page with this order summary open again.
+    if (isLoggedOut && !session && checkoutItem) {
+      const pending: PendingCheckout = { tab: activeTab, item: checkoutItem, selectedPackage, subscriptionPlan }
+      try {
+        window.sessionStorage.setItem(PENDING_CHECKOUT_KEY, JSON.stringify(pending))
+      } catch {
+        // Storage blocked: they land on Plans and pick again.
+      }
+      // Navigate with the summary still open: closing it first would pop
+      // its Back entry (useBackToClose) and undo this navigation.
+      router.push(`/login?${new URLSearchParams({ next: "/apnahire/credits" })}`)
+      return
+    }
     setPaymentAmount(total)
     // Subscriptions carry their mandate method from the drawer, so the payment
     // step must not ask again — it is handed straight to the gateway.
