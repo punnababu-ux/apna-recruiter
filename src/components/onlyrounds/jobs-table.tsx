@@ -87,6 +87,13 @@ export function JobsTable({ rows }: { rows: JobRow[] }) {
  *
  * Title: 16px semibold on phones (the list-title size, as notification rows
  * and order lines; above the 14px filter chips), 18px from sm.
+ *
+ * The whole card opens the job: the title link's hit area is stretched over
+ * the card (a link can't wrap the pills and buttons inside it), and the card
+ * presses and ripples. Actions, metric pills and the banner sit above that
+ * layer (relative z-10) with their own clicks; the ink utility lets only the
+ * innermost pressed surface ripple. Keyboard: one link per card (the title)
+ * plus the inner controls.
  */
 export function JobCardFrame({
   logo,
@@ -114,7 +121,7 @@ export function JobCardFrame({
   banner?: React.ReactNode
 }) {
   return (
-    <div className="rounded-xl border border-border/60 bg-card px-4 py-4 sm:px-5 shadow-card transition-shadow hover:shadow-elevated">
+    <div className="ink press-subtle relative cursor-pointer rounded-xl border border-border/60 bg-card px-4 py-4 sm:px-5 shadow-card transition-interactive hover:shadow-elevated">
       {/* Header row: Logo · content block · actions */}
       <div className="flex items-start gap-3">
         {logo && <div className="mt-0.5 shrink-0">{logo}</div>}
@@ -125,7 +132,10 @@ export function JobCardFrame({
               than truncating — "Customer Support Executive" stays readable
               beside its badge on a phone; the badge sits on the first line. */}
           <div className="flex min-w-0 items-start gap-2">
-            <Link href={href} className="group min-w-0">
+            <Link
+              href={href}
+              className="group min-w-0 outline-none after:absolute after:inset-0 after:rounded-xl focus-visible:after:ring-3 focus-visible:after:ring-ring/50"
+            >
               <span className="line-clamp-2 text-base font-semibold group-hover:underline sm:text-lg">{title}</span>
             </Link>
             <span className="mt-0.5 shrink-0 sm:mt-1">{badge}</span>
@@ -137,20 +147,20 @@ export function JobCardFrame({
           <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">{meta}</div>
         </div>
 
-        <div className="-mr-1 -mt-1 flex shrink-0 items-center gap-1 self-start">{actions}</div>
+        <div className="relative z-10 -mr-1 -mt-1 flex shrink-0 items-center gap-1 self-start">{actions}</div>
       </div>
 
       {/* Pills — horizontal scroll on mobile */}
       {pills && (
         <>
           <hr className="-mx-4 mt-4 border-t border-border/60 sm:-mx-5" />
-          <div className="mt-3 flex max-w-full items-center gap-1.5 overflow-x-auto whitespace-nowrap no-scrollbar pb-0.5">
+          <div className="relative z-10 mt-3 flex max-w-full items-center gap-1.5 overflow-x-auto whitespace-nowrap no-scrollbar pb-0.5">
             {pills}
           </div>
         </>
       )}
 
-      {banner && <div className="mt-3">{banner}</div>}
+      {banner && <div className="relative z-10 mt-3">{banner}</div>}
     </div>
   )
 }

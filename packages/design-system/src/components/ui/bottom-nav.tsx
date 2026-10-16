@@ -182,12 +182,12 @@ export interface BottomNavMenuProps {
   label?: string
   /** The bar has a `featured` (raised) item: sit high enough to clear it. */
   clearFeatured?: boolean
-  /** Under the tiles, full width — e.g. the account alert the desktop shows
-   *  in its sidebar. At the bottom so dismissing it never moves a tile. */
-  footer?: React.ReactNode
+  /** Above the tiles, full width — e.g. the account alert the desktop shows
+   *  in its sidebar, read first when the card opens. */
+  header?: React.ReactNode
 }
 
-export function BottomNavMenu({ open, onOpenChange, items, label = "More", clearFeatured, footer }: BottomNavMenuProps) {
+export function BottomNavMenu({ open, onOpenChange, items, label = "More", clearFeatured, header }: BottomNavMenuProps) {
   const firstRef = React.useRef<HTMLAnchorElement>(null)
 
   React.useEffect(() => {
@@ -224,6 +224,7 @@ export function BottomNavMenu({ open, onOpenChange, items, label = "More", clear
             clearFeatured ? "mb-7" : "mb-2"
           )}
         >
+          {header && <div className="col-span-4">{header}</div>}
           {items.map((item, i) => {
             const Icon = item.icon
             return (
@@ -239,11 +240,11 @@ export function BottomNavMenu({ open, onOpenChange, items, label = "More", clear
                     green accent — the same pairing as the bar's active tab. */}
                 <span
                   className={cn(
-                    "relative flex size-14 items-center justify-center rounded-full",
+                    "relative flex size-12 items-center justify-center rounded-full",
                     item.active ? "bg-accent text-accent-foreground" : "bg-muted text-foreground"
                   )}
                 >
-                  <Icon className="size-6" aria-hidden />
+                  <Icon className="size-5" aria-hidden />
                   {item.dot && (
                     <span className="absolute top-0.5 right-0.5 size-2.5 rounded-full bg-destructive ring-2 ring-card" />
                   )}
@@ -255,7 +256,6 @@ export function BottomNavMenu({ open, onOpenChange, items, label = "More", clear
               </Link>
             )
           })}
-          {footer && <div className="col-span-4">{footer}</div>}
         </div>
       </div>
     </>

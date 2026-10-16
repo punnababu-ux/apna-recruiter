@@ -6,9 +6,10 @@
  * Phones show no breadcrumb (native apps don't, and it repeated the page
  * title and crowded Credits / the avatar as pages got deeper). The left of
  * the bar is, like an app bar: the apna Hire brand on Jobs (the home tab),
- * the section's name everywhere else ("Database", "Notifications"), Back +
- * the page's name on a full-screen page (one opened from More: no bottom
- * bar), and Back on a drill-down (a page below a section, e.g. one job).
+ * the section's name everywhere else ("Database", "Notifications"), and
+ * Back + the page's name on a full-screen page (one opened from More: no
+ * bottom bar). A drill-down (a page below a section, e.g. one job) hides
+ * this bar on phones: the page's own header carries Back, title and ⋮.
  * Back returns in-app, or to Jobs when there's nowhere to return to
  * (src/lib/apnahire/nav.ts). From md: the breadcrumb.
  *
@@ -30,7 +31,7 @@ import { toast } from "sonner"
 import { AvailableCreditsButton } from "@/components/apnahire/available-credits-button"
 import { NotificationsButton } from "@/components/apnahire/notifications/notifications-button"
 import { ApnaHireBreadcrumb, sectionTitle } from "@/components/apnahire/breadcrumb"
-import { isFullScreenPage, useAppBack } from "@/lib/apnahire/nav"
+import { isDrillDown, isFullScreenPage, useAppBack } from "@/lib/apnahire/nav"
 import {
   Avatar,
   AvatarFallback,
@@ -44,15 +45,6 @@ import {
 } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 
-/** Sections whose pages sit one level deeper (/database/search-candidates):
- *  those are section pages, not drill-downs. */
-const TWO_LEVEL_SECTIONS = ["database", "invite-centre"]
-
-/** A page below a section (/apnahire/jobs/123): phones show Back there. */
-function isDrillDown(pathname: string) {
-  const [, section, ...rest] = pathname.split("/").filter(Boolean)
-  return rest.length > (TWO_LEVEL_SECTIONS.includes(section ?? "") ? 1 : 0)
-}
 
 export function ApnaHireTopBar({
   actions,
@@ -72,6 +64,9 @@ export function ApnaHireTopBar({
         // 16px sides on phones (the page's gutter); 12px beside the
         // sidebar trigger from md.
         "sticky top-0 z-10 flex h-16 items-center gap-1 border-b border-border bg-card px-4 md:px-3",
+        // Drill-downs draw their own header on phones. Hidden, not
+        // unmounted: useAppBack keeps tracking in-app navigation.
+        isDrillDown(pathname) && "max-md:hidden",
         className
       )}
     >
@@ -89,8 +84,6 @@ export function ApnaHireTopBar({
             <BackButton onClick={back} />
             <span className="truncate font-heading text-lg font-semibold text-foreground">{sectionTitle(pathname)}</span>
           </span>
-        ) : isDrillDown(pathname) ? (
-          <BackButton onClick={back} />
         ) : pathname.split("/").filter(Boolean)[1] !== "jobs" ? (
           <span className="truncate font-heading text-lg font-semibold text-foreground">{sectionTitle(pathname)}</span>
         ) : (

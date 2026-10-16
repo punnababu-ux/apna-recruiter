@@ -64,7 +64,7 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 | ReusableSidebar  | `import { ReusableSidebar } from "@apna/design-system"`                | High-level configurable sidebar shell.           |
 | BottomNav        | `import { BottomNav, type BottomNavItem } from "@apna/design-system"` | Fixed mobile bottom tab bar. Hidden at `md+`. Items accept `href` (link) or `onClick` (button) + optional `badge` overlay. `featured` raises one (middle) item into a promoted tile above the bar (e.g. Plans). |
 | Fab              | `import { Fab } from "@apna/design-system"` | Phones' extended floating action button for a screen's one main action: a green "+ label" pill 16px above the BottomNav, shrinking to a round icon while scrolling down. One per screen; give the screen ~80px of end room. |
-| BottomNavMenu    | `import { BottomNavMenu, type BottomNavMenuItem } from "@apna/design-system"` | The bottom bar's "More" card: icon tiles (4 across) rising just above the bar, which stays visible. Flat destinations only; optional red `dot` per tile. Tap outside / Escape / a tile closes it. `clearFeatured` when the bar has a raised item; `footer` for a full-width block under the tiles (e.g. the account alert). |
+| BottomNavMenu    | `import { BottomNavMenu, type BottomNavMenuItem } from "@apna/design-system"` | The bottom bar's "More" card: icon tiles (4 across) rising just above the bar, which stays visible. Flat destinations only; optional red `dot` per tile. Tap outside / Escape / a tile closes it. `clearFeatured` when the bar has a raised item; `header` for a full-width block above the tiles (e.g. the account alert). |
 
 ## 5. Overlays & Dialogs
 

@@ -50,6 +50,8 @@ import {
 import { IconLabel } from "@/components/onlyrounds/shared"
 import { Badge } from "@/components/ui/badge"
 import { BackButton } from "@/components/ui/back-button"
+import { useIsMobile } from "@/hooks/use-mobile"
+import { useAppBack } from "@/lib/apnahire/nav"
 import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -1067,6 +1069,11 @@ function JobDetailPageInner({ id }: { id: string }) {
   const [searchQuery, setSearchQuery] = useState("")
   const [isDialing, setIsDialing] = useState(false)
   const [viewMode, setViewMode] = useState<"card" | "table">("card")
+  // Phones: card view only (a table doesn't fit), and Back falls back to Jobs
+  // when there's no in-app history (src/lib/apnahire/nav.ts).
+  const isMobile = useIsMobile()
+  const view = isMobile ? "card" : viewMode
+  const back = useAppBack()
   const [candidateToMove, setCandidateToMove] = useState<string | null>(null)
 
   const candidateObjectToMove = useMemo(() => {
@@ -1350,23 +1357,65 @@ function JobDetailPageInner({ id }: { id: string }) {
   return (
     <div className="flex min-h-svh flex-col">
       <PageHeader
-        // Sticks directly beneath the 64px ProductTopBar so the job
-        // title + round tabs stay in view while the candidate list scrolls.
-        className="sticky top-16 z-20"
+        // Desktop: sticks beneath the 64px top bar so the job title + round
+        // tabs stay in view while the candidate list scrolls. Phones: the
+        // page is full screen (no top or bottom bar), so this header is the
+        // screen's app bar: Back · title · ⋮, then status + facts, then tabs.
+        className="sticky top-0 z-20 md:top-16"
         title={
           <div className="flex items-start gap-3">
-            <BackButton className="mt-0.5" />
-            <div className="flex flex-col gap-1.5 min-w-0">
+            <BackButton className="mt-0.5" onClick={back} />
+            <div className="flex min-w-0 flex-1 flex-col gap-1.5">
               <div className="flex items-center gap-2">
-                <span className="text-xl font-semibold leading-tight capitalize">{jobTitle}</span>
-                <Badge variant="success">Active</Badge>
+                <span className="line-clamp-2 text-lg leading-tight font-semibold capitalize md:text-xl">{jobTitle}</span>
+                <Badge variant="success" className="hidden md:inline-flex">Active</Badge>
               </div>
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+                <Badge variant="success" className="md:hidden">Active</Badge>
                 <IconLabel icon={Building2}>Simplilearn</IconLabel>
-                <span aria-hidden>·</span>
+                <span aria-hidden className="hidden md:inline">·</span>
                 <IconLabel icon={MapPin}>Hubli</IconLabel>
               </div>
             </div>
+            {/* Phones: every job action in one menu (desktop shows them as
+                buttons beside the title). */}
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <Button variant="ghost" size="icon-sm" aria-label="Job actions" className="shrink-0 text-muted-foreground md:hidden" />
+                }
+              >
+                <MoreVertical className="size-5" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setAddDialogOpen(true)}>
+                  <UserPlus className="size-3.5" />
+                  Add candidates
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Download className="size-3.5" />
+                  Download data
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Share2 className="size-3.5" />
+                  Share job
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <Upload className="size-3.5" />
+                  Publish
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Copy className="size-3.5" />
+                  Duplicate
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="text-destructive">
+                  <PowerOff className="size-3.5" />
+                  Deactivate
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         }
         description={null}
@@ -1389,8 +1438,9 @@ function JobDetailPageInner({ id }: { id: string }) {
               </TabsList>
             </Tabs>
 
-            {/* View toggle — lives at the far-right of the tab row */}
-            <div className="flex shrink-0 items-center gap-1.5 pb-1">
+            {/* View toggle — far right of the tab row; desktop only (phones
+                are card view). */}
+            <div className="hidden shrink-0 items-center gap-1.5 pb-1 md:flex">
               <ButtonGroup>
                 <Button
                   variant="outline"
@@ -1415,7 +1465,8 @@ function JobDetailPageInner({ id }: { id: string }) {
           </div>
         }
         actions={
-          <>
+          // Desktop only; phones have them in the ⋮ beside the title.
+          <div className="hidden items-center gap-2 md:flex">
             <Button variant="outline" size="sm" onClick={() => setAddDialogOpen(true)}>
               <UserPlus className="size-4" /> Add candidates
             </Button>
@@ -1453,11 +1504,11 @@ function JobDetailPageInner({ id }: { id: string }) {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          </>
+          </div>
         }
       />
 
-      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-4 px-6 py-4">
+      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-4 px-4 py-4 md:px-6">
         {/* Round summary strip — what's configured for the active round */}
         <RoundSummaryStrip
           roundName={ROUNDS[mainTab].name}
@@ -1502,7 +1553,7 @@ function JobDetailPageInner({ id }: { id: string }) {
               Clear all filters
             </Button>
           </div>
-        ) : viewMode === "card" ? (
+        ) : view === "card" ? (
           <div className="flex flex-col gap-3">
             {filteredCandidates.map((c) => (
               <CandidateCard

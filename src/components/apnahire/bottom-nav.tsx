@@ -18,10 +18,10 @@
  * an ✕. Flat destinations only:
  * Invite centre, Reports, Campus AI, Credits & usage, Support, Settings.
  * The account alert the desktop shows in its sidebar ("Verify Identity…")
- * sits under the tiles, and a red dot on More says it's there.
+ * sits above the tiles, and a red dot on More says it's there.
  *
- * Pages opened from More are full screens on phones (src/lib/apnahire/
- * nav.ts): the bar isn't shown there; the top bar carries Back.
+ * Pages opened from More, and drill-downs (one job), are full screens on
+ * phones (src/lib/apnahire/nav.ts): the bar isn't shown there.
  *
  * Hidden at md+ (768px) where the sidebar takes over.
  */
@@ -51,13 +51,13 @@ import {
 import { useActiveSubscription } from "@/hooks/use-active-subscription"
 import { useNotifications } from "@/hooks/apnahire/use-notifications"
 import { useAccountAlert } from "@/hooks/apnahire/use-account-alert"
-import { isFullScreenPage } from "@/lib/apnahire/nav"
+import { hidesBottomNav } from "@/lib/apnahire/nav"
 
 /** The bar's room at the end of the page: its 64px plus the home-indicator
  *  inset; nothing on full-screen pages, where there is no bar. */
 export function BottomNavSpacer() {
   const pathname = usePathname()
-  if (isFullScreenPage(pathname)) return null
+  if (hidesBottomNav(pathname)) return null
   return <div aria-hidden className="pb-safe-16 md:hidden" />
 }
 
@@ -139,7 +139,7 @@ export function ApnaHireBottomNav() {
     },
   ]
 
-  if (isFullScreenPage(pathname)) return null
+  if (hidesBottomNav(pathname)) return null
 
   return (
     <>
@@ -149,7 +149,7 @@ export function ApnaHireBottomNav() {
         items={menuItems}
         label="More"
         clearFeatured
-        footer={
+        header={
           account.alert ? (
             // The sidebar's alert, same component and look.
             <AlertBanner

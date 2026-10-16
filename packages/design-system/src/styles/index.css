@@ -500,7 +500,9 @@
     transition: opacity var(--duration-ink-fade) var(--ease-standard);
   }
 
-  &:active:not(:disabled, [aria-disabled="true"], [data-disabled])::before {
+  /* :not(:has(.ink:active)) — surfaces nest (a pill or a banner inside a
+   * clickable card): only the innermost pressed one ripples, never both. */
+  &:active:not(:disabled, [aria-disabled="true"], [data-disabled]):not(:has(.ink:active))::before {
     opacity: var(--ink-opacity);
     transition-duration: 0ms;
     animation: ink-spread var(--duration-ink) var(--ease-standard) both;

@@ -6,6 +6,7 @@ import { Dialog as SheetPrimitive } from "@base-ui/react/dialog"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { CloseBubble } from "@/components/ui/close-bubble"
+import { BackButton } from "@/components/ui/back-button"
 import { XIcon } from "@/icons/icons"
 
 function Sheet({ ...props }: SheetPrimitive.Root.Props) {
@@ -169,9 +170,14 @@ function SheetPanel({
 
 /**
  * SheetPanelHeader — a side panel's title row: the 20px semibold heading
- * title, an optional action ("Mark all as read"), and the close button.
- * Every SheetPanel uses this one row, so panel titles never drift in size
- * or weight. Place it at the top of the panel's first white section.
+ * title, an optional action, and the way out. Every SheetPanel uses this
+ * one row, so panel titles never drift in size or weight. Place it at the
+ * top of the panel's first white section.
+ *
+ * The way out: on phones (< sm) the panel fills the screen, so it reads as
+ * a screen — BackButton first in the row, as on every other full-screen
+ * page; from sm it's a panel beside the page, with the close ✕ at the end.
+ * Both close the sheet (so a host's onOpenChange, e.g. an exit offer, runs).
  */
 function SheetPanelHeader({
   title,
@@ -183,11 +189,14 @@ function SheetPanelHeader({
   className?: string
 }) {
   return (
-    <div data-slot="sheet-panel-header" className={cn("flex items-center justify-between gap-3 px-5", className)}>
-      <SheetTitle className="font-heading text-xl font-semibold text-foreground">{title}</SheetTitle>
+    <div data-slot="sheet-panel-header" className={cn("flex items-center justify-between gap-3 px-4 sm:px-5", className)}>
+      <div className="flex min-w-0 items-center gap-3">
+        <SheetClose render={<BackButton className="sm:hidden" />} />
+        <SheetTitle className="font-heading text-xl font-semibold text-foreground">{title}</SheetTitle>
+      </div>
       <div className="flex shrink-0 items-center gap-2">
         {action}
-        <SheetClose render={<Button variant="ghost" size="icon-sm" />}>
+        <SheetClose render={<Button variant="ghost" size="icon-sm" className="max-sm:hidden" />}>
           <XIcon className="size-6 text-muted-foreground" aria-hidden />
           <span className="sr-only">Close</span>
         </SheetClose>

@@ -96,6 +96,10 @@ const AlertBanner = React.forwardRef<HTMLDivElement, AlertBannerProps>(
           // so the container lives on the Alert root and the actual
           // flex-direction switch lives on a child of it, below.
           "@container/alert-banner relative py-2.5 px-3 rounded-lg text-left",
+          // With an action the whole banner is the target: the action's
+          // hit area is stretched over it (below), and it presses and
+          // ripples like any surface. Close / CTA sit above that layer.
+          action && "ink press-subtle cursor-pointer transition-interactive",
           borderless && "border-0 shadow-none",
           isPrimary && cn("bg-transparent", bannerPrimaryBgMap[safeVariant]),
           className
@@ -131,6 +135,9 @@ const AlertBanner = React.forwardRef<HTMLDivElement, AlertBannerProps>(
                   onClick={action.onClick}
                   className={cn(
                     "group inline-flex items-center font-semibold underline underline-offset-4 transition-interactive hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm align-baseline cursor-pointer whitespace-nowrap",
+                    // Stretched over the banner: a tap anywhere on it runs
+                    // the action (one button, so one focus stop).
+                    "after:absolute after:inset-0 after:rounded-lg",
                     accentColor
                   )}
                 >
@@ -140,14 +147,14 @@ const AlertBanner = React.forwardRef<HTMLDivElement, AlertBannerProps>(
             </div>
           </div>
 
-          {cta && <div className="shrink-0">{cta}</div>}
+          {cta && <div className="relative z-10 shrink-0">{cta}</div>}
 
           {onClose && (
             <button
               type="button"
               onClick={onClose}
               className={cn(
-                "ink press relative shrink-0 rounded-md p-1 opacity-70 hover:opacity-100 transition-interactive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer -mr-1",
+                "ink press relative z-10 shrink-0 rounded-md p-1 opacity-70 hover:opacity-100 transition-interactive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer -mr-1",
                 textColor
               )}
             >
