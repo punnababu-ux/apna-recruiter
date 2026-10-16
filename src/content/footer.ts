@@ -29,7 +29,7 @@ export const FOOTER_COLUMNS: FooterColumn[] = [
       { label: "About us", href: "/about" },
       { label: "Careers", href: "/careers" },
       { label: "Newsroom", href: "/newsroom" },
-      { label: "Contact us", href: "/contact-us" },
+      { label: "Contact us", href: "/#contact-us" },
       { label: "Looking for a job?", href: "https://apna.co", external: true },
     ],
   },

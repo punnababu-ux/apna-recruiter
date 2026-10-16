@@ -191,7 +191,7 @@ export const LOOKING_FOR_A_JOB: NavLink = {
 }
 
 export const HEADER_ACTIONS = {
-  secondary: { label: "Contact us", href: "/contact-us" } satisfies NavLink,
+  secondary: { label: "Contact us", href: "/#contact-us" } satisfies NavLink,
   // The live site's header login entry (employer.apna.co).
   // "Login" alone (user call, 2026-10-16) — the same /login flow signs new
   // recruiters up too.
