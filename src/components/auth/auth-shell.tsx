@@ -15,7 +15,7 @@
  */
 
 import Link from "next/link"
-import { ArrowUpRight, Card, LogoApnaHire, Separator } from "@apna/design-system"
+import { AmbientBackdrop, ArrowUpRight, Card, LogoApnaHire, Separator } from "@apna/design-system"
 import { AUTH_PANEL, LEGAL_LINE, LOOKING_FOR_A_JOB_LINK } from "@/content/auth"
 import { LEGAL_LINKS } from "@/content/footer"
 import { cn } from "@/lib/utils"
@@ -77,12 +77,15 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         <LookingForJob />
       </header>
 
-      {/* From md: the brand half. */}
-      <aside className="hidden flex-1 flex-col px-10 py-8 md:flex lg:px-20">
-        <Link href="/" aria-label="apna Hire, home" className="self-start">
+      {/* From md: the brand half — on the homepage hero's background (the
+          same gradient and AmbientBackdrop), so signing in still feels like
+          the site it came from rather than a blank white page. */}
+      <aside className="bg-gradient-checkout-hero relative isolate hidden flex-1 flex-col overflow-hidden px-10 py-8 md:flex lg:px-20">
+        <AmbientBackdrop className="inset-0" />
+        <Link href="/" aria-label="apna Hire, home" className="relative self-start">
           <LogoApnaHire className="h-6 w-auto" />
         </Link>
-        <div className="my-auto flex max-w-md flex-col gap-6 py-10">
+        <div className="relative my-auto flex max-w-md flex-col gap-6 py-10">
           <h1 className="text-h1 text-foreground">{AUTH_PANEL.headline}</h1>
           <p className="text-base text-foreground">{AUTH_PANEL.description}</p>
           <Separator />
