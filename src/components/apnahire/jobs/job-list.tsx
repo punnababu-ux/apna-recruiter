@@ -56,7 +56,7 @@ import {
   UserCheck,
   Users,
 } from "@apna/design-system"
-import { ClientLogo, IconLabel } from "@/components/onlyrounds/shared"
+import { IconLabel } from "@/components/onlyrounds/shared"
 import { JobCardFrame, JobMetricPill } from "@/components/onlyrounds/jobs-table"
 
 export type ApnaJobStatus = "under_review" | "active" | "draft" | "expired"
@@ -223,7 +223,6 @@ function JobCard({ job }: { job: ApnaJob }) {
 
   return (
     <JobCardFrame
-      logo={<ClientLogo name={job.company} size="md" />}
       title={job.title}
       href={href}
       badge={

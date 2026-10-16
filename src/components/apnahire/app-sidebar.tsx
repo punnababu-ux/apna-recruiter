@@ -13,6 +13,7 @@ import {
 } from "@apna/design-system"
 import { Badge } from "@apna/design-system"
 import { useActiveSubscription } from "@/hooks/use-active-subscription"
+import { ACCOUNT_ALERT, useAccountAlert } from "@/hooks/apnahire/use-account-alert"
 
 const WORKSPACES: SidebarWorkspace[] = [
   {
@@ -90,14 +91,16 @@ export function ApnaHireSidebar({
   onWorkspaceChange,
   // Account-level: shown on every product page until verified.
   showAlert = true,
-  alertTitle = "Verify Identity: Complete tax verification to post jobs.",
-  alertCtaText = "Verify",
-  alertVariant = "warning",
-  alertAppearance = "secondary",
+  alertTitle = ACCOUNT_ALERT.title,
+  alertCtaText = ACCOUNT_ALERT.ctaText,
+  alertVariant = ACCOUNT_ALERT.variant,
+  alertAppearance = ACCOUNT_ALERT.appearance,
   alertShowClose = true,
   hasActiveSubscription,
 }: ApnaHireSidebarProps) {
   const subscribed = useActiveSubscription()
+  // Shared with the phone More card: dismissing here clears it there.
+  const account = useAccountAlert()
   const hasPlan = hasActiveSubscription ?? subscribed
   const [internalId, setInternalId] = React.useState(WORKSPACES[0].id)
   const activeWorkspaceId = controlledId ?? internalId
@@ -123,7 +126,7 @@ export function ApnaHireSidebar({
       onWorkspaceChange={handleWorkspaceChange}
       navItems={NAV}
       alertBanner={
-        showAlert
+        showAlert && account.alert
           ? {
               id: `ah-alert-${alertVariant}-${alertAppearance}`,
               title: alertTitle,
@@ -131,6 +134,7 @@ export function ApnaHireSidebar({
               variant: alertVariant,
               appearance: alertAppearance,
               showClose: alertShowClose,
+              onDismiss: account.dismiss,
             }
           : undefined
       }

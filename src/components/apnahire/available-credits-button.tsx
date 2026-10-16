@@ -2,7 +2,8 @@
 
 /**
  * AvailableCreditsButton — the "Available credits" action in every top bar
- * (product shell, checkout, job posting). One component so it can't drift
+ * (product shell, checkout, job posting): an icon-only circle on phones,
+ * the labelled button from sm. One component so it can't drift
  * between flows: the same small outline button as the wizard's "Save &
  * exit", with its own fill, so it reads as a button on the self-checkout
  * gradient instead of a border-less label floating on it.
@@ -136,10 +137,11 @@ export function AvailableCreditsButton({
   ) : null
 
   const trigger = (
-    <Button type="button" variant="outline" size="sm">
+    // Phones: an icon-only 32px circle (the desktop bell's size and shape);
+    // the label from sm. The accessible name stays "Available credits".
+    <Button type="button" variant="outline" size="sm" aria-label="Available credits" className="max-sm:size-8 max-sm:px-0">
       <Wallet className="size-4" aria-hidden />
       <span className="hidden sm:inline">Available credits</span>
-      <span className="sm:hidden">Credits</span>
     </Button>
   )
 

@@ -17,6 +17,8 @@
  * icon tiles just above the bar, which stays visible with More turned into
  * an ✕. Flat destinations only:
  * Invite centre, Reports, Campus AI, Credits & usage, Support, Settings.
+ * The account alert the desktop shows in its sidebar ("Verify Identity…")
+ * sits under the tiles, and a red dot on More says it's there.
  *
  * Pages opened from More are full screens on phones (src/lib/apnahire/
  * nav.ts): the bar isn't shown there; the top bar carries Back.
@@ -27,6 +29,8 @@
 import * as React from "react"
 import { usePathname } from "next/navigation"
 import {
+  AlertBanner,
+  AlertCircle,
   BarChart2,
   Bell,
   BottomNav,
@@ -46,6 +50,7 @@ import {
 } from "@apna/design-system"
 import { useActiveSubscription } from "@/hooks/use-active-subscription"
 import { useNotifications } from "@/hooks/apnahire/use-notifications"
+import { useAccountAlert } from "@/hooks/apnahire/use-account-alert"
 import { isFullScreenPage } from "@/lib/apnahire/nav"
 
 /** The bar's room at the end of the page: its 64px plus the home-indicator
@@ -61,6 +66,7 @@ export function ApnaHireBottomNav() {
   const [menuOpen, setMenuOpen] = React.useState(false)
   const subscribed = useActiveSubscription()
   const { unreadCount } = useNotifications()
+  const account = useAccountAlert()
 
   /** True if the current route starts with the given prefix. */
   const isActive = (prefix: string) => pathname.startsWith(prefix)
@@ -120,6 +126,14 @@ export function ApnaHireBottomNav() {
       // one of its pages is the current page.
       label: "More",
       icon: menuOpen ? X : MoreHorizontal,
+      // The account alert lives in the card: a dot says so until it's
+      // resolved or dismissed.
+      badge:
+        account.alert && !menuOpen ? (
+          <span className="block size-2.5 rounded-full bg-destructive ring-2 ring-card">
+            <span className="sr-only">Account alert</span>
+          </span>
+        ) : undefined,
       active: menuOpen || (!menuOpen && menuItems.some((item) => item.active)),
       onClick: () => setMenuOpen((open) => !open),
     },
@@ -129,7 +143,26 @@ export function ApnaHireBottomNav() {
 
   return (
     <>
-      <BottomNavMenu open={menuOpen} onOpenChange={setMenuOpen} items={menuItems} label="More" clearFeatured />
+      <BottomNavMenu
+        open={menuOpen}
+        onOpenChange={setMenuOpen}
+        items={menuItems}
+        label="More"
+        clearFeatured
+        footer={
+          account.alert ? (
+            // The sidebar's alert, same component and look.
+            <AlertBanner
+              variant={account.alert.variant}
+              appearance={account.alert.appearance}
+              icon={<AlertCircle className="size-4 shrink-0" />}
+              title={account.alert.title}
+              action={{ label: account.alert.ctaText, onClick: () => {} }}
+              onClose={account.dismiss}
+            />
+          ) : undefined
+        }
+      />
       <BottomNav items={items} />
     </>
   )

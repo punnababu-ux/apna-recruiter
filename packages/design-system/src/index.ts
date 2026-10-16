@@ -44,6 +44,7 @@ export * from "./components/ui/sidebar"
 export * from "./components/ui/app-sidebar"
 export * from "./components/ui/bottom-nav"
 export * from "./components/ui/coin"
+export * from "./components/ui/fab"
 
 // 5. Overlays & Dialogs
 export * from "./components/ui/tooltip"

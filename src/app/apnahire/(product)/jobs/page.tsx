@@ -6,7 +6,7 @@
  * search and filters, then the cards (JobList).
  */
 
-import { Plus } from "@apna/design-system"
+import { Fab, Plus } from "@apna/design-system"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Suspense, useMemo, useState } from "react"
@@ -167,7 +167,8 @@ function JobsPageInner() {
             nativeButton={false}
             render={<Link href="/apnahire/jobs/new" />}
             aria-label="Create new job"
-            className="gap-2 cursor-pointer font-semibold shadow-xs"
+            // Phones post from the floating button instead.
+            className="gap-2 cursor-pointer font-semibold shadow-xs max-md:hidden"
           >
             <Plus className="size-4" />
             <span className="hidden sm:inline">Create new job</span>
@@ -219,7 +220,12 @@ function JobsPageInner() {
 
       <main className="flex-1">
         <JobList jobs={filtered} />
+        {/* Room for the floating button, so the last card scrolls clear. */}
+        <div aria-hidden className="h-20 md:hidden" />
       </main>
+
+      {/* Phones: posting is the Jobs tab's main action, at thumb reach. */}
+      <Fab href="/apnahire/jobs/new" icon={Plus} label="Post a job" />
     </div>
   )
 }

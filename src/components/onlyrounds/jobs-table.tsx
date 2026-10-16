@@ -76,10 +76,17 @@ export function JobsTable({ rows }: { rows: JobRow[] }) {
 
 /**
  * JobCardFrame — the job card's shell, shared by every jobs list (OnlyRounds
- * and apna hire) so they look identical: logo · title + status badge ·
+ * and apna hire) so they look identical: [logo] · title + status badge ·
  * one meta line (wraps when it runs out of room) · actions on top, then a
  * divider and a row of metric chips, then an optional banner. Lists differ
  * only in what they pass in.
+ *
+ * `logo` is optional: pass it only when it tells jobs apart (OnlyRounds'
+ * client logos — an agency posts for many clients). A recruiter's own
+ * company initial on every card says nothing and costs title width.
+ *
+ * Title: 16px semibold on phones (the list-title size, as notification rows
+ * and order lines; above the 14px filter chips), 18px from sm.
  */
 export function JobCardFrame({
   logo,
@@ -91,7 +98,7 @@ export function JobCardFrame({
   pills,
   banner,
 }: {
-  logo: React.ReactNode
+  logo?: React.ReactNode
   title: string
   href: string
   /** Status badge — sits beside the title. */
@@ -110,16 +117,18 @@ export function JobCardFrame({
     <div className="rounded-xl border border-border/60 bg-card px-4 py-4 sm:px-5 shadow-card transition-shadow hover:shadow-elevated">
       {/* Header row: Logo · content block · actions */}
       <div className="flex items-start gap-3">
-        <div className="mt-0.5 shrink-0">{logo}</div>
+        {logo && <div className="mt-0.5 shrink-0">{logo}</div>}
 
         {/* Content column — grows to fill available width */}
         <div className="min-w-0 flex-1">
-          {/* Title + status badge on one line; the title truncates first. */}
-          <div className="flex min-w-0 items-center gap-2">
+          {/* Title + status badge. The title wraps (up to two lines) rather
+              than truncating — "Customer Support Executive" stays readable
+              beside its badge on a phone; the badge sits on the first line. */}
+          <div className="flex min-w-0 items-start gap-2">
             <Link href={href} className="group min-w-0">
-              <span className="block truncate text-sm font-medium group-hover:underline sm:text-base">{title}</span>
+              <span className="line-clamp-2 text-base font-semibold group-hover:underline sm:text-lg">{title}</span>
             </Link>
-            <span className="shrink-0">{badge}</span>
+            <span className="mt-0.5 shrink-0 sm:mt-1">{badge}</span>
           </div>
 
           {/* One line of meta that wraps onto the next when it runs out of

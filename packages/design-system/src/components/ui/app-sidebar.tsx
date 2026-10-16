@@ -63,6 +63,9 @@ export type SidebarAlertBanner = {
   variant?: "warning" | "info" | "destructive" | "success" | "default"
   appearance?: "primary" | "secondary"
   showClose?: boolean
+  /** Called when the recruiter closes it — so a host that shows the same
+   *  alert elsewhere (e.g. a phone menu) can drop it there too. */
+  onDismiss?: () => void
 }
 
 export type SidebarBrand = {
@@ -425,7 +428,14 @@ export function ReusableSidebar({
                     ? { label: alertBanner.ctaText, onClick: alertBanner.onCtaClick || (() => {}) }
                     : undefined
                 }
-                onClose={alertBanner.showClose !== false ? () => setAlertDismissed(true) : undefined}
+                onClose={
+                  alertBanner.showClose !== false
+                    ? () => {
+                        setAlertDismissed(true)
+                        alertBanner.onDismiss?.()
+                      }
+                    : undefined
+                }
               />
             )
             return (

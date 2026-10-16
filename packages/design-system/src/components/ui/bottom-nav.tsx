@@ -178,9 +178,12 @@ export interface BottomNavMenuProps {
   label?: string
   /** The bar has a `featured` (raised) item: sit high enough to clear it. */
   clearFeatured?: boolean
+  /** Under the tiles, full width — e.g. the account alert the desktop shows
+   *  in its sidebar. At the bottom so dismissing it never moves a tile. */
+  footer?: React.ReactNode
 }
 
-export function BottomNavMenu({ open, onOpenChange, items, label = "More", clearFeatured }: BottomNavMenuProps) {
+export function BottomNavMenu({ open, onOpenChange, items, label = "More", clearFeatured, footer }: BottomNavMenuProps) {
   const firstRef = React.useRef<HTMLAnchorElement>(null)
 
   React.useEffect(() => {
@@ -248,6 +251,7 @@ export function BottomNavMenu({ open, onOpenChange, items, label = "More", clear
               </Link>
             )
           })}
+          {footer && <div className="col-span-4">{footer}</div>}
         </div>
       </div>
     </>
