@@ -106,7 +106,8 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
     })
   }, [])
   // Phones: every tab is a radio list with one sticky CTA for its selection.
-  const [subscriptionPlan, setSubscriptionPlan] = React.useState<SubscriptionPlanId>("quarterly")
+  // Annual: the recommended plan, selected first on phones.
+  const [subscriptionPlan, setSubscriptionPlan] = React.useState<SubscriptionPlanId>("annual")
   const [enterpriseTier, setEnterpriseTier] = React.useState(DEFAULT_ENTERPRISE_TIER)
 
   // Sticky header — starts transparent over the gradient hero, turns solid

@@ -5,7 +5,8 @@
  *
  * Layout:
  *   PageHeader (title + status + breadcrumb + Round tabs + actions)
- *   RoundSummaryStrip (config snapshot of the active round + Test CTA)
+ *   (No round summary strip: AI screening was an OnlyRounds feature; apna
+ *   Hire's AI calling will be designed as its own add-on, 2026-10-16.)
  *   InfoBanner (round-level CTA, e.g. "Start dialing")
  *   2-column body: FilterPanel (left) + candidate feed (right)
  *   CandidateDrawer (right-side panel; URL-driven via ?leadId=)
@@ -27,7 +28,6 @@ import {
 } from "@/components/onlyrounds/candidate-drawer"
 
 import { SearchFilterBar } from "@apna/design-system"
-import { RoundSummaryStrip } from "@/components/onlyrounds/round-summary-strip"
 import { PageHeader } from "@/components/onlyrounds/page-header"
 import { CandidateTable } from "@/components/onlyrounds/candidate-table"
 import {
@@ -1067,7 +1067,6 @@ function JobDetailPageInner({ id }: { id: string }) {
 
   const [filters, setFilters] = useState<Record<string, Set<string>>>({})
   const [searchQuery, setSearchQuery] = useState("")
-  const [isDialing, setIsDialing] = useState(false)
   const [viewMode, setViewMode] = useState<"card" | "table">("card")
   // Phones: card view only (a table doesn't fit), and Back falls back to Jobs
   // when there's no in-app history (src/lib/apnahire/nav.ts).
@@ -1423,7 +1422,7 @@ function JobDetailPageInner({ id }: { id: string }) {
           <div className="flex items-center justify-between gap-3">
             {/* min-w-0 lets the tab strip scroll on narrow screens instead of
              * pushing the view toggle (and the page) past the viewport. */}
-            <Tabs className="min-w-0" value={mainTab} onValueChange={(v) => { setMainTab(v as Stage); setFilters({}); setSearchQuery(""); setIsDialing(false) }}>
+            <Tabs className="min-w-0" value={mainTab} onValueChange={(v) => { setMainTab(v as Stage); setFilters({}); setSearchQuery("") }}>
               <TabsList variant="line">
                 {(["screening", "interview", "selected"] as Stage[]).map((s) => {
                   const count = candidates.filter((c) => c.stage === s).length
@@ -1509,21 +1508,6 @@ function JobDetailPageInner({ id }: { id: string }) {
       />
 
       <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-4 px-4 py-4 md:px-6">
-        {/* Round summary strip — what's configured for the active round */}
-        <RoundSummaryStrip
-          roundName={ROUNDS[mainTab].name}
-          mode={ROUNDS[mainTab].mode}
-          meta={ROUNDS[mainTab].meta}
-          onTest={ROUNDS[mainTab].mode === "ai" ? () => undefined : undefined}
-          isDialing={isDialing}
-          onStartDialing={
-            ROUNDS[mainTab].mode === "ai" && candidatesForStage.length > 0
-              ? () => setIsDialing(true)
-              : undefined
-          }
-          onStopDialing={() => setIsDialing(false)}
-        />
-
         {/* ── Search + filters ── */}
         <SearchFilterBar
           placeholder="Search by candidate name, email, or phone…"

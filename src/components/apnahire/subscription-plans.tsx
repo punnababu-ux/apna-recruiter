@@ -250,7 +250,8 @@ interface SubscriptionPlansProps {
 export function SubscriptionPlans({
   extraOff,
   onBuyAnnual,
-  selectedPlan = "quarterly",
+  // Annual is the recommended plan (product, 2026-10-16).
+  selectedPlan = "annual",
   onSelectPlan,
   onBuyMonthly,
   onBuyQuarterly,
@@ -307,7 +308,7 @@ export function SubscriptionPlans({
       <div className="flex flex-col gap-4">
         {/* Phones (< md): the Jobs / Database radio rows. Collapsed, a row
             is its name, the reposts line and the price; the selected one
-            (Quarterly, the recommended plan, by default) reveals the plan details. The
+            (Annual, the recommended plan, by default) reveals the plan details. The
             page's sticky CTA buys the selection. */}
         <div className="flex flex-col gap-3 md:hidden">
           {(["monthly", "quarterly", "annual"] as const).map((id) => {
@@ -319,7 +320,7 @@ export function SubscriptionPlans({
                 title={plan.title}
                 selected={selectedPlan === id}
                 onSelect={() => onSelectPlan?.(id)}
-                recommended={id === "quarterly"}
+                recommended={id === "annual"}
                 // The Jobs tab's Unlimited card structure, with the radio:
                 // name and price on one line, the reposts promise and the
                 // discount on the next (see MobilePlanRow's "inline").
@@ -382,7 +383,6 @@ export function SubscriptionPlans({
             months={3}
             extraOff={extraOff}
             ctaLabel="Buy quarterly plan"
-            recommended
             slotDays={90}
             /* Figma (1971:9120) reads "600 profiles … every month", but 600
                is the whole-quarter allowance: Monthly grants 200/month and
@@ -405,6 +405,7 @@ export function SubscriptionPlans({
             months={ANNUAL_PLAN.months}
             extraOff={extraOff}
             ctaLabel="Buy annual plan"
+            recommended
             slotDays={ANNUAL_PLAN.slotDays}
             dbLine={
               <>

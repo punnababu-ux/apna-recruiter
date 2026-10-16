@@ -67,7 +67,9 @@ export function SectionChips({ items }: { items: { href: string; label: string }
       <MobileChipRow
         items={items.map((item) => ({ value: item.href, label: item.label }))}
         value={active}
-        onValueChange={(href) => router.push(href)}
+        // replace, not push: switching chips isn't a step to go back
+        // through — Back leaves the section.
+        onValueChange={(href) => router.replace(href)}
       />
     </div>
   )

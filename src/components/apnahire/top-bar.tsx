@@ -8,7 +8,7 @@
  * the bar is, like an app bar: the apna Hire brand on Jobs (the home tab),
  * the section's name everywhere else ("Database", "Notifications"), and
  * Back + the page's name on a full-screen page (one opened from More: no
- * bottom bar). A drill-down (a page below a section, e.g. one job) hides
+ * bottom bar), where Back goes home to Jobs. A drill-down (a page below a section, e.g. one job) hides
  * this bar on phones: the page's own header carries Back, title and ⋮.
  * Back returns in-app, or to Jobs when there's nowhere to return to
  * (src/lib/apnahire/nav.ts). From md: the breadcrumb.
@@ -25,13 +25,13 @@
  */
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { toast } from "sonner"
 
 import { AvailableCreditsButton } from "@/components/apnahire/available-credits-button"
 import { NotificationsButton } from "@/components/apnahire/notifications/notifications-button"
 import { ApnaHireBreadcrumb, sectionTitle } from "@/components/apnahire/breadcrumb"
-import { isDrillDown, isFullScreenPage, useAppBack } from "@/lib/apnahire/nav"
+import { HOME, isDrillDown, isFullScreenPage, useAppBack } from "@/lib/apnahire/nav"
 import {
   Avatar,
   AvatarFallback,
@@ -56,7 +56,9 @@ export function ApnaHireTopBar({
   className?: string
 }) {
   const pathname = usePathname()
-  const back = useAppBack()
+  // Called for its in-app history tracking (drill-downs read it).
+  useAppBack()
+  const router = useRouter()
   const fullScreen = isFullScreenPage(pathname)
   return (
     <div
@@ -81,7 +83,9 @@ export function ApnaHireTopBar({
         {fullScreen ? (
           // BackButton's rule: first in the row, gap-3 before the title.
           <span className="flex min-w-0 items-center gap-3">
-            <BackButton onClick={back} />
+            {/* A More page's Back goes home to Jobs, not through its
+                section's chips or wherever More was opened from. */}
+            <BackButton onClick={() => router.push(HOME)} />
             <span className="truncate font-heading text-lg font-semibold text-foreground">{sectionTitle(pathname)}</span>
           </span>
         ) : pathname.split("/").filter(Boolean)[1] !== "jobs" ? (

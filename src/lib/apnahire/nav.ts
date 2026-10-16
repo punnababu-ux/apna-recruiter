@@ -10,9 +10,11 @@
  *   Drill-downs (a page below a section, e.g. one job) are full screens too,
  *   with their own header (Back · title · ⋮): no bottom bar, no top bar.
  *
- * Back goes to the previous screen when the recruiter navigated here inside
- * the app; landing straight on a page (a link, a notification) has nothing
- * to go back to, so Back opens the Jobs home instead of leaving the app.
+ * Back on a More page always goes home to Jobs (the section's chips don't
+ * stack up as history; they replace each other). Back on a drill-down goes
+ * to the previous screen when the recruiter navigated there inside the
+ * app; landing straight on a page (a link, a notification) has nothing to
+ * go back to, so Back opens the Jobs home instead of leaving the app.
  */
 
 import * as React from "react"
@@ -50,7 +52,9 @@ let navigatedInApp = false
 
 /** Call once in a component that stays mounted across product pages (the
  *  top bar). Returns Back's handler. */
-export function useAppBack(home = "/apnahire/jobs") {
+export const HOME = "/apnahire/jobs"
+
+export function useAppBack(home = HOME) {
   const pathname = usePathname()
   const router = useRouter()
   const first = React.useRef(pathname)

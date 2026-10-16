@@ -70,6 +70,7 @@ import {
   SheetPanelHeader,
 } from "@apna/design-system"
 import { cn } from "@/lib/utils"
+import { useBackToClose } from "@/hooks/use-back-to-close"
 import { AiCallingAddonCard, type AiAddonOffer } from "@/components/apnahire/ai-calling-addon-card"
 import { CountdownChip, useCountdown } from "@/components/apnahire/offers/countdown-chip"
 import { CouponExpiredDialog } from "@/components/apnahire/offers/coupon-expired-dialog"
@@ -368,6 +369,9 @@ export function CheckoutDrawer({
   extraOffer,
   onExtraOfferExpired,
 }: CheckoutDrawerProps) {
+  // The back button / gesture closes the summary through its own close
+  // path (so the exit offer still shows), rather than leaving the page.
+  useBackToClose(open, () => onOpenChange(false))
   const [expiredOpen, setExpiredOpen] = React.useState(false)
   // Primitives, not the object: callers build `extraOffer` inline, and an
   // effect keyed on its identity would re-apply a coupon the user removed.
