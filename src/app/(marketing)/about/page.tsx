@@ -6,9 +6,9 @@
  *              (the founding story sits in the hero, under the intro)
  *   Story      the four beats as the homepage's stacking cards, each on a
  *              mother-gradient wash with its year as a large watermark
- *   How we build  one section: the mission as its title, then the
- *              recruiter offers (an h3 + accordion, each offer opening to
- *              its detail) beside the AI Calling Agent illustration
+ *   Mission    its own section: one wide card in the mother gradient
+ *   Recruiters the offers (each opening to its detail) beside the AI
+ *              Calling Agent illustration, on a white band
  *
  * Neutral throughout: product gradients belong to their products, so the
  * only colour here is the AI Calling Agent's own, on its illustration.
@@ -20,6 +20,7 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
+  Card,
   ScrollStack,
   ScrollStackItem,
   Section,
@@ -94,11 +95,13 @@ export default function AboutPage() {
         </div>
       </Section>
 
-      {/* How we build: the mission is this section's title, and the
-          recruiter offers beside the illustration are the answer to it.
-          On the canvas, so it doesn't run into the white story band. */}
+      {/* Our mission: a section of its own — one wide card in the homepage's
+          own gradient, the mother gradient (no product colour on About). */}
       <Section size="md">
-        <div className="flex flex-col gap-12 lg:gap-16">
+        <Card
+          padding="none"
+          className="items-center border-card/60 bg-gradient-checkout-hero px-6 py-16 text-center shadow-card sm:px-12 lg:py-24"
+        >
           <SectionHeading
             level={2}
             align="center"
@@ -106,30 +109,34 @@ export default function AboutPage() {
             title={mission.title}
             description={mission.description}
           />
-          <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-            <div className="flex flex-col gap-6">
-              <SectionHeading
-                level={3}
-                eyebrow={<span className="text-overline text-muted-foreground">{recruiters.label}</span>}
-                title={recruiters.title}
-                description={recruiters.description}
-              />
-              <Accordion defaultValue={[recruiters.items[0].title]} className="border-t border-border">
-                {recruiters.items.map((item) => (
-                  <AccordionItem key={item.title} value={item.title} className="border-b border-border">
-                    <AccordionTrigger className="py-4 hover:no-underline">
-                      <span className="flex flex-col gap-0.5">
-                        <span className="text-base font-semibold text-foreground">{item.title}</span>
-                        <span className="text-sm font-regular text-muted-foreground">{item.tagline}</span>
-                      </span>
-                    </AccordionTrigger>
-                    <AccordionContent className="pb-4 text-muted-foreground">{item.description}</AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </div>
-            <ProductIllustration product="AI Calling Agent" size="lg" className="h-80 rounded-card sm:h-112" />
+        </Card>
+      </Section>
+
+      {/* Built for recruiters: the offers beside the illustration. */}
+      <Section tone="card" size="md">
+        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+          <div className="flex flex-col gap-8">
+            <SectionHeading
+              level={2}
+              eyebrow={<span className="text-overline text-muted-foreground">{recruiters.label}</span>}
+              title={recruiters.title}
+              description={recruiters.description}
+            />
+            <Accordion defaultValue={[recruiters.items[0].title]} className="border-t border-border">
+              {recruiters.items.map((item) => (
+                <AccordionItem key={item.title} value={item.title} className="border-b border-border">
+                  <AccordionTrigger className="py-4 hover:no-underline">
+                    <span className="flex flex-col gap-0.5">
+                      <span className="text-base font-semibold text-foreground">{item.title}</span>
+                      <span className="text-sm font-regular text-muted-foreground">{item.tagline}</span>
+                    </span>
+                  </AccordionTrigger>
+                  <AccordionContent className="pb-4 text-muted-foreground">{item.description}</AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
           </div>
+          <ProductIllustration product="AI Calling Agent" size="lg" className="h-80 rounded-card sm:h-112" />
         </div>
       </Section>
 
