@@ -254,8 +254,14 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
           // correction. Below xl the last item is the ghost menu icon.
           "relative mx-auto w-full border backdrop-blur-xl transition-shape",
           docked
-            ? // The docked bar: edge to edge, square, page gutters.
-              "h-18 max-w-full rounded-none border-x-0 border-t-0 border-border bg-card/95 px-4 shadow-card sm:px-8 lg:px-12"
+            ? cn(
+                // The docked bar: edge to edge, square, page gutters.
+                "h-18 max-w-full rounded-none border-x-0 border-t-0 border-border bg-card/95 px-4 sm:px-8 lg:px-12",
+                // With a sub-nav docked under it, the bar and the strip are
+                // one block: one shadow, under the strip (the bar's own fell
+                // across the strip as a crease); the hairline divides them.
+                slot?.showSubNav ? "shadow-none" : "shadow-card"
+              )
             : cn(
                 "h-14 max-w-band rounded-full pr-2.25 pl-2 xl:pr-2.75",
                 // Frosted at rest; more solid while a menu or search is open.
