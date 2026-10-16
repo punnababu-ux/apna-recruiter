@@ -383,20 +383,13 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
             )}
             {/* No "Contact us" here: support gets its own floating button
                 (user call, 2026-10-16). */}
-            {/* One green CTA per screen: on the homepage the hero's sign-up
-                form is the primary, and on phones it sits right under this bar
-                — so here, there, this login steps down to the outline button. */}
-            {pathname === "/" && (
-              <Button
-                variant="outline"
-                className="shrink-0 rounded-full font-semibold sm:hidden"
-                render={<Link href={HEADER_ACTIONS.primary.href} />}
-              >
-                {HEADER_ACTIONS.primary.label}
-              </Button>
-            )}
+            {/* Login is the dark emphasis button on every page and size: each
+                page has its own one green action (the hero's sign-up, the
+                recommended plan's Buy now), and a returning user's way in
+                needn't compete with it. */}
             <Button
-              className={cn("shrink-0 rounded-full font-semibold", pathname === "/" && "max-sm:hidden")}
+              variant="emphasis"
+              className="shrink-0 rounded-full font-semibold"
               render={<Link href={HEADER_ACTIONS.primary.href} />}
             >
               {HEADER_ACTIONS.primary.label}
