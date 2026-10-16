@@ -34,9 +34,8 @@ export const ABOUT_OVERVIEW = {
     eyebrow: "Founded in 2019",
     name: "Nirmit Parikh",
     role: "Founder, Group CEO",
-    photo: "/images/company/people/nirmit-parikh.jpg",
     // His own words, from the Leadership page.
-    quote: "Talent is everywhere, but opportunity isn't.",
+    quote: "Talent is everywhere, but opportunity isn’t.",
   },
   storyTitle: "How we got here",
   body: "Founded in 2019 by Nirmit Parikh, apna set out with a simple mission: to enable livelihoods for billions across India by closing the network and access gap that keeps talented people from finding the right jobs. Today, that mission has grown into India’s largest early-career job marketplace, connecting 6 crore+ job seekers with 7 lakh+ businesses and enterprises across 7,200+ towns and cities.",

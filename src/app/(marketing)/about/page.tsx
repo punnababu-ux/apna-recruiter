@@ -2,8 +2,8 @@
  * /about — Overview. Copy: content/company.ts ABOUT_OVERVIEW.
  *
  *   Hero       the chip, the serif headline, the intro — no numbers
- *   Founder    the page's centrepiece: Nirmit's portrait beside his line
- *              in the serif, then the founding story
+ *   Founder    the page's centrepiece: his line, large, in the serif;
+ *              who said it; the founding story (no portrait)
  *   Story      the four beats as the homepage's stacking cards, each on a
  *              mother-gradient wash with its year as a large watermark
  *   Mission    a calm serif statement (no dark band)
@@ -15,7 +15,6 @@
  */
 
 import type { Metadata } from "next"
-import Image from "next/image"
 import {
   Accordion,
   AccordionContent,
@@ -49,32 +48,20 @@ export default function AboutPage() {
     <>
       <PageHero eyebrow={eyebrow} title={withAccent(title, titleAccent)} description={intro} />
 
-      {/* The founder: portrait, his line, the story. */}
-      <Section tone="card" size="lg">
-        <div className="grid items-center gap-10 md:grid-cols-12 lg:gap-16">
-          <figure className="relative md:col-span-5">
-            <Image
-              src={founder.photo}
-              alt={founder.name}
-              width={560}
-              height={700}
-              priority
-              className="aspect-4/5 w-full rounded-card object-cover shadow-elevated"
-            />
-            {/* The name tag sits on the portrait's foot, like a caption card. */}
-            <figcaption className="absolute inset-x-4 bottom-4 flex flex-col rounded-card-nested bg-card/85 px-4 py-3 shadow-card backdrop-blur-xl">
-              <span className="text-base font-semibold text-foreground">{founder.name}</span>
-              <span className="text-sm text-muted-foreground">{founder.role}</span>
-            </figcaption>
-          </figure>
-          <div className="flex flex-col gap-8 md:col-span-7">
-            <span className="text-overline text-muted-foreground">{founder.eyebrow}</span>
-            <blockquote className="text-quote-lg text-balance text-foreground">
-              &ldquo;{withAccent(founder.quote, "opportunity")}&rdquo;
-            </blockquote>
-            <p className="text-lead text-pretty text-muted-foreground">{body}</p>
-          </div>
-        </div>
+      {/* The founder, in his own words: no portrait, just the line, large,
+          then who said it and the founding story. */}
+      <Section tone="card" size="lg" width="narrow">
+        <figure className="flex flex-col items-center gap-8 text-center">
+          <span className="text-overline text-muted-foreground">{founder.eyebrow}</span>
+          <blockquote className="text-quote-lg text-balance text-foreground">
+            &ldquo;{withAccent(founder.quote, "opportunity")}&rdquo;
+          </blockquote>
+          <figcaption className="flex flex-col gap-0.5">
+            <span className="text-base font-semibold text-foreground">{founder.name}</span>
+            <span className="text-sm text-muted-foreground">{founder.role}</span>
+          </figcaption>
+          <p className="max-w-prose text-lead text-pretty text-muted-foreground">{body}</p>
+        </figure>
       </Section>
 
       {/* How we got here: the homepage's stacking cards, one beat each. */}
