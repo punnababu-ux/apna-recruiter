@@ -86,7 +86,7 @@ export default function AboutPage() {
                     {beat.marker} · {String(i + 1).padStart(2, "0")} / {String(story.length).padStart(2, "0")}
                   </span>
                   <h3 className="text-h3 text-balance text-foreground sm:text-h2">{beat.title}</h3>
-                  <p className="text-lg leading-relaxed text-pretty text-muted-foreground sm:text-xl">{beat.description}</p>
+                  <p className="max-w-2xl text-lg leading-relaxed text-pretty text-foreground sm:text-xl">{beat.description}</p>
                 </div>
               </ScrollStackItem>
             ))}

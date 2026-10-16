@@ -1141,7 +1141,7 @@
 
 /* A very large, very light number behind a card's text (About's story
  * cards: "2019", "400M"). Inter, tabular, at 6% of the ink, so the copy
- * reads straight over it. Sized to the viewport, capped. Decorative —
+ * reads straight over it (at 5% of the ink). Sized to the viewport, capped. Decorative —
  * pair with aria-hidden. */
 @utility text-watermark {
   font-family:     var(--font-heading);
@@ -1150,7 +1150,7 @@
   font-weight:     var(--font-weight-bold);
   letter-spacing:  var(--letter-spacing-tighter);
   font-variant-numeric: tabular-nums;
-  color:           color-mix(in srgb, var(--foreground) 6%, transparent);
+  color:           color-mix(in srgb, var(--foreground) 5%, transparent);
 }
 
 /* The enclosing [data-product]'s gradient (none outside one). */
