@@ -24,19 +24,13 @@ export const ABOUT_OVERVIEW = {
     title: "About us",
     description: "apna is India's largest early-talent, AI-first hiring platform, connecting talent with opportunity at scale.",
   },
-  eyebrow: "About apna",
+  /** The hero chip. */
+  eyebrow: "Founded in 2019",
   title: "Building the bridge between talent and opportunity.",
   /** Set in italic in the headline. */
   titleAccent: "opportunity",
   intro:
     "apna is India’s largest early-talent, AI-first hiring solution, built to solve one of the country’s biggest challenges: connecting people to the right opportunities, at scale.",
-  founder: {
-    eyebrow: "Founded in 2019",
-    // apna's founding belief, condensed from Nirmit's own sentence on the
-    // Leadership page ("…a simple belief: that talent is everywhere, but
-    // opportunity isn't") — shown as a line, not as a quote of him.
-    quote: "Talent is everywhere, but opportunity isn’t.",
-  },
   storyTitle: "How we got here",
   body: "Founded in 2019 by Nirmit Parikh, apna set out with a simple mission: to enable livelihoods for billions across India by closing the network and access gap that keeps talented people from finding the right jobs. Today, that mission has grown into India’s largest early-career job marketplace, connecting 6 crore+ job seekers with 7 lakh+ businesses and enterprises across 7,200+ towns and cities.",
   story: [

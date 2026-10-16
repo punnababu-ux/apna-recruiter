@@ -1,9 +1,9 @@
 /**
  * /about — Overview. Copy: content/company.ts ABOUT_OVERVIEW.
  *
- *   Hero       the chip, the serif headline, the intro — no numbers
- *   Founding   the page's centrepiece: apna's founding belief, large, in
- *              the serif, then the founding story
+ *   Hero       the chip ("Founded in 2019"), the serif headline, the intro
+ *              and the founding story — no numbers
+ *              (the founding story sits in the hero, under the intro)
  *   Story      the four beats as the homepage's stacking cards, each on a
  *              mother-gradient wash with its year as a large watermark
  *   How we build  one section: the mission as its title, then the
@@ -42,23 +42,22 @@ const STORY_WASH = [
 ] as const
 
 export default function AboutPage() {
-  const { eyebrow, title, titleAccent, intro, founder, storyTitle, body, story, mission, audiences } = ABOUT_OVERVIEW
+  const { eyebrow, title, titleAccent, intro, storyTitle, body, story, mission, audiences } = ABOUT_OVERVIEW
   const recruiters = audiences[0]
   return (
     <>
-      <PageHero eyebrow={eyebrow} title={withAccent(title, titleAccent)} description={intro} />
-
-      {/* The founding belief, large, then the founding story. */}
-      <Section tone="card" size="lg" width="narrow">
-        <div className="flex flex-col items-center gap-8 text-center">
-          <span className="text-overline text-muted-foreground">{founder.eyebrow}</span>
-          {/* apna's belief, as a line — not a quote: it's condensed from
-              Nirmit's own sentence on the Leadership page, so it carries no
-              quotation marks or attribution. */}
-          <p className="text-quote-lg text-balance text-foreground">{withAccent(founder.quote, "opportunity")}</p>
-          <p className="max-w-prose text-lead text-pretty text-muted-foreground">{body}</p>
-        </div>
-      </Section>
+      <PageHero
+        eyebrow={eyebrow}
+        title={withAccent(title, titleAccent)}
+        // The founding story belongs with the claim it explains: one
+        // description, the intro then the story.
+        description={
+          <span className="flex flex-col gap-4">
+            <span>{intro}</span>
+            <span className="text-base">{body}</span>
+          </span>
+        }
+      />
 
       {/* How we got here: the homepage's stacking cards, one beat each. */}
       <Section size="md">
