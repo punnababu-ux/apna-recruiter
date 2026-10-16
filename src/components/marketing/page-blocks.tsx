@@ -180,20 +180,26 @@ export function StatementBand({
   eyebrow,
   title,
   description,
+  actions,
 }: {
   eyebrow?: string
   title: ReactNode
   description?: ReactNode
+  /** A button under the statement (a closing band's one action). */
+  actions?: ReactNode
 }) {
   return (
     <Section size="lg" className="bg-gradient-checkout-hero">
-      <SectionHeading
-        level={2}
-        align="center"
-        eyebrow={eyebrow && <span className="text-overline text-muted-foreground">{eyebrow}</span>}
-        title={title}
-        description={description}
-      />
+      <div className="flex flex-col items-center gap-8">
+        <SectionHeading
+          level={2}
+          align="center"
+          eyebrow={eyebrow && <span className="text-overline text-muted-foreground">{eyebrow}</span>}
+          title={title}
+          description={description}
+        />
+        {actions}
+      </div>
     </Section>
   )
 }

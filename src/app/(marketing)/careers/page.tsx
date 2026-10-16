@@ -1,15 +1,32 @@
 /**
- * /careers — Join us. Copy: content/company.ts CAREERS. The open roles live
- * on careers.apna.co: the hero's green button goes there, and the closing
- * card repeats it as the dark companion.
+ * /careers — Join us. Copy: content/company.ts CAREERS (Lovable "Join Us").
+ *
+ *   Hero     the chip, the serif headline, one paragraph (the hook and
+ *            the pace), the green "See open roles" (careers.apna.co),
+ *            the team's faces in an avatar row
+ *   Life     "Life at apna" as the About story's stacking cards
+ *   Closing  "Ready to make an impact?" as a statement band, the roles link
+ *            again as the dark companion
  */
 
 import type { Metadata } from "next"
-import { ArrowUpRight, Button, Card, Section, SectionHeading } from "@apna/design-system"
-import { PageHero } from "@/components/marketing/page-blocks"
-import { CAREERS } from "@/content/company"
+import {
+  ArrowUpRight,
+  Avatar,
+  AvatarFallback,
+  AvatarGroup,
+  AvatarImage,
+  Button,
+  ScrollStack,
+  Section,
+  SectionHeading,
+} from "@apna/design-system"
+import { PageHero, StackCard, StatementBand, deckPosition } from "@/components/marketing/page-blocks"
+import { ABOUT_LEADERSHIP, ABOUT_MANAGEMENT, CAREERS } from "@/content/company"
 
 export const metadata: Metadata = CAREERS.meta
+
+const TEAM = [...ABOUT_LEADERSHIP.people, ...ABOUT_MANAGEMENT.people]
 
 const rolesLink = <a href={CAREERS.cta.href} target="_blank" rel="noreferrer noopener" />
 
@@ -20,50 +37,59 @@ export default function CareersPage() {
       <PageHero
         eyebrow={eyebrow}
         title={title}
-        description={description}
+        description={`${description} ${body}`}
         actions={
           <Button size="lg" nativeButton={false} render={rolesLink} trailingIcon={<ArrowUpRight aria-hidden />}>
             {cta.label}
           </Button>
         }
-      />
+      >
+        {/* The people you'd work with — real faces, no copy needed. */}
+        <AvatarGroup className="-space-x-3">
+          {TEAM.map((person) => (
+            <Avatar key={person.name} className="size-12 sm:size-14">
+              <AvatarImage src={person.photo} alt={person.name} className="object-cover" />
+              <AvatarFallback>{person.name[0]}</AvatarFallback>
+            </Avatar>
+          ))}
+        </AvatarGroup>
+      </PageHero>
+
       <Section tone="card" size="md">
-        <div className="flex flex-col gap-12">
-          <p className="mx-auto max-w-prose text-center text-lead text-pretty text-muted-foreground">{body}</p>
+        <div className="flex flex-col gap-10">
           <SectionHeading level={2} align="center" title={life.title} />
-          <ul className="grid gap-6 md:grid-cols-3">
-            {life.items.map((item) => (
-              <li key={item.title}>
-                <Card padding="lg" tone="muted" className="h-full gap-3">
-                  <h3 className="text-h5 text-balance text-foreground">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground">{item.description}</p>
-                </Card>
-              </li>
+          <ScrollStack>
+            {life.items.map((item, i) => (
+              <StackCard
+                key={item.title}
+                watermark={String(i + 1).padStart(2, "0")}
+                overline={deckPosition(i, life.items.length)}
+                title={item.title}
+              >
+                <p className="max-w-2xl text-lg leading-relaxed text-pretty text-foreground sm:text-xl">
+                  {item.description}
+                </p>
+              </StackCard>
             ))}
-          </ul>
+          </ScrollStack>
         </div>
       </Section>
-      <Section size="md" className="pb-0 md:pb-0">
-        <Card
-          padding="lg"
-          className="flex flex-col items-center gap-8 border-card/60 bg-card/60 text-center shadow-card backdrop-blur-xl sm:p-12"
-        >
-          <div className="flex flex-col items-center gap-3">
-            <h2 className="text-editorial-h2 text-balance text-foreground sm:text-editorial-h1">{closing.title}</h2>
-            <p className="text-lead max-w-prose text-pretty text-muted-foreground">{closing.description}</p>
-          </div>
+
+      <StatementBand
+        title={closing.title}
+        description={closing.description}
+        actions={
           <Button
             variant="emphasis"
             size="lg"
-            className="w-full sm:w-auto"
             nativeButton={false}
             render={rolesLink}
             trailingIcon={<ArrowUpRight aria-hidden />}
           >
             {cta.label}
           </Button>
-        </Card>
-      </Section>
+        }
+      />
     </>
   )
 }
