@@ -488,7 +488,11 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
         <div
           inert={!slot.showSubNav}
           className={cn(
-            "absolute inset-x-0 top-full -z-10 hidden h-16 items-center justify-center border-b border-border bg-card/95 px-4 shadow-card backdrop-blur-xl transition-interactive duration-enter ease-out-ui md:flex",
+            // Every width: on phones too, the plan tabs must stay reachable
+            // once the page's own tab row has scrolled away. Scrolls sideways
+            // if its content can't fit (the content centres itself with mx-auto,
+            // so nothing is cut off on the left).
+            "absolute inset-x-0 top-full -z-10 flex h-16 items-center no-scrollbar overflow-x-auto border-b border-border bg-card/95 px-4 shadow-card backdrop-blur-xl transition-interactive duration-enter ease-out-ui",
             slot.showSubNav
               ? "translate-y-0 opacity-100"
               : "pointer-events-none -translate-y-full opacity-0"

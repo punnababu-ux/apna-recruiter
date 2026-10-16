@@ -94,13 +94,14 @@ export function PricingHero({
       className={cn(
         // Same gutter as the page header and the tab bodies below, so the
         // left-aligned H1, the tab track, the back arrow and the body cards
-        // all land on one column. Top padding is Figma's 112px less the
-        // 64px header, which is in-flow here rather than overlaid.
-        "relative flex flex-col items-center px-4 pb-8 pt-10 sm:px-8 sm:pt-12 lg:px-12",
+        // all land on one column. Tighter than Figma's 112px-less-header
+        // (user call, 2026-10-16): 24 / 32px above the heading, 24px to the
+        // tabs, 20px under them.
+        "relative flex flex-col items-center px-4 pb-5 pt-6 sm:px-8 sm:pt-8 lg:px-12",
         className
       )}
     >
-      <div className="@container flex w-full max-w-6xl flex-col gap-8">
+      <div className="@container flex w-full max-w-6xl flex-col gap-6">
         {/* Heading — source has no subtitle under the H1. `text-h1` already
             carries font-heading and bold. Phones keep it to one line: 24px
             when the column has 320px (360px phones and up), 20px below

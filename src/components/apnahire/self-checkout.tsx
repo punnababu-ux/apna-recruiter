@@ -153,7 +153,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   // unrelated re-renders — useHeaderSlot re-publishes whenever it changes.
   const compactTabSwitcher = React.useMemo(
     () => (
-      <CompactPlanTabs value={activeTab} onValueChange={changeTab} />
+      <CompactPlanTabs className="mx-auto shrink-0" value={activeTab} onValueChange={changeTab} />
     ),
     [activeTab, changeTab]
   )
@@ -411,6 +411,23 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
           }
         />
       )}
+      {!isLoggedOut && (
+        /* Below lg the bar has no room for the tabs, so they dock as a strip
+           under it once the hero's row scrolls away. A zero-height sticky
+           anchor (no space in the layout) carrying the strip, so nothing
+           shifts when it appears. */
+        <div className="sticky top-16 z-sticky h-0 lg:hidden">
+          <div
+            inert={!showCompactTabs}
+            className={cn(
+              "absolute inset-x-0 top-0 flex h-16 items-center no-scrollbar overflow-x-auto border-b border-border bg-card/95 px-4 shadow-card backdrop-blur-xl transition-interactive duration-enter ease-out-ui",
+              showCompactTabs ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-2 opacity-0"
+            )}
+          >
+            <CompactPlanTabs className="mx-auto shrink-0" value={activeTab} onValueChange={changeTab} />
+          </div>
+        </div>
+      )}
 
       {/* ── Hero + pricing body share the page-level ambient-gradient canvas ── */}
       <div className="flex-1">
@@ -633,9 +650,10 @@ function CompactPlanTabs({
     <Tabs value={value} onValueChange={(v) => onValueChange(v as PricingTab)} className={className}>
       <TabsList variant="checkout">
         {PRICING_TABS.map((tab) => (
-          <TabsTrigger key={tab.value} value={tab.value} className="px-3.5">
+          // Phones: label only, tighter — four tabs with icons don't fit 375px.
+          <TabsTrigger key={tab.value} value={tab.value} className="px-2.5 sm:px-3.5">
             {React.isValidElement<{ className?: string }>(tab.icon)
-              ? React.cloneElement(tab.icon, { className: "size-5 shrink-0" })
+              ? React.cloneElement(tab.icon, { className: "hidden size-5 shrink-0 sm:block" })
               : tab.icon}
             {PRICING_TAB_SHORT_LABELS[tab.value]}
           </TabsTrigger>
