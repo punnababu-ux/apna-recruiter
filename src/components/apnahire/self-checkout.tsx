@@ -137,13 +137,15 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
     // Negative top rootMargin ~= sticky header height, so the compact
     // switcher appears exactly when the real one would otherwise be
     // hidden behind it, not only once fully past the viewport edge.
+    // Logged out it sits under the marketing pill header (72px); logged in,
+    // under the product top bar (64px).
     const observer = new IntersectionObserver(
       ([entry]) => setShowCompactTabs(!entry.isIntersecting),
-      { rootMargin: "-64px 0px 0px 0px" }
+      { rootMargin: isLoggedOut ? "-72px 0px 0px 0px" : "-64px 0px 0px 0px" }
     )
     observer.observe(el)
     return () => observer.disconnect()
-  }, [])
+  }, [isLoggedOut])
 
   // Logged-out only: publish the compact tab switcher into the shared
   // SiteHeader (provided by the (marketing) layout above this component).

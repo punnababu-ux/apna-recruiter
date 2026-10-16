@@ -23,7 +23,7 @@
  * `stack-item` utility: the deeper, the smaller. Each card also gets a
  * measured tail margin (`--stack-tail`) so the finished deck leaves as one,
  * ledges intact, instead of the front card sliding up over them. Reduced motion keeps the stacking and drops the
- * recede. The header is 4rem; the first card pins at 6rem.
+ * recede. The marketing header is 4.5rem; the first card pins at 6rem.
  */
 
 import * as React from "react"

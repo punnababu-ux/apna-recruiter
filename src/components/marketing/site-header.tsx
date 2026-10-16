@@ -22,7 +22,7 @@
  *    Prep Lounge prototype uses exactly that, so it's needed on day one
  *    rather than retrofitted.
  *
- * A floating glass pill (2026-10-16): frosted white, 8px from the top and
+ * A floating glass pill (2026-10-16): frosted white, 16px from the top and
  * the page's content width, a touch more solid once the page scrolls under
  * it. Search is an icon that turns the whole pill into one large field,
  * Spotlight-style, over a dimmed page; the
@@ -201,11 +201,12 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
     )
 
   return (
-    // A floating glass pill (8px from the top, the page's content width),
-    // not an edge-to-edge bar. 8px + the 56px pill keeps the header 64px,
-    // which sticky offsets on the pricing page are measured against.
+    // A floating glass pill (16px from the top, the page's content width),
+    // not an edge-to-edge bar. 16px + the 56px pill = a 72px header — the
+    // hero backdrop (-top-18) and the pricing page's scroll trigger
+    // (self-checkout.tsx rootMargin) are measured against it.
     <header
-      className="sticky top-0 z-sticky px-3 pt-2 sm:px-6"
+      className="sticky top-0 z-sticky px-3 pt-4 sm:px-6"
       onKeyDown={(e) => {
         if (e.key === "Escape") {
           setOpenPanel(null)
