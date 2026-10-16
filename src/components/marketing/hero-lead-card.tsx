@@ -90,14 +90,15 @@ export function HeroLeadCard({ className, onContinue, onEnterpriseLogin }: HeroL
 
       <Separator />
 
-      <button
+      <Button
         type="button"
+        variant="link-inline"
+        className="self-start text-foreground"
         onClick={onEnterpriseLogin}
-        className="inline-flex items-center gap-2 text-sm font-bold text-foreground underline underline-offset-2"
+        leadingIcon={<Building2 aria-hidden />}
       >
-        <Building2 className="size-4" aria-hidden />
         Enterprise login
-      </button>
+      </Button>
 
       <p className="text-xs text-muted-foreground">
         By clicking continue, you agree to the apna{" "}

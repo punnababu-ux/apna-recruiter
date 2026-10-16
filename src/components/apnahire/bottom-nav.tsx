@@ -29,6 +29,7 @@
 import * as React from "react"
 import { usePathname } from "next/navigation"
 import {
+  Badge,
   AlertBanner,
   AlertCircle,
   BarChart2,
@@ -113,10 +114,10 @@ export function ApnaHireBottomNav() {
       icon: Bell,
       active: tabActive("/apnahire/notifications"),
       badge: unreadCount ? (
-        <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-2xs leading-none font-semibold text-destructive-foreground">
+        <Badge variant="count" size="count">
           {unreadCount}
           <span className="sr-only"> unread</span>
-        </span>
+        </Badge>
       ) : undefined,
     },
     {
@@ -128,9 +129,9 @@ export function ApnaHireBottomNav() {
       // resolved or dismissed.
       badge:
         account.alert && !menuOpen ? (
-          <span className="block size-2.5 rounded-full bg-destructive ring-2 ring-card">
+          <Badge variant="count" size="dot" className="ring-2 ring-card">
             <span className="sr-only">Account alert</span>
-          </span>
+          </Badge>
         ) : undefined,
       active: menuOpen || (!menuOpen && menuItems.some((item) => item.active)),
       onClick: () => setMenuOpen((open) => !open),

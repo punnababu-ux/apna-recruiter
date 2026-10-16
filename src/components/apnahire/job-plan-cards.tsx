@@ -33,6 +33,7 @@ import {
   LogoApnaUnlimited,
   MapPin,
   PricingCard,
+  StickyCtaBar,
   Sparkles,
   TrendingUp,
   WhatsApp,
@@ -412,17 +413,12 @@ function MobileJobPlanRadioGroup({
       </div>
 
       {/* Mobile Sticky Bottom CTA Dock for selected single job tier */}
-      <div className="fixed inset-x-0 bottom-0 z-sticky border-t border-border bg-card/95 p-3.5 backdrop-blur-md sm:hidden">
-        <Button
-          type="button"
-          variant="checkout"
-          size="lg"
-          className="h-12 w-full rounded-full text-base font-semibold shadow-md"
-          onClick={() => onSelectTier(selectedTier)}
-        >
+      {/* sm:hidden: this page switches to the card grid at sm, not md. */}
+      <StickyCtaBar className="sm:hidden">
+        <Button type="button" variant="checkout" size="xl" onClick={() => onSelectTier(selectedTier)}>
           {ctaText}
         </Button>
-      </div>
+      </StickyCtaBar>
     </>
   )
 }

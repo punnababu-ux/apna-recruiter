@@ -96,14 +96,9 @@ export function FaqSection({ onHelpAndSupport, onShowMore, className }: FaqSecti
           })}
         </Accordion>
 
-        <button
-          type="button"
-          onClick={onShowMore}
-          className="inline-flex items-center gap-1 text-sm text-info underline underline-offset-2"
-        >
+        <Button type="button" variant="link" className="self-start" onClick={onShowMore} trailingIcon={<ChevronDown aria-hidden />}>
           Show more
-          <ChevronDown className="size-5" aria-hidden />
-        </button>
+        </Button>
       </div>
     </div>
   )

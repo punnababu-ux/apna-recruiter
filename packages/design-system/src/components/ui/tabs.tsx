@@ -39,6 +39,10 @@ const tabsListVariants = cva(
         /** White pill with a near-black active chip. Use on gray/tinted canvases
          *  where the default muted pill would be invisible. */
         inverted: "bg-card",
+        /** Self-checkout's look (the plans hero switcher): grey track, white
+         *  pill with a strong inset ring, active label in checkout green.
+         *  Fixed across themes, like the checkout surfaces it sits on. */
+        checkout: "bg-checkout-track",
       },
     },
     defaultVariants: {
@@ -71,6 +75,7 @@ function TabsList({
           "top-(--active-tab-top) left-(--active-tab-left) h-(--active-tab-height) w-(--active-tab-width)",
           "group-data-[variant=default]/tabs-list:rounded-full group-data-[variant=default]/tabs-list:bg-background group-data-[variant=default]/tabs-list:shadow-sm dark:group-data-[variant=default]/tabs-list:border dark:group-data-[variant=default]/tabs-list:border-input dark:group-data-[variant=default]/tabs-list:bg-input/30",
           "group-data-[variant=inverted]/tabs-list:rounded-full group-data-[variant=inverted]/tabs-list:bg-foreground",
+          "group-data-[variant=checkout]/tabs-list:rounded-full group-data-[variant=checkout]/tabs-list:bg-card group-data-[variant=checkout]/tabs-list:inset-ring-1 group-data-[variant=checkout]/tabs-list:inset-ring-border-strong",
           "group-data-[variant=line]/tabs-list:rounded-full group-data-[variant=line]/tabs-list:bg-foreground",
           "group-data-horizontal/tabs:group-data-[variant=line]/tabs-list:top-auto group-data-horizontal/tabs:group-data-[variant=line]/tabs-list:bottom-0 group-data-horizontal/tabs:group-data-[variant=line]/tabs-list:h-0.5",
           "group-data-vertical/tabs:group-data-[variant=line]/tabs-list:left-auto group-data-vertical/tabs:group-data-[variant=line]/tabs-list:right-0 group-data-vertical/tabs:group-data-[variant=line]/tabs-list:w-0.5"
@@ -91,7 +96,9 @@ function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
         // ink either — there is no surface for it to fill.
         "group-data-[variant=line]/tabs-list:px-0 group-data-[variant=line]/tabs-list:before:hidden",
         "group-data-[variant=inverted]/tabs-list:data-active:text-background",
+        "group-data-[variant=checkout]/tabs-list:font-semibold group-data-[variant=checkout]/tabs-list:text-checkout-hero-fg-secondary group-data-[variant=checkout]/tabs-list:not-data-active:hover:text-checkout-hero-fg",
         "data-active:text-foreground dark:data-active:text-foreground",
+        "group-data-[variant=checkout]/tabs-list:data-active:text-checkout-primary dark:group-data-[variant=checkout]/tabs-list:data-active:text-checkout-primary",
         className
       )}
       {...props}

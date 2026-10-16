@@ -404,9 +404,8 @@ function Title(ctx: ScreenCtx) {
           </span>
           <Button
             type="button"
-            variant="link"
-            size="sm"
-            className="h-auto p-0 text-foreground underline"
+            variant="link-inline"
+            className="text-foreground"
             onClick={() => setChangingCompany(true)}
           >
             Change

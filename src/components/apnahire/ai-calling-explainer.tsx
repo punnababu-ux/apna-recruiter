@@ -101,7 +101,8 @@ export function AiCallingExplainer({
         <Button
           type="button"
           variant="checkout"
-          className="h-12 w-full text-base font-semibold"
+          size="xl"
+          className="w-full"
           onClick={() => {
             onCta()
             onOpenChange(false)

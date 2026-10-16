@@ -38,6 +38,7 @@ import * as React from "react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { Coin } from "@/components/ui/coin"
+import { Badge } from "@/components/ui/badge"
 
 export interface BottomNavItem {
   /** If provided, renders an <a> tag via next/link. */
@@ -246,7 +247,7 @@ export function BottomNavMenu({ open, onOpenChange, items, label = "More", clear
                 >
                   <Icon className="size-5" aria-hidden />
                   {item.dot && (
-                    <span className="absolute top-0.5 right-0.5 size-2.5 rounded-full bg-destructive ring-2 ring-card" />
+                    <Badge variant="count" size="dot" className="absolute top-0.5 right-0.5 ring-2 ring-card" />
                   )}
                 </span>
                 <span className="text-xs leading-tight font-medium text-foreground">

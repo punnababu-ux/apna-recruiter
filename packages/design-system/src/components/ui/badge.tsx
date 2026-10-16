@@ -33,6 +33,10 @@ const badgeVariants = cva(
           "bg-checkout-info font-semibold text-checkout-info-foreground",
         discount:
           "bg-checkout-discount-bg font-semibold text-checkout-discount-fg",
+        /* Unread / attention marker on an icon: a solid red count (size
+         * "count") or a bare dot (size "dot"). Ring it in the surface it sits
+         * on (`ring-2 ring-card`) so it cuts out of the icon. */
+        count: "bg-destructive font-semibold text-destructive-foreground",
       },
       size: {
         default: "h-5 px-2 py-0.5 text-xs",
@@ -46,6 +50,8 @@ const badgeVariants = cva(
          * the base's 12px is what the designs draw, and a second !important
          * size here would just fight it. */
         ribbon: "h-5 rounded-none rounded-bl-xl px-4 py-0.5 text-xs",
+        count: "h-4 min-w-4 rounded-full px-1 py-0 text-2xs leading-none",
+        dot: "size-2.5 rounded-full p-0",
       },
     },
     defaultVariants: {

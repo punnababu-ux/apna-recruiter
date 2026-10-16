@@ -127,14 +127,16 @@ export function JobCreditBundles({
               Job credits
             </h2>
           </div>
-          <button
+          <Button
             type="button"
+            variant="link"
+            size="sm"
+            className="shrink-0"
             onClick={onBuySingleCredit}
-            className="flex shrink-0 items-center gap-1 text-xs font-semibold text-checkout-info hover:opacity-80"
+            trailingIcon={<ArrowRight aria-hidden />}
           >
             Buy 1 job credit
-            <ArrowRight className="size-3.5" aria-hidden />
-          </button>
+          </Button>
         </div>
 
         <div className="flex flex-col gap-3">
@@ -186,14 +188,15 @@ export function JobCreditBundles({
               Pick a bundle. Choose the job type later, when you post.
             </p>
           </div>
-          <button
+          <Button
             type="button"
+            variant="link"
+            className="shrink-0"
             onClick={onBuySingleCredit}
-            className="flex shrink-0 items-center gap-1 text-sm font-semibold text-checkout-info hover:opacity-80"
+            trailingIcon={<ArrowRight aria-hidden />}
           >
             I need a single job credit
-            <ArrowRight className="size-5" aria-hidden />
-          </button>
+          </Button>
         </div>
 
         <div className="grid flex-1 grid-cols-1 gap-4 lg:grid-cols-3">

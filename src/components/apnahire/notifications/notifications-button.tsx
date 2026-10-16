@@ -9,7 +9,7 @@
  * recruiter works through it.
  */
 
-import { Bell, Button, Sheet, SheetPanel, SheetTrigger } from "@apna/design-system"
+import { Badge, Bell, Button, Sheet, SheetPanel, SheetTrigger } from "@apna/design-system"
 import { NotificationList } from "@/components/apnahire/notifications/notification-list"
 import { useNotifications } from "@/hooks/apnahire/use-notifications"
 
@@ -30,9 +30,9 @@ export function NotificationsButton() {
       >
         <Bell className="size-4" aria-hidden />
         {unreadCount > 0 && (
-          <span className="absolute -top-1.5 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-2xs leading-none font-semibold text-destructive-foreground ring-2 ring-background">
+          <Badge variant="count" size="count" className="absolute -top-1.5 -right-1.5 ring-2 ring-background">
             {unreadCount}
-          </span>
+          </Badge>
         )}
       </SheetTrigger>
       {/* The app's side panel (SheetPanel), as the order summary uses. */}

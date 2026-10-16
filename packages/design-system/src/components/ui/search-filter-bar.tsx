@@ -135,8 +135,8 @@ export function SearchFilterBar({
               <div className="border-t border-border p-4">
                 <Button
                   type="button"
-                  size="lg"
-                  className="h-12 w-full"
+                  size="xl"
+                  className="w-full"
                   onClick={() => {
                     // Toggle exactly the options whose state changed.
                     filterGroups!.forEach((g) => {

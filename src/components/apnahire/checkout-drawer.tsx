@@ -336,13 +336,9 @@ function CartLineRow({ line, onRemove }: { line: CartLine; onRemove?: () => void
         <div className="flex items-start justify-between gap-3">
           <p className="text-xs text-muted-foreground">{line.sublabel}</p>
           {onRemove && (
-            <button
-              type="button"
-              onClick={onRemove}
-              className="shrink-0 text-xs text-foreground underline underline-offset-2"
-            >
+            <Button type="button" variant="link-inline" size="sm" className="shrink-0 text-foreground" onClick={onRemove}>
               Remove
-            </button>
+            </Button>
           )}
         </div>
       )}
@@ -664,13 +660,15 @@ export function CheckoutDrawer({
                   <p className="text-sm text-foreground">
                     {inr(couponDiscount)} saved with {appliedCoupon}
                   </p>
-                  <button
+                  <Button
                     type="button"
+                    variant="link-inline"
+                    size="sm"
+                    className="self-start text-foreground"
                     onClick={() => setAppliedCoupon(null)}
-                    className="self-start text-xs text-foreground underline underline-offset-2"
                   >
                     Remove
-                  </button>
+                  </Button>
                 </div>
               </div>
               {extraOffer && appliedCoupon === extraOffer.code ? (
@@ -726,13 +724,9 @@ export function CheckoutDrawer({
                       <span className="font-semibold">{inr(c.maxDiscount)}</span> on this purchase
                     </span>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => handleApplyCoupon(c.label)}
-                    className="shrink-0 text-sm font-semibold text-checkout-primary"
-                  >
+                  <Button type="button" variant="link" className="shrink-0" onClick={() => handleApplyCoupon(c.label)}>
                     Apply
-                  </button>
+                  </Button>
                 </div>
               ))}
             </section>
@@ -893,8 +887,8 @@ export function CheckoutDrawer({
 
               <Button
                 variant="checkout"
-                size="lg"
-                className="h-12 w-full text-base font-semibold"
+                size="xl"
+                className="w-full"
                 onClick={() => onProceedToPay(total, lines, paymentMethod)}
               >
                 {appliedCoupon
@@ -926,8 +920,8 @@ export function CheckoutDrawer({
             <>
               <Button
                 variant="checkout"
-                size="lg"
-                className="h-12 w-full text-base font-semibold"
+                size="xl"
+                className="w-full"
                 onClick={() => onProceedToPay(total, lines)}
               >
                 {nothingToPay ? "Post job" : `Proceed to pay ${inr(total)}`}

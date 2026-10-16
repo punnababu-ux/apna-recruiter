@@ -2,8 +2,8 @@
  * Button — base interactive surface.
  *
  * API
- *   <Button variant="default|outline|secondary|ghost|destructive|success|link|checkout|checkout-inset|emphasis"
- *           size="xs|sm|default|lg|icon|icon-xs|icon-sm|icon-lg"
+ *   <Button variant="default|outline|secondary|ghost|destructive|success|link|link-inline|checkout|checkout-inset|emphasis"
+ *           size="xs|sm|default|lg|xl|icon|icon-xs|icon-sm|icon-lg"
  *           leadingIcon={<Plus />}     // optional leading icon
  *           trailingIcon={<ArrowRight />} // optional trailing icon
  *           loading         // shows spinner, disables pointer events
@@ -23,6 +23,19 @@
  * second green button. `emphasis` is only ever a companion: never the only
  * CTA on a screen and never more than one per section; anything less
  * important than that is `outline`.
+ *
+ * Links — two, and only two:
+ *   `link`         a standalone action link: blue, semibold, underlined on
+ *                  hover ("Buy 1 job credit →", "Show more", "Apply",
+ *                  "Clear filters")
+ *   `link-inline`  a link inside running text: the surrounding text's own
+ *                  colour, always underlined ("Need more info?", "Change",
+ *                  "Remove")
+ * Both drop the button's height and padding, so they sit in a line of text.
+ * `size` still sets the text size (sm → 12px, default → 14px).
+ *
+ * `xl` (48px, 16px label) is the full-width primary CTA at the foot of a
+ * panel or sheet: "Proceed to pay", "Apply filters", "Add AI calling".
  *
  * Exception — step-by-step flows (WizardFooter): every step's CTA ("Next",
  * "Get started", "Draft my job") is `emphasis`, even as the screen's only
@@ -65,7 +78,9 @@ const buttonVariants = cva(
         success:
           "bg-success/10 text-success border border-success/30 hover:bg-success/20 hover:border-success/50 focus-visible:border-success/50 focus-visible:ring-success/20 dark:bg-success/20 dark:hover:bg-success/30 dark:focus-visible:ring-success/40",
         // A text link has no surface to fill — no ink, no compression.
-        link: "text-primary underline-offset-4 hover:underline before:hidden active:scale-100",
+        link: "font-semibold text-info underline-offset-4 hover:underline before:hidden active:scale-100",
+        "link-inline":
+          "font-medium text-inherit underline underline-offset-2 hover:opacity-80 before:hidden active:scale-100",
         /* Self-checkout CTAs. `--checkout-primary` is fixed across themes
          * (--primary brightens a step in dark), matching a surface that is
          * deliberately light in both. */
@@ -94,6 +109,7 @@ const buttonVariants = cva(
         xs: "h-6 gap-1 px-2 text-xs font-semibold font-heading in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
         sm: "h-8 gap-1.5 px-2.5 text-xs font-semibold font-heading in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&_svg:not([class*='size-'])]:size-3.5",
         lg: "h-10 gap-2 px-4 text-base font-medium font-heading has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3 [&_svg:not([class*='size-'])]:size-4.5",
+        xl: "h-12 gap-2 px-6 text-base font-semibold font-heading [&_svg:not([class*='size-'])]:size-5",
         icon: "size-9",
         "icon-xs":
           "size-6 in-data-[slot=button-group]:rounded-lg [&_svg:not([class*='size-'])]:size-3",
@@ -102,6 +118,14 @@ const buttonVariants = cva(
         "icon-lg": "size-10",
       },
     },
+    compoundVariants: [
+      {
+        // Links sit in a line of text: no box, whatever the size.
+        variant: ["link", "link-inline"],
+        className: "h-auto gap-1 rounded-sm p-0 has-data-[icon=inline-end]:pr-0 has-data-[icon=inline-start]:pl-0",
+      },
+      { variant: "link-inline", className: "font-medium" },
+    ],
     defaultVariants: {
       variant: "default",
       size: "default",

@@ -34,7 +34,7 @@ import {
   PRICING_TAB_SHORT_LABELS,
   type PricingTab,
 } from "@/components/apnahire/pricing-hero"
-import { Button } from "@apna/design-system"
+import { Button, StickyCtaBar, Tabs, TabsList, TabsTrigger } from "@apna/design-system"
 import {
   JobCreditBundles,
   SINGLE_CREDIT,
@@ -139,24 +139,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   // unrelated re-renders — useHeaderSlot re-publishes whenever it changes.
   const compactTabSwitcher = React.useMemo(
     () => (
-      <div className="flex items-center gap-2 rounded-full border border-border bg-checkout-track p-1">
-        {PRICING_TABS.map((tab) => (
-          <button
-            key={tab.value}
-            type="button"
-            onClick={() => changeTab(tab.value)}
-            className={cn(
-              "inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-semibold transition-colors [&_svg]:size-5",
-              activeTab === tab.value
-                ? "bg-card text-checkout-primary shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-            )}
-          >
-            {tab.icon}
-            {PRICING_TAB_SHORT_LABELS[tab.value]}
-          </button>
-        ))}
-      </div>
+      <CompactPlanTabs value={activeTab} onValueChange={changeTab} />
     ),
     [activeTab, changeTab]
   )
@@ -360,28 +343,11 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
           onBack={() => attemptExit(() => router.push(HOME))}
           backLabel="Back to jobs"
           showCenter={showCompactTabs}
-          // Revealed from lg, not md: with the logo and the full-size
-          // credits pill in the row, four chips no longer fit between
+          // Revealed from lg, not md: with the title and the full-size
+          // credits pill in the row, four tabs no longer fit between
           // them at tablet widths.
           center={
-            <div className="hidden items-center gap-1 rounded-full border border-border bg-muted p-1 lg:flex">
-              {PRICING_TABS.map((tab) => (
-                <button
-                  key={tab.value}
-                  type="button"
-                  onClick={() => changeTab(tab.value)}
-                  className={cn(
-                    "inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-sm font-semibold transition-colors [&_svg]:size-5",
-                    activeTab === tab.value
-                      ? "bg-card text-checkout-primary shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  {tab.icon}
-                  {PRICING_TAB_SHORT_LABELS[tab.value]}
-                </button>
-              ))}
-            </div>
+            <CompactPlanTabs className="hidden lg:flex" value={activeTab} onValueChange={changeTab} />
           }
         />
       )}
@@ -412,12 +378,9 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                     <p className="text-xs text-checkout-hero-fg">
                       1 job credit = 1 classic job ・ 2 credits = 1 premium job ・ 4
                       credits = 1 super premium job.{" "}
-                      <button
-                        type="button"
-                        className="font-semibold underline underline-offset-2"
-                      >
+                      <Button type="button" variant="link-inline" size="sm" className="font-semibold">
                         Need more info?
-                      </button>
+                      </Button>
                     </p>
                   </div>
 
@@ -448,12 +411,9 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                     <p className="text-xs text-checkout-hero-fg">
                       1 job credit = 1 classic job ・ 2 credits = 1 premium job ・ 4
                       credits = 1 super premium job.{" "}
-                      <button
-                        type="button"
-                        className="font-semibold underline underline-offset-2"
-                      >
+                      <Button type="button" variant="link-inline" size="sm" className="font-semibold">
                         Need more info?
-                      </button>
+                      </Button>
                     </p>
                   </div>
 
@@ -544,17 +504,11 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
       {/* Mobile sticky bottom CTA dock: buys the current tab's selection
           (Enterprise: Contact sales). Prices carry the claimed offer, as the
           rows above do. */}
-      <div className="fixed inset-x-0 bottom-0 z-sticky border-t border-border bg-card/95 p-3.5 pb-safe-3.5 backdrop-blur-md md:hidden">
-        <Button
-          type="button"
-          variant="checkout"
-          size="lg"
-          className="h-12 w-full rounded-full text-base font-semibold shadow-md"
-          onClick={handleStickyCtaClick}
-        >
+      <StickyCtaBar>
+        <Button type="button" variant="checkout" size="xl" onClick={handleStickyCtaClick}>
           {stickyCtaLabel}
         </Button>
-      </div>
+      </StickyCtaBar>
 
       <CheckoutDrawer
         open={drawerOpen}
@@ -601,5 +555,33 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
         offer={{ claimed: offer.claimed, onExpireSoon: offer.expireSoon, onReset: offer.reset }}
       />
     </div>
+  )
+}
+
+/** The plan tabs once the hero's switcher scrolls away: in the logged-in
+ *  top bar and the logged-out site header. One control, the system Tabs in
+ *  its checkout look, so both bars match the hero and slide like it. */
+function CompactPlanTabs({
+  value,
+  onValueChange,
+  className,
+}: {
+  value: PricingTab
+  onValueChange: (tab: PricingTab) => void
+  className?: string
+}) {
+  return (
+    <Tabs value={value} onValueChange={(v) => onValueChange(v as PricingTab)} className={className}>
+      <TabsList variant="checkout">
+        {PRICING_TABS.map((tab) => (
+          <TabsTrigger key={tab.value} value={tab.value} className="px-3.5">
+            {React.isValidElement<{ className?: string }>(tab.icon)
+              ? React.cloneElement(tab.icon, { className: "size-5 shrink-0" })
+              : tab.icon}
+            {PRICING_TAB_SHORT_LABELS[tab.value]}
+          </TabsTrigger>
+        ))}
+      </TabsList>
+    </Tabs>
   )
 }
