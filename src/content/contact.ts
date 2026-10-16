@@ -11,7 +11,8 @@ export const CONTACT_ANCHOR = "contact-us"
 
 export const CONTACT = {
   cta: "Contact us",
-  title: "Join over 7 Lakhs+ employers. We're happy to help.",
+  /** Two lines on purpose — the section breaks after the first. */
+  title: ["Join over 7 Lakhs+ employers.", "We're happy to help."],
   steps: [
     "Submit this simple form.",
     "A dedicated talent executive will get back to you shortly.",

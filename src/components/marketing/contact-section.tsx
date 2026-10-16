@@ -32,7 +32,6 @@ import {
   FieldLabel,
   Input,
   Section,
-  SectionHeading,
   Select,
   SelectContent,
   SelectItem,
@@ -75,8 +74,20 @@ export function ContactSection() {
       {/* rounded-3xl: the page's large cards share one corner. Title centred,
           the button under it — the dark emphasis button, like the product
           cards' "Learn more" (green stays with the hero's sign-up). */}
-      <Card padding="lg" className="flex flex-col items-center gap-6 rounded-3xl text-center sm:p-10">
-        <SectionHeading level={2} align="center" title={CONTACT.title} />
+      {/* Frosted, like the header pill: the gradient shows through. */}
+      <Card
+        padding="lg"
+        className="flex flex-col items-center gap-8 rounded-3xl border-card/60 bg-card/60 text-center shadow-card backdrop-blur-xl sm:p-12"
+      >
+        {/* The page's closing line: the h1 type preset (it stays an h2 —
+            the hero owns the h1), broken into its two sentences on purpose. */}
+        <h2 className="text-h1 text-balance text-foreground">
+          {CONTACT.title.map((line) => (
+            <span key={line} className="block">
+              {line}
+            </span>
+          ))}
+        </h2>
         <Button
           variant="emphasis"
           size="lg"
