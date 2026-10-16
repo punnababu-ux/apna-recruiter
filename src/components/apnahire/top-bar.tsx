@@ -72,6 +72,9 @@ export function ApnaHireTopBar({
         // 16px sides on phones (the page's gutter); 12px beside the
         // sidebar trigger from md.
         "sticky top-0 z-sticky flex h-16 items-center gap-1 border-b border-border bg-card px-4 md:px-3",
+        // Phones: no line while a page's first block continues the bar
+        // (useFlushHeader).
+        "max-md:[[data-header-flush]_&]:border-transparent",
         // Drill-downs draw their own header on phones. Hidden, not
         // unmounted: useAppBack keeps tracking in-app navigation.
         isDrillDown(pathname) && "max-md:hidden",

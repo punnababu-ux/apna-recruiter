@@ -46,6 +46,10 @@ export interface SearchFilterBarProps {
    *  which steps aside while you type (a clear ✕ takes its place). Search
    *  and filters always combine: a result must match both. */
   mobileFilters?: "beside" | "inside"
+  /** With mobileFilters="inside", on a white surface (the search band that
+   *  joins the top bar): "filled" makes the field a grey pill and the
+   *  Filters pill white, inverting the default (white field, grey pill). */
+  fieldTone?: "default" | "filled"
   className?: string
 }
 
@@ -56,6 +60,7 @@ export function SearchFilterBar({
   filterGroups,
   onClearFilters,
   mobileFilters = "beside",
+  fieldTone = "default",
   className,
 }: SearchFilterBarProps) {
   const isMobile = useIsMobile()
@@ -84,8 +89,8 @@ export function SearchFilterBar({
   // Phones, inside the field: a grey pill like an unselected chip.
   const pillTrigger = (
     <Button
-      variant="secondary"
-      className="h-full cursor-pointer gap-1.5 rounded-full px-3"
+      variant={fieldTone === "filled" ? "outline" : "secondary"}
+      className={cn("h-full cursor-pointer gap-1.5 rounded-full px-3", fieldTone === "filled" && "bg-card shadow-control")}
       aria-label={activeFilterCount ? `Filters, ${activeFilterCount} applied` : "Filters"}
     >
       <SlidersHorizontal className="size-4" />
@@ -123,6 +128,7 @@ export function SearchFilterBar({
             // the clear ✕ while typing
             // 44px on phones, so the inset pill keeps a full 40px tap target
             inside && "h-11 rounded-full",
+            inside && fieldTone === "filled" && "border-transparent bg-muted",
             inside && (focused ? (value ? "pr-11" : "pr-4") : "pr-32")
           )}
         />

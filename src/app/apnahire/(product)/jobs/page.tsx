@@ -30,6 +30,7 @@ import { MobileChipRow } from "@/components/apnahire/mobile-chip-row"
 import { JobList, STATUS_LABELS, type ApnaJob, type ApnaJobStatus } from "@/components/apnahire/jobs/job-list"
 import { PageHeader } from "@/components/onlyrounds/page-header"
 import { COMPANY_NAME } from "@/lib/apnahire/job-draft"
+import { useFlushHeader } from "@/hooks/use-flush-header"
 
 /** Sample jobs — one per state and per banner, so every case shows. */
 const MOCK: ApnaJob[] = [
@@ -164,6 +165,10 @@ function JobsPageInner() {
   })
   const filtered = matched.filter((j) => tab === "all" || j.status === tab)
 
+  // Phones: while the search band touches the top bar, they read as one
+  // header (no line between them).
+  useFlushHeader()
+
   const clearFilters = () => {
     setCityFilters([])
     setPosterFilters([])
@@ -224,6 +229,10 @@ function JobsPageInner() {
       {/* Search first — it covers every state — then the tabs, whose
           counts show where the matches are. */}
       <div className="flex flex-col gap-3">
+        {/* Phones: the search sits in a white band joined to the top bar
+            (one header: logo row + search). The bar stays pinned; this band
+            scrolls away with the list. */}
+        <div className="max-md:-mx-4 max-md:-mt-4 max-md:border-b max-md:border-border max-md:bg-card max-md:px-4 max-md:pt-1 max-md:pb-3">
         <SearchFilterBar
           className="px-0 pt-0"
           placeholder="Search by job title…"
@@ -246,18 +255,10 @@ function JobsPageInner() {
           onClearFilters={clearFilters}
           // Phones: a pill field with the Filters pill inside it.
           mobileFilters="inside"
+          // On the white band: a grey-filled pill with a white Filters pill.
+          fieldTone="filled"
         />
-        {/* Phones: five tabs don't fit across, so they become self-checkout's
-            scrolling chip row (MobileChipRow, text only). From md: the tab
-            bar. */}
-        <MobileChipRow
-          items={TAB_ORDER.map((t) => ({
-            value: t,
-            label: `${t === "all" ? "All" : STATUS_LABELS[t]} (${counts[t]})`,
-          }))}
-          value={tab}
-          onValueChange={setTab}
-        />
+        </div>
         <div className="hidden md:block">
           <Tabs value={tab} onValueChange={(v) => setTab(v as JobTab)}>
             <TabsList variant="inverted">
@@ -269,6 +270,21 @@ function JobsPageInner() {
             </TabsList>
           </Tabs>
         </div>
+      </div>
+
+      {/* Phones: the state chips, sticky under the pinned logo row as the
+          list scrolls (self-checkout's chip row). A child of the page column,
+          not the search block, so it stays sticky for the whole list. From
+          md: the tab bar above. */}
+      <div className="sticky top-16 z-docked -my-2 bg-muted py-2 md:hidden">
+        <MobileChipRow
+          items={TAB_ORDER.map((t) => ({
+            value: t,
+            label: `${t === "all" ? "All" : STATUS_LABELS[t]} (${counts[t]})`,
+          }))}
+          value={tab}
+          onValueChange={setTab}
+        />
       </div>
 
       <main className="flex-1">
