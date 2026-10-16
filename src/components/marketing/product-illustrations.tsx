@@ -63,11 +63,12 @@ export function IllustrationTile({
   )
 }
 
-const TILE: Record<Product, string> = {
-  "Smart Jobs": "bg-gradient-illustration-sky",
-  "AI Calling Agent": "bg-gradient-illustration-green",
-  "Hyperlocal Database": "bg-gradient-illustration-plum",
-  "apna Unlimited": "bg-gradient-illustration-gold",
+/** Each product's own gradient (the product identity tokens). */
+export const PRODUCT_GRADIENT: Record<Product, string> = {
+  "Smart Jobs": "bg-gradient-product-smart-jobs",
+  "AI Calling Agent": "bg-gradient-product-ai-calling",
+  "Hyperlocal Database": "bg-gradient-product-database",
+  "apna Unlimited": "bg-gradient-product-unlimited",
 }
 
 /** The floating white surface every snippet sits on. */
@@ -212,9 +213,13 @@ const SNIPPETS: Record<Product, () => React.JSX.Element> = {
 export function ProductIllustration({
   product,
   size = "default",
+  bare = false,
   className,
 }: {
   product: Product
+  /** No tile of its own: the snippet alone, for a surface that already
+   *  wears the product's gradient (its product page's hero). */
+  bare?: boolean
   /** The snippet's scale: "default" for the cards, "lg" for a big tile
    *  (the detail rows). Phones keep it at 1×. */
   size?: "default" | "lg"
@@ -224,7 +229,11 @@ export function ProductIllustration({
   return (
     <div
       aria-hidden
-      className={cn("flex items-center justify-center overflow-hidden rounded-xl p-4", TILE[product], className)}
+      className={cn(
+        "flex items-center justify-center overflow-hidden rounded-xl p-4",
+        !bare && PRODUCT_GRADIENT[product],
+        className
+      )}
     >
       <div className={cn(size === "lg" ? "sm:scale-150" : "sm:scale-125")}>
         <Snippet />

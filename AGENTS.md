@@ -344,6 +344,25 @@ To change how round the cards feel, retune `--radius-card` in
 
 ---
 
+## Marketing pages — the visual language
+
+- **Heroes have a chip, not an eyebrow.** The opening band carries the
+  homepage hero's outlined chip (`HeroChip` in
+  `src/components/marketing/page-blocks.tsx`: Badge `lg`, outline, on card,
+  with an icon). `PageHero` and the product hero draw it for you.
+- **Eyebrows below the hero are gray** (`text-overline
+  text-muted-foreground`), never green.
+- **Serif for the editorial voice.** Hero headlines and big section titles
+  use Playfair Display through `SectionHeading voice="editorial"` or the
+  `text-editorial-*` presets; one word may be italic (`<em>`, `withAccent`).
+  Everything else stays Inter. Never the serif in UI (cards, buttons, forms).
+- **Each product owns one gradient** (`bg-gradient-product-*`): Smart Jobs
+  sky, AI Calling Agent green, apna Database plum, apna Unlimited gold. Use
+  it only with that product: its homepage card, its product page hero, its
+  illustration. Company pages (About, Newsroom, Careers, …) use none.
+
+---
+
 ## Text that grows — layouts decide where lines break, not copy
 
 Copy changes: a price gains a digit, a plan gets a longer name, the font

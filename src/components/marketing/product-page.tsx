@@ -28,7 +28,6 @@ import {
   FileText,
   Filter,
   ListChecks,
-  LogoApnaUnlimited,
   MapPin,
   PhoneCall,
   RefreshCw,
@@ -43,8 +42,9 @@ import {
   Zap,
 } from "@apna/design-system"
 import { ContactSection } from "@/components/marketing/contact-section"
-import { HeroBackdrop } from "@/components/marketing/hero-backdrop"
-import { ProductIllustration } from "@/components/marketing/product-illustrations"
+import { HeroChip } from "@/components/marketing/page-blocks"
+import { PRODUCT_GRADIENT, ProductIllustration } from "@/components/marketing/product-illustrations"
+import { cn } from "@/lib/utils"
 import { CONTACT_ANCHOR } from "@/content/contact"
 import type { ProductIconName, ProductPageContent } from "@/content/products"
 
@@ -73,21 +73,21 @@ export function ProductPage({ content }: { content: ProductPageContent }) {
 
   return (
     <>
+      {/* The hero wears the product's own gradient (its homepage card's), so
+          "Learn more" lands on the colour it was clicked from. Starts behind
+          the header and melts into the page at its foot. */}
       <div className="relative isolate">
-        <HeroBackdrop />
+        <div
+          aria-hidden
+          className={cn("absolute inset-x-0 -top-18 bottom-0 -z-10 mask-fade-b", PRODUCT_GRADIENT[product])}
+        />
         <Section size="lg" className="relative max-md:pt-8">
           <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-12">
             <div className="flex flex-col gap-8">
               <SectionHeading
                 level={1}
-                eyebrow={
-                  // apna Unlimited is a brand with its own wordmark.
-                  product === "apna Unlimited" ? (
-                    <LogoApnaUnlimited variant="theme" className="h-5 w-auto text-foreground" />
-                  ) : (
-                    <span className="text-overline text-primary">{eyebrow}</span>
-                  )
-                }
+                voice="editorial"
+                eyebrow={<HeroChip>{eyebrow}</HeroChip>}
                 title={heading}
                 description={description}
               />
@@ -105,7 +105,7 @@ export function ProductPage({ content }: { content: ProductPageContent }) {
                 </Button>
               </div>
             </div>
-            <ProductIllustration product={product} size="lg" className="h-72 rounded-card sm:h-96" />
+            <ProductIllustration product={product} size="lg" bare className="h-72 sm:h-96" />
           </div>
         </Section>
       </div>
@@ -129,7 +129,8 @@ export function ProductPage({ content }: { content: ProductPageContent }) {
             <SectionHeading
               level={2}
               align="center"
-              eyebrow={<span className="text-overline text-primary">{steps.title}</span>}
+              voice="editorial"
+              eyebrow={<span className="text-overline text-muted-foreground">{steps.title}</span>}
               title={steps.heading}
             />
             <ol className="grid gap-6 md:grid-cols-3">
@@ -151,7 +152,7 @@ export function ProductPage({ content }: { content: ProductPageContent }) {
 
       <Section size="md" tone={steps ? "card" : "transparent"}>
         <div className="flex flex-col gap-10">
-          <SectionHeading level={2} align="center" title={features.title} />
+          <SectionHeading level={2} align="center" voice="editorial" title={features.title} />
           <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {features.items.map((feature) => {
               const Icon = ICONS[feature.icon]

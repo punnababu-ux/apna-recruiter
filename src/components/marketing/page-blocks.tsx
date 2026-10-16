@@ -3,8 +3,12 @@
  * Stories): the pieces every one of them repeats, named once so the pages
  * read as one site with the homepage and product pages.
  *
- *   PageHero    the opening band: the living backdrop, eyebrow, h1,
- *               description, optional actions; `children` go under it
+ *   HeroChip    the hero's label: the homepage's outlined chip ("India's
+ *               #1 hiring platform"). RULE: a hero never has an eyebrow,
+ *               it has this chip; sections below keep gray eyebrows.
+ *   PageHero    the opening band: the living backdrop, the chip, the h1 in
+ *               the editorial serif, description, optional actions;
+ *               `children` go under it
  *   StatGrid    numbers over their labels (value first visually, label
  *               first for screen readers)
  *   PersonCard  a leader: initials, name, role, their own words, LinkedIn
@@ -17,14 +21,40 @@ import {
   ArrowUpRight,
   Avatar,
   AvatarFallback,
+  Badge,
   Button,
   Card,
+  CheckCircle2,
   Section,
   SectionHeading,
 } from "@apna/design-system"
 import { HeroBackdrop } from "@/components/marketing/hero-backdrop"
 import type { Person } from "@/content/company"
 import { cn } from "@/lib/utils"
+
+/** Sets one word of a headline in italic (`em`, styled by the editorial
+ *  presets): "…talent and *opportunity*." */
+export function withAccent(text: string, word?: string): ReactNode {
+  if (!word || !text.includes(word)) return text
+  const [before, after] = text.split(word)
+  return (
+    <>
+      {before}
+      <em>{word}</em>
+      {after}
+    </>
+  )
+}
+
+/** The hero's chip — the homepage hero's own (Badge lg, outline, on card). */
+export function HeroChip({ children, icon }: { children: ReactNode; icon?: ReactNode }) {
+  return (
+    <Badge size="lg" variant="outline" className="bg-card">
+      {icon ?? <CheckCircle2 aria-hidden />}
+      {children}
+    </Badge>
+  )
+}
 
 export function PageHero({
   eyebrow,
@@ -33,6 +63,7 @@ export function PageHero({
   actions,
   children,
 }: {
+  /** The chip's label. */
   eyebrow: string
   title: ReactNode
   description?: ReactNode
@@ -48,7 +79,8 @@ export function PageHero({
             <SectionHeading
               level={1}
               align="center"
-              eyebrow={<span className="text-overline text-primary">{eyebrow}</span>}
+              voice="editorial"
+              eyebrow={<HeroChip>{eyebrow}</HeroChip>}
               title={title}
               description={description}
             />

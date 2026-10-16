@@ -164,6 +164,7 @@
   --font-mono:    var(--font-mono);
   --font-display: var(--font-display);
   --font-quote:   var(--font-quote);
+  --font-editorial: var(--font-editorial);
   --font-sans:    var(--font-body); /* backwards-compat alias; prefer font-body */
 
   /* Weight utilities → .font-regular, .font-medium, .font-semibold, .font-bold, .font-extrabold */
@@ -359,6 +360,47 @@
   line-height:     var(--line-height-tight);
   font-weight:     var(--font-weight-extrabold);
   letter-spacing:  var(--letter-spacing-tighter);
+}
+
+/* Editorial presets — Playfair Display, the marketing pages' serif voice
+ * (hero headlines, section titles, pull quotes). Semibold, not extrabold:
+ * a high-contrast serif carries the weight by itself. `em` inside goes
+ * italic, for the one accented word a headline may have.
+ *   text-editorial-display  the page-opening h1 (fluid 40→60px)
+ *   text-editorial-h1       a band's title that should feel big (48px)
+ *   text-editorial-h2       a section title (36px)
+ *   text-editorial-quote    a pull quote (30px, regular, italic-friendly) */
+@utility text-editorial-display {
+  font-family:     var(--font-editorial);
+  font-size:       var(--text-display-fluid);
+  line-height:     var(--line-height-tight);
+  font-weight:     var(--font-weight-semibold);
+  letter-spacing:  var(--letter-spacing-tight);
+  & em { font-style: italic; }
+}
+
+@utility text-editorial-h1 {
+  font-family:     var(--font-editorial);
+  font-size:       var(--text-5xl);
+  line-height:     var(--line-height-tight);
+  font-weight:     var(--font-weight-semibold);
+  letter-spacing:  var(--letter-spacing-tight);
+  & em { font-style: italic; }
+}
+
+@utility text-editorial-h2 {
+  font-family:     var(--font-editorial);
+  font-size:       var(--text-4xl);
+  line-height:     var(--line-height-tight);
+  font-weight:     var(--font-weight-semibold);
+  & em { font-style: italic; }
+}
+
+@utility text-editorial-quote {
+  font-family:     var(--font-editorial);
+  font-size:       var(--text-3xl);
+  line-height:     var(--line-height-snug);
+  font-weight:     var(--font-weight-regular);
 }
 
 @utility text-display {
@@ -1071,6 +1113,23 @@
 }
 @utility bg-gradient-illustration-plum {
   background-image: var(--gradient-illustration-plum);
+}
+@utility bg-gradient-product-smart-jobs {
+  background-image: var(--gradient-product-smart-jobs);
+}
+@utility bg-gradient-product-ai-calling {
+  background-image: var(--gradient-product-ai-calling);
+}
+@utility bg-gradient-product-database {
+  background-image: var(--gradient-product-database);
+}
+@utility bg-gradient-product-unlimited {
+  background-image: var(--gradient-product-unlimited);
+}
+/* Fades a full-bleed band out at its foot, so a product hero's gradient
+ * melts into the page instead of ending on a hard edge. */
+@utility mask-fade-b {
+  mask-image: linear-gradient(to bottom, black 60%, transparent);
 }
 @utility bg-gradient-illustration-gold {
   background-image: var(--gradient-illustration-gold);

@@ -9,6 +9,9 @@
  * its code, since the rendered text reads "0" until they animate. Layout
  * and look are this site's own. "apna" is lower case, as everywhere here.
  *
+ * About overview: the prototype's "Built for every job seeker" block is
+ * left out by design (user call, 2026-10-17): this is the recruiter site.
+ *
  * Customer Stories: the per-company results (PwC, HDFC Bank, …) are the
  * prototype's and have no story pages behind them yet — verify each with
  * the customer before this goes live. Only PwC has a full story (its own
@@ -23,14 +26,10 @@ export const ABOUT_OVERVIEW = {
   },
   eyebrow: "About apna",
   title: "Building the bridge between talent and opportunity.",
+  /** Set in italic in the headline. */
+  titleAccent: "opportunity",
   intro:
     "apna is India’s largest early-talent, AI-first hiring solution, built to solve one of the country’s biggest challenges: connecting people to the right opportunities, at scale.",
-  /** The overview's three big numbers, from its own paragraph below. */
-  stats: [
-    { value: "6 Cr+", label: "Job seekers" },
-    { value: "7 L+", label: "Businesses & enterprises" },
-    { value: "7,200+", label: "Towns & cities" },
-  ],
   founder: {
     eyebrow: "Founded in 2019",
     name: "Nirmit Parikh",
@@ -109,45 +108,6 @@ export const ABOUT_OVERVIEW = {
           tagline: "Safety first, always.",
           description:
             "Rigorous verification protocols and scam-free safeguards protect both sides of the marketplace, built from the ground up for millions of first-time job seekers and the recruiters hiring them.",
-        },
-      ],
-    },
-    {
-      key: "candidates",
-      label: "For job seekers",
-      title: "Built for every job seeker in Bharat.",
-      description:
-        "Tools, opportunities, and support designed to help you find work, prepare better, and get hired with confidence.",
-      items: [
-        {
-          title: "India's largest early-talent marketplace",
-          tagline: "Opportunity, wherever you are.",
-          description:
-            "Access to 1 lakh+ live job opportunities across 900+ cities, from your neighbourhood to your next big move.",
-        },
-        {
-          title: "Hired by recruiters you can trust",
-          tagline: "7L+ organisations. One platform.",
-          description:
-            "From growing startups to large enterprises, 7 lakh+ businesses and enterprises hire directly from apna: real companies, real openings, no middlemen.",
-        },
-        {
-          title: "AI interview preparation",
-          tagline: "Walk in ready, not guessing.",
-          description:
-            "Role-specific, skill-based interview prep helps candidates practise for the exact job they're applying to, building the confidence to perform when it counts.",
-        },
-        {
-          title: "Resumes that get noticed",
-          tagline: "Built to pass the first filter.",
-          description:
-            "An all-in-one resume builder creates polished, ATS-friendly resumes designed to clear automated screening and land in front of the right recruiter.",
-        },
-        {
-          title: "Jobs matched to where you are today",
-          tagline: "Your next role, based on your current one.",
-          description:
-            "By capturing current job title and role details, precision matching surfaces openings that align with real experience and skills, not just keyword guesses.",
         },
       ],
     },

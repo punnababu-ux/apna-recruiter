@@ -1,13 +1,16 @@
 /**
  * /about — Overview. Copy: content/company.ts ABOUT_OVERVIEW.
  *
- *   Hero       the claim and its three numbers, the bridge illustration
- *   Founder    Nirmit's photo, the founding story and his line
- *   Story      four beats (2019 → today), each on its own coloured tile
- *   Mission    the one dark band
- *   Audiences  recruiters / job seekers: an illustration beside the five
- *              offers, each a title + tagline that opens to its detail
- *              (the detail is there on demand, not on the page)
+ *   Hero       the chip, the serif headline, the intro — no numbers
+ *   Founder    the page's centrepiece: Nirmit's portrait beside his line
+ *              in the serif, then the founding story
+ *   Story      the four beats as the homepage's stacking cards
+ *   Mission    a calm serif statement (no dark band)
+ *   Recruiters the offers beside the AI Calling Agent illustration, each
+ *              offer a title + tagline that opens to its detail
+ *
+ * Neutral throughout: product gradients belong to their products, so the
+ * only colour here is the AI Calling Agent's own, on its illustration.
  */
 
 import type { Metadata } from "next"
@@ -17,127 +20,113 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
+  ScrollStack,
+  ScrollStackItem,
   Section,
   SectionHeading,
 } from "@apna/design-system"
-import { BridgeIllustration, SeekerIllustration } from "@/components/marketing/company-illustrations"
 import { ContactSection } from "@/components/marketing/contact-section"
-import { HeroBackdrop } from "@/components/marketing/hero-backdrop"
-import { StatGrid } from "@/components/marketing/page-blocks"
-import { ILLUSTRATION_TONE, ProductIllustration } from "@/components/marketing/product-illustrations"
+import { PageHero, withAccent } from "@/components/marketing/page-blocks"
+import { ProductIllustration } from "@/components/marketing/product-illustrations"
 import { ABOUT_OVERVIEW } from "@/content/company"
-import { cn } from "@/lib/utils"
 
 export const metadata: Metadata = ABOUT_OVERVIEW.meta
 
-const BEAT_TONES = ["sky", "plum", "green", "gold"] as const
-
 export default function AboutPage() {
-  const { eyebrow, title, intro, stats, founder, storyTitle, body, story, mission, audiences } = ABOUT_OVERVIEW
+  const { eyebrow, title, titleAccent, intro, founder, storyTitle, body, story, mission, audiences } = ABOUT_OVERVIEW
+  const recruiters = audiences[0]
   return (
     <>
-      <div className="relative isolate">
-        <HeroBackdrop />
-        <Section size="lg" className="relative max-md:pt-8">
-          <div className="grid items-center gap-12 lg:grid-cols-2">
-            <div className="flex flex-col gap-10">
-              <SectionHeading
-                level={1}
-                eyebrow={<span className="text-overline text-primary">{eyebrow}</span>}
-                title={title}
-                description={intro}
-              />
-              <StatGrid stats={stats} className="grid-cols-3 sm:grid-cols-3" />
-            </div>
-            <BridgeIllustration className="h-80 rounded-card sm:h-112" />
-          </div>
-        </Section>
-      </div>
+      <PageHero eyebrow={eyebrow} title={withAccent(title, titleAccent)} description={intro} />
 
-      {/* The founder, and the story in his words. */}
-      <Section tone="card" size="md">
-        <div className="grid items-center gap-10 md:grid-cols-5 lg:gap-16">
-          <figure className="flex w-full max-w-xs flex-col gap-3 justify-self-center md:col-span-2 md:justify-self-start">
+      {/* The founder: portrait, his line, the story. */}
+      <Section tone="card" size="lg">
+        <div className="grid items-center gap-10 md:grid-cols-12 lg:gap-16">
+          <figure className="relative md:col-span-5">
             <Image
               src={founder.photo}
               alt={founder.name}
-              width={480}
-              height={600}
-              className="aspect-4/5 w-full rounded-card object-cover"
+              width={560}
+              height={700}
+              priority
+              className="aspect-4/5 w-full rounded-card object-cover shadow-elevated"
             />
-            <figcaption className="flex flex-col">
+            {/* The name tag sits on the portrait's foot, like a caption card. */}
+            <figcaption className="absolute inset-x-4 bottom-4 flex flex-col rounded-card-nested bg-card/85 px-4 py-3 shadow-card backdrop-blur-xl">
               <span className="text-base font-semibold text-foreground">{founder.name}</span>
               <span className="text-sm text-muted-foreground">{founder.role}</span>
             </figcaption>
           </figure>
-          <div className="flex flex-col gap-6 md:col-span-3">
-            <span className="text-overline text-primary">{founder.eyebrow}</span>
-            <blockquote className="text-h2 text-balance text-foreground">&ldquo;{founder.quote}&rdquo;</blockquote>
+          <div className="flex flex-col gap-8 md:col-span-7">
+            <span className="text-overline text-muted-foreground">{founder.eyebrow}</span>
+            <blockquote className="text-editorial-h1 text-balance text-foreground">
+              &ldquo;{withAccent(founder.quote, "opportunity")}&rdquo;
+            </blockquote>
             <p className="text-lead text-pretty text-muted-foreground">{body}</p>
           </div>
         </div>
       </Section>
 
-      {/* The story: four beats, each on its own tile. */}
+      {/* How we got here: the homepage's stacking cards, one beat each. */}
       <Section size="md">
         <div className="flex flex-col gap-10">
-          <SectionHeading level={2} align="center" title={storyTitle} />
-          <ol className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <SectionHeading level={2} align="center" voice="editorial" title={storyTitle} />
+          <ScrollStack>
             {story.map((beat, i) => (
-              <li key={beat.marker} className="flex flex-col gap-4">
-                <div
-                  className={cn(
-                    "flex min-h-56 flex-col justify-between gap-6 rounded-card p-6",
-                    ILLUSTRATION_TONE[BEAT_TONES[i]]
-                  )}
-                >
-                  <span className="font-heading text-display font-semibold text-foreground">{beat.marker}</span>
-                  <h3 className="text-h6 text-balance text-foreground">{beat.title}</h3>
+              <ScrollStackItem key={beat.marker} className="grid gap-2 p-2 lg:grid-cols-5">
+                <div className="flex min-h-40 items-end rounded-card-nested bg-muted p-6 lg:col-span-2 lg:min-h-80 lg:p-8">
+                  <span className="text-editorial-display text-foreground">{beat.marker}</span>
                 </div>
-                <p className="text-sm text-muted-foreground">{beat.description}</p>
-              </li>
+                <div className="flex flex-col justify-center gap-4 p-4 sm:p-6 lg:col-span-3 lg:p-10">
+                  <span className="text-overline text-muted-foreground tabular-nums">
+                    {String(i + 1).padStart(2, "0")} / {String(story.length).padStart(2, "0")}
+                  </span>
+                  <h3 className="text-h3 text-balance text-foreground">{beat.title}</h3>
+                  <p className="text-lead text-pretty text-muted-foreground">{beat.description}</p>
+                </div>
+              </ScrollStackItem>
             ))}
-          </ol>
+          </ScrollStack>
         </div>
       </Section>
 
-      <Section tone="ink" size="lg">
-        <SectionHeading level={2} align="center" title={mission.title} description={mission.description} />
+      <Section size="md">
+        <SectionHeading
+          level={2}
+          align="center"
+          voice="editorial"
+          title={mission.title}
+          description={mission.description}
+        />
       </Section>
 
-      {/* Who we build for: illustration beside the offers, sides alternating. */}
-      {audiences.map((audience, i) => (
-        <Section key={audience.key} tone={i % 2 ? "transparent" : "card"} size="md">
-          <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-            <div className={cn("flex flex-col gap-8", i % 2 && "lg:order-last")}>
-              <SectionHeading
-                level={2}
-                eyebrow={<span className="text-overline text-primary">{audience.label}</span>}
-                title={audience.title}
-                description={audience.description}
-              />
-              <Accordion defaultValue={[audience.items[0].title]} className="border-t border-border">
-                {audience.items.map((item) => (
-                  <AccordionItem key={item.title} value={item.title} className="border-b border-border">
-                    <AccordionTrigger className="py-4 hover:no-underline">
-                      <span className="flex flex-col gap-0.5">
-                        <span className="text-base font-semibold text-foreground">{item.title}</span>
-                        <span className="text-sm font-regular text-primary">{item.tagline}</span>
-                      </span>
-                    </AccordionTrigger>
-                    <AccordionContent className="pb-4 text-muted-foreground">{item.description}</AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </div>
-            {audience.key === "recruiters" ? (
-              <ProductIllustration product="AI Calling Agent" size="lg" className="h-80 rounded-card sm:h-112" />
-            ) : (
-              <SeekerIllustration className="h-80 rounded-card sm:h-112" />
-            )}
+      <Section tone="card" size="md">
+        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+          <div className="flex flex-col gap-8">
+            <SectionHeading
+              level={2}
+              voice="editorial"
+              eyebrow={<span className="text-overline text-muted-foreground">{recruiters.label}</span>}
+              title={recruiters.title}
+              description={recruiters.description}
+            />
+            <Accordion defaultValue={[recruiters.items[0].title]} className="border-t border-border">
+              {recruiters.items.map((item) => (
+                <AccordionItem key={item.title} value={item.title} className="border-b border-border">
+                  <AccordionTrigger className="py-4 hover:no-underline">
+                    <span className="flex flex-col gap-0.5">
+                      <span className="text-base font-semibold text-foreground">{item.title}</span>
+                      <span className="text-sm font-regular text-muted-foreground">{item.tagline}</span>
+                    </span>
+                  </AccordionTrigger>
+                  <AccordionContent className="pb-4 text-muted-foreground">{item.description}</AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
           </div>
-        </Section>
-      ))}
+          <ProductIllustration product="AI Calling Agent" size="lg" className="h-80 rounded-card sm:h-112" />
+        </div>
+      </Section>
 
       <ContactSection />
     </>

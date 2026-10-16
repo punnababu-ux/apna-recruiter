@@ -20,6 +20,14 @@ const TITLE_PRESET = {
   3: "text-h3",
 } as const
 
+/** The editorial voice (Playfair Display): the marketing pages' serif
+ *  headlines. Level 3 stays sans — at that size the serif reads as fussy. */
+const EDITORIAL_PRESET = {
+  1: "text-editorial-display",
+  2: "text-editorial-h2",
+  3: "text-h3",
+} as const
+
 export interface SectionHeadingProps
   extends Omit<React.ComponentProps<"header">, "title"> {
   /** Small label above the title — a `<Badge size="lg">` or plain text. */
@@ -31,6 +39,9 @@ export interface SectionHeadingProps
   align?: "start" | "center"
   /** Heading level. Also picks the type preset: 1 is the page-opening size. */
   level?: 1 | 2 | 3
+  /** "editorial" sets the title in the serif (text-editorial-*). Weight
+   *  comes from the preset, so the default semibold is dropped. */
+  voice?: "default" | "editorial"
 }
 
 function SectionHeading({
@@ -41,6 +52,7 @@ function SectionHeading({
   actions,
   align = "start",
   level = 2,
+  voice = "default",
   ...props
 }: SectionHeadingProps) {
   const Title = `h${level}` as const
@@ -62,7 +74,10 @@ function SectionHeading({
 
         <Title
           data-slot="section-heading-title"
-          className={cn(TITLE_PRESET[level], "font-semibold text-balance")}
+          className={cn(
+            voice === "editorial" ? EDITORIAL_PRESET[level] : [TITLE_PRESET[level], "font-semibold"],
+            "text-balance"
+          )}
         >
           {title}
         </Title>
