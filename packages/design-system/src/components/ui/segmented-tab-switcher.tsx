@@ -106,7 +106,7 @@ const APPEARANCES = {
     active: "text-checkout-primary",
     inactive: "text-checkout-hero-fg-secondary",
     muted: "text-checkout-hero-fg-secondary",
-    activeItem: "bg-card inset-ring-1 inset-ring-border-strong shadow-none",
+    activeItem: "bg-card inset-ring-1 inset-ring-border shadow-none",
   },
 } as const
 
@@ -224,10 +224,10 @@ export function SegmentedTabSwitcher<V extends string = string>({
           <span
             ref={mobilePillRef}
             aria-hidden
-            // The ring (--border-strong) keeps the white selected chip
+            // The ring (--border) keeps the white selected chip
             // visible on a white surface (a card, a panel), not just on a
             // grey one; the shadow alone vanished there.
-            className="sliding-indicator rounded-full bg-card shadow-card inset-ring-1 inset-ring-border-strong"
+            className="sliding-indicator rounded-full bg-card shadow-card inset-ring-1 inset-ring-border"
           />
           {items.map(({ value: v, label, shortLabel, icon }) => {
             const active = v === value
