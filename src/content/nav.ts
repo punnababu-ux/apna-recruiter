@@ -176,6 +176,10 @@ export const MAIN_NAV: NavGroup[] = [
     ],
   },
   { label: "Customer Stories", href: "/customer-stories" },
+  // Not in the prototype's nav, but the logged-out pricing page is the way
+  // into checkout — it stays one click from every page (user call,
+  // 2026-10-16).
+  { label: "Pricing", href: "/pricing" },
 ]
 
 /** The candidate ingress — kept after the prototype's menus (user call,
