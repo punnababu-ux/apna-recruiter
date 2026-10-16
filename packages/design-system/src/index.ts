@@ -39,6 +39,7 @@ export * from "./components/ui/metric-card"
 
 // 4. Navigation
 export * from "./components/ui/tabs"
+export * from "./components/ui/story-tabs"
 export * from "./components/ui/chip-tabs"
 export * from "./components/ui/segmented-tab-switcher"
 export * from "./components/ui/breadcrumb"

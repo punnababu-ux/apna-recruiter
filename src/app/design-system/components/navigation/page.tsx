@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import {
+  StoryTabs,
   Tabs,
   TabsList,
   TabsTrigger,
@@ -160,6 +161,26 @@ export default function NavigationComponentsPage() {
           ]}
           value={activeChip}
           onValueChange={setActiveChip}
+        />
+      </div>
+
+      {/* StoryTabs */}
+      <div className="rounded-xl border border-border bg-card p-6 space-y-4">
+        <h2 className="text-base font-semibold text-foreground font-heading border-b border-border/60 pb-2">
+          Story Tabs (auto-advancing)
+        </h2>
+        <StoryTabs
+          label="Demo stories"
+          items={[
+            { value: "post", title: "Post a job", description: "Live in minutes", details: <p className="text-sm text-muted-foreground">Each tab gets one turn of the bar.</p> },
+            { value: "screen", title: "AI screening", description: "Calls every applicant" },
+            { value: "hire", title: "Hire", description: "Interview the shortlist" },
+          ]}
+          renderPanel={(value) => (
+            <div className="flex h-48 items-center justify-center rounded-lg bg-muted text-sm text-muted-foreground lg:h-full">
+              Panel: {value}
+            </div>
+          )}
         />
       </div>
 

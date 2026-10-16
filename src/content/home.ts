@@ -55,7 +55,8 @@ export const HOME_TRUSTED_BY = {
 }
 
 /**
- * Product offerings grid. Requested "like" a competitor's (Naukri's)
+ * The hiring suite: the four products, as the showcase's tabs (name,
+ * tagline, icon). Originally a product offerings grid, requested "like" a competitor's (Naukri's)
  * equivalent section — its 2×3 illustrated-card layout is the reference for
  * STRUCTURE only. Two deliberate departures, not oversights:
  *   - 4 cards, not 6: apna's real product lineup (nav.ts PRODUCT_LINKS),
@@ -97,10 +98,10 @@ export interface ProductDetailRow {
 }
 
 /**
- * Product suite — alternating detail rows, one per product, below the
- * compact grid above (both stay; the grid is the overview, this is the
- * detail). Modeled on gomotive.com's per-product layout, per the approved
- * wireframe (2026-09-28).
+ * Product suite detail — one entry per product: the heading and two
+ * features the showcase (ProductShowcase) opens under the active product.
+ * (These were alternating rows under a card grid until 2026-10-16, when
+ * both became one interactive showcase.)
  *
  * Smart Jobs, AI Calling Agent and Hyperlocal Database: eyebrow, heading
  * and every feature title/description below are verbatim from
@@ -117,12 +118,8 @@ export interface ProductDetailRow {
  * `unlimited-side-card.tsx` and `subscription-plans.tsx` — rather than
  * written fresh for this section.
  *
- * The media side of every row is a placeholder (a tinted icon panel, same
- * visual language as the grid cards above) standing in for a real product
- * screenshot or recording — explicit product-owner call, 2026-09-28, since
- * no such asset exists in this repo yet. Swap `HomeProductRows`' media slot
- * for a real image/video per product once one is supplied; nothing here
- * should be mistaken for the real thing.
+ * The media side is a scripted demo per product (showcase-demos.tsx),
+ * built from design-system parts — illustrative, not real data.
  */
 export const HOME_PRODUCT_DETAILS: ProductDetailRow[] = [
   {

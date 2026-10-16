@@ -828,6 +828,25 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
+/* StoryTabs' turn bar: fills left → right over --duration-story; its end
+ * advances the tabs. Pauses with the showcase; under reduced motion it
+ * doesn't run at all, so nothing advances on its own. */
+@keyframes story-progress {
+  from { scale: 0 1; }
+  to   { scale: 1 1; }
+}
+@utility animate-story-progress {
+  transform-origin: left;
+  animation: story-progress var(--duration-story) linear forwards;
+
+  [data-story-paused] & { animation-play-state: paused; }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    scale: 0 1;
+  }
+}
+
 /* An unread dot's ping: a ring that grows from the dot and fades, three
  * times when it appears, then the dot rests. Three, not forever: a list of
  * cards can carry many dots, and a field of endless pulses reads as noise.
