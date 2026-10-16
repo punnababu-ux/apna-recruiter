@@ -55,48 +55,75 @@ type Filter = (typeof PRESS.filters)[number]
 
 export function PressList() {
   const [filter, setFilter] = React.useState<Filter>("2026")
-  const items = PRESS.items.filter((item) =>
-    filter === "Earlier" ? !PRESS.filters.includes(item.year as Filter) : item.year === filter
-  )
+  const inFilter = (year: string, f: Filter) =>
+    f === "Earlier" ? !PRESS.filters.includes(year as Filter) : year === f
+  const items = PRESS.items.filter((item) => inFilter(item.year, filter))
+  const [lead, ...rest] = items
+
   return (
     <div className="flex w-full flex-col gap-8">
       <ChipTabs
         aria-label="Year"
-        className="self-start"
-        items={PRESS.filters.map((f) => ({ value: f, label: f, count: PRESS.items.filter((i) => (f === "Earlier" ? !PRESS.filters.includes(i.year as Filter) : i.year === f)).length }))}
+        className="self-center"
+        items={PRESS.filters.map((f) => ({
+          value: f,
+          label: f,
+          count: PRESS.items.filter((i) => inFilter(i.year, f)).length,
+        }))}
         value={filter}
         onValueChange={setFilter}
       />
-      <ul className="flex flex-col divide-y divide-border border-y border-border">
-        {items.map((item) => (
-          <li key={item.url + item.title}>
-            <a
-              href={item.url}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="group flex items-start gap-4 py-5 sm:items-center sm:gap-8"
-            >
-              {/* Phones: the date joins the outlet line under the headline. */}
-              <span className="hidden w-24 shrink-0 text-sm whitespace-nowrap text-muted-foreground tabular-nums sm:block">
-                {item.date}
-              </span>
-              <span className="flex min-w-0 flex-1 flex-col gap-1">
-                <span className="text-base font-semibold text-pretty text-foreground group-hover:text-primary">
-                  {item.title}
-                </span>
-                <span className="text-sm text-muted-foreground">
-                  {item.source}
-                  <span className="sm:hidden"> · {item.date}</span>
-                </span>
-              </span>
-              <ArrowUpRight
-                className="mt-0.5 size-5 shrink-0 text-muted-foreground transition-interactive group-hover:text-primary"
-                aria-hidden
-              />
-            </a>
-          </li>
-        ))}
-      </ul>
+
+      {/* The year's most recent story, large. */}
+      {lead && (
+        <a href={lead.url} target="_blank" rel="noreferrer noopener" className="group">
+          <Card
+            padding="lg"
+            interactive
+            className="gap-4 border-card/60 bg-card/80 shadow-card backdrop-blur-xl sm:p-10"
+          >
+            <span className="text-overline text-muted-foreground tabular-nums">
+              {lead.source} · {lead.date}
+            </span>
+            <h3 className="max-w-3xl text-h3 text-balance text-foreground sm:text-h2">{lead.title}</h3>
+            <span className="flex items-center gap-1 text-sm font-semibold text-foreground">
+              Read the story
+              <ArrowUpRight className="size-4 transition-interactive group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden />
+            </span>
+          </Card>
+        </a>
+      )}
+
+      {/* The rest of the year: one card of rows. */}
+      {rest.length > 0 && (
+        <Card padding="none" className="border-card/60 bg-card/80 shadow-card backdrop-blur-xl">
+          <ul className="flex flex-col divide-y divide-border">
+            {rest.map((item) => (
+              <li key={item.url + item.title}>
+                <a
+                  href={item.url}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="group ink relative flex items-start gap-4 px-5 py-5 transition-interactive hover:bg-muted sm:items-center sm:gap-8 sm:px-8"
+                >
+                  {/* Phones: the date joins the outlet line under the headline. */}
+                  <span className="hidden w-24 shrink-0 text-sm whitespace-nowrap text-muted-foreground tabular-nums sm:block">
+                    {item.date}
+                  </span>
+                  <span className="flex min-w-0 flex-1 flex-col gap-1">
+                    <span className="text-base font-semibold text-pretty text-foreground">{item.title}</span>
+                    <span className="text-sm text-muted-foreground">
+                      {item.source}
+                      <span className="sm:hidden"> · {item.date}</span>
+                    </span>
+                  </span>
+                  <ArrowUpRight className="mt-0.5 size-5 shrink-0 text-muted-foreground" aria-hidden />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
     </div>
   )
 }

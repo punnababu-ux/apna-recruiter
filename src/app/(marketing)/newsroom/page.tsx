@@ -1,4 +1,8 @@
-/** /newsroom — Press releases and coverage. Copy: content/press.ts. */
+/**
+ * /newsroom — Press releases and coverage. Copy: content/press.ts (Lovable
+ * "Press Releases"). Year tabs; the year's latest story as a large card,
+ * the rest as rows in one card, on a mother-gradient band.
+ */
 
 import type { Metadata } from "next"
 import { Section } from "@apna/design-system"
@@ -13,7 +17,7 @@ export default function NewsroomPage() {
   return (
     <>
       <PageHero eyebrow={PRESS.eyebrow} title={PRESS.title} description={PRESS.description} />
-      <Section tone="card" size="md" width="narrow">
+      <Section size="lg" className="bg-gradient-checkout-hero">
         <PressList />
       </Section>
       <ContactSection />
