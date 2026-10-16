@@ -41,6 +41,10 @@ export interface SearchFilterBarProps {
   filterGroups?: FilterGroup[]
   /** Called by "Clear filters" (popover and sheet). */
   onClearFilters?: () => void
+  /** false: no Filters button beside the search on phones (< md) — the
+   *  page puts a FilterControl chip elsewhere (e.g. pinned in its chip
+   *  row). From md the button stays beside the search. */
+  mobileFilters?: boolean
   className?: string
 }
 
@@ -50,37 +54,17 @@ export function SearchFilterBar({
   onChange,
   filterGroups,
   onClearFilters,
+  mobileFilters = true,
   className,
 }: SearchFilterBarProps) {
-  const isMobile = useIsMobile()
-  const [sheetOpen, setSheetOpen] = React.useState(false)
-  // The sheet's staged picks, by group label; committed on Apply.
-  const [draft, setDraft] = React.useState<Record<string, string[]>>({})
-  const activeFilterCount =
-    filterGroups?.reduce((sum, g) => sum + g.selected.length, 0) ?? 0
   const hasFilters = (filterGroups?.length ?? 0) > 0
-
-  const trigger = (
-    // The search field's 40px height, with a 14px label.
-    <Button variant="outline" className="h-10 gap-1.5 cursor-pointer">
-      <SlidersHorizontal className="size-4" />
-      <span>Filters</span>
-      {activeFilterCount > 0 && (
-        <Badge variant="success" className="ml-1 h-5 min-w-5 px-1.5 text-2xs">
-          {activeFilterCount}
-        </Badge>
-      )}
-    </Button>
-  )
-
   return (
     <div className={cn("flex items-center gap-3", className)}>
       {/* Search Input */}
       <div className="relative flex-1">
         <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
         {/* Input's own default size: 40px, 16px text on phones (iOS
-            Safari zooms into a field under 16px), 14px from md. It was
-            forced to 36px / 12px here. */}
+            Safari zooms into a field under 16px), 14px from md. */}
         <Input
           placeholder={placeholder}
           value={value}
@@ -88,12 +72,63 @@ export function SearchFilterBar({
           className="bg-card pl-9"
         />
       </div>
+      {hasFilters && (
+        <FilterControl groups={filterGroups!} onClear={onClearFilters} className={mobileFilters ? undefined : "max-md:hidden"} />
+      )}
+    </div>
+  )
+}
 
-      {hasFilters && isMobile && (
+/**
+ * FilterControl — the Filters trigger and what it opens: a popover from md,
+ * a bottom sheet on phones (staged picks, "Apply filters", "Clear filters").
+ * SearchFilterBar uses it beside the search; a page can place it on its own
+ * (`variant="chip"`: a 32px pill for a chip row, e.g. pinned at its end).
+ */
+export function FilterControl({
+  groups,
+  onClear,
+  variant = "button",
+  className,
+}: {
+  groups: FilterGroup[]
+  onClear?: () => void
+  variant?: "button" | "chip"
+  className?: string
+}) {
+  const isMobile = useIsMobile()
+  const [sheetOpen, setSheetOpen] = React.useState(false)
+  // The sheet's staged picks, by group label; committed on Apply.
+  const [draft, setDraft] = React.useState<Record<string, string[]>>({})
+  const activeFilterCount = groups.reduce((sum, g) => sum + g.selected.length, 0)
+
+  const trigger = (
+    <Button
+      variant="outline"
+      className={cn(
+        "cursor-pointer gap-1.5",
+        // button: the search field's 40px height · chip: a chip row's 32px pill
+        variant === "chip" ? "h-8 rounded-full px-3" : "h-10"
+      )}
+      aria-label={activeFilterCount ? `Filters, ${activeFilterCount} applied` : "Filters"}
+    >
+      <SlidersHorizontal className="size-4" />
+      <span>Filters</span>
+      {activeFilterCount > 0 && (
+        <Badge variant="success" className="ml-0.5 h-5 min-w-5 px-1.5 text-2xs">
+          {activeFilterCount}
+        </Badge>
+      )}
+    </Button>
+  )
+
+  return (
+    <div className={cn("flex shrink-0", className)}>
+      {isMobile && (
         <>
           {React.cloneElement(trigger, {
             onClick: () => {
-              setDraft(Object.fromEntries(filterGroups!.map((g) => [g.label, g.selected])))
+              setDraft(Object.fromEntries(groups.map((g) => [g.label, g.selected])))
               setSheetOpen(true)
             },
           })}
@@ -106,7 +141,7 @@ export function SearchFilterBar({
                   type="button"
                   variant="link"
                   onClick={() => {
-                    onClearFilters?.()
+                    onClear?.()
                     setSheetOpen(false)
                   }}
                   disabled={activeFilterCount === 0 && Object.values(draft).every((d) => d.length === 0)}
@@ -118,7 +153,7 @@ export function SearchFilterBar({
               <div className="min-h-0 flex-1 overflow-y-auto">
                 <FilterGroups
                   touch
-                  groups={filterGroups!.map((g) => {
+                  groups={groups.map((g) => {
                     const selected = draft[g.label] ?? g.selected
                     return {
                       ...g,
@@ -139,7 +174,7 @@ export function SearchFilterBar({
                   className="w-full"
                   onClick={() => {
                     // Toggle exactly the options whose state changed.
-                    filterGroups!.forEach((g) => {
+                    groups.forEach((g) => {
                       const next = draft[g.label] ?? g.selected
                       g.options.forEach((opt) => {
                         if (next.includes(opt) !== g.selected.includes(opt)) g.onToggle(opt)
@@ -156,7 +191,7 @@ export function SearchFilterBar({
         </>
       )}
 
-      {hasFilters && !isMobile && (
+      {!isMobile && (
         <Popover>
           <PopoverTrigger render={trigger} />
           <PopoverContent align="end" className="w-64 p-0">
@@ -166,14 +201,14 @@ export function SearchFilterBar({
                 type="button"
                 variant="ghost"
                 size="sm"
-                onClick={onClearFilters}
+                onClick={onClear}
                 disabled={activeFilterCount === 0}
                 className="h-6 px-1.5 text-2xs cursor-pointer"
               >
                 Clear filters
               </Button>
             </div>
-            <FilterGroups groups={filterGroups!} />
+            <FilterGroups groups={groups} />
           </PopoverContent>
         </Popover>
       )}
