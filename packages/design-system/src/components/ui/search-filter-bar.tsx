@@ -41,11 +41,6 @@ export interface SearchFilterBarProps {
   filterGroups?: FilterGroup[]
   /** Called by "Clear filters" (popover and sheet). */
   onClearFilters?: () => void
-  /** Where Filters sits on phones (< md): "beside" the search (a button),
-   *  "inside" it (an icon at the field's end, with the applied count), or
-   *  "none" (the page places a FilterControl itself). From md it's always
-   *  the button beside the search. */
-  mobileFilters?: "beside" | "inside" | "none"
   className?: string
 }
 
@@ -55,108 +50,50 @@ export function SearchFilterBar({
   onChange,
   filterGroups,
   onClearFilters,
-  mobileFilters = "beside",
   className,
 }: SearchFilterBarProps) {
+  const isMobile = useIsMobile()
+  const [sheetOpen, setSheetOpen] = React.useState(false)
+  // The sheet's staged picks, by group label; committed on Apply.
+  const [draft, setDraft] = React.useState<Record<string, string[]>>({})
+  const activeFilterCount =
+    filterGroups?.reduce((sum, g) => sum + g.selected.length, 0) ?? 0
   const hasFilters = (filterGroups?.length ?? 0) > 0
-  const inside = hasFilters && mobileFilters === "inside"
+
+  const trigger = (
+    // The search field's 40px height, with a 14px label.
+    <Button variant="outline" className="h-10 gap-1.5 cursor-pointer">
+      <SlidersHorizontal className="size-4" />
+      <span>Filters</span>
+      {activeFilterCount > 0 && (
+        <Badge variant="success" className="ml-1 h-5 min-w-5 px-1.5 text-2xs">
+          {activeFilterCount}
+        </Badge>
+      )}
+    </Button>
+  )
+
   return (
     <div className={cn("flex items-center gap-3", className)}>
       {/* Search Input */}
       <div className="relative flex-1">
         <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
         {/* Input's own default size: 40px, 16px text on phones (iOS
-            Safari zooms into a field under 16px), 14px from md. */}
+            Safari zooms into a field under 16px), 14px from md. It was
+            forced to 36px / 12px here. */}
         <Input
           placeholder={placeholder}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className={cn("bg-card pl-9", inside && "max-md:pr-11")}
+          className="bg-card pl-9"
         />
-        {inside && (
-          <FilterControl
-            variant="icon"
-            groups={filterGroups!}
-            onClear={onClearFilters}
-            className="absolute top-1/2 right-1 -translate-y-1/2 md:hidden"
-          />
-        )}
       </div>
-      {hasFilters && (
-        <FilterControl
-          groups={filterGroups!}
-          onClear={onClearFilters}
-          className={mobileFilters === "beside" ? undefined : "max-md:hidden"}
-        />
-      )}
-    </div>
-  )
-}
 
-/**
- * FilterControl — the Filters trigger and what it opens: a popover from md,
- * a bottom sheet on phones (staged picks, "Apply filters", "Clear filters").
- * SearchFilterBar uses it beside the search (or, on phones, inside it as
- * `variant="icon"`: a boxed, slightly raised icon button at the field's
- * end with the applied count); a page can place it on its own (`variant="chip"`: a 32px pill).
- */
-export function FilterControl({
-  groups,
-  onClear,
-  variant = "button",
-  className,
-}: {
-  groups: FilterGroup[]
-  onClear?: () => void
-  variant?: "button" | "chip" | "icon"
-  className?: string
-}) {
-  const isMobile = useIsMobile()
-  const [sheetOpen, setSheetOpen] = React.useState(false)
-  // The sheet's staged picks, by group label; committed on Apply.
-  const [draft, setDraft] = React.useState<Record<string, string[]>>({})
-  const activeFilterCount = groups.reduce((sum, g) => sum + g.selected.length, 0)
-
-  const label = activeFilterCount ? `Filters, ${activeFilterCount} applied` : "Filters"
-  const trigger =
-    variant === "icon" ? (
-      // A boxed, slightly raised button inside the field, so it reads as a
-      // control rather than part of the text.
-      <Button variant="outline" size="icon-sm" className="relative cursor-pointer bg-card text-foreground shadow-card" aria-label={label}>
-        <SlidersHorizontal className="size-4" />
-        {activeFilterCount > 0 && (
-          <Badge variant="count" size="count" className="absolute -top-0.5 -right-0.5 ring-2 ring-card">
-            {activeFilterCount}
-          </Badge>
-        )}
-      </Button>
-    ) : (
-      <Button
-        variant="outline"
-        className={cn(
-          "cursor-pointer gap-1.5",
-          // button: the search field's 40px height · chip: a chip row's 32px pill
-          variant === "chip" ? "h-8 rounded-full px-3" : "h-10"
-        )}
-        aria-label={label}
-      >
-        <SlidersHorizontal className="size-4" />
-        <span>Filters</span>
-        {activeFilterCount > 0 && (
-          <Badge variant="success" className="ml-0.5 h-5 min-w-5 px-1.5 text-2xs">
-            {activeFilterCount}
-          </Badge>
-        )}
-      </Button>
-    )
-
-  return (
-    <div className={cn("flex shrink-0", className)}>
-      {isMobile && (
+      {hasFilters && isMobile && (
         <>
           {React.cloneElement(trigger, {
             onClick: () => {
-              setDraft(Object.fromEntries(groups.map((g) => [g.label, g.selected])))
+              setDraft(Object.fromEntries(filterGroups!.map((g) => [g.label, g.selected])))
               setSheetOpen(true)
             },
           })}
@@ -169,7 +106,7 @@ export function FilterControl({
                   type="button"
                   variant="link"
                   onClick={() => {
-                    onClear?.()
+                    onClearFilters?.()
                     setSheetOpen(false)
                   }}
                   disabled={activeFilterCount === 0 && Object.values(draft).every((d) => d.length === 0)}
@@ -181,7 +118,7 @@ export function FilterControl({
               <div className="min-h-0 flex-1 overflow-y-auto">
                 <FilterGroups
                   touch
-                  groups={groups.map((g) => {
+                  groups={filterGroups!.map((g) => {
                     const selected = draft[g.label] ?? g.selected
                     return {
                       ...g,
@@ -202,7 +139,7 @@ export function FilterControl({
                   className="w-full"
                   onClick={() => {
                     // Toggle exactly the options whose state changed.
-                    groups.forEach((g) => {
+                    filterGroups!.forEach((g) => {
                       const next = draft[g.label] ?? g.selected
                       g.options.forEach((opt) => {
                         if (next.includes(opt) !== g.selected.includes(opt)) g.onToggle(opt)
@@ -219,7 +156,7 @@ export function FilterControl({
         </>
       )}
 
-      {!isMobile && (
+      {hasFilters && !isMobile && (
         <Popover>
           <PopoverTrigger render={trigger} />
           <PopoverContent align="end" className="w-64 p-0">
@@ -229,14 +166,14 @@ export function FilterControl({
                 type="button"
                 variant="ghost"
                 size="sm"
-                onClick={onClear}
+                onClick={onClearFilters}
                 disabled={activeFilterCount === 0}
                 className="h-6 px-1.5 text-2xs cursor-pointer"
               >
                 Clear filters
               </Button>
             </div>
-            <FilterGroups groups={groups} />
+            <FilterGroups groups={filterGroups!} />
           </PopoverContent>
         </Popover>
       )}

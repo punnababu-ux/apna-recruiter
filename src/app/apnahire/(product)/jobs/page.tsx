@@ -9,7 +9,7 @@
  * Filters: Location and Posted by. Job state isn't a filter, the tabs are.
  */
 
-import { Fab, Plus, type FilterGroup } from "@apna/design-system"
+import { Fab, Plus } from "@apna/design-system"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Suspense, useMemo, useState } from "react"
@@ -25,7 +25,6 @@ import { MobileChipRow } from "@/components/apnahire/mobile-chip-row"
 import { JobList, STATUS_LABELS, type ApnaJob, type ApnaJobStatus } from "@/components/apnahire/jobs/job-list"
 import { PageHeader } from "@/components/onlyrounds/page-header"
 import { COMPANY_NAME } from "@/lib/apnahire/job-draft"
-import { useCollapsingHeader } from "@/hooks/use-collapsing-header"
 
 /** Sample jobs — one per state and per banner, so every case shows. */
 const MOCK: ApnaJob[] = [
@@ -160,35 +159,11 @@ function JobsPageInner() {
   })
   const filtered = matched.filter((j) => tab === "all" || j.status === tab)
 
-  const filterGroups: FilterGroup[] = [
-    {
-      label: "Location",
-      options: cities,
-      selected: cityFilters,
-      onToggle: (v) => setCityFilters((prev) => toggle(prev, v)),
-    },
-    {
-      label: "Posted by",
-      options: posters,
-      selected: posterFilters,
-      onToggle: (v) => setPosterFilters((prev) => toggle(prev, v)),
-    },
-  ]
-  const clearFilters = () => {
-    setCityFilters([])
-    setPosterFilters([])
-  }
-
-  // Phones: the top bar and search slide away as the list scrolls down; the
-  // chip row stays.
-  useCollapsingHeader()
-
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 p-4 sm:gap-6 sm:p-6">
       <PageHeader
         variant="transparent"
-        // Phones: no page title — the bottom bar already says Jobs.
-        className="px-0 pt-0 max-md:hidden"
+        className="px-0 pt-0"
         title="Jobs"
         actions={
           <Button
@@ -212,10 +187,35 @@ function JobsPageInner() {
           placeholder="Search by job title…"
           value={searchQuery}
           onChange={setSearchQuery}
-          filterGroups={filterGroups}
-          onClearFilters={clearFilters}
-          // Phones: Filters is an icon inside the search field.
-          mobileFilters="inside"
+          filterGroups={[
+            {
+              label: "Location",
+              options: cities,
+              selected: cityFilters,
+              onToggle: (v) => setCityFilters((prev) => toggle(prev, v)),
+            },
+            {
+              label: "Posted by",
+              options: posters,
+              selected: posterFilters,
+              onToggle: (v) => setPosterFilters((prev) => toggle(prev, v)),
+            },
+          ]}
+          onClearFilters={() => {
+            setCityFilters([])
+            setPosterFilters([])
+          }}
+        />
+        {/* Phones: five tabs don't fit across, so they become self-checkout's
+            scrolling chip row (MobileChipRow, text only). From md: the tab
+            bar. */}
+        <MobileChipRow
+          items={TAB_ORDER.map((t) => ({
+            value: t,
+            label: `${t === "all" ? "All" : STATUS_LABELS[t]} (${counts[t]})`,
+          }))}
+          value={tab}
+          onValueChange={setTab}
         />
         <div className="hidden md:block">
           <Tabs value={tab} onValueChange={(v) => setTab(v as JobTab)}>
@@ -228,21 +228,6 @@ function JobsPageInner() {
             </TabsList>
           </Tabs>
         </div>
-      </div>
-
-      {/* Phones: the state chips. The row sticks under the top bar and rides
-          up into its place when the bar slides away. It's a child of the
-          page column, not the search block, so it stays sticky for the whole
-          list. From md: the tab bar above. */}
-      <div className="sticky top-16 z-docked -my-2 bg-muted py-2 transition-interactive duration-enter max-md:[[data-header-hidden]_&]:-translate-y-16 md:hidden">
-        <MobileChipRow
-          items={TAB_ORDER.map((t) => ({
-            value: t,
-            label: `${t === "all" ? "All" : STATUS_LABELS[t]} (${counts[t]})`,
-          }))}
-          value={tab}
-          onValueChange={setTab}
-        />
       </div>
 
       <main className="flex-1">
