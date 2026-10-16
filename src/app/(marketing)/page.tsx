@@ -183,7 +183,11 @@ export default function HomePage() {
                   </div>
 
                   <div className="w-full flex-1">
-                    <Card padding="none" className="p-2">
+                    {/* Concentric corners: the tile is rounded-xl (12.5px) and
+                        sits 8px in, so the card's corner is 12.5 + 8 ≈ the
+                        3xl step (19.5px) — rounded-surface (10px) read as
+                        tighter than the tile inside it. */}
+                    <Card padding="none" className="group rounded-3xl p-2">
                       <ProductIllustration product={product.name as ProductName} size="lg" className="h-64" />
                     </Card>
                   </div>

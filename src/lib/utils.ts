@@ -6,6 +6,13 @@ import { extendTailwindMerge } from "tailwind-merge"
  *  dropped the type preset. Registering them as font sizes keeps both. */
 const twMerge = extendTailwindMerge({
   extend: {
+    // Semantic radius roles (`rounded-surface`, `rounded-hero`, …). Unknown
+    // to tailwind-merge, `cn("rounded-surface", "rounded-3xl")` kept both
+    // and the stylesheet order picked the winner — a card's corner override
+    // silently did nothing.
+    theme: {
+      radius: ["field", "control", "surface", "overlay", "hero", "pill"],
+    },
     classGroups: {
       "font-size": [
         {

@@ -1,7 +1,7 @@
 /**
  * ProductIllustration — the homepage product rows' artwork: a soft
  * pastel tile (`bg-gradient-illustration-*`) with a floating snippet of the
- * product's own UI on it — an applicant to shortlist, the AI agent on a
+ * product's own UI on it — a deck of applicants to shortlist, the AI agent on a
  * call, a nearby-candidate search, two live Unlimited slots.
  *
  * The style (tile + one crisp floating UI fragment, grey bars standing in
@@ -63,18 +63,40 @@ function Lines({ widths = ["w-24", "w-16"] }: { widths?: string[] }) {
   )
 }
 
-function SmartJobs() {
+/** One candidate in the Smart Jobs deck. */
+function CandidateCard({ initials, name, className }: { initials: string; name: string; className?: string }) {
   return (
-    <Float className="flex w-64 items-center gap-3">
+    <Float className={cn("flex items-center gap-3", className)}>
       <Avatar>
-        <AvatarFallback>RV</AvatarFallback>
+        <AvatarFallback>{initials}</AvatarFallback>
       </Avatar>
       <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-        <span className="truncate text-sm font-semibold text-foreground">Rahul Verma</span>
+        <span className="truncate text-sm font-semibold text-foreground">{name}</span>
         <Lines widths={["w-20"]} />
       </div>
       <Badge variant="outline" className="shrink-0">Shortlist</Badge>
     </Float>
+  )
+}
+
+/** A deck of applicants: two more peek out behind the front card (opaque,
+ *  so only their edges show — a pile, not a muddle), and the deck fans a
+ *  little further open on hover. */
+function SmartJobs() {
+  return (
+    <div className="relative w-64 pt-8">
+      <CandidateCard
+        initials="AM"
+        name="Arjun Mehta"
+        className="absolute inset-x-0 top-0 scale-90 shadow-card group-hover:-translate-y-2"
+      />
+      <CandidateCard
+        initials="SK"
+        name="Sneha Kulkarni"
+        className="absolute inset-x-0 top-4 scale-95 shadow-card group-hover:-translate-y-1.5"
+      />
+      <CandidateCard initials="RV" name="Rahul Verma" className="relative" />
+    </div>
   )
 }
 
