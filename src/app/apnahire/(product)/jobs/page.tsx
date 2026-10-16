@@ -12,6 +12,7 @@
 import { Fab, Plus } from "@apna/design-system"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import * as React from "react"
 import { Suspense, useMemo, useState } from "react"
 
 import {
@@ -31,6 +32,7 @@ import { JobList, STATUS_LABELS, type ApnaJob, type ApnaJobStatus } from "@/comp
 import { PageHeader } from "@/components/onlyrounds/page-header"
 import { COMPANY_NAME } from "@/lib/apnahire/job-draft"
 import { useFlushHeader } from "@/hooks/use-flush-header"
+import { cn } from "@/lib/utils"
 
 /** Sample jobs — one per state and per banner, so every case shows. */
 const MOCK: ApnaJob[] = [
@@ -169,6 +171,26 @@ function JobsPageInner() {
   // header (no line between them).
   useFlushHeader()
 
+  // Phones: the chip row turns into a white bar only once it is actually
+  // stuck under the top bar — not while the search band is still scrolling
+  // away, which would show the page's grey gap above a white bar. Stuck =
+  // its top has reached the bar's foot (64px, its sticky offset).
+  const chipBar = React.useRef<HTMLDivElement>(null)
+  const [chipsStuck, setChipsStuck] = React.useState(false)
+  React.useEffect(() => {
+    const update = () => {
+      const el = chipBar.current
+      if (el) setChipsStuck(el.getBoundingClientRect().top <= 64.5 && window.scrollY > 0)
+    }
+    update()
+    window.addEventListener("scroll", update, { passive: true })
+    window.addEventListener("resize", update)
+    return () => {
+      window.removeEventListener("scroll", update)
+      window.removeEventListener("resize", update)
+    }
+  }, [])
+
   const clearFilters = () => {
     setCityFilters([])
     setPosterFilters([])
@@ -278,9 +300,15 @@ function JobsPageInner() {
           md: the tab bar above. */}
       {/* Full-bleed (-mx-4 px-4). Once scrolled, it's a white bar with a line
           under it, as self-checkout's sticky chips are; at the top it sits
-          on the page's grey. pt-2 / pb-1: the chip scroller adds 4px under
+          on the page's grey (chipsStuck). pt-2 / pb-1: the chip scroller adds 4px under
           the chips, so the chips sit 8px from the bar's top and bottom. */}
-      <div className="sticky top-16 z-docked -mx-4 -my-2 border-b border-transparent bg-muted px-4 pt-2 pb-1 transition-interactive [[data-header-scrolled]_&]:border-border [[data-header-scrolled]_&]:bg-card md:hidden">
+      <div
+        ref={chipBar}
+        className={cn(
+          "sticky top-16 z-docked -mx-4 -my-2 border-b px-4 pt-2 pb-1 transition-interactive md:hidden",
+          chipsStuck ? "border-border bg-card" : "border-transparent bg-muted"
+        )}
+      >
         <MobileChipRow
           items={TAB_ORDER.map((t) => ({
             value: t,

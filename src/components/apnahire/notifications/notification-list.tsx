@@ -51,6 +51,7 @@ import {
   type IconComponent,
 } from "@apna/design-system"
 import { MobileChipRow } from "@/components/apnahire/mobile-chip-row"
+import { useFlushHeader } from "@/hooks/use-flush-header"
 import {
   NOTIFICATION_GROUPS,
   type NotificationKind,
@@ -127,6 +128,11 @@ function NotificationRow({
   )
 }
 
+function JoinTopBar() {
+  useFlushHeader()
+  return null
+}
+
 export function NotificationList({ variant }: { variant: "panel" | "page" }) {
   const { notifications, unreadCount, markRead, markAllRead } = useNotifications()
   const [filter, setFilter] = React.useState<Filter>("all")
@@ -170,6 +176,7 @@ export function NotificationList({ variant }: { variant: "panel" | "page" }) {
 
   return (
     <div data-slot="notification-list" className="flex flex-col gap-3">
+      {variant === "page" && <JoinTopBar />}
       {/* 1 — Header + filters: the order summary's first card. */}
       {variant === "panel" ? (
         <section className="flex flex-col gap-4 bg-card py-5 shadow-card">
@@ -191,8 +198,12 @@ export function NotificationList({ variant }: { variant: "panel" | "page" }) {
         </section>
       ) : (
         // Phones: the jobs page's chip row, scrolling beside a fixed ⋮
-        // (Tabs from md, if the page is opened on a wide screen).
-        <section className="flex items-center gap-2 bg-card py-3 pr-2 pl-4 shadow-card">
+        // (Tabs from md, if the page is opened on a wide screen). Like the
+        // jobs chips once stuck: a white bar joined to the top bar (which
+        // drops its own line, useFlushHeader), sticky under it, one line
+        // below; 8px above and below the chips (the scroller adds 4px under
+        // them, hence pt-2 pb-1).
+        <section className="sticky top-16 z-docked flex items-center gap-2 border-b border-border bg-card pt-2 pr-2 pb-1 pl-4 md:static md:border-b-0 md:py-3 md:shadow-card">
           <div className="min-w-0 flex-1">
             <MobileChipRow items={filterItems} value={filter} onValueChange={setFilter} gutter="page-start" />
             <Tabs className="hidden md:flex" value={filter} onValueChange={(v) => setFilter(v as Filter)}>
