@@ -17,7 +17,6 @@ import {
   ArrowRight,
   Badge,
   Card,
-  CardContent,
   CheckCircle2,
   LogoWall,
   Quote,
@@ -138,42 +137,11 @@ export default function HomePage() {
             description={HOME_SUITE.description}
           />
 
-          {/* 2 × 2, not 4 across: the illustrations need a wide tile (as
-              in the reference) — at a quarter of the band they crop. */}
-          <div className="grid gap-6 sm:grid-cols-2">
-            {HOME_SUITE.items.map((item) => (
-              // The whole card is the link (a lifting card must be clickable
-              // as a whole — see card-hover-lift); "Learn more" is its label.
-              <Link
-                key={item.name}
-                href={hrefFor(item.name)}
-                className="group rounded-surface outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-              >
-                <Card padding="none" interactive className="flex h-full flex-col">
-                  <div className="p-2">
-                    <ProductIllustration product={item.name} className="h-56" />
-                  </div>
-                  <CardContent className="flex flex-1 flex-col gap-3 p-6 pt-4">
-                    <div className="flex flex-col gap-1.5">
-                      <h3 className="text-h6 text-foreground">{item.name}</h3>
-                      <p className="text-sm text-muted-foreground">{item.tagline}</p>
-                    </div>
-                    <span className="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-primary">
-                      Learn more <ArrowRight className="size-4 transition-interactive group-hover:translate-x-0.5" aria-hidden />
-                    </span>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-          </div>
-
-          {/* Detail rows — one per product, description alternating left/
-              right against a media panel. The grid above stays as the
-              compact overview; this is the detail underneath it, not a
-              replacement (user call, 2026-09-28). Media: the same product
-              illustration as the card above, on a larger tile. See
-              content/home.ts's HOME_PRODUCT_DETAILS header for the full
-              sourcing note. */}
+          {/* One row per product, description alternating left/right
+              against its illustration. The four overview cards that sat
+              above these were dropped (user call, 2026-10-16): they
+              repeated what each row already says. See content/home.ts's
+              HOME_PRODUCT_DETAILS header for the full sourcing note. */}
           <div className="flex flex-col gap-16">
             {HOME_PRODUCT_DETAILS.map((product, i) => {
               const reversed = i % 2 === 1

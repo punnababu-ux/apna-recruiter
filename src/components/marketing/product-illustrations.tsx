@@ -1,5 +1,5 @@
 /**
- * ProductIllustration — the homepage product cards' artwork: a soft
+ * ProductIllustration — the homepage product rows' artwork: a soft
  * pastel tile (`bg-gradient-illustration-*`) with a floating snippet of the
  * product's own UI on it — an applicant to shortlist, the AI agent on a
  * call, a nearby-candidate search, two live Unlimited slots.
@@ -10,11 +10,10 @@
  * parts (Avatar, Badge, icons), so it stays sharp at any size and follows
  * the theme. Names and numbers are illustrative.
  *
- *   <ProductIllustration product="Smart Jobs" className="h-56" />
  *   <ProductIllustration product="Smart Jobs" size="lg" className="h-64" />
  *
- * Decorative: `aria-hidden`. Inside a `group` (the card link) the snippet
- * lifts a little on hover; the AI agent's voice bars always move.
+ * Decorative: `aria-hidden`. Inside a `group` the snippet lifts a little
+ * on hover; the AI agent's voice bars always move.
  */
 
 import * as React from "react"

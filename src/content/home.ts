@@ -55,18 +55,14 @@ export const HOME_TRUSTED_BY = {
 }
 
 /**
- * Product offerings grid. Requested "like" a competitor's (Naukri's)
- * equivalent section — its 2×3 illustrated-card layout is the reference for
- * STRUCTURE only. Two deliberate departures, not oversights:
- *   - 4 cards, not 6: apna's real product lineup (nav.ts PRODUCT_LINKS),
- *     not Naukri's.
- *   - No bespoke mockup illustrations: those are a competitor's own product
- *     UI, not something to imitate. Each card gets a plain tinted block with
- *     an icon instead — Briefcase / PhoneCall / Search / InfinityIcon are
- *     already the icon language for these same four products in
- *     pricing-hero.tsx's PRICING_TABS.
+ * The hiring suite section: its heading, plus the four products' names,
+ * taglines and icon keys. The section shows one illustrated row per product
+ * (HOME_PRODUCT_DETAILS below); the overview card grid that used to sit
+ * above the rows was removed on 2026-10-16 as repetitive. Only the names
+ * are read today (to type the rows); taglines and icon keys are kept for
+ * the product pages the nav already links to.
  *
- * Heading and item taglines ARE sourced, verbatim, from
+ * Heading and item taglines are verbatim from
  * self-checkout-five.vercel.app/employer's own "hiring suite" section
  * (confirmed via get_page_text, 2026-09-21) — not written for this pass.
  */
