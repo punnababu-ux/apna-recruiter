@@ -206,7 +206,9 @@ export function SegmentedTabSwitcher<V extends string = string>({
           as the source design. */}
       <div
         className={cn(
-          "no-scrollbar overflow-x-auto pb-1 md:hidden",
+          // pt-px / -mt-px: room for the selected pill's outer ring, which a
+          // scroller would otherwise clip at the top (layout unchanged).
+          "no-scrollbar -mt-px overflow-x-auto pt-px pb-1 md:hidden",
           mobileBleedClassName
         )}
       >
