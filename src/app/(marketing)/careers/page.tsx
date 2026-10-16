@@ -49,7 +49,7 @@ export default function CareersPage() {
           className="flex flex-col items-center gap-8 border-card/60 bg-card/60 text-center shadow-card backdrop-blur-xl sm:p-12"
         >
           <div className="flex flex-col items-center gap-3">
-            <h2 className="text-h3 text-balance text-foreground sm:text-h1">{closing.title}</h2>
+            <h2 className="text-editorial-h2 text-balance text-foreground sm:text-editorial-h1">{closing.title}</h2>
             <p className="text-lead max-w-prose text-pretty text-muted-foreground">{closing.description}</p>
           </div>
           <Button

@@ -79,7 +79,6 @@ export function PageHero({
             <SectionHeading
               level={1}
               align="center"
-              voice="editorial"
               eyebrow={<HeroChip>{eyebrow}</HeroChip>}
               title={title}
               description={description}

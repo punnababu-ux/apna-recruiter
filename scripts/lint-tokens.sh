@@ -109,6 +109,16 @@ run_check \
   'style=\{\{[^}]*(color|background|padding|margin|gap|fontFamily|fontSize|fontWeight)[^}]*\}\}' \
   "$FILES_TS"
 
+# 4. The editorial serif stays where AGENTS.md "Serif — where and only where"
+#    puts it: marketing pages (headlines via SectionHeading, quotes). The
+#    presets, and the raw serif families, are refused anywhere else — the
+#    app, the onlyrounds product, ad-hoc components.
+FILES_SERIF=$(printf "%s\n" "$FILES_TS" | grep -vE '/app/\(marketing\)/|/components/marketing/|/app/design-system/|/components/ui/section-heading\.tsx|/components/apnahire/(testimonial-grid|faq-section|trust-bar|pricing-hero)\.tsx|/app/layout\.tsx' || true)
+run_check \
+  "Serif (text-editorial-*, text-quote*, font-editorial, font-serif) only on marketing pages" \
+  '(text-editorial-|text-quote|font-editorial|font-serif|font-quote)' \
+  "$FILES_SERIF"
+
 printf "%s\n" "------------------------------------------------------------"
 if [[ $fail -eq 0 ]]; then
   printf "${GREEN}${BOLD}All token checks passed.${NC}\n"

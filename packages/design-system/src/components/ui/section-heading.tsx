@@ -14,18 +14,14 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
+/** Title presets. Inside a `data-voice="editorial"` surface (the marketing
+ *  shell sets it) levels 1 and 2 switch to the editorial serif by
+ *  themselves; level 3 stays sans everywhere. One rule, no per-call prop:
+ *  see AGENTS.md "Serif — where and only where". */
 const TITLE_PRESET = {
-  1: "text-display-lg",
-  2: "text-h2",
-  3: "text-h3",
-} as const
-
-/** The editorial voice (Playfair Display): the marketing pages' serif
- *  headlines. Level 3 stays sans — at that size the serif reads as fussy. */
-const EDITORIAL_PRESET = {
-  1: "text-editorial-display",
-  2: "text-editorial-h2",
-  3: "text-h3",
+  1: "text-display-lg font-semibold [[data-voice=editorial]_&]:text-editorial-display",
+  2: "text-h2 font-semibold [[data-voice=editorial]_&]:text-editorial-h2",
+  3: "text-h3 font-semibold",
 } as const
 
 export interface SectionHeadingProps
@@ -39,9 +35,6 @@ export interface SectionHeadingProps
   align?: "start" | "center"
   /** Heading level. Also picks the type preset: 1 is the page-opening size. */
   level?: 1 | 2 | 3
-  /** "editorial" sets the title in the serif (text-editorial-*). Weight
-   *  comes from the preset, so the default semibold is dropped. */
-  voice?: "default" | "editorial"
 }
 
 function SectionHeading({
@@ -52,7 +45,6 @@ function SectionHeading({
   actions,
   align = "start",
   level = 2,
-  voice = "default",
   ...props
 }: SectionHeadingProps) {
   const Title = `h${level}` as const
@@ -74,10 +66,7 @@ function SectionHeading({
 
         <Title
           data-slot="section-heading-title"
-          className={cn(
-            voice === "editorial" ? EDITORIAL_PRESET[level] : [TITLE_PRESET[level], "font-semibold"],
-            "text-balance"
-          )}
+          className={cn(TITLE_PRESET[level], "text-balance")}
         >
           {title}
         </Title>

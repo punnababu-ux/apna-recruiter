@@ -58,7 +58,7 @@ export function TrustBar({ className }: { className?: string }) {
     <div data-slot="trust-bar" className={cn("flex flex-col gap-15 py-12", className)}>
       <div className="flex flex-col gap-10">
         <div className="flex flex-col gap-4">
-          <h2 className="text-h3 font-heading font-semibold text-foreground">
+          <h2 className="text-h3 font-heading font-semibold text-foreground [[data-voice=editorial]_&]:font-editorial">
             Trusted by companies from all sizes
           </h2>
           <p className="text-sm text-muted-foreground">

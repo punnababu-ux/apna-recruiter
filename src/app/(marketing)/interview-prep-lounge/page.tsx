@@ -67,7 +67,6 @@ export default function InterviewPrepLoungePage() {
               <SectionHeading
                 level={1}
                 align="center"
-                voice="editorial"
                 eyebrow={<HeroChip>{hero.eyebrow}</HeroChip>}
                 title={hero.title}
                 description={hero.description}
@@ -117,7 +116,7 @@ export default function InterviewPrepLoungePage() {
       {/* Placement support → career-readiness: four words carry it. */}
       <Section size="md">
         <div className="flex flex-col gap-12">
-          <SectionHeading level={2} align="center" voice="editorial" title={pillars.title} description={pillars.description} />
+          <SectionHeading level={2} align="center" title={pillars.title} description={pillars.description} />
           <dl className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {pillars.items.map((p) => (
               <div key={p.title} className="flex flex-col gap-2 border-t-2 border-primary pt-4">
@@ -132,7 +131,7 @@ export default function InterviewPrepLoungePage() {
       {/* The experience. */}
       <Section tone="card" size="md">
         <div className="flex flex-col gap-10">
-          <SectionHeading level={2} align="center" voice="editorial" title={experience.title} description={experience.description} />
+          <SectionHeading level={2} align="center" title={experience.title} description={experience.description} />
           <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {experience.items.map((item) => {
               const Icon = EXPERIENCE_ICONS[item.icon]
@@ -177,7 +176,7 @@ export default function InterviewPrepLoungePage() {
       {/* Public outcomes: the one dark band. */}
       <Section tone="ink" size="md">
         <div className="flex flex-col gap-10">
-          <SectionHeading level={2} align="center" voice="editorial" title={publicOutcomes.title} description={publicOutcomes.description} />
+          <SectionHeading level={2} align="center" title={publicOutcomes.title} description={publicOutcomes.description} />
           <dl className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {publicOutcomes.items.map((item) => (
               <Card key={item.title} padding="lg" tone="ink" className="gap-2">
@@ -194,7 +193,7 @@ export default function InterviewPrepLoungePage() {
       <Section size="md">
         <div className="flex flex-col gap-16">
           <div className="flex flex-col gap-10">
-            <SectionHeading level={2} align="center" voice="editorial" title={howItWorks.title} />
+            <SectionHeading level={2} align="center" title={howItWorks.title} />
             <ol className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
               {howItWorks.items.map((step, i) => (
                 <li key={step.title} className="flex flex-col gap-2 border-t-2 border-border pt-4">
@@ -207,7 +206,7 @@ export default function InterviewPrepLoungePage() {
           </div>
 
           <div className="flex flex-col gap-10">
-            <SectionHeading level={2} align="center" voice="editorial" title={journey.title} description={journey.description} />
+            <SectionHeading level={2} align="center" title={journey.title} description={journey.description} />
             <ol className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {journey.items.map((step, i) => (
                 <li key={step.title}>

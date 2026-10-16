@@ -287,10 +287,10 @@
    * text-editorial-* presets, not `font-editorial` on ad-hoc type. */
   --font-editorial: var(--font-family-editorial);
 
-  /* Quote voice — pull quotes and testimonials. `--font-family-serif` existed
-   * in the primitive layer but was never registered, so `font-serif` in a
-   * component silently fell through to the browser default serif. */
-  --font-quote:   var(--font-family-serif);
+  /* Quote voice — pull quotes and testimonials: the editorial serif, the
+   * same face as the marketing headlines (one serif in the system, not a
+   * browser-default Georgia beside a Playfair). */
+  --font-quote:   var(--font-editorial);
 
   /* Weight roles — industry-standard defaults. Re-alias to shift the whole
      system's weight feel (e.g. regular → 300 for a lighter brand). */

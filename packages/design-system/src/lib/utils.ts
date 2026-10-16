@@ -24,7 +24,7 @@ const twMerge = extendTailwindMerge({
             "editorial-display",
             "editorial-h1",
             "editorial-h2",
-            "editorial-quote",
+            "quote-lg",
             "display-fluid",
             "h1",
             "h2",

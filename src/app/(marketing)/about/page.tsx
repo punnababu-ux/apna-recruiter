@@ -59,7 +59,7 @@ export default function AboutPage() {
           </figure>
           <div className="flex flex-col gap-8 md:col-span-7">
             <span className="text-overline text-muted-foreground">{founder.eyebrow}</span>
-            <blockquote className="text-editorial-h1 text-balance text-foreground">
+            <blockquote className="text-quote-lg text-balance text-foreground">
               &ldquo;{withAccent(founder.quote, "opportunity")}&rdquo;
             </blockquote>
             <p className="text-lead text-pretty text-muted-foreground">{body}</p>
@@ -70,12 +70,12 @@ export default function AboutPage() {
       {/* How we got here: the homepage's stacking cards, one beat each. */}
       <Section size="md">
         <div className="flex flex-col gap-10">
-          <SectionHeading level={2} align="center" voice="editorial" title={storyTitle} />
+          <SectionHeading level={2} align="center" title={storyTitle} />
           <ScrollStack>
             {story.map((beat, i) => (
               <ScrollStackItem key={beat.marker} className="grid gap-2 p-2 lg:grid-cols-5">
                 <div className="flex min-h-40 items-end rounded-card-nested bg-muted p-6 lg:col-span-2 lg:min-h-80 lg:p-8">
-                  <span className="text-editorial-display text-foreground">{beat.marker}</span>
+                  <span className="text-display-lg font-heading text-foreground tabular-nums">{beat.marker}</span>
                 </div>
                 <div className="flex flex-col justify-center gap-4 p-4 sm:p-6 lg:col-span-3 lg:p-10">
                   <span className="text-overline text-muted-foreground tabular-nums">
@@ -94,7 +94,6 @@ export default function AboutPage() {
         <SectionHeading
           level={2}
           align="center"
-          voice="editorial"
           title={mission.title}
           description={mission.description}
         />
@@ -105,7 +104,6 @@ export default function AboutPage() {
           <div className="flex flex-col gap-8">
             <SectionHeading
               level={2}
-              voice="editorial"
               eyebrow={<span className="text-overline text-muted-foreground">{recruiters.label}</span>}
               title={recruiters.title}
               description={recruiters.description}

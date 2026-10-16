@@ -39,7 +39,7 @@ export function TestimonialGrid({ className }: { className?: string }) {
             width={t.width}
             className="h-9 w-auto self-start object-contain"
           />
-          <p className="font-serif text-2xl leading-8 text-foreground">{QUOTE}</p>
+          <p className="text-quote text-foreground">{QUOTE}</p>
           <div className="flex items-center gap-3.5">
             <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-checkout-avatar text-sm font-bold text-white">
               PR

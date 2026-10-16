@@ -107,7 +107,7 @@ export function PricingHero({
             Phones keep it to one line: 24px when the column has 320px (360px
             phones and up), 20px below that; the 36px preset from sm. Scoped
             to max-sm so the container steps never reach desktop. */}
-        <h1 className="text-h1 font-semibold text-checkout-hero-fg max-sm:text-xl max-sm:@xs:text-2xl">
+        <h1 className="text-h1 font-semibold text-checkout-hero-fg max-sm:text-xl max-sm:@xs:text-2xl [[data-voice=editorial]_&]:font-editorial">
           Everything you need to hire
         </h1>
 

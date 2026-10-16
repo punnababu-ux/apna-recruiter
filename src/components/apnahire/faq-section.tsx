@@ -50,7 +50,7 @@ export function FaqSection({ onHelpAndSupport, onShowMore, className }: FaqSecti
       )}
     >
       <div className="flex w-full shrink-0 flex-col items-start gap-6 lg:w-92">
-        <h2 className="text-h3 font-heading font-semibold text-foreground">
+        <h2 className="text-h3 font-heading font-semibold text-foreground [[data-voice=editorial]_&]:font-editorial">
           Frequently
           <br />
           asked questions

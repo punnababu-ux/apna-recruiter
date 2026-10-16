@@ -225,7 +225,7 @@ export default function HomePage() {
               <Link key={item.outlet} href={item.href} target="_blank" rel="noreferrer noopener">
                 <Card padding="lg" interactive className="flex h-full flex-col gap-4">
                   <Quote className="size-6 text-muted-foreground" aria-hidden />
-                  <p className="font-serif text-lg leading-7 text-foreground italic">
+                  <p className="text-quote text-foreground italic">
                     &ldquo;{item.headline}&rdquo;
                   </p>
                   <span className="mt-auto text-sm font-semibold text-foreground">

@@ -352,10 +352,24 @@ To change how round the cards feel, retune `--radius-card` in
   with an icon). `PageHero` and the product hero draw it for you.
 - **Eyebrows below the hero are gray** (`text-overline
   text-muted-foreground`), never green.
-- **Serif for the editorial voice.** Hero headlines and big section titles
-  use Playfair Display through `SectionHeading voice="editorial"` or the
-  `text-editorial-*` presets; one word may be italic (`<em>`, `withAccent`).
-  Everything else stays Inter. Never the serif in UI (cards, buttons, forms).
+- **Serif — where and only where.** Playfair Display (the editorial voice)
+  is used for exactly three things on marketing pages, the homepage
+  included:
+  1. **The page headline (h1)** in every hero.
+  2. **Section titles (h2)** — the one title that opens a section, the
+     closing contact band's title included.
+  3. **Quotes** — `text-quote` in a card (testimonials, press),
+     `text-quote-lg` for a page's featured quote (the founder's line).
+
+  One word per headline may be italic (`<em>`, `withAccent`); never more.
+  **Everything else is Inter:** h3 and below, card / list / accordion
+  titles, every number (stats, years, step numbers — numbers are data),
+  eyebrows, chips, body, buttons, nav, forms, footer, and anything in the
+  app. It's automatic: the marketing shell sets `data-voice="editorial"`
+  and `SectionHeading` switches levels 1–2 to the serif by itself — there
+  is no prop to set or forget. A hand-built h1/h2 uses
+  `text-editorial-display` / `-h1` / `-h2`. `npm run lint:tokens` refuses
+  the serif presets outside the marketing folders.
 - **Each product owns one gradient** (`bg-gradient-product-*`): Smart Jobs
   sky, AI Calling Agent green, apna Database plum, apna Unlimited gold. Use
   it only with that product: its homepage card, its product page hero, its

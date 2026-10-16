@@ -83,7 +83,6 @@ export function ProductPage({ content }: { content: ProductPageContent }) {
             <div className="flex flex-col gap-8">
               <SectionHeading
                 level={1}
-                voice="editorial"
                 eyebrow={<HeroChip>{eyebrow}</HeroChip>}
                 title={heading}
                 description={description}
@@ -126,7 +125,6 @@ export function ProductPage({ content }: { content: ProductPageContent }) {
             <SectionHeading
               level={2}
               align="center"
-              voice="editorial"
               eyebrow={<span className="text-overline text-muted-foreground">{steps.title}</span>}
               title={steps.heading}
             />
@@ -149,7 +147,7 @@ export function ProductPage({ content }: { content: ProductPageContent }) {
 
       <Section size="md">
         <div className="flex flex-col gap-10">
-          <SectionHeading level={2} align="center" voice="editorial" title={features.title} />
+          <SectionHeading level={2} align="center" title={features.title} />
           <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {features.items.map((feature) => {
               const Icon = ICONS[feature.icon]

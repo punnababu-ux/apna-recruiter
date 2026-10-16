@@ -97,7 +97,7 @@ export function ContactSection({
             the hero owns the h1). One line on desktop; on phones the h3 size
             (at 36px it broke into five lines on a 375px screen). */}
         <div className="flex flex-col items-center gap-3">
-          <h2 className="text-h3 text-balance text-foreground sm:text-h1">{title}</h2>
+          <h2 className="text-editorial-h2 text-balance text-foreground sm:text-editorial-h1">{title}</h2>
           {description && <p className="text-lead max-w-prose text-pretty text-muted-foreground">{description}</p>}
         </div>
         <Button
