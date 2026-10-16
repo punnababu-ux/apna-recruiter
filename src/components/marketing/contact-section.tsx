@@ -183,13 +183,9 @@ function ContactForm() {
         </Button>
         <p className="text-xs text-muted-foreground">
           By clicking “Submit” I agree to the{" "}
-          <a href={TERMS_HREF} target="_blank" rel="noreferrer noopener" className="text-info underline">
-            Terms of Use
-          </a>{" "}
+          <Button variant="link-inline" nativeButton={false} render={<a href={TERMS_HREF} target="_blank" rel="noreferrer noopener" />}>Terms of Use</Button>{" "}
           and the{" "}
-          <a href={PRIVACY_HREF} target="_blank" rel="noreferrer noopener" className="text-info underline">
-            Privacy Statement
-          </a>
+          <Button variant="link-inline" nativeButton={false} render={<a href={PRIVACY_HREF} target="_blank" rel="noreferrer noopener" />}>Privacy Statement</Button>
           .
         </p>
       </div>

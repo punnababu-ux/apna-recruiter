@@ -15,7 +15,7 @@
  */
 
 import Link from "next/link"
-import { AmbientBackdrop, ArrowUpRight, Card, LogoApnaHire, Separator } from "@apna/design-system"
+import { AmbientBackdrop, ArrowUpRight, Button, Card, LogoApnaHire, Separator } from "@apna/design-system"
 import { AUTH_PANEL, LEGAL_LINE, LOOKING_FOR_A_JOB_LINK } from "@/content/auth"
 import { LEGAL_LINKS } from "@/content/footer"
 import { cn } from "@/lib/utils"
@@ -41,13 +41,9 @@ export function LegalLine({ className }: { className?: string }) {
   return (
     <p className={cn("text-sm text-muted-foreground", className)}>
       {LEGAL_LINE}{" "}
-      <a href={TERMS_HREF} target="_blank" rel="noreferrer noopener" className="text-info underline">
-        Terms of service
-      </a>{" "}
+      <Button variant="link-inline" nativeButton={false} render={<a href={TERMS_HREF} target="_blank" rel="noreferrer noopener" />}>Terms of service</Button>{" "}
       &amp;{" "}
-      <a href={PRIVACY_HREF} target="_blank" rel="noreferrer noopener" className="text-info underline">
-        Privacy policy
-      </a>
+      <Button variant="link-inline" nativeButton={false} render={<a href={PRIVACY_HREF} target="_blank" rel="noreferrer noopener" />}>Privacy policy</Button>
     </p>
   )
 }
