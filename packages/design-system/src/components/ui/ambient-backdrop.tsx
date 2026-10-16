@@ -28,7 +28,7 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-const BLOBS = [1, 2, 3, 4] as const
+const BLOBS = [1, 2, 3, 4, 5, 6, 7] as const
 
 function AmbientBackdrop({
   className,

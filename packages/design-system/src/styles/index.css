@@ -712,8 +712,9 @@
  *
  *   ambient-backdrop  the clipping frame; fades out at its foot so the hero
  *                     hands over to the page canvas without an edge
- *   ambient-blob      a soft disc of one mesh hue drifting on a long loop;
- *                     `data-blob="1…4"` picks hue, spot, path and tempo
+ *   ambient-blob      a soft disc of one mesh hue drifting on a loop;
+ *                     `data-blob="1…7"` picks hue, spot, size, path and
+ *                     tempo (1–4 large and slow, 5–7 small and quicker)
  *   ambient-glow      a light that wanders the hero on its own loop (no
  *                     pointer tracking — phones see it too)
  *   ambient-grain     static film grain over everything
@@ -731,6 +732,14 @@
   0%, 100% { translate: 0 0; scale: 1; }
   33%      { translate: -22% 10%; scale: 0.86; }
   66%      { translate: 10% -16%; scale: 1.16; }
+}
+
+/* The small, quick blobs' path: a wider orbit, so they visibly travel. */
+@keyframes ambient-float-c {
+  0%, 100% { translate: 0 0; scale: 1; }
+  25%      { translate: 45% -25%; scale: 1.2; }
+  50%      { translate: 80% 20%; scale: 0.85; }
+  75%      { translate: 30% 45%; scale: 1.1; }
 }
 
 @utility ambient-backdrop {
@@ -755,6 +764,10 @@
   &[data-blob="2"] { --blob-color: var(--ambient-blob-2); top: 20%; left: -25%; animation-name: ambient-float-b; animation-duration: calc(var(--duration-ambient) * 1.15); }
   &[data-blob="3"] { --blob-color: var(--ambient-blob-3); bottom: -45%; left: 15%; animation-duration: calc(var(--duration-ambient) * 1.2); animation-delay: calc(var(--duration-ambient) * -0.4); }
   &[data-blob="4"] { --blob-color: var(--ambient-blob-4); top: -35%; right: -20%; animation-name: ambient-float-b; animation-duration: var(--duration-ambient); animation-delay: calc(var(--duration-ambient) * -0.6); }
+  /* Smaller and quicker: the foreground of the motion. */
+  &[data-blob="5"] { --blob-color: var(--ambient-blob-2); width: 30vmax; top: 10%; left: 20%; animation-name: ambient-float-c; animation-duration: calc(var(--duration-ambient) * 0.6); }
+  &[data-blob="6"] { --blob-color: var(--ambient-blob-4); width: 26vmax; top: 35%; left: 55%; animation-name: ambient-float-c; animation-direction: reverse; animation-duration: calc(var(--duration-ambient) * 0.7); animation-delay: calc(var(--duration-ambient) * -0.3); }
+  &[data-blob="7"] { --blob-color: var(--ambient-blob-1); width: 24vmax; top: 50%; left: 5%; animation-name: ambient-float-c; animation-duration: calc(var(--duration-ambient) * 0.55); animation-delay: calc(var(--duration-ambient) * -0.5); }
 
   [data-paused] > & { animation-play-state: paused; }
 
