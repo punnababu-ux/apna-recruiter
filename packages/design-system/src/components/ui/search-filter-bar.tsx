@@ -5,8 +5,9 @@
  *
  * Filters open in a popover from md and in a bottom sheet on phones (the
  * pattern for any picker on a phone: thumb reach, full-width rows, a 44px
- * touch target per option). Same groups, same live filtering, in both; the
- * sheet's "Show results" just closes it.
+ * touch target per option). The popover filters live; the sheet stages
+ * picks and applies them on "Apply filters" (dismissing it discards them),
+ * and "Clear filters" clears everything and closes it.
  *
  *   <SearchFilterBar value={q} onChange={setQ}
  *     filterGroups={[{ label: "Location", options, selected, onToggle }]}
@@ -38,7 +39,7 @@ export interface SearchFilterBarProps {
   onChange: (value: string) => void
   /** Pass one or more filter groups to show the Filters popover. */
   filterGroups?: FilterGroup[]
-  /** Called when "Clear all" is clicked in the filter popover. */
+  /** Called by "Clear filters" (popover and sheet). */
   onClearFilters?: () => void
   className?: string
 }
@@ -53,6 +54,8 @@ export function SearchFilterBar({
 }: SearchFilterBarProps) {
   const isMobile = useIsMobile()
   const [sheetOpen, setSheetOpen] = React.useState(false)
+  // The sheet's staged picks, by group label; committed on Apply.
+  const [draft, setDraft] = React.useState<Record<string, string[]>>({})
   const activeFilterCount =
     filterGroups?.reduce((sum, g) => sum + g.selected.length, 0) ?? 0
   const hasFilters = (filterGroups?.length ?? 0) > 0
@@ -88,7 +91,12 @@ export function SearchFilterBar({
 
       {hasFilters && isMobile && (
         <>
-          {React.cloneElement(trigger, { onClick: () => setSheetOpen(true) })}
+          {React.cloneElement(trigger, {
+            onClick: () => {
+              setDraft(Object.fromEntries(filterGroups!.map((g) => [g.label, g.selected])))
+              setSheetOpen(true)
+            },
+          })}
           <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
             {/* No overflow-hidden: it would clip the close bubble. */}
             <SheetContent side="bottom" className="max-h-5/6 gap-0 rounded-t-2xl border-t-0 p-0 pb-safe">
@@ -97,19 +105,50 @@ export function SearchFilterBar({
                 <Button
                   type="button"
                   variant="link"
-                  onClick={onClearFilters}
-                  disabled={activeFilterCount === 0}
+                  onClick={() => {
+                    onClearFilters?.()
+                    setSheetOpen(false)
+                  }}
+                  disabled={activeFilterCount === 0 && Object.values(draft).every((d) => d.length === 0)}
                   className="h-auto px-0"
                 >
-                  Clear all
+                  Clear filters
                 </Button>
               </div>
               <div className="min-h-0 flex-1 overflow-y-auto">
-                <FilterGroups groups={filterGroups!} touch />
+                <FilterGroups
+                  touch
+                  groups={filterGroups!.map((g) => {
+                    const selected = draft[g.label] ?? g.selected
+                    return {
+                      ...g,
+                      selected,
+                      onToggle: (v: string) =>
+                        setDraft((d) => ({
+                          ...d,
+                          [g.label]: selected.includes(v) ? selected.filter((x) => x !== v) : [...selected, v],
+                        })),
+                    }
+                  })}
+                />
               </div>
               <div className="border-t border-border p-4">
-                <Button type="button" size="lg" className="h-12 w-full" onClick={() => setSheetOpen(false)}>
-                  Show results
+                <Button
+                  type="button"
+                  size="lg"
+                  className="h-12 w-full"
+                  onClick={() => {
+                    // Toggle exactly the options whose state changed.
+                    filterGroups!.forEach((g) => {
+                      const next = draft[g.label] ?? g.selected
+                      g.options.forEach((opt) => {
+                        if (next.includes(opt) !== g.selected.includes(opt)) g.onToggle(opt)
+                      })
+                    })
+                    setSheetOpen(false)
+                  }}
+                >
+                  Apply filters
                 </Button>
               </div>
             </SheetContent>
@@ -131,7 +170,7 @@ export function SearchFilterBar({
                 disabled={activeFilterCount === 0}
                 className="h-6 px-1.5 text-2xs cursor-pointer"
               >
-                Clear all
+                Clear filters
               </Button>
             </div>
             <FilterGroups groups={filterGroups!} />
