@@ -6,7 +6,7 @@
  *              (the founding story sits in the hero, under the intro)
  *   Story      the four beats as the homepage's stacking cards, each on a
  *              mother-gradient wash with its year as a large watermark
- *   Mission    its own section: one wide card in the mother gradient
+ *   Mission    its own full-width band in the mother gradient, no card
  *   Recruiters the offers (each opening to its detail) beside the AI
  *              Calling Agent illustration, on a white band
  *
@@ -20,7 +20,6 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-  Card,
   ScrollStack,
   ScrollStackItem,
   Section,
@@ -95,21 +94,17 @@ export default function AboutPage() {
         </div>
       </Section>
 
-      {/* Our mission: a section of its own — one wide card in the homepage's
-          own gradient, the mother gradient (no product colour on About). */}
-      <Section size="md">
-        <Card
-          padding="none"
-          className="items-center border-card/60 bg-gradient-checkout-hero px-6 py-16 text-center shadow-card sm:px-12 lg:py-24"
-        >
-          <SectionHeading
-            level={2}
-            align="center"
-            eyebrow={<span className="text-overline text-muted-foreground">Our mission</span>}
-            title={mission.title}
-            description={mission.description}
-          />
-        </Card>
+      {/* Our mission: its own band — full width, in the homepage's own
+          gradient (the mother gradient; no product colour on About), the
+          eyebrow, title and line straight on it. No card. */}
+      <Section size="lg" className="bg-gradient-checkout-hero">
+        <SectionHeading
+          level={2}
+          align="center"
+          eyebrow={<span className="text-overline text-muted-foreground">Our mission</span>}
+          title={mission.title}
+          description={mission.description}
+        />
       </Section>
 
       {/* Built for recruiters: the offers beside the illustration. */}
