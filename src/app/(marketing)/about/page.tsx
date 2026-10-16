@@ -42,7 +42,7 @@ const STORY_WASH = [
 ] as const
 
 export default function AboutPage() {
-  const { eyebrow, title, titleAccent, intro, storyTitle, body, story, mission, audiences } = ABOUT_OVERVIEW
+  const { eyebrow, title, titleAccent, intro, storyEyebrow, storyTitle, body, story, mission, audiences } = ABOUT_OVERVIEW
   const recruiters = audiences[0]
   return (
     <>
@@ -59,10 +59,16 @@ export default function AboutPage() {
         }
       />
 
-      {/* How we got here: the homepage's stacking cards, one beat each. */}
-      <Section size="md">
+      {/* How we got here: the homepage's stacking cards, one beat each, on
+          a white band. */}
+      <Section tone="card" size="md">
         <div className="flex flex-col gap-10">
-          <SectionHeading level={2} align="center" title={storyTitle} />
+          <SectionHeading
+            level={2}
+            align="center"
+            eyebrow={<span className="text-overline text-muted-foreground">{storyEyebrow}</span>}
+            title={storyTitle}
+          />
           <ScrollStack>
             {story.map((beat, i) => (
               // The marker is a watermark: very large, very light, behind the
@@ -89,8 +95,9 @@ export default function AboutPage() {
       </Section>
 
       {/* How we build: the mission is this section's title, and the
-          recruiter offers beside the illustration are the answer to it. */}
-      <Section tone="card" size="md">
+          recruiter offers beside the illustration are the answer to it.
+          On the canvas, so it doesn't run into the white story band. */}
+      <Section size="md">
         <div className="flex flex-col gap-12 lg:gap-16">
           <SectionHeading
             level={2}
