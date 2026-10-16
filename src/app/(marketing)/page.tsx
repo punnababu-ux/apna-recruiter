@@ -149,7 +149,7 @@ export default function HomePage() {
             level={2}
             align="center"
             eyebrow={
-              <span className="text-overline text-primary">{HOME_SUITE.eyebrow}</span>
+              <span className="text-overline text-muted-foreground">{HOME_SUITE.eyebrow}</span>
             }
             title={HOME_SUITE.title}
             description={HOME_SUITE.description}
@@ -177,7 +177,7 @@ export default function HomePage() {
                   {product.name === "apna Unlimited" ? (
                     <LogoApnaUnlimited variant="theme" className="h-4 w-auto self-start text-foreground" />
                   ) : (
-                    <span className="text-overline text-primary">{product.eyebrow}</span>
+                    <span className="text-overline text-muted-foreground">{product.eyebrow}</span>
                   )}
                   <h3 className="text-h4 text-foreground">{product.heading}</h3>
                   <ul className="flex flex-col gap-4">

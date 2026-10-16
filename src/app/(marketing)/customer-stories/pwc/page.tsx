@@ -69,7 +69,7 @@ export default function PwcStoryPage() {
             <ul className="flex flex-col gap-3">
               {solution.items.map((item) => (
                 <li key={item} className="flex items-start gap-3">
-                  <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden />
+                  <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-foreground" aria-hidden />
                   <span className="text-base text-foreground">{item}</span>
                 </li>
               ))}

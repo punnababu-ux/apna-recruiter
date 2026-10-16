@@ -45,9 +45,9 @@ export default function CareersPage() {
         }
       >
         {/* The people you'd work with — real faces, no copy needed. */}
-        <AvatarGroup className="-space-x-3">
+        <AvatarGroup className="-space-x-2 sm:-space-x-3">
           {TEAM.map((person) => (
-            <Avatar key={person.name} className="size-12 sm:size-14">
+            <Avatar key={person.name} className="size-8 sm:size-14">
               <AvatarImage src={person.photo} alt={person.name} className="object-cover" />
               <AvatarFallback>{person.name[0]}</AvatarFallback>
             </Avatar>
