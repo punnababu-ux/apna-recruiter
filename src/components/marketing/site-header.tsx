@@ -24,7 +24,8 @@
  *
  * A floating glass pill (2026-10-16): frosted white, 8px from the top and
  * the page's content width, a touch more solid once the page scrolls under
- * it. Search is an icon that opens the field over the end of the nav; the
+ * it. Search is an icon that turns the whole pill into one large field,
+ * Spotlight-style, over a dimmed page; the
  * right side is just Login (support gets its own floating button,
  * not a "Contact us" here).
  */
@@ -49,6 +50,7 @@ import {
   Award,
   Menu,
   Search,
+  XIcon,
   Sheet,
   SheetContent,
   SheetHeader,
@@ -152,8 +154,8 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
   // field would raise the phone keyboard over the menu the moment it opens.
   const mobileBodyRef = React.useRef<HTMLDivElement>(null)
   // Desktop search lives behind an icon (the pill can't spare a field's
-  // width next to every menu). Open, it lays the field over the end of the
-  // nav; Escape or a click elsewhere puts it away.
+  // width next to every menu). Open, the whole pill becomes the field
+  // (Spotlight-style); Escape, the ×, or a click on the dimmed page closes it.
   const [searchOpen, setSearchOpen] = React.useState(false)
   const searchRef = React.useRef<HTMLDivElement>(null)
   React.useEffect(() => {
@@ -213,157 +215,176 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
     >
       <div
         className={cn(
-          // An even inset round the last button: 56px pill − 1px border − the
-          // 36px button leaves 10px above and below, so 1px + pr-2.25 (9px)
-          // gives 10px on the right too.
-          "relative mx-auto flex h-14 w-full max-w-band items-center justify-between gap-4 rounded-full border pr-2.25 pl-2 backdrop-blur-xl transition-interactive duration-enter",
+          // The inset round the last button: 56px pill − 1px border − the
+          // 36px button leaves 10px above and below. On the right, 10px
+          // measured equal but read tighter beside a filled pill's round
+          // end, so from xl — where the filled Login is the last thing in
+          // the bar — the right gets 12px (1px + pr-2.75), an optical
+          // correction. Below xl the last item is the ghost menu icon.
+          "relative mx-auto flex h-14 w-full max-w-band items-center justify-between gap-4 rounded-full border pr-2.25 pl-2 backdrop-blur-xl transition-interactive duration-enter xl:pr-2.75",
           // Frosted at rest; a touch more solid once the page scrolls under it.
           isScrolled || openPanel || mobileOpen || searchOpen
             ? "border-border bg-card/85 shadow-popover"
             : "border-card/60 bg-card/60 shadow-card"
         )}
       >
-        <div className="flex shrink-0 items-center gap-3 lg:gap-4">
-          {/* The "apna" wordmark the collapsed product sidebar uses; plum on
-              the light pill, white on the dark one. Optically centred: the
-              "p" descender fills the bottom of the box, so the letters sit
-              ~2.6px high — nudged down 3px to line up with the nav text. */}
-          <Link href="/" aria-label="apna for employers, home" className="shrink-0 rounded-full px-3 py-2">
-            <LogoApnaWordmark className="h-5 w-auto translate-y-0.75 dark:hidden" />
-            <LogoApnaWordmark variant="white" className="hidden h-5 w-auto translate-y-0.75 dark:block" />
-          </Link>
-
-          {variant === "default" && (
-            // Leaving the nav (its menu cards are inside it) closes the menu,
-            // so moving on to search or the buttons never leaves one open.
-            <nav
-              aria-label="Main"
-              className="relative hidden items-center gap-0.5 self-stretch py-2 xl:flex"
-              onMouseLeave={() => setOpenPanel(null)}
+        {searchOpen ? (
+          // Spotlight: the whole pill becomes one large search field — logo,
+          // menus and Login step aside until it closes.
+          <div ref={searchRef} className="flex w-full items-center gap-1 animate-in fade-in-0 duration-enter">
+            <SiteSearch variant="spotlight" autoFocus className="flex-1" onNavigate={() => setSearchOpen(false)} />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="shrink-0 rounded-full"
+              aria-label="Close search"
+              onClick={() => setSearchOpen(false)}
             >
-              {MAIN_NAV.map((group) => {
-                const current = isCurrent(group)
+              <XIcon className="size-5" aria-hidden />
+            </Button>
+          </div>
+        ) : (
+          <>
+          <div className="flex shrink-0 items-center gap-3 lg:gap-4">
+            {/* The "apna" wordmark the collapsed product sidebar uses; plum on
+                the light pill, white on the dark one. Optically centred: the
+                "p" descender fills the bottom of the box, so the letters sit
+                ~2.6px high — nudged down 3px to line up with the nav text. */}
+            <Link href="/" aria-label="apna for employers, home" className="shrink-0 rounded-full px-3 py-2">
+              <LogoApnaWordmark className="h-5 w-auto translate-y-0.75 dark:hidden" />
+              <LogoApnaWordmark variant="white" className="hidden h-5 w-auto translate-y-0.75 dark:block" />
+            </Link>
 
-                if (!group.sections) {
+            {variant === "default" && (
+              // Leaving the nav (its menu cards are inside it) closes the menu,
+              // so moving on to search or the buttons never leaves one open.
+              <nav
+                aria-label="Main"
+                className="relative hidden items-center gap-0.5 self-stretch py-2 xl:flex"
+                onMouseLeave={() => setOpenPanel(null)}
+              >
+                {MAIN_NAV.map((group) => {
+                  const current = isCurrent(group)
+
+                  if (!group.sections) {
+                    return (
+                      <Link
+                        key={group.label}
+                        href={group.href!}
+                        aria-current={current ? "page" : undefined}
+                        onMouseEnter={() => setOpenPanel(null)}
+                        className={navItemClass(current)}
+                      >
+                        {group.label}
+                      </Link>
+                    )
+                  }
+
+                  const open = openPanel === group.label
                   return (
-                    <Link
+                    <button
                       key={group.label}
-                      href={group.href!}
+                      type="button"
+                      aria-expanded={open}
+                      aria-controls={`menu-${group.label}`}
                       aria-current={current ? "page" : undefined}
-                      onMouseEnter={() => setOpenPanel(null)}
+                      onMouseEnter={() => setOpenPanel(group.label)}
+                      onClick={() => setOpenPanel(open ? null : group.label)}
                       className={navItemClass(current)}
                     >
                       {group.label}
-                    </Link>
+                      <ChevronDown className={cn("size-4 transition-select", open && "rotate-180")} aria-hidden />
+                    </button>
                   )
-                }
+                })}
 
-                const open = openPanel === group.label
-                return (
-                  <button
-                    key={group.label}
-                    type="button"
-                    aria-expanded={open}
-                    aria-controls={`menu-${group.label}`}
-                    aria-current={current ? "page" : undefined}
-                    onMouseEnter={() => setOpenPanel(group.label)}
-                    onClick={() => setOpenPanel(open ? null : group.label)}
-                    className={navItemClass(current)}
-                  >
-                    {group.label}
-                    <ChevronDown className={cn("size-4 transition-select", open && "rotate-180")} aria-hidden />
-                  </button>
-                )
-              })}
-
-              <a
-                href={LOOKING_FOR_A_JOB.href}
-                onMouseEnter={() => setOpenPanel(null)}
-                className={navItemClass(false)}
-              >
-                {LOOKING_FOR_A_JOB.label}
-                <ArrowUpRight className="size-4" aria-hidden />
-              </a>
-
-              {/* ── Menu card ── hangs below the pill, left-aligned to the
-                   nav (a card anchored to its own trigger runs off the right
-                   edge for the later, wider menus). The top padding bridges
-                   the gap so the pointer can travel from trigger to card. */}
-              {MAIN_NAV.filter((g) => g.sections).map((group) => (
-                <div
-                  key={group.label}
-                  id={`menu-${group.label}`}
-                  hidden={openPanel !== group.label}
-                  className="absolute top-full left-0 pt-4"
+                <a
+                  href={LOOKING_FOR_A_JOB.href}
+                  onMouseEnter={() => setOpenPanel(null)}
+                  className={navItemClass(false)}
                 >
-                  <div className="flex divide-x divide-border rounded-2xl bg-popover p-6 shadow-popover ring-1 ring-foreground/10">
-                    {group.sections!.map((section) => (
-                      <div key={section.heading} className="min-w-48 px-6 first:pl-0 last:pr-0">
-                        <MenuSection section={section} onNavigate={() => setOpenPanel(null)} />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </nav>
-          )}
-        </div>
+                  {LOOKING_FOR_A_JOB.label}
+                  <ArrowUpRight className="size-4" aria-hidden />
+                </a>
 
-        <div className="flex shrink-0 items-center gap-2">
-          {variant === "default" && (
-            <div ref={searchRef} className="relative hidden xl:block">
+                {/* ── Menu card ── hangs below the pill, left-aligned to the
+                     nav (a card anchored to its own trigger runs off the right
+                     edge for the later, wider menus). The top padding bridges
+                     the gap so the pointer can travel from trigger to card. */}
+                {MAIN_NAV.filter((g) => g.sections).map((group) => (
+                  <div
+                    key={group.label}
+                    id={`menu-${group.label}`}
+                    hidden={openPanel !== group.label}
+                    className="absolute top-full left-0 pt-4"
+                  >
+                    <div className="flex divide-x divide-border rounded-2xl bg-popover p-6 shadow-popover ring-1 ring-foreground/10">
+                      {group.sections!.map((section) => (
+                        <div key={section.heading} className="min-w-48 px-6 first:pl-0 last:pr-0">
+                          <MenuSection section={section} onNavigate={() => setOpenPanel(null)} />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </nav>
+            )}
+          </div>
+
+          <div className="flex shrink-0 items-center gap-2">
+            {variant === "default" && (
               <Button
                 variant="ghost"
                 size="icon"
-                className="rounded-full"
+                className="hidden rounded-full xl:inline-flex"
                 aria-label="Search the site"
                 aria-expanded={searchOpen}
-                onClick={() => setSearchOpen((v) => !v)}
+                onClick={() => setSearchOpen(true)}
               >
                 <Search className="size-5" aria-hidden />
               </Button>
-              {searchOpen && (
-                // Laid over the end of the nav, right-aligned to the icon.
-                <div className="absolute top-1/2 right-0 w-72 -translate-y-1/2 animate-in fade-in-0 duration-enter">
-                  <SiteSearch autoFocus onNavigate={() => setSearchOpen(false)} />
-                </div>
-              )}
-            </div>
-          )}
-          {/* No "Contact us" here: support gets its own floating button
-              (user call, 2026-10-16). */}
-          {/* One green CTA per screen: on the homepage the hero's sign-up
-              form is the primary, and on phones it sits right under this bar
-              — so here, there, this login steps down to the outline button. */}
-          {pathname === "/" && (
+            )}
+            {/* No "Contact us" here: support gets its own floating button
+                (user call, 2026-10-16). */}
+            {/* One green CTA per screen: on the homepage the hero's sign-up
+                form is the primary, and on phones it sits right under this bar
+                — so here, there, this login steps down to the outline button. */}
+            {pathname === "/" && (
+              <Button
+                variant="outline"
+                className="shrink-0 rounded-full font-semibold sm:hidden"
+                render={<Link href={HEADER_ACTIONS.primary.href} />}
+              >
+                {HEADER_ACTIONS.primary.label}
+              </Button>
+            )}
             <Button
-              variant="outline"
-              className="shrink-0 rounded-full font-semibold sm:hidden"
+              className={cn("shrink-0 rounded-full font-semibold", pathname === "/" && "max-sm:hidden")}
               render={<Link href={HEADER_ACTIONS.primary.href} />}
             >
               {HEADER_ACTIONS.primary.label}
             </Button>
-          )}
-          <Button
-            className={cn("shrink-0 rounded-full font-semibold", pathname === "/" && "max-sm:hidden")}
-            render={<Link href={HEADER_ACTIONS.primary.href} />}
-          >
-            {HEADER_ACTIONS.primary.label}
-          </Button>
-          {variant === "default" && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full xl:hidden"
-              aria-label="Open menu"
-              aria-expanded={mobileOpen}
-              onClick={() => setMobileOpen(true)}
-            >
-              <Menu className="size-5" />
-            </Button>
-          )}
-        </div>
+            {variant === "default" && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-full xl:hidden"
+                aria-label="Open menu"
+                aria-expanded={mobileOpen}
+                onClick={() => setMobileOpen(true)}
+              >
+                <Menu className="size-5" />
+              </Button>
+            )}
+          </div>
+          </>
+        )}
       </div>
+
+      {/* Spotlight dims the page behind it; a click there closes it. */}
+      {searchOpen && (
+        <div aria-hidden className="fixed inset-0 -z-10 bg-foreground/20 animate-in fade-in-0 duration-enter" />
+      )}
 
       {/* ── Mobile menu ── below xl the inline nav is hidden; the same groups
            are an accordion in a sheet (no hover on touch), search on top. */}

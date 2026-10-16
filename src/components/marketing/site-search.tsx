@@ -75,15 +75,20 @@ export function SiteSearch({
   className,
   onNavigate,
   autoFocus,
+  variant = "default",
 }: {
   className?: string
   /** Called after a result is picked — the mobile menu closes itself. */
   onNavigate?: () => void
   /** Focus the field on mount (the header's search icon opens it). */
   autoFocus?: boolean
+  /** "spotlight": the header's full-width search — a large borderless
+   *  field (the pill is its frame) with results the full pill wide. */
+  variant?: "default" | "spotlight"
 }) {
   const router = useRouter()
   const [query, setQuery] = React.useState("")
+  const spotlight = variant === "spotlight"
 
   const go = (result: SearchResult) => {
     setQuery("")
@@ -101,12 +106,18 @@ export function SiteSearch({
     >
       <AutocompleteInput
         aria-label="Search the site"
-        placeholder="Search"
+        placeholder={spotlight ? "Search apna" : "Search"}
         autoFocus={autoFocus}
-        containerClassName={className}
-        className="rounded-full border-transparent bg-muted"
+        inputSize={spotlight ? "lg" : "sm"}
+        containerClassName={cn(spotlight && "[&>svg]:left-4 [&>svg]:size-5", className)}
+        className={
+          spotlight
+            ? "rounded-full border-transparent bg-transparent pl-12 text-lg focus-visible:border-transparent focus-visible:ring-0 md:text-lg"
+            : "rounded-full border-transparent bg-muted"
+        }
       />
-      <AutocompleteContent className="w-80">
+      {/* Spotlight: the list drops just under the pill, as wide as the field. */}
+      <AutocompleteContent className={spotlight ? "max-h-96 p-2" : "w-80"} sideOffset={spotlight ? 14 : 6}>
         <AutocompleteEmpty>No results for &ldquo;{query}&rdquo;</AutocompleteEmpty>
         <AutocompleteList>
           {(group: SearchGroup) => (
