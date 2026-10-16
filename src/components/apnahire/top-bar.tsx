@@ -39,7 +39,6 @@ import {
   BackButton,
   Button,
   ChevronRight,
-  LogoApnaHire,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -84,7 +83,8 @@ export function ApnaHireTopBar({
       <div className="mx-1 h-4 w-px bg-border hidden md:block" />
 
       {/* Phones: Back on a drill-down (BackButton's rule: first in the
-          row), the brand on Jobs, the section's name elsewhere. */}
+          row), otherwise the section's name — Jobs included, as the page's
+          own title (the page drops its heading on phones). */}
       <div className="flex min-w-0 items-center md:hidden">
         {fullScreen ? (
           // BackButton's rule: first in the row, gap-3 before the title.
@@ -94,13 +94,8 @@ export function ApnaHireTopBar({
             <BackButton onClick={() => router.push(HOME)} />
             <span className="truncate text-h5 text-foreground">{sectionTitle(pathname)}</span>
           </span>
-        ) : pathname.split("/").filter(Boolean)[1] !== "jobs" ? (
-          <span className="truncate text-h5 text-foreground">{sectionTitle(pathname)}</span>
         ) : (
-          <Link href="/apnahire/dashboard" aria-label="apna Hire home" className="flex items-center">
-            {/* 24px: the wordmark's native size, as in the expanded sidebar. */}
-            <LogoApnaHire className="h-6" />
-          </Link>
+          <span className="truncate text-h5 text-foreground">{sectionTitle(pathname)}</span>
         )}
       </div>
 

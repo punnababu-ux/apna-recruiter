@@ -163,7 +163,8 @@ function JobsPageInner() {
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 p-4 sm:gap-6 sm:p-6">
       <PageHeader
         variant="transparent"
-        className="px-0 pt-0"
+        // Phones: the top bar carries "Jobs", as it does every section's name.
+        className="px-0 pt-0 max-md:hidden"
         title="Jobs"
         actions={
           <Button
