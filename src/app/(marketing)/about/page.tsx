@@ -17,13 +17,12 @@
 import type { Metadata } from "next"
 import {
   ScrollStack,
-  ScrollStackItem,
   Section,
   SectionHeading,
 } from "@apna/design-system"
 import { ContactSection } from "@/components/marketing/contact-section"
 import { FeatureShowcase } from "@/components/marketing/feature-showcase"
-import { PageHero, withAccent } from "@/components/marketing/page-blocks"
+import { PageHero, StackCard, StatementBand, deckPosition, withAccent } from "@/components/marketing/page-blocks"
 import { ABOUT_OVERVIEW } from "@/content/company"
 
 export const metadata: Metadata = ABOUT_OVERVIEW.meta
@@ -54,24 +53,14 @@ export default function AboutPage() {
           />
           <ScrollStack>
             {story.map((beat, i) => (
-              // The marker is a watermark: very large, very light, behind the
-              // copy, which reads straight over it. Every card wears the
-              // homepage gradient (the mother gradient), like the mission band.
-              <ScrollStackItem
+              <StackCard
                 key={beat.marker}
-                className="relative isolate overflow-hidden bg-gradient-checkout-hero"
+                watermark={beat.marker}
+                overline={`${beat.marker} · ${deckPosition(i, story.length)}`}
+                title={beat.title}
               >
-                <span aria-hidden className="text-watermark pointer-events-none absolute -right-6 -bottom-10 -z-10 select-none lg:-bottom-16">
-                  {beat.marker}
-                </span>
-                <div className="flex min-h-80 max-w-3xl flex-col justify-center gap-5 p-6 sm:p-10 lg:min-h-96 lg:p-14">
-                  <span className="text-overline text-muted-foreground tabular-nums">
-                    {beat.marker} · {String(i + 1).padStart(2, "0")} / {String(story.length).padStart(2, "0")}
-                  </span>
-                  <h3 className="text-h3 text-balance text-foreground sm:text-h2">{beat.title}</h3>
-                  <p className="max-w-2xl text-lg leading-relaxed text-pretty text-foreground sm:text-xl">{beat.description}</p>
-                </div>
-              </ScrollStackItem>
+                <p className="max-w-2xl text-lg leading-relaxed text-pretty text-foreground sm:text-xl">{beat.description}</p>
+              </StackCard>
             ))}
           </ScrollStack>
         </div>
@@ -80,15 +69,7 @@ export default function AboutPage() {
       {/* Our mission: its own band — full width, in the homepage's own
           gradient (the mother gradient; no product colour on About), the
           eyebrow, title and line straight on it. No card. */}
-      <Section size="lg" className="bg-gradient-checkout-hero">
-        <SectionHeading
-          level={2}
-          align="center"
-          eyebrow={<span className="text-overline text-muted-foreground">Our mission</span>}
-          title={mission.title}
-          description={mission.description}
-        />
-      </Section>
+      <StatementBand eyebrow="Our mission" title={mission.title} description={mission.description} />
 
       {/* Built for recruiters: the offers walk themselves (each opens, its
           loader fills, the next opens) and the picture follows. */}

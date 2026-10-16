@@ -11,6 +11,11 @@
  *               `children` go under it
  *   StatGrid    numbers over their labels (value first visually, label
  *               first for screen readers)
+ *   StackCard   one card of a ScrollStack: the mother gradient, a very
+ *               large light watermark (a year, a number) the copy reads
+ *               over, an overline, an Inter title and the body
+ *   StatementBand  a full-width band in the mother gradient carrying one
+ *               serif statement (About's mission, Culture's closing line)
  *   PersonCard  a leader: initials, name, role, their own words, LinkedIn
  *
  * Pure layout over Section, SectionHeading, Card, Avatar and Button.
@@ -25,6 +30,7 @@ import {
   Button,
   Card,
   CheckCircle2,
+  ScrollStackItem,
   Section,
   SectionHeading,
 } from "@apna/design-system"
@@ -128,6 +134,60 @@ export function StatGrid({
         ))}
       </dl>
     </Card>
+  )
+}
+
+export function StackCard({
+  watermark,
+  overline,
+  title,
+  children,
+}: {
+  watermark: string
+  overline: ReactNode
+  title: ReactNode
+  children?: ReactNode
+}) {
+  return (
+    <ScrollStackItem className="relative isolate overflow-hidden bg-gradient-checkout-hero">
+      <span
+        aria-hidden
+        className="text-watermark pointer-events-none absolute -right-6 -bottom-10 -z-10 select-none lg:-bottom-16"
+      >
+        {watermark}
+      </span>
+      <div className="flex min-h-80 max-w-3xl flex-col justify-center gap-5 p-6 sm:p-10 lg:min-h-96 lg:p-14">
+        <span className="text-overline text-muted-foreground tabular-nums">{overline}</span>
+        <h3 className="text-h3 text-balance text-foreground sm:text-h2">{title}</h3>
+        {children}
+      </div>
+    </ScrollStackItem>
+  )
+}
+
+/** "01 / 04" — a stack card's place in its deck. */
+export const deckPosition = (i: number, total: number) =>
+  `${String(i + 1).padStart(2, "0")} / ${String(total).padStart(2, "0")}`
+
+export function StatementBand({
+  eyebrow,
+  title,
+  description,
+}: {
+  eyebrow?: string
+  title: ReactNode
+  description?: ReactNode
+}) {
+  return (
+    <Section size="lg" className="bg-gradient-checkout-hero">
+      <SectionHeading
+        level={2}
+        align="center"
+        eyebrow={eyebrow && <span className="text-overline text-muted-foreground">{eyebrow}</span>}
+        title={title}
+        description={description}
+      />
+    </Section>
   )
 }
 
