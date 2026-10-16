@@ -149,7 +149,7 @@ function PlanCard({
       className="card-hover-lift ink press-subtle relative flex flex-1 cursor-pointer flex-col justify-between gap-5 rounded-card border border-border bg-card px-4 pb-5 pt-8"
     >
       {recommended && (
-        <div className="absolute right-0 top-0 flex overflow-hidden rounded-tr-xl rounded-bl-xl">
+        <div className="absolute right-0 top-0 flex overflow-hidden rounded-tr-[inherit] rounded-bl-xl">
           <Badge variant="ribbon" size="ribbon">
             Recommended
             <Sparkles aria-hidden />
@@ -172,14 +172,14 @@ function PlanCard({
           </div>
           {/* The note line is reserved in every card whether or not it has
               one, so the dividers, feature lists and CTAs sit on the same
-              baseline across the row. Only Quarterly carries a note, and
-              without this Monthly's divider rides ~20px higher. The claimed
-              offer's line goes under it, in both cards. */}
+              baseline across the row. Without this, Monthly's divider
+              rides ~16px higher. The claimed offer's line goes under it,
+              in all cards. */}
           <p
-            className={cn("text-xs italic text-checkout-primary", !note && "invisible")}
+            className={cn("min-h-4 text-xs italic leading-4 text-checkout-primary", !note && "invisible")}
             aria-hidden={!note}
           >
-            {note ?? " "}
+            {note ?? "\u00A0"}
           </p>
           {extraOff && <ExtraOffLine />}
         </div>

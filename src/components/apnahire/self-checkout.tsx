@@ -98,6 +98,18 @@ type PendingCheckout = {
   subscriptionPlan: SubscriptionPlanId
 }
 
+const ACTIVE_TAB_STORAGE_KEY = "apnahire:active-pricing-tab"
+
+function parsePricingTab(raw: string | null | undefined): PricingTab | null {
+  if (!raw) return null
+  const normalized = raw.trim().toLowerCase()
+  if (normalized === "jobs") return "jobs"
+  if (normalized === "database") return "database"
+  if (normalized === "unlimited" || normalized === "subscription") return "unlimited"
+  if (normalized === "enterprise") return "enterprise"
+  return null
+}
+
 export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   const router = useRouter()
   const isLoggedOut = authState === "logged-out"
@@ -110,14 +122,65 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   // The mobile sticky CTA buys whatever is selected on the current tab, so
   // switching between Jobs and Database pre-selects that tab's recommended
   // bundle — the button never offers job credits on the Database tab.
-  const changeTab = React.useCallback((tab: PricingTab) => {
+  const changeTab = React.useCallback((tab: PricingTab, updateUrl = true) => {
     setActiveTab(tab)
     setSelectedPackage((current) => {
       if (tab === "database" && current.kind !== "db") return { kind: "db", bundle: DB_BUNDLES[1] }
       if (tab === "jobs" && current.kind === "db") return { kind: "job", bundle: BUNDLES[1] }
       return current
     })
+
+    if (typeof window !== "undefined") {
+      try {
+        window.sessionStorage.setItem(ACTIVE_TAB_STORAGE_KEY, tab)
+      } catch {
+        // Storage blocked / quota exceeded
+      }
+      if (updateUrl) {
+        try {
+          const url = new URL(window.location.href)
+          if (tab === "jobs") {
+            url.searchParams.delete("tab")
+          } else {
+            url.searchParams.set("tab", tab)
+          }
+          window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash)
+        } catch {
+          // Ignore invalid URL
+        }
+      }
+    }
   }, [])
+
+  // Restore tab on mount (from ?tab= URL param or sessionStorage).
+  React.useEffect(() => {
+    if (typeof window === "undefined") return
+    const params = new URLSearchParams(window.location.search)
+    const urlTab = parsePricingTab(params.get("tab"))
+    if (urlTab) {
+      changeTab(urlTab, false)
+      return
+    }
+    try {
+      const stored = parsePricingTab(window.sessionStorage.getItem(ACTIVE_TAB_STORAGE_KEY))
+      if (stored) {
+        changeTab(stored, true)
+      }
+    } catch {
+      // Storage blocked
+    }
+  }, [changeTab])
+
+  // Sync tab on browser Back/Forward navigation.
+  React.useEffect(() => {
+    const onPopState = () => {
+      const params = new URLSearchParams(window.location.search)
+      const tab = parsePricingTab(params.get("tab")) ?? "jobs"
+      changeTab(tab, false)
+    }
+    window.addEventListener("popstate", onPopState)
+    return () => window.removeEventListener("popstate", onPopState)
+  }, [changeTab])
   // Phones: every tab is a radio list with one sticky CTA for its selection.
   // Annual: the recommended plan, selected first on phones.
   const [subscriptionPlan, setSubscriptionPlan] = React.useState<SubscriptionPlanId>("annual")
