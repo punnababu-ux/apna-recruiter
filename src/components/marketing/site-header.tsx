@@ -272,9 +272,22 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
               {HEADER_ACTIONS.secondary.label}
             </Button>
           )}
+          {/* One green CTA per screen: on the homepage the hero's sign-up
+              form is the primary, and on phones it sits right under this bar
+              — so here, there, this login steps down to the outline button. */}
+          {pathname === "/" && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="shrink-0 rounded-full font-semibold sm:hidden"
+              render={<Link href={HEADER_ACTIONS.primary.href} />}
+            >
+              {HEADER_ACTIONS.primary.label}
+            </Button>
+          )}
           <Button
             size="sm"
-            className="shrink-0 rounded-full font-semibold"
+            className={cn("shrink-0 rounded-full font-semibold", pathname === "/" && "max-sm:hidden")}
             render={<Link href={HEADER_ACTIONS.primary.href} />}
           >
             {HEADER_ACTIONS.primary.label}

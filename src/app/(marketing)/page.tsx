@@ -63,13 +63,20 @@ export default function HomePage() {
           transparent header above it); the section paints over it. */}
       <div className="relative isolate">
         <HeroBackdrop />
-        <Section size="lg" className="relative">
-          <div className="flex flex-col items-start gap-12 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex max-w-2xl flex-col gap-10">
+        {/* Phones: the sign-up form must sit in the first screen. Less
+            space above, no badge, one line of subtext, a smaller headline
+            (the display token's phone size), then the form, then the stats
+            as a compact strip under it. The text column is `contents` below
+            lg so its heading and stats can sit either side of the form. */}
+        <Section size="lg" className="relative max-md:pt-6">
+          <div className="flex flex-col items-start gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-12">
+            <div className="flex max-w-2xl flex-col gap-10 max-lg:contents">
               <SectionHeading
                 level={1}
                 eyebrow={
-                  <Badge size="lg" variant="outline" className="bg-card">
+                  // Says what "India's Largest" says right under it; phones
+                  // can't spare the row.
+                  <Badge size="lg" variant="outline" className="bg-card max-sm:hidden">
                     <CheckCircle2 aria-hidden />
                     {HOME_HERO.eyebrow}
                   </Badge>
@@ -83,20 +90,25 @@ export default function HomePage() {
                 description={
                   <>
                     {HOME_HERO.description}
-                    <br />
-                    {HOME_HERO.tagline}
+                    {/* The tagline is the second line from sm; on phones the
+                        two ran together as one run-on sentence. */}
+                    <span className="max-sm:hidden">
+                      <br />
+                      {HOME_HERO.tagline}
+                    </span>
                   </>
                 }
               />
 
-              <dl className="flex flex-wrap gap-x-12 gap-y-6">
+              {/* Phones: a compact 3-up strip under the form. */}
+              <dl className="grid w-full grid-cols-3 gap-4 max-lg:order-last sm:flex sm:flex-wrap sm:gap-x-12 sm:gap-y-6">
                 {HOME_HERO.stats.map((stat) => (
                   <div key={stat.label} className="flex flex-col gap-1">
                     <dt className="sr-only">{stat.label}</dt>
-                    <dd className="text-h3 font-heading font-semibold text-foreground">
+                    <dd className="font-heading text-xl font-semibold text-foreground sm:text-h3">
                       {stat.value}
                     </dd>
-                    <p aria-hidden className="text-sm text-muted-foreground">
+                    <p aria-hidden className="text-xs text-muted-foreground sm:text-sm">
                       {stat.label}
                     </p>
                   </div>
