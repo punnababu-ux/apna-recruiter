@@ -22,7 +22,7 @@ import {
   SectionHeading,
   SelectValue,
 } from "@apna/design-system"
-import { StatGrid } from "@/components/marketing/page-blocks"
+import { CompanyMark, StatGrid } from "@/components/marketing/page-blocks"
 import { ABOUT_NUMBERS, CUSTOMER_STORIES } from "@/content/company"
 import { PRESS } from "@/content/press"
 
@@ -182,8 +182,8 @@ export function StoryLibrary() {
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {shown.map((c) => (
             <li key={c.company}>
-              <Card padding="md" tone="muted" className="h-full gap-1">
-                <span className="text-base font-semibold text-foreground">{c.company}</span>
+              <Card padding="md" className="h-full gap-3 border-card/60 bg-card/80 backdrop-blur-xl">
+                <CompanyMark company={c.company} />
                 <span className="text-sm text-muted-foreground">{c.industry}</span>
               </Card>
             </li>

@@ -35,6 +35,7 @@ import {
 } from "@apna/design-system"
 import { HeroBackdrop } from "@/components/marketing/hero-backdrop"
 import type { Person } from "@/content/company"
+import { CLIENT_LOGOS } from "@/content/logos"
 import { cn } from "@/lib/utils"
 
 /** Sets one word of a headline in italic (`em`, styled by the editorial
@@ -276,4 +277,12 @@ export function PersonCard({
       </div>
     </Card>
   )
+}
+
+/** A company's logo where we have one (content/logos.ts), else its name. */
+export function CompanyMark({ company }: { company: string }) {
+  const logo = CLIENT_LOGOS.find((l) => l.name === company)
+  if (!logo) return <span className="text-h5 text-foreground">{company}</span>
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src={logo.src} alt={company} height={28} width={logo.width} className="h-7 w-auto self-start" />
 }
