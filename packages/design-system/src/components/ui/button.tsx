@@ -2,7 +2,7 @@
  * Button — base interactive surface.
  *
  * API
- *   <Button variant="default|outline|secondary|ghost|destructive|success|link|link-inline|checkout|checkout-inset|emphasis|inverted"
+ *   <Button variant="default|outline|secondary|ghost|destructive|success|link|link-inline|checkout|checkout-inset|emphasis"
  *           size="xs|sm|default|lg|xl|icon|icon-xs|icon-sm|icon-lg"
  *           leadingIcon={<Plus />}     // optional leading icon
  *           trailingIcon={<ArrowRight />} // optional trailing icon
@@ -23,6 +23,15 @@
  * second green button. `emphasis` is only ever a companion: never the only
  * CTA on a screen and never more than one per section; anything less
  * important than that is `outline`.
+ *
+ * RULE — the companion inverts on dark surfaces. `emphasis` is dark gray on
+ * a light surface and white (dark label) on a dark one, so it always
+ * contrasts with what it sits on: the AI add-on's "Add" beside "Proceed to
+ * pay" is dark gray; the slot pop-up's "Upgrade now" on its plum header is
+ * white, beside the body's green "Expire & post". Don't pick a colour —
+ * mark the dark surface `data-surface="dark"` (OfferDialog's header does)
+ * and every `emphasis` inside it renders white by itself. Same rule as
+ * above: still one green primary per screen.
  *
  * Links — two, and only two:
  *   `link`         a standalone action link: blue, semibold, underlined on
@@ -98,13 +107,11 @@ const buttonVariants = cva(
          * plans link. For that one destination only. */
         premium:
           "bg-gradient-offer-premium text-surface-inverted-fg shadow-control hover:shadow-card hover:brightness-110 active:brightness-95",
-        /* Dark-gray push for a screen whose green primary is already taken
-         * (add-ons, upsells) — see the one-primary RULE above. */
+        /* The companion push for a screen whose green primary is already
+         * taken (add-ons, upsells) — see the RULEs above. Dark gray on light;
+         * inside a `data-surface="dark"` area it inverts to white. */
         emphasis:
-          "bg-cta-emphasis text-cta-emphasis-foreground hover:bg-cta-emphasis-hover active:bg-cta-emphasis-hover",
-        /* A white pill on a dark surface (offer headers): "Upgrade now". */
-        inverted:
-          "bg-cta-inverted text-cta-inverted-foreground hover:bg-cta-inverted-hover active:bg-cta-inverted-hover",
+          "bg-cta-emphasis text-cta-emphasis-foreground hover:bg-cta-emphasis-hover active:bg-cta-emphasis-hover in-data-[surface=dark]:bg-cta-inverted in-data-[surface=dark]:text-cta-inverted-foreground in-data-[surface=dark]:hover:bg-cta-inverted-hover in-data-[surface=dark]:active:bg-cta-inverted-hover",
       },
       size: {
         default:

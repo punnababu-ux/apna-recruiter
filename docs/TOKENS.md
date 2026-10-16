@@ -185,7 +185,7 @@ while `--primary`/`--success` brighten one step in dark mode
 | `--checkout-primary-hover`     | apna-green-700 (#186954) | apna-green-700 (fixed) | checkout CTA hover |
 | `--checkout-primary-foreground`| gray-0                 | gray-0                   | text/icon on checkout-primary             |
 | `--cta-emphasis`               | gray-800               | gray-700                 | emphasis CTA (`Button variant="emphasis"`) — an add-on/upsell push on a screen whose primary CTA is taken |
-| `--cta-inverted` / `-hover` / `-foreground` | gray-0 / gray-100 / gray-900 | same (fixed) | inverted CTA (`Button variant="inverted"`) — a white pill on a dark offer header ("Upgrade now") |
+| `--cta-inverted` / `-hover` / `-foreground` | gray-0 / gray-100 / gray-900 | same (fixed) | the `emphasis` CTA on a dark surface — inside `data-surface="dark"` it renders white with a dark label ("Upgrade now" on an offer header) |
 | `--cta-emphasis-hover`         | gray-900               | gray-600                 | emphasis CTA hover                         |
 | `--cta-emphasis-foreground`    | gray-0                 | gray-0                   | text/icon on cta-emphasis                  |
 | `--checkout-discount-fg`       | apna-green-700 (#186954) | apna-green-700 (fixed) | discount-pill and itemized discount text (drawer, cards). Consumed via `<Badge variant="discount">` |

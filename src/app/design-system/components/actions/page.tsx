@@ -182,6 +182,27 @@ export default function ActionsComponentsPage() {
         </div>
       </div>
 
+      {/* One primary + its companion, on light and on dark */}
+      <div className="rounded-xl border border-border bg-card p-6 space-y-4">
+        <h2 className="text-base font-semibold text-foreground font-heading border-b border-border/60 pb-2">
+          Primary + companion (emphasis inverts on dark)
+        </h2>
+        <p className="text-sm text-muted-foreground">
+          One green primary per screen. Its companion is <code>emphasis</code>: dark gray on light, white on a
+          surface marked <code>data-surface=&quot;dark&quot;</code> — same variant, no colour to pick.
+        </p>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-background p-5">
+            <Button variant="emphasis">Add AI calling</Button>
+            <Button>Proceed to pay</Button>
+          </div>
+          <div data-surface="dark" className="flex flex-wrap items-center gap-3 rounded-xl bg-gradient-offer-premium p-5">
+            <Button variant="emphasis">Upgrade now</Button>
+            <span className="text-sm text-surface-inverted-fg">on a dark header</span>
+          </div>
+        </div>
+      </div>
+
       {/* Button Groups Showcase (Primary, Secondary, Outline, Text Addon) */}
       <div className="rounded-xl border border-border bg-card p-6 space-y-6">
         <div className="flex items-center justify-between border-b border-border/60 pb-3">

@@ -14,9 +14,11 @@
  * Built like the subscription upsell so the two read as one family:
  * OfferDialog's premium tone (the same gold-on-plum header), the "Special
  * upgrade offer" tag, the per-slot price as the same struck-old → gold-new
- * price drop, and the same CTA pairing — upgrading is the one green button,
- * the alternative (expire a job) is outline, like the upsell's "stay"
- * option. Dialog from md, bottom sheet on phones; the job choices are
+ * price drop. CTAs follow the one-primary rule: "Expire & post" is the
+ * screen's green primary; "Upgrade now" is the `emphasis` companion, which
+ * renders white on the dark header (the companion inverts on dark
+ * surfaces — see Button). Dialog from md, bottom sheet on phones; the job
+ * choices are
  * RadioCards (radio at the start from sm, at the end on phones).
  */
 

@@ -215,6 +215,10 @@ Reject the PR if you see any of:
   the only CTA on a screen, at most one per section. Exception: in a
   step-by-step flow (WizardFooter) every step's CTA is `emphasis`, and green
   is kept for the one committing action (post / pay). See Button's JSDoc.
+- A hand-picked white button on a dark surface. The companion inverts by
+  itself: mark the dark area `data-surface="dark"` (OfferDialog's header
+  does) and `emphasis` inside it renders white with a dark label. Dark gray
+  on light, white on dark — one rule, one variant.
 - A card that lifts on hover (`card-hover-lift`, PricingCard) but isn't
   clickable as a whole, or a lifting card with `overflow-hidden`. See the
   rule on `card-hover-lift` in the design system's `styles/index.css`.

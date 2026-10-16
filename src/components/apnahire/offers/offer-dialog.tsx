@@ -91,6 +91,8 @@ export function OfferDialog({
   const body = (
     <>
       <div
+        // Dark header: `emphasis` buttons in it render white (Button RULE).
+        data-surface={dark ? "dark" : undefined}
         className={cn(
           // rounded-t: the bottom sheet can't clip (its close bubble sits
           // outside it), so the header rounds its own top corners.
