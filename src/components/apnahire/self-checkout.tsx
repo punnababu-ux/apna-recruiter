@@ -61,6 +61,7 @@ import { TrustBar } from "@/components/apnahire/trust-bar"
 import { TestimonialGrid } from "@/components/apnahire/testimonial-grid"
 import { UnlimitedSideCard } from "@/components/apnahire/unlimited-side-card"
 import { CheckoutTopBar } from "@/components/apnahire/checkout-top-bar"
+import { HOME } from "@/lib/apnahire/nav"
 import {
   CheckoutDrawer,
   type CartLine,
@@ -354,8 +355,10 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
              the (marketing) layout) is the header, and compactTabSwitcher
              above is published into it rather than rendered here. ── */
         <CheckoutTopBar
-          onBack={() => attemptExit(() => router.push("/apnahire/dashboard"))}
-          backLabel="Back to dashboard"
+          title="Plans"
+          // Home, like every other page's Back (lib/apnahire/nav).
+          onBack={() => attemptExit(() => router.push(HOME))}
+          backLabel="Back to jobs"
           showCenter={showCompactTabs}
           // Revealed from lg, not md: with the logo and the full-size
           // credits pill in the row, four chips no longer fit between

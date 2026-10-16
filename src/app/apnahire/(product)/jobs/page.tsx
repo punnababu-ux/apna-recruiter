@@ -1,9 +1,12 @@
 "use client"
 
 /**
- * /apnahire/jobs — "All your jobs": the recruiter's job list. Tabs filter by
- * apna hire's four job states (under review, active, draft, expired), then
- * search and filters, then the cards (JobList).
+ * /apnahire/jobs — "Jobs": the recruiter's job list. Search and filters
+ * first (they cover every state), then tabs by apna hire's four job states
+ * (under review, active, draft, expired) with counts of what the search
+ * matched, then the cards (JobList).
+ *
+ * Filters: Location and Posted by. Job state isn't a filter, the tabs are.
  */
 
 import { Fab, Plus } from "@apna/design-system"
@@ -127,6 +130,7 @@ function JobsPageInner() {
   const tab = (searchParams.get("tab") as JobTab | null) ?? "all"
 
   const [cityFilters, setCityFilters] = useState<string[]>([])
+  const [posterFilters, setPosterFilters] = useState<string[]>([])
   const [searchQuery, setSearchQuery] = useState("")
 
   const setTab = (next: JobTab) => {
@@ -136,31 +140,31 @@ function JobsPageInner() {
   }
 
   const cities = useMemo(() => Array.from(new Set(MOCK.map((j) => j.city))).sort(), [])
-  const counts = useMemo(() => {
-    const c = Object.fromEntries(TAB_ORDER.map((t) => [t, 0])) as Record<JobTab, number>
-    MOCK.forEach((j) => {
-      c.all++
-      c[j.status]++
-    })
-    return c
-  }, [])
+  const posters = useMemo(() => Array.from(new Set(MOCK.map((j) => j.postedBy))).sort(), [])
 
   const toggle = (list: string[], value: string) =>
     list.includes(value) ? list.filter((v) => v !== value) : [...list, value]
 
-  const filtered = MOCK.filter((j) => {
-    if (tab !== "all" && j.status !== tab) return false
+  // Search and filters first; the tabs then split what they matched.
+  const matched = MOCK.filter((j) => {
     if (cityFilters.length > 0 && !cityFilters.includes(j.city)) return false
+    if (posterFilters.length > 0 && !posterFilters.includes(j.postedBy)) return false
     if (searchQuery.trim() && !j.title.toLowerCase().includes(searchQuery.toLowerCase())) return false
     return true
   })
+  const counts = Object.fromEntries(TAB_ORDER.map((t) => [t, 0])) as Record<JobTab, number>
+  matched.forEach((j) => {
+    counts.all++
+    counts[j.status]++
+  })
+  const filtered = matched.filter((j) => tab === "all" || j.status === tab)
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 p-4 sm:gap-6 sm:p-6">
       <PageHeader
         variant="transparent"
         className="px-0 pt-0"
-        title="All your jobs"
+        title="Jobs"
         actions={
           <Button
             size="sm"
@@ -176,8 +180,33 @@ function JobsPageInner() {
         }
       />
 
-      {/* Tabs, then search — narrow by state first, then by words. */}
+      {/* Search first — it covers every state — then the tabs, whose
+          counts show where the matches are. */}
       <div className="flex flex-col gap-3">
+        <SearchFilterBar
+          className="px-0 pt-0"
+          placeholder="Search by job title…"
+          value={searchQuery}
+          onChange={setSearchQuery}
+          filterGroups={[
+            {
+              label: "Location",
+              options: cities,
+              selected: cityFilters,
+              onToggle: (v) => setCityFilters((prev) => toggle(prev, v)),
+            },
+            {
+              label: "Posted by",
+              options: posters,
+              selected: posterFilters,
+              onToggle: (v) => setPosterFilters((prev) => toggle(prev, v)),
+            },
+          ]}
+          onClearFilters={() => {
+            setCityFilters([])
+            setPosterFilters([])
+          }}
+        />
         {/* Phones: five tabs don't fit across, so they become self-checkout's
             scrolling chip row (MobileChipRow, text only). From md: the tab
             bar. */}
@@ -200,22 +229,6 @@ function JobsPageInner() {
             </TabsList>
           </Tabs>
         </div>
-
-        <SearchFilterBar
-          className="px-0 pt-0"
-          placeholder="Search by job title…"
-          value={searchQuery}
-          onChange={setSearchQuery}
-          filterGroups={[
-            {
-              label: "City",
-              options: cities,
-              selected: cityFilters,
-              onToggle: (v) => setCityFilters((prev) => toggle(prev, v)),
-            },
-          ]}
-          onClearFilters={() => setCityFilters([])}
-        />
       </div>
 
       <main className="flex-1">

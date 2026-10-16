@@ -143,7 +143,7 @@ export function ApnaHireSidebar({
       bottomCta={
         hasPlan
           ? { label: "Manage plans", icon: IndianRupee, href: "/apnahire/credits" }
-          : { label: "View plans", icon: IndianRupee, href: "/pricing" }
+          : { label: "View plans", icon: IndianRupee, href: "/apnahire/credits" }
       }
       footerItems={[
         {

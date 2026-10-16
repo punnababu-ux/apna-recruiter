@@ -8,17 +8,21 @@
  * slot fades in when `showCenter` flips — the page decides when (usually
  * once its hero's own heading/tabs scroll out from under this bar).
  *
- *   <CheckoutTopBar onBack={…} backLabel="Back to dashboard"
+ * Back · page title, like every other app page's header (no logo: the
+ * recruiter is inside the app, so the bar names the page, "Plans").
+ *
+ *   <CheckoutTopBar title="Plans" onBack={…} backLabel="Back to jobs"
  *     center={<CompactTabs />} showCenter={heroOutOfView} />
  */
 
 import * as React from "react"
-import { ApnaLogo, BackButton } from "@apna/design-system"
+import { BackButton } from "@apna/design-system"
 import { AvailableCreditsButton } from "@/components/apnahire/available-credits-button"
 import { useScrolled } from "@/hooks/use-scrolled"
 import { cn } from "@/lib/utils"
 
 interface CheckoutTopBarProps {
+  title: string
   onBack: () => void
   backLabel: string
   center?: React.ReactNode
@@ -26,6 +30,7 @@ interface CheckoutTopBarProps {
 }
 
 export function CheckoutTopBar({
+  title,
   onBack,
   backLabel,
   center,
@@ -46,9 +51,10 @@ export function CheckoutTopBar({
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between">
           {/* Same back-button placement as the job-posting wizard header —
               see BackButton's one-back-affordance rule. */}
-          <div className="flex flex-1 items-center gap-3">
+          <div className="flex min-w-0 flex-1 items-center gap-3">
             <BackButton onClick={onBack} aria-label={backLabel} />
-            <ApnaLogo />
+            {/* The app top bar's page-title style. */}
+            <span className="truncate font-heading text-lg font-semibold text-foreground">{title}</span>
           </div>
 
           {center && (

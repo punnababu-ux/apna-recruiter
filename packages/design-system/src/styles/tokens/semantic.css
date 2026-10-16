@@ -502,6 +502,10 @@
   /* AI add-on wash — plum → sky → green, the soft "AI" tint behind the
    * AI calling upsell in the order summary. Quiet enough for body text. */
   --gradient-ai-subtle: linear-gradient(100deg, var(--color-apna-plum-50) 0%, var(--color-apna-sky-50) 55%, var(--color-apna-green-50) 100%);
+  /* AI demo card — violet → mint, a step stronger than the wash above: the
+   * "AI calling agent in action" demo player in the How AI calling works
+   * pop-up (Figma 3025:52815, #F0E6FF → #B7F5DD). */
+  --gradient-ai-demo: linear-gradient(90deg, var(--color-apna-navy-100) 0%, var(--color-apna-green-100) 100%);
   --gradient-checkout-unlimited: linear-gradient(180deg,
                                    var(--color-apna-plum-700) 0%,
                                    var(--color-apna-plum-800) 60%,
@@ -672,6 +676,7 @@
     radial-gradient(circle at 50% 90%, var(--color-alpha-white-5)  0%, transparent 60%),
     linear-gradient(135deg, var(--color-apna-plum-950) 0%, var(--color-apna-plum-900) 50%, var(--color-apna-plum-800) 100%);
   --gradient-ai-subtle: linear-gradient(100deg, color-mix(in srgb, var(--color-apna-plum-950) 70%, transparent) 0%, color-mix(in srgb, var(--color-apna-sky-950) 45%, transparent) 55%, color-mix(in srgb, var(--color-apna-green-950) 60%, transparent) 100%);
+  --gradient-ai-demo: linear-gradient(90deg, color-mix(in srgb, var(--color-apna-navy-950) 70%, transparent) 0%, color-mix(in srgb, var(--color-apna-green-950) 70%, transparent) 100%);
   --surface-checkout-hero-fg:       var(--color-gray-50);
   --surface-checkout-hero-fg-muted: var(--color-gray-400);
   /* Sits between the two, as it does in light. No dark design exists to

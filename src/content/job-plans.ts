@@ -155,10 +155,23 @@ export const AI_CALLING_ADDON = {
   price: 1600,
   headline: "Save your time – use AI calling to interview candidates",
   benefits: ["30% higher call pickup", "Ready to interview candidates", "Hindi & English calling"],
-  /** "How it works" explainer — placeholder copy until product signs it off. */
-  steps: [
-    "AI calls every applicant within minutes of them applying.",
-    "It asks your screening questions in Hindi or English.",
-    "You get a shortlist with call recordings and answers.",
-  ],
+  /** The "How it works" pop-up (Figma 3025:52757). */
+  explainer: {
+    title: "How AI calling works",
+    description:
+      "AI calls every applicant, checks their interest and availability, and hands you the ones ready to interview. Listen to a demo call.",
+    stats: [
+      { value: "30%", title: "Higher call pickup", body: "Candidates answer an AI call more often" },
+      { title: "Ready to interview", body: "Candidates are screened and shortlisted for you" },
+    ],
+    demo: {
+      title: "AI Calling Agent in Action",
+      /** Recordings per language. No `src` yet: the player runs the
+       *  timeline silently until product supplies the demo calls. */
+      calls: [
+        { value: "hi", label: "Hindi", durationSec: 72, src: undefined as string | undefined },
+        { value: "en", label: "English", durationSec: 72, src: undefined as string | undefined },
+      ],
+    },
+  },
 } as const

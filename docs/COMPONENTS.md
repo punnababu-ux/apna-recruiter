@@ -32,11 +32,11 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 | RadioGroup       | `import { RadioGroup, RadioGroupItem } from "@apna/design-system"`     | Single-select from 2+ options.                   |
 | Switch           | `import { Switch } from "@apna/design-system"`                         | Instant on/off. Persist on change.               |
 | Select           | `import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@apna/design-system"` | Styled dropdown. Use for 4+ options. |
-| Slider           | `import { Slider } from "@apna/design-system"`                         | Slider built on Base UI Slider. Pass an array (`value={[min, max]}`) for a range with two thumbs; `thumbLabels` names them. |
+| Slider           | `import { Slider } from "@apna/design-system"`                         | Slider built on Base UI Slider. Pass an array (`value={[min, max]}`) for a range with two thumbs; `thumbLabels` names them. `size="sm"`: a slim seek bar (4px track, 12px solid thumb) for media players. |
 | OptionCard       | `import { OptionCard, OptionCardGroup } from "@apna/design-system"`    | Large tappable answer to one question — `layout="row"` (icon, title, description) or `"tile"` in a 2-column grid. `OptionCardGroup type="single"` = radiogroup, `"multiple"` = checkboxes. Selected reads like ChipTabs `choice`. |
 | RangeSlider      | `import { RangeSlider } from "@apna/design-system"`                    | From–to range on a ruler (salary bracket): pill handles with grips, value bubble on hover/drag/focus, accent band and in-range ticks, haptic tick on major marks. `unset` (grey until answered), `invalid` ("min"/"max"). Built on Base UI Slider. |
 | NumberStepper    | `import { NumberStepper } from "@apna/design-system"`                  | − n + for a small whole number (years of experience). Disables at `min`/`max`; value announced live. |
-| SearchFilterBar  | `import { SearchFilterBar } from "@apna/design-system"`               | Search input with optional multi-group filter popover. |
+| SearchFilterBar  | `import { SearchFilterBar } from "@apna/design-system"`               | Search input with optional multi-group filters: a popover from md, a bottom sheet (44px rows, "Show results") on phones. |
 
 ## 3. Data Display
 

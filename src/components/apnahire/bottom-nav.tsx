@@ -48,7 +48,6 @@ import {
   type BottomNavItem,
   type BottomNavMenuItem,
 } from "@apna/design-system"
-import { useActiveSubscription } from "@/hooks/use-active-subscription"
 import { useNotifications } from "@/hooks/apnahire/use-notifications"
 import { useAccountAlert } from "@/hooks/apnahire/use-account-alert"
 import { hidesBottomNav } from "@/lib/apnahire/nav"
@@ -64,7 +63,6 @@ export function BottomNavSpacer() {
 export function ApnaHireBottomNav() {
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = React.useState(false)
-  const subscribed = useActiveSubscription()
   const { unreadCount } = useNotifications()
   const account = useAccountAlert()
 
@@ -104,7 +102,7 @@ export function ApnaHireBottomNav() {
       active: tabActive("/apnahire/database"),
     },
     {
-      href: subscribed ? "/apnahire/credits" : "/pricing",
+      href: "/apnahire/credits",
       label: "Plans",
       icon: IndianRupee,
       featured: true,

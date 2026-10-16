@@ -167,6 +167,7 @@ Composed from primitives only, exposed as `bg-gradient-<name>` utilities
 | `--gradient-offer` | `linear-gradient(137deg, apna-green-500 → apna-green-800 → apna-green-950)`, fixed across themes | header of the job bundle, credit pack and exit-nudge pop-ups (`bg-gradient-offer`). White text (`--surface-inverted-fg`), the new price in `--highlight` gold |
 | `--gradient-offer-premium` | 55% apna-gold-500 radial bloom top-left over `linear-gradient(137deg, apna-plum-400 → plum-700 → plum-950)`, fixed across themes | header of the subscription upgrade pop-up (`bg-gradient-offer-premium`), in the Unlimited card and logo colours |
 | `--gradient-ai-subtle` | Light: `linear-gradient(100deg, apna-plum-50 → apna-sky-50 → apna-green-50)`. Dark: the 950 steps of the same ramps at 45–70% over the surface | soft "AI" wash behind the AI calling add-on in the express-checkout order summary (`bg-gradient-ai-subtle`); quiet enough for body text on top |
+| `--gradient-ai-demo` | Light: `linear-gradient(90deg, apna-navy-100 → apna-green-100)`. Dark: the 950 steps at 70% over the surface | violet → mint card behind the AI calling demo player in the "How AI calling works" pop-up (`bg-gradient-ai-demo`); a step stronger than `--gradient-ai-subtle` |
 
 ### Checkout brand
 

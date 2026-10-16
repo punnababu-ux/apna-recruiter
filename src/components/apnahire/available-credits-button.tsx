@@ -16,7 +16,7 @@
  * `balance` defaults every count to 0: most surfaces have no balance data
  * yet. Express checkout passes its job and AI calling balance.
  *
- * `plansCta` adds "View plans" (→ /pricing) under the balance. Only the
+ * `plansCta` adds "View plans" (→ /apnahire/credits, the logged-in plans page) under the balance. Only the
  * product shell's top bar turns it on: on self-checkout and express
  * checkout's plan step the recruiter is already looking at plans, so the
  * panel there is the balance alone.
@@ -130,7 +130,7 @@ export function AvailableCreditsButton({
   // 16px (the panel's gap) above it, clear of the last row.
   const cta = plansCta ? (
     // The plans look (premium + Coin), as in the sidebar and the bottom bar.
-    <Button variant="premium" size="lg" className="w-full" nativeButton={false} render={<Link href="/pricing" />}>
+    <Button variant="premium" size="lg" className="w-full" nativeButton={false} render={<Link href="/apnahire/credits" />}>
       <Coin icon={IndianRupee} />
       View plans
     </Button>

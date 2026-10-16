@@ -17,23 +17,16 @@
  * Either way the CTA reads "Add AI calling agent". The parent decides what
  * the resulting cart line costs.
  *
- * Composition only: Button + Dialog from the design system, a token gradient
+ * "How it works" opens AiCallingExplainer, whose CTA adds the same add-on.
+ *
+ * Composition only: Button from the design system, a token gradient
  * (`bg-gradient-ai-subtle`). No palette of its own.
  */
 
 import * as React from "react"
-import {
-  Button,
-  Check,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  Play,
-  Sparkles,
-} from "@apna/design-system"
+import { Button, Check, Play } from "@apna/design-system"
 import { AI_CALLING_ADDON } from "@/content/job-plans"
+import { AiCallingExplainer, AiSparkle } from "@/components/apnahire/ai-calling-explainer"
 
 export interface AiAddonOffer {
   /** Rupee price when no AI calling credit is available. */
@@ -62,7 +55,7 @@ export function AiCallingAddonCard({
               "How it works" keeps its width opposite, on every screen. */}
           <div className="flex items-start justify-between gap-3">
             <div className="flex min-w-0 items-start gap-2">
-              <Sparkles className="mt-0.5 size-5 shrink-0 text-checkout-info" aria-hidden />
+              <AiSparkle className="mt-0.5 size-5 shrink-0" />
               <p className="text-sm font-semibold text-foreground">{AI_CALLING_ADDON.headline}</p>
             </div>
             <Button
@@ -105,26 +98,12 @@ export function AiCallingAddonCard({
         </div>
       </div>
 
-      <Dialog open={explainerOpen} onOpenChange={setExplainerOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>How AI calling works</DialogTitle>
-            <DialogDescription>
-              An AI agent screens applicants for this job, so you only talk to the right ones.
-            </DialogDescription>
-          </DialogHeader>
-          <ol className="flex flex-col gap-3">
-            {AI_CALLING_ADDON.steps.map((step, i) => (
-              <li key={step} className="flex items-start gap-3 text-sm text-foreground">
-                <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-semibold text-accent-foreground">
-                  {i + 1}
-                </span>
-                {step}
-              </li>
-            ))}
-          </ol>
-        </DialogContent>
-      </Dialog>
+      <AiCallingExplainer
+        open={explainerOpen}
+        onOpenChange={setExplainerOpen}
+        ctaLabel={`Add AI calling · ${useCredit ? "1 credit" : inr(offer.price)}`}
+        onCta={onAdd}
+      />
     </section>
   )
 }

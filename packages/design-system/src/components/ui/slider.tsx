@@ -13,16 +13,21 @@ function Slider({
   max = 100,
   step = 1,
   thumbLabels,
+  size = "default",
   ...props
 }: SliderPrimitive.Root.Props & {
   /** Accessible names for the thumbs, e.g. ["Minimum salary", "Maximum salary"]. */
   thumbLabels?: string[]
+  /** "sm" is a slim seek bar (4px track, 12px solid thumb) for media
+   *  players; "default" is the form control. */
+  size?: "default" | "sm"
 }) {
   const current = value ?? defaultValue
   const thumbs = Array.isArray(current) ? current.length : 1
   return (
     <SliderPrimitive.Root
       data-slot="slider"
+      data-size={size}
       className={cn(
         "relative flex w-full touch-none select-none items-center data-[orientation=vertical]:h-full data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col data-disabled:opacity-50",
         className
@@ -40,7 +45,7 @@ function Slider({
       >
         <SliderPrimitive.Track
           data-slot="slider-track"
-          className="relative h-2 w-full grow overflow-hidden rounded-full bg-secondary data-[orientation=vertical]:h-full data-[orientation=vertical]:w-2"
+          className={cn("relative w-full grow overflow-hidden rounded-full bg-secondary data-[orientation=vertical]:h-full data-[orientation=vertical]:w-2", size === "sm" ? "h-1" : "h-2")}
         >
           <SliderPrimitive.Indicator
             data-slot="slider-indicator"
@@ -54,7 +59,10 @@ function Slider({
             index={i}
             data-slot="slider-thumb"
             getAriaLabel={thumbLabels ? () => thumbLabels[i] ?? "" : undefined}
-            className="block size-5 rounded-full border-2 border-primary bg-background transition-interactive hover:ring-4 hover:ring-primary/15 has-focus-visible:ring-3 has-focus-visible:ring-ring/50 data-dragging:scale-110 data-dragging:ring-4 data-dragging:ring-primary/20 data-disabled:cursor-not-allowed"
+            className={cn(
+              "block rounded-full transition-interactive hover:ring-4 hover:ring-primary/15 has-focus-visible:ring-3 has-focus-visible:ring-ring/50 data-dragging:scale-110 data-dragging:ring-4 data-dragging:ring-primary/20 data-disabled:cursor-not-allowed",
+              size === "sm" ? "size-3 bg-primary" : "size-5 border-2 border-primary bg-background"
+            )}
           />
         ))}
       </SliderPrimitive.Control>

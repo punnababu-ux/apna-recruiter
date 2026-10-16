@@ -859,6 +859,10 @@
   background-image: var(--gradient-ai-subtle);
 }
 
+@utility bg-gradient-ai-demo {
+  background-image: var(--gradient-ai-demo);
+}
+
 @utility bg-gradient-checkout-unlimited {
   background-image: var(--gradient-checkout-unlimited);
 }
