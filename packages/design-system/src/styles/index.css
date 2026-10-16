@@ -670,6 +670,26 @@
   }
 }
 
+/* A brand word in moving green (the hero's "AI-Native"): the green ramp
+ * clipped to the text, its light sweeping across and back on a slow loop.
+ * Reduced motion: the gradient holds still. */
+@keyframes text-gradient-flow {
+  from { background-position: 0% 50%; }
+  to   { background-position: 100% 50%; }
+}
+@utility animate-text-gradient {
+  background-image: var(--gradient-text-brand);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: text-gradient-flow var(--duration-text-gradient) ease-in-out infinite alternate;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
 /* A small rocking turn for the discount icon / % OFF badge, on the same 3s
  * cycle as `animate-text-shimmer`: it rocks as each sweep starts (~0.75s),
  * then holds still through the rest. Animates the standalone `rotate`. */

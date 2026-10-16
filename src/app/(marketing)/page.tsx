@@ -85,7 +85,9 @@ export default function HomePage() {
                 }
                 title={
                   <>
-                    India&apos;s Largest <span className="text-primary">AI-Native</span>{" "}
+                    India&apos;s Largest{" "}
+                      {/* The green ramp flowing across the word. */}
+                      <span className="animate-text-gradient text-primary">AI-Native</span>{" "}
                     Early Talent Platform
                   </>
                 }

@@ -237,6 +237,9 @@
   /* The wandering light's loop — quicker than the blobs, so it reads as
    * light moving across the colour. Its pulse runs at 0.4× this. */
   --duration-ambient-wander: 14s;
+  /* animate-text-gradient: one sweep of the brand-green light across a
+   * word (it then sweeps back). */
+  --duration-text-gradient: 4s;
 
   --press-scale:        var(--scale-97);    /* buttons, chips, controls      */
   --press-scale-subtle: var(--scale-99);    /* cards and large surfaces      */
@@ -532,6 +535,10 @@
   --gradient-illustration-sky:   linear-gradient(160deg, var(--color-apna-sky-100) 0%, var(--color-apna-plum-50) 100%);
   --gradient-illustration-plum:  linear-gradient(160deg, var(--color-apna-plum-100) 0%, var(--color-apna-sky-50) 100%);
   --gradient-illustration-gold:  linear-gradient(160deg, var(--color-apna-gold-100) 0%, var(--color-apna-plum-50) 100%);
+  /* Brand words set in a moving green (animate-text-gradient — the hero's
+   * "AI-Native"): only the apna-green ramp, deep → bright → deep, so the
+   * word stays the brand colour while the light travels across it. */
+  --gradient-text-brand: linear-gradient(90deg, var(--color-apna-green-700) 0%, var(--color-apna-green-500) 35%, var(--color-apna-green-400) 50%, var(--color-apna-green-500) 65%, var(--color-apna-green-700) 100%);
   --gradient-offer-premium:
     radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--color-apna-gold-500) 55%, transparent) 0%, transparent 55%),
     linear-gradient(137deg, var(--color-apna-plum-400) 5%, var(--color-apna-plum-700) 50%, var(--color-apna-plum-950) 112%);
@@ -723,6 +730,7 @@
   --gradient-illustration-sky:   linear-gradient(160deg, color-mix(in srgb, var(--color-apna-sky-900) 55%, transparent) 0%, transparent 100%);
   --gradient-illustration-plum:  linear-gradient(160deg, color-mix(in srgb, var(--color-apna-plum-900) 55%, transparent) 0%, transparent 100%);
   --gradient-illustration-gold:  linear-gradient(160deg, color-mix(in srgb, var(--color-apna-gold-900) 55%, transparent) 0%, transparent 100%);
+  --gradient-text-brand: linear-gradient(90deg, var(--color-apna-green-500) 0%, var(--color-apna-green-300) 35%, var(--color-apna-green-200) 50%, var(--color-apna-green-300) 65%, var(--color-apna-green-500) 100%);
   --surface-checkout-hero-fg:       var(--color-gray-50);
   --surface-checkout-hero-fg-muted: var(--color-gray-400);
   /* Sits between the two, as it does in light. No dark design exists to
