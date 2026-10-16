@@ -78,6 +78,7 @@ import {
   type CreditBalance,
   type JobPlanTier,
 } from "@/content/job-plans"
+import { num } from "@/lib/format"
 
 export type JobPlanLayout = "tiered" | "subscription"
 
@@ -231,7 +232,7 @@ export function JobPlanSelection() {
   const annualLine = (): CartLine => ({
     id: "unlimited_annual",
     label: "Annual plan",
-    sublabel: `1 active job slot + ${ANNUAL_PLAN.dbCredits.toLocaleString("en-IN")} Database credits + Valid for ${ANNUAL_PLAN.slotDays} days`,
+    sublabel: `1 active job slot + ${num(ANNUAL_PLAN.dbCredits)} Database credits + Valid for ${ANNUAL_PLAN.slotDays} days`,
     price: ANNUAL_PLAN.price,
     renewAfterDays: 365,
   })

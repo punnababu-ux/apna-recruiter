@@ -114,7 +114,6 @@ import {
   categoryForTitle,
   companyName,
   experienceLabel,
-  inr,
   locationLabel,
   missingRequired,
   runJobChecks,
@@ -122,6 +121,7 @@ import {
 } from "@/lib/apnahire/job-draft"
 import { cn } from "@/lib/utils"
 import type { JobPostDraft, JobType, PayType } from "@/types/apnahire-job"
+import { inr, num } from "@/lib/format"
 
 export type StageId = "job" | "candidates" | "setup"
 
@@ -697,7 +697,7 @@ function Pay(ctx: ScreenCtx) {
                 id="salary-min"
                 inputMode="numeric"
                 placeholder="₹"
-                value={draft.salaryMin == null ? "" : draft.salaryMin.toLocaleString("en-IN")}
+                value={draft.salaryMin == null ? "" : num(draft.salaryMin)}
                 onChange={(e) => update("salaryMin", toNumber(e.target.value))}
               />
             </Field>
@@ -708,7 +708,7 @@ function Pay(ctx: ScreenCtx) {
                 id="salary-max"
                 inputMode="numeric"
                 placeholder="₹"
-                value={draft.salaryMax == null ? "" : draft.salaryMax.toLocaleString("en-IN")}
+                value={draft.salaryMax == null ? "" : num(draft.salaryMax)}
                 onChange={(e) => update("salaryMax", toNumber(e.target.value))}
                 aria-invalid={err ? true : undefined}
               />
@@ -745,7 +745,7 @@ function Pay(ctx: ScreenCtx) {
             id="incentive"
             inputMode="numeric"
             placeholder="₹ e.g. 5,000"
-            value={draft.incentive == null ? "" : draft.incentive.toLocaleString("en-IN")}
+            value={draft.incentive == null ? "" : num(draft.incentive)}
             onChange={(e) => update("incentive", toNumber(e.target.value))}
           />
         </Field>

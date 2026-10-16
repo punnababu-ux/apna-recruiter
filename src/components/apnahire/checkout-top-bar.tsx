@@ -41,8 +41,8 @@ export function CheckoutTopBar({
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 border-b transition-[background-color,border-color,box-shadow] duration-300 ease-standard",
-        isScrolled ? "border-border bg-card shadow-sm" : "border-checkout-track bg-transparent shadow-none"
+        "sticky top-0 z-sticky border-b transition-interactive duration-enter",
+        isScrolled ? "border-border bg-card shadow-card" : "border-checkout-track bg-transparent shadow-none"
       )}
     >
       {/* Same gutter + column as the hero and page body, so the back arrow
@@ -60,7 +60,7 @@ export function CheckoutTopBar({
           {center && (
             <div
               className={cn(
-                "transition-[opacity,translate] duration-300 ease-standard",
+                "transition-interactive duration-enter",
                 showCenter ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-2 opacity-0"
               )}
             >

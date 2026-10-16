@@ -17,6 +17,11 @@ import {
   Badge,
   Button,
   JobCard,
+  JobCardFrame,
+  JobMetricPill,
+  MoreVertical,
+  UserSearch,
+  Users,
   PhoneFrame,
   PricingCard,
   ClockFading,
@@ -40,6 +45,28 @@ export default function DataLayoutComponentsPage() {
         <p className="text-sm text-muted-foreground mt-1">
           Tables, accordions, job cards, and pricing cards.
         </p>
+      </div>
+
+      {/* Jobs list card */}
+      <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-6">
+        <h2 className="border-b border-border/60 pb-2 text-h6 text-foreground">Jobs list card (JobCardFrame)</h2>
+        <JobCardFrame
+          title="Telecaller"
+          href="#"
+          badge={<Badge variant="success">Active</Badge>}
+          meta={<span className="text-sm text-muted-foreground">Koramangala, Bengaluru · Posted 12 Oct 2026</span>}
+          actions={
+            <Button variant="ghost" size="icon-sm" aria-label="Job actions">
+              <MoreVertical />
+            </Button>
+          }
+          pills={
+            <>
+              <JobMetricPill href="#" icon={Users} label="Applied" count={12} />
+              <JobMetricPill href="#" icon={UserSearch} label="Active leads" count={5} unread="4 new" />
+            </>
+          }
+        />
       </div>
 
       {/* Cards */}

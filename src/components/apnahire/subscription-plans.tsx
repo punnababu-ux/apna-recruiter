@@ -37,6 +37,7 @@ import {
   MobilePlanDetails,
   MobilePlanRow,
 } from "@/components/apnahire/mobile-plan-row"
+import { inr, num } from "@/lib/format"
 
 export type SubscriptionPlanId = "monthly" | "quarterly" | "annual"
 
@@ -78,7 +79,6 @@ function planPricing(plan: { price: number; mrp?: number }, extraOff?: boolean) 
   return { price, strike, pct }
 }
 
-const inr = (n: number) => `₹${n.toLocaleString("en-IN")}`
 
 type JobSlotCount = "1" | "2" | "3"
 
@@ -348,7 +348,7 @@ export function SubscriptionPlans({
                       ],
                       [
                         <Database key="i" aria-hidden />,
-                        `${plan.dbCredits.toLocaleString("en-IN")} database credits worth ${inr(plan.dbWorth)}`,
+                        `${num(plan.dbCredits)} database credits worth ${inr(plan.dbWorth)}`,
                       ],
                       [<WhatsApp key="i" aria-hidden />, "WhatsApp outreach to matched candidates"],
                     ]}
@@ -409,7 +409,7 @@ export function SubscriptionPlans({
             slotDays={ANNUAL_PLAN.slotDays}
             dbLine={
               <>
-                Unlock {ANNUAL_PLAN.dbCredits.toLocaleString("en-IN")} profiles on candidate database{" "}
+                Unlock {num(ANNUAL_PLAN.dbCredits)} profiles on candidate database{" "}
                 <span className="font-semibold italic">worth {inr(ANNUAL_PLAN.dbCreditsWorth)}</span>
               </>
             }

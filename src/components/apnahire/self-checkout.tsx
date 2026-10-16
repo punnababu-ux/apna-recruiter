@@ -75,6 +75,7 @@ import { AuthStateSwitcher } from "@/components/apnahire/auth-state-switcher"
 import { ExitOfferDialog } from "@/components/apnahire/offers/exit-offer-dialog"
 import { useExtraOff } from "@/components/apnahire/offers/use-extra-off"
 import { ANNUAL_PLAN, EXTRA_OFF, withExtraOff } from "@/content/offers"
+import { inr, num } from "@/lib/format"
 
 export type CheckoutAuthState = "logged-in" | "logged-out"
 
@@ -212,7 +213,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   }
 
   const shownPrice = (n: number) =>
-    `₹${(offer.claimed ? withExtraOff(n) : n).toLocaleString("en-IN")}`
+    inr((offer.claimed ? withExtraOff(n) : n))
   const stickyCtaLabel =
     activeTab === "enterprise"
       ? "Contact sales"
@@ -255,7 +256,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
     setCheckoutItem({
       id: "unlimited_annual_1",
       label: "Annual plan",
-      sublabel: `(1 active job slot + ${ANNUAL_PLAN.dbCredits.toLocaleString("en-IN")} Database credits + Valid for ${ANNUAL_PLAN.slotDays} days)`,
+      sublabel: `(1 active job slot + ${num(ANNUAL_PLAN.dbCredits)} Database credits + Valid for ${ANNUAL_PLAN.slotDays} days)`,
       price: ANNUAL_PLAN.price,
       mrp: ANNUAL_PLAN.mrp,
       renewAfterDays: ANNUAL_PLAN.slotDays,

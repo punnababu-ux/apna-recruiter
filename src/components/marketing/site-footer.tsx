@@ -53,7 +53,7 @@ export function SiteFooter({ className }: { className?: string }) {
                   aria-label={label}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="text-foreground transition-opacity hover:opacity-70"
+                  className="text-foreground transition-interactive hover:opacity-70"
                 >
                   <Mark />
                 </a>
@@ -74,7 +74,7 @@ export function SiteFooter({ className }: { className?: string }) {
                   href={link.href}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="text-sm text-foreground transition-opacity hover:opacity-70"
+                  className="text-sm text-foreground transition-interactive hover:opacity-70"
                 >
                   {link.label}
                 </a>
@@ -82,7 +82,7 @@ export function SiteFooter({ className }: { className?: string }) {
                 <Link
                   key={link.label}
                   href={link.href}
-                  className="text-sm text-foreground transition-opacity hover:opacity-70"
+                  className="text-sm text-foreground transition-interactive hover:opacity-70"
                 >
                   {link.label}
                 </Link>
@@ -101,7 +101,7 @@ export function SiteFooter({ className }: { className?: string }) {
               href={item.href}
               target="_blank"
               rel="noreferrer noopener"
-              className="text-xs text-foreground transition-opacity hover:opacity-70"
+              className="text-xs text-foreground transition-interactive hover:opacity-70"
             >
               {item.label}
             </a>

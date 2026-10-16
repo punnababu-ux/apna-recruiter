@@ -61,8 +61,8 @@ import {
   type JobPlanTier,
   type JobPlanTierId,
 } from "@/content/job-plans"
+import { inr } from "@/lib/format"
 
-const inr = (n: number) => `₹${n.toLocaleString("en-IN")}`
 
 /** The claimed exit offer, as the plan lists see it: prices already carry
  *  the 10% (the lists render a discounted copy of each tier), each card

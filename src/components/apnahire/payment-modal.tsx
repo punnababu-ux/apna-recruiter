@@ -21,6 +21,7 @@ import {
   OptionCardGroup,
   Separator,
 } from "@apna/design-system"
+import { inr } from "@/lib/format"
 
 export type PaymentMethod = "upi" | "card" | "netbanking"
 
@@ -85,7 +86,7 @@ export function PaymentModal({
         <div className="flex flex-col items-center gap-1 py-2">
           <span className="text-xs text-muted-foreground">Amount payable</span>
           <span className="text-3xl font-bold text-foreground">
-            ₹{amount.toLocaleString("en-IN")}
+            {inr(amount)}
           </span>
         </div>
 
@@ -153,7 +154,7 @@ export function PaymentModal({
               disabled={processing !== null}
               onClick={() => runMockPayment("success")}
             >
-              {processing === "success" ? "Processing…" : `Pay ₹${amount.toLocaleString("en-IN")}`}
+              {processing === "success" ? "Processing…" : `Pay ${inr(amount)}`}
             </Button>
           )}
           <p className="flex items-center justify-center gap-1.5 text-2xs text-muted-foreground">

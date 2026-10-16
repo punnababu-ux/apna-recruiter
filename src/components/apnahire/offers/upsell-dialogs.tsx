@@ -21,8 +21,8 @@ import { ANNUAL_PLAN, JOB_BUNDLE_OFFERS, withExtraOff } from "@/content/offers"
 import type { JobPlanTier } from "@/content/job-plans"
 import { OfferChoice } from "@/components/apnahire/offers/offer-choice"
 import { OfferDialog } from "@/components/apnahire/offers/offer-dialog"
+import { inr } from "@/lib/format"
 
-const inr = (n: number) => `₹${n.toLocaleString("en-IN")}`
 // Notes glue a value to its unit with a no-break space (\u00A0): on a
 // narrow tile "₹989 /job" may move to the next line, but never splits.
 const pctOff = (price: number, mrp?: number) =>

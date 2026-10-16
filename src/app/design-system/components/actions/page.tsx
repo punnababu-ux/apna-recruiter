@@ -10,6 +10,9 @@ import {
   ToggleGroup,
   ToggleGroupItem,
   Badge,
+  Coin,
+  IndianRupee,
+  StickyCtaBar,
 } from "@apna/design-system"
 import { Bold, Italic, Underline, ChevronDown, Layers, Plus, ArrowRight, Download, Bookmark, Share2, Search, Filter, Sliders } from "@apna/design-system"
 
@@ -301,6 +304,39 @@ export default function ActionsComponentsPage() {
                 <Button variant="default" size={activeSize}>Copy URL</Button>
               </ButtonGroup>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Showcase: links, the xl CTA, the phone CTA dock and the plans coin */}
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-6">
+          <h2 className="border-b border-border/60 pb-2 text-h6 text-foreground">Links — the only two</h2>
+          <div className="flex flex-wrap items-center gap-6">
+            <Button variant="link" trailingIcon={<ArrowRight />}>Buy 1 job credit</Button>
+            <Button variant="link" size="sm">Clear filters</Button>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            1 job credit = 1 classic job.{" "}
+            <Button variant="link-inline" size="sm" className="text-foreground">Need more info?</Button>
+          </p>
+          <span className="text-xs text-muted-foreground">
+            `link` is a standalone action; `link-inline` sits in running text in its colour.
+          </span>
+        </div>
+
+        <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-6">
+          <h2 className="border-b border-border/60 pb-2 text-h6 text-foreground">xl CTA · StickyCtaBar · Coin</h2>
+          <Button variant="checkout" size="xl" className="w-full">Proceed to pay ₹1,651</Button>
+          {/* The real bar is fixed to the bottom of a phone screen; shown in
+              place here. */}
+          <StickyCtaBar className="relative inset-auto rounded-xl md:block">
+            <Button variant="checkout" size="xl">Buy 6 job credits · ₹3,649</Button>
+          </StickyCtaBar>
+          <div className="flex items-center gap-3">
+            <Coin icon={IndianRupee} />
+            <Coin icon={IndianRupee} size="lg" />
+            <span className="text-xs text-muted-foreground">The Plans mark (md 24px · lg 28px)</span>
           </div>
         </div>
       </div>

@@ -1360,7 +1360,7 @@ function JobDetailPageInner({ id }: { id: string }) {
         // tabs stay in view while the candidate list scrolls. Phones: the
         // page is full screen (no top or bottom bar), so this header is the
         // screen's app bar: Back · title · ⋮, then status + facts, then tabs.
-        className="sticky top-0 z-20 md:top-16"
+        className="sticky top-0 z-sticky md:top-16"
         title={
           <div className="flex items-start gap-3">
             <BackButton className="mt-0.5" onClick={back} />

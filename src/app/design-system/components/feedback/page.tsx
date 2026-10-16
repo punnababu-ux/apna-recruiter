@@ -1,7 +1,9 @@
 "use client"
 
 import * as React from "react"
-import { AlertBanner, RenewalBanner, Button, Badge, Switch, Label } from "@apna/design-system"
+import {
+  Bell,
+  MoreHorizontal, AlertBanner, RenewalBanner, Button, Badge, Switch, Label } from "@apna/design-system"
 import { toast } from "sonner"
 import { AlertCircle, Info, CreditCard, ChevronRight, RefreshCw, Sparkles, InfinityIcon, ArrowUp, Clock } from "@apna/design-system"
 import { cn } from "@/lib/utils"
@@ -239,6 +241,22 @@ export default function FeedbackComponentsPage() {
             ribbon={<RibbonBadge appearance={appearance}><Clock className="size-3.5" /> Offer ends in 4 days</RibbonBadge>}
             cta={<Button variant="secondary" trailingIcon={<ChevronRight />}>Buy now</Button>}
           />
+        </div>
+      </div>
+
+      {/* Count / attention badges */}
+      <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-6">
+        <h2 className="border-b border-border/60 pb-2 text-h6 text-foreground">Unread count &amp; attention dot</h2>
+        <div className="flex items-center gap-8">
+          <span className="relative inline-flex size-10 items-center justify-center rounded-full border border-border">
+            <Bell className="size-5" aria-hidden />
+            <Badge variant="count" size="count" className="absolute -top-1.5 -right-1.5 ring-2 ring-card">3</Badge>
+          </span>
+          <span className="relative inline-flex size-10 items-center justify-center rounded-full border border-border">
+            <MoreHorizontal className="size-5" aria-hidden />
+            <Badge variant="count" size="dot" className="absolute top-0.5 right-0.5 ring-2 ring-card" />
+          </span>
+          <span className="text-xs text-muted-foreground">{'variant="count" with size="count" or size="dot"; ring it in the surface beneath.'}</span>
         </div>
       </div>
 

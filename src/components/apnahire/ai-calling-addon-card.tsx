@@ -27,6 +27,7 @@ import * as React from "react"
 import { Button, Check, Play } from "@apna/design-system"
 import { AI_CALLING_ADDON } from "@/content/job-plans"
 import { AiCallingExplainer, AiSparkle } from "@/components/apnahire/ai-calling-explainer"
+import { inr } from "@/lib/format"
 
 export interface AiAddonOffer {
   /** Rupee price when no AI calling credit is available. */
@@ -35,7 +36,6 @@ export interface AiAddonOffer {
   creditsAvailable: number
 }
 
-const inr = (n: number) => `₹${n.toLocaleString("en-IN")}`
 
 export function AiCallingAddonCard({
   offer,

@@ -26,6 +26,7 @@ import { ExtraOffLine } from "@/components/apnahire/offers/extra-off-line"
 import { MobileDiscountRow } from "@/components/apnahire/mobile-plan-row"
 import { cn } from "@/lib/utils"
 import { MobileUnlimitedCard } from "@/components/apnahire/mobile-plan-row"
+import { inr } from "@/lib/format"
 
 interface UnlimitedSideCardProps {
   price?: number
@@ -57,7 +58,7 @@ export function UnlimitedSideCard({
   // Truncated, as the design does for ₹5,999 / 3 = ₹1,999.
   if (extraOff) monthlyPrice = Math.floor(price / jobSlotMonths)
   const pct = extraOff ? Math.round((1 - price / basePrice) * 100) : null
-  const strike = extraOff ? `₹${basePrice.toLocaleString("en-IN")}` : undefined
+  const strike = extraOff ? inr(basePrice) : undefined
   return (
     <>
       {/* ── Mobile (< md): the shared phone card, the same one express
@@ -70,12 +71,12 @@ export function UnlimitedSideCard({
         title="Quarterly plan"
         subtitle="Unlimited job reposts"
         mrp={strike}
-        price={`₹${price.toLocaleString("en-IN")}`}
+        price={inr(price)}
         unit="/quarter"
         belowPrice={<MobileDiscountRow pct={pct} note={extraOff ? "Incl. 10% extra" : undefined} />}
         features={[
           [<BriefcaseBusiness key="i" aria-hidden />, <><strong>1 active job slot</strong> for {jobSlotMonths * 30} days</>],
-          [<Database key="i" aria-hidden />, `${dbCredits} database credits worth ₹${dbCreditsWorth.toLocaleString("en-IN")}`],
+          [<Database key="i" aria-hidden />, `${dbCredits} database credits worth ${inr(dbCreditsWorth)}`],
           [<WhatsApp key="i" aria-hidden />, "WhatsApp outreach to matched candidates"],
         ]}
         note="Valid in a single city"
@@ -129,16 +130,16 @@ export function UnlimitedSideCard({
               </>,
               <>
                 <UserSearch aria-hidden />
-                {dbCredits} database credits worth ₹{dbCreditsWorth.toLocaleString("en-IN")}
+                {dbCredits} database credits worth {inr(dbCreditsWorth)}
               </>,
             ]}
-            price={`₹${price.toLocaleString("en-IN")}`}
+            price={inr(price)}
             mrp={strike}
             badge={pct ? <Badge variant="discount">{pct}% OFF</Badge> : undefined}
             priceSuffix={
               <span className="flex flex-col gap-1">
                 <span className="text-checkout-primary">
-                  That&apos;s just ₹{monthlyPrice.toLocaleString("en-IN")}{"\u00A0"}/month
+                  That&apos;s just {inr(monthlyPrice)}{"\u00A0"}/month
                 </span>
                 {extraOff && <ExtraOffLine />}
               </span>

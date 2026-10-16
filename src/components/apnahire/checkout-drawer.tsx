@@ -75,6 +75,7 @@ import { AiCallingAddonCard, type AiAddonOffer } from "@/components/apnahire/ai-
 import { CountdownChip, useCountdown } from "@/components/apnahire/offers/countdown-chip"
 import { CouponExpiredDialog } from "@/components/apnahire/offers/coupon-expired-dialog"
 import { EXTRA_OFF } from "@/content/offers"
+import { inr } from "@/lib/format"
 
 export interface CartLine {
   id: string
@@ -203,7 +204,6 @@ interface CheckoutDrawerProps {
   onExtraOfferExpired?: () => void
 }
 
-const inr = (n: number) => `₹${n.toLocaleString("en-IN")}`
 
 /** "1 April 2026" — the format the disclosure is drawn in. */
 const renewalDateFormat = new Intl.DateTimeFormat("en-IN", {

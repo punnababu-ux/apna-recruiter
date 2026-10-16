@@ -35,6 +35,7 @@ import { ExtraOffLine } from "@/components/apnahire/offers/extra-off-line"
 import { MobileDiscountRow, MobileMetaLine, MobilePlanRow } from "@/components/apnahire/mobile-plan-row"
 
 import { UserSearch } from "@apna/design-system"
+import { inr } from "@/lib/format"
 
 export type DbBundleId = "170" | "380" | "900"
 
@@ -149,8 +150,8 @@ export function DatabaseCreditBundles({
                     </span>
                   </>
                 }
-                mrp={`₹${bundle.mrp.toLocaleString("en-IN")}`}
-                price={`₹${view.price.toLocaleString("en-IN")}`}
+                mrp={inr(bundle.mrp)}
+                price={inr(view.price)}
                 belowPrice={
                   <MobileDiscountRow pct={view.discountPct} note={extraOff ? "Incl. 10% extra" : undefined} />
                 }
@@ -195,8 +196,8 @@ export function DatabaseCreditBundles({
                   Valid for {bundle.validDays} days
                 </>
               }
-              price={`₹${view.price.toLocaleString("en-IN")}`}
-              mrp={`₹${bundle.mrp.toLocaleString("en-IN")}`}
+              price={inr(view.price)}
+              mrp={inr(bundle.mrp)}
               badge={<Badge variant="discount">{view.discountPct}% OFF</Badge>}
               priceSuffix={
               // The claimed offer's line sits under the per-credit price.

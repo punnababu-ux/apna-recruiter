@@ -83,12 +83,12 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
   }, [pathname])
 
   return (
-    <header className="sticky top-0 z-40" onMouseLeave={() => setOpenPanel(null)}>
+    <header className="sticky top-0 z-sticky" onMouseLeave={() => setOpenPanel(null)}>
       <div
         className={cn(
           "flex h-16 items-center justify-between gap-8 border-b px-4 transition-interactive duration-enter sm:px-8 lg:px-12",
           isScrolled || openPanel || mobileOpen
-            ? "border-border bg-card shadow-sm"
+            ? "border-border bg-card shadow-card"
             : "border-transparent bg-transparent shadow-none"
         )}
       >
@@ -252,7 +252,7 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
           key={group.label}
           hidden={openPanel !== group.label}
           onMouseEnter={() => setOpenPanel(group.label)}
-          className="absolute inset-x-0 top-full hidden border-b border-border bg-card shadow-sm lg:block"
+          className="absolute inset-x-0 top-full hidden border-b border-border bg-card shadow-card lg:block"
         >
           <div className="mx-auto grid w-full max-w-band gap-2 px-4 py-6 sm:px-8 sm:grid-cols-2 lg:grid-cols-4 lg:px-12">
             {group.items!.map((item) => (
@@ -277,7 +277,7 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
         <div
           inert={!slot.showSubNav}
           className={cn(
-            "absolute inset-x-0 top-full -z-10 hidden h-16 items-center justify-center bg-card px-4 shadow-sm transition-interactive duration-enter ease-out-ui md:flex",
+            "absolute inset-x-0 top-full -z-10 hidden h-16 items-center justify-center bg-card px-4 shadow-card transition-interactive duration-enter ease-out-ui md:flex",
             slot.showSubNav
               ? "translate-y-0 opacity-100"
               : "pointer-events-none -translate-y-full opacity-0"

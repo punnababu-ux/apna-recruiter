@@ -43,6 +43,7 @@ import {
   Wallet,
 } from "@apna/design-system"
 import { useIsMobile } from "@/hooks/use-mobile"
+import { num } from "@/lib/format"
 
 export interface CreditsBalance {
   job: number
@@ -103,7 +104,7 @@ function CreditRows({ balance }: { balance: CreditsBalance }) {
           <span className="flex items-center gap-3">
             <Icon className="size-5 shrink-0 text-foreground" aria-hidden />
             <span className="text-xl font-semibold tabular-nums text-foreground">
-              {balance[key].toLocaleString("en-IN")}
+              {num(balance[key])}
             </span>
           </span>
           <span className="flex items-center gap-1.5 text-sm text-foreground">

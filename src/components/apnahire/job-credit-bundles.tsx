@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils"
 import { withExtraOffBundle } from "@/content/offers"
 import { ExtraOffLine } from "@/components/apnahire/offers/extra-off-line"
 import { MobileDiscountRow, MobileMetaLine, MobilePlanRow } from "@/components/apnahire/mobile-plan-row"
+import { inr } from "@/lib/format"
 
 /* ─────────────────────────────────────── types ───────────────────────── */
 
@@ -163,8 +164,8 @@ export function JobCreditBundles({
                     </span>
                   </>
                 }
-                mrp={`₹${bundle.mrp.toLocaleString("en-IN")}`}
-                price={`₹${view.price.toLocaleString("en-IN")}`}
+                mrp={inr(bundle.mrp)}
+                price={inr(view.price)}
                 belowPrice={
                   <MobileDiscountRow pct={view.discountPct} note={extraOff ? "Incl. 10% extra" : undefined} />
                 }
@@ -223,8 +224,8 @@ export function JobCreditBundles({
                 Valid for {bundle.validDays} days
               </>,
             ]}
-            price={`₹${view.price.toLocaleString("en-IN")}`}
-            mrp={`₹${bundle.mrp.toLocaleString("en-IN")}`}
+            price={inr(view.price)}
+            mrp={inr(bundle.mrp)}
             badge={<Badge variant="discount">{view.discountPct}% OFF</Badge>}
             priceSuffix={
               // The claimed offer's line sits under the per-credit price.

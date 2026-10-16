@@ -21,6 +21,10 @@ import {
   DialogFooter,
   Button,
   Badge,
+  Sheet,
+  SheetTrigger,
+  SheetPanel,
+  SheetPanelHeader,
 } from "@apna/design-system"
 import { MoreHorizontal, Info, Edit, Trash, Settings } from "@apna/design-system"
 
@@ -142,6 +146,24 @@ export default function OverlaysComponentsPage() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
+        </div>
+      </div>
+
+      {/* Side panel */}
+      <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-6">
+        <h2 className="border-b border-border/60 pb-2 text-h6 text-foreground">Side panel (SheetPanel)</h2>
+        <div className="flex items-center gap-4">
+          <Sheet>
+            <SheetTrigger render={<Button variant="outline" size="sm">Open side panel</Button>} />
+            <SheetPanel>
+              <SheetPanelHeader title="Order summary" />
+              <div className="flex flex-col gap-3 p-4">
+                <div className="rounded-xl bg-card p-4 text-sm text-foreground shadow-card">A white card section</div>
+                <div className="rounded-xl bg-card p-4 text-sm text-foreground shadow-card">Another section</div>
+              </div>
+            </SheetPanel>
+          </Sheet>
+          <span className="text-xs text-muted-foreground">The order summary and notifications panel. Back on phones, X from sm.</span>
         </div>
       </div>
     </div>

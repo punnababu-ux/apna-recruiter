@@ -6,14 +6,12 @@
  * layout to show (tiered vs. subscription — normally decided by user
  * segment/conditions TBD) and the recruiter's credit balance (normally the
  * account's real balance). Same prototype-control pattern as
- * `AuthStateSwitcher`, just driving in-place state instead of navigating
+ * `AuthStateSwitcher` (both are PrototypeSettings), just driving in-place state instead of navigating
  * between routes, since both of these are view-local rather than separate
  * pages.
  */
 
-import * as React from "react"
-import { Settings } from "@apna/design-system"
-import { cn } from "@/lib/utils"
+import { ExitOfferControls, PrototypeOption, PrototypeSection, PrototypeSettings } from "@/components/apnahire/prototype-settings"
 import type { JobPlanLayout } from "@/components/apnahire/job-plan-selection"
 import type { CreditBalance } from "@/content/job-plans"
 
@@ -52,90 +50,27 @@ export function JobPlanPreviewSwitcher({
   onCreditBalanceChange,
   offer,
 }: JobPlanPreviewSwitcherProps) {
-  const [open, setOpen] = React.useState(false)
-
   return (
-    <div className="fixed bottom-6 left-6 z-50 flex flex-col items-start gap-2 print:hidden">
-      {open && (
-        <div
-          role="group"
-          aria-label="Preview job-plan state"
-          className="flex w-64 flex-col gap-3 rounded-xl border border-border bg-popover p-3 shadow-lg"
-        >
-          <div className="flex flex-col gap-1">
-            <p className="text-xs font-semibold text-muted-foreground">Plan layout</p>
-            {LAYOUTS.map((opt) => (
-              <button
-                key={opt.value}
-                type="button"
-                onClick={() => onLayoutChange(opt.value)}
-                aria-current={opt.value === layout ? "true" : undefined}
-                className={cn(
-                  "rounded-lg px-3 py-1.5 text-left text-sm font-medium transition-colors",
-                  opt.value === layout
-                    ? "bg-accent text-accent-foreground"
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                )}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
-
-          <div className="flex flex-col gap-1 border-t border-border pt-2">
-            <p className="text-xs font-semibold text-muted-foreground">Credit balance</p>
-            {CREDIT_BALANCES.map((opt) => (
-              <button
-                key={opt.label}
-                type="button"
-                onClick={() => onCreditBalanceChange(opt.balance)}
-                aria-current={sameBalance(opt.balance, creditBalance) ? "true" : undefined}
-                className={cn(
-                  "rounded-lg px-3 py-1.5 text-left text-sm font-medium transition-colors",
-                  sameBalance(opt.balance, creditBalance)
-                    ? "bg-accent text-accent-foreground"
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                )}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
-
-          {offer && (
-            <div className="flex flex-col gap-1 border-t border-border pt-2">
-              <p className="text-xs font-semibold text-muted-foreground">
-                10% exit offer · {offer.claimed ? "claimed" : "not claimed"}
-              </p>
-              <button
-                type="button"
-                disabled={!offer.claimed}
-                onClick={offer.onExpireSoon}
-                className="rounded-lg px-3 py-1.5 text-left text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50"
-              >
-                Expire in 5 seconds
-              </button>
-              <button
-                type="button"
-                onClick={offer.onReset}
-                className="rounded-lg px-3 py-1.5 text-left text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-              >
-                Reset offer and exit nudge
-              </button>
-            </div>
-          )}
-        </div>
-      )}
-
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-        aria-label="Preview job-plan state"
-        className="flex size-10 items-center justify-center rounded-full border border-border bg-popover text-muted-foreground shadow-lg transition-colors hover:text-foreground"
-      >
-        <Settings className="size-5" aria-hidden />
-      </button>
-    </div>
+    <PrototypeSettings label="Preview job-plan state">
+      <PrototypeSection title="Plan layout">
+        {LAYOUTS.map((opt) => (
+          <PrototypeOption key={opt.value} active={opt.value === layout} onClick={() => onLayoutChange(opt.value)}>
+            {opt.label}
+          </PrototypeOption>
+        ))}
+      </PrototypeSection>
+      <PrototypeSection title="Credit balance">
+        {CREDIT_BALANCES.map((opt) => (
+          <PrototypeOption
+            key={opt.label}
+            active={sameBalance(opt.balance, creditBalance)}
+            onClick={() => onCreditBalanceChange(opt.balance)}
+          >
+            {opt.label}
+          </PrototypeOption>
+        ))}
+      </PrototypeSection>
+      {offer && <ExitOfferControls offer={offer} />}
+    </PrototypeSettings>
   )
 }

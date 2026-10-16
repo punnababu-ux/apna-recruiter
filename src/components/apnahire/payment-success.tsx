@@ -10,6 +10,7 @@ import * as React from "react"
 import { CheckCircle2 } from "@apna/design-system"
 import { Button, Separator } from "@apna/design-system"
 import type { CartLine } from "@/components/apnahire/checkout-drawer"
+import { inr } from "@/lib/format"
 
 interface PaymentSuccessProps {
   lines: CartLine[]
@@ -36,7 +37,7 @@ export function PaymentSuccess({
 
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center bg-muted px-4 py-12">
-      <div className="flex w-full max-w-md flex-col items-center gap-6 rounded-2xl border border-border bg-card p-8 shadow-sm">
+      <div className="flex w-full max-w-md flex-col items-center gap-6 rounded-2xl border border-border bg-card p-8 shadow-card">
         <CheckCircle2 className="size-14 text-success" aria-hidden />
 
         <div className="flex flex-col items-center gap-1 text-center">
@@ -58,7 +59,7 @@ export function PaymentSuccess({
               <li key={line.id} className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">{line.label}</span>
                 <span className="font-medium text-foreground">
-                  {line.priceLabel ?? `₹${line.price.toLocaleString("en-IN")}`}
+                  {line.priceLabel ?? inr(line.price)}
                 </span>
               </li>
             ))}
@@ -66,17 +67,17 @@ export function PaymentSuccess({
           <Separator className="my-3" />
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">Sub total</span>
-            <span className="font-medium text-foreground">₹{subtotal.toLocaleString("en-IN")}</span>
+            <span className="font-medium text-foreground">{inr(subtotal)}</span>
           </div>
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">GST (18%)</span>
-            <span className="font-medium text-foreground">₹{gst.toLocaleString("en-IN")}</span>
+            <span className="font-medium text-foreground">{inr(gst)}</span>
           </div>
           <Separator className="my-3" />
           <div className="flex items-center justify-between">
             <span className="font-semibold text-foreground">Total (inc tax)</span>
             <span className="text-lg font-bold text-foreground">
-              ₹{total.toLocaleString("en-IN")}
+              {inr(total)}
             </span>
           </div>
         </div>

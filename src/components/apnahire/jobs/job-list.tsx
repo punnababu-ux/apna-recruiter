@@ -57,7 +57,7 @@ import {
   Users,
 } from "@apna/design-system"
 import { IconLabel } from "@/components/onlyrounds/shared"
-import { JobCardFrame, JobMetricPill } from "@/components/onlyrounds/jobs-table"
+import { JobCardFrame, JobMetricPill } from "@apna/design-system"
 
 export type ApnaJobStatus = "under_review" | "active" | "draft" | "expired"
 

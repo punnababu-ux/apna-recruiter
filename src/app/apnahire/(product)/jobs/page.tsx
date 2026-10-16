@@ -170,12 +170,11 @@ function JobsPageInner() {
             size="sm"
             nativeButton={false}
             render={<Link href="/apnahire/jobs/new" />}
-            aria-label="Create new job"
             // Phones post from the floating button instead.
-            className="gap-2 cursor-pointer font-semibold shadow-xs max-md:hidden"
+            className="max-md:hidden"
+            leadingIcon={<Plus />}
           >
-            <Plus className="size-4" />
-            <span className="hidden sm:inline">Create new job</span>
+            Create new job
           </Button>
         }
       />

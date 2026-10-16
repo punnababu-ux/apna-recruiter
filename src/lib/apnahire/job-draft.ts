@@ -12,6 +12,7 @@ import type {
   ScreeningQuestion,
 } from "@/types/apnahire-job"
 import { CATEGORY_RULES } from "@/lib/apnahire/prompt-parse"
+import { inr } from "@/lib/format"
 
 /** Defaults are the answers most recruiters give on the live form, so the
  *  AI only has to ask about things it genuinely can't infer. Nothing that
@@ -252,8 +253,6 @@ export const newQuestion = (question: string, mustHave = false): ScreeningQuesti
   question,
   mustHave,
 })
-
-export const inr = (n: number) => `₹${n.toLocaleString("en-IN")}`
 
 export function salaryLabel(d: JobPostDraft): string | null {
   const fixed =

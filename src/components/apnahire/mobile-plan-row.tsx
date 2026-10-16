@@ -95,7 +95,7 @@ export function MobilePlanRow({
   return (
     <div className="relative pt-1.5">
       {recommended && (
-        <div className="absolute -top-1 left-3 z-10">
+        <div className="absolute -top-1 left-3 z-docked">
           <Badge variant="ribbon">Recommended</Badge>
         </div>
       )}
@@ -111,7 +111,7 @@ export function MobilePlanRow({
         aria-checked={selected}
         tabIndex={0}
         className={cn(
-          "ink press-subtle @container relative flex cursor-pointer flex-col gap-3 overflow-hidden rounded-xl bg-card p-4 shadow-xs transition-interactive",
+          "ink press-subtle @container relative flex cursor-pointer flex-col gap-3 overflow-hidden rounded-xl bg-card p-4 shadow-card transition-interactive",
           selected
             ? "border-2 border-checkout-primary ring-1 ring-checkout-primary/20"
             : "border border-border hover:border-border/80",
@@ -278,7 +278,7 @@ export function MobileUnlimitedCard({
 
       <div
         className={cn(
-          "relative flex flex-col gap-3 overflow-hidden rounded-xl bg-card p-4 text-card-foreground shadow-xs",
+          "relative flex flex-col gap-3 overflow-hidden rounded-xl bg-card p-4 text-card-foreground shadow-card",
           cardClassName
         )}
       >

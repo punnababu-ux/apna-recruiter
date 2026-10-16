@@ -65,7 +65,7 @@ export function ApnaHireTopBar({
       className={cn(
         // 16px sides on phones (the page's gutter); 12px beside the
         // sidebar trigger from md.
-        "sticky top-0 z-10 flex h-16 items-center gap-1 border-b border-border bg-card px-4 md:px-3",
+        "sticky top-0 z-sticky flex h-16 items-center gap-1 border-b border-border bg-card px-4 md:px-3",
         // Drill-downs draw their own header on phones. Hidden, not
         // unmounted: useAppBack keeps tracking in-app navigation.
         isDrillDown(pathname) && "max-md:hidden",
@@ -117,7 +117,7 @@ export function ApnaHireTopBar({
         <Popover>
           <PopoverTrigger
             render={
-              <button className="rounded-full ring-offset-background transition-shadow hover:ring-2 hover:ring-ring/40 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 shrink-0">
+              <button className="rounded-full ring-offset-background transition-interactive hover:ring-2 hover:ring-ring/40 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 shrink-0">
                 <Avatar className="size-8">
                   <AvatarFallback className="bg-accent text-xs font-semibold text-accent-foreground">
                     {user.initial}

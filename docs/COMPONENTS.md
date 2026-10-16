@@ -76,7 +76,8 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 | DropdownMenu     | `import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@apna/design-system"` | Popup action menu built on Base UI Menu. |
 | Dialog           | `import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@apna/design-system"` | Modal. Focus-trapped. |
 | AlertDialog      | `import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from "@apna/design-system"` | Confirm destructive / irreversible actions. |
-| Sheet            | `import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter } from "@apna/design-system"` | Edge-docked drawer. |
+| Sheet            | `import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter } from "@apna/design-system"` | Edge-docked drawer. A bottom `SheetContent` is a phone pop-up (CloseBubble outside it). |
+| SheetPanel       | `import { SheetPanel, SheetPanelHeader } from "@apna/design-system"` | The app's side panel (order summary, notifications): muted frame, 448px / 512px, rounded left corners, white card sections. `SheetPanelHeader` is its one title row (20px heading, optional action, Back on phones / X from sm). Never a bare `SheetContent side="right"`. |
 
 ## 6. Feedback & Status
 
@@ -97,6 +98,10 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 | PhoneFrame       | `import { PhoneFrame } from "@apna/design-system"`                     | Phone bezel for previewing a mobile screen inside a desktop page; the screen scrolls on its own. `label` names the region. |
 | PricingCard      | `import { PricingCard } from "@apna/design-system"`                    | Plan/bundle card — ribbon, one or more meta rows, price+MRP+badge, CTA slot. Pure layout; caller supplies coloured ribbon/badge/cta. `emphasis`: "price" (default) or "title" picks which line leads. `surface="inset"` for a card nested in an always-dark surface. |
 | ApnaLogo         | `import { ApnaLogo } from "@apna/design-system"`                       | Brand mark lockup with gradient and wordmark.    |
+| LogoApnaHire     | `import { LogoApnaHire, LogoApnaWordmark } from "@apna/design-system"` | "apnaHire" wordmark (expanded sidebar, the Jobs top bar on phones) and "apna" alone (collapsed sidebar). Sized by the caller (`h-6 w-auto`). |
+| OnlyRoundsLogo   | `import { OnlyRoundsLogo, OnlyRoundsLogoMark } from "@apna/design-system"` | OnlyRounds lockup and its mark alone. |
+| Coin             | `import { Coin } from "@apna/design-system"` | Gold disc carrying an icon (₹): the mark of the Plans destination — bottom bar Plans tile, sidebar plans link, `premium` Button. `size`: "md" (24px) · "lg" (28px). |
+| JobCardFrame     | `import { JobCardFrame, JobMetricPill } from "@apna/design-system"` | The jobs-list card every product composes: optional logo · title (stretched link: the whole card opens the job) + status badge · meta line · actions, a row of `JobMetricPill` links (label + count + unread dot that pings three times), an optional banner. Inner controls keep their own clicks; only the innermost pressed surface ripples. |
 | LogoApnaUnlimited | `import { LogoApnaUnlimited } from "@apna/design-system"`             | "apna ∞ Unlimited" wordmark — `variant="default\|white\|gradient"` (dark/light/Accent-Gradient fill). |
 
 ## 8. Marketing & Layout

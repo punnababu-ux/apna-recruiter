@@ -37,6 +37,7 @@ import {
 } from "@/lib/apnahire/job-draft"
 import { cn } from "@/lib/utils"
 import type { JobPostDraft } from "@/types/apnahire-job"
+import { inr } from "@/lib/format"
 
 /** While the AI is still drafting, empty fields shimmer instead of saying
  *  "not added" — they're on their way, not missing. */
@@ -285,7 +286,7 @@ export function CandidateJobPreview({
             )}
             {draft.joiningFee && draft.joiningFeeDetails.amount != null && (
               <p className="rounded-md bg-warning-subtle px-2 py-1.5 text-xs text-foreground">
-                This job asks for a fee of ₹{draft.joiningFeeDetails.amount.toLocaleString("en-IN")}
+                This job asks for a fee of {inr(draft.joiningFeeDetails.amount)}
               </p>
             )}
           </Section>

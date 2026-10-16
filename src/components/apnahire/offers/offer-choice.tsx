@@ -19,6 +19,7 @@ import * as React from "react"
 import { Badge, BadgePercent, Button, ClockFading } from "@apna/design-system"
 import { EXTRA_OFF } from "@/content/offers"
 import { cn } from "@/lib/utils"
+import { inr } from "@/lib/format"
 
 export interface OfferOption {
   title: string
@@ -40,7 +41,6 @@ export interface OfferOption {
   onSelect: () => void
 }
 
-const inr = (n: number) => `₹${n.toLocaleString("en-IN")}`
 
 function OptionTile({
   option,
