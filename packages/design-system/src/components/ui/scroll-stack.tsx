@@ -20,7 +20,9 @@
  * Behaviour: the pinning is CSS (`position: sticky`); the recede is one
  * passive scroll listener writing `--stack-depth` per card — how many cards
  * lie on top of it (fractional while one slides in) — read by the
- * `stack-item` utility: the deeper, the smaller. Reduced motion keeps the stacking and drops the
+ * `stack-item` utility: the deeper, the smaller. Each card also gets a
+ * measured tail margin (`--stack-tail`) so the finished deck leaves as one,
+ * ledges intact, instead of the front card sliding up over them. Reduced motion keeps the stacking and drops the
  * recede. The header is 4rem; the first card pins at 6rem.
  */
 
@@ -69,16 +71,38 @@ function ScrollStack({ className, children }: { className?: string; children: Re
       if (!frame) frame = requestAnimationFrame(update)
     }
 
+    // Leave as one deck. A sticky card lets go when the stack's bottom
+    // reaches its own bottom edge, so cards pinned at different heights (and
+    // of different heights) let go one by one and their ledges collapse.
+    // Each card's tail margin pads it to the same release point as the
+    // front card, so the whole deck scrolls away together.
+    const align = () => {
+      const items = [...root.querySelectorAll<HTMLElement>(":scope > [data-slot=scroll-stack-item]")]
+      const last = items[items.length - 1]
+      if (!last) return
+      const reach = (el: HTMLElement) => (parseFloat(getComputedStyle(el).top) || 0) + el.offsetHeight
+      const end = reach(last)
+      items.forEach((item) => {
+        const tail = wide.matches ? Math.max(0, end - reach(item)) : 0
+        item.style.setProperty("--stack-tail", `${Math.round(tail)}px`)
+      })
+      schedule()
+    }
+    const resize = new ResizeObserver(align)
+    root.querySelectorAll(":scope > [data-slot=scroll-stack-item]").forEach((item) => resize.observe(item))
+
+    align()
     update()
     window.addEventListener("scroll", schedule, { passive: true })
-    window.addEventListener("resize", schedule)
-    wide.addEventListener("change", schedule)
+    window.addEventListener("resize", align)
+    wide.addEventListener("change", align)
     calm.addEventListener("change", schedule)
     return () => {
       cancelAnimationFrame(frame)
+      resize.disconnect()
       window.removeEventListener("scroll", schedule)
-      window.removeEventListener("resize", schedule)
-      wide.removeEventListener("change", schedule)
+      window.removeEventListener("resize", align)
+      wide.removeEventListener("change", align)
       calm.removeEventListener("change", schedule)
     }
   }, [])
@@ -101,7 +125,7 @@ function ScrollStackItem({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="scroll-stack-item"
-      className={cn("stack-item rounded-3xl border border-border bg-card lg:sticky lg:shadow-card", className)}
+      className={cn("stack-item rounded-3xl border border-border bg-card lg:sticky lg:mb-(--stack-tail) lg:shadow-card", className)}
       {...props}
     />
   )
