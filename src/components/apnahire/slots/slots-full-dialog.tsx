@@ -23,7 +23,7 @@
  */
 
 import * as React from "react"
-import { ArrowRight, Badge, BadgePercent, Button, Check, RadioCard, RadioCardGroup, Separator } from "@apna/design-system"
+import { ArrowRight, Badge, BadgePercent, Button, Check, RadioCard, RadioCardGroup } from "@apna/design-system"
 import { OfferDialog } from "@/components/apnahire/offers/offer-dialog"
 import { SLOT_UPGRADE } from "@/content/offers"
 import { ordinal, type JobSlots } from "@/hooks/use-job-slots"
@@ -64,32 +64,34 @@ export function SlotsFullDialog({
       eyebrow={`All job slots are in use. Upgrade to a ${ordinal(nextSlot)} slot`}
       priceDrop={{ from: inr(SLOT_UPGRADE.perSlotMrp), to: inr(SLOT_UPGRADE.perSlot), unit: "/slot" }}
       headerFooter={
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex min-w-0 flex-col gap-3">
-            <div className="flex flex-col gap-2">
-              <p className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
-                <span className="text-xl font-semibold">{inr(SLOT_UPGRADE.price)}</span>
-                <span className="text-xs text-surface-inverted-fg/70 line-through">{inr(SLOT_UPGRADE.mrp)}</span>
-                <Badge variant="on-dark" size="sm">
-                  {pct}% OFF
-                </Badge>
-              </p>
-              <ul className="flex flex-col gap-1.5 text-xs text-surface-inverted-fg/85 sm:flex-row sm:flex-wrap sm:gap-x-4">
-                <li className="flex items-center gap-1.5">
-                  <Check className="size-4 shrink-0 text-highlight" aria-hidden />
-                  {nextSlot} Active job slots for {SLOT_UPGRADE.validDays} days
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <Check className="size-4 shrink-0 text-highlight" aria-hidden />
-                  {SLOT_UPGRADE.dbCredits} database credits
-                </li>
-              </ul>
-            </div>
+        // The CTA sits opposite the price, so the plan's lines below get the
+        // full width and each stays on one line.
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-between gap-4">
+            <p className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1">
+              <span className="text-xl font-semibold">{inr(SLOT_UPGRADE.price)}</span>
+              <span className="text-xs text-surface-inverted-fg/70 line-through">{inr(SLOT_UPGRADE.mrp)}</span>
+              <Badge variant="on-dark" size="sm">
+                {pct}% OFF
+              </Badge>
+            </p>
+            <Button variant="emphasis" size="lg" className="shrink-0" trailingIcon={<ArrowRight />} onClick={onUpgrade}>
+              Upgrade now
+            </Button>
+          </div>
+          <div className="flex flex-col gap-2">
+            <ul className="flex flex-col gap-1.5 text-xs text-surface-inverted-fg/85 sm:flex-row sm:flex-wrap sm:gap-x-4">
+              <li className="flex items-center gap-1.5">
+                <Check className="size-4 shrink-0 text-highlight" aria-hidden />
+                {nextSlot} Active job slots for {SLOT_UPGRADE.validDays} days
+              </li>
+              <li className="flex items-center gap-1.5">
+                <Check className="size-4 shrink-0 text-highlight" aria-hidden />
+                {SLOT_UPGRADE.dbCredits} database credits
+              </li>
+            </ul>
             <p className="text-xs text-surface-inverted-fg/60 italic">*Prorated discount applicable</p>
           </div>
-          <Button variant="emphasis" size="lg" className="shrink-0" trailingIcon={<ArrowRight />} onClick={onUpgrade}>
-            Upgrade now
-          </Button>
         </div>
       }
     >
@@ -104,16 +106,11 @@ export function SlotsFullDialog({
                     <span className="text-base font-semibold text-foreground">{job.title}</span>
                     <Badge variant="success">Active</Badge>
                   </div>
-                  {/* A div, not a p: the Separator renders a div. */}
-                  <div className="flex flex-wrap items-center gap-x-2 text-sm text-muted-foreground">
-                    <span className="whitespace-nowrap">{job.location}</span>
-                    <Separator orientation="vertical" className="h-3.5" />
-                    <span className="whitespace-nowrap">Posted on : {job.postedAt}</span>
-                  </div>
+                  <p className="text-sm whitespace-nowrap text-muted-foreground">Posted on : {job.postedAt}</p>
                 </div>
                 {/* Phones: "Applied candidates … 12" on its own row; from sm the
                     count sits over its label at the right. */}
-                <div className="flex items-baseline justify-between gap-2 max-sm:mt-2 sm:shrink-0 sm:flex-col sm:items-end sm:gap-1">
+                <div className="flex items-baseline justify-between gap-2 sm:shrink-0 sm:flex-col sm:items-end sm:gap-1">
                   <span className="order-2 text-base font-semibold text-foreground tabular-nums sm:order-1">{pad2(job.applied)}</span>
                   <span className="order-1 text-sm whitespace-nowrap text-muted-foreground sm:order-2">Applied candidates</span>
                 </div>
@@ -121,9 +118,14 @@ export function SlotsFullDialog({
             </RadioCard>
           ))}
         </RadioCardGroup>
-        <Button variant="checkout" size="lg" className="mt-1 w-full" disabled={!picked} onClick={() => picked && onExpireAndPost(picked)}>
-          Expire &amp; post
-        </Button>
+        {/* Sticks to the foot of the sheet / dialog when the content scrolls
+            (short phones, more jobs), so the action never leaves the screen.
+            Full-bleed over the body's padding, so cards scroll under it. */}
+        <div className="sticky bottom-0 -mx-4 -mb-4 border-t border-border bg-card px-4 py-3 sm:-mx-6 sm:-mb-6 sm:px-6 sm:pb-6">
+          <Button variant="checkout" size="lg" className="w-full" disabled={!picked} onClick={() => picked && onExpireAndPost(picked)}>
+            Expire &amp; post
+          </Button>
+        </div>
       </div>
     </OfferDialog>
   )

@@ -119,7 +119,10 @@ export function OfferDialog({
         <Image src={ILLUSTRATIONS[illustration]} alt="" width={56} height={56} className="size-14" />
         <Title
           className={cn(
-            "font-body text-lg font-regular sm:text-xl",
+            // "lg" (the slot upgrade) carries the most below it, so its
+            // eyebrow steps down on phones to keep the sheet short.
+            "font-body font-regular sm:text-xl",
+            size === "lg" ? "text-base" : "text-lg",
             dark ? "text-surface-inverted-fg" : "text-muted-foreground"
           )}
         >
@@ -160,7 +163,10 @@ export function OfferDialog({
           side="bottom"
           className="gap-0 rounded-t-2xl border-t-0 p-0 pb-safe"
         >
-          {body}
+          {/* The sheet is capped below the viewport (so its close bubble
+              stays on screen) and can't clip; the content scrolls in here
+              instead when a short phone or a long job list needs it. */}
+          <div className="min-h-0 overflow-y-auto overscroll-contain rounded-t-2xl">{body}</div>
         </SheetContent>
       </Sheet>
     )
