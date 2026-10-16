@@ -3,16 +3,17 @@
 /**
  * ContactSection — the homepage's closing "Contact us" band (`#contact-us`,
  * where every "Contact us" link lands now that the header doesn't carry
- * one). The live employer.apna.co/contact-us form, as a section: the pitch
- * and three steps on the left, the form in a card on the right (one column
- * on phones, form under the pitch).
+ * one): a card with the eyebrow, the title and one Contact us button, which
+ * opens the contact form in a pop-up (user call, 2026-10-16 — the form
+ * inline made the band heavy).
  *
- * Fields and options are verbatim from the live page (content/contact.ts).
- * Validation runs on submit (required fields, a work email, a 10-digit
- * mobile number) and then shows the thank-you state.
+ * Fields and options are verbatim from employer.apna.co/contact-us
+ * (content/contact.ts). Validation runs on submit (required fields, a work
+ * email, a 10-digit mobile number), then the pop-up shows the thank-you
+ * state; reopening starts a fresh form.
  *
  * PROTOTYPE: there's no backend here — submitting sends nothing anywhere;
- * it only swaps the form for the confirmation. Wire `onSubmit` to the real
+ * it only swaps the form for the confirmation. Wire `submit` to the real
  * lead endpoint when one exists.
  */
 
@@ -21,6 +22,11 @@ import {
   Button,
   Card,
   CheckCircle2,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
   Field,
   FieldError,
   FieldLabel,
@@ -57,6 +63,44 @@ function validate(v: Values): Errors {
 }
 
 export function ContactSection() {
+  const [open, setOpen] = React.useState(false)
+  // A new key per opening, so a reopened pop-up starts with a fresh form
+  // (not the last one's values or its thank-you state).
+  const [round, setRound] = React.useState(0)
+
+  return (
+    <Section id={CONTACT_ANCHOR} size="md" className="scroll-mt-20">
+      {/* rounded-3xl: the page's large cards share one corner. */}
+      <Card padding="lg" className="rounded-3xl sm:p-10">
+        <SectionHeading
+          level={2}
+          eyebrow={<span className="text-overline text-primary">{CONTACT.eyebrow}</span>}
+          title={CONTACT.title}
+          actions={
+            <Button
+              size="lg"
+              className="w-full sm:w-auto"
+              onClick={() => {
+                setRound((r) => r + 1)
+                setOpen(true)
+              }}
+            >
+              {CONTACT.eyebrow}
+            </Button>
+          }
+        />
+      </Card>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="gap-6 rounded-3xl p-6 sm:max-w-xl sm:p-8">
+          <ContactForm key={round} />
+        </DialogContent>
+      </Dialog>
+    </Section>
+  )
+}
+
+function ContactForm() {
   const [values, setValues] = React.useState<Values>(EMPTY)
   const [errors, setErrors] = React.useState<Errors>({})
   const [sent, setSent] = React.useState(false)
@@ -74,97 +118,78 @@ export function ContactSection() {
     if (Object.keys(found).length === 0) setSent(true)
   }
 
-  return (
-    <Section id={CONTACT_ANCHOR} size="md" className="scroll-mt-20">
-      <div className="grid items-start gap-10 lg:grid-cols-2 lg:gap-16">
-        <div className="flex flex-col gap-8">
-          <SectionHeading
-            level={2}
-            eyebrow={<span className="text-overline text-primary">{CONTACT.eyebrow}</span>}
-            title={CONTACT.title}
-          />
-          <ul className="flex flex-col gap-4">
-            {CONTACT.steps.map((step) => (
-              <li key={step} className="flex items-start gap-3">
-                <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden />
-                <p className="text-base text-muted-foreground">{step}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* rounded-3xl: the page's large cards share one corner. */}
-        <Card padding="lg" className="rounded-3xl">
-          {sent ? (
-            <div role="status" className="flex flex-col items-start gap-3 py-6">
-              <CheckCircle2 className="size-10 text-primary" aria-hidden />
-              <h3 className="text-h5 text-foreground">{CONTACT.success.title}</h3>
-              <p className="text-base text-muted-foreground">{CONTACT.success.body}</p>
-            </div>
-          ) : (
-            <form noValidate onSubmit={submit} className="flex flex-col gap-6">
-              <h3 className="text-h5 text-foreground">{CONTACT.formTitle}</h3>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <TextField id="contact-name" label={CONTACT.fields.name} autoComplete="name"
-                  value={values.name} onChange={set("name")} error={errors.name} />
-                <TextField id="contact-email" label={CONTACT.fields.email} type="email" autoComplete="email"
-                  value={values.email} onChange={set("email")} error={errors.email} />
-
-                <Field data-invalid={errors.phone ? true : undefined}>
-                  <FieldLabel htmlFor="contact-phone">{CONTACT.fields.phone}*</FieldLabel>
-                  {/* A fixed +91 inside the field, as on the sign-up card. */}
-                  <div
-                    className={cn(
-                      inputVariants(),
-                      "flex items-center gap-3 focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50",
-                      errors.phone && "border-destructive"
-                    )}
-                  >
-                    <span className="shrink-0 text-foreground">+91</span>
-                    <input
-                      id="contact-phone"
-                      type="tel"
-                      inputMode="numeric"
-                      autoComplete="tel-national"
-                      aria-invalid={errors.phone ? true : undefined}
-                      className="w-full min-w-0 border-0 bg-transparent p-0 text-base outline-none placeholder:text-muted-foreground md:text-sm"
-                      value={values.phone}
-                      onChange={(e) => set("phone")(e.target.value.replace(/\D/g, "").slice(-10))}
-                    />
-                  </div>
-                  {errors.phone && <FieldError>{errors.phone}</FieldError>}
-                </Field>
-
-                <ChoiceField id="contact-role" label={CONTACT.fields.role} options={CONTACT.roles}
-                  value={values.role} onChange={set("role")} error={errors.role} />
-                <TextField id="contact-company" label={CONTACT.fields.company} autoComplete="organization"
-                  value={values.company} onChange={set("company")} error={errors.company} />
-                <ChoiceField id="contact-size" label={CONTACT.fields.size} options={CONTACT.sizes}
-                  value={values.size} onChange={set("size")} error={errors.size} />
-              </div>
-
-              <div className="flex flex-col gap-4">
-                <Button type="submit" size="lg" className="w-full sm:w-fit sm:min-w-40">
-                  {CONTACT.submit}
-                </Button>
-                <p className="text-xs text-muted-foreground">
-                  By clicking “Submit” I agree to the{" "}
-                  <a href={TERMS_HREF} target="_blank" rel="noreferrer noopener" className="text-info underline">
-                    Terms of Use
-                  </a>{" "}
-                  and the{" "}
-                  <a href={PRIVACY_HREF} target="_blank" rel="noreferrer noopener" className="text-info underline">
-                    Privacy Statement
-                  </a>
-                  .
-                </p>
-              </div>
-            </form>
-          )}
-        </Card>
+  if (sent) {
+    return (
+      <div role="status" className="flex flex-col items-start gap-3 py-4">
+        <CheckCircle2 className="size-10 text-primary" aria-hidden />
+        <DialogTitle className="text-h5 text-foreground">{CONTACT.success.title}</DialogTitle>
+        <DialogDescription className="text-base text-muted-foreground">{CONTACT.success.body}</DialogDescription>
       </div>
-    </Section>
+    )
+  }
+
+  return (
+    <form noValidate onSubmit={submit} className="flex flex-col gap-6">
+      <DialogHeader className="gap-1">
+        <DialogTitle className="text-h5 text-foreground">{CONTACT.formTitle}</DialogTitle>
+        <DialogDescription className="text-sm text-muted-foreground">{CONTACT.steps[1]}</DialogDescription>
+      </DialogHeader>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <TextField id="contact-name" label={CONTACT.fields.name} autoComplete="name"
+          value={values.name} onChange={set("name")} error={errors.name} />
+        <TextField id="contact-email" label={CONTACT.fields.email} type="email" autoComplete="email"
+          value={values.email} onChange={set("email")} error={errors.email} />
+
+        <Field data-invalid={errors.phone ? true : undefined}>
+          <FieldLabel htmlFor="contact-phone">{CONTACT.fields.phone}*</FieldLabel>
+          {/* A fixed +91 inside the field, as on the sign-up card. */}
+          <div
+            className={cn(
+              inputVariants(),
+              "flex items-center gap-3 focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50",
+              errors.phone && "border-destructive"
+            )}
+          >
+            <span className="shrink-0 text-foreground">+91</span>
+            <input
+              id="contact-phone"
+              type="tel"
+              inputMode="numeric"
+              autoComplete="tel-national"
+              aria-invalid={errors.phone ? true : undefined}
+              className="w-full min-w-0 border-0 bg-transparent p-0 text-base outline-none placeholder:text-muted-foreground md:text-sm"
+              value={values.phone}
+              onChange={(e) => set("phone")(e.target.value.replace(/\D/g, "").slice(-10))}
+            />
+          </div>
+          {errors.phone && <FieldError>{errors.phone}</FieldError>}
+        </Field>
+
+        <ChoiceField id="contact-role" label={CONTACT.fields.role} options={CONTACT.roles}
+          value={values.role} onChange={set("role")} error={errors.role} />
+        <TextField id="contact-company" label={CONTACT.fields.company} autoComplete="organization"
+          value={values.company} onChange={set("company")} error={errors.company} />
+        <ChoiceField id="contact-size" label={CONTACT.fields.size} options={CONTACT.sizes}
+          value={values.size} onChange={set("size")} error={errors.size} />
+      </div>
+
+      <div className="flex flex-col gap-4">
+        <Button type="submit" size="lg" className="w-full sm:w-fit sm:min-w-40">
+          {CONTACT.submit}
+        </Button>
+        <p className="text-xs text-muted-foreground">
+          By clicking “Submit” I agree to the{" "}
+          <a href={TERMS_HREF} target="_blank" rel="noreferrer noopener" className="text-info underline">
+            Terms of Use
+          </a>{" "}
+          and the{" "}
+          <a href={PRIVACY_HREF} target="_blank" rel="noreferrer noopener" className="text-info underline">
+            Privacy Statement
+          </a>
+          .
+        </p>
+      </div>
+    </form>
   )
 }
 
