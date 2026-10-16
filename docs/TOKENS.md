@@ -441,7 +441,7 @@ steps, so one line here retunes every surface of that kind.
 | `--ease-out-ui` / `--ease-in-ui` | decel / emphasis | Enter / exit curves |
 | `--ease-select` | spring | Selection lands with a nudge (`ease-select`) |
 | `--duration-slide` / `--ease-slide` | 300ms / standard | A selection pill travelling between options (`tab-indicator`, `sliding-indicator`) |
-| `--duration-ambient` / `--duration-ambient-wander` | 24s / 18s | One AmbientBackdrop blob loop (blobs run at 0.85–1.2×) / one loop of its wandering light (pulse at 0.4×) |
+| `--duration-ambient` / `--duration-ambient-wander` | 16s / 14s | One AmbientBackdrop blob loop (blobs run at 0.85–1.2×) / one loop of its wandering light (pulse at 0.4×) |
 | `--press-scale` / `--press-scale-subtle` | 0.97 / 0.99 | Press compression for controls / cards |
 | `--ink-opacity` | 0.12 (dark 0.16) | Ink strength over `currentColor` |
 

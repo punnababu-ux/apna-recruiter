@@ -781,10 +781,18 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 36rem;
+  width: 56rem;
   aspect-ratio: 1;
   border-radius: 9999px;
-  background: radial-gradient(circle closest-side, var(--ambient-glow), transparent);
+  /* Eased falloff (several stops) so the light has no edge — a sheen
+     passing over the colour, never an orb. */
+  background: radial-gradient(
+    circle closest-side,
+    var(--ambient-glow) 0%,
+    color-mix(in srgb, var(--ambient-glow) 55%, transparent) 30%,
+    color-mix(in srgb, var(--ambient-glow) 20%, transparent) 60%,
+    transparent 100%
+  );
   translate: calc(15cqw - 50%) calc(30cqh - 50%);
   will-change: translate, scale, opacity;
   animation:
