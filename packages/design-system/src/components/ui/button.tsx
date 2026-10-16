@@ -134,7 +134,12 @@ const buttonVariants = cva(
         variant: ["link", "link-inline"],
         className: "h-auto gap-1 rounded-sm p-0 has-data-[icon=inline-end]:pr-0 has-data-[icon=inline-start]:pl-0",
       },
-      { variant: "link-inline", className: "font-medium" },
+      // An inline link takes its sentence's type size too, not the button's
+      // (in a 12px legal line it rendered at 14px). Written as
+      // text-[length:inherit] so tailwind-merge reads it as a font size and
+      // drops the size variant's text-sm — a custom utility name was read
+      // as a colour and knocked out text-inherit instead.
+      { variant: "link-inline", className: "font-medium text-[length:inherit] leading-[inherit]" },
     ],
     defaultVariants: {
       variant: "default",
