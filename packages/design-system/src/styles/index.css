@@ -707,6 +707,93 @@
   }
 }
 
+/* ----------------------------------------------------------------------------
+ * Ambient backdrop — AmbientBackdrop's layers (homepage hero).
+ *
+ *   ambient-backdrop  the clipping frame; fades out at its foot so the hero
+ *                     hands over to the page canvas without an edge
+ *   ambient-blob      a soft disc of one mesh hue drifting on a long loop;
+ *                     `data-blob="1…4"` picks hue, spot, path and tempo
+ *   ambient-glow      a light that trails a mouse pointer (fine pointers
+ *                     only — never on touch)
+ *   ambient-grain     static film grain over everything
+ *
+ * Only translate / scale / opacity move, so nothing repaints. The host sets
+ * `data-paused` while off-screen; reduced motion leaves the blobs where
+ * they rest and drops the glow.
+ * -------------------------------------------------------------------------- */
+@keyframes ambient-float-a {
+  0%, 100% { translate: 0 0; scale: 1; }
+  33%      { translate: 14% 9%; scale: 1.12; }
+  66%      { translate: -9% 15%; scale: 0.92; }
+}
+@keyframes ambient-float-b {
+  0%, 100% { translate: 0 0; scale: 1; }
+  33%      { translate: -15% 7%; scale: 0.9; }
+  66%      { translate: 7% -11%; scale: 1.1; }
+}
+
+@utility ambient-backdrop {
+  position: absolute;
+  overflow: hidden;
+  pointer-events: none;
+  mask-image: linear-gradient(to bottom, black 65%, transparent);
+}
+
+@utility ambient-blob {
+  position: absolute;
+  width: 55vmax;
+  aspect-ratio: 1;
+  border-radius: 9999px;
+  background: radial-gradient(circle closest-side, var(--blob-color) 0%, transparent 100%);
+  will-change: translate, scale;
+  animation: ambient-float-a var(--duration-ambient) ease-in-out infinite;
+
+  &[data-blob="1"] { --blob-color: var(--ambient-blob-1); top: -30%; left: -20%; animation-duration: calc(var(--duration-ambient) * 0.85); }
+  &[data-blob="2"] { --blob-color: var(--ambient-blob-2); top: 20%; left: -25%; animation-name: ambient-float-b; animation-duration: calc(var(--duration-ambient) * 1.15); }
+  &[data-blob="3"] { --blob-color: var(--ambient-blob-3); bottom: -45%; left: 15%; animation-duration: calc(var(--duration-ambient) * 1.2); animation-delay: calc(var(--duration-ambient) * -0.4); }
+  &[data-blob="4"] { --blob-color: var(--ambient-blob-4); top: -35%; right: -20%; animation-name: ambient-float-b; animation-duration: var(--duration-ambient); animation-delay: calc(var(--duration-ambient) * -0.6); }
+
+  [data-paused] > & { animation-play-state: paused; }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@utility ambient-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 36rem;
+  aspect-ratio: 1;
+  border-radius: 9999px;
+  background: radial-gradient(circle closest-side, var(--ambient-glow), transparent);
+  translate: calc(var(--ambient-x, 50vw) - 50%) calc(var(--ambient-y, 40vh) - 50%);
+  opacity: 0;
+  transition:
+    translate var(--duration-ambient-follow) var(--ease-out-ui),
+    opacity var(--duration-ambient-follow) var(--ease-standard);
+
+  [data-pointer] > & { opacity: 1; }
+
+  @media not ((hover: hover) and (pointer: fine)) {
+    display: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    display: none;
+  }
+}
+
+@utility ambient-grain {
+  position: absolute;
+  inset: 0;
+  opacity: var(--ambient-grain-opacity);
+  mix-blend-mode: overlay;
+  background-size: 160px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
 /* An unread dot's ping: a ring that grows from the dot and fades, three
  * times when it appears, then the dot rests. Three, not forever: a list of
  * cards can carry many dots, and a field of endless pulses reads as noise.

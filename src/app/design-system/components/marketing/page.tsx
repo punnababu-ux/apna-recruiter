@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import {
+  AmbientBackdrop,
   ArrowRight,
   Badge,
   Button,
@@ -174,6 +175,21 @@ export default function MarketingComponentsPage() {
               </CardContent>
             </Card>
           ))}
+        </div>
+      </div>
+
+      {/* ── AmbientBackdrop ────────────────────────────────────────────── */}
+      <div className="overflow-hidden rounded-xl border border-border bg-card">
+        <div className="border-b border-border/60 bg-muted/30 p-4 sm:p-6">
+          <h2 className="text-h6 text-foreground">AmbientBackdrop</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            The homepage hero&apos;s living layer over <code>bg-gradient-checkout-hero</code>: drifting
+            blobs in the mesh&apos;s hues, a glow that follows the mouse, film grain.
+          </p>
+        </div>
+        <div className="bg-gradient-checkout-hero relative isolate flex h-72 items-center justify-center">
+          <AmbientBackdrop className="inset-0" />
+          <p className="relative text-h4 text-foreground">Move the mouse here</p>
         </div>
       </div>
 

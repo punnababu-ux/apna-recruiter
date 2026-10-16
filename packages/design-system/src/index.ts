@@ -85,6 +85,7 @@ export * from "./components/ui/card"
 export * from "./components/ui/section"
 export * from "./components/ui/section-heading"
 export * from "./components/ui/logo-wall"
+export * from "./components/ui/ambient-backdrop"
 
 // Helper Utilities
 export * from "./lib/utils"

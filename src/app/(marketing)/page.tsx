@@ -29,6 +29,7 @@ import {
   SectionHeading,
   type IconComponent,
 } from "@apna/design-system"
+import { HeroBackdrop } from "@/components/marketing/hero-backdrop"
 import { HeroLeadCard } from "@/components/marketing/hero-lead-card"
 import {
   HOME_HERO,
@@ -65,52 +66,57 @@ function hrefFor(name: string) {
 export default function HomePage() {
   return (
     <>
-      <Section size="lg">
-        <div className="flex flex-col items-start gap-12 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex max-w-2xl flex-col gap-10">
-            <SectionHeading
-              level={1}
-              eyebrow={
-                <Badge size="lg" variant="outline" className="bg-card">
-                  <CheckCircle2 aria-hidden />
-                  {HOME_HERO.eyebrow}
-                </Badge>
-              }
-              title={
-                <>
-                  India&apos;s Largest <span className="text-primary">AI-Native</span>{" "}
-                  Early Talent Platform
-                </>
-              }
-              description={
-                <>
-                  {HOME_HERO.description}
-                  <br />
-                  {HOME_HERO.tagline}
-                </>
-              }
-            />
+      {/* The hero's living background sits behind the section (and the
+          transparent header above it); the section paints over it. */}
+      <div className="relative isolate">
+        <HeroBackdrop />
+        <Section size="lg" className="relative">
+          <div className="flex flex-col items-start gap-12 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex max-w-2xl flex-col gap-10">
+              <SectionHeading
+                level={1}
+                eyebrow={
+                  <Badge size="lg" variant="outline" className="bg-card">
+                    <CheckCircle2 aria-hidden />
+                    {HOME_HERO.eyebrow}
+                  </Badge>
+                }
+                title={
+                  <>
+                    India&apos;s Largest <span className="text-primary">AI-Native</span>{" "}
+                    Early Talent Platform
+                  </>
+                }
+                description={
+                  <>
+                    {HOME_HERO.description}
+                    <br />
+                    {HOME_HERO.tagline}
+                  </>
+                }
+              />
 
-            <dl className="flex flex-wrap gap-x-12 gap-y-6">
-              {HOME_HERO.stats.map((stat) => (
-                <div key={stat.label} className="flex flex-col gap-1">
-                  <dt className="sr-only">{stat.label}</dt>
-                  <dd className="text-h3 font-heading font-semibold text-foreground">
-                    {stat.value}
-                  </dd>
-                  <p aria-hidden className="text-sm text-muted-foreground">
-                    {stat.label}
-                  </p>
-                </div>
-              ))}
-            </dl>
+              <dl className="flex flex-wrap gap-x-12 gap-y-6">
+                {HOME_HERO.stats.map((stat) => (
+                  <div key={stat.label} className="flex flex-col gap-1">
+                    <dt className="sr-only">{stat.label}</dt>
+                    <dd className="text-h3 font-heading font-semibold text-foreground">
+                      {stat.value}
+                    </dd>
+                    <p aria-hidden className="text-sm text-muted-foreground">
+                      {stat.label}
+                    </p>
+                  </div>
+                ))}
+              </dl>
+            </div>
+
+            {/* max-w-md is already set inside HeroLeadCard itself — shrink-0
+                just stops the flex row from compressing it on medium widths. */}
+            <HeroLeadCard className="w-full shrink-0" />
           </div>
-
-          {/* max-w-md is already set inside HeroLeadCard itself — shrink-0
-              just stops the flex row from compressing it on medium widths. */}
-          <HeroLeadCard className="w-full shrink-0" />
-        </div>
-      </Section>
+        </Section>
+      </div>
 
       <Section tone="card" size="md">
         <div className="flex flex-col items-center gap-10">
