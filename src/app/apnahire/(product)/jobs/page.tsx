@@ -9,7 +9,7 @@
  * Filters: Location and Posted by. Job state isn't a filter, the tabs are.
  */
 
-import { Fab, FilterControl, Plus, Separator, type FilterGroup } from "@apna/design-system"
+import { Fab, Plus, type FilterGroup } from "@apna/design-system"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Suspense, useMemo, useState } from "react"
@@ -214,8 +214,8 @@ function JobsPageInner() {
           onChange={setSearchQuery}
           filterGroups={filterGroups}
           onClearFilters={clearFilters}
-          // Phones: Filters is pinned in the chip row instead.
-          mobileFilters={false}
+          // Phones: Filters is an icon inside the search field.
+          mobileFilters="inside"
         />
         <div className="hidden md:block">
           <Tabs value={tab} onValueChange={(v) => setTab(v as JobTab)}>
@@ -230,15 +230,12 @@ function JobsPageInner() {
         </div>
       </div>
 
-      {/* Phones: the state chips scroll under a Filters chip pinned at the
-          right (thumb reach; "All" keeps the start). The row sticks under the
-          top bar and rides up into its place when the bar slides away. It's
-          a child of the page column, not the search block, so it stays
-          sticky for the whole list. From md: the tab bar above. */}
-      <div className="sticky top-16 z-docked -my-2 flex items-center gap-2 bg-muted py-2 transition-interactive duration-enter max-md:[[data-header-hidden]_&]:-translate-y-16 md:hidden">
+      {/* Phones: the state chips. The row sticks under the top bar and rides
+          up into its place when the bar slides away. It's a child of the
+          page column, not the search block, so it stays sticky for the whole
+          list. From md: the tab bar above. */}
+      <div className="sticky top-16 z-docked -my-2 bg-muted py-2 transition-interactive duration-enter max-md:[[data-header-hidden]_&]:-translate-y-16 md:hidden">
         <MobileChipRow
-          gutter="page-start"
-          className="min-w-0 flex-1"
           items={TAB_ORDER.map((t) => ({
             value: t,
             label: `${t === "all" ? "All" : STATUS_LABELS[t]} (${counts[t]})`,
@@ -246,8 +243,6 @@ function JobsPageInner() {
           value={tab}
           onValueChange={setTab}
         />
-        <Separator orientation="vertical" className="h-6" />
-        <FilterControl variant="chip" groups={filterGroups} onClear={clearFilters} />
       </div>
 
       <main className="flex-1">

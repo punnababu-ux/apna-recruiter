@@ -41,10 +41,11 @@ export interface SearchFilterBarProps {
   filterGroups?: FilterGroup[]
   /** Called by "Clear filters" (popover and sheet). */
   onClearFilters?: () => void
-  /** false: no Filters button beside the search on phones (< md) — the
-   *  page puts a FilterControl chip elsewhere (e.g. pinned in its chip
-   *  row). From md the button stays beside the search. */
-  mobileFilters?: boolean
+  /** Where Filters sits on phones (< md): "beside" the search (a button),
+   *  "inside" it (an icon at the field's end, with the applied count), or
+   *  "none" (the page places a FilterControl itself). From md it's always
+   *  the button beside the search. */
+  mobileFilters?: "beside" | "inside" | "none"
   className?: string
 }
 
@@ -54,10 +55,11 @@ export function SearchFilterBar({
   onChange,
   filterGroups,
   onClearFilters,
-  mobileFilters = true,
+  mobileFilters = "beside",
   className,
 }: SearchFilterBarProps) {
   const hasFilters = (filterGroups?.length ?? 0) > 0
+  const inside = hasFilters && mobileFilters === "inside"
   return (
     <div className={cn("flex items-center gap-3", className)}>
       {/* Search Input */}
@@ -69,11 +71,23 @@ export function SearchFilterBar({
           placeholder={placeholder}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="bg-card pl-9"
+          className={cn("bg-card pl-9", inside && "max-md:pr-11")}
         />
+        {inside && (
+          <FilterControl
+            variant="icon"
+            groups={filterGroups!}
+            onClear={onClearFilters}
+            className="absolute top-1/2 right-1 -translate-y-1/2 md:hidden"
+          />
+        )}
       </div>
       {hasFilters && (
-        <FilterControl groups={filterGroups!} onClear={onClearFilters} className={mobileFilters ? undefined : "max-md:hidden"} />
+        <FilterControl
+          groups={filterGroups!}
+          onClear={onClearFilters}
+          className={mobileFilters === "beside" ? undefined : "max-md:hidden"}
+        />
       )}
     </div>
   )
@@ -82,8 +96,9 @@ export function SearchFilterBar({
 /**
  * FilterControl — the Filters trigger and what it opens: a popover from md,
  * a bottom sheet on phones (staged picks, "Apply filters", "Clear filters").
- * SearchFilterBar uses it beside the search; a page can place it on its own
- * (`variant="chip"`: a 32px pill for a chip row, e.g. pinned at its end).
+ * SearchFilterBar uses it beside the search (or, on phones, inside it as
+ * `variant="icon"`: an icon button at the field's end with the applied
+ * count); a page can place it on its own (`variant="chip"`: a 32px pill).
  */
 export function FilterControl({
   groups,
@@ -93,7 +108,7 @@ export function FilterControl({
 }: {
   groups: FilterGroup[]
   onClear?: () => void
-  variant?: "button" | "chip"
+  variant?: "button" | "chip" | "icon"
   className?: string
 }) {
   const isMobile = useIsMobile()
@@ -102,25 +117,36 @@ export function FilterControl({
   const [draft, setDraft] = React.useState<Record<string, string[]>>({})
   const activeFilterCount = groups.reduce((sum, g) => sum + g.selected.length, 0)
 
-  const trigger = (
-    <Button
-      variant="outline"
-      className={cn(
-        "cursor-pointer gap-1.5",
-        // button: the search field's 40px height · chip: a chip row's 32px pill
-        variant === "chip" ? "h-8 rounded-full px-3" : "h-10"
-      )}
-      aria-label={activeFilterCount ? `Filters, ${activeFilterCount} applied` : "Filters"}
-    >
-      <SlidersHorizontal className="size-4" />
-      <span>Filters</span>
-      {activeFilterCount > 0 && (
-        <Badge variant="success" className="ml-0.5 h-5 min-w-5 px-1.5 text-2xs">
-          {activeFilterCount}
-        </Badge>
-      )}
-    </Button>
-  )
+  const label = activeFilterCount ? `Filters, ${activeFilterCount} applied` : "Filters"
+  const trigger =
+    variant === "icon" ? (
+      <Button variant="ghost" size="icon-sm" className="relative cursor-pointer text-muted-foreground" aria-label={label}>
+        <SlidersHorizontal className="size-4" />
+        {activeFilterCount > 0 && (
+          <Badge variant="count" size="count" className="absolute -top-0.5 -right-0.5 ring-2 ring-card">
+            {activeFilterCount}
+          </Badge>
+        )}
+      </Button>
+    ) : (
+      <Button
+        variant="outline"
+        className={cn(
+          "cursor-pointer gap-1.5",
+          // button: the search field's 40px height · chip: a chip row's 32px pill
+          variant === "chip" ? "h-8 rounded-full px-3" : "h-10"
+        )}
+        aria-label={label}
+      >
+        <SlidersHorizontal className="size-4" />
+        <span>Filters</span>
+        {activeFilterCount > 0 && (
+          <Badge variant="success" className="ml-0.5 h-5 min-w-5 px-1.5 text-2xs">
+            {activeFilterCount}
+          </Badge>
+        )}
+      </Button>
+    )
 
   return (
     <div className={cn("flex shrink-0", className)}>
