@@ -35,7 +35,7 @@ export const HOME_HERO = {
   tagline: "Building Bharat's workforce in the AI Economy.",
   stats: [
     { value: "6 Cr+", label: "Candidates" },
-    { value: "7 L+", label: "Businesses and Enterprises" },
+    { value: "7 L+", label: "Businesses & Enterprises" },
     { value: "7,200+", label: "Towns & Cities Covered" },
   ] satisfies Stat[],
 }

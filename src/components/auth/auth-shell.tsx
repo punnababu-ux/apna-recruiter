@@ -93,11 +93,13 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
           {/* foreground at low alpha: the default border colour vanished on
               the hero gradient. */}
           <Separator className="bg-foreground/15" />
+          {/* The homepage hero's stats — same numbers, same look. Three
+              fixed columns: this column is narrower than the hero's, and a
+              wrapping row dropped the third stat onto a line of its own. */}
           <dl className="grid grid-cols-3 gap-6">
             {AUTH_PANEL.stats.map((s) => (
               <div key={s.label} className="flex flex-col gap-1">
                 <dt className="order-2 text-sm text-muted-foreground">{s.label}</dt>
-                {/* Dark, like the homepage hero's stats (not green). */}
                 <dd className="order-1 font-heading text-h3 font-semibold text-foreground">{s.value}</dd>
               </div>
             ))}

@@ -4,16 +4,15 @@
  * login and onboarding.
  */
 
-import type { Stat } from "@/content/home"
+import { HOME_HERO } from "@/content/home"
 
 export const AUTH_PANEL = {
   headline: "Hire top talent in 48 hours with apna.",
   description: "Streamline your recruitment with AI-driven precision. Single solution from Fresher to experienced hiring.",
-  stats: [
-    { value: "6 Crore+", label: "Qualified candidates" },
-    { value: "7 Lakhs+", label: "Employers use apna" },
-    { value: "900+", label: "Available cities" },
-  ] satisfies Stat[],
+  /** The homepage hero's stats, not the live sign-in page's own (6 Crore+ /
+   *  7 Lakhs+ / 900+ cities): one site, one set of numbers (user call,
+   *  2026-10-16) — the city count disagreed (900+ vs 7,200+). */
+  stats: HOME_HERO.stats,
 }
 
 export const LOOKING_FOR_A_JOB_LINK = { label: "Looking for a job?", href: "https://apna.co" }
