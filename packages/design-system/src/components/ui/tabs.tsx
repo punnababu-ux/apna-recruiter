@@ -75,7 +75,7 @@ function TabsList({
           "top-(--active-tab-top) left-(--active-tab-left) h-(--active-tab-height) w-(--active-tab-width)",
           "group-data-[variant=default]/tabs-list:rounded-full group-data-[variant=default]/tabs-list:bg-background group-data-[variant=default]/tabs-list:shadow-card dark:group-data-[variant=default]/tabs-list:border dark:group-data-[variant=default]/tabs-list:border-input dark:group-data-[variant=default]/tabs-list:bg-input/30",
           "group-data-[variant=inverted]/tabs-list:rounded-full group-data-[variant=inverted]/tabs-list:bg-foreground",
-          "group-data-[variant=checkout]/tabs-list:rounded-full group-data-[variant=checkout]/tabs-list:bg-card group-data-[variant=checkout]/tabs-list:inset-ring-1 group-data-[variant=checkout]/tabs-list:inset-ring-border",
+          "group-data-[variant=checkout]/tabs-list:rounded-full group-data-[variant=checkout]/tabs-list:bg-card group-data-[variant=checkout]/tabs-list:ring-1 group-data-[variant=checkout]/tabs-list:ring-border",
           "group-data-[variant=line]/tabs-list:rounded-full group-data-[variant=line]/tabs-list:bg-foreground",
           "group-data-horizontal/tabs:group-data-[variant=line]/tabs-list:top-auto group-data-horizontal/tabs:group-data-[variant=line]/tabs-list:bottom-0 group-data-horizontal/tabs:group-data-[variant=line]/tabs-list:h-0.5",
           "group-data-vertical/tabs:group-data-[variant=line]/tabs-list:left-auto group-data-vertical/tabs:group-data-[variant=line]/tabs-list:right-0 group-data-vertical/tabs:group-data-[variant=line]/tabs-list:w-0.5"

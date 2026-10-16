@@ -74,7 +74,7 @@ export function SearchFilterBar({
       <SlidersHorizontal className="size-4" />
       <span>Filters</span>
       {activeFilterCount > 0 && (
-        <Badge variant="success" className="ml-1 h-5 min-w-5 px-1.5 text-2xs">
+        <Badge variant="default" className="ml-1 h-5 min-w-5 px-1.5 text-2xs font-semibold">
           {activeFilterCount}
         </Badge>
       )}
@@ -91,7 +91,7 @@ export function SearchFilterBar({
       <SlidersHorizontal className="size-4" />
       <span>Filters</span>
       {activeFilterCount > 0 && (
-        <Badge variant="success" className="h-5 min-w-5 px-1.5 text-2xs">
+        <Badge variant="default" className="h-5 min-w-5 px-1.5 text-2xs font-semibold">
           {activeFilterCount}
         </Badge>
       )}
