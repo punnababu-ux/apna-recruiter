@@ -49,7 +49,7 @@ export function AiCallingAddonCard({
 
   return (
     <section data-slot="ai-calling-addon" className="bg-card p-4 shadow-card">
-      <div className="overflow-hidden rounded-2xl border border-border">
+      <div className="overflow-hidden rounded-card-nested border border-border">
         <div className="flex flex-col gap-3 bg-gradient-ai-subtle p-4">
           {/* The headline gives: it wraps to two or three lines while
               "How it works" keeps its width opposite, on every screen. */}

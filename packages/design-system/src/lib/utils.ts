@@ -11,7 +11,7 @@ const twMerge = extendTailwindMerge({
     // and the stylesheet order picked the winner — a card's corner override
     // silently did nothing.
     theme: {
-      radius: ["field", "control", "surface", "overlay", "hero", "pill"],
+      radius: ["field", "control", "surface", "card", "card-nested", "overlay", "hero", "pill"],
     },
     classGroups: {
       "font-size": [

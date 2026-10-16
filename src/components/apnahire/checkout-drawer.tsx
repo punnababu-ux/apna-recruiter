@@ -302,7 +302,7 @@ function GstinCard({
   children: React.ReactNode
 }) {
   return (
-    <div className="flex flex-col gap-4 rounded-2xl border border-border bg-muted px-4 py-5">
+    <div className="flex flex-col gap-4 rounded-card-nested border border-border bg-muted px-4 py-5">
       <div className="flex items-center justify-between gap-2">
         <p className="text-base font-semibold text-foreground">{title}</p>
         <Button variant="ghost" size="icon-sm" onClick={onClose} aria-label={`Close ${title}`}>
@@ -577,7 +577,7 @@ export function CheckoutDrawer({
                 </p>
               </div>
 
-              <div className="flex flex-col gap-4 rounded-2xl border border-border bg-muted p-4">
+              <div className="flex flex-col gap-4 rounded-card-nested border border-border bg-muted p-4">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex flex-col gap-3">
                     <p className="text-sm font-semibold text-foreground">

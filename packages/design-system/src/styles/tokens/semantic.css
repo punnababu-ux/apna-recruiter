@@ -184,7 +184,13 @@
   --radius:         var(--radius-lg); /* legacy default — keep for shadcn   */
   --radius-field:   var(--radius-sm); /* inputs, selects, textareas         */
   --radius-control: var(--radius-md); /* buttons, chips, toggles            */
-  --radius-surface: var(--radius-lg); /* cards, popovers, menus             */
+  --radius-surface: var(--radius-lg); /* popovers, menus                    */
+  /* Cards — ONE corner for every card on every page (home, pricing, plans,
+     login, app), user call 2026-10-17. `card` for a card on the page
+     background; `card-nested` (one step down) for a card inside another
+     surface — a track, a card, a side panel. Never pick a radius per page. */
+  --radius-card:        var(--radius-3xl); /* ≈20px — cards on the page       */
+  --radius-card-nested: var(--radius-2xl); /* ≈16px — a card inside a surface */
   --radius-overlay: var(--radius-xl); /* dialogs, sheets, drawers           */
   --radius-hero:    var(--radius-2xl);/* marketing blocks, splashes         */
   --radius-pill:    var(--radius-full);/* avatars, pills, capsule buttons   */

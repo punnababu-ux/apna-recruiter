@@ -284,7 +284,7 @@ export interface JobPlanSelectProps {
  *  the Unlimited card's 24px logo row, so both columns' cards start level. */
 function PlanFrame({ title, className, children }: { title: string; className?: string; children: React.ReactNode }) {
   return (
-    <div className={cn("flex flex-col gap-5 rounded-2xl bg-checkout-track p-4", className)}>
+    <div className={cn("flex flex-col gap-5 rounded-card bg-checkout-track p-4", className)}>
       {/* A group label, not a heading to compete with the page title: 16px,
           on the same 24px line as the apna Unlimited logo row beside it. */}
       <h2 className="text-h6 leading-6 text-foreground">{title}</h2>
@@ -578,7 +578,7 @@ function MonthlySubscriptionCard({
       data-card-lift-group
       onClick={onSelect}
       className={cn(
-        "flex cursor-pointer flex-col gap-5 rounded-2xl bg-gradient-checkout-unlimited p-4",
+        "flex cursor-pointer flex-col gap-5 rounded-card bg-gradient-checkout-unlimited p-4",
         className
       )}
     >

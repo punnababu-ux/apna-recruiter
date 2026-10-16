@@ -110,9 +110,7 @@ export function PhoneLoginForm({
 
 export function HeroLeadCard({ className, ...props }: PhoneLoginFormProps & { className?: string }) {
   return (
-    // rounded-3xl (19.5px), like the homepage's product cards: the default
-    // card corner (10px) read tight on a card this size.
-    <Card padding="lg" className={cn("flex w-full max-w-md flex-col gap-6 rounded-3xl", className)}>
+    <Card padding="lg" className={cn("flex w-full max-w-md flex-col gap-6", className)}>
       <PhoneLoginForm ctaLabel="Continue" {...props} />
       <LegalLine className="text-xs" />
     </Card>

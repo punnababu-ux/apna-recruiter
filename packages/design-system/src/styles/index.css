@@ -240,6 +240,8 @@
   --radius-field:   var(--radius-field);
   --radius-control: var(--radius-control);
   --radius-surface: var(--radius-surface);
+  --radius-card: var(--radius-card);
+  --radius-card-nested: var(--radius-card-nested);
   --radius-overlay: var(--radius-overlay);
   --radius-hero:    var(--radius-hero);
   --radius-pill:    var(--radius-pill);

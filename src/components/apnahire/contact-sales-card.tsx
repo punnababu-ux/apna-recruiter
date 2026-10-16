@@ -25,7 +25,7 @@ export function ContactSalesCard({ onContactSales, className }: ContactSalesCard
     <div
       data-slot="contact-sales-card"
       className={cn(
-        "flex flex-col items-start justify-between gap-4 rounded-2xl border border-border bg-card p-5 sm:flex-row sm:items-center",
+        "flex flex-col items-start justify-between gap-4 rounded-card border border-border bg-card p-5 sm:flex-row sm:items-center",
         className
       )}
     >

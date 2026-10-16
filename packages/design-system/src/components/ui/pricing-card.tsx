@@ -200,9 +200,11 @@ export function PricingCard({
 
   const rootClassName = cn(
     // `card-hover-lift` is the shared card interaction (see styles/index.css).
+    // `card-nested`: it usually sits in a plan track; on the page background
+    // pass `rounded-card` (the ribbon's corner follows via `inherit`).
     // No `overflow-hidden`: it would clip the lift's hit strip; the ribbon
     // clips its own corner instead.
-    "relative flex h-full flex-col gap-4 rounded-xl border p-4 pt-8",
+    "relative flex h-full flex-col gap-4 rounded-card-nested border p-4 pt-8",
     interactive && "card-hover-lift",
     inset ? "border-checkout-inset-border bg-checkout-inset" : "border-border bg-card",
     // A clickable card answers a press like every other surface.
@@ -219,7 +221,7 @@ export function PricingCard({
         className={rootClassName}
         {...props}
       >
-        {ribbon && <div className="absolute right-0 top-0 flex overflow-hidden rounded-tr-xl rounded-bl-xl">{ribbon}</div>}
+        {ribbon && <div className="absolute right-0 top-0 flex overflow-hidden rounded-tr-[inherit] rounded-bl-xl">{ribbon}</div>}
 
         <div className="flex flex-col gap-2">
           <p className={cn("text-base font-semibold leading-5", fg)}>{title}</p>
@@ -255,7 +257,7 @@ export function PricingCard({
         // as an inline formatting context around `ribbon`, which reserves
         // baseline/line-height space above the badge — a visible gap
         // between the card's top edge and the ribbon itself.
-        <div className="absolute right-0 top-0 flex overflow-hidden rounded-tr-xl rounded-bl-xl">{ribbon}</div>
+        <div className="absolute right-0 top-0 flex overflow-hidden rounded-tr-[inherit] rounded-bl-xl">{ribbon}</div>
       )}
 
       <div className="flex flex-1 flex-col gap-5">

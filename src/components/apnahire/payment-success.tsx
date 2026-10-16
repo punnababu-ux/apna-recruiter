@@ -37,7 +37,7 @@ export function PaymentSuccess({
 
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center bg-muted px-4 py-12">
-      <div className="flex w-full max-w-md flex-col items-center gap-6 rounded-2xl border border-border bg-card p-8 shadow-card">
+      <div className="flex w-full max-w-md flex-col items-center gap-6 rounded-card border border-border bg-card p-8 shadow-card">
         <CheckCircle2 className="size-14 text-success" aria-hidden />
 
         <div className="flex flex-col items-center gap-1 text-center">
@@ -52,7 +52,7 @@ export function PaymentSuccess({
           <p className="text-sm text-muted-foreground">Order ID: {orderId}</p>
         </div>
 
-        <div className="w-full rounded-xl border border-border bg-muted/40 p-4">
+        <div className="w-full rounded-card-nested border border-border bg-muted/40 p-4">
           <p className="mb-3 text-sm font-semibold text-foreground">Payment details</p>
           <ul className="flex flex-col gap-2">
             {lines.map((line) => (

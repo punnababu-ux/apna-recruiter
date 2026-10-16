@@ -165,7 +165,7 @@ export default function HomePage() {
             {HOME_PRODUCT_DETAILS.map((product) => (
               // p-2 insets the tile 8px from the card edge on three sides, so
               // the corners nest: tile rounded-xl (12.5px) + 8px + border ≈
-              // the card's rounded-3xl (19.5px).
+              // the card's rounded-card (19.5px).
               <ScrollStackItem key={product.name} className="group grid gap-2 p-2 lg:grid-cols-2">
                 <div className="flex flex-col gap-5 p-4 sm:p-6 lg:p-8">
                   {/* apna Unlimited is a brand with its own wordmark — show the
@@ -219,9 +219,7 @@ export default function HomePage() {
           <div className="grid gap-6 sm:grid-cols-3">
             {HOME_PRESS.items.map((item) => (
               <Link key={item.outlet} href={item.href} target="_blank" rel="noreferrer noopener">
-                {/* rounded-3xl: the page's large cards share one corner (the
-                    product cards, the sign-up card). */}
-                <Card padding="lg" interactive className="flex h-full flex-col gap-4 rounded-3xl">
+                <Card padding="lg" interactive className="flex h-full flex-col gap-4">
                   <Quote className="size-6 text-muted-foreground" aria-hidden />
                   <p className="font-serif text-lg leading-7 text-foreground italic">
                     &ldquo;{item.headline}&rdquo;

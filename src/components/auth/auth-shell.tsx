@@ -49,13 +49,12 @@ export function LegalLine({ className }: { className?: string }) {
 }
 
 /** The form's surface: a card from md, flat on the phone's white page.
- *  rounded-3xl (19.5px), like the homepage's sign-up card and every other
- *  large card on the site. */
+ *  Card's own corner (rounded-card), like every card on the site. */
 export function AuthCard({ className, children }: { className?: string; children: React.ReactNode }) {
   return (
     <Card
       className={cn(
-        "flex w-full flex-col gap-6 rounded-3xl shadow-elevated max-md:border-transparent max-md:bg-transparent max-md:p-0 max-md:shadow-none",
+        "flex w-full flex-col gap-6 shadow-elevated max-md:border-transparent max-md:bg-transparent max-md:p-0 max-md:shadow-none",
         className
       )}
     >

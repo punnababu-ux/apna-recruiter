@@ -73,7 +73,7 @@ export function FaqSection({ onHelpAndSupport, onShowMore, className }: FaqSecti
                 key={faq.value}
                 value={faq.value}
                 className={cn(
-                  "card-hover-lift rounded-xl px-6 not-last:border-b",
+                  "card-hover-lift rounded-card px-6 not-last:border-b",
                   isOpen ? "border-transparent bg-muted" : "border border-border bg-card"
                 )}
               >

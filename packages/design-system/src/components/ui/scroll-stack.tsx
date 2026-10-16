@@ -13,7 +13,7 @@
  *     <ScrollStackItem>…</ScrollStackItem>
  *   </ScrollStack>
  *
- *   ScrollStackItem is the card's frame (opaque `bg-card`, `rounded-3xl`,
+ *   ScrollStackItem is the card's frame (opaque `bg-card`, `rounded-card`,
  *   border); pass layout and padding through `className`. Up to six items
  *   get their own pin offset.
  *
@@ -125,7 +125,7 @@ function ScrollStackItem({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="scroll-stack-item"
-      className={cn("stack-item rounded-3xl border border-border bg-card lg:sticky lg:mb-(--stack-tail) lg:shadow-card", className)}
+      className={cn("stack-item rounded-card border border-border bg-card lg:sticky lg:mb-(--stack-tail) lg:shadow-card", className)}
       {...props}
     />
   )

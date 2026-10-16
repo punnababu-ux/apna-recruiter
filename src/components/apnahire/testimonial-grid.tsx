@@ -30,7 +30,7 @@ export function TestimonialGrid({ className }: { className?: string }) {
       className={cn("grid grid-cols-1 gap-6 py-12 lg:grid-cols-3", className)}
     >
       {TESTIMONIALS.map((t) => (
-        <div key={t.company} className="card-hover-lift flex flex-col gap-6 rounded-xl bg-card p-8">
+        <div key={t.company} className="card-hover-lift flex flex-col gap-6 rounded-card bg-card p-8">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={t.logo}

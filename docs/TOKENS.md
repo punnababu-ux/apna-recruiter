@@ -267,7 +267,9 @@ Two tiers are available:
 |---------------------|-------------------|---------------------|--------------------------------------|
 | `--radius-field`    | `--radius-sm`     | `rounded-field`     | Inputs, selects, textareas           |
 | `--radius-control`  | `--radius-md`     | `rounded-control`   | Buttons, chips, toggles              |
-| `--radius-surface`  | `--radius-lg`     | `rounded-surface`   | Cards, popovers, menus               |
+| `--radius-surface`  | `--radius-lg`     | `rounded-surface`   | Popovers, menus                      |
+| `--radius-card`     | `--radius-3xl`    | `rounded-card`      | Every card on the page background (≈20px) — `Card`'s default |
+| `--radius-card-nested` | `--radius-2xl` | `rounded-card-nested` | A card inside a surface: track, card, side panel (≈16px) |
 | `--radius-overlay`  | `--radius-xl`     | `rounded-overlay`   | Dialogs, sheets, drawers             |
 | `--radius-hero`     | `--radius-2xl`    | `rounded-hero`      | Marketing blocks, splashes           |
 | `--radius-pill`     | `--radius-full`   | `rounded-pill`      | Avatars, pill buttons, capsules      |

@@ -146,7 +146,7 @@ function PlanCard({
     // clip the lift's hit strip; the ribbon clips its own corner.
     <div
       onClick={onBuy}
-      className="card-hover-lift ink press-subtle relative flex flex-1 cursor-pointer flex-col justify-between gap-5 rounded-xl border border-border bg-card px-4 pb-5 pt-8"
+      className="card-hover-lift ink press-subtle relative flex flex-1 cursor-pointer flex-col justify-between gap-5 rounded-card border border-border bg-card px-4 pb-5 pt-8"
     >
       {recommended && (
         <div className="absolute right-0 top-0 flex overflow-hidden rounded-tr-xl rounded-bl-xl">

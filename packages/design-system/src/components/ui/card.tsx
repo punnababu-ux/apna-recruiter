@@ -24,7 +24,7 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 
 const cardVariants = cva(
-  "group/card flex flex-col rounded-surface border text-card-foreground",
+  "group/card flex flex-col rounded-card border text-card-foreground",
   {
     variants: {
       tone: {

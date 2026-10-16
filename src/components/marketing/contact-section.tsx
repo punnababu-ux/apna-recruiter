@@ -76,13 +76,13 @@ export function ContactSection() {
     // No bottom padding: the card sits right above the footer, whose own
     // 80px top padding is the gap (with the band's padding too it was 176px).
     <Section id={CONTACT_ANCHOR} size="md" className="scroll-mt-20 pb-0 md:pb-0">
-      {/* rounded-3xl: the page's large cards share one corner. Title centred,
+      {/* Card's own corner (rounded-card), like every card. Title centred,
           the button under it — the dark emphasis button, like the product
           cards' "Learn more" (green stays with the hero's sign-up). */}
       {/* Frosted, like the header pill: the gradient shows through. */}
       <Card
         padding="lg"
-        className="flex flex-col items-center gap-8 rounded-3xl border-card/60 bg-card/60 text-center shadow-card backdrop-blur-xl sm:p-12"
+        className="flex flex-col items-center gap-8 border-card/60 bg-card/60 text-center shadow-card backdrop-blur-xl sm:p-12"
       >
         {/* The page's closing line: the h1 type preset (it stays an h2 —
             the hero owns the h1). One line on desktop; on phones the h3 size

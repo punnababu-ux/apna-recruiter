@@ -317,6 +317,33 @@ applied coupon, a price that just changed).
 
 ---
 
+## Card corners — one radius, every page
+
+Every card on every page — home, pricing, the plans step, login, the app —
+has the same corner. Two roles, nothing else:
+
+| Where the card sits | Class | ≈ |
+|---|---|---|
+| On the page background (a plan card, the login card, the contact band, an FAQ item, a testimonial) | `rounded-card` | 20px |
+| Inside another surface (a card in a plan track, a section in a side panel, a box inside a card) | `rounded-card-nested` | 16px |
+
+- `Card` is already `rounded-card`. Don't override its corner.
+- A hand-rolled card (a `div` with `bg-card` / a border / `shadow-card`)
+  uses one of the two roles. Never `rounded-xl` / `rounded-2xl` /
+  `rounded-3xl` on a card, and never a radius picked per page ("this page
+  looks better rounder").
+- A component that is nested in one place and on the page in another
+  (PricingCard: in the Jobs track, on the page in Database) defaults to
+  `card-nested`; the on-page caller passes `className="rounded-card"`.
+- Not cards: inputs (`rounded-field`), buttons and chips (`rounded-control` /
+  `rounded-full`), popovers and menus (`rounded-surface`), dialogs and sheets
+  (`rounded-overlay`). Small tiles inside illustrations keep their own size.
+
+To change how round the cards feel, retune `--radius-card` in
+`semantic.css` — once, for the whole product.
+
+---
+
 ## Text that grows — layouts decide where lines break, not copy
 
 Copy changes: a price gains a digit, a plan gets a longer name, the font
