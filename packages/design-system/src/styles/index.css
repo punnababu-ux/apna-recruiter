@@ -1134,6 +1134,25 @@
 @utility bg-gradient-product-unlimited {
   background-image: var(--gradient-product-unlimited);
 }
+@utility bg-gradient-mother-peach { background-image: var(--gradient-mother-peach); }
+@utility bg-gradient-mother-pink { background-image: var(--gradient-mother-pink); }
+@utility bg-gradient-mother-lavender { background-image: var(--gradient-mother-lavender); }
+@utility bg-gradient-mother-sky { background-image: var(--gradient-mother-sky); }
+
+/* A very large, very light number behind a card's text (About's story
+ * cards: "2019", "400M"). Inter, tabular, at 6% of the ink, so the copy
+ * reads straight over it. Sized to the viewport, capped. Decorative —
+ * pair with aria-hidden. */
+@utility text-watermark {
+  font-family:     var(--font-heading);
+  font-size:       clamp(9rem, 30vw, 26rem);
+  line-height:     0.8;
+  font-weight:     var(--font-weight-bold);
+  letter-spacing:  var(--letter-spacing-tighter);
+  font-variant-numeric: tabular-nums;
+  color:           color-mix(in srgb, var(--foreground) 6%, transparent);
+}
+
 /* The enclosing [data-product]'s gradient (none outside one). */
 @utility bg-gradient-product {
   background-image: var(--product-gradient);

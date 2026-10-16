@@ -415,6 +415,14 @@
     radial-gradient(circle at 85% 15%, rgba(239, 246, 255, 0.70) 0%, rgba(240, 249, 255, 0.50) 40%, transparent 65%),
     radial-gradient(circle at 92% 88%, rgba(255, 255, 255, 1)    0%, rgba(248, 250, 252, 0.80) 45%, transparent 70%),
     linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 40%, #F1F5F9 80%, #E2E8F0 100%);
+  /* Mother washes — the homepage canvas's own four hues (the mesh's peach,
+   * pink, lavender and sky), each as a card-sized wash from white. For
+   * company pages, which wear no product colour but may still want warmth
+   * on a card (About's story cards). */
+  --gradient-mother-peach:    linear-gradient(135deg, #FFFFFF 0%, rgba(255, 237, 213, 0.85) 100%);
+  --gradient-mother-pink:     linear-gradient(135deg, #FFFFFF 0%, rgba(252, 231, 243, 0.95) 100%);
+  --gradient-mother-lavender: linear-gradient(135deg, #FFFFFF 0%, rgba(237, 233, 254, 0.95) 100%);
+  --gradient-mother-sky:      linear-gradient(135deg, #FFFFFF 0%, rgba(219, 234, 254, 0.95) 100%);
   /* Product canvases — the page background of a product page, header to
    * footer: the homepage canvas (--gradient-checkout-hero, "the mother
    * gradient": the same mesh, white wash and corner geometry) re-tinted in
@@ -776,6 +784,10 @@
     radial-gradient(circle at 90% 18%, var(--color-alpha-white-10) 0%, transparent 55%),
     radial-gradient(circle at 50% 90%, var(--color-alpha-white-5)  0%, transparent 60%),
     linear-gradient(135deg, var(--color-apna-plum-950) 0%, var(--color-apna-plum-900) 50%, var(--color-apna-plum-800) 100%);
+  --gradient-mother-peach:    linear-gradient(135deg, var(--card) 0%, color-mix(in srgb, var(--color-apna-gold-900) 35%, var(--card)) 100%);
+  --gradient-mother-pink:     linear-gradient(135deg, var(--card) 0%, color-mix(in srgb, var(--color-apna-plum-700) 45%, var(--card)) 100%);
+  --gradient-mother-lavender: linear-gradient(135deg, var(--card) 0%, color-mix(in srgb, var(--color-apna-plum-600) 40%, var(--card)) 100%);
+  --gradient-mother-sky:      linear-gradient(135deg, var(--card) 0%, color-mix(in srgb, var(--color-apna-sky-900) 45%, var(--card)) 100%);
   /* Product canvases — the page background of a product page, header to
    * footer: the homepage canvas (--gradient-checkout-hero, "the mother
    * gradient": the same mesh, white wash and corner geometry) re-tinted in

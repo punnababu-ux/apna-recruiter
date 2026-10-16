@@ -4,7 +4,8 @@
  *   Hero       the chip, the serif headline, the intro — no numbers
  *   Founder    the page's centrepiece: Nirmit's portrait beside his line
  *              in the serif, then the founding story
- *   Story      the four beats as the homepage's stacking cards
+ *   Story      the four beats as the homepage's stacking cards, each on a
+ *              mother-gradient wash with its year as a large watermark
  *   Mission    a calm serif statement (no dark band)
  *   Recruiters the offers beside the AI Calling Agent illustration, each
  *              offer a title + tagline that opens to its detail
@@ -29,8 +30,17 @@ import { ContactSection } from "@/components/marketing/contact-section"
 import { PageHero, withAccent } from "@/components/marketing/page-blocks"
 import { ProductIllustration } from "@/components/marketing/product-illustrations"
 import { ABOUT_OVERVIEW } from "@/content/company"
+import { cn } from "@/lib/utils"
 
 export const metadata: Metadata = ABOUT_OVERVIEW.meta
+
+/** The four story cards' washes: the homepage canvas's own hues, in turn. */
+const STORY_WASH = [
+  "bg-gradient-mother-peach",
+  "bg-gradient-mother-pink",
+  "bg-gradient-mother-lavender",
+  "bg-gradient-mother-sky",
+] as const
 
 export default function AboutPage() {
   const { eyebrow, title, titleAccent, intro, founder, storyTitle, body, story, mission, audiences } = ABOUT_OVERVIEW
@@ -73,16 +83,22 @@ export default function AboutPage() {
           <SectionHeading level={2} align="center" title={storyTitle} />
           <ScrollStack>
             {story.map((beat, i) => (
-              <ScrollStackItem key={beat.marker} className="grid gap-2 p-2 lg:grid-cols-5">
-                <div className="flex min-h-40 items-end rounded-card-nested bg-muted p-6 lg:col-span-2 lg:min-h-80 lg:p-8">
-                  <span className="text-display-lg font-heading text-foreground tabular-nums">{beat.marker}</span>
-                </div>
-                <div className="flex flex-col justify-center gap-4 p-4 sm:p-6 lg:col-span-3 lg:p-10">
+              // The marker is a watermark: very large, very light, behind the
+              // copy, which reads straight over it. Each card one of the
+              // mother gradient's own hues (no product colour on About).
+              <ScrollStackItem
+                key={beat.marker}
+                className={cn("relative isolate overflow-hidden", STORY_WASH[i % STORY_WASH.length])}
+              >
+                <span aria-hidden className="text-watermark pointer-events-none absolute -right-6 -bottom-10 -z-10 select-none lg:-bottom-16">
+                  {beat.marker}
+                </span>
+                <div className="flex min-h-80 max-w-3xl flex-col justify-center gap-5 p-6 sm:p-10 lg:min-h-96 lg:p-14">
                   <span className="text-overline text-muted-foreground tabular-nums">
-                    {String(i + 1).padStart(2, "0")} / {String(story.length).padStart(2, "0")}
+                    {beat.marker} · {String(i + 1).padStart(2, "0")} / {String(story.length).padStart(2, "0")}
                   </span>
-                  <h3 className="text-h3 text-balance text-foreground">{beat.title}</h3>
-                  <p className="text-lead text-pretty text-muted-foreground">{beat.description}</p>
+                  <h3 className="text-h3 text-balance text-foreground sm:text-h2">{beat.title}</h3>
+                  <p className="text-lg leading-relaxed text-pretty text-muted-foreground sm:text-xl">{beat.description}</p>
                 </div>
               </ScrollStackItem>
             ))}
