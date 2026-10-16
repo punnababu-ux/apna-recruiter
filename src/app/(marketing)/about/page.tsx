@@ -2,8 +2,8 @@
  * /about — Overview. Copy: content/company.ts ABOUT_OVERVIEW.
  *
  *   Hero       the chip, the serif headline, the intro — no numbers
- *   Founder    the page's centrepiece: his line, large, in the serif;
- *              who said it; the founding story (no portrait)
+ *   Founding   the page's centrepiece: apna's founding belief, large, in
+ *              the serif, then the founding story
  *   Story      the four beats as the homepage's stacking cards, each on a
  *              mother-gradient wash with its year as a large watermark
  *   How we build  one section: the mission as its title, then the
@@ -48,20 +48,16 @@ export default function AboutPage() {
     <>
       <PageHero eyebrow={eyebrow} title={withAccent(title, titleAccent)} description={intro} />
 
-      {/* The founder, in his own words: no portrait, just the line, large,
-          then who said it and the founding story. */}
+      {/* The founding belief, large, then the founding story. */}
       <Section tone="card" size="lg" width="narrow">
-        <figure className="flex flex-col items-center gap-8 text-center">
+        <div className="flex flex-col items-center gap-8 text-center">
           <span className="text-overline text-muted-foreground">{founder.eyebrow}</span>
-          <blockquote className="text-quote-lg text-balance text-foreground">
-            &ldquo;{withAccent(founder.quote, "opportunity")}&rdquo;
-          </blockquote>
-          <figcaption className="flex flex-col gap-0.5">
-            <span className="text-base font-semibold text-foreground">{founder.name}</span>
-            <span className="text-sm text-muted-foreground">{founder.role}</span>
-          </figcaption>
+          {/* apna's belief, as a line — not a quote: it's condensed from
+              Nirmit's own sentence on the Leadership page, so it carries no
+              quotation marks or attribution. */}
+          <p className="text-quote-lg text-balance text-foreground">{withAccent(founder.quote, "opportunity")}</p>
           <p className="max-w-prose text-lead text-pretty text-muted-foreground">{body}</p>
-        </figure>
+        </div>
       </Section>
 
       {/* How we got here: the homepage's stacking cards, one beat each. */}
