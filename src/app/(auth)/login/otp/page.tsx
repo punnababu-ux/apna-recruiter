@@ -13,7 +13,8 @@
 import * as React from "react"
 import { Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { BackButton, Button, Card, FieldError, OtpInput } from "@apna/design-system"
+import { BackButton, Button, FieldError, OtpInput } from "@apna/design-system"
+import { AuthCard } from "@/components/auth/auth-shell"
 import { safeNext, signIn } from "@/hooks/use-session"
 import { HOME } from "@/lib/apnahire/nav"
 
@@ -62,10 +63,10 @@ function OtpInner() {
   }
 
   return (
-    <Card padding="lg" className="flex w-full max-w-md flex-col gap-6 max-sm:p-6">
+    <AuthCard>
       <div className="flex flex-col gap-3">
         <BackButton onClick={() => router.push(backToNumber)} aria-label="Change mobile number" />
-        <h1 className="text-h3 font-bold text-foreground">Enter the code</h1>
+        <h2 className="text-h3 font-bold text-foreground">Enter the code</h2>
         <p className="text-base text-muted-foreground">
           We sent a {LENGTH}-digit code to{" "}
           <span className="font-medium whitespace-nowrap text-foreground">{formatPhone(phone)}</span>.{" "}
@@ -93,7 +94,7 @@ function OtpInner() {
       </div>
 
       <div className="flex flex-col gap-4">
-        <Button size="xl" className="w-full" disabled={code.length !== LENGTH} loading={verifying} onClick={() => verify(code)}>
+        <Button size="lg" className="w-full" disabled={code.length !== LENGTH} loading={verifying} onClick={() => verify(code)}>
           Verify and continue
         </Button>
         <p className="text-sm text-muted-foreground">
@@ -118,7 +119,7 @@ function OtpInner() {
       <p className="rounded-lg bg-muted px-3 py-2 text-xs text-muted-foreground">
         Prototype: any {LENGTH} digits log you in. 000000 shows a wrong code.
       </p>
-    </Card>
+    </AuthCard>
   )
 }
 

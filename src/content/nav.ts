@@ -70,5 +70,6 @@ export const LOOKING_FOR_A_JOB: NavLink = {
 
 export const HEADER_ACTIONS = {
   secondary: { label: "Contact us", href: "/contact-us" } satisfies NavLink,
-  primary: { label: "Post a Job", href: "/apnahire/jobs/new" } satisfies NavLink,
+  // The live site's header login entry (employer.apna.co).
+  primary: { label: "Login/Sign up", href: "/login" } satisfies NavLink,
 }

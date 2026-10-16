@@ -1,49 +1,80 @@
 "use client"
 
 /**
- * /login/enterprise — email + password for enterprise accounts.
+ * /login/enterprise — enterprise sign-in, as on the live
+ * employer.apna.co/enterprise/signin: the enterprise email first
+ * ("Continue"), then the password. No sign-up — "Want to register your
+ * Enterprise email? Contact us" — and "Continue with mobile" goes back to
+ * the mobile login.
  *
- * No sign-up: enterprise accounts are created by the company's apna admin,
- * so the page says so instead of offering one. Forgotten passwords also go
- * through the admin.
- *
- * Prototype: any work email with any password logs in; the password
- * "wrong" shows the incorrect-credentials state.
+ * Prototype: personal addresses (gmail, yahoo, outlook, hotmail…) aren't
+ * enterprise accounts and get the not-registered error; any other address
+ * moves on, and any password logs in except "wrong".
  */
 
 import * as React from "react"
 import { Suspense } from "react"
+import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-import { BackButton, Button, Card, Field, FieldError, FieldLabel, Input, Separator } from "@apna/design-system"
+import {
+  BackButton,
+  Button,
+  Field,
+  FieldError,
+  FieldLabel,
+  FieldSeparator,
+  Info,
+  Input,
+  Phone,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@apna/design-system"
+import { AuthCard } from "@/components/auth/auth-shell"
+import { withNext } from "@/components/marketing/hero-lead-card"
+import { ENTERPRISE_LOGIN } from "@/content/auth"
+import { HEADER_ACTIONS } from "@/content/nav"
 import { safeNext, signIn } from "@/hooks/use-session"
 import { HOME } from "@/lib/apnahire/nav"
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const PERSONAL = /@(gmail|googlemail|yahoo|ymail|outlook|hotmail|live|icloud|rediffmail)\./i
 
 function EnterpriseInner() {
   const router = useRouter()
   const params = useSearchParams()
   const next = params.get("next")
-  const mobileLogin = next ? `/login?${new URLSearchParams({ next })}` : "/login"
+  const mobileLogin = withNext("/login", next)
 
+  const [step, setStep] = React.useState<"email" | "password">("email")
   const [email, setEmail] = React.useState("")
+  const [emailError, setEmailError] = React.useState<string | null>(null)
   const [password, setPassword] = React.useState("")
   const [showPassword, setShowPassword] = React.useState(false)
-  const [touched, setTouched] = React.useState(false)
-  const [error, setError] = React.useState<string | null>(null)
-  const [submitting, setSubmitting] = React.useState(false)
+  const [passwordError, setPasswordError] = React.useState<string | null>(null)
+  const [busy, setBusy] = React.useState(false)
 
-  const emailInvalid = touched && !EMAIL.test(email.trim())
-
-  const submit = (e: React.FormEvent) => {
+  const submitEmail = (e: React.FormEvent) => {
     e.preventDefault()
-    setTouched(true)
-    if (!EMAIL.test(email.trim()) || !password) return
-    setSubmitting(true)
+    const value = email.trim()
+    if (!EMAIL.test(value)) return setEmailError("Enter your enterprise email address.")
+    if (PERSONAL.test(value))
+      return setEmailError("This email isn't registered for Enterprise login. Use your company email, or contact us to register it.")
+    setBusy(true)
+    window.setTimeout(() => {
+      setBusy(false)
+      setStep("password")
+    }, 400)
+  }
+
+  const submitPassword = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!password) return setPasswordError("Enter your password.")
+    setBusy(true)
     window.setTimeout(() => {
       if (password === "wrong") {
-        setError("Email or password is incorrect.")
-        setSubmitting(false)
+        setPasswordError("That password isn't right. Try again, or ask your company admin to reset it.")
+        setBusy(false)
         return
       }
       signIn({ kind: "enterprise", email: email.trim() })
@@ -51,83 +82,118 @@ function EnterpriseInner() {
     }, 600)
   }
 
-  return (
-    <Card padding="lg" className="flex w-full max-w-md flex-col gap-6 max-sm:p-6">
-      <div className="flex flex-col gap-3">
-        <BackButton onClick={() => router.push(mobileLogin)} aria-label="Back to mobile login" />
-        <h1 className="text-h3 font-bold text-foreground">Enterprise login</h1>
-        <p className="text-base text-muted-foreground">
-          Use the work email and password your company admin set up for you.
-        </p>
-      </div>
-
-      <form className="flex flex-col gap-4" onSubmit={submit} noValidate>
-        <Field>
-          <FieldLabel htmlFor="ent-email">Work email</FieldLabel>
-          <Input
-            id="ent-email"
-            type="email"
-            autoComplete="username"
-            placeholder="name@company.com"
-            value={email}
-            aria-invalid={emailInvalid || undefined}
-            onChange={(e) => {
-              setEmail(e.target.value)
-              setError(null)
-            }}
-            onBlur={() => setTouched(true)}
-          />
-          {emailInvalid && <FieldError>Enter your work email, like name@company.com.</FieldError>}
-        </Field>
-
-        <Field>
-          <div className="flex items-baseline justify-between gap-3">
-            <FieldLabel htmlFor="ent-password">Password</FieldLabel>
-            <Button
-              type="button"
-              variant="link"
-              size="sm"
-              aria-pressed={showPassword}
-              onClick={() => setShowPassword((v) => !v)}
-            >
-              {showPassword ? "Hide" : "Show"}
+  if (step === "password") {
+    return (
+      <AuthCard>
+        <div className="flex flex-col gap-3">
+          <BackButton onClick={() => setStep("email")} aria-label="Change email" />
+          <h2 className="text-h3 font-bold text-foreground">Enter your password</h2>
+          <p className="text-base text-muted-foreground">
+            Signing in as <span className="font-medium break-all text-foreground">{email.trim()}</span>.{" "}
+            <Button variant="link-inline" className="text-foreground" onClick={() => setStep("email")}>
+              Change
             </Button>
+          </p>
+        </div>
+
+        <form className="flex flex-col gap-6" onSubmit={submitPassword} noValidate>
+          <Field>
+            <div className="flex items-baseline justify-between gap-3">
+              <FieldLabel htmlFor="ent-password">Password</FieldLabel>
+              <Button
+                type="button"
+                variant="link"
+                size="sm"
+                aria-pressed={showPassword}
+                onClick={() => setShowPassword((v) => !v)}
+              >
+                {showPassword ? "Hide" : "Show"}
+              </Button>
+            </div>
+            <Input
+              id="ent-password"
+              inputSize="lg"
+              type={showPassword ? "text" : "password"}
+              autoComplete="current-password"
+              autoFocus
+              value={password}
+              aria-invalid={!!passwordError || undefined}
+              onChange={(e) => {
+                setPassword(e.target.value)
+                setPasswordError(null)
+              }}
+            />
+            {passwordError && <FieldError>{passwordError}</FieldError>}
+          </Field>
+          <Button type="submit" size="lg" className="w-full" loading={busy}>
+            Log in
+          </Button>
+        </form>
+
+        <p className="text-sm text-muted-foreground">Forgot your password? Your company&apos;s apna admin can reset it.</p>
+        <p className="rounded-lg bg-muted px-3 py-2 text-xs text-muted-foreground">
+          Prototype: any password logs you in. &ldquo;wrong&rdquo; shows the error.
+        </p>
+      </AuthCard>
+    )
+  }
+
+  return (
+    <AuthCard>
+      <h2 className="text-h4 text-foreground">{ENTERPRISE_LOGIN.title}</h2>
+
+      <form className="flex flex-col gap-6" onSubmit={submitEmail} noValidate>
+        <Field>
+          <div className="flex items-center gap-1">
+            <FieldLabel htmlFor="ent-email">{ENTERPRISE_LOGIN.label}</FieldLabel>
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <Button type="button" variant="ghost" size="icon-xs" className="text-muted-foreground" aria-label={ENTERPRISE_LOGIN.hint}>
+                    <Info />
+                  </Button>
+                }
+              />
+              <TooltipContent>{ENTERPRISE_LOGIN.hint}</TooltipContent>
+            </Tooltip>
           </div>
           <Input
-            id="ent-password"
-            type={showPassword ? "text" : "password"}
-            autoComplete="current-password"
-            value={password}
-            aria-invalid={(touched && !password) || !!error || undefined}
+            id="ent-email"
+            inputSize="lg"
+            type="email"
+            autoComplete="username"
+            placeholder={ENTERPRISE_LOGIN.placeholder}
+            value={email}
+            aria-invalid={!!emailError || undefined}
             onChange={(e) => {
-              setPassword(e.target.value)
-              setError(null)
+              setEmail(e.target.value)
+              setEmailError(null)
             }}
           />
-          {touched && !password && <FieldError>Enter your password.</FieldError>}
-          {error && <FieldError>{error}</FieldError>}
+          {emailError && <FieldError>{emailError}</FieldError>}
         </Field>
-
-        <Button type="submit" size="xl" className="mt-2 w-full" loading={submitting}>
-          Log in
+        <Button type="submit" size="lg" className="w-full" loading={busy}>
+          {ENTERPRISE_LOGIN.cta}
         </Button>
       </form>
 
-      <p className="text-sm text-muted-foreground">
-        Forgot your password, or don&apos;t have an account yet? Your company&apos;s apna admin can reset or create
-        it for you.
+      <p className="text-sm text-foreground">
+        {ENTERPRISE_LOGIN.register}{" "}
+        <Button variant="link-inline" className="text-primary" render={<Link href={HEADER_ACTIONS.secondary.href} />} nativeButton={false}>
+          {ENTERPRISE_LOGIN.registerLink}
+        </Button>
       </p>
 
-      <Separator />
+      <FieldSeparator>OR</FieldSeparator>
 
-      <Button variant="link-inline" className="self-start text-foreground" onClick={() => router.push(mobileLogin)}>
-        Log in with mobile number instead
+      <Button variant="outline" size="lg" className="w-full" leadingIcon={<Phone aria-hidden />} onClick={() => router.push(mobileLogin)}>
+        {ENTERPRISE_LOGIN.mobile}
       </Button>
 
       <p className="rounded-lg bg-muted px-3 py-2 text-xs text-muted-foreground">
-        Prototype: any work email and password log you in. The password &ldquo;wrong&rdquo; shows the error.
+        Prototype: personal emails (Gmail, Yahoo…) show the not-registered error; any company email continues.
       </p>
-    </Card>
+    </AuthCard>
   )
 }
 
