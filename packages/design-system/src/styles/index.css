@@ -714,13 +714,13 @@
  *                     hands over to the page canvas without an edge
  *   ambient-blob      a soft disc of one mesh hue drifting on a long loop;
  *                     `data-blob="1…4"` picks hue, spot, path and tempo
- *   ambient-glow      a light that trails a mouse pointer (fine pointers
- *                     only — never on touch)
+ *   ambient-glow      a light that wanders the hero on its own loop (no
+ *                     pointer tracking — phones see it too)
  *   ambient-grain     static film grain over everything
  *
  * Only translate / scale / opacity move, so nothing repaints. The host sets
  * `data-paused` while off-screen; reduced motion leaves the blobs where
- * they rest and drops the glow.
+ * they rest, the light parked at its start.
  * -------------------------------------------------------------------------- */
 @keyframes ambient-float-a {
   0%, 100% { translate: 0 0; scale: 1; }
@@ -736,6 +736,8 @@
 @utility ambient-backdrop {
   position: absolute;
   overflow: hidden;
+  /* Lets the glow's path use cqw / cqh — the hero's own size. */
+  container-type: size;
   pointer-events: none;
   mask-image: linear-gradient(to bottom, black 65%, transparent);
 }
@@ -761,6 +763,20 @@
   }
 }
 
+/* The wandering light: travels its own loop over the hero (in container
+ * units, so the path scales with the hero), brightening and dimming on a
+ * second, shorter beat so it reads as light rather than a sliding shape. */
+@keyframes ambient-wander {
+  0%, 100% { translate: calc(15cqw - 50%) calc(30cqh - 50%); }
+  25%      { translate: calc(50cqw - 50%) calc(12cqh - 50%); }
+  50%      { translate: calc(88cqw - 50%) calc(40cqh - 50%); }
+  75%      { translate: calc(55cqw - 50%) calc(72cqh - 50%); }
+}
+@keyframes ambient-pulse {
+  from { opacity: 0.65; scale: 0.92; }
+  to   { opacity: 1;    scale: 1.08; }
+}
+
 @utility ambient-glow {
   position: absolute;
   top: 0;
@@ -769,19 +785,16 @@
   aspect-ratio: 1;
   border-radius: 9999px;
   background: radial-gradient(circle closest-side, var(--ambient-glow), transparent);
-  translate: calc(var(--ambient-x, 50vw) - 50%) calc(var(--ambient-y, 40vh) - 50%);
-  opacity: 0;
-  transition:
-    translate var(--duration-ambient-follow) var(--ease-out-ui),
-    opacity var(--duration-ambient-follow) var(--ease-standard);
+  translate: calc(15cqw - 50%) calc(30cqh - 50%);
+  will-change: translate, scale, opacity;
+  animation:
+    ambient-wander var(--duration-ambient-wander) ease-in-out infinite,
+    ambient-pulse calc(var(--duration-ambient-wander) * 0.4) ease-in-out infinite alternate;
 
-  [data-pointer] > & { opacity: 1; }
+  [data-paused] > & { animation-play-state: paused; }
 
-  @media not ((hover: hover) and (pointer: fine)) {
-    display: none;
-  }
   @media (prefers-reduced-motion: reduce) {
-    display: none;
+    animation: none;
   }
 }
 

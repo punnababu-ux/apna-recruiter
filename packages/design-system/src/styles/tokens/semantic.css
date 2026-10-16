@@ -234,8 +234,9 @@
    * should register as "the light is shifting", never as "something moved".
    * Blobs run at 0.8–1.2× this so the pattern never visibly repeats. */
   --duration-ambient:  24s;
-  /* How far the cursor glow lags the pointer. */
-  --duration-ambient-follow: var(--duration-700);
+  /* The wandering light's loop — quicker than the blobs, so it reads as
+   * light moving across the colour. Its pulse runs at 0.4× this. */
+  --duration-ambient-wander: 18s;
 
   --press-scale:        var(--scale-97);    /* buttons, chips, controls      */
   --press-scale-subtle: var(--scale-99);    /* cards and large surfaces      */

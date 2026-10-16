@@ -184,12 +184,12 @@ export default function MarketingComponentsPage() {
           <h2 className="text-h6 text-foreground">AmbientBackdrop</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             The homepage hero&apos;s living layer over <code>bg-gradient-checkout-hero</code>: drifting
-            blobs in the mesh&apos;s hues, a glow that follows the mouse, film grain.
+            blobs in the mesh&apos;s hues, a light wandering across them, film grain.
           </p>
         </div>
         <div className="bg-gradient-checkout-hero relative isolate flex h-72 items-center justify-center">
           <AmbientBackdrop className="inset-0" />
-          <p className="relative text-h4 text-foreground">Move the mouse here</p>
+          <p className="relative text-h4 text-foreground">Moves by itself</p>
         </div>
       </div>
 
