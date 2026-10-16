@@ -7,7 +7,7 @@
  * next.
  *
  *   State          Badge     Metrics shown          Banner
- *   under_review   warning   – · – · matches        Verify to start receiving candidates (destructive)
+ *   under_review   warning   – · – · matches        none (verification is the account alert's job)
  *   active         success   applied · leads · DB   only when a nudge applies (see below)
  *   draft          secondary none                   Finish posting (muted)
  *   expired        destr.    applied · leads · DB   Repost to get new candidates (muted)
@@ -35,7 +35,6 @@ import {
   Badge,
   Button,
   CalendarDays,
-  CircleAlert,
   Copy,
   Database,
   DropdownMenu,
@@ -97,15 +96,10 @@ export const STATUS_LABELS: Record<ApnaJobStatus, string> = {
 /** The banner a card shows, if any — one per card, the most important. */
 function jobBanner(job: ApnaJob, go: (path: string) => void): React.ReactNode {
   switch (job.status) {
+    // Under review: no card banner — account verification is asked for once,
+    // by the account alert (sidebar / More), not on every job.
     case "under_review":
-      return (
-        <AlertBanner
-          variant="destructive"
-          icon={<CircleAlert />}
-          title="Verify your account to start receiving candidates. It's a one-time step."
-          action={{ label: "Verify now", onClick: () => go("/apnahire/settings") }}
-        />
-      )
+      return null
     // Draft / expired: on phones the next-step button would crowd the title,
     // so it moves into the banner as its link; from `sm` up it's the button
     // beside ⋮ and the banner stays a plain note.
