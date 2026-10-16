@@ -14,6 +14,15 @@ import {
   SelectValue,
   SelectContent,
   SelectItem,
+  Autocomplete,
+  AutocompleteInput,
+  AutocompleteContent,
+  AutocompleteList,
+  AutocompleteGroup,
+  AutocompleteGroupLabel,
+  AutocompleteCollection,
+  AutocompleteItem,
+  AutocompleteEmpty,
   Checkbox,
   Switch,
   RadioGroup,
@@ -37,6 +46,11 @@ import {
   Truck,
   Laptop,
 } from "@apna/design-system"
+
+const SEARCH_DEMO = [
+  { label: "Product", items: [{ id: "jobs", label: "Smart Job Posting" }, { id: "db", label: "apna Database" }, { id: "ai", label: "AI Calling Agent" }] },
+  { label: "Resources", items: [{ id: "blogs", label: "Blogs" }, { id: "faqs", label: "FAQs" }, { id: "help", label: "Help Center" }] },
+]
 
 export default function InputsComponentsPage() {
   const [prompt, setPrompt] = React.useState("")
@@ -118,6 +132,34 @@ export default function InputsComponentsPage() {
             },
           ]}
         />
+      </div>
+
+      {/* Autocomplete */}
+      <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-6">
+        <h2 className="border-b border-border/60 pb-2 text-h6 text-foreground">Search with suggestions (Autocomplete)</h2>
+        <Autocomplete items={SEARCH_DEMO} itemToStringValue={(item: { label: string }) => item.label}>
+          <AutocompleteInput placeholder="Search" containerClassName="max-w-xs" className="rounded-full bg-muted" />
+          <AutocompleteContent>
+            <AutocompleteEmpty>No results</AutocompleteEmpty>
+            <AutocompleteList>
+              {(group: (typeof SEARCH_DEMO)[number]) => (
+                <AutocompleteGroup key={group.label} items={group.items}>
+                  <AutocompleteGroupLabel>{group.label}</AutocompleteGroupLabel>
+                  <AutocompleteCollection>
+                    {(item: { id: string; label: string }) => (
+                      <AutocompleteItem key={item.id} value={item}>
+                        {item.label}
+                      </AutocompleteItem>
+                    )}
+                  </AutocompleteCollection>
+                </AutocompleteGroup>
+              )}
+            </AutocompleteList>
+          </AutocompleteContent>
+        </Autocomplete>
+        <span className="text-xs text-muted-foreground">
+          Type to filter; ↑/↓ and Enter to pick. The marketing header&apos;s site search.
+        </span>
       </div>
 
       {/* Select & Textarea */}

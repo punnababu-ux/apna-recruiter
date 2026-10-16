@@ -24,6 +24,7 @@ export * from "./components/ui/radio-group"
 export * from "./components/ui/radio-card"
 export * from "./components/ui/switch"
 export * from "./components/ui/select"
+export * from "./components/ui/autocomplete"
 export * from "./components/ui/slider"
 export * from "./components/ui/search-filter-bar"
 
