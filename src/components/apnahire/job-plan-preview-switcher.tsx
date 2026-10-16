@@ -6,7 +6,7 @@
  * layout to show (tiered vs. subscription — normally decided by user
  * segment/conditions TBD) and the recruiter's credit balance (normally the
  * account's real balance). Same prototype-control pattern as
- * `AuthStateSwitcher` (both are PrototypeSettings), just driving in-place state instead of navigating
+ * `CheckoutPreviewSettings` (both are PrototypeSettings), just driving in-place state instead of navigating
  * between routes, since both of these are view-local rather than separate
  * pages.
  */

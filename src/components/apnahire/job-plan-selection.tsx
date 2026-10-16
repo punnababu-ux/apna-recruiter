@@ -27,7 +27,7 @@
  *
  * `planLayout` and `creditBalance` have no real data source yet (segment
  * rules / account balance, respectively) — both are previewed via
- * `JobPlanPreviewSwitcher`, a floating control like `AuthStateSwitcher` —
+ * `JobPlanPreviewSwitcher`, a floating control like `CheckoutPreviewSettings` —
  * but unlike that one it also shows in deployed builds, so the page's
  * states can be reviewed on Vercel.
  *

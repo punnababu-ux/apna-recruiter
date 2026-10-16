@@ -72,7 +72,7 @@ import { PaymentModal } from "@/components/apnahire/payment-modal"
 import { PaymentSuccess } from "@/components/apnahire/payment-success"
 import { setActiveSubscription } from "@/hooks/use-active-subscription"
 import { useHeaderSlot } from "@/components/marketing/header-slot"
-import { AuthStateSwitcher } from "@/components/apnahire/auth-state-switcher"
+import { CheckoutPreviewSettings } from "@/components/apnahire/checkout-preview-settings"
 import { ExitOfferDialog } from "@/components/apnahire/offers/exit-offer-dialog"
 import { useExtraOff } from "@/components/apnahire/offers/use-extra-off"
 import { ANNUAL_PLAN, EXTRA_OFF, withExtraOff } from "@/content/offers"
@@ -594,12 +594,11 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
         onFailure={handlePaymentFailure}
       />
 
-      {/* Prototype-only settings: auth state and the exit offer's demo
-          controls. Shown in every build, deployed ones included, like
-          express checkout's switcher, so the states can be reviewed on the
-          live site. Remove once real auth and offer rules are wired up. */}
-      <AuthStateSwitcher
-        current={authState}
+      {/* Prototype-only settings: the exit offer's demo controls (no auth
+          switch — each state has its own route). Shown in every build,
+          deployed ones included, like express checkout's switcher. Remove
+          once real offer rules are wired up. */}
+      <CheckoutPreviewSettings
         offer={{ claimed: offer.claimed, onExpireSoon: offer.expireSoon, onReset: offer.reset }}
       />
     </div>
