@@ -828,6 +828,15 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
+/* ScrollStack's cards: a covered card eases back (up to 6% smaller,
+ * anchored at its top edge) as the next one slides over it. ScrollStack
+ * writes --stack-cover (0 → 1); it stays 0 below lg and under reduced
+ * motion. */
+@utility stack-item {
+  transform-origin: 50% 0;
+  scale: calc(1 - var(--stack-cover, 0) * 0.06);
+}
+
 /* An unread dot's ping: a ring that grows from the dot and fades, three
  * times when it appears, then the dot rests. Three, not forever: a list of
  * cards can carry many dots, and a field of endless pulses reads as noise.

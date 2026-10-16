@@ -56,10 +56,10 @@ export const HOME_TRUSTED_BY = {
 
 /**
  * The hiring suite section: its heading, plus the four products' names,
- * taglines and icon keys. The section shows one illustrated row per product
+ * taglines and icon keys. The section shows one illustrated card per product
  * (HOME_PRODUCT_DETAILS below); the overview card grid that used to sit
- * above the rows was removed on 2026-10-16 as repetitive. Only the names
- * are read today (to type the rows); taglines and icon keys are kept for
+ * above them was removed on 2026-10-16 as repetitive. Only the names
+ * are read today (to type the cards); taglines and icon keys are kept for
  * the product pages the nav already links to.
  *
  * Heading and item taglines are verbatim from

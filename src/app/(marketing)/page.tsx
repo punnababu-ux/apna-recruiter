@@ -20,6 +20,8 @@ import {
   CheckCircle2,
   LogoWall,
   Quote,
+  ScrollStack,
+  ScrollStackItem,
   Section,
   SectionHeading,
 } from "@apna/design-system"
@@ -35,7 +37,6 @@ import {
 } from "@/content/home"
 import { CLIENT_LOGOS } from "@/content/logos"
 import { PRODUCT_LINKS } from "@/content/nav"
-import { cn } from "@/lib/utils"
 
 const CLIENT_LOGO_ITEMS = CLIENT_LOGOS.map((client) => ({
   name: client.name,
@@ -137,64 +138,47 @@ export default function HomePage() {
             description={HOME_SUITE.description}
           />
 
-          {/* One row per product, description alternating left/right
-              against its illustration. The four overview cards that sat
-              above these were dropped (user call, 2026-10-16): they
-              repeated what each row already says. See content/home.ts's
-              HOME_PRODUCT_DETAILS header for the full sourcing note. */}
-          <div className="flex flex-col gap-16">
-            {HOME_PRODUCT_DETAILS.map((product, i) => {
-              const reversed = i % 2 === 1
-              return (
-                <div
-                  key={product.name}
-                  className={cn(
-                    "flex flex-col items-center gap-8 lg:flex-row lg:gap-12",
-                    reversed && "lg:flex-row-reverse"
-                  )}
-                >
-                  <div className="flex flex-1 flex-col gap-5">
-                    <span className="text-overline text-primary">{product.eyebrow}</span>
-                    <h3 className="text-h4 text-foreground">{product.heading}</h3>
-                    <ul className="flex flex-col gap-4">
-                      {product.features.map((feature) => (
-                        <li key={feature.title} className="flex items-start gap-3">
-                          <CheckCircle2
-                            className="mt-0.5 size-5 shrink-0 text-primary"
-                            aria-hidden
-                          />
-                          <div className="flex flex-col gap-0.5">
-                            <p className="text-sm font-semibold text-foreground">
-                              {feature.title}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              {feature.description}
-                            </p>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                    <Link
-                      href={hrefFor(product.name)}
-                      className="inline-flex w-fit items-center gap-1 text-sm font-semibold text-primary"
-                    >
-                      Learn more <ArrowRight className="size-4" aria-hidden />
-                    </Link>
-                  </div>
-
-                  <div className="w-full flex-1">
-                    {/* Concentric corners: the tile is rounded-xl (12.5px) and
-                        sits 8px in, so the card's corner is 12.5 + 8 ≈ the
-                        3xl step (19.5px) — rounded-surface (10px) read as
-                        tighter than the tile inside it. */}
-                    <Card padding="none" className="group rounded-3xl p-2">
-                      <ProductIllustration product={product.name as ProductName} size="lg" className="h-64" />
-                    </Card>
-                  </div>
+          {/* One card per product — its text and illustration in its own
+              container, so each offering reads as a chapter. From lg the
+              cards stack as you scroll (ScrollStack): each pins below the
+              last and the next slides over it. The overview cards that sat
+              above were dropped (2026-10-16) as repetitive. Sourcing:
+              content/home.ts HOME_PRODUCT_DETAILS. */}
+          <ScrollStack>
+            {HOME_PRODUCT_DETAILS.map((product) => (
+              // p-2 insets the tile 8px from the card edge on three sides, so
+              // the corners nest: tile rounded-xl (12.5px) + 8px + border ≈
+              // the card's rounded-3xl (19.5px).
+              <ScrollStackItem key={product.name} className="group grid gap-2 p-2 lg:grid-cols-2">
+                <div className="flex flex-col gap-5 p-4 sm:p-6 lg:p-8">
+                  <span className="text-overline text-primary">{product.eyebrow}</span>
+                  <h3 className="text-h4 text-foreground">{product.heading}</h3>
+                  <ul className="flex flex-col gap-4">
+                    {product.features.map((feature) => (
+                      <li key={feature.title} className="flex items-start gap-3">
+                        <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden />
+                        <div className="flex flex-col gap-0.5">
+                          <p className="text-sm font-semibold text-foreground">{feature.title}</p>
+                          <p className="text-sm text-muted-foreground">{feature.description}</p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                  <Link
+                    href={hrefFor(product.name)}
+                    className="inline-flex w-fit items-center gap-1 text-sm font-semibold text-primary"
+                  >
+                    Learn more <ArrowRight className="size-4" aria-hidden />
+                  </Link>
                 </div>
-              )
-            })}
-          </div>
+                <ProductIllustration
+                  product={product.name as ProductName}
+                  size="lg"
+                  className="h-64 lg:h-full lg:min-h-80"
+                />
+              </ScrollStackItem>
+            ))}
+          </ScrollStack>
         </div>
       </Section>
 

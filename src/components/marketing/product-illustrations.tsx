@@ -1,5 +1,5 @@
 /**
- * ProductIllustration — the homepage product rows' artwork: a soft
+ * ProductIllustration — the homepage product cards' artwork: a soft
  * pastel tile (`bg-gradient-illustration-*`) with a floating snippet of the
  * product's own UI on it — a deck of applicants to shortlist, the AI agent on a
  * call, a nearby-candidate search, two live Unlimited slots.

@@ -3,6 +3,8 @@
 import * as React from "react"
 import {
   AmbientBackdrop,
+  ScrollStack,
+  ScrollStackItem,
   ArrowRight,
   Badge,
   Button,
@@ -190,6 +192,26 @@ export default function MarketingComponentsPage() {
         <div className="bg-gradient-checkout-hero relative isolate flex h-72 items-center justify-center">
           <AmbientBackdrop className="inset-0" />
           <p className="relative text-h4 text-foreground">Moves by itself</p>
+        </div>
+      </div>
+
+      {/* ── ScrollStack ────────────────────────────────────────────────── */}
+      <div className="rounded-xl border border-border bg-card">
+        <div className="border-b border-border/60 bg-muted/30 p-4 sm:p-6">
+          <h2 className="text-h6 text-foreground">ScrollStack</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            From lg, scroll past: each card pins below the last and the next slides over it. A plain
+            column on phones.
+          </p>
+        </div>
+        <div className="p-4 sm:p-6">
+          <ScrollStack>
+            {["One", "Two", "Three"].map((label) => (
+              <ScrollStackItem key={label} className="flex h-48 items-center justify-center p-6">
+                <span className="text-h4 text-foreground">Card {label}</span>
+              </ScrollStackItem>
+            ))}
+          </ScrollStack>
         </div>
       </div>
 

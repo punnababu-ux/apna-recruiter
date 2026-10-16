@@ -86,6 +86,7 @@ export * from "./components/ui/section"
 export * from "./components/ui/section-heading"
 export * from "./components/ui/logo-wall"
 export * from "./components/ui/ambient-backdrop"
+export * from "./components/ui/scroll-stack"
 
 // Helper Utilities
 export * from "./lib/utils"
