@@ -216,7 +216,9 @@ export default function HomePage() {
           <div className="grid gap-6 sm:grid-cols-3">
             {HOME_PRESS.items.map((item) => (
               <Link key={item.outlet} href={item.href} target="_blank" rel="noreferrer noopener">
-                <Card padding="lg" interactive className="flex h-full flex-col gap-4">
+                {/* rounded-3xl: the page's large cards share one corner (the
+                    product cards, the sign-up card). */}
+                <Card padding="lg" interactive className="flex h-full flex-col gap-4 rounded-3xl">
                   <Quote className="size-6 text-muted-foreground" aria-hidden />
                   <p className="font-serif text-lg leading-7 text-foreground italic">
                     &ldquo;{item.headline}&rdquo;
