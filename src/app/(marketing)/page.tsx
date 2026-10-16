@@ -177,8 +177,10 @@ export default function HomePage() {
                       </li>
                     ))}
                   </ul>
-                  {/* The card's one action: the primary button. */}
+                  {/* The card's one action, in the dark `emphasis` button: green
+                      stays with the hero's sign-up, the page's one primary. */}
                   <Button
+                    variant="emphasis"
                     size="lg"
                     className="w-fit"
                     nativeButton={false}
