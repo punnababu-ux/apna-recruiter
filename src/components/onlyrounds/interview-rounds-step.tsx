@@ -419,13 +419,13 @@ function TaskTypePicker({
               // No shadow — the picker container already carries the
               // elevation. `group` lets the icon box react on hover.
               className={cn(
-                "group flex items-start gap-3 rounded-lg border border-border bg-card p-3 text-left transition-colors",
+                "ink press-subtle group relative flex items-start gap-3 rounded-lg border border-border bg-card p-3 text-left transition-interactive",
                 disabled
                   ? "cursor-not-allowed opacity-50"
                   : "hover:border-primary hover:bg-accent/30",
               )}
             >
-              <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-muted text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-muted text-primary transition-interactive group-hover:bg-primary group-hover:text-primary-foreground">
                 <Icon className="size-5" />
               </span>
               <span className="min-w-0">

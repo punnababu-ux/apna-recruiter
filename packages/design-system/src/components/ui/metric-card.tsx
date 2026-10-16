@@ -21,7 +21,7 @@ const metricCardVariants = cva("rounded-xl text-left transition-interactive", {
     variant: {
       // Unchanged from before this had variants — no card-hover-lift here,
       // on purpose: a dashboard grid of these isn't meant to invite a click.
-      metric: "border border-border/70 bg-card p-4 shadow-xs",
+      metric: "border border-border/70 bg-card p-4 shadow-control",
       // Ported verbatim from trust-bar.tsx, where this was hand-rolled.
       stat: "card-hover-lift flex flex-col gap-2 bg-muted px-6 py-9 hover:bg-card",
     },

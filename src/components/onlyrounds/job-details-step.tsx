@@ -584,7 +584,7 @@ function Section({
         onClick={onToggle}
         aria-expanded={isOpen}
         aria-controls={bodyId}
-        className="flex w-full items-center gap-3 px-5 py-4 text-left transition-colors hover:bg-muted/30"
+        className="flex w-full items-center gap-3 px-5 py-4 text-left transition-interactive hover:bg-muted/30"
       >
         {status === "complete" ? (
           <Check className="size-6 shrink-0 text-primary" aria-hidden="true" />
@@ -610,7 +610,7 @@ function Section({
         <StatusPip status={status} />
         <ChevronDown
           className={cn(
-            "size-4 shrink-0 text-muted-foreground transition-transform duration-150",
+            "size-4 shrink-0 text-muted-foreground transition-select",
             !isOpen && "-rotate-90",
           )}
           aria-hidden="true"
@@ -853,14 +853,16 @@ function QuestionSectionsEditor({
                 Suggestions:
               </span>
               {unusedPresets.map((preset) => (
-                <button
+                <Button
                   key={preset.title}
                   type="button"
+                  variant="outline"
+                  size="xs"
+                  className="rounded-full font-medium"
                   onClick={() => addSection(preset.title, preset.target)}
-                  className="rounded-full border border-border bg-background px-2.5 py-0.5 text-xs transition-colors hover:bg-muted"
                 >
                   + {preset.title}
-                </button>
+                </Button>
               ))}
             </div>
           ) : null}
@@ -964,19 +966,16 @@ function QuestionSectionItem({
     <div className="rounded-md border border-border bg-muted/20">
       {/* ── header row ─────────────────────────────────────────── */}
       <div className="flex items-center gap-2 px-3 py-2.5">
-        <button
+        <Button
           type="button"
-          onClick={onToggle}
+          variant="ghost"
+          size="icon-xs"
           className="shrink-0 text-muted-foreground"
+          onClick={onToggle}
           aria-label={isOpen ? "Collapse section" : "Expand section"}
         >
-          <ChevronDown
-            className={cn(
-              "size-4 transition-transform duration-150",
-              !isOpen && "-rotate-90",
-            )}
-          />
-        </button>
+          <ChevronDown className={cn("size-4 transition-select", !isOpen && "-rotate-90")} />
+        </Button>
 
         {editingTitle ? (
           <Input
@@ -1490,13 +1489,9 @@ function QuestionSectionBody({
               <Sparkles className="size-3 text-primary" />
               AI Suggested Questions
             </span>
-            <button
-              type="button"
-              onClick={() => setSuggestions(null)}
-              className="text-xs text-muted-foreground hover:text-foreground"
-            >
+            <Button type="button" variant="ghost" size="xs" className="text-muted-foreground" onClick={() => setSuggestions(null)}>
               Hide
-            </button>
+            </Button>
           </div>
           <div className="flex flex-col gap-2">
             {visibleSuggestions.map((s, idx) => {

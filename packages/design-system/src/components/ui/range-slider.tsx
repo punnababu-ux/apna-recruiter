@@ -122,7 +122,7 @@ function RangeSlider({
                 key={v}
                 aria-hidden
                 className={cn(
-                  "absolute top-1/2 w-px -translate-x-1/2 -translate-y-1/2 rounded-full transition-colors duration-150",
+                  "absolute top-1/2 w-px -translate-x-1/2 -translate-y-1/2 rounded-full transition-interactive duration-150",
                   major ? "h-3" : "h-1.5",
                   inRange ? (major ? "bg-primary" : "bg-primary/50") : major ? "bg-muted-foreground" : "bg-border"
                 )}
@@ -134,7 +134,7 @@ function RangeSlider({
             {/* The chosen range: a soft band behind the ticks' accent. */}
             <SliderPrimitive.Indicator
               className={cn(
-                "absolute h-full rounded-lg transition-colors duration-150",
+                "absolute h-full rounded-lg transition-interactive duration-150",
                 unset ? "bg-muted" : invalid ? "bg-destructive/10" : "bg-accent"
               )}
             />
@@ -148,7 +148,7 @@ function RangeSlider({
                 getAriaLabel={thumbLabels ? () => thumbLabels[i] : undefined}
                 getAriaValueText={(_, v) => formatValue(v)}
                 className={cn(
-                  "group/thumb flex h-10 w-6 cursor-grab items-center justify-center gap-0.5 rounded-xl border-2 border-background shadow-md outline-none transition-[box-shadow,scale,background-color] duration-150",
+                  "group/thumb flex h-10 w-6 cursor-grab items-center justify-center gap-0.5 rounded-xl border-2 border-background shadow-popover outline-none transition-[box-shadow,scale,background-color] duration-150",
                   // Focus lands on the hidden input inside the thumb, so it's
                   // focus-within, not a data attribute.
                   "data-dragging:scale-105 data-dragging:cursor-grabbing data-dragging:ring-4 focus-within:ring-4",

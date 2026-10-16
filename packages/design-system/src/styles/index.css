@@ -67,6 +67,7 @@
   --color-warning-subtle:          var(--warning-subtle);
   --color-warning-subtle-foreground: var(--warning-subtle-fg);
   --color-info:                    var(--info);
+  --color-whatsapp:                var(--whatsapp);
   --color-info-foreground:         var(--info-foreground);
   --color-info-subtle:             var(--info-subtle);
   --color-info-subtle-foreground:  var(--info-subtle-fg);
@@ -252,6 +253,7 @@
   --shadow-2xl:  var(--shadow-2xl);
   --shadow-inner: var(--shadow-inner);
 
+  --shadow-control:   var(--shadow-control);
   --shadow-card:      var(--shadow-card);
   --shadow-popover:   var(--shadow-popover);
   --shadow-elevated:  var(--shadow-elevated);

@@ -66,11 +66,11 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-xs active:bg-primary/95 aria-expanded:bg-primary/90",
+          "bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-control active:bg-primary/95 aria-expanded:bg-primary/90",
         outline:
           "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
         secondary:
-          "bg-secondary text-secondary-foreground border border-border/60 hover:bg-secondary/70 hover:border-border hover:shadow-2xs active:bg-secondary/90 aria-expanded:bg-secondary/80 dark:border-border/30 dark:hover:bg-secondary/80",
+          "bg-secondary text-secondary-foreground border border-border/60 hover:bg-secondary/70 hover:border-border hover:shadow-control active:bg-secondary/90 aria-expanded:bg-secondary/80 dark:border-border/30 dark:hover:bg-secondary/80",
         ghost:
           "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
         destructive:
@@ -97,7 +97,7 @@ const buttonVariants = cva(
          * look as the bottom bar's raised Plans tile and the sidebar's
          * plans link. For that one destination only. */
         premium:
-          "bg-gradient-offer-premium text-surface-inverted-fg shadow-xs hover:shadow-sm hover:brightness-110 active:brightness-95",
+          "bg-gradient-offer-premium text-surface-inverted-fg shadow-control hover:shadow-card hover:brightness-110 active:brightness-95",
         /* Dark-gray push for a screen whose green primary is already taken
          * (add-ons, upsells) — see the one-primary RULE above. */
         emphasis:

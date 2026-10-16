@@ -191,7 +191,7 @@ export function ReusableSidebar({
                 <button
                   type="button"
                   aria-label="Switch workspace"
-                  className="flex h-12 w-full items-center gap-3 rounded-lg border border-sidebar-border bg-background px-2.5 text-left text-sm font-medium text-foreground shadow-sm ring-sidebar-ring outline-hidden transition-colors hover:bg-accent/50 focus-visible:ring-2 cursor-pointer group-data-[collapsible=icon]:w-10"
+                  className="flex h-12 w-full items-center gap-3 rounded-lg border border-sidebar-border bg-background px-2.5 text-left text-sm font-medium text-foreground shadow-card ring-sidebar-ring outline-hidden transition-interactive hover:bg-accent/50 focus-visible:ring-2 cursor-pointer group-data-[collapsible=icon]:w-10"
                 >
                   {activeWorkspace.logoUrl ? (
                     <img
@@ -342,7 +342,7 @@ export function ReusableSidebar({
                               {badge}
                               <ChevronDown
                                 className={cn(
-                                  "size-3.5 shrink-0 text-muted-foreground transition-transform duration-200",
+                                  "size-3.5 shrink-0 text-muted-foreground transition-select",
                                   isExpanded && "rotate-180"
                                 )}
                               />

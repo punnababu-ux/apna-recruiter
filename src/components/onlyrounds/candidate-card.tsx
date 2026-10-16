@@ -120,8 +120,8 @@ export function CandidateCard({
         }
       }}
       className={cn(
-        "rounded-lg border border-border bg-card transition-shadow",
-        onOpen && "cursor-pointer hover:shadow-sm focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+        "rounded-lg border border-border bg-card transition-interactive",
+        onOpen && "cursor-pointer hover:shadow-card focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
         className,
       )}
     >
@@ -226,23 +226,10 @@ export function CandidateCard({
               </InsightChip>
             ))}
           </div>
-          {state.insights.length > 12 && (
-            <button
-              type="button"
-              onClick={stop(onViewInsights)}
-              className="mt-2 text-xs font-medium text-primary hover:underline"
-            >
+          {(state.insights.length > 12 || onViewInsights) && (
+            <Button type="button" variant="link" size="sm" className="mt-2 self-start" onClick={stop(onViewInsights)}>
               See detailed insights… ›
-            </button>
-          )}
-          {state.insights.length <= 12 && onViewInsights && (
-            <button
-              type="button"
-              onClick={stop(onViewInsights)}
-              className="mt-2 text-xs font-medium text-primary hover:underline"
-            >
-              See detailed insights… ›
-            </button>
+            </Button>
           )}
         </div>
       )}
@@ -373,14 +360,9 @@ function CandidateNote({
   if (!note && !editing) {
     return (
       <div className="flex items-center justify-end border-t border-border px-4 py-2 text-xs">
-        <button
-          type="button"
-          onClick={startEditing}
-          className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground"
-        >
-          <Pencil className="size-3" />
+        <Button type="button" variant="ghost" size="xs" className="text-muted-foreground" onClick={startEditing} leadingIcon={<Pencil />}>
           Add a note
-        </button>
+        </Button>
       </div>
     )
   }
@@ -430,14 +412,9 @@ function CandidateNote({
   return (
     <div className="flex items-start justify-between gap-3 border-t border-border bg-muted/30 px-4 py-2 text-xs">
       <p className="flex-1 whitespace-pre-wrap text-foreground">{note}</p>
-      <button
-        type="button"
-        onClick={startEditing}
-        aria-label="Edit note"
-        className="shrink-0 text-muted-foreground hover:text-foreground"
-      >
-        <Pencil className="size-3.5" />
-      </button>
+      <Button type="button" variant="ghost" size="icon-xs" className="shrink-0 text-muted-foreground" onClick={startEditing} aria-label="Edit note">
+        <Pencil />
+      </Button>
     </div>
   )
 }
@@ -483,7 +460,7 @@ function ContactActions({
         onClick={onStop(() => {
           window.open(`https://wa.me/${digits}`, "_blank", "noopener,noreferrer")
         })}
-        className="inline-flex size-5 items-center justify-center rounded text-[#25D366] hover:bg-muted" // token-lint-ignore: whatsapp-brand-color
+        className="inline-flex size-5 items-center justify-center rounded text-whatsapp transition-interactive hover:bg-muted"
       >
         <WhatsAppIcon className="size-3.5" />
       </button>
@@ -492,14 +469,16 @@ function ContactActions({
       <Popover>
         <PopoverTrigger
           render={
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon-xs"
+              className="text-muted-foreground"
               aria-label={`Show call QR for ${name}`}
               onClick={(e) => e.stopPropagation()}
-              className="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
             >
-              <QrCode className="size-3.5" />
-            </button>
+              <QrCode />
+            </Button>
           }
         />
         <PopoverContent

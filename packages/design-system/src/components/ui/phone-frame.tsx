@@ -29,7 +29,7 @@ function PhoneFrame({ label, className, screenClassName, children, ...props }: P
       role="region"
       aria-label={label}
       className={cn(
-        "relative mx-auto w-full max-w-xs overflow-hidden rounded-4xl border-8 border-foreground bg-foreground shadow-xl",
+        "relative mx-auto w-full max-w-xs overflow-hidden rounded-4xl border-8 border-foreground bg-foreground shadow-dialog",
         className
       )}
       {...props}

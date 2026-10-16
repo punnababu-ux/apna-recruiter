@@ -26,7 +26,7 @@ import { ChevronRight } from "@/icons/icons"
  * The whole card opens the job: the title link's hit area is stretched over
  * the card (a link can't wrap the pills and buttons inside it), and the card
  * presses and ripples. Actions, metric pills and the banner sit above that
- * layer (relative z-10) with their own clicks; the ink utility lets only the
+ * layer (relative z-docked) with their own clicks; the ink utility lets only the
  * innermost pressed surface ripple. Keyboard: one link per card (the title)
  * plus the inner controls.
  */
@@ -82,20 +82,20 @@ export function JobCardFrame({
           <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">{meta}</div>
         </div>
 
-        <div className="relative z-10 -mr-1 -mt-1 flex shrink-0 items-center gap-1 self-start">{actions}</div>
+        <div className="relative z-docked -mr-1 -mt-1 flex shrink-0 items-center gap-1 self-start">{actions}</div>
       </div>
 
       {/* Pills — horizontal scroll on mobile */}
       {pills && (
         <>
           <hr className="-mx-4 mt-4 border-t border-border/60 sm:-mx-5" />
-          <div className="relative z-10 mt-3 flex max-w-full items-center gap-1.5 overflow-x-auto whitespace-nowrap no-scrollbar pb-0.5">
+          <div className="relative z-docked mt-3 flex max-w-full items-center gap-1.5 overflow-x-auto whitespace-nowrap no-scrollbar pb-0.5">
             {pills}
           </div>
         </>
       )}
 
-      {banner && <div className="relative z-10 mt-3">{banner}</div>}
+      {banner && <div className="relative z-docked mt-3">{banner}</div>}
     </div>
   )
 }

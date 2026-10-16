@@ -147,14 +147,14 @@ const AlertBanner = React.forwardRef<HTMLDivElement, AlertBannerProps>(
             </div>
           </div>
 
-          {cta && <div className="relative z-10 shrink-0">{cta}</div>}
+          {cta && <div className="relative z-docked shrink-0">{cta}</div>}
 
           {onClose && (
             <button
               type="button"
               onClick={onClose}
               className={cn(
-                "ink press relative z-10 shrink-0 rounded-md p-1 opacity-70 hover:opacity-100 transition-interactive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer -mr-1",
+                "ink press relative z-docked shrink-0 rounded-md p-1 opacity-70 hover:opacity-100 transition-interactive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer -mr-1",
                 textColor
               )}
             >

@@ -94,7 +94,6 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 |------------------|------------------------------------------------------------------------|--------------------------------------------------|
 | Table            | `import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell, TableCaption, TableFooter } from "@apna/design-system"` | Semantic tabular data. |
 | Accordion        | `import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@apna/design-system"` | Expand/collapse grouped content. |
-| JobCard          | `import { JobCard } from "@apna/design-system"`                        | Candidate-facing job post card.                  |
 | PhoneFrame       | `import { PhoneFrame } from "@apna/design-system"`                     | Phone bezel for previewing a mobile screen inside a desktop page; the screen scrolls on its own. `label` names the region. |
 | PricingCard      | `import { PricingCard } from "@apna/design-system"`                    | Plan/bundle card — ribbon, one or more meta rows, price+MRP+badge, CTA slot. Pure layout; caller supplies coloured ribbon/badge/cta. `emphasis`: "price" (default) or "title" picks which line leads. `surface="inset"` for a card nested in an always-dark surface. |
 | ApnaLogo         | `import { ApnaLogo } from "@apna/design-system"`                       | Brand mark lockup with gradient and wordmark.    |

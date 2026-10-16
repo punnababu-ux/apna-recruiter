@@ -71,7 +71,7 @@ export interface SegmentedTabSwitcherProps<V extends string = string> {
    *  `text-muted-foreground`. */
   mutedClassName?: string
   /** Surface treatment for the active desktop pill — the single indicator
-   *  that slides between items — replacing the default `bg-card shadow-sm`
+   *  that slides between items — replacing the default `bg-card shadow-card`
    *  outright. Pass the complete string — a partial
    *  override (say `"shadow-none"`) would drop the fill rather than merge
    *  with it. Use an inset ring, not `border`, for a stroke: a real border
@@ -99,7 +99,7 @@ const APPEARANCES = {
     active: "text-primary",
     inactive: "text-muted-foreground",
     muted: "text-muted-foreground",
-    activeItem: "bg-card shadow-sm",
+    activeItem: "bg-card shadow-card",
   },
   checkout: {
     track: "bg-checkout-track",
@@ -227,7 +227,7 @@ export function SegmentedTabSwitcher<V extends string = string>({
             // The ring (--border-strong) keeps the white selected chip
             // visible on a white surface (a card, a panel), not just on a
             // grey one; the shadow alone vanished there.
-            className="sliding-indicator rounded-full bg-card shadow-sm inset-ring-1 inset-ring-border-strong"
+            className="sliding-indicator rounded-full bg-card shadow-card inset-ring-1 inset-ring-border-strong"
           />
           {items.map(({ value: v, label, shortLabel, icon }) => {
             const active = v === value

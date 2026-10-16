@@ -57,7 +57,7 @@ function useScrollCollapse() {
 export function Fab({ label, icon: Icon, href, onClick, className }: FabProps) {
   const collapsed = useScrollCollapse()
   const classes = cn(
-    "ink press pointer-events-auto relative flex h-14 items-center justify-center gap-2 rounded-full bg-primary font-heading text-base font-semibold text-primary-foreground shadow-lg outline-none transition-interactive hover:bg-primary/90 focus-visible:ring-3 focus-visible:ring-ring/50",
+    "ink press pointer-events-auto relative flex h-14 items-center justify-center gap-2 rounded-full bg-primary font-heading text-base font-semibold text-primary-foreground shadow-elevated outline-none transition-interactive hover:bg-primary/90 focus-visible:ring-3 focus-visible:ring-ring/50",
     collapsed ? "w-14" : "px-5",
     className
   )

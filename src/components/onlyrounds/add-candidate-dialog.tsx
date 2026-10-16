@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { useState, useRef } from "react"
-import { ChevronLeft, Download, FileSpreadsheet, FileText, Upload, UserPlus, X, File, Loader2 } from "@apna/design-system"
+import { BackButton, Download, FileSpreadsheet, FileText, Upload, UserPlus, X, File, Loader2 } from "@apna/design-system"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
@@ -108,7 +108,7 @@ function SelectStep({
         <button
           type="button"
           onClick={onViewBulk}
-          className="flex items-start gap-4 rounded-xl border border-border bg-card p-4 text-left outline-none transition-colors hover:bg-muted/40 focus-visible:ring-3 focus-visible:ring-ring/50"
+          className="ink press-subtle relative flex items-start gap-4 rounded-xl border border-border bg-card p-4 text-left outline-none transition-interactive hover:bg-muted/40 focus-visible:ring-3 focus-visible:ring-ring/50"
         >
           <div className="flex size-10 shrink-0 items-center justify-center rounded-lg border border-border bg-muted/30 text-primary">
             <FileSpreadsheet className="size-5" />
@@ -126,7 +126,7 @@ function SelectStep({
         <button
           type="button"
           onClick={onViewManual}
-          className="flex items-start gap-4 rounded-xl border border-border bg-card p-4 text-left outline-none transition-colors hover:bg-muted/40 focus-visible:ring-3 focus-visible:ring-ring/50"
+          className="ink press-subtle relative flex items-start gap-4 rounded-xl border border-border bg-card p-4 text-left outline-none transition-interactive hover:bg-muted/40 focus-visible:ring-3 focus-visible:ring-ring/50"
         >
           <div className="flex size-10 shrink-0 items-center justify-center rounded-lg border border-border bg-muted/30 text-primary">
             <UserPlus className="size-5" />
@@ -240,13 +240,11 @@ function BulkStep({
   return (
     <div className="flex flex-col gap-6">
       <DialogHeader>
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon-sm" onClick={onBack} disabled={processing}>
-            <ChevronLeft className="size-4" />
-          </Button>
+        <div className="flex items-center gap-3">
+          <BackButton onClick={onBack} disabled={processing} aria-label="Back to add options" />
           <DialogTitle>Bulk upload candidates</DialogTitle>
         </div>
-        <DialogDescription className="pl-8">
+        <DialogDescription className="pl-11">
           Upload a CSV containing your list of exploratory leads for this job.
         </DialogDescription>
       </DialogHeader>
@@ -281,7 +279,7 @@ function BulkStep({
           onDrop={handleDrop}
           onClick={() => !processing && fileInputRef.current?.click()}
           className={cn(
-            "flex min-h-36 cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border p-6 text-center transition-colors hover:bg-muted/30 focus-visible:outline-none",
+            "flex min-h-36 cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border p-6 text-center transition-interactive hover:bg-muted/30 focus-visible:outline-none",
             file && "border-primary bg-primary/5 hover:bg-primary/5",
             error && "border-destructive bg-destructive/5 hover:bg-destructive/5",
             processing && "pointer-events-none opacity-60"
@@ -408,13 +406,11 @@ function ManualStep({
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
       <DialogHeader>
-        <div className="flex items-center gap-2">
-          <Button type="button" variant="ghost" size="icon-sm" onClick={onBack} disabled={isSubmitting}>
-            <ChevronLeft className="size-4" />
-          </Button>
+        <div className="flex items-center gap-3">
+          <BackButton type="button" onClick={onBack} disabled={isSubmitting} aria-label="Back to add options" />
           <DialogTitle>Add candidate manually</DialogTitle>
         </div>
-        <DialogDescription className="pl-8">
+        <DialogDescription className="pl-11">
           Fill in candidate information. Mandatory fields are marked with an asterisk (*).
         </DialogDescription>
       </DialogHeader>
@@ -505,13 +501,16 @@ function ManualStep({
                 <span className="truncate text-xs font-medium text-foreground max-w-48">
                   {resumeFile.name}
                 </span>
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="icon-xs"
+                  className="shrink-0 text-muted-foreground"
                   onClick={() => setResumeFile(null)}
-                  className="text-muted-foreground hover:text-foreground shrink-0"
+                  aria-label="Remove resume"
                 >
-                  <X className="size-3.5" />
-                </button>
+                  <X />
+                </Button>
               </div>
             )}
           </div>

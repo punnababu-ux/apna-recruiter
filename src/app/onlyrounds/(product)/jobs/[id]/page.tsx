@@ -1352,7 +1352,7 @@ function JobDetailPageInner({ id }: { id: string }) {
       <PageHeader
         // Sticks directly beneath the 64px ProductTopBar so the job
         // title + round tabs stay in view while the candidate list scrolls.
-        className="sticky top-16 z-20"
+        className="sticky top-16 z-sticky"
         title={
           <div className="flex items-start gap-3">
             <BackButton className="mt-0.5" />

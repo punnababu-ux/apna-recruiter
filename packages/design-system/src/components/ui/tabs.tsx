@@ -73,7 +73,7 @@ function TabsList({
         className={cn(
           "absolute -z-1 tab-indicator",
           "top-(--active-tab-top) left-(--active-tab-left) h-(--active-tab-height) w-(--active-tab-width)",
-          "group-data-[variant=default]/tabs-list:rounded-full group-data-[variant=default]/tabs-list:bg-background group-data-[variant=default]/tabs-list:shadow-sm dark:group-data-[variant=default]/tabs-list:border dark:group-data-[variant=default]/tabs-list:border-input dark:group-data-[variant=default]/tabs-list:bg-input/30",
+          "group-data-[variant=default]/tabs-list:rounded-full group-data-[variant=default]/tabs-list:bg-background group-data-[variant=default]/tabs-list:shadow-card dark:group-data-[variant=default]/tabs-list:border dark:group-data-[variant=default]/tabs-list:border-input dark:group-data-[variant=default]/tabs-list:bg-input/30",
           "group-data-[variant=inverted]/tabs-list:rounded-full group-data-[variant=inverted]/tabs-list:bg-foreground",
           "group-data-[variant=checkout]/tabs-list:rounded-full group-data-[variant=checkout]/tabs-list:bg-card group-data-[variant=checkout]/tabs-list:inset-ring-1 group-data-[variant=checkout]/tabs-list:inset-ring-border-strong",
           "group-data-[variant=line]/tabs-list:rounded-full group-data-[variant=line]/tabs-list:bg-foreground",

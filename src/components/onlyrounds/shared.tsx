@@ -171,8 +171,9 @@ export function SelectionCard({
         }
       }}
       className={cn(
-        "cursor-pointer rounded-lg border p-4 text-left outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring/50",
-        selected ? "border-primary bg-accent/30" : "border-border hover:bg-muted/40",
+        // OptionCard's selection look, so a picked card reads the same here.
+        "ink press-subtle relative cursor-pointer rounded-lg border p-4 text-left outline-none transition-interactive focus-visible:ring-3 focus-visible:ring-ring/50",
+        selected ? "border-primary bg-accent ring-1 ring-primary" : "border-border hover:bg-muted/50",
         className,
       )}
     >

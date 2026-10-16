@@ -37,7 +37,7 @@ export function ProductTopBar({
   return (
     <div
       className={cn(
-        "sticky top-0 z-10 flex h-16 items-center gap-1 border-b border-border bg-card px-3",
+        "sticky top-0 z-sticky flex h-16 items-center gap-1 border-b border-border bg-card px-3",
         className
       )}
     >
@@ -50,7 +50,7 @@ export function ProductTopBar({
         <Popover>
           <PopoverTrigger
             render={
-              <button className="rounded-full ring-offset-background transition-shadow hover:ring-2 hover:ring-ring/40 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 shrink-0">
+              <button className="rounded-full ring-offset-background transition-interactive hover:ring-2 hover:ring-ring/40 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 shrink-0">
                 <Avatar className="size-8">
                   <AvatarFallback className="bg-accent text-xs font-semibold text-accent-foreground">
                     {user.initial}

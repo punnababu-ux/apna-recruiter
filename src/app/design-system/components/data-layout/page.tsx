@@ -16,7 +16,6 @@ import {
   LogoApnaUnlimited,
   Badge,
   Button,
-  JobCard,
   JobCardFrame,
   JobMetricPill,
   MoreVertical,
@@ -43,7 +42,7 @@ export default function DataLayoutComponentsPage() {
           7. Data & Layout
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Tables, accordions, job cards, and pricing cards.
+          Tables, accordions, the jobs list card, and pricing cards.
         </p>
       </div>
 
@@ -67,23 +66,6 @@ export default function DataLayoutComponentsPage() {
             </>
           }
         />
-      </div>
-
-      {/* Cards */}
-      <div className="rounded-xl border border-border bg-card p-6 space-y-4">
-        <h2 className="text-base font-semibold text-foreground font-heading border-b border-border/60 pb-2">
-          Product Cards
-        </h2>
-        <div className="max-w-md w-full">
-          <JobCard
-            title="Senior Frontend Engineer"
-            company="Acme Corp"
-            location="Remote, US"
-            jobType="Full-time"
-            salary="$120k - $160k"
-            postedAt="2 days ago"
-          />
-        </div>
       </div>
 
       {/* Phone frame */}

@@ -112,6 +112,8 @@
   --warning-subtle-fg:      var(--color-apna-gold-900);
 
   --info:                   var(--color-apna-sky-600);
+  /* WhatsApp's own green, on the WhatsApp action only (message on WhatsApp). */
+  --whatsapp:               var(--color-brand-whatsapp);
   --info-foreground:        var(--color-gray-50);
   --info-subtle:            var(--color-apna-sky-100);
   --info-subtle-fg:         var(--color-apna-sky-900);
@@ -194,6 +196,7 @@
    * (shadow-xs … shadow-2xl) but role-based utilities retune globally when a
    * single line here changes.
    * ======================================================================== */
+  --shadow-control:  var(--shadow-xs);  /* Buttons, inputs: a hairline lift   */
   --shadow-card:     var(--shadow-sm);  /* Card default, resting             */
   --shadow-popover:  var(--shadow-md);  /* Popover, Tooltip, DropdownMenu    */
   --shadow-elevated: var(--shadow-lg);  /* hovered cards, HoverCard          */

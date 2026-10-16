@@ -276,7 +276,7 @@ function ContactActions({ phone, name }: { phone: string; name: string }) {
         onClick={() => {
           window.open(`https://wa.me/${digits}`, "_blank", "noopener,noreferrer")
         }}
-        className="inline-flex size-5 items-center justify-center rounded text-[#25D366] hover:bg-muted" // token-lint-ignore: whatsapp-brand-color
+        className="inline-flex size-5 items-center justify-center rounded text-whatsapp transition-interactive hover:bg-muted"
       >
         <WhatsAppIcon className="size-3.5" />
       </button>
@@ -285,18 +285,14 @@ function ContactActions({ phone, name }: { phone: string; name: string }) {
       <Popover>
         <PopoverTrigger
           render={
-            <button
-              type="button"
-              aria-label={`Show call QR for ${name}`}
-              className="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
-            >
-              <QrCode className="size-3.5" />
-            </button>
+            <Button type="button" variant="ghost" size="icon-xs" className="text-muted-foreground" aria-label={`Show call QR for ${name}`}>
+              <QrCode />
+            </Button>
           }
         />
         <PopoverContent
           align="start"
-          className="w-auto p-3 z-50 bg-popover border border-border rounded-lg shadow-md"
+          className="w-auto p-3"
         >
           <div className="flex flex-col items-center gap-2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -693,7 +689,7 @@ function DrawerBody({
                 e.stopPropagation()
                 setIsEditing(true)
               }}
-              className="flex w-full items-center justify-between rounded-lg border border-border bg-muted/20 px-3.5 py-2.5 text-left text-sm hover:bg-muted/40 transition-colors"
+              className="flex w-full items-center justify-between rounded-lg border border-border bg-muted/20 px-3.5 py-2.5 text-left text-sm hover:bg-muted/40 transition-interactive"
             >
               {noteText ? (
                 <span className="text-foreground whitespace-pre-wrap">{noteText}</span>
@@ -798,24 +794,20 @@ function VideoPopup({
 
   return ReactDOM.createPortal(
     <div
-      className="fixed z-50 animate-in fade-in slide-in-from-right-4 duration-200"
+      className="fixed z-modal animate-in fade-in slide-in-from-right-4 duration-200"
       style={{ top: "16px", right: "calc(56rem + 12px)" }}
     >
-      <div className="w-full max-w-lg overflow-hidden rounded-xl border border-border bg-card shadow-2xl">
+      <div className="w-full max-w-lg overflow-hidden rounded-xl border border-border bg-card shadow-dialog">
         {/* Header */}
         <div className="flex items-center gap-2 border-b border-border px-4 py-2.5">
           <Video className="size-4 shrink-0 text-muted-foreground" />
           <span className="flex-1 truncate text-sm font-semibold text-foreground">
             {candidateName} — Interview recording
           </span>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close video"
-            className="flex size-6 shrink-0 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-          >
-            <X className="size-4" />
-          </button>
+          {/* A floating panel, not a dialog: its close stays inside. */}
+          <Button type="button" variant="ghost" size="icon-xs" className="shrink-0 text-muted-foreground" onClick={onClose} aria-label="Close video">
+            <X />
+          </Button>
         </div>
 
         {/* YouTube iframe (16:9) */}
@@ -874,10 +866,10 @@ function AudioPlayer({
 
   return (
     <div className={cn(
-      "transition-all duration-200",
+      "transition-interactive duration-enter",
       playing
         /* Playing → full-bleed sticky strip below the tab bar */
-        ? "-mx-4 sticky top-0 z-10 bg-card border-b border-border shadow-sm"
+        ? "-mx-4 sticky top-0 z-docked bg-card border-b border-border shadow-card"
         /* At rest → normal rounded card, same style as other insight cards */
         : "rounded-lg border border-border bg-card",
     )}>
@@ -914,14 +906,16 @@ function AudioPlayer({
           </div>
         </div>
         {/* Play / Pause */}
-        <button
+        <Button
           type="button"
+          variant="outline"
+          size="icon-sm"
+          className="shrink-0 rounded-full"
           onClick={onTogglePlay}
           aria-label={playing ? "Pause audio" : "Play audio"}
-          className="flex size-8 shrink-0 items-center justify-center rounded-full border border-border bg-muted hover:bg-muted/70 transition-colors"
         >
-          {playing ? <Pause className="size-3.5" /> : <Play className="size-3.5 ml-0.5" />}
-        </button>
+          {playing ? <Pause /> : <Play />}
+        </Button>
       </div>
     </div>
   )
@@ -1209,7 +1203,7 @@ function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
                 <span
                   key={i}
                   className={cn(
-                    "inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs shadow-2xs transition-colors bg-card",
+                    "inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs shadow-card transition-interactive bg-card",
                     it.tone === "ok"
                       ? "border-success/40 text-success-foreground"
                       : "border-destructive/40 text-destructive"
@@ -1226,7 +1220,7 @@ function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
                       type="button"
                       onClick={() => seekTo(it.atSecond!)}
                       aria-label={`Jump to ${fmtMmSs(it.atSecond!)} in ${mediaType}`}
-                      className="ml-1 inline-flex size-4 items-center justify-center rounded-full border border-border bg-muted/40 hover:bg-muted transition-colors cursor-pointer"
+                      className="ml-1 inline-flex size-4 items-center justify-center rounded-full border border-border bg-muted/40 hover:bg-muted transition-interactive cursor-pointer"
                     >
                       <Play className="size-2 text-muted-foreground fill-muted-foreground ml-0.5" />
                     </button>
@@ -1676,7 +1670,7 @@ function CriterionRow({
                     ? `Jump to ${fmtMmSs(item.atSecond!)} in ${mediaType}`
                     : `Play from start in ${mediaType}`
                 }
-                className="flex size-6 shrink-0 items-center justify-center rounded-full border border-success/30 bg-success/5 text-success hover:bg-success/15 hover:scale-105 transition-all cursor-pointer"
+                className="flex size-6 shrink-0 items-center justify-center rounded-full border border-success/30 bg-success/5 text-success hover:bg-success/15 hover:scale-105 transition-interactive cursor-pointer"
               >
                 <Play className="size-2.5 fill-success text-success ml-0.5" />
               </button>

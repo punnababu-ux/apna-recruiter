@@ -52,7 +52,6 @@ import { toast } from "sonner"
 import {
   AlertDialog,
   AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
@@ -909,15 +908,8 @@ export function CreateJobWizard() {
         open={exitDialogOpen}
         onOpenChange={setExitDialogOpen}
       >
+        {/* A forced choice: no close X (pop-ups never carry their own). */}
         <AlertDialogContent>
-          <AlertDialogCancel
-            variant="ghost"
-            size="icon-sm"
-            className="absolute top-2 right-2"
-            aria-label="Close"
-          >
-            <X className="size-4" />
-          </AlertDialogCancel>
           <AlertDialogHeader>
             <AlertDialogTitle>Leave without saving?</AlertDialogTitle>
             <AlertDialogDescription>
@@ -1138,7 +1130,7 @@ function DescriptionStep({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
           {/* Left Column: Prompt / File Summary */}
           <div className="md:col-span-1">
-            <div className="rounded-lg border border-border bg-card p-4 flex flex-col gap-4 h-fit shadow-sm">
+            <div className="rounded-lg border border-border bg-card p-4 flex flex-col gap-4 h-fit shadow-card">
               <div>
                 <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
                   Your Input
@@ -1161,13 +1153,9 @@ function DescriptionStep({
                       &rdquo;
                     </div>
                     {form.promptText.length > 180 ? (
-                      <button
-                        type="button"
-                        onClick={() => setShowAllPrompt(!showAllPrompt)}
-                        className="text-xs text-primary font-semibold hover:underline self-start cursor-pointer mt-0.5"
-                      >
+                      <Button type="button" variant="link" size="sm" className="self-start" onClick={() => setShowAllPrompt(!showAllPrompt)}>
                         {showAllPrompt ? "See less" : "See more"}
-                      </button>
+                      </Button>
                     ) : null}
                   </div>
                 ) : (
@@ -1191,7 +1179,7 @@ function DescriptionStep({
           </div>
 
           {/* Right Column: Editable Fields */}
-          <div className="md:col-span-2 rounded-lg border border-border bg-card p-6 shadow-sm flex flex-col gap-4">
+          <div className="md:col-span-2 rounded-lg border border-border bg-card p-6 shadow-card flex flex-col gap-4">
             <UIField>
               <FieldLabel htmlFor="title" icon={Briefcase}>Job title</FieldLabel>
               <Input
@@ -1238,7 +1226,7 @@ function DescriptionStep({
                   <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-md bg-background z-docked">
                     <Skeleton variant="ai" className="absolute inset-0 rounded-none" aria-hidden="true" />
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium shadow-sm">
+                      <div className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium shadow-card">
                         <Sparkles className="size-4 animate-pulse text-primary" />
                         <span>Polishing with AI…</span>
                       </div>
@@ -1258,7 +1246,7 @@ function DescriptionStep({
         </div>
       ) : (
         /* Initial State: Unified AI Command Bar Card */
-        <div className="rounded-lg border border-border bg-card p-6 shadow-sm w-full animate-in fade-in zoom-in-95 duration-200">
+        <div className="rounded-lg border border-border bg-card p-6 shadow-card w-full animate-in fade-in zoom-in-95 duration-200">
           <div className="flex flex-col items-center text-center gap-2 mb-6">
             <div className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary">
               <Sparkles className="size-5" />
@@ -1266,7 +1254,7 @@ function DescriptionStep({
             <h3 className="text-lg font-semibold">What is your hiring requirement?</h3>
           </div>
 
-          <div className="relative rounded-lg border border-border bg-background shadow-xs focus-within:ring-2 focus-within:ring-ring focus-within:border-transparent transition-all flex flex-col">
+          <div className="relative rounded-lg border border-border bg-background shadow-control focus-within:ring-2 focus-within:ring-ring focus-within:border-transparent transition-interactive flex flex-col">
             {/* token-lint-ignore: Need fixed field-sizing and fixed height to prevent prompt input card auto-expansion */}
             <Textarea
               value={promptVal}
@@ -1315,13 +1303,16 @@ function DescriptionStep({
                     <span className="inline-flex items-center gap-1.5 rounded-md bg-muted px-2 py-1 text-xs text-muted-foreground border border-border max-w-48">
                       <FileText className="size-3.5 shrink-0 text-primary" />
                       <span className="truncate flex-1">{attachedFile.name}</span>
-                      <button
+                      <Button
                         type="button"
+                        variant="ghost"
+                        size="icon-xs"
+                        className="shrink-0 hover:text-destructive"
                         onClick={() => setAttachedFile(null)}
-                        className="hover:text-destructive cursor-pointer shrink-0"
+                        aria-label="Remove attachment"
                       >
-                        <X className="size-3" />
-                      </button>
+                        <X />
+                      </Button>
                     </span>
                   ) : null}
 
@@ -1373,7 +1364,7 @@ function DescriptionStep({
                     setPromptVal(suggestion)
                     setError(null)
                   }}
-                  className="rounded-full border border-border bg-background px-2.5 py-0.5 text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-all cursor-pointer"
+                  className="rounded-full border border-border bg-background px-2.5 py-0.5 text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-interactive cursor-pointer"
                 >
                   {suggestion}
                 </button>

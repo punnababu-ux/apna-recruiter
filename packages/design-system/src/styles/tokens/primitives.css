@@ -189,6 +189,11 @@
   --color-apna-royal-950: #001840;   /* Hero/inverted surface deep */
 
   /* --------------------------------------------------------------------------
+   * Color · Third-party brands (only where a partner's own mark is shown)
+   * ------------------------------------------------------------------------ */
+  --color-brand-whatsapp: #25D366;
+
+  /* --------------------------------------------------------------------------
    * Color · Alpha (translucent neutrals for overlays, rings, dividers)
    * ------------------------------------------------------------------------ */
   --color-alpha-black-5:   rgba(0, 0, 0, 0.05);

@@ -69,7 +69,7 @@ export function BottomNav({ items, className }: BottomNavProps) {
       aria-label="Main navigation"
       className={cn(
         // Fixed bar — hidden on desktop where sidebar is present
-        "fixed bottom-0 left-0 right-0 z-50 md:hidden",
+        "fixed bottom-0 left-0 right-0 z-modal md:hidden",
         "box-content flex h-16 items-stretch border-t border-border bg-card pb-safe",
         className
       )}
@@ -129,7 +129,7 @@ export function BottomNav({ items, className }: BottomNavProps) {
               aria-current={item.active ? "page" : undefined}
               className="relative flex flex-1 flex-col items-center justify-start touch-manipulation outline-none"
             >
-              <span className="ink press relative -mt-5 flex h-16 w-16 flex-col items-center justify-center gap-1 rounded-2xl bg-gradient-offer-premium text-surface-inverted-fg shadow-lg ring-4 ring-card transition-interactive">
+              <span className="ink press relative -mt-5 flex h-16 w-16 flex-col items-center justify-center gap-1 rounded-2xl bg-gradient-offer-premium text-surface-inverted-fg shadow-elevated ring-4 ring-card transition-interactive">
                 <Coin icon={Icon} size="lg" />
                 <span className="text-xs leading-none font-semibold">{item.label}</span>
               </span>
@@ -205,7 +205,7 @@ export function BottomNavMenu({ open, onOpenChange, items, label = "More", clear
 
   return (
     <>
-      {/* Under the bar (z-overlay < the bar's z-50), so the bar stays
+      {/* Under the bar (z-overlay < the bar's z-modal), so the bar stays
           tappable; the same dim + blur as SheetOverlay. */}
       <div
         aria-hidden
@@ -220,7 +220,7 @@ export function BottomNavMenu({ open, onOpenChange, items, label = "More", clear
           aria-label={label}
           data-slot="bottom-nav-menu"
           className={cn(
-            "pointer-events-auto mx-2 grid grid-cols-4 gap-x-2 gap-y-5 rounded-2xl bg-card px-3 py-5 shadow-lg animate-in fade-in slide-in-from-bottom-4 duration-200",
+            "pointer-events-auto mx-2 grid grid-cols-4 gap-x-2 gap-y-5 rounded-2xl bg-card px-3 py-5 shadow-elevated animate-in fade-in slide-in-from-bottom-4 duration-200",
             // 8px above the bar; 28px above a raised item's 20px rise.
             clearFeatured ? "mb-7" : "mb-2"
           )}

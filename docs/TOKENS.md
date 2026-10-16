@@ -192,6 +192,12 @@ while `--primary`/`--success` brighten one step in dark mode
 | `--checkout-info`              | apna-sky-500 (#3B82F6)  | apna-sky-500 (fixed)     | the checkout surface's fixed accent blue — the "Recommended" ribbon (`<Badge variant="ribbon">`) and the single-credit link. Not `--info`: that is apna-sky-600 and remaps in dark, while this surface stays light in both themes |
 | `--checkout-info-foreground`   | gray-0                  | gray-0 (fixed)           | text/icon on `--checkout-info`            |
 
+### Third-party brand
+
+| Token | Value | Intent |
+|---|---|---|
+| `--whatsapp` | `--color-brand-whatsapp` (#25D366) | WhatsApp's own green, on the "Message on WhatsApp" action only (`text-whatsapp`) |
+
 ### Status
 
 Each status role has `--<role>`, `--<role>-foreground` (text on the solid
@@ -403,6 +409,21 @@ Use `gap-inline`, `p-inset`, `gap-stack`, etc. These read as intent and shift
 globally if the system's rhythm is re-aliased.
 
 ---
+
+### Elevation & layering
+
+Components read these roles, never the raw `shadow-xs…2xl` / `z-10…50`
+steps, so one line here retunes every surface of that kind.
+
+| Token | Value | Intent |
+|---|---|---|
+| `--shadow-control` | shadow-xs | Buttons, inputs: a hairline lift (`shadow-control`) |
+| `--shadow-card` | shadow-sm | Cards at rest, sticky headers once scrolled |
+| `--shadow-popover` | shadow-md | Popovers, menus, selects, floating controls |
+| `--shadow-elevated` | shadow-lg | Hovered cards, raised floating actions |
+| `--shadow-dialog` | shadow-xl | Dialogs, sheets |
+| `z-docked` / `z-dropdown` / `z-sticky` / `z-overlay` | 10 / 20 / 30 / 40 | In-component layers / — / sticky headers and CTA bars / bottom nav, floating tools |
+| `z-modal` / `z-popover` / `z-toast` / `z-tooltip` | 50 / 60 / 70 / 80 | Dialogs and sheets / popovers, menus, selects (always above a dialog) / toasts / tooltips |
 
 ### Motion — live surfaces
 

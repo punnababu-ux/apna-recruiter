@@ -92,13 +92,9 @@ function CollapsibleJd({ jd }: { jd: string }) {
       <p className={cn("whitespace-pre-wrap text-sm text-foreground", !expanded && "line-clamp-6")}>
         {jd}
       </p>
-      <button
-        type="button"
-        onClick={() => setExpanded(!expanded)}
-        className="self-start text-xs font-semibold text-primary underline-offset-2 hover:underline focus-visible:outline-none"
-      >
+      <Button type="button" variant="link" size="sm" className="self-start" onClick={() => setExpanded(!expanded)}>
         {expanded ? "Show less" : "Show more"}
-      </button>
+      </Button>
     </div>
   )
 }

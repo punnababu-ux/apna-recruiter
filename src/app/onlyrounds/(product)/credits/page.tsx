@@ -303,7 +303,7 @@ export default function CreditsPage() {
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               
               {/* Audio Credits */}
-              <div className="relative flex flex-col justify-between rounded-lg border border-border bg-card p-inset shadow-xs">
+              <div className="relative flex flex-col justify-between rounded-lg border border-border bg-card p-inset shadow-card">
                 <div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-foreground font-semibold">
@@ -331,7 +331,7 @@ export default function CreditsPage() {
               </div>
 
               {/* Video Credits */}
-              <div className="relative flex flex-col justify-between rounded-lg border border-border bg-card p-inset shadow-xs">
+              <div className="relative flex flex-col justify-between rounded-lg border border-border bg-card p-inset shadow-card">
                 <div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-foreground font-semibold">
@@ -359,7 +359,7 @@ export default function CreditsPage() {
               </div>
 
               {/* Outbound Credits */}
-              <div className="relative flex flex-col justify-between rounded-lg border border-border bg-card p-inset shadow-xs">
+              <div className="relative flex flex-col justify-between rounded-lg border border-border bg-card p-inset shadow-card">
                 <div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-foreground font-semibold">
@@ -410,7 +410,7 @@ export default function CreditsPage() {
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 
                 {/* Audio Screening Card */}
-                <div className="rounded-lg border border-border bg-card p-inset shadow-2xs">
+                <div className="rounded-lg border border-border bg-card p-inset shadow-card">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex size-8 items-center justify-center rounded-full bg-muted text-muted-foreground">
                       <Mic className="size-4" />
@@ -424,7 +424,7 @@ export default function CreditsPage() {
                 </div>
 
                 {/* Video Screening Card */}
-                <div className="rounded-lg border border-border bg-card p-inset shadow-2xs">
+                <div className="rounded-lg border border-border bg-card p-inset shadow-card">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex size-8 items-center justify-center rounded-full bg-muted text-muted-foreground">
                       <Video className="size-4" />
@@ -460,7 +460,7 @@ export default function CreditsPage() {
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 
                 {/* Audio Interview Card */}
-                <div className="rounded-lg border border-border bg-card p-inset shadow-2xs">
+                <div className="rounded-lg border border-border bg-card p-inset shadow-card">
                   <div className="flex size-8 items-center justify-center rounded-full bg-muted text-muted-foreground mb-4">
                     <Mic className="size-4" />
                   </div>
@@ -472,7 +472,7 @@ export default function CreditsPage() {
                 </div>
 
                 {/* Video Interview Card */}
-                <div className="rounded-lg border border-border bg-card p-inset shadow-2xs">
+                <div className="rounded-lg border border-border bg-card p-inset shadow-card">
                   <div className="flex size-8 items-center justify-center rounded-full bg-muted text-muted-foreground mb-4">
                     <Video className="size-4" />
                   </div>
@@ -495,7 +495,7 @@ export default function CreditsPage() {
             </div>
           </>
         ) : (
-          <div className="rounded-lg border border-border bg-card shadow-xs overflow-hidden">
+          <div className="rounded-lg border border-border bg-card shadow-card overflow-hidden">
             <Table className="table-fixed">
               <colgroup>
                 <col style={{ width: widths.creditType }} />
@@ -620,10 +620,10 @@ export default function CreditsPage() {
               </div>
 
               <div className="flex items-center gap-1">
-                <Button variant="ghost" size="icon-sm" disabled className="h-7 w-7">
+                <Button variant="ghost" size="icon-sm" disabled aria-label="Previous page">
                   <ChevronLeft className="size-4" />
                 </Button>
-                <Button variant="ghost" size="icon-sm" className="h-7 w-7">
+                <Button variant="ghost" size="icon-sm" aria-label="Next page">
                   <ChevronRight className="size-4" />
                 </Button>
               </div>

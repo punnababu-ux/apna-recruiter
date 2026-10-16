@@ -58,7 +58,7 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
     <tr
       data-slot="table-row"
       className={cn(
-        "border-b transition-colors hover:bg-muted/50 has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted",
+        "border-b transition-interactive hover:bg-muted/50 has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted",
         className
       )}
       {...props}
@@ -178,11 +178,11 @@ function SortableTableHead({
           aria-label="Resize column"
           onPointerDown={handlePointerDown}
           onDoubleClick={(e) => e.stopPropagation()}
-          className="group/resize absolute top-0 right-0 bottom-0 z-10 flex w-3 cursor-col-resize touch-none items-center justify-center"
+          className="group/resize absolute top-0 right-0 bottom-0 z-docked flex w-3 cursor-col-resize touch-none items-center justify-center"
         >
           <span
             aria-hidden
-            className="h-4 w-px bg-border transition-all group-hover/resize:h-full group-hover/resize:w-0.5 group-hover/resize:bg-primary"
+            className="h-4 w-px bg-border transition-interactive group-hover/resize:h-full group-hover/resize:w-0.5 group-hover/resize:bg-primary"
           />
         </span>
       ) : null}
