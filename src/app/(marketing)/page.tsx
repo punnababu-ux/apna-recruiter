@@ -16,21 +16,17 @@ import Link from "next/link"
 import {
   ArrowRight,
   Badge,
-  Briefcase,
   Card,
   CardContent,
   CheckCircle2,
-  InfinityIcon,
   LogoWall,
-  PhoneCall,
   Quote,
-  Search,
   Section,
   SectionHeading,
-  type IconComponent,
 } from "@apna/design-system"
 import { HeroBackdrop } from "@/components/marketing/hero-backdrop"
 import { HeroLeadCard } from "@/components/marketing/hero-lead-card"
+import { ProductIllustration } from "@/components/marketing/product-illustrations"
 import {
   HOME_HERO,
   HOME_PRESS,
@@ -50,12 +46,8 @@ const CLIENT_LOGO_ITEMS = CLIENT_LOGOS.map((client) => ({
   ),
 }))
 
-const SUITE_ICONS: Record<(typeof HOME_SUITE.items)[number]["icon"], IconComponent> = {
-  briefcase: Briefcase,
-  phone: PhoneCall,
-  search: Search,
-  infinity: InfinityIcon,
-}
+
+type ProductName = (typeof HOME_SUITE.items)[number]["name"]
 
 // nav.ts's PRODUCT_LINKS is the one place a product's href is defined —
 // cross-referenced by name rather than duplicating the URL here too.
@@ -146,47 +138,44 @@ export default function HomePage() {
             description={HOME_SUITE.description}
           />
 
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {HOME_SUITE.items.map((item) => {
-              const Icon = SUITE_ICONS[item.icon]
-              return (
-                <Card key={item.name} padding="none" interactive className="overflow-hidden">
-                  {/* Plain tinted block + icon, not a mockup illustration —
-                      see the file header for why. */}
-                  <div className="flex h-32 items-center justify-center bg-muted">
-                    <Icon className="size-10 text-primary" aria-hidden />
+          {/* 2 × 2, not 4 across: the illustrations need a wide tile (as
+              in the reference) — at a quarter of the band they crop. */}
+          <div className="grid gap-6 sm:grid-cols-2">
+            {HOME_SUITE.items.map((item) => (
+              // The whole card is the link (a lifting card must be clickable
+              // as a whole — see card-hover-lift); "Learn more" is its label.
+              <Link
+                key={item.name}
+                href={hrefFor(item.name)}
+                className="group rounded-surface outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+              >
+                <Card padding="none" interactive className="flex h-full flex-col">
+                  <div className="p-2">
+                    <ProductIllustration product={item.name} className="h-56" />
                   </div>
-                  <CardContent className="flex flex-col gap-3 p-6">
+                  <CardContent className="flex flex-1 flex-col gap-3 p-6 pt-4">
                     <div className="flex flex-col gap-1.5">
-                      <h3 className="text-h6 text-foreground">
-                        {item.name}
-                      </h3>
+                      <h3 className="text-h6 text-foreground">{item.name}</h3>
                       <p className="text-sm text-muted-foreground">{item.tagline}</p>
                     </div>
-                    <Link
-                      href={hrefFor(item.name)}
-                      className="inline-flex items-center gap-1 text-sm font-semibold text-primary"
-                    >
-                      Learn more <ArrowRight className="size-4" aria-hidden />
-                    </Link>
+                    <span className="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-primary">
+                      Learn more <ArrowRight className="size-4 transition-interactive group-hover:translate-x-0.5" aria-hidden />
+                    </span>
                   </CardContent>
                 </Card>
-              )
-            })}
+              </Link>
+            ))}
           </div>
 
           {/* Detail rows — one per product, description alternating left/
               right against a media panel. The grid above stays as the
               compact overview; this is the detail underneath it, not a
-              replacement (user call, 2026-09-28). Media is a placeholder:
-              the same plain tinted-icon-block language as the grid cards
-              above, scaled up — standing in for a real product screenshot
-              or recording, which doesn't exist in this repo yet. See
+              replacement (user call, 2026-09-28). Media: the same product
+              illustration as the card above, on a larger tile. See
               content/home.ts's HOME_PRODUCT_DETAILS header for the full
               sourcing note. */}
           <div className="flex flex-col gap-16">
             {HOME_PRODUCT_DETAILS.map((product, i) => {
-              const Icon = SUITE_ICONS[HOME_SUITE.items.find((s) => s.name === product.name)!.icon]
               const reversed = i % 2 === 1
               return (
                 <div
@@ -226,11 +215,8 @@ export default function HomePage() {
                   </div>
 
                   <div className="w-full flex-1">
-                    <Card
-                      padding="none"
-                      className="flex h-64 items-center justify-center overflow-hidden bg-muted"
-                    >
-                      <Icon className="size-16 text-primary" aria-hidden />
+                    <Card padding="none" className="p-2">
+                      <ProductIllustration product={product.name as ProductName} size="lg" className="h-64" />
                     </Card>
                   </div>
                 </div>

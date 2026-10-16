@@ -972,6 +972,18 @@
 @utility bg-gradient-offer {
   background-image: var(--gradient-offer);
 }
+@utility bg-gradient-illustration-green {
+  background-image: var(--gradient-illustration-green);
+}
+@utility bg-gradient-illustration-sky {
+  background-image: var(--gradient-illustration-sky);
+}
+@utility bg-gradient-illustration-plum {
+  background-image: var(--gradient-illustration-plum);
+}
+@utility bg-gradient-illustration-gold {
+  background-image: var(--gradient-illustration-gold);
+}
 
 @utility bg-gradient-offer-premium {
   background-image: var(--gradient-offer-premium);

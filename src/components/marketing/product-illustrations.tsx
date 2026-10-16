@@ -1,0 +1,181 @@
+/**
+ * ProductIllustration — the homepage product cards' artwork: a soft
+ * pastel tile (`bg-gradient-illustration-*`) with a floating snippet of the
+ * product's own UI on it — an applicant to shortlist, the AI agent on a
+ * call, a nearby-candidate search, two live Unlimited slots.
+ *
+ * The style (tile + one crisp floating UI fragment, grey bars standing in
+ * for secondary text) follows the reference the product owner shared on
+ * 2026-10-16; the content is apna's own and is built from design-system
+ * parts (Avatar, Badge, icons), so it stays sharp at any size and follows
+ * the theme. Names and numbers are illustrative.
+ *
+ *   <ProductIllustration product="Smart Jobs" className="h-56" />
+ *   <ProductIllustration product="Smart Jobs" size="lg" className="h-64" />
+ *
+ * Decorative: `aria-hidden`. Inside a `group` (the card link) the snippet
+ * lifts a little on hover; the AI agent's voice bars always move.
+ */
+
+import * as React from "react"
+import {
+  Avatar,
+  AvatarFallback,
+  Badge,
+  CheckCircle2,
+  InfinityIcon,
+  MapPin,
+  PhoneCall,
+  Search,
+} from "@apna/design-system"
+import { cn } from "@/lib/utils"
+
+type Product = "Smart Jobs" | "AI Calling Agent" | "Hyperlocal Database" | "apna Unlimited"
+
+const TILE: Record<Product, string> = {
+  "Smart Jobs": "bg-gradient-illustration-sky",
+  "AI Calling Agent": "bg-gradient-illustration-green",
+  "Hyperlocal Database": "bg-gradient-illustration-plum",
+  "apna Unlimited": "bg-gradient-illustration-gold",
+}
+
+/** The floating white surface every snippet sits on. */
+function Float({ className, children }: { className?: string; children: React.ReactNode }) {
+  return (
+    <div
+      className={cn(
+        "rounded-xl bg-card p-3 shadow-popover transition-interactive duration-enter group-hover:-translate-y-1",
+        className
+      )}
+    >
+      {children}
+    </div>
+  )
+}
+
+/** Grey bars standing in for secondary text, as in the reference. */
+function Lines({ widths = ["w-24", "w-16"] }: { widths?: string[] }) {
+  return (
+    <span className="flex flex-col gap-1.5">
+      {widths.map((w) => (
+        <span key={w} className={cn("h-1.5 rounded-full bg-muted", w)} />
+      ))}
+    </span>
+  )
+}
+
+function SmartJobs() {
+  return (
+    <Float className="flex w-64 items-center gap-3">
+      <Avatar>
+        <AvatarFallback>RV</AvatarFallback>
+      </Avatar>
+      <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+        <span className="truncate text-sm font-semibold text-foreground">Rahul Verma</span>
+        <Lines widths={["w-20"]} />
+      </div>
+      <Badge variant="outline" className="shrink-0">Shortlist</Badge>
+    </Float>
+  )
+}
+
+function AiCalling() {
+  return (
+    <div className="flex w-64 flex-col gap-2">
+      <Float className="flex items-center gap-3">
+        <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+          <PhoneCall className="size-4" />
+        </span>
+        <div className="flex min-w-0 flex-1 flex-col">
+          <span className="truncate text-sm font-semibold text-foreground">AI agent calling…</span>
+          <span className="text-xs text-muted-foreground">Priya S.</span>
+        </div>
+        <span className="flex h-4 items-center gap-0.5 text-primary">
+          {[0, 1, 2, 3].map((i) => (
+            <span
+              key={i}
+              className="h-full w-0.5 rounded-full bg-current animate-voice-bar"
+              style={{ animationDelay: `${i * 120}ms` }}
+            />
+          ))}
+        </span>
+      </Float>
+      <Float className="ml-8 flex items-center justify-between gap-2 py-2">
+        <Lines widths={["w-16"]} />
+        <Badge variant="success">
+          <CheckCircle2 />
+          Shortlisted
+        </Badge>
+      </Float>
+    </div>
+  )
+}
+
+function Database() {
+  return (
+    <div className="flex w-72 flex-col items-center gap-3">
+      <Float className="flex w-full items-center gap-2 rounded-full px-4">
+        <Search className="size-4 shrink-0 text-muted-foreground" />
+        <span className="min-w-0 flex-1 truncate text-sm text-muted-foreground">Delivery executives</span>
+        <Badge variant="outline" className="shrink-0">
+          <MapPin />2 km
+        </Badge>
+      </Float>
+      <Float className="flex items-center gap-2 self-end py-2">
+        <MapPin className="size-4 shrink-0 text-primary" />
+        <span className="text-xs font-semibold text-foreground">960 active jobseekers nearby</span>
+      </Float>
+    </div>
+  )
+}
+
+function Unlimited() {
+  return (
+    <div className="flex w-64 flex-col gap-2">
+      {["Delivery Executive", "Telecaller"].map((title, i) => (
+        <Float key={title} className={cn("flex items-center justify-between gap-2 py-2.5", i === 1 && "ml-6")}>
+          <div className="flex min-w-0 flex-col gap-1.5">
+            <span className="truncate text-sm font-semibold text-foreground">{title}</span>
+            <Lines widths={["w-14"]} />
+          </div>
+          <Badge variant="success" className="shrink-0">Live</Badge>
+        </Float>
+      ))}
+      <Badge variant="outline" className="self-start bg-card shadow-card">
+        <InfinityIcon className="text-primary" />
+        Unlimited job posts
+      </Badge>
+    </div>
+  )
+}
+
+const SNIPPETS: Record<Product, () => React.JSX.Element> = {
+  "Smart Jobs": SmartJobs,
+  "AI Calling Agent": AiCalling,
+  "Hyperlocal Database": Database,
+  "apna Unlimited": Unlimited,
+}
+
+export function ProductIllustration({
+  product,
+  size = "default",
+  className,
+}: {
+  product: Product
+  /** The snippet's scale: "default" for the cards, "lg" for a big tile
+   *  (the detail rows). Phones keep it at 1×. */
+  size?: "default" | "lg"
+  className?: string
+}) {
+  const Snippet = SNIPPETS[product]
+  return (
+    <div
+      aria-hidden
+      className={cn("flex items-center justify-center overflow-hidden rounded-xl p-4", TILE[product], className)}
+    >
+      <div className={cn(size === "lg" ? "sm:scale-150" : "sm:scale-125")}>
+        <Snippet />
+      </div>
+    </div>
+  )
+}

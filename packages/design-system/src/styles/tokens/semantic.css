@@ -525,6 +525,13 @@
    *                  slot upgrade alike: a gold bloom on plum, the Unlimited
    *                  card and logo's own colours */
   --gradient-offer: linear-gradient(137deg, var(--color-apna-green-500) 5%, var(--color-apna-green-800) 50%, var(--color-apna-green-950) 112%);
+  /* Illustration tiles (ProductIllustration): the soft pastel wash behind a
+   * floating snippet of product UI on the homepage product cards. One per
+   * brand hue so a row of cards reads as a family, not four copies. */
+  --gradient-illustration-green: linear-gradient(160deg, var(--color-apna-green-100) 0%, var(--color-apna-sky-50) 100%);
+  --gradient-illustration-sky:   linear-gradient(160deg, var(--color-apna-sky-100) 0%, var(--color-apna-plum-50) 100%);
+  --gradient-illustration-plum:  linear-gradient(160deg, var(--color-apna-plum-100) 0%, var(--color-apna-sky-50) 100%);
+  --gradient-illustration-gold:  linear-gradient(160deg, var(--color-apna-gold-100) 0%, var(--color-apna-plum-50) 100%);
   --gradient-offer-premium:
     radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--color-apna-gold-500) 55%, transparent) 0%, transparent 55%),
     linear-gradient(137deg, var(--color-apna-plum-400) 5%, var(--color-apna-plum-700) 50%, var(--color-apna-plum-950) 112%);
@@ -712,6 +719,10 @@
   --ambient-blob-4: color-mix(in srgb, var(--color-apna-sky-900) 40%, transparent);
   --ambient-glow:   var(--color-alpha-white-10);
   --ambient-grain-opacity: 0.08;
+  --gradient-illustration-green: linear-gradient(160deg, color-mix(in srgb, var(--color-apna-green-900) 55%, transparent) 0%, transparent 100%);
+  --gradient-illustration-sky:   linear-gradient(160deg, color-mix(in srgb, var(--color-apna-sky-900) 55%, transparent) 0%, transparent 100%);
+  --gradient-illustration-plum:  linear-gradient(160deg, color-mix(in srgb, var(--color-apna-plum-900) 55%, transparent) 0%, transparent 100%);
+  --gradient-illustration-gold:  linear-gradient(160deg, color-mix(in srgb, var(--color-apna-gold-900) 55%, transparent) 0%, transparent 100%);
   --surface-checkout-hero-fg:       var(--color-gray-50);
   --surface-checkout-hero-fg-muted: var(--color-gray-400);
   /* Sits between the two, as it does in light. No dark design exists to
