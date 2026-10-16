@@ -65,7 +65,16 @@ function validate(v: Values): Errors {
   return e
 }
 
-export function ContactSection() {
+export function ContactSection({
+  title = CONTACT.title,
+  cta = CONTACT.cta,
+  description,
+}: {
+  /** The band's closing line; each page can say its own (the lounge does). */
+  title?: string
+  cta?: string
+  description?: string
+} = {}) {
   const [open, setOpen] = React.useState(false)
   const isMobile = useIsMobile()
   // A new key per opening, so a reopened pop-up starts with a fresh form
@@ -87,7 +96,10 @@ export function ContactSection() {
         {/* The page's closing line: the h1 type preset (it stays an h2 —
             the hero owns the h1). One line on desktop; on phones the h3 size
             (at 36px it broke into five lines on a 375px screen). */}
-        <h2 className="text-h3 text-balance text-foreground sm:text-h1">{CONTACT.title}</h2>
+        <div className="flex flex-col items-center gap-3">
+          <h2 className="text-h3 text-balance text-foreground sm:text-h1">{title}</h2>
+          {description && <p className="text-lead max-w-prose text-pretty text-muted-foreground">{description}</p>}
+        </div>
         <Button
           variant="emphasis"
           size="lg"
@@ -97,7 +109,7 @@ export function ContactSection() {
             setOpen(true)
           }}
         >
-          {CONTACT.cta}
+          {cta}
         </Button>
       </Card>
 

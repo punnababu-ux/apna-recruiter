@@ -32,7 +32,7 @@ export {
   Footprints, Globe, GraduationCap, Grid, Hash,
   Heading, Headphones, Heart, HelpCircle, History,
   Home, ImageIcon, ImagePlus, IndianRupee, InfinityIcon,
-  Info, InfoIcon, Italic, Languages, Laptop,
+  Info, InfoIcon, Italic, Landmark, Languages, Laptop,
   Layers, Layout, LayoutGrid, LayoutList, Lightbulb,
   LinkIcon, ListChecks, ListTodo, Loader2, Loader2Icon,
   Lock, Mail, MapPin, Mars, Maximize2,
