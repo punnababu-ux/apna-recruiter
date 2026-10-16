@@ -6,7 +6,8 @@
  * the same action in the page header.
  *
  * Sits at the bottom right, 16px above the BottomNav (its 64px plus the
- * home-indicator inset). A labelled green pill at rest; while the page
+ * home-indicator inset). A 48px labelled green pill at rest (14px label,
+ * 20px icon — 56px read too heavy over the cards); while the page
  * scrolls down it shrinks to a round icon so it doesn't sit on the content,
  * and expands again on scroll up or when scrolling stops.
  *
@@ -57,13 +58,13 @@ function useScrollCollapse() {
 export function Fab({ label, icon: Icon, href, onClick, className }: FabProps) {
   const collapsed = useScrollCollapse()
   const classes = cn(
-    "ink press pointer-events-auto relative flex h-14 items-center justify-center gap-2 rounded-full bg-primary font-heading text-base font-semibold text-primary-foreground shadow-elevated outline-none transition-interactive hover:bg-primary/90 focus-visible:ring-3 focus-visible:ring-ring/50",
-    collapsed ? "w-14" : "px-5",
+    "ink press pointer-events-auto relative flex h-12 items-center justify-center gap-2 rounded-full bg-primary font-heading text-sm font-semibold text-primary-foreground shadow-elevated outline-none transition-interactive hover:bg-primary/90 focus-visible:ring-3 focus-visible:ring-ring/50",
+    collapsed ? "w-12" : "px-4",
     className
   )
   const content = (
     <>
-      <Icon className="size-6 shrink-0" />
+      <Icon className="size-5 shrink-0" />
       {!collapsed && <span className="whitespace-nowrap animate-in fade-in duration-150">{label}</span>}
     </>
   )
