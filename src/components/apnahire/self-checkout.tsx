@@ -34,7 +34,7 @@ import {
   PRICING_TAB_SHORT_LABELS,
   type PricingTab,
 } from "@/components/apnahire/pricing-hero"
-import { Button, StickyCtaBar, Tabs, TabsList, TabsTrigger } from "@apna/design-system"
+import { Button, SegmentedTabSwitcher, StickyCtaBar, Tabs, TabsList, TabsTrigger } from "@apna/design-system"
 import {
   JobCreditBundles,
   SINGLE_CREDIT,
@@ -153,7 +153,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   // unrelated re-renders — useHeaderSlot re-publishes whenever it changes.
   const compactTabSwitcher = React.useMemo(
     () => (
-      <CompactPlanTabs className="mx-auto shrink-0" value={activeTab} onValueChange={changeTab} />
+      <DockedPlanTabs value={activeTab} onValueChange={changeTab} />
     ),
     [activeTab, changeTab]
   )
@@ -424,7 +424,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
               showCompactTabs ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-2 opacity-0"
             )}
           >
-            <CompactPlanTabs className="mx-auto shrink-0" value={activeTab} onValueChange={changeTab} />
+            <DockedPlanTabs value={activeTab} onValueChange={changeTab} />
           </div>
         </div>
       )}
@@ -637,6 +637,36 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
 /** The plan tabs once the hero's switcher scrolls away: in the logged-in
  *  top bar and the logged-out site header. One control, the system Tabs in
  *  its checkout look, so both bars match the hero and slide like it. */
+/**
+ * The plan tabs once docked under the bar on scroll. Phones keep the hero's
+ * own chip row (the same SegmentedTabSwitcher, so the chips don't turn into
+ * a different control as they stick — user call, 2026-10-17); from md, the
+ * compact pill tabs.
+ */
+function DockedPlanTabs({
+  value,
+  onValueChange,
+}: {
+  value: PricingTab
+  onValueChange: (tab: PricingTab) => void
+}) {
+  return (
+    <>
+      <div className="w-full min-w-0 md:hidden">
+        <SegmentedTabSwitcher
+          items={PRICING_TABS.map((tab) => ({ ...tab, shortLabel: PRICING_TAB_SHORT_LABELS[tab.value] }))}
+          value={value}
+          onValueChange={onValueChange}
+          appearance="checkout"
+          mobileBleedClassName="-mx-4"
+          mobileGutterClassName="px-4"
+        />
+      </div>
+      <CompactPlanTabs className="mx-auto hidden shrink-0 md:flex" value={value} onValueChange={onValueChange} />
+    </>
+  )
+}
+
 function CompactPlanTabs({
   value,
   onValueChange,
@@ -650,10 +680,9 @@ function CompactPlanTabs({
     <Tabs value={value} onValueChange={(v) => onValueChange(v as PricingTab)} className={className}>
       <TabsList variant="checkout">
         {PRICING_TABS.map((tab) => (
-          // Phones: label only, tighter — four tabs with icons don't fit 375px.
-          <TabsTrigger key={tab.value} value={tab.value} className="px-2.5 sm:px-3.5">
+          <TabsTrigger key={tab.value} value={tab.value} className="px-3.5">
             {React.isValidElement<{ className?: string }>(tab.icon)
-              ? React.cloneElement(tab.icon, { className: "hidden size-5 shrink-0 sm:block" })
+              ? React.cloneElement(tab.icon, { className: "size-5 shrink-0" })
               : tab.icon}
             {PRICING_TAB_SHORT_LABELS[tab.value]}
           </TabsTrigger>
