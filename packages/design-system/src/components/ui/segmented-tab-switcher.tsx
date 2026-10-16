@@ -227,7 +227,7 @@ export function SegmentedTabSwitcher<V extends string = string>({
             // The ring (--border) keeps the white selected chip
             // visible on a white surface (a card, a panel), not just on a
             // grey one; the shadow alone vanished there.
-            className="sliding-indicator rounded-full bg-card shadow-card inset-ring-1 inset-ring-border"
+            className="sliding-indicator rounded-full bg-card shadow-control inset-ring-1 inset-ring-border"
           />
           {items.map(({ value: v, label, shortLabel, icon }) => {
             const active = v === value
