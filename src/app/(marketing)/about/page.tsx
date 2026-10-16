@@ -105,6 +105,9 @@ export default function AboutPage() {
           heading={
             <SectionHeading
               level={2}
+              // Full width: the line isn't held to the reading measure here,
+              // so it runs on one line beside nothing.
+              className="[&_[data-slot=section-heading-description]]:max-w-none"
               eyebrow={<span className="text-overline text-muted-foreground">{recruiters.label}</span>}
               title={recruiters.title}
               description={recruiters.description}

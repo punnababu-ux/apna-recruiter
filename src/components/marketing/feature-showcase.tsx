@@ -27,9 +27,12 @@ export function FeatureShowcase({ heading, items }: { heading: React.ReactNode; 
   const picture = items.find((item) => item.title === active)?.picture ?? items[0].picture
 
   return (
-    <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-      <div className="flex flex-col gap-8">
-        {heading}
+    // The heading runs the full width on top (title and line each on one
+    // line where they fit); the accordion and its picture sit side by side
+    // under it.
+    <div className="flex flex-col gap-10 lg:gap-12">
+      {heading}
+      <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
         <ProgressAccordion
           value={active}
           onValueChange={setActive}
@@ -40,14 +43,14 @@ export function FeatureShowcase({ heading, items }: { heading: React.ReactNode; 
             content: item.description,
           }))}
         />
-      </div>
-      {/* Keyed on the picture so each change fades in afresh. */}
-      <div key={picture} className="animate-in fade-in duration-large">
-        {picture === "Trust" ? (
-          <TrustIllustration size="lg" className={PICTURE_CLASS} />
-        ) : (
-          <ProductIllustration product={picture} size="lg" className={PICTURE_CLASS} />
-        )}
+        {/* Keyed on the picture so each change fades in afresh. */}
+        <div key={picture} className="animate-in fade-in duration-large">
+          {picture === "Trust" ? (
+            <TrustIllustration size="lg" className={PICTURE_CLASS} />
+          ) : (
+            <ProductIllustration product={picture} size="lg" className={PICTURE_CLASS} />
+          )}
+        </div>
       </div>
     </div>
   )
