@@ -3,8 +3,8 @@
 /**
  * ScrollStack — cards that stack as you scroll: from lg, each card pins a
  * little lower than the one before it, the next slides up over it, and the
- * cards underneath ease back (scale down) as they're covered, so the deck
- * has depth. Below lg it's a plain column — a phone card is taller than the
+ * cards underneath ease back (scale down) the deeper they sit, so the back
+ * card is the smallest and the front one full size. Below lg it's a plain column — a phone card is taller than the
  * screen, and a pinned card that tall hides its own bottom.
  *
  * API
@@ -18,8 +18,9 @@
  *   get their own pin offset.
  *
  * Behaviour: the pinning is CSS (`position: sticky`); the recede is one
- * passive scroll listener writing `--stack-cover` (0 → 1) per card, read by
- * the `stack-item` utility. Reduced motion keeps the stacking and drops the
+ * passive scroll listener writing `--stack-depth` per card — how many cards
+ * lie on top of it (fractional while one slides in) — read by the
+ * `stack-item` utility: the deeper, the smaller. Reduced motion keeps the stacking and drops the
  * recede. The header is 4rem; the first card pins at 6rem.
  */
 
@@ -46,16 +47,23 @@ function ScrollStack({ className, children }: { className?: string; children: Re
     const update = () => {
       frame = 0
       const items = [...root.querySelectorAll<HTMLElement>(":scope > [data-slot=scroll-stack-item]")]
-      items.forEach((item, i) => {
+      const live = wide.matches && !calm.matches
+      // How far each card is covered by the one after it (0 → 1)…
+      const covers = items.map((item, i) => {
         const next = items[i + 1]
-        let cover = 0
-        if (next && wide.matches && !calm.matches) {
-          const a = item.getBoundingClientRect()
-          const b = next.getBoundingClientRect()
-          cover = Math.min(1, Math.max(0, (a.bottom - b.top) / Math.max(1, a.height - LEDGE_PX)))
-        }
-        item.style.setProperty("--stack-cover", cover.toFixed(3))
+        if (!next || !live) return 0
+        const a = item.getBoundingClientRect()
+        const b = next.getBoundingClientRect()
+        return Math.min(1, Math.max(0, (a.bottom - b.top) / Math.max(1, a.height - LEDGE_PX)))
       })
+      // …and its depth: how many cards lie on top of it. A card is as deep
+      // as its own cover plus every cover above it, so the back card ends
+      // smallest and the front card stays full size — a real deck.
+      let depth = 0
+      for (let i = items.length - 1; i >= 0; i--) {
+        depth += covers[i]
+        items[i].style.setProperty("--stack-depth", depth.toFixed(3))
+      }
     }
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(update)
@@ -82,6 +90,9 @@ function ScrollStack({ className, children }: { className?: string; children: Re
           ? React.cloneElement(child, { className: cn(PIN[Math.min(i, PIN.length - 1)], child.props.className) })
           : child
       )}
+      {/* A beat of scroll after the last card lands, so the finished deck
+          holds before it leaves (sticky cards can't outlive their parent). */}
+      <div aria-hidden className="hidden lg:block lg:h-24" />
     </div>
   )
 }

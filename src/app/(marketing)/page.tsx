@@ -171,10 +171,11 @@ export default function HomePage() {
                     Learn more <ArrowRight className="size-4" aria-hidden />
                   </Link>
                 </div>
+                {/* Phones: the illustration leads, the copy follows. */}
                 <ProductIllustration
                   product={product.name as ProductName}
                   size="lg"
-                  className="h-64 lg:h-full lg:min-h-80"
+                  className="h-64 max-lg:order-first lg:h-full lg:min-h-80"
                 />
               </ScrollStackItem>
             ))}
