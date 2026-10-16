@@ -209,10 +209,13 @@ export function SegmentedTabSwitcher<V extends string = string>({
                 onClick={() => onValueChange(v)}
                 aria-pressed={active}
                 data-indicator-active={active || undefined}
+                // 32px chips, 14px labels; the selected one semibold, not
+                // bold — compact and quiet next to the 16px titles they
+                // filter (was 38px with a bold selected label).
                 className={cn(
-                  "flex shrink-0 items-center gap-1.5 ink press relative rounded-full border px-4 py-2 text-sm font-medium whitespace-nowrap transition-interactive [&_svg]:size-5",
+                  "flex shrink-0 items-center gap-1.5 ink press relative rounded-full border h-8 px-3.5 text-sm font-medium whitespace-nowrap transition-interactive [&_svg]:size-5",
                   active
-                    ? cn("border-transparent font-bold", mobileActiveClassName ?? activeClassName)
+                    ? cn("border-transparent font-semibold", mobileActiveClassName ?? activeClassName)
                     : cn("border-transparent bg-muted hover:bg-muted", inactiveClassName, trackClassName)
                 )}
               >

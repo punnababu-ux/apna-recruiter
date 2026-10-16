@@ -16,8 +16,9 @@
  * badges).
  *
  * Visual language = the order summary panel's: white card sections on a
- * muted frame; rows are 16px semibold titles with muted text, on the 20px
- * (px-5) gutter.
+ * muted frame; rows are 16px semibold titles with muted text. Gutter: the
+ * panel's 20px (px-5); the phone page's 16px (px-4), in line with the top
+ * bar's title.
  *   panel  SheetPanelHeader ("Notifications" · ⋮ · close), divider, Tabs
  *   page   no title (the phone top bar says "Notifications"): the filter
  *          chips with ⋮ fixed at the row's end
@@ -69,13 +70,22 @@ const KIND_ICON: Record<NotificationKind, IconComponent> = {
   credits: Database,
 }
 
-function NotificationRow({ n, onRead }: { n: RecruiterNotification; onRead: (id: string) => void }) {
+function NotificationRow({
+  n,
+  onRead,
+  gutter,
+}: {
+  n: RecruiterNotification
+  onRead: (id: string) => void
+  gutter: string
+}) {
   const Icon = KIND_ICON[n.kind]
   return (
     <li
       onClick={() => n.unread && onRead(n.id)}
       className={cn(
-        "flex gap-3 border-b border-border px-5 py-4 transition-interactive last:border-b-0",
+        "flex gap-3 border-b border-border py-4 transition-interactive last:border-b-0",
+        gutter,
         n.unread ? "bg-accent/40" : "bg-card"
       )}
     >
@@ -130,6 +140,9 @@ export function NotificationList({ variant }: { variant: "panel" | "page" }) {
     filter === "applications" ? n.kind === "application" : filter === "unread" ? n.unread : true
   )
 
+  // The panel's 20px gutter; the phone page's 16px, in line with the top bar.
+  const gutter = variant === "panel" ? "px-5" : "px-4"
+
   const filterItems: { value: Filter; label: string }[] = [
     { value: "all", label: `All (${counts.all})` },
     { value: "applications", label: `Applications (${counts.applications})` },
@@ -179,9 +192,9 @@ export function NotificationList({ variant }: { variant: "panel" | "page" }) {
       ) : (
         // Phones: the jobs page's chip row, scrolling beside a fixed ⋮
         // (Tabs from md, if the page is opened on a wide screen).
-        <section className="flex items-center gap-2 bg-card py-3 pr-3 pl-5 shadow-card">
+        <section className="flex items-center gap-2 bg-card py-3 pr-2 pl-4 shadow-card">
           <div className="min-w-0 flex-1">
-            <MobileChipRow items={filterItems} value={filter} onValueChange={setFilter} gutter="none" />
+            <MobileChipRow items={filterItems} value={filter} onValueChange={setFilter} gutter="page-start" />
             <Tabs className="hidden md:flex" value={filter} onValueChange={(v) => setFilter(v as Filter)}>
               <TabsList>
                 {filterItems.map((item) => (
@@ -199,7 +212,7 @@ export function NotificationList({ variant }: { variant: "panel" | "page" }) {
       {/* 2 — The list, one card, grouped by day. */}
       <section className="bg-card shadow-card">
         {shown.length === 0 ? (
-          <p className="px-5 py-10 text-center text-sm text-muted-foreground">
+          <p className={cn("py-10 text-center text-sm text-muted-foreground", gutter)}>
             {filter === "unread" ? "You're all caught up." : "Nothing here yet."}
           </p>
         ) : (
@@ -208,12 +221,12 @@ export function NotificationList({ variant }: { variant: "panel" | "page" }) {
             if (items.length === 0) return null
             return (
               <section key={group.id} aria-label={group.label}>
-                <h3 className="text-overline border-b border-border bg-muted px-5 py-2 text-muted-foreground">
+                <h3 className={cn("text-overline border-b border-border bg-muted py-2 text-muted-foreground", gutter)}>
                   {group.label}
                 </h3>
                 <ul>
                   {items.map((n) => (
-                    <NotificationRow key={n.id} n={n} onRead={markRead} />
+                    <NotificationRow key={n.id} n={n} onRead={markRead} gutter={gutter} />
                   ))}
                 </ul>
               </section>

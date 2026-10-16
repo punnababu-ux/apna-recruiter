@@ -85,18 +85,22 @@ export function BottomNav({ items, className }: BottomNavProps) {
                 item.active && "bg-accent"
               )}
             >
-              <Icon
-                className={cn(
-                  "size-5 transition-interactive",
-                  item.active ? "text-primary" : "text-muted-foreground"
+              {/* The badge is anchored to the icon, not the 56px pill, so a
+                  dot or count sits on the icon's top-right corner. */}
+              <span className="relative flex">
+                <Icon
+                  className={cn(
+                    "size-5 transition-interactive",
+                    item.active ? "text-primary" : "text-muted-foreground"
+                  )}
+                  aria-hidden
+                />
+                {item.badge && (
+                  <span className="absolute -top-1.5 left-3 flex items-center">
+                    {item.badge}
+                  </span>
                 )}
-                aria-hidden
-              />
-              {item.badge && (
-                <span className="absolute -top-1 -right-2 flex items-center">
-                  {item.badge}
-                </span>
-              )}
+              </span>
             </div>
 
             {/* Label */}

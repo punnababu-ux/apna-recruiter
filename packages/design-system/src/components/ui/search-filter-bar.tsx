@@ -45,11 +45,14 @@ export function SearchFilterBar({
       {/* Search Input */}
       <div className="relative flex-1">
         <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+        {/* Input's own default size: 40px, 16px text on phones (iOS
+            Safari zooms into a field under 16px), 14px from md. It was
+            forced to 36px / 12px here. */}
         <Input
           placeholder={placeholder}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="bg-card pl-9 text-xs sm:text-sm h-9"
+          className="bg-card pl-9"
         />
       </div>
 
@@ -58,7 +61,8 @@ export function SearchFilterBar({
         <Popover>
           <PopoverTrigger
             render={
-              <Button variant="outline" size="sm" className="h-9 gap-1.5 cursor-pointer">
+              // The search field's 40px height, with a 14px label.
+              <Button variant="outline" className="h-10 gap-1.5 cursor-pointer">
                 <SlidersHorizontal className="size-4" />
                 <span>Filters</span>
                 {activeFilterCount > 0 && (

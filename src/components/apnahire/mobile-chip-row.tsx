@@ -35,9 +35,9 @@ export function MobileChipRow<V extends string>({
   className?: string
   /** The container's horizontal padding the row bleeds through:
    *  "page" px-4 sm:px-6 · "panel" px-5 (SheetPanel / card sections) ·
-   *  "none" no bleed — the row scrolls inside its own box, e.g. beside a
-   *  fixed ⋮ menu at the end of the row. */
-  gutter?: "page" | "panel" | "none"
+   *  "page-start" bleeds to the left edge only (a px-4 container) and
+   *  stops at its right, e.g. beside a fixed ⋮ menu at the row's end. */
+  gutter?: "page" | "panel" | "page-start"
 }) {
   return (
     <SegmentedTabSwitcher
@@ -50,8 +50,8 @@ export function MobileChipRow<V extends string>({
       mobileActiveClassName="text-checkout-primary"
       inactiveClassName="text-checkout-hero-fg-secondary"
       mutedClassName="text-checkout-hero-fg-secondary"
-      mobileBleedClassName={gutter === "none" ? "" : gutter === "panel" ? "-mx-5" : "-mx-4 sm:-mx-6"}
-      mobileGutterClassName={gutter === "none" ? "" : gutter === "panel" ? "px-5" : "px-4 sm:px-6"}
+      mobileBleedClassName={gutter === "page-start" ? "-ml-4" : gutter === "panel" ? "-mx-5" : "-mx-4 sm:-mx-6"}
+      mobileGutterClassName={gutter === "page-start" ? "pr-2 pl-4" : gutter === "panel" ? "px-5" : "px-4 sm:px-6"}
     />
   )
 }
