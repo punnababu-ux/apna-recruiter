@@ -31,6 +31,38 @@ import { cn } from "@/lib/utils"
 
 type Product = "Smart Jobs" | "AI Calling Agent" | "Hyperlocal Database" | "apna Unlimited"
 
+/** The pastel tiles, by tone. The company pages' illustrations
+ *  (company-illustrations.tsx) use the same four. */
+export const ILLUSTRATION_TONE = {
+  sky: "bg-gradient-illustration-sky",
+  green: "bg-gradient-illustration-green",
+  plum: "bg-gradient-illustration-plum",
+  gold: "bg-gradient-illustration-gold",
+} as const
+export type IllustrationTone = keyof typeof ILLUSTRATION_TONE
+
+/** A pastel tile with one floating snippet centred on it. */
+export function IllustrationTile({
+  tone,
+  size = "default",
+  className,
+  children,
+}: {
+  tone: IllustrationTone
+  size?: "default" | "lg"
+  className?: string
+  children: React.ReactNode
+}) {
+  return (
+    <div
+      aria-hidden
+      className={cn("flex items-center justify-center overflow-hidden rounded-xl p-4", ILLUSTRATION_TONE[tone], className)}
+    >
+      <div className={cn(size === "lg" ? "sm:scale-150" : "sm:scale-125")}>{children}</div>
+    </div>
+  )
+}
+
 const TILE: Record<Product, string> = {
   "Smart Jobs": "bg-gradient-illustration-sky",
   "AI Calling Agent": "bg-gradient-illustration-green",
@@ -39,7 +71,7 @@ const TILE: Record<Product, string> = {
 }
 
 /** The floating white surface every snippet sits on. */
-function Float({ className, children }: { className?: string; children: React.ReactNode }) {
+export function Float({ className, children }: { className?: string; children: React.ReactNode }) {
   return (
     <div
       className={cn(
@@ -53,7 +85,7 @@ function Float({ className, children }: { className?: string; children: React.Re
 }
 
 /** Grey bars standing in for secondary text, as in the reference. */
-function Lines({ widths = ["w-24", "w-16"] }: { widths?: string[] }) {
+export function Lines({ widths = ["w-24", "w-16"] }: { widths?: string[] }) {
   return (
     <span className="flex flex-col gap-1.5">
       {widths.map((w) => (
