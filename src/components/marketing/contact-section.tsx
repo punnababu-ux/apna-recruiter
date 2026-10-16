@@ -4,7 +4,7 @@
  * ContactSection — the homepage's closing "Contact us" band (`#contact-us`,
  * where every "Contact us" link lands now that the header doesn't carry
  * one): a card with the title centred and one Contact us button under it, which
- * opens the contact form in a pop-up (user call, 2026-10-16 — the form
+ * opens the contact form in a pop-up (a bottom sheet on phones) (user call, 2026-10-16 — the form
  * inline made the band heavy).
  *
  * Fields and options are verbatim from employer.apna.co/contact-us
@@ -25,7 +25,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogHeader,
   DialogTitle,
   Field,
   FieldError,
@@ -37,8 +36,13 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetTitle,
   inputVariants,
 } from "@apna/design-system"
+import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
 import { CONTACT, CONTACT_ANCHOR } from "@/content/contact"
 import { LEGAL_LINKS } from "@/content/footer"
@@ -63,6 +67,7 @@ function validate(v: Values): Errors {
 
 export function ContactSection() {
   const [open, setOpen] = React.useState(false)
+  const isMobile = useIsMobile()
   // A new key per opening, so a reopened pop-up starts with a fresh form
   // (not the last one's values or its thank-you state).
   const [round, setRound] = React.useState(0)
@@ -80,8 +85,9 @@ export function ContactSection() {
         className="flex flex-col items-center gap-8 rounded-3xl border-card/60 bg-card/60 text-center shadow-card backdrop-blur-xl sm:p-12"
       >
         {/* The page's closing line: the h1 type preset (it stays an h2 —
-            the hero owns the h1). One line on desktop; phones wrap it. */}
-        <h2 className="text-h1 text-balance text-foreground">{CONTACT.title}</h2>
+            the hero owns the h1). One line on desktop; on phones the h3 size
+            (at 36px it broke into five lines on a 375px screen). */}
+        <h2 className="text-h3 text-balance text-foreground sm:text-h1">{CONTACT.title}</h2>
         <Button
           variant="emphasis"
           size="lg"
@@ -95,16 +101,41 @@ export function ContactSection() {
         </Button>
       </Card>
 
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="gap-6 rounded-3xl p-6 sm:max-w-xl sm:p-8">
-          <ContactForm key={round} />
-        </DialogContent>
-      </Dialog>
+      {/* Phones: a bottom sheet (the system's pop-up on a phone); from md, a
+          centred dialog. Same form in both. */}
+      {isMobile ? (
+        <Sheet open={open} onOpenChange={setOpen}>
+          {/* The sheet is capped below the viewport and can't clip (its close
+              bubble sits outside it), so the form scrolls in its own wrapper,
+              rounded to the sheet's top corners. */}
+          <SheetContent side="bottom" className="gap-0 rounded-t-3xl border-t-0 p-0 pb-safe">
+            <div className="min-h-0 overflow-y-auto overscroll-contain rounded-t-3xl p-5">
+              <ContactForm key={round} Title={SheetTitle} Description={SheetDescription} />
+            </div>
+          </SheetContent>
+        </Sheet>
+      ) : (
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogContent className="gap-6 rounded-3xl p-6 sm:max-w-xl sm:p-8">
+            <ContactForm key={round} Title={DialogTitle} Description={DialogDescription} />
+          </DialogContent>
+        </Dialog>
+      )}
     </Section>
   )
 }
 
-function ContactForm() {
+/** The pop-up's title/description parts — Dialog's or Sheet's, whichever
+ *  is hosting the form (each wires its own accessible name). */
+type PartProps = { className?: string; children?: React.ReactNode }
+
+function ContactForm({
+  Title,
+  Description,
+}: {
+  Title: React.ComponentType<PartProps>
+  Description: React.ComponentType<PartProps>
+}) {
   const [values, setValues] = React.useState<Values>(EMPTY)
   const [errors, setErrors] = React.useState<Errors>({})
   const [sent, setSent] = React.useState(false)
@@ -126,18 +157,18 @@ function ContactForm() {
     return (
       <div role="status" className="flex flex-col items-start gap-3 py-4">
         <CheckCircle2 className="size-10 text-primary" aria-hidden />
-        <DialogTitle className="text-h5 text-foreground">{CONTACT.success.title}</DialogTitle>
-        <DialogDescription className="text-base text-muted-foreground">{CONTACT.success.body}</DialogDescription>
+        <Title className="text-h5 text-foreground">{CONTACT.success.title}</Title>
+        <Description className="text-base text-muted-foreground">{CONTACT.success.body}</Description>
       </div>
     )
   }
 
   return (
     <form noValidate onSubmit={submit} className="flex flex-col gap-6">
-      <DialogHeader className="gap-1">
-        <DialogTitle className="text-h5 text-foreground">{CONTACT.formTitle}</DialogTitle>
-        <DialogDescription className="text-sm text-muted-foreground">{CONTACT.steps[1]}</DialogDescription>
-      </DialogHeader>
+      <div className="flex flex-col gap-1 text-left">
+        <Title className="text-h5 text-foreground">{CONTACT.formTitle}</Title>
+        <Description className="text-sm text-muted-foreground">{CONTACT.steps[1]}</Description>
+      </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <TextField id="contact-name" label={CONTACT.fields.name} autoComplete="name"
           value={values.name} onChange={set("name")} error={errors.name} />
