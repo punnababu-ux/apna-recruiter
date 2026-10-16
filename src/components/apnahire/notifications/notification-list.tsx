@@ -201,9 +201,9 @@ export function NotificationList({ variant }: { variant: "panel" | "page" }) {
         // (Tabs from md, if the page is opened on a wide screen). Like the
         // jobs chips once stuck: a white bar joined to the top bar (which
         // drops its own line, useFlushHeader), sticky under it, one line
-        // below; 8px above and below the chips (the scroller adds 4px under
-        // them, hence pt-2 pb-1).
-        <section className="sticky top-16 z-docked flex items-center gap-2 border-b border-border bg-card pt-2 pr-2 pb-1 pl-4 md:static md:border-b-0 md:py-3 md:shadow-card">
+        // below; 8px above the chips and 12px below (the scroller adds 4px
+        // under them, hence pt-2 pb-2).
+        <section className="sticky top-16 z-docked flex items-center gap-2 border-b border-border bg-card pt-2 pr-2 pb-2 pl-4 md:static md:border-b-0 md:py-3 md:shadow-card">
           <div className="min-w-0 flex-1">
             <MobileChipRow items={filterItems} value={filter} onValueChange={setFilter} gutter="page-start" />
             <Tabs className="hidden md:flex" value={filter} onValueChange={(v) => setFilter(v as Filter)}>

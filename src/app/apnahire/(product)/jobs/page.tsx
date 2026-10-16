@@ -300,12 +300,12 @@ function JobsPageInner() {
           md: the tab bar above. */}
       {/* Full-bleed (-mx-4 px-4). Once scrolled, it's a white bar with a line
           under it, as self-checkout's sticky chips are; at the top it sits
-          on the page's grey (chipsStuck). pt-2 / pb-1: the chip scroller adds 4px under
-          the chips, so the chips sit 8px from the bar's top and bottom. */}
+          on the page's grey (chipsStuck). pt-2 / pb-2: the chip scroller adds 4px under
+          the chips, so they sit 8px from the top and 12px from the bottom. */}
       <div
         ref={chipBar}
         className={cn(
-          "sticky top-16 z-docked -mx-4 -my-2 border-b px-4 pt-2 pb-1 transition-interactive md:hidden",
+          "sticky top-16 z-docked -mx-4 -my-2 border-b px-4 pt-2 pb-2 transition-interactive md:hidden",
           chipsStuck ? "border-border bg-card" : "border-transparent bg-muted"
         )}
       >
