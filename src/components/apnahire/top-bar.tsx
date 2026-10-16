@@ -6,9 +6,11 @@
  * Phones show no breadcrumb (native apps don't, and it repeated the page
  * title and crowded Credits / the avatar as pages got deeper). The left of
  * the bar is, like an app bar: the apna Hire brand on Jobs (the home tab),
- * the section's name everywhere else ("Database", "Notifications"), and
- * the system BackButton on a drill-down (a page below a section, e.g. one
- * job). From md: the breadcrumb.
+ * the section's name everywhere else ("Database", "Notifications"), Back +
+ * the page's name on a full-screen page (one opened from More: no bottom
+ * bar), and Back on a drill-down (a page below a section, e.g. one job).
+ * Back returns in-app, or to Jobs when there's nowhere to return to
+ * (src/lib/apnahire/nav.ts). From md: the breadcrumb.
  *
  * Layout (left → right):
  *   SidebarTrigger · ApnaHireBreadcrumb · [actions slot] · Notifications (md+;
@@ -28,6 +30,7 @@ import { toast } from "sonner"
 import { AvailableCreditsButton } from "@/components/apnahire/available-credits-button"
 import { NotificationsButton } from "@/components/apnahire/notifications/notifications-button"
 import { ApnaHireBreadcrumb, sectionTitle } from "@/components/apnahire/breadcrumb"
+import { isFullScreenPage, useAppBack } from "@/lib/apnahire/nav"
 import {
   Avatar,
   AvatarFallback,
@@ -61,6 +64,8 @@ export function ApnaHireTopBar({
   className?: string
 }) {
   const pathname = usePathname()
+  const back = useAppBack()
+  const fullScreen = isFullScreenPage(pathname)
   return (
     <div
       className={cn(
@@ -78,13 +83,20 @@ export function ApnaHireTopBar({
       {/* Phones: Back on a drill-down (BackButton's rule: first in the
           row), the brand on Jobs, the section's name elsewhere. */}
       <div className="flex min-w-0 items-center md:hidden">
-        {isDrillDown(pathname) ? (
-          <BackButton />
+        {fullScreen ? (
+          // BackButton's rule: first in the row, gap-3 before the title.
+          <span className="flex min-w-0 items-center gap-3">
+            <BackButton onClick={back} />
+            <span className="truncate font-heading text-lg font-semibold text-foreground">{sectionTitle(pathname)}</span>
+          </span>
+        ) : isDrillDown(pathname) ? (
+          <BackButton onClick={back} />
         ) : pathname.split("/").filter(Boolean)[1] !== "jobs" ? (
           <span className="truncate font-heading text-lg font-semibold text-foreground">{sectionTitle(pathname)}</span>
         ) : (
           <Link href="/apnahire/dashboard" aria-label="apna Hire home" className="flex items-center">
-            <LogoApnaHire className="h-7" />
+            {/* 24px: the wordmark's native size, as in the expanded sidebar. */}
+            <LogoApnaHire className="h-6" />
           </Link>
         )}
       </div>
