@@ -44,6 +44,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  Separator,
   Sheet,
   SheetContent,
   SheetTitle,
@@ -186,6 +187,7 @@ export function ApnaHireTopBar({
                 <SheetContent side="bottom" className="gap-4 rounded-t-2xl border-t-0 p-5 pb-safe-5">
                   <SheetTitle className="sr-only">Your account</SheetTitle>
                   {who}
+                  <Separator />
                   {actions}
                 </SheetContent>
               </Sheet>
@@ -197,6 +199,7 @@ export function ApnaHireTopBar({
               <PopoverContent align="end" className="w-60 p-4">
                 <div className="flex flex-col gap-4">
                   {who}
+                  <Separator />
                   {actions}
                 </div>
               </PopoverContent>
