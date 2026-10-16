@@ -30,7 +30,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@apna/design-system"
-import { AuthCard } from "@/components/auth/auth-shell"
+import { AuthCard, LegalLine } from "@/components/auth/auth-shell"
 import { withNext } from "@/components/marketing/hero-lead-card"
 import { ENTERPRISE_LOGIN } from "@/content/auth"
 import { HEADER_ACTIONS } from "@/content/nav"
@@ -139,61 +139,64 @@ function EnterpriseInner() {
   }
 
   return (
-    <AuthCard>
-      <h2 className="text-h4 text-foreground">{ENTERPRISE_LOGIN.title}</h2>
+    <>
+      <AuthCard>
+        <h2 className="text-h4 text-foreground">{ENTERPRISE_LOGIN.title}</h2>
 
-      <form className="flex flex-col gap-6" onSubmit={submitEmail} noValidate>
-        <Field>
-          <div className="flex items-center gap-1">
-            <FieldLabel htmlFor="ent-email">{ENTERPRISE_LOGIN.label}</FieldLabel>
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <Button type="button" variant="ghost" size="icon-xs" className="text-muted-foreground" aria-label={ENTERPRISE_LOGIN.hint}>
-                    <Info />
-                  </Button>
-                }
-              />
-              <TooltipContent>{ENTERPRISE_LOGIN.hint}</TooltipContent>
-            </Tooltip>
-          </div>
-          <Input
-            id="ent-email"
-            inputSize="lg"
-            type="email"
-            autoComplete="username"
-            placeholder={ENTERPRISE_LOGIN.placeholder}
-            value={email}
-            aria-invalid={!!emailError || undefined}
-            onChange={(e) => {
-              setEmail(e.target.value)
-              setEmailError(null)
-            }}
-          />
-          {emailError && <FieldError>{emailError}</FieldError>}
-        </Field>
-        <Button type="submit" size="lg" className="w-full" loading={busy}>
-          {ENTERPRISE_LOGIN.cta}
+        <form className="flex flex-col gap-6" onSubmit={submitEmail} noValidate>
+          <Field>
+            <div className="flex items-center gap-1">
+              <FieldLabel htmlFor="ent-email">{ENTERPRISE_LOGIN.label}</FieldLabel>
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Button type="button" variant="ghost" size="icon-xs" className="text-muted-foreground" aria-label={ENTERPRISE_LOGIN.hint}>
+                      <Info />
+                    </Button>
+                  }
+                />
+                <TooltipContent>{ENTERPRISE_LOGIN.hint}</TooltipContent>
+              </Tooltip>
+            </div>
+            <Input
+              id="ent-email"
+              inputSize="lg"
+              type="email"
+              autoComplete="username"
+              placeholder={ENTERPRISE_LOGIN.placeholder}
+              value={email}
+              aria-invalid={!!emailError || undefined}
+              onChange={(e) => {
+                setEmail(e.target.value)
+                setEmailError(null)
+              }}
+            />
+            {emailError && <FieldError>{emailError}</FieldError>}
+          </Field>
+          <Button type="submit" size="lg" className="w-full" loading={busy}>
+            {ENTERPRISE_LOGIN.cta}
+          </Button>
+        </form>
+
+        <p className="text-sm text-foreground">
+          {ENTERPRISE_LOGIN.register}{" "}
+          <Button variant="link-inline" className="text-primary" render={<Link href={HEADER_ACTIONS.secondary.href} />} nativeButton={false}>
+            {ENTERPRISE_LOGIN.registerLink}
+          </Button>
+        </p>
+
+        <FieldSeparator>OR</FieldSeparator>
+
+        <Button variant="outline" size="lg" className="w-full" leadingIcon={<Phone aria-hidden />} onClick={() => router.push(mobileLogin)}>
+          {ENTERPRISE_LOGIN.mobile}
         </Button>
-      </form>
 
-      <p className="text-sm text-foreground">
-        {ENTERPRISE_LOGIN.register}{" "}
-        <Button variant="link-inline" className="text-primary" render={<Link href={HEADER_ACTIONS.secondary.href} />} nativeButton={false}>
-          {ENTERPRISE_LOGIN.registerLink}
-        </Button>
-      </p>
-
-      <FieldSeparator>OR</FieldSeparator>
-
-      <Button variant="outline" size="lg" className="w-full" leadingIcon={<Phone aria-hidden />} onClick={() => router.push(mobileLogin)}>
-        {ENTERPRISE_LOGIN.mobile}
-      </Button>
-
-      <p className="rounded-lg bg-muted px-3 py-2 text-xs text-muted-foreground">
-        Prototype: personal emails (Gmail, Yahoo…) show the not-registered error; any company email continues.
-      </p>
-    </AuthCard>
+        <p className="rounded-lg bg-muted px-3 py-2 text-xs text-muted-foreground">
+          Prototype: personal emails (Gmail, Yahoo…) show the not-registered error; any company email continues.
+        </p>
+      </AuthCard>
+      <LegalLine />
+    </>
   )
 }
 

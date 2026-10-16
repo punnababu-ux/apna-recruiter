@@ -9,15 +9,18 @@
 
 import { Suspense } from "react"
 import { useSearchParams } from "next/navigation"
-import { AuthCard } from "@/components/auth/auth-shell"
+import { AuthCard, LegalLine } from "@/components/auth/auth-shell"
 import { PhoneLoginForm } from "@/components/marketing/hero-lead-card"
 
 function LoginInner() {
   const params = useSearchParams()
   return (
-    <AuthCard>
-      <PhoneLoginForm next={params.get("next") ?? undefined} defaultPhone={params.get("phone") ?? ""} />
-    </AuthCard>
+    <>
+      <AuthCard>
+        <PhoneLoginForm next={params.get("next") ?? undefined} defaultPhone={params.get("phone") ?? ""} />
+      </AuthCard>
+      <LegalLine />
+    </>
   )
 }
 

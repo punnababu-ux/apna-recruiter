@@ -1,13 +1,15 @@
 "use client"
 
 /**
- * /login/otp — the code sent to the mobile number from /login.
+ * /login/otp — "Verify OTP", as on the live employer.apna.co sign-in:
+ * Back, the title, "A one time password sent on your mobile number" with
+ * the number, four boxes, "Didn't receive OTP? Resend in 00:29 Sec", Login.
  *
- * Six digits; the last one verifies on its own (no extra tap). A number with
- * no account signs up here — there's no separate sign-up for SMB recruiters.
- * Resend unlocks after 30 seconds. "Change" goes back with the number kept.
+ * The fourth digit logs in on its own; Login is there for anyone who'd
+ * rather tap. A number with no account signs up here — there's no separate
+ * sign-up for SMB recruiters. Back returns to the number with it kept.
  *
- * Prototype: any 6 digits sign in; 000000 shows the wrong-code state.
+ * Prototype: any 4 digits log in; 0000 shows the wrong-OTP state.
  */
 
 import * as React from "react"
@@ -15,20 +17,21 @@ import { Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { BackButton, Button, FieldError, OtpInput } from "@apna/design-system"
 import { AuthCard } from "@/components/auth/auth-shell"
+import { withNext } from "@/components/marketing/hero-lead-card"
 import { safeNext, signIn } from "@/hooks/use-session"
 import { HOME } from "@/lib/apnahire/nav"
 
-const LENGTH = 6
+const LENGTH = 4
 const RESEND_AFTER = 30
 
-const formatPhone = (p: string) => (p.length === 10 ? `+91 ${p.slice(0, 5)} ${p.slice(5)}` : `+91 ${p}`)
+const mmss = (s: number) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`
 
 function OtpInner() {
   const router = useRouter()
   const params = useSearchParams()
   const phone = params.get("phone") ?? ""
   const next = params.get("next")
-  const backToNumber = `/login?${new URLSearchParams({ phone, ...(next ? { next } : {}) })}`
+  const backToNumber = withNext("/login", next, { phone })
 
   const [code, setCode] = React.useState("")
   const [error, setError] = React.useState<string | null>(null)
@@ -51,8 +54,8 @@ function OtpInner() {
     setVerifying(true)
     // A beat, as a real check would take.
     window.setTimeout(() => {
-      if (value === "000000") {
-        setError("That code isn't right. Check the SMS and try again.")
+      if (value === "0000") {
+        setError("Incorrect OTP. Check the SMS and try again.")
         setCode("")
         setVerifying(false)
         return
@@ -65,14 +68,11 @@ function OtpInner() {
   return (
     <AuthCard>
       <div className="flex flex-col gap-3">
-        <BackButton onClick={() => router.push(backToNumber)} aria-label="Change mobile number" />
-        <h2 className="text-h3 font-bold text-foreground">Enter the code</h2>
-        <p className="text-base text-muted-foreground">
-          We sent a {LENGTH}-digit code to{" "}
-          <span className="font-medium whitespace-nowrap text-foreground">{formatPhone(phone)}</span>.{" "}
-          <Button variant="link-inline" className="text-foreground" onClick={() => router.push(backToNumber)}>
-            Change
-          </Button>
+        <BackButton onClick={() => router.push(backToNumber)} aria-label="Back to mobile number" />
+        <h2 className="text-h3 font-bold text-foreground">Verify OTP</h2>
+        <p className="text-sm text-muted-foreground">
+          A one time password sent on your mobile number
+          <span className="block font-semibold text-foreground">+91-{phone}</span>
         </p>
       </div>
 
@@ -88,19 +88,18 @@ function OtpInner() {
           invalid={!!error}
           disabled={verifying}
           autoFocus
-          aria-label="Code from SMS"
+          aria-label="OTP from SMS"
         />
         {error && <FieldError>{error}</FieldError>}
       </div>
 
       <div className="flex flex-col gap-4">
-        <Button size="lg" className="w-full" disabled={code.length !== LENGTH} loading={verifying} onClick={() => verify(code)}>
-          Verify and continue
-        </Button>
         <p className="text-sm text-muted-foreground">
-          Didn&apos;t get it?{" "}
+          Didn&apos;t receive OTP?{" "}
           {wait > 0 ? (
-            <span className="whitespace-nowrap tabular-nums">Resend in 0:{String(wait).padStart(2, "0")}</span>
+            <span className="whitespace-nowrap">
+              Resend in <span className="font-medium text-foreground tabular-nums">{mmss(wait)} Sec</span>
+            </span>
           ) : (
             <Button
               variant="link"
@@ -110,14 +109,17 @@ function OtpInner() {
                 setError(null)
               }}
             >
-              Resend code
+              Resend OTP
             </Button>
           )}
         </p>
+        <Button size="lg" className="w-full" disabled={code.length !== LENGTH} loading={verifying} onClick={() => verify(code)}>
+          Login
+        </Button>
       </div>
 
       <p className="rounded-lg bg-muted px-3 py-2 text-xs text-muted-foreground">
-        Prototype: any {LENGTH} digits log you in. 000000 shows a wrong code.
+        Prototype: any {LENGTH} digits log you in. 0000 shows a wrong OTP.
       </p>
     </AuthCard>
   )

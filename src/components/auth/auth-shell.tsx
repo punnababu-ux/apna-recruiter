@@ -4,10 +4,11 @@
  *
  *   From md   two halves: on the left the apnaHire wordmark, the headline,
  *             one line and three stats; on the right a grey panel with
- *             "Looking for a job?" top-right and the form in a card, the
- *             legal line under the card.
+ *             "Looking for a job?" top-right and the form in a card.
  *   Phones    an apnaHire bar with "Looking for a job?", then the form flat
- *             on white (no card), the legal line under it.
+ *             on white (no card).
+ * Steps that ask for consent (number, enterprise email) put LegalLine under
+ * their card; Verify OTP doesn't, as on the live site.
  *
  * Pages pass their form wrapped in AuthCard, which is a card from md and
  * flat on phones.
@@ -102,10 +103,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
           <LookingForJob />
         </div>
         <div className="flex flex-1 flex-col items-center px-4 pt-8 pb-12 md:justify-center md:px-8 md:pt-0">
-          <div className="flex w-full max-w-md flex-col gap-4">
-            {children}
-            <LegalLine />
-          </div>
+          <div className="flex w-full max-w-md flex-col gap-4">{children}</div>
         </div>
       </main>
     </div>
