@@ -54,7 +54,6 @@ import {
   Smartphone,
   Sparkles,
   Tag,
-  X,
   XCircle,
   type IconComponent,
 } from "@apna/design-system"
@@ -67,9 +66,8 @@ import {
   RadioGroupItem,
   Separator,
   Sheet,
-  SheetClose,
-  SheetContent,
-  SheetTitle,
+  SheetPanel,
+  SheetPanelHeader,
 } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 import { AiCallingAddonCard, type AiAddonOffer } from "@/components/apnahire/ai-calling-addon-card"
@@ -526,39 +524,14 @@ export function CheckoutDrawer({
           attribute-qualified (specificity 0,2,0) and beat a bare `w-full` /
           `sm:max-w-md` (0,1,0); twMerge cannot dedupe across variant prefixes
           either. Matching the prefix is what makes the width take. */}
-      <SheetContent
-        side="right"
-        showCloseButton={false}
-        className={cn(
-          // The `data-[side=right]:` prefix is load-bearing: the Sheet
-          // primitive sets its own width under that selector, which a plain
-          // `sm:max-w-md` loses to on specificity.
-          "gap-0 overflow-hidden bg-muted p-0 data-[side=right]:w-full sm:rounded-l-2xl",
-          // Figma draws the subscription order summary as a wider component
-          // (536px) than the one-time one (438px) — the payment tiles and the
-          // three-item trust row do not fit the narrower drawer.
-          isSubscription
-            ? "data-[side=right]:sm:max-w-lg"
-            : "data-[side=right]:sm:max-w-md"
-        )}
-      >
+      {/* Figma draws the subscription order summary as a wider component
+          (536px) than the one-time one (438px) — the payment tiles and the
+          three-item trust row do not fit the narrower drawer. */}
+      <SheetPanel size={isSubscription ? "lg" : "md"}>
         <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto">
           {/* 1 — Header + line items */}
           <section className="flex flex-col gap-4 bg-card py-5 shadow-card">
-            <div className="flex items-center justify-between gap-3 px-5">
-              {/* Atomic utilities rather than the `text-h4` preset: SheetTitle
-                  already sets `text-base font-medium`, and twMerge classifies
-                  the unknown `text-h4` as a text-COLOUR utility, so it is
-                  dropped outright when merged next to `text-foreground`.
-                  These four classes are text-h4's resolved values. */}
-              <SheetTitle className="font-heading text-xl font-semibold text-foreground">
-                Order summary
-              </SheetTitle>
-              <SheetClose render={<Button variant="ghost" size="icon-sm" />}>
-                <X className="size-6 text-muted-foreground" aria-hidden />
-                <span className="sr-only">Close</span>
-              </SheetClose>
-            </div>
+            <SheetPanelHeader title="Order summary" />
 
             <Separator />
 
@@ -968,7 +941,7 @@ export function CheckoutDrawer({
             </>
           )}
         </div>
-      </SheetContent>
+      </SheetPanel>
       <CouponExpiredDialog open={expiredOpen} onClose={() => setExpiredOpen(false)} />
     </Sheet>
   )

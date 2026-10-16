@@ -137,8 +137,69 @@ function SheetDescription({
   )
 }
 
+/**
+ * SheetPanel — the app's right side panel (order summary, notifications):
+ * a muted frame with rounded left corners, holding white card sections.
+ * Use it, not a bare `SheetContent side="right"`, for any side panel, so
+ * every panel has the same width, surface and header.
+ *   size  "md" 448px (default) · "lg" 512px (e.g. the subscription order
+ *         summary, whose payment tiles need the room)
+ * The `data-[side=right]:` prefix is load-bearing: SheetContent sets its
+ * own width under that selector, which a plain `sm:max-w-*` loses to.
+ */
+function SheetPanel({
+  className,
+  size = "md",
+  ...props
+}: Omit<React.ComponentProps<typeof SheetContent>, "side" | "showCloseButton"> & { size?: "md" | "lg" }) {
+  return (
+    <SheetContent
+      side="right"
+      showCloseButton={false}
+      data-slot="sheet-panel"
+      className={cn(
+        "gap-0 overflow-hidden bg-muted p-0 data-[side=right]:w-full sm:rounded-l-2xl",
+        size === "lg" ? "data-[side=right]:sm:max-w-lg" : "data-[side=right]:sm:max-w-md",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+/**
+ * SheetPanelHeader — a side panel's title row: the 20px semibold heading
+ * title, an optional action ("Mark all as read"), and the close button.
+ * Every SheetPanel uses this one row, so panel titles never drift in size
+ * or weight. Place it at the top of the panel's first white section.
+ */
+function SheetPanelHeader({
+  title,
+  action,
+  className,
+}: {
+  title: React.ReactNode
+  action?: React.ReactNode
+  className?: string
+}) {
+  return (
+    <div data-slot="sheet-panel-header" className={cn("flex items-center justify-between gap-3 px-5", className)}>
+      <SheetTitle className="font-heading text-xl font-semibold text-foreground">{title}</SheetTitle>
+      <div className="flex shrink-0 items-center gap-2">
+        {action}
+        <SheetClose render={<Button variant="ghost" size="icon-sm" />}>
+          <XIcon className="size-6 text-muted-foreground" aria-hidden />
+          <span className="sr-only">Close</span>
+        </SheetClose>
+      </div>
+    </div>
+  )
+}
+
 export {
   Sheet,
+  SheetPanel,
+  SheetPanelHeader,
   SheetTrigger,
   SheetClose,
   SheetContent,

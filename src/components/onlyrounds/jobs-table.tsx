@@ -206,29 +206,42 @@ export function JobMetricPill({
   icon: Icon,
   label,
   count,
-  extra,
+  unread,
 }: {
   href: string
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
   label: string
   count: number | string
-  extra?: React.ReactNode
+  /** Something here hasn't been looked at ("4 new", "5 pending"). Shown as
+   *  a dot on the count — the exact number lives on the list it opens —
+   *  and spoken in full to screen readers. */
+  unread?: string
 }) {
+  const shown = typeof count === "number" ? count.toLocaleString("en-IN") : count
   return (
     // Each chip is its own link (to that list of candidates); the chevron
     // says so. 32px tall — an easy tap.
     <Link
       href={href}
+      aria-label={[label, shown, unread].filter(Boolean).join(", ")}
       className="ink press-subtle inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md bg-secondary px-3 text-xs text-secondary-foreground transition-interactive outline-none hover:bg-secondary/80 focus-visible:ring-3 focus-visible:ring-ring/50"
     >
       <Icon className="size-3.5 text-muted-foreground" aria-hidden />
       <span>{label}</span>
-      {/* Same box as a default Badge (20px, px-2, text-xs, medium, pill), so
-          the count and a status tag beside it ("5 pending") read as a pair. */}
-      <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-4xl bg-muted-foreground/25 px-2 text-xs leading-none font-medium tabular-nums text-foreground">
-        {typeof count === "number" ? count.toLocaleString("en-IN") : count}
+      {/* Same box as a default Badge (20px, px-2, text-xs, medium, pill). */}
+      <span className="relative inline-flex h-5 min-w-5 items-center justify-center rounded-4xl bg-muted-foreground/25 px-2 text-xs leading-none font-medium tabular-nums text-foreground">
+        {shown}
+        {/* Unread: a dot on the count's corner, ringed in the pill's colour
+            so it reads against the count, with a ping that plays three
+            times and stops (animate-unread-ping). One colour for every
+            "haven't looked yet". */}
+        {unread && (
+          <span className="absolute -top-0.5 -right-0.5 flex size-2" aria-hidden>
+            <span className="animate-unread-ping absolute inline-flex size-full rounded-full bg-info" />
+            <span className="relative inline-flex size-2 rounded-full bg-info ring-2 ring-secondary" />
+          </span>
+        )}
       </span>
-      {extra}
       <ChevronRight className="-mr-1 size-3.5 text-muted-foreground" aria-hidden />
     </Link>
   )

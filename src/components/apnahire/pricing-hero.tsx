@@ -128,7 +128,7 @@ export function PricingHero({
               mobileActiveClassName="text-checkout-primary"
               inactiveClassName="text-checkout-hero-fg-secondary"
               mutedClassName="text-checkout-hero-fg-secondary"
-              activeItemClassName="bg-card inset-ring-1 inset-ring-border shadow-none"
+              activeItemClassName="bg-card inset-ring-1 inset-ring-border-strong shadow-none"
               mobileBleedClassName="-mx-4 sm:-mx-8"
               mobileGutterClassName="px-4 sm:px-8"
             />

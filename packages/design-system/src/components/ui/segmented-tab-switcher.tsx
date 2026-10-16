@@ -195,7 +195,10 @@ export function SegmentedTabSwitcher<V extends string = string>({
           <span
             ref={mobilePillRef}
             aria-hidden
-            className="sliding-indicator rounded-full bg-card shadow-sm"
+            // The ring (--border-strong) keeps the white selected chip
+            // visible on a white surface (a card, a panel), not just on a
+            // grey one; the shadow alone vanished there.
+            className="sliding-indicator rounded-full bg-card shadow-sm inset-ring-1 inset-ring-border-strong"
           />
           {items.map(({ value: v, label, shortLabel, icon }) => {
             const active = v === value

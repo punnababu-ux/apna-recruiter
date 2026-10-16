@@ -29,7 +29,9 @@ const SECTIONS: Record<string, { label: string; href: string }> = {
   "invite-centre":{ label: "Invite Centre",  href: "/apnahire/invite-centre/database-wa-invites" },
   reports:        { label: "Reports",        href: "/apnahire/reports" },
   "campus-ai":    { label: "Campus AI",      href: "/apnahire/campus-ai" },
-  credits:        { label: "Credits & Usage",href: "/apnahire/credits" },
+  usage:          { label: "Credits & Usage",href: "/apnahire/usage" },
+  notifications:  { label: "Notifications",  href: "/apnahire/notifications" },
+  credits:        { label: "Plans",          href: "/apnahire/credits" },
   settings:       { label: "Settings",       href: "/apnahire/settings" },
   support:        { label: "Support",        href: "/apnahire/support" },
   "sidebar-specs":{ label: "Sidebar Specs",  href: "/apnahire/sidebar-specs" },
@@ -90,6 +92,13 @@ function Crumbs() {
       </BreadcrumbList>
     </Breadcrumb>
   )
+}
+
+/** The current section's name ("Database", "Notifications"): the phone top
+ *  bar's title, where the breadcrumb isn't shown. */
+export function sectionTitle(pathname: string) {
+  const key = pathname.split("/").filter(Boolean)[1] ?? ""
+  return SECTIONS[key]?.label ?? ""
 }
 
 export function ApnaHireBreadcrumb() {

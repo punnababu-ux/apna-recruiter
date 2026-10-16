@@ -77,6 +77,12 @@ const buttonVariants = cva(
          * a box that stays white. */
         "checkout-inset":
           "border-checkout-inset-border bg-checkout-inset text-checkout-inset-fg hover:bg-checkout-inset-hover",
+        /* "Plans": the promoted way to buy — the gold-on-plum offer gradient
+         * (the subscription offer's), white label, a gold `Coin` icon. Same
+         * look as the bottom bar's raised Plans tile and the sidebar's
+         * plans link. For that one destination only. */
+        premium:
+          "bg-gradient-offer-premium text-surface-inverted-fg shadow-xs hover:shadow-sm hover:brightness-110 active:brightness-95",
         /* Dark-gray push for a screen whose green primary is already taken
          * (add-ons, upsells) — see the one-primary RULE above. */
         emphasis:

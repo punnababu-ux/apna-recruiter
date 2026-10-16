@@ -120,6 +120,7 @@
   /* Lines */
   --color-border: var(--border);
   --color-input:  var(--input);
+  --color-border-strong: var(--border-strong);
   --color-ring:   var(--ring);
 
   /* Sidebar */
@@ -696,6 +697,23 @@
 
   @media (prefers-reduced-motion: reduce) {
     animation: none;
+  }
+}
+
+/* An unread dot's ping: a ring that grows from the dot and fades, three
+ * times when it appears, then the dot rests. Three, not forever: a list of
+ * cards can carry many dots, and a field of endless pulses reads as noise.
+ * Put it on a ring layered behind the solid dot (see JobMetricPill). */
+@keyframes unread-ping {
+  75%, 100% { scale: 2.4; opacity: 0; }
+}
+
+@utility animate-unread-ping {
+  animation: unread-ping 1.4s cubic-bezier(0, 0, 0.2, 1) 400ms 3 both;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    opacity: 0;
   }
 }
 

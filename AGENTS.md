@@ -250,6 +250,7 @@ primitives already do this; product code gets it by composing them.
 | `press` / `press-subtle` | Compresses while held (`--press-scale`, `--press-scale-subtle` for cards) | Buttons, chips, checkbox, radio, switch |
 | `transition-interactive` | Colour, border, shadow, focus ring and transform ease (`--duration-hover`) | Every interactive primitive |
 | `transition-select` | Selection lands with a slight spring (`--duration-select`, `--ease-select`) | Checkbox tick, radio dot, switch thumb, chevrons |
+| `animate-unread-ping` | An unread dot pings three times as it appears, then rests (never an endless pulse) | Unread dot on JobMetricPill's count |
 | `tab-indicator` / `sliding-indicator` | One selection pill glides to the active option, never a cross-fade (`--duration-slide`, `--ease-slide`) | TabsList (Base UI indicator); SegmentedTabSwitcher, ChipTabs and hand-built segmented controls via `useSlidingIndicator` |
 
 Rules:
@@ -280,6 +281,26 @@ and don't put `overflow-hidden` on a bottom sheet, because it would clip
 the bubble. Round the inner corners instead. Side drawers (right and left
 sheets) are panels and keep their inside X. Pass `showCloseButton={false}`
 only for a forced choice.
+
+**Same pattern, same component — check before you build.** If a new
+surface looks like one that exists (a side panel, a pop-up, a chip row, a
+plans button), find the component that draws the existing one and use it.
+Two look-alikes built separately drift in title size, weight and padding;
+that is a defect even when each looks fine alone. The shared ones:
+
+- **Side panels** (order summary, notifications): `SheetPanel` for the frame
+  (muted, 448px / 512px, rounded left corners, white card sections) and
+  `SheetPanelHeader` for the title row (20px semibold heading title,
+  optional action, close). Never a bare `SheetContent side="right"`, never
+  a hand-sized panel title.
+- **Plans** (bottom bar tile, sidebar link, "View plans" CTAs): the plans
+  look only — `variant="premium"` Button or BottomNav `featured`, with a
+  gold `Coin` carrying the ₹. Not green, not the dark emphasis.
+- **Segmented controls** (Tabs default / inverted, ChipTabs,
+  SegmentedTabSwitcher): fully rounded track, pill and items. A squared
+  pill next to a round one is the same control drawn twice.
+- **Phone chip rows**: `MobileChipRow` / `SectionChips`, the self-checkout
+  styling.
 
 Mobile: bottom-fixed bars use `pb-safe` (no padding of their own) or
 `pb-safe-<n>` (in place of `pb-<n>`) to clear the home indicator. Inputs use

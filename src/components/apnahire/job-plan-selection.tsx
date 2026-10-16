@@ -294,7 +294,11 @@ export function JobPlanSelection() {
         current="plan"
         onStepClick={(step) => step !== "plan" && router.push("/apnahire/jobs/new")}
         // Zero-credit users haven't met the credit model yet.
-        actions={hasAnyCredits(creditBalance) ? <AvailableCreditsButton /> : undefined}
+        actions={
+          hasAnyCredits(creditBalance) ? (
+            <AvailableCreditsButton balance={{ job: creditBalance.job, aiCalling: creditBalance["ai-calling"] }} />
+          ) : undefined
+        }
         onExitAttempt={attemptExit}
       />
 

@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { AlertBanner } from "@/components/ui/alert-banner"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Coin } from "@/components/ui/coin"
 import { cn } from "@/lib/utils"
 import {
   Sidebar,
@@ -68,6 +69,12 @@ export type SidebarBrand = {
   name: string
   logo: React.ReactNode
   href?: string
+  /** A full wordmark (e.g. "apna Hire"): shown alone in the expanded
+   *  sidebar instead of `logo` + `name`. */
+  wordmark?: React.ReactNode
+  /** The collapsed sidebar's mark when `wordmark` is set (e.g. "apna"
+   *  alone); falls back to `logo`. */
+  collapsedLogo?: React.ReactNode
 }
 
 export type ReusableSidebarProps = {
@@ -149,12 +156,25 @@ export function ReusableSidebar({
               className="hover:bg-transparent focus-visible:ring-0 active:bg-transparent px-0! group-data-[collapsible=icon]:w-10"
               onClick={() => setOpenMobile(false)}
             >
-              <div className="size-10 shrink-0 flex items-center justify-center">
-                {brand.logo}
-              </div>
-              <span className="text-lg font-bold tracking-tight text-secondary-foreground truncate">
-                {brand.name}
-              </span>
+              {brand.wordmark ? (
+                // Divs, not spans: SidebarMenuButton hides every span but
+                // the first in the collapsed state.
+                <>
+                  <div className="flex h-10 items-center group-data-[collapsible=icon]:hidden">{brand.wordmark}</div>
+                  <div className="hidden size-10 shrink-0 items-center justify-center group-data-[collapsible=icon]:flex">
+                    {brand.collapsedLogo ?? brand.logo}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="size-10 shrink-0 flex items-center justify-center">
+                    {brand.logo}
+                  </div>
+                  <span className="text-lg font-bold tracking-tight text-secondary-foreground truncate">
+                    {brand.name}
+                  </span>
+                </>
+              )}
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -437,9 +457,10 @@ export function ReusableSidebar({
 
           {/* Bottom link — under the banner, the last thing in the sidebar.
               A destination, not an action: shaped like a nav row (left-aligned,
-              chevron = "goes to another page"), on the dark emphasis surface so
-              it stands out from the plain nav items without competing with the
-              page's own green CTA. Collapsed: an icon tile the size and inset
+              chevron = "goes to another page"), in the plans look shared with
+              the bottom bar's raised Plans tile and the `premium` Button: the
+              gold-on-plum gradient and a gold Coin. It stands out from the
+              plain nav items without competing with the page's green CTA. Collapsed: an icon tile the size and inset
               of the nav buttons above (40px, 12px in), so its icon sits on
               the same centre line; a 32px tile 8px in sat 8px to the left. */}
           {bottomCta && (
@@ -449,9 +470,9 @@ export function ReusableSidebar({
                 aria-label={isCollapsed ? bottomCta.label : undefined}
                 title={isCollapsed ? bottomCta.label : undefined}
                 onClick={() => setOpenMobile(false)}
-                className="ink press-subtle relative flex h-10 w-full items-center gap-2.5 rounded-lg bg-cta-emphasis px-3 text-sm font-medium text-cta-emphasis-foreground outline-none transition-interactive hover:bg-cta-emphasis-hover focus-visible:ring-3 focus-visible:ring-ring/50 group-data-[collapsible=icon]:size-10 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0"
+                className="ink press-subtle relative flex h-10 w-full items-center gap-2.5 rounded-lg bg-gradient-offer-premium px-2 text-sm font-medium text-surface-inverted-fg outline-none transition-interactive hover:brightness-110 focus-visible:ring-3 focus-visible:ring-ring/50 group-data-[collapsible=icon]:size-10 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0"
               >
-                <bottomCta.icon className="size-4 shrink-0" />
+                <Coin icon={bottomCta.icon} />
                 <span className="truncate group-data-[collapsible=icon]:hidden">{bottomCta.label}</span>
                 <ChevronRight className="ml-auto size-4 shrink-0 group-data-[collapsible=icon]:hidden" aria-hidden />
               </Link>

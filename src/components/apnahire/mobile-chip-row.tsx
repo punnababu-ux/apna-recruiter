@@ -1,0 +1,74 @@
+"use client"
+
+/**
+ * MobileChipRow — the phone chip row (< md): SegmentedTabSwitcher's mobile
+ * layout styled exactly as self-checkout's (grey track fill, a green label
+ * on the selected chip; the same classes as pricing-hero.tsx). The selected
+ * chip's white pill and its --border-strong ring come from the component,
+ * so it holds on white and grey surfaces alike. One component so the jobs page and every section's
+ * sub-page chips look the same.
+ *
+ *   MobileChipRow  controlled: `value` / `onValueChange` (the jobs tabs)
+ *   SectionChips   links: a section's sub-pages, active by the current route
+ *                  (Database, Invite centre — the bottom bar opens the
+ *                  section, these chips move between its pages)
+ *
+ * The row bleeds to the screen edge and re-adds the gutter inside; the
+ * defaults mirror a `px-4 sm:px-6` page gutter.
+ */
+
+import * as React from "react"
+import { usePathname, useRouter } from "next/navigation"
+import { SegmentedTabSwitcher, type SegmentedTabItem } from "@apna/design-system"
+import { cn } from "@/lib/utils"
+
+export function MobileChipRow<V extends string>({
+  items,
+  value,
+  onValueChange,
+  className,
+  gutter = "page",
+}: {
+  items: SegmentedTabItem<V>[]
+  value: V
+  onValueChange: (value: V) => void
+  className?: string
+  /** The container's horizontal padding the row bleeds through:
+   *  "page" px-4 sm:px-6 · "panel" px-5 (SheetPanel / card sections) ·
+   *  "none" no bleed — the row scrolls inside its own box, e.g. beside a
+   *  fixed ⋮ menu at the end of the row. */
+  gutter?: "page" | "panel" | "none"
+}) {
+  return (
+    <SegmentedTabSwitcher
+      className={cn("md:hidden", className)}
+      items={items}
+      value={value}
+      onValueChange={onValueChange}
+      trackClassName="bg-checkout-track"
+      activeClassName="text-checkout-primary"
+      mobileActiveClassName="text-checkout-primary"
+      inactiveClassName="text-checkout-hero-fg-secondary"
+      mutedClassName="text-checkout-hero-fg-secondary"
+      mobileBleedClassName={gutter === "none" ? "" : gutter === "panel" ? "-mx-5" : "-mx-4 sm:-mx-6"}
+      mobileGutterClassName={gutter === "none" ? "" : gutter === "panel" ? "px-5" : "px-4 sm:px-6"}
+    />
+  )
+}
+
+/** A section's sub-pages as phone chips, in a `px-4 sm:px-6` band at the
+ *  top of the section. Hidden from md, where the sidebar lists them. */
+export function SectionChips({ items }: { items: { href: string; label: string }[] }) {
+  const pathname = usePathname()
+  const router = useRouter()
+  const active = items.find((item) => pathname.startsWith(item.href))?.href ?? items[0].href
+  return (
+    <div className="px-4 pt-4 sm:px-6 md:hidden">
+      <MobileChipRow
+        items={items.map((item) => ({ value: item.href, label: item.label }))}
+        value={active}
+        onValueChange={(href) => router.push(href)}
+      />
+    </div>
+  )
+}

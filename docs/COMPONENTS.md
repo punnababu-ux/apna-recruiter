@@ -62,7 +62,8 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 | Breadcrumb       | `import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@apna/design-system"` | Hierarchical location trail. |
 | Sidebar          | `import { Sidebar, SidebarContent, SidebarHeader, SidebarFooter, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@apna/design-system"` | Persistent app sidebar primitives. |
 | ReusableSidebar  | `import { ReusableSidebar } from "@apna/design-system"`                | High-level configurable sidebar shell.           |
-| BottomNav        | `import { BottomNav, type BottomNavItem } from "@apna/design-system"` | Fixed mobile bottom tab bar. Hidden at `md+`. Items accept `href` (link) or `onClick` (button) + optional `badge` overlay. |
+| BottomNav        | `import { BottomNav, type BottomNavItem } from "@apna/design-system"` | Fixed mobile bottom tab bar. Hidden at `md+`. Items accept `href` (link) or `onClick` (button) + optional `badge` overlay. `featured` raises one (middle) item into a promoted tile above the bar (e.g. Plans). |
+| BottomNavMenu    | `import { BottomNavMenu, type BottomNavMenuItem } from "@apna/design-system"` | The bottom bar's "More" card: icon tiles (4 across) rising just above the bar, which stays visible. Flat destinations only; optional red `dot` per tile. Tap outside / Escape / a tile closes it. `clearFeatured` when the bar has a raised item. |
 
 ## 5. Overlays & Dialogs
 

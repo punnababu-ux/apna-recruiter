@@ -12,6 +12,11 @@
  *   draft          secondary none                   Finish posting (muted)
  *   expired        destr.    applied · leads · DB   Repost to get new candidates (muted)
  *
+ * Unread (applications not yet reviewed, new leads) is a dot on the
+ * metric's count, not a second number: the pill keeps one total, and the
+ * list it opens shows which ones are new. In the product the dot clears
+ * once that list is opened (server state; here it follows the mock).
+ *
  * Active-job nudges come from the server (`nudge`), not guessed here:
  *   "active-leads"  — applications are slow but leads are waiting (success)
  *   "improve-reach" — applications are slow; suggestions can help (info)
@@ -244,26 +249,16 @@ function JobCard({ job }: { job: ApnaJob }) {
               icon={UserCheck}
               label="Applied"
               count={counting ? job.applied : "–"}
-              extra={
-                counting && job.appliedPending ? (
-                  <Badge variant="warning">
-                    {job.appliedPending} pending
-                  </Badge>
-                ) : undefined
-              }
+              // A dot, not "5 pending": the total stays the one number on
+              // the pill; the list it opens shows which are unreviewed.
+              unread={counting && job.appliedPending ? `${job.appliedPending} pending` : undefined}
             />
             <JobMetricPill
               href={`${href}?tab=leads`}
               icon={Users}
               label="Active leads"
               count={counting ? job.activeLeads : "–"}
-              extra={
-                counting && job.activeLeadsNew ? (
-                  <Badge variant="info">
-                    {job.activeLeadsNew} new
-                  </Badge>
-                ) : undefined
-              }
+              unread={counting && job.activeLeadsNew ? `${job.activeLeadsNew} new` : undefined}
             />
             <JobMetricPill href={`${href}?tab=database`} icon={Database} label="Database matches" count={job.dbMatches} />
           </>

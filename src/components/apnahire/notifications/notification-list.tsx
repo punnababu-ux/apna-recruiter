@@ -1,0 +1,226 @@
+"use client"
+
+/**
+ * NotificationList — the recruiter's notification centre, one component for
+ * both homes: the phone page (/apnahire/notifications, reached from the
+ * bottom bar's bell) and the desktop side panel (the top bar's bell).
+ *
+ *   Header   title · "Mark all as read"
+ *   Filters  All · Applications · Unread, with counts — the jobs page's
+ *            filter components (MobileChipRow on phones, Tabs from md)
+ *   Groups   Today · Yesterday · Earlier this week
+ *   Row      kind icon · title · time · body; unread rows are tinted with a
+ *            dot; new applications carry "View profile" and "Call"
+ *
+ * Tapping a row marks it read (useNotifications, shared with the bell
+ * badges).
+ *
+ * Visual language = the order summary panel's: white card sections on a
+ * muted frame; rows are 16px semibold titles with muted text, on the 20px
+ * (px-5) gutter.
+ *   panel  SheetPanelHeader ("Notifications" · ⋮ · close), divider, Tabs
+ *   page   no title (the phone top bar says "Notifications"): the filter
+ *          chips with ⋮ fixed at the row's end
+ * "Mark all as read" lives in the ⋮ menu: a rare, bulk action, behind a
+ * deliberate second tap, in the place WhatsApp-style apps put it.
+ */
+
+import * as React from "react"
+import Link from "next/link"
+import {
+  AlertTriangle,
+  BriefcaseBusiness,
+  Button,
+  Check,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  MoreVertical,
+  Separator,
+  SheetPanelHeader,
+  Database,
+  FileText,
+  Phone,
+  Sparkles,
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  User,
+  type IconComponent,
+} from "@apna/design-system"
+import { MobileChipRow } from "@/components/apnahire/mobile-chip-row"
+import {
+  NOTIFICATION_GROUPS,
+  type NotificationKind,
+  type RecruiterNotification,
+} from "@/content/notifications"
+import { useNotifications } from "@/hooks/apnahire/use-notifications"
+import { cn } from "@/lib/utils"
+
+type Filter = "all" | "applications" | "unread"
+
+const KIND_ICON: Record<NotificationKind, IconComponent> = {
+  application: User,
+  ai: Sparkles,
+  summary: FileText,
+  action: AlertTriangle,
+  expired: BriefcaseBusiness,
+  credits: Database,
+}
+
+function NotificationRow({ n, onRead }: { n: RecruiterNotification; onRead: (id: string) => void }) {
+  const Icon = KIND_ICON[n.kind]
+  return (
+    <li
+      onClick={() => n.unread && onRead(n.id)}
+      className={cn(
+        "flex gap-3 border-b border-border px-5 py-4 transition-interactive last:border-b-0",
+        n.unread ? "bg-accent/40" : "bg-card"
+      )}
+    >
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
+        <Icon className="size-5" aria-hidden />
+      </span>
+      <div className="flex min-w-0 flex-1 flex-col gap-1">
+        <div className="flex items-start justify-between gap-3">
+          <p className="text-base font-semibold text-foreground">{n.title}</p>
+          <span className="flex shrink-0 items-center gap-1.5 text-xs whitespace-nowrap text-muted-foreground">
+            {n.time}
+            {n.unread && (
+              <>
+                <span className="size-2 rounded-full bg-primary" aria-hidden />
+                <span className="sr-only">Unread</span>
+              </>
+            )}
+          </span>
+        </div>
+        <p className="text-sm text-muted-foreground">{n.body}</p>
+        {n.candidate && (
+          <div className="flex flex-wrap gap-2 pt-2">
+            <Button
+              size="sm"
+              variant="outline"
+              nativeButton={false}
+              render={<Link href="/apnahire/jobs?tab=active" />}
+            >
+              View profile
+            </Button>
+            <Button size="sm" variant="outline" nativeButton={false} render={<a href={`tel:${n.candidate.phone}`} />}>
+              <Phone className="size-4" aria-hidden />
+              Call
+            </Button>
+          </div>
+        )}
+      </div>
+    </li>
+  )
+}
+
+export function NotificationList({ variant }: { variant: "panel" | "page" }) {
+  const { notifications, unreadCount, markRead, markAllRead } = useNotifications()
+  const [filter, setFilter] = React.useState<Filter>("all")
+
+  const counts: Record<Filter, number> = {
+    all: notifications.length,
+    applications: notifications.filter((n) => n.kind === "application").length,
+    unread: unreadCount,
+  }
+  const shown = notifications.filter((n) =>
+    filter === "applications" ? n.kind === "application" : filter === "unread" ? n.unread : true
+  )
+
+  const filterItems: { value: Filter; label: string }[] = [
+    { value: "all", label: `All (${counts.all})` },
+    { value: "applications", label: `Applications (${counts.applications})` },
+    { value: "unread", label: `Unread (${counts.unread})` },
+  ]
+
+  // The list's actions; one item today, room for more (settings, clear read).
+  const menu = (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <Button variant="ghost" size="icon-sm" aria-label="Notification actions" className="shrink-0 text-muted-foreground" />
+        }
+      >
+        <MoreVertical className="size-5" aria-hidden />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem className="whitespace-nowrap" disabled={unreadCount === 0} onClick={markAllRead}>
+          <Check className="size-3.5" />
+          Mark all as read
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+
+  return (
+    <div data-slot="notification-list" className="flex flex-col gap-3">
+      {/* 1 — Header + filters: the order summary's first card. */}
+      {variant === "panel" ? (
+        <section className="flex flex-col gap-4 bg-card py-5 shadow-card">
+          <SheetPanelHeader title="Notifications" action={menu} />
+          <Separator />
+          {/* The jobs page's filter component: Tabs, `default` variant (the
+              one for a white surface; `inverted` is for grey canvases). */}
+          <div className="px-5">
+            <Tabs value={filter} onValueChange={(v) => setFilter(v as Filter)}>
+              <TabsList>
+                {filterItems.map((item) => (
+                  <TabsTrigger key={item.value} value={item.value}>
+                    {item.label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
+          </div>
+        </section>
+      ) : (
+        // Phones: the jobs page's chip row, scrolling beside a fixed ⋮
+        // (Tabs from md, if the page is opened on a wide screen).
+        <section className="flex items-center gap-2 bg-card py-3 pr-3 pl-5 shadow-card">
+          <div className="min-w-0 flex-1">
+            <MobileChipRow items={filterItems} value={filter} onValueChange={setFilter} gutter="none" />
+            <Tabs className="hidden md:flex" value={filter} onValueChange={(v) => setFilter(v as Filter)}>
+              <TabsList>
+                {filterItems.map((item) => (
+                  <TabsTrigger key={item.value} value={item.value}>
+                    {item.label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
+          </div>
+          {menu}
+        </section>
+      )}
+
+      {/* 2 — The list, one card, grouped by day. */}
+      <section className="bg-card shadow-card">
+        {shown.length === 0 ? (
+          <p className="px-5 py-10 text-center text-sm text-muted-foreground">
+            {filter === "unread" ? "You're all caught up." : "Nothing here yet."}
+          </p>
+        ) : (
+          NOTIFICATION_GROUPS.map((group) => {
+            const items = shown.filter((n) => n.group === group.id)
+            if (items.length === 0) return null
+            return (
+              <section key={group.id} aria-label={group.label}>
+                <h3 className="text-overline border-b border-border bg-muted px-5 py-2 text-muted-foreground">
+                  {group.label}
+                </h3>
+                <ul>
+                  {items.map((n) => (
+                    <NotificationRow key={n.id} n={n} onRead={markRead} />
+                  ))}
+                </ul>
+              </section>
+            )
+          })
+        )}
+      </section>
+    </div>
+  )
+}

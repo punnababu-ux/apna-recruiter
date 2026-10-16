@@ -214,6 +214,7 @@ before October 2026 it didn't, and dark warning text was about 1:1.
 |------------|----------------|-----------------------|-----------------------|
 | `--border` | gray-200       | alpha-white-10        | hairlines, separators |
 | `--input`  | gray-200       | alpha-white-15        | input outlines        |
+| `--border-strong` | gray-300 | alpha-white-20     | an outline that must hold on white — the selected chip in a chip row |
 | `--ring`   | gray-400       | gray-500              | focus indicator       |
 
 ### Sidebar

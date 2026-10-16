@@ -3,26 +3,53 @@
 /**
  * ApnaHireTopBar — sticky header chrome for the Apna Hire product shell.
  *
- * Layout (left → right):
- *   SidebarTrigger · ApnaHireBreadcrumb · [actions slot] · Avatar with profile popover
+ * Phones show no breadcrumb (native apps don't, and it repeated the page
+ * title and crowded Credits / the avatar as pages got deeper). The left of
+ * the bar is, like an app bar: the apna Hire brand on Jobs (the home tab),
+ * the section's name everywhere else ("Database", "Notifications"), and
+ * the system BackButton on a drill-down (a page below a section, e.g. one
+ * job). From md: the breadcrumb.
  *
- * Callers can inject extra `actions` before the avatar for page-specific
- * chrome (e.g. a search field or a notification bell).
+ * Layout (left → right):
+ *   SidebarTrigger · ApnaHireBreadcrumb · [actions slot] · Notifications (md+;
+ *   phones have the bottom bar's tab) · Available credits · Avatar with
+ *   profile popover
+ *
+ * Callers can inject extra `actions` before the balance for page-specific
+ * chrome (e.g. a search field or a notification bell). The balance is the
+ * same AvailableCreditsButton as the checkout and job-posting top bars, so
+ * it reads the same everywhere.
  */
 
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { toast } from "sonner"
 
-import { ApnaHireBreadcrumb } from "@/components/apnahire/breadcrumb"
+import { AvailableCreditsButton } from "@/components/apnahire/available-credits-button"
+import { NotificationsButton } from "@/components/apnahire/notifications/notifications-button"
+import { ApnaHireBreadcrumb, sectionTitle } from "@/components/apnahire/breadcrumb"
 import {
   Avatar,
   AvatarFallback,
+  BackButton,
   Button,
+  LogoApnaHire,
   Popover,
   PopoverContent,
   PopoverTrigger,
   SidebarTrigger,
 } from "@apna/design-system"
 import { cn } from "@/lib/utils"
+
+/** Sections whose pages sit one level deeper (/database/search-candidates):
+ *  those are section pages, not drill-downs. */
+const TWO_LEVEL_SECTIONS = ["database", "invite-centre"]
+
+/** A page below a section (/apnahire/jobs/123): phones show Back there. */
+function isDrillDown(pathname: string) {
+  const [, section, ...rest] = pathname.split("/").filter(Boolean)
+  return rest.length > (TWO_LEVEL_SECTIONS.includes(section ?? "") ? 1 : 0)
+}
 
 export function ApnaHireTopBar({
   actions,
@@ -33,10 +60,13 @@ export function ApnaHireTopBar({
   user?: { name: string; email: string; initial: string }
   className?: string
 }) {
+  const pathname = usePathname()
   return (
     <div
       className={cn(
-        "sticky top-0 z-10 flex h-16 items-center gap-1 border-b border-border bg-card px-3",
+        // 16px sides on phones (the page's gutter); 12px beside the
+        // sidebar trigger from md.
+        "sticky top-0 z-10 flex h-16 items-center gap-1 border-b border-border bg-card px-4 md:px-3",
         className
       )}
     >
@@ -45,10 +75,34 @@ export function ApnaHireTopBar({
       {/* Divider — only visible alongside the sidebar trigger */}
       <div className="mx-1 h-4 w-px bg-border hidden md:block" />
 
-      <ApnaHireBreadcrumb />
+      {/* Phones: Back on a drill-down (BackButton's rule: first in the
+          row), the brand on Jobs, the section's name elsewhere. */}
+      <div className="flex min-w-0 items-center md:hidden">
+        {isDrillDown(pathname) ? (
+          <BackButton />
+        ) : pathname.split("/").filter(Boolean)[1] !== "jobs" ? (
+          <span className="truncate font-heading text-lg font-semibold text-foreground">{sectionTitle(pathname)}</span>
+        ) : (
+          <Link href="/apnahire/dashboard" aria-label="apna Hire home" className="flex items-center">
+            <LogoApnaHire className="h-7" />
+          </Link>
+        )}
+      </div>
+
+      <div className="hidden md:flex">
+        <ApnaHireBreadcrumb />
+      </div>
 
       <div className="ml-auto flex items-center gap-2">
         {actions}
+
+        {/* The product shell is the one place the balance offers "View
+            plans"; the checkout pages are already showing plans. */}
+        <div className="hidden md:block">
+          <NotificationsButton />
+        </div>
+
+        <AvailableCreditsButton plansCta />
 
         {/* Profile Avatar → logout popover */}
         <Popover>

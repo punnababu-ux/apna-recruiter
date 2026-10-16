@@ -3,138 +3,120 @@
 /**
  * ApnaHireBottomNav — Mobile bottom navigation for the Apna Hire product shell.
  *
- * Shows 5 primary destinations at thumb reach.
- * A "More" tab opens a bottom Sheet for secondary items (Campus AI, Credits, Support).
+ *   Jobs · Database · ( Plans ) · Notifications · More
+ *
+ * Plans is the raised centre tile (BottomNav `featured`): the one promoted
+ * destination, so recruiters always see where to buy (with a subscription
+ * it manages the plan instead, as in the sidebar). Notifications carries
+ * the unread count and opens the notification centre page.
+ *
+ * A section with sub-pages (Database, Invite centre) opens its first page;
+ * the page's chips (SectionChips) move between the rest.
+ *
+ * More (three dots: it opens a grid of tiles) opens BottomNavMenu: a card of
+ * icon tiles just above the bar, which stays visible with More turned into
+ * an ✕. Flat destinations only:
+ * Invite centre, Reports, Campus AI, Credits & usage, Support, Settings.
  *
  * Hidden at md+ (768px) where the sidebar takes over.
  */
 
 import * as React from "react"
 import { usePathname } from "next/navigation"
-import { BarChart2, Briefcase, CreditCard, Database, HelpCircle, Mail, MoreHorizontal, Trophy } from "@apna/design-system"
-import Link from "next/link"
-
 import {
-  Badge,
+  BarChart2,
+  Bell,
   BottomNav,
+  BottomNavMenu,
+  Briefcase,
+  CreditCard,
+  Database,
+  HelpCircle,
+  IndianRupee,
+  Mail,
+  MoreHorizontal,
+  Settings,
+  Trophy,
+  X,
   type BottomNavItem,
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
+  type BottomNavMenuItem,
 } from "@apna/design-system"
-import { cn } from "@/lib/utils"
-
-/** Secondary items shown in the "More" bottom sheet. */
-const MORE_ITEMS = [
-  {
-    href: "/apnahire/campus-ai",
-    label: "Campus AI",
-    icon: Trophy,
-    badge: true,
-  },
-  {
-    href: "/apnahire/credits",
-    label: "Credits & Usage",
-    icon: CreditCard,
-  },
-  {
-    href: "/apnahire/support",
-    label: "Support",
-    icon: HelpCircle,
-  },
-] as const
+import { useActiveSubscription } from "@/hooks/use-active-subscription"
+import { useNotifications } from "@/hooks/apnahire/use-notifications"
 
 export function ApnaHireBottomNav() {
   const pathname = usePathname()
-  const [moreOpen, setMoreOpen] = React.useState(false)
+  const [menuOpen, setMenuOpen] = React.useState(false)
+  const subscribed = useActiveSubscription()
+  const { unreadCount } = useNotifications()
 
   /** True if the current route starts with the given prefix. */
   const isActive = (prefix: string) => pathname.startsWith(prefix)
+  /** A bar tab reads as current only while the More card is closed: when it
+   *  is open, More is the one selected tab. */
+  const tabActive = (prefix: string) => !menuOpen && isActive(prefix)
+
+  // Close the card when the route changes (e.g. browser back).
+  React.useEffect(() => setMenuOpen(false), [pathname])
+
+  const menuItems: BottomNavMenuItem[] = [
+    { href: "/apnahire/invite-centre/database-wa-invites", label: "Invite centre", icon: Mail },
+    { href: "/apnahire/reports", label: "Reports", icon: BarChart2 },
+    { href: "/apnahire/campus-ai", label: "Campus AI", icon: Trophy, dot: true },
+    { href: "/apnahire/usage", label: "Credits & usage", icon: CreditCard },
+    { href: "/apnahire/support", label: "Support", icon: HelpCircle },
+    { href: "/apnahire/settings", label: "Settings", icon: Settings },
+  ].map((item) => ({
+    ...item,
+    // Invite centre is a section: any of its pages counts.
+    active: isActive(item.href.startsWith("/apnahire/invite-centre") ? "/apnahire/invite-centre" : item.href),
+  }))
 
   const items: BottomNavItem[] = [
     {
       href: "/apnahire/jobs",
       label: "Jobs",
       icon: Briefcase,
-      active: isActive("/apnahire/jobs"),
+      active: tabActive("/apnahire/jobs"),
     },
     {
       href: "/apnahire/database/search-candidates",
       label: "Database",
       icon: Database,
-      active: isActive("/apnahire/database"),
+      active: tabActive("/apnahire/database"),
     },
     {
-      href: "/apnahire/invite-centre/database-wa-invites",
-      label: "Invite",
-      icon: Mail,
-      active: isActive("/apnahire/invite-centre"),
+      href: subscribed ? "/apnahire/credits" : "/pricing",
+      label: "Plans",
+      icon: IndianRupee,
+      featured: true,
     },
     {
-      href: "/apnahire/reports",
-      label: "Reports",
-      icon: BarChart2,
-      active: isActive("/apnahire/reports"),
+      href: "/apnahire/notifications",
+      label: "Notifications",
+      icon: Bell,
+      active: tabActive("/apnahire/notifications"),
+      badge: unreadCount ? (
+        <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-2xs leading-none font-semibold text-destructive-foreground">
+          {unreadCount}
+          <span className="sr-only"> unread</span>
+        </span>
+      ) : undefined,
     },
     {
+      // Toggles the card; reads as the current tab while it's open, or when
+      // one of its pages is the current page.
       label: "More",
-      icon: MoreHorizontal,
-      onClick: () => setMoreOpen(true),
+      icon: menuOpen ? X : MoreHorizontal,
+      active: menuOpen || (!menuOpen && menuItems.some((item) => item.active)),
+      onClick: () => setMenuOpen((open) => !open),
     },
   ]
 
   return (
     <>
+      <BottomNavMenu open={menuOpen} onOpenChange={setMenuOpen} items={menuItems} label="More" clearFeatured />
       <BottomNav items={items} />
-
-      {/* Secondary-items sheet */}
-      <Sheet open={moreOpen} onOpenChange={setMoreOpen}>
-        <SheetContent side="bottom" className="rounded-t-xl pb-8">
-          <SheetHeader className="px-1">
-            <SheetTitle className="text-left text-sm font-semibold text-foreground">
-              More
-            </SheetTitle>
-          </SheetHeader>
-
-          <nav className="mt-3 flex flex-col gap-1">
-            {MORE_ITEMS.map((item) => {
-              const Icon = item.icon
-              const active = isActive(item.href)
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setMoreOpen(false)}
-                  className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-colors",
-                    active
-                      ? "bg-primary/10 text-primary"
-                      : "text-foreground hover:bg-muted"
-                  )}
-                >
-                  <Icon
-                    className={cn(
-                      "size-5 shrink-0",
-                      active ? "text-primary" : "text-muted-foreground"
-                    )}
-                    aria-hidden
-                  />
-                  {item.label}
-                  {"badge" in item && item.badge && (
-                    <Badge
-                      variant="info"
-                      className="ml-auto px-1.5 py-0 text-2xs"
-                    >
-                      New
-                    </Badge>
-                  )}
-                </Link>
-              )
-            })}
-          </nav>
-        </SheetContent>
-      </Sheet>
     </>
   )
 }

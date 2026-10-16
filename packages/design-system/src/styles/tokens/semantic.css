@@ -121,6 +121,9 @@
    * ------------------------------------------------------------------------ */
   --border:  var(--color-gray-200);
   --input:   var(--color-gray-200); /* mirrors --border by default            */
+  /* A step stronger than --border: an outline that must hold on white
+   * (the selected white chip in a chip row sitting on a white card). */
+  --border-strong: var(--color-gray-300);
   --ring:    var(--color-apna-green-500); /* brand focus ring                 */
 
   /* --------------------------------------------------------------------------
@@ -621,6 +624,7 @@
   /* Lines — translucent on dark for softer hairlines */
   --border: var(--color-alpha-white-10);
   --input:  var(--color-alpha-white-15);
+  --border-strong: var(--color-alpha-white-20);
   --ring:   var(--color-apna-green-400);
 
   /* Sidebar — card 1 / card 2 on the same elevation ladder as above. */

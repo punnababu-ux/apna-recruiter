@@ -6,6 +6,8 @@ import { Briefcase, CreditCard, Database, HelpCircle, IndianRupee, Mail, BarChar
 import {
   ReusableSidebar,
   ApnaLogo,
+  LogoApnaHire,
+  LogoApnaWordmark,
   type SidebarWorkspace,
   type SidebarNavItem,
 } from "@apna/design-system"
@@ -62,7 +64,9 @@ const NAV: SidebarNavItem[] = [
     badge: <Badge variant="info" className="ml-auto text-2xs px-1.5 py-0">New</Badge>,
   },
   {
-    href: "/apnahire/credits",
+    // Usage, invoices and credit history (not built yet), never checkout:
+    // only "View plans" / "Manage plans" below lead to buying.
+    href: "/apnahire/usage",
     label: "Credits & Usage",
     icon: CreditCard,
   },
@@ -107,6 +111,11 @@ export function ApnaHireSidebar({
       brand={{
         name: "Hire",
         logo: <ApnaLogo className="size-10! shrink-0" />,
+        // The apna Hire wordmark expanded, "apna" alone collapsed. `!`
+        // because the sidebar's menu button sizes every svg to 20px.
+        wordmark: <LogoApnaHire className="h-6! w-auto!" />,
+        // 40px: the collapsed rail's tile width, its widest.
+        collapsedLogo: <LogoApnaWordmark className="h-auto! w-10!" />,
         href: "/apnahire/dashboard",
       }}
       workspaces={WORKSPACES}
