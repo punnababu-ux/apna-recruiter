@@ -87,7 +87,7 @@ export function SlotsFullDialog({
             </div>
             <p className="text-xs text-surface-inverted-fg/60 italic">*Prorated discount applicable</p>
           </div>
-          <Button variant="checkout" size="lg" className="shrink-0" trailingIcon={<ArrowRight />} onClick={onUpgrade}>
+          <Button variant="emphasis" size="lg" className="shrink-0" trailingIcon={<ArrowRight />} onClick={onUpgrade}>
             Upgrade now
           </Button>
         </div>
@@ -121,7 +121,7 @@ export function SlotsFullDialog({
             </RadioCard>
           ))}
         </RadioCardGroup>
-        <Button variant="outline" size="lg" className="mt-1 w-full" disabled={!picked} onClick={() => picked && onExpireAndPost(picked)}>
+        <Button variant="checkout" size="lg" className="mt-1 w-full" disabled={!picked} onClick={() => picked && onExpireAndPost(picked)}>
           Expire &amp; post
         </Button>
       </div>
