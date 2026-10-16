@@ -24,6 +24,7 @@
  * it reads the same everywhere.
  */
 
+import * as React from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 
@@ -37,11 +38,13 @@ import {
   AvatarFallback,
   BackButton,
   Button,
+  ChevronRight,
   LogoApnaHire,
   Popover,
   PopoverContent,
   PopoverTrigger,
   SidebarTrigger,
+  UserRound,
 } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 
@@ -59,6 +62,7 @@ export function ApnaHireTopBar({
   // Called for its in-app history tracking (drill-downs read it).
   useAppBack()
   const router = useRouter()
+  const [profileOpen, setProfileOpen] = React.useState(false)
   const session = useSession()
   const signedInAs = session?.kind === "phone" ? `+91 ${session.phone}` : session?.email
   const fullScreen = isFullScreenPage(pathname)
@@ -116,7 +120,7 @@ export function ApnaHireTopBar({
         <AvailableCreditsButton plansCta />
 
         {/* Profile Avatar → logout popover */}
-        <Popover>
+        <Popover open={profileOpen} onOpenChange={setProfileOpen}>
           <PopoverTrigger
             render={
               <button className="rounded-full ring-offset-background transition-interactive hover:ring-2 hover:ring-ring/40 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 shrink-0">
@@ -135,6 +139,19 @@ export function ApnaHireTopBar({
                 {/* Who is signed in: the number or the enterprise email. */}
                 <span className="text-xs text-muted-foreground">{signedInAs ?? user.email}</span>
               </div>
+              {/* Goes to a page, so it reads as a row with a chevron, not a button. */}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="-mx-2 w-auto justify-start gap-2"
+                nativeButton={false}
+                render={<Link href="/apnahire/profile" />}
+                onClick={() => setProfileOpen(false)}
+              >
+                <UserRound aria-hidden />
+                Profile
+                <ChevronRight className="ml-auto text-muted-foreground" aria-hidden />
+              </Button>
               <Button
                 variant="destructive"
                 size="sm"

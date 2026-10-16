@@ -28,6 +28,7 @@ export const FULL_SCREEN_PREFIXES = [
   "/apnahire/usage",
   "/apnahire/support",
   "/apnahire/settings",
+  "/apnahire/profile",
 ]
 
 export const isFullScreenPage = (pathname: string) =>
