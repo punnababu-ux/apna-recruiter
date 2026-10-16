@@ -534,6 +534,20 @@
   }
 }
 
+/* A surface changing shape (the marketing header's pill ↔ docked bar):
+ * size, corners, padding and its paint ease together. Never
+ * transition-all; these are the properties that move. */
+@utility transition-shape {
+  transition-property: max-width, height, padding, border-radius, border-color,
+    background-color, box-shadow;
+  transition-duration: var(--duration-enter);
+  transition-timing-function: var(--ease-out-ui);
+
+  @media (prefers-reduced-motion: reduce) {
+    transition-duration: 0ms;
+  }
+}
+
 @utility transition-interactive {
   transition-property: color, background-color, border-color, outline-color,
     text-decoration-color, fill, stroke, box-shadow, opacity, scale, translate,

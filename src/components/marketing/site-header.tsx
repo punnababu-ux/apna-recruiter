@@ -22,9 +22,10 @@
  *    Prep Lounge prototype uses exactly that, so it's needed on day one
  *    rather than retrofitted.
  *
- * A floating glass pill (2026-10-16): frosted white, 16px from the top and
- * the page's content width, a touch more solid once the page scrolls under
- * it. Search is an icon that turns the whole pill into one large field,
+ * A floating glass pill at rest (2026-10-16): frosted white, 16px from the
+ * top and the page's content width. Once the page scrolls, it stretches into
+ * a full-width bar docked to the top (content stays at the page width), and
+ * a page's sub-nav (the pricing tabs) docks flush under it as a strip. Search is an icon that turns the whole pill into one large field,
  * Spotlight-style, over a dimmed page; the
  * right side is just Login (support gets its own floating button,
  * not a "Contact us" here).
@@ -219,16 +220,23 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
     cn(
       "ink relative inline-flex items-center gap-1 self-stretch px-2.5 py-1.5 text-sm font-semibold whitespace-nowrap transition-interactive",
       "rounded-full",
-      current ? "bg-primary/10 text-primary" : "text-foreground hover:bg-foreground/5"
+      // Current section: green text only. A filled pill here stacked over
+      // the page's own selected tab (the pricing tabs) — two "you are here"
+      // pills one above the other.
+      current ? "text-primary hover:bg-foreground/5" : "text-foreground hover:bg-foreground/5"
     )
 
+  // At rest a floating glass pill; once the page scrolls, the pill
+  // stretches into a full-width bar docked to the top (the page's own
+  // sub-nav — the pricing tabs — then docks flush under it, as a strip).
+  // 72px either way (16px + the 56px pill, or the 72px bar), so nothing
+  // under it jumps; the hero backdrop (-top-18) and the pricing page's scroll
+  // trigger (self-checkout.tsx rootMargin) are measured against it.
+  const docked = isScrolled
+
   return (
-    // A floating glass pill (16px from the top, the page's content width),
-    // not an edge-to-edge bar. 16px + the 56px pill = a 72px header — the
-    // hero backdrop (-top-18) and the pricing page's scroll trigger
-    // (self-checkout.tsx rootMargin) are measured against it.
     <header
-      className="sticky top-0 z-sticky px-3 pt-4 sm:px-6"
+      className={cn("sticky top-0 z-sticky transition-shape", docked ? "px-0 pt-0" : "px-3 pt-4 sm:px-6")}
       onKeyDown={(e) => {
         if (e.key === "Escape") {
           setOpenPanel(null)
@@ -244,13 +252,22 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
           // end, so from xl — where the filled Login is the last thing in
           // the bar — the right gets 12px (1px + pr-2.75), an optical
           // correction. Below xl the last item is the ghost menu icon.
-          "relative mx-auto flex h-14 w-full max-w-band items-center justify-between gap-4 rounded-full border pr-2.25 pl-2 backdrop-blur-xl transition-interactive duration-enter xl:pr-2.75",
-          // Frosted at rest; a touch more solid once the page scrolls under it.
-          isScrolled || openPanel || mobileOpen || searchOpen
-            ? "border-border bg-card/85 shadow-popover"
-            : "border-card/60 bg-card/60 shadow-card"
+          "relative mx-auto w-full border backdrop-blur-xl transition-shape",
+          docked
+            ? // The docked bar: edge to edge, square, page gutters.
+              "h-18 max-w-full rounded-none border-x-0 border-t-0 border-border bg-card/95 px-4 shadow-card sm:px-8 lg:px-12"
+            : cn(
+                "h-14 max-w-band rounded-full pr-2.25 pl-2 xl:pr-2.75",
+                // Frosted at rest; more solid while a menu or search is open.
+                openPanel || mobileOpen || searchOpen
+                  ? "border-border bg-card/85 shadow-popover"
+                  : "border-card/60 bg-card/60 shadow-card"
+              )
         )}
       >
+        {/* The content keeps the page's width in both states, so the items
+            don't fly out to the screen edges when the bar docks. */}
+        <div className="mx-auto flex h-full w-full max-w-band items-center justify-between gap-4">
         {searchOpen ? (
           // Spotlight: the whole pill becomes one large search field — logo,
           // menus and Login step aside until it closes.
@@ -393,6 +410,7 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
           </div>
           </>
         )}
+        </div>
       </div>
 
       {/* Spotlight dims the page behind it; a click there closes it. */}
@@ -462,13 +480,16 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
         </Sheet>
       )}
 
-      {/* ── Sub-nav slot ── published by the page via useHeaderSlot; kept
-           mounted once published so it can slide rather than pop. */}
+      {/* ── Sub-nav slot ── published by the page via useHeaderSlot (the
+           pricing page's compact plan tabs): a strip docked flush under the
+           bar — it only shows once the page has scrolled, by which time the
+           pill has become the full-width bar. Kept mounted once published so
+           it can slide rather than pop. */}
       {slot && (
         <div
           inert={!slot.showSubNav}
           className={cn(
-            "absolute inset-x-0 top-full -z-10 hidden h-16 items-center justify-center bg-card px-4 shadow-card transition-interactive duration-enter ease-out-ui md:flex",
+            "absolute inset-x-0 top-full -z-10 hidden h-16 items-center justify-center border-b border-border bg-card/95 px-4 shadow-card backdrop-blur-xl transition-interactive duration-enter ease-out-ui md:flex",
             slot.showSubNav
               ? "translate-y-0 opacity-100"
               : "pointer-events-none -translate-y-full opacity-0"
