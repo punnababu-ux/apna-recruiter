@@ -20,7 +20,6 @@ export const LOOKING_FOR_A_JOB_LINK = { label: "Looking for a job?", href: "http
 
 export const PHONE_LOGIN = {
   title: "Let’s get started",
-  subtitle: "Hire top talent faster with apna",
   label: "Mobile number",
   placeholder: "Enter your mobile number",
   /** "Continue" on the homepage card, "Send OTP" on the sign-in page. */

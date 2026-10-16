@@ -88,12 +88,15 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         <div className="relative my-auto flex max-w-md flex-col gap-6 py-10">
           <h1 className="text-h1 text-foreground">{AUTH_PANEL.headline}</h1>
           <p className="text-base text-foreground">{AUTH_PANEL.description}</p>
-          <Separator />
+          {/* foreground at low alpha: the default border colour vanished on
+              the hero gradient. */}
+          <Separator className="bg-foreground/15" />
           <dl className="grid grid-cols-3 gap-6">
             {AUTH_PANEL.stats.map((s) => (
               <div key={s.label} className="flex flex-col gap-1">
                 <dt className="order-2 text-sm text-muted-foreground">{s.label}</dt>
-                <dd className="order-1 text-h3 text-primary">{s.value}</dd>
+                {/* Dark, like the homepage hero's stats (not green). */}
+                <dd className="order-1 font-heading text-h3 font-semibold text-foreground">{s.value}</dd>
               </div>
             ))}
           </dl>

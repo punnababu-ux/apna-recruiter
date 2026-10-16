@@ -28,9 +28,6 @@ export interface PhoneLoginFormProps {
   ctaLabel?: string
   /** Where to go once signed in (passed through the login steps). */
   next?: string
-  /** "Hire top talent faster with apna" under the title — the login page
-   *  keeps it; the homepage card drops it (the hero already says it). */
-  showSubtitle?: boolean
   /** Prefill, e.g. when coming back from the OTP step to change the number. */
   defaultPhone?: string
   onContinue?: (phone: string) => void
@@ -44,7 +41,6 @@ export const withNext = (path: string, next?: string | null, extra?: Record<stri
 
 export function PhoneLoginForm({
   ctaLabel = PHONE_LOGIN.cta,
-  showSubtitle = true,
   next,
   defaultPhone = "",
   onContinue,
@@ -58,10 +54,7 @@ export function PhoneLoginForm({
 
   return (
     <>
-      <div className="flex flex-col gap-1">
-        <h2 className="text-h3 font-bold text-foreground">{PHONE_LOGIN.title}</h2>
-        {showSubtitle && <p className="text-base text-muted-foreground">{PHONE_LOGIN.subtitle}</p>}
-      </div>
+      <h2 className="text-h3 font-bold text-foreground">{PHONE_LOGIN.title}</h2>
 
       <form
         className="flex flex-col gap-6"
@@ -120,7 +113,7 @@ export function HeroLeadCard({ className, ...props }: PhoneLoginFormProps & { cl
     // rounded-3xl (19.5px), like the homepage's product cards: the default
     // card corner (10px) read tight on a card this size.
     <Card padding="lg" className={cn("flex w-full max-w-md flex-col gap-6 rounded-3xl", className)}>
-      <PhoneLoginForm ctaLabel="Continue" showSubtitle={false} {...props} />
+      <PhoneLoginForm ctaLabel="Continue" {...props} />
       <LegalLine className="text-xs" />
     </Card>
   )
