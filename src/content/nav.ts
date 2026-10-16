@@ -13,7 +13,7 @@
  * user calls, 2026-10-16), then our own "Looking
  * for a job?" link (kept on purpose). Its own header actions
  * ("Sign Up" menu, "Get In Touch") are NOT taken: the right side stays
- * Contact us + Login/Sign up (`HEADER_ACTIONS`).
+ * Login (`HEADER_ACTIONS`).
  *
  * Hrefs: where the prototype linked somewhere real (apna.co candidate tools,
  * the help centre, the career-central blogs) the same URL is used. Every
@@ -189,5 +189,7 @@ export const LOOKING_FOR_A_JOB: NavLink = {
 export const HEADER_ACTIONS = {
   secondary: { label: "Contact us", href: "/contact-us" } satisfies NavLink,
   // The live site's header login entry (employer.apna.co).
-  primary: { label: "Login/Sign up", href: "/login" } satisfies NavLink,
+  // "Login" alone (user call, 2026-10-16) — the same /login flow signs new
+  // recruiters up too.
+  primary: { label: "Login", href: "/login" } satisfies NavLink,
 }

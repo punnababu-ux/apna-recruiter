@@ -25,7 +25,7 @@
  * A floating glass pill (2026-10-16): frosted white, 8px from the top and
  * the page's content width, a touch more solid once the page scrolls under
  * it. Search is an icon that opens the field over the end of the nav; the
- * right side is just Login/Sign up (support gets its own floating button,
+ * right side is just Login (support gets its own floating button,
  * not a "Contact us" here).
  */
 
