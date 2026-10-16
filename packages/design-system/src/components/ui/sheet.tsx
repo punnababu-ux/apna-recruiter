@@ -195,7 +195,7 @@ function SheetPanelHeader({
     <div data-slot="sheet-panel-header" className={cn("flex items-center justify-between gap-3 px-4 sm:px-5", className)}>
       <div className="flex min-w-0 items-center gap-3">
         <SheetClose render={<BackButton className="sm:hidden" />} />
-        <SheetTitle className="font-heading text-xl font-semibold text-foreground">{title}</SheetTitle>
+        <SheetTitle className="text-h4 text-foreground">{title}</SheetTitle>
       </div>
       <div className="flex shrink-0 items-center gap-2">
         {action}

@@ -16,7 +16,7 @@
  */
 
 import * as React from "react"
-import { BadgePercent, Button, ClockFading } from "@apna/design-system"
+import { Badge, BadgePercent, Button, ClockFading } from "@apna/design-system"
 import { EXTRA_OFF } from "@/content/offers"
 import { cn } from "@/lib/utils"
 
@@ -66,16 +66,9 @@ function OptionTile({
       )}
     >
       {option.badge && (
-        <span
-          className={cn(
-            "absolute top-0 right-0 rounded-bl-xl px-2.5 py-0.5 text-xs font-bold",
-            upgrade
-              ? "bg-checkout-primary text-checkout-primary-foreground"
-              : "bg-muted text-success"
-          )}
-        >
+        <Badge variant={upgrade ? "default" : "discount"} size="ribbon" className="absolute top-0 right-0">
           {option.badge}
-        </span>
+        </Badge>
       )}
 
       <div className="flex flex-col gap-2">

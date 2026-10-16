@@ -6,12 +6,9 @@ import { toast } from "sonner"
 import { AlertCircle, Info, CreditCard, ChevronRight, RefreshCw, Sparkles, InfinityIcon, ArrowUp, Clock } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 
-// A translucent overlay rather than an opaque chip — `bg-foreground/15` reads
-// as "black at ~15% opacity" in light mode and "white at ~15% opacity" in
-// dark mode (foreground flips with theme), so the pill softly darkens a
-// light tint card or lightens a dark one instead of sitting on top of it as
-// a stark white/black block. `bg-white/15` is used on the primary (solid
-// gradient) appearance instead, matching the gradient's own fixed white text.
+// Badge's translucent tones: `on-tint` softly darkens a light tint card (and
+// lightens a dark one, as foreground flips), `on-dark` lightens a solid or
+// gradient surface, instead of either sitting on it as an opaque block.
 function DiscountBadge({
   appearance,
   children = "22% OFF",
@@ -20,11 +17,11 @@ function DiscountBadge({
   children?: React.ReactNode
 }) {
   return appearance === "primary" ? (
-    <Badge variant="outline" className="border-transparent bg-white/15 text-white">
+    <Badge variant="on-dark">
       {children}
     </Badge>
   ) : (
-    <Badge variant="outline" className="border-transparent bg-foreground/15 text-foreground">
+    <Badge variant="on-tint">
       {children}
     </Badge>
   )
@@ -39,11 +36,11 @@ function RibbonBadge({
   children: React.ReactNode
 }) {
   return appearance === "primary" ? (
-    <Badge size="ribbon" variant="outline" className="border-transparent bg-white/10 text-white">
+    <Badge size="ribbon" variant="on-dark">
       {children}
     </Badge>
   ) : (
-    <Badge size="ribbon" variant="outline" className="border-transparent bg-foreground/10 text-foreground">
+    <Badge size="ribbon" variant="on-tint">
       {children}
     </Badge>
   )

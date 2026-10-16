@@ -152,7 +152,7 @@ export default function HomePage() {
                   </div>
                   <CardContent className="flex flex-col gap-3 p-6">
                     <div className="flex flex-col gap-1.5">
-                      <h3 className="text-base font-heading font-semibold text-foreground">
+                      <h3 className="text-h6 text-foreground">
                         {item.name}
                       </h3>
                       <p className="text-sm text-muted-foreground">{item.tagline}</p>

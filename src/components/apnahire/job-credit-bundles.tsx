@@ -123,7 +123,7 @@ export function JobCreditBundles({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Briefcase className="size-4 text-checkout-hero-fg" aria-hidden />
-            <h2 className="font-heading text-base font-semibold text-checkout-hero-fg">
+            <h2 className="text-h6 text-checkout-hero-fg">
               Job credits
             </h2>
           </div>
@@ -181,7 +181,7 @@ export function JobCreditBundles({
       <div className="hidden md:flex md:flex-1 md:flex-col md:gap-5">
         <div className="flex min-h-12 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-1">
           <div className="flex min-w-0 flex-col gap-1">
-            <h2 className="font-heading text-xl font-semibold leading-6 text-checkout-hero-fg">
+            <h2 className="text-h4 leading-6 text-checkout-hero-fg">
               Job credits
             </h2>
             <p className="text-sm text-checkout-hero-fg-muted">

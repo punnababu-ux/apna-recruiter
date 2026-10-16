@@ -37,6 +37,12 @@ const badgeVariants = cva(
          * "count") or a bare dot (size "dot"). Ring it in the surface it sits
          * on (`ring-2 ring-card`) so it cuts out of the icon. */
         count: "bg-destructive font-semibold text-destructive-foreground",
+        /* Translucent pills that tint the surface under them instead of
+         * sitting on it as a block: `on-dark` lightens a dark/gradient
+         * surface (offer headers, solid banners), `on-tint` darkens a light
+         * tinted one (and lightens it in dark mode, as foreground flips). */
+        "on-dark": "bg-surface-inverted-fg/15 font-semibold text-surface-inverted-fg",
+        "on-tint": "bg-foreground/15 font-semibold text-foreground",
       },
       size: {
         default: "h-5 px-2 py-0.5 text-xs",

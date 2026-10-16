@@ -62,8 +62,8 @@ import {
   Button,
   ChipTabs,
   Input,
-  RadioGroup,
-  RadioGroupItem,
+  OptionCard,
+  OptionCardGroup,
   Separator,
   Sheet,
   SheetPanel,
@@ -860,29 +860,18 @@ export function CheckoutDrawer({
                 <legend className="pb-2 text-sm font-semibold text-foreground">
                   Select payment method
                 </legend>
-                <RadioGroup
-                  value={paymentMethod}
-                  onValueChange={(v) => setPaymentMethod(v as SubscriptionPaymentMethod)}
-                  className="flex gap-3"
-                >
+                <OptionCardGroup columns={2} aria-label="Payment method">
                   {SUBSCRIPTION_PAYMENT_METHODS.map(({ value, label, icon: Icon }) => (
-                    <label
+                    <OptionCard
                       key={value}
-                      className={cn(
-                        "flex flex-1 cursor-pointer items-center gap-2 rounded-xl border p-3 transition-colors",
-                        paymentMethod === value
-                          ? "border-checkout-primary bg-muted"
-                          : "border-border hover:bg-muted/50"
-                      )}
-                    >
-                      <Icon className="size-6 shrink-0 text-foreground" aria-hidden />
-                      <span className="flex-1 text-sm font-medium text-foreground">
-                        {label}
-                      </span>
-                      <RadioGroupItem value={value} />
-                    </label>
+                      className="items-center p-3"
+                      icon={<Icon aria-hidden />}
+                      title={label}
+                      selected={paymentMethod === value}
+                      onSelect={() => setPaymentMethod(value)}
+                    />
                   ))}
-                </RadioGroup>
+                </OptionCardGroup>
               </fieldset>
 
               <Button

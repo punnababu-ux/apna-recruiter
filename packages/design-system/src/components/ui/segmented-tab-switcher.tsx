@@ -85,23 +85,52 @@ export interface SegmentedTabSwitcherProps<V extends string = string> {
    *  can cause horizontal page scroll. */
   mobileBleedClassName?: string
   mobileGutterClassName?: string
+  /** Colour preset. `checkout` is self-checkout's look (grey track, ringed
+   *  white pill, green active label, fixed across themes), used by the plans
+   *  hero and every phone chip row (MobileChipRow). Prefer it to passing the
+   *  colour props one by one; they still override it. */
+  appearance?: "default" | "checkout"
   className?: string
 }
+
+const APPEARANCES = {
+  default: {
+    track: undefined,
+    active: "text-primary",
+    inactive: "text-muted-foreground",
+    muted: "text-muted-foreground",
+    activeItem: "bg-card shadow-sm",
+  },
+  checkout: {
+    track: "bg-checkout-track",
+    active: "text-checkout-primary",
+    inactive: "text-checkout-hero-fg-secondary",
+    muted: "text-checkout-hero-fg-secondary",
+    activeItem: "bg-card inset-ring-1 inset-ring-border-strong shadow-none",
+  },
+} as const
 
 export function SegmentedTabSwitcher<V extends string = string>({
   items,
   value,
   onValueChange,
-  trackClassName,
-  activeClassName = "text-primary",
+  appearance = "default",
+  trackClassName: trackProp,
+  activeClassName: activeProp,
   mobileActiveClassName,
-  inactiveClassName = "text-muted-foreground",
-  mutedClassName = "text-muted-foreground",
-  activeItemClassName = "bg-card shadow-sm",
+  inactiveClassName: inactiveProp,
+  mutedClassName: mutedProp,
+  activeItemClassName: activeItemProp,
   mobileBleedClassName = "-mx-4 sm:-mx-10",
   mobileGutterClassName = "px-4 sm:px-10",
   className,
 }: SegmentedTabSwitcherProps<V>) {
+  const preset = APPEARANCES[appearance]
+  const trackClassName = trackProp ?? preset.track
+  const activeClassName = activeProp ?? preset.active
+  const inactiveClassName = inactiveProp ?? preset.inactive
+  const mutedClassName = mutedProp ?? preset.muted
+  const activeItemClassName = activeItemProp ?? preset.activeItem
   // One pill per layout that glides to the active item, rather than each
   // item painting its own active background (which read as a cross-fade).
   const { containerRef: desktopTrackRef, indicatorRef: desktopPillRef } = useSlidingIndicator(value)

@@ -59,7 +59,7 @@ export default function MarketingComponentsPage() {
       {/* ── Section ─────────────────────────────────────────────────────── */}
       <div className="overflow-hidden rounded-xl border border-border bg-card">
         <div className="border-b border-border/60 bg-muted/30 p-4 sm:p-6">
-          <h2 className="font-heading text-base font-semibold text-foreground">
+          <h2 className="text-h6 text-foreground">
             Section — tones
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -88,7 +88,7 @@ export default function MarketingComponentsPage() {
       {/* ── SectionHeading ──────────────────────────────────────────────── */}
       <div className="overflow-hidden rounded-xl border border-border bg-card">
         <div className="border-b border-border/60 bg-muted/30 p-4 sm:p-6">
-          <h2 className="font-heading text-base font-semibold text-foreground">
+          <h2 className="text-h6 text-foreground">
             SectionHeading
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -147,7 +147,7 @@ export default function MarketingComponentsPage() {
       {/* ── Card ────────────────────────────────────────────────────────── */}
       <div className="overflow-hidden rounded-xl border border-border bg-card">
         <div className="border-b border-border/60 bg-muted/30 p-4 sm:p-6">
-          <h2 className="font-heading text-base font-semibold text-foreground">
+          <h2 className="text-h6 text-foreground">
             Card — tones
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -180,7 +180,7 @@ export default function MarketingComponentsPage() {
       {/* ── LogoWall + MetricCard variant="stat" ───────────────────────── */}
       <div className="overflow-hidden rounded-xl border border-border bg-card">
         <div className="border-b border-border/60 bg-muted/30 p-4 sm:p-6">
-          <h2 className="font-heading text-base font-semibold text-foreground">
+          <h2 className="text-h6 text-foreground">
             LogoWall &amp; MetricCard variant=&quot;stat&quot;
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -204,7 +204,7 @@ export default function MarketingComponentsPage() {
       {/* ── Type presets ────────────────────────────────────────────────── */}
       <div className="overflow-hidden rounded-xl border border-border bg-card">
         <div className="border-b border-border/60 bg-muted/30 p-4 sm:p-6">
-          <h2 className="font-heading text-base font-semibold text-foreground">
+          <h2 className="text-h6 text-foreground">
             Marketing type presets
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">

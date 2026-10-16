@@ -86,10 +86,10 @@ export function ApnaHireTopBar({
             {/* A More page's Back goes home to Jobs, not through its
                 section's chips or wherever More was opened from. */}
             <BackButton onClick={() => router.push(HOME)} />
-            <span className="truncate font-heading text-lg font-semibold text-foreground">{sectionTitle(pathname)}</span>
+            <span className="truncate text-h5 text-foreground">{sectionTitle(pathname)}</span>
           </span>
         ) : pathname.split("/").filter(Boolean)[1] !== "jobs" ? (
-          <span className="truncate font-heading text-lg font-semibold text-foreground">{sectionTitle(pathname)}</span>
+          <span className="truncate text-h5 text-foreground">{sectionTitle(pathname)}</span>
         ) : (
           <Link href="/apnahire/dashboard" aria-label="apna Hire home" className="flex items-center">
             {/* 24px: the wordmark's native size, as in the expanded sidebar. */}

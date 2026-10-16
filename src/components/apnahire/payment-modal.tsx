@@ -11,16 +11,16 @@
 import * as React from "react"
 import { Lock } from "@apna/design-system"
 import {
+  Badge,
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   Button,
-  RadioGroup,
-  RadioGroupItem,
+  OptionCard,
+  OptionCardGroup,
   Separator,
 } from "@apna/design-system"
-import { cn } from "@/lib/utils"
 
 export type PaymentMethod = "upi" | "card" | "netbanking"
 
@@ -106,41 +106,31 @@ export function PaymentModal({
             <span className="text-2xs text-muted-foreground">Recurring mandate</span>
           </div>
         ) : (
-        <RadioGroup value={method} onValueChange={(v) => setMethod(v as PaymentMethod)} className="gap-2">
+        <OptionCardGroup aria-label="Payment method" className="gap-2">
           {[
             { id: "upi" as const, label: "UPI / QR", tag: "Instant", tagVariant: "success" as const, sub: "Google Pay, PhonePe, Paytm, BHIM" },
             { id: "card" as const, label: "Credit / Debit Card", sub: "Visa, Mastercard, RuPay" },
             { id: "netbanking" as const, label: "Netbanking", tag: "Simulates failure", tagVariant: "destructive" as const, sub: "HDFC, ICICI, SBI, Axis Bank" },
           ].map((option) => (
-            <label
+            <OptionCard
               key={option.id}
-              className={cn(
-                "flex cursor-pointer items-center gap-3 rounded-lg border p-3 transition-colors",
-                method === option.id ? "border-primary bg-accent" : "border-border hover:bg-muted/50"
-              )}
-            >
-              <RadioGroupItem value={option.id} />
-              <div className="flex-1">
-                <span className="flex items-center gap-2 text-sm font-medium text-foreground">
+              className="p-3"
+              title={
+                <span className="flex items-center gap-2">
                   {option.label}
                   {option.tag && (
-                    <span
-                      className={cn(
-                        "rounded-full px-2 py-0.5 text-2xs font-semibold",
-                        option.tagVariant === "destructive"
-                          ? "bg-destructive-subtle text-destructive-subtle-foreground"
-                          : "bg-success-subtle text-success-subtle-foreground"
-                      )}
-                    >
+                    <Badge variant={option.tagVariant} size="sm">
                       {option.tag}
-                    </span>
+                    </Badge>
                   )}
                 </span>
-                <p className="text-2xs text-muted-foreground">{option.sub}</p>
-              </div>
-            </label>
+              }
+              description={option.sub}
+              selected={method === option.id}
+              onSelect={() => setMethod(option.id)}
+            />
           ))}
-        </RadioGroup>
+        </OptionCardGroup>
         )}
 
         <div className="mt-2 flex flex-col gap-2">

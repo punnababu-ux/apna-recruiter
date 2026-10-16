@@ -43,7 +43,7 @@ export default function SidebarSpecsPage() {
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <Monitor className="size-5 text-primary" />
-              <h2 className="text-xl font-heading font-semibold text-foreground">
+              <h2 className="text-h4 text-foreground">
                 Desktop Layout States
               </h2>
             </div>
@@ -169,7 +169,7 @@ export default function SidebarSpecsPage() {
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <Smartphone className="size-5 text-primary" />
-              <h2 className="text-xl font-heading font-semibold text-foreground">
+              <h2 className="text-h4 text-foreground">
                 Mobile Layout & Drawer Overlay
               </h2>
             </div>

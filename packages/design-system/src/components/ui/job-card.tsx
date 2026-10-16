@@ -51,7 +51,7 @@ export function JobCard({
             )}
           </div>
           <div className="space-y-1 text-left">
-            <h3 className="font-heading text-lg font-semibold leading-tight text-foreground line-clamp-1">
+            <h3 className="text-h5 leading-tight text-foreground line-clamp-1">
               {title}
             </h3>
             <p className="text-sm font-medium text-muted-foreground">{company}</p>

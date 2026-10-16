@@ -2,10 +2,9 @@
 
 /**
  * MobileChipRow — the phone chip row (< md): SegmentedTabSwitcher's mobile
- * layout styled exactly as self-checkout's (grey track fill, a green label
- * on the selected chip; the same classes as pricing-hero.tsx). The selected
- * chip's white pill and its --border-strong ring come from the component,
- * so it holds on white and grey surfaces alike. One component so the jobs page and every section's
+ * layout in its `checkout` appearance, the plans hero's own look (grey
+ * track, ringed white pill, green label), so it holds on white and grey
+ * surfaces alike. One component so the jobs page and every section's
  * sub-page chips look the same.
  *
  *   MobileChipRow  controlled: `value` / `onValueChange` (the jobs tabs)
@@ -45,11 +44,7 @@ export function MobileChipRow<V extends string>({
       items={items}
       value={value}
       onValueChange={onValueChange}
-      trackClassName="bg-checkout-track"
-      activeClassName="text-checkout-primary"
-      mobileActiveClassName="text-checkout-primary"
-      inactiveClassName="text-checkout-hero-fg-secondary"
-      mutedClassName="text-checkout-hero-fg-secondary"
+      appearance="checkout"
       mobileBleedClassName={gutter === "page-start" ? "-ml-4" : gutter === "panel" ? "-mx-5" : "-mx-4 sm:-mx-6"}
       mobileGutterClassName={gutter === "page-start" ? "pr-2 pl-4" : gutter === "panel" ? "px-5" : "px-4 sm:px-6"}
     />

@@ -28,6 +28,7 @@ import * as React from "react"
 import Image from "next/image"
 import {
   ArrowRight,
+  Badge,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -93,14 +94,15 @@ export function OfferDialog({
             to match it on the sheet, clipped by the dialog), out of the
             illustration row so long tag copy never pushes it around. */}
         {tag && (
-          <span
-            className={cn(
-              "absolute top-0 right-0 inline-flex items-center gap-1.5 rounded-tr-2xl rounded-bl-xl px-3 py-1.5 text-xs font-semibold whitespace-nowrap",
-              dark ? "bg-surface-inverted-fg/15" : "bg-card/70"
-            )}
+          // Taller than a card ribbon (it sits in a 20px-padded header) and
+          // rounded into the sheet's own top-right corner.
+          <Badge
+            variant={dark ? "on-dark" : "on-tint"}
+            size="ribbon"
+            className="absolute top-0 right-0 h-7 gap-1.5 rounded-tr-2xl px-3"
           >
             {tag}
-          </span>
+          </Badge>
         )}
         <Image src={ILLUSTRATIONS[illustration]} alt="" width={56} height={56} className="size-14" />
         <Title

@@ -58,7 +58,7 @@ export function OnlyRoundsSidebar({
       dropdownClassName="theme-onlyrounds"
       brand={{
         name: "Apna Hire",
-        logo: <ApnaLogo className="size-8! shrink-0" />,
+        logo: <ApnaLogo className="size-8 shrink-0" />,
         href: "/apnahire/jobs",
       }}
       workspaces={WORKSPACES}

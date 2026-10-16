@@ -9,10 +9,9 @@
  * plan cards below, matching the finalized self-checkout designs — the
  * gradient isn't hero-only).
  *
- * The tab switcher itself is `SegmentedTabSwitcher` (design system) —
- * colours here are overridden to the fixed `checkout-hero-fg`/
- * `checkout-primary` roles (not the theme-flipping `foreground`/
- * `text-primary` defaults) since this surface stays light even when the
+ * The tab switcher itself is `SegmentedTabSwitcher` (design system) in its
+ * `checkout` appearance: fixed checkout roles rather than the
+ * theme-flipping defaults, since this surface stays light even when the
  * app is in dark mode — see semantic.css.
  */
 
@@ -123,12 +122,7 @@ export function PricingHero({
               items={PRICING_TABS.map((tab) => ({ ...tab, shortLabel: PRICING_TAB_SHORT_LABELS[tab.value] }))}
               value={activeTab}
               onValueChange={onTabChange}
-              trackClassName="bg-checkout-track"
-              activeClassName="text-checkout-primary"
-              mobileActiveClassName="text-checkout-primary"
-              inactiveClassName="text-checkout-hero-fg-secondary"
-              mutedClassName="text-checkout-hero-fg-secondary"
-              activeItemClassName="bg-card inset-ring-1 inset-ring-border-strong shadow-none"
+              appearance="checkout"
               mobileBleedClassName="-mx-4 sm:-mx-8"
               mobileGutterClassName="px-4 sm:px-8"
             />

@@ -54,7 +54,7 @@ export function CheckoutTopBar({
           <div className="flex min-w-0 flex-1 items-center gap-3">
             <BackButton onClick={onBack} aria-label={backLabel} />
             {/* The app top bar's page-title style. */}
-            <span className="truncate font-heading text-lg font-semibold text-foreground">{title}</span>
+            <span className="truncate text-h5 text-foreground">{title}</span>
           </div>
 
           {center && (

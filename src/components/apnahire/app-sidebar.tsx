@@ -113,12 +113,11 @@ export function ApnaHireSidebar({
     <ReusableSidebar
       brand={{
         name: "Hire",
-        logo: <ApnaLogo className="size-10! shrink-0" />,
-        // The apna Hire wordmark expanded, "apna" alone collapsed. `!`
-        // because the sidebar's menu button sizes every svg to 20px.
-        wordmark: <LogoApnaHire className="h-6! w-auto!" />,
+        logo: <ApnaLogo className="size-10 shrink-0" />,
+        // The apna Hire wordmark expanded, "apna" alone collapsed.
+        wordmark: <LogoApnaHire className="h-6 w-auto" />,
         // 40px: the collapsed rail's tile width, its widest.
-        collapsedLogo: <LogoApnaWordmark className="h-auto! w-10!" />,
+        collapsedLogo: <LogoApnaWordmark className="h-auto w-10" />,
         href: "/apnahire/dashboard",
       }}
       workspaces={WORKSPACES}

@@ -120,7 +120,7 @@ export function DatabaseCreditBundles({
       <div className="flex flex-col gap-3 md:hidden">
         <div className="flex items-center gap-2">
           <UserSearch className="size-4 text-checkout-hero-fg" aria-hidden />
-          <h2 className="font-heading text-base font-semibold text-checkout-hero-fg">
+          <h2 className="text-h6 text-checkout-hero-fg">
             Database credits
           </h2>
         </div>

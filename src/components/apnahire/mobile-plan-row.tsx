@@ -31,7 +31,7 @@
  */
 
 import * as React from "react"
-import { Badge, BadgePercent, LogoApnaUnlimited } from "@apna/design-system"
+import { Badge, BadgePercent, LogoApnaUnlimited, RadioMark } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 
 /* ── Radio row ──────────────────────────────────────────────────────── */
@@ -77,16 +77,7 @@ export function MobilePlanRow({
   priceNote,
   className,
 }: MobilePlanRowProps) {
-  const radio = (
-    <div
-      className={cn(
-        "flex size-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
-        selected ? "border-checkout-primary" : "border-muted-foreground/30"
-      )}
-    >
-      {selected && <div className="size-2.5 rounded-full bg-checkout-primary" />}
-    </div>
-  )
+  const radio = <RadioMark checked={selected} size="lg" />
   const priceBlock = (
     <div className="flex shrink-0 flex-col items-end gap-1 text-right">
       <div className="flex items-baseline justify-end gap-1.5 whitespace-nowrap">
@@ -105,9 +96,7 @@ export function MobilePlanRow({
     <div className="relative pt-1.5">
       {recommended && (
         <div className="absolute -top-1 left-3 z-10">
-          <span className="rounded-full bg-checkout-info px-2.5 py-0.5 text-xs font-semibold text-checkout-info-foreground shadow-xs">
-            Recommended
-          </span>
+          <Badge variant="ribbon">Recommended</Badge>
         </div>
       )}
       <div

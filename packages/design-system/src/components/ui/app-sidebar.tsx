@@ -156,21 +156,22 @@ export function ReusableSidebar({
               render={brand.href ? <Link href={brand.href} /> : undefined}
               tooltip={brand.name}
               size="lg"
-              className="hover:bg-transparent focus-visible:ring-0 active:bg-transparent px-0! group-data-[collapsible=icon]:w-10"
+              className="px-0 hover:bg-transparent focus-visible:ring-0 active:bg-transparent group-data-[collapsible=icon]:w-10"
               onClick={() => setOpenMobile(false)}
             >
               {brand.wordmark ? (
                 // Divs, not spans: SidebarMenuButton hides every span but
-                // the first in the collapsed state.
+                // the first in the collapsed state. data-sidebar="brand":
+                // the button sizes icons to 20px, logos keep their own size.
                 <>
-                  <div className="flex h-10 items-center group-data-[collapsible=icon]:hidden">{brand.wordmark}</div>
-                  <div className="hidden size-10 shrink-0 items-center justify-center group-data-[collapsible=icon]:flex">
+                  <div data-sidebar="brand" className="flex h-10 items-center group-data-[collapsible=icon]:hidden">{brand.wordmark}</div>
+                  <div data-sidebar="brand" className="hidden size-10 shrink-0 items-center justify-center group-data-[collapsible=icon]:flex">
                     {brand.collapsedLogo ?? brand.logo}
                   </div>
                 </>
               ) : (
                 <>
-                  <div className="size-10 shrink-0 flex items-center justify-center">
+                  <div data-sidebar="brand" className="size-10 shrink-0 flex items-center justify-center">
                     {brand.logo}
                   </div>
                   <span className="text-lg font-bold tracking-tight text-secondary-foreground truncate">
