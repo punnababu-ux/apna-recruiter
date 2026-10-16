@@ -121,7 +121,8 @@ export function SearchFilterBar({
             "bg-card pl-9",
             // inside: a pill; room on the right for the Filters pill, or for
             // the clear ✕ while typing
-            inside && "rounded-full",
+            // 44px on phones, so the inset pill keeps a full 40px tap target
+            inside && "h-11 rounded-full",
             inside && (focused ? (value ? "pr-11" : "pr-4") : "pr-32")
           )}
         />
