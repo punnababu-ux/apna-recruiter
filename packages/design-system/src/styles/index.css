@@ -837,6 +837,52 @@
   scale: calc(1 - var(--stack-depth, 0) * 0.04);
 }
 
+/* NavigationMenu (Base UI) — the card glides to the active trigger and
+ * resizes to its content (--popup-width / --popup-height) instead of
+ * closing and reopening; content slides in from the side it came from.
+ * Reduced motion: no transitions. */
+@utility nav-menu-positioner {
+  transition-property: top, left, right, bottom;
+  transition-duration: var(--duration-slide);
+  transition-timing-function: var(--ease-slide);
+
+  &[data-instant] { transition: none; }
+
+  @media (prefers-reduced-motion: reduce) { transition: none; }
+}
+@utility nav-menu-popup {
+  position: relative;
+  width: var(--popup-width);
+  height: var(--popup-height);
+  transform-origin: var(--transform-origin);
+  transition-property: opacity, scale, width, height;
+  transition-duration: var(--duration-slide);
+  transition-timing-function: var(--ease-slide);
+
+  &[data-starting-style],
+  &[data-ending-style] {
+    opacity: 0;
+    scale: 0.97;
+  }
+
+  @media (prefers-reduced-motion: reduce) { transition: none; }
+}
+@utility nav-menu-content {
+  width: max-content;
+  transition-property: opacity, translate;
+  transition-duration: var(--duration-slide);
+  transition-timing-function: var(--ease-slide);
+
+  &[data-starting-style],
+  &[data-ending-style] { opacity: 0; }
+  &[data-starting-style][data-activation-direction="right"],
+  &[data-ending-style][data-activation-direction="left"] { translate: 12% 0; }
+  &[data-starting-style][data-activation-direction="left"],
+  &[data-ending-style][data-activation-direction="right"] { translate: -12% 0; }
+
+  @media (prefers-reduced-motion: reduce) { transition: none; }
+}
+
 /* An unread dot's ping: a ring that grows from the dot and fades, three
  * times when it appears, then the dot rests. Three, not forever: a list of
  * cards can carry many dots, and a field of endless pulses reads as noise.

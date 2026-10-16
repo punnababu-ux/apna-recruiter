@@ -2,6 +2,13 @@
 
 import * as React from "react"
 import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuPopup,
+  NavigationMenuTrigger,
   Tabs,
   TabsList,
   TabsTrigger,
@@ -161,6 +168,41 @@ export default function NavigationComponentsPage() {
           value={activeChip}
           onValueChange={setActiveChip}
         />
+      </div>
+
+      {/* NavigationMenu */}
+      <div className="rounded-xl border border-border bg-card p-6 space-y-4">
+        <h2 className="text-base font-semibold text-foreground font-heading border-b border-border/60 pb-2">
+          Navigation Menu (site header)
+        </h2>
+        <NavigationMenu aria-label="Demo">
+          <NavigationMenuList>
+            {["Company", "Product"].map((label) => (
+              <NavigationMenuItem key={label} value={label}>
+                <NavigationMenuTrigger className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-semibold text-foreground transition-interactive hover:bg-foreground/5">
+                  {label}
+                </NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <div className="flex flex-col gap-1 p-4">
+                    {["Overview", "Team", "Careers"].map((item) => (
+                      <NavigationMenuLink
+                        key={item}
+                        href="#"
+                        className="rounded-md px-2 py-1.5 text-sm text-muted-foreground transition-interactive hover:bg-muted hover:text-foreground"
+                      >
+                        {label} · {item}
+                      </NavigationMenuLink>
+                    ))}
+                  </div>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+            ))}
+          </NavigationMenuList>
+          <NavigationMenuPopup />
+        </NavigationMenu>
+        <span className="block text-xs text-muted-foreground">
+          Hover, click (pins), Escape, arrow keys. The marketing header&apos;s menus.
+        </span>
       </div>
 
       {/* Standard Tabs */}

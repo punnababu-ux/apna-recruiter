@@ -43,12 +43,18 @@ import {
   Briefcase,
   Building2,
   Button,
-  ChevronDown,
   FileText,
   GraduationCap,
   Headset,
   Award,
   Menu,
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuPopup,
+  NavigationMenuTrigger,
   Search,
   XIcon,
   Sheet,
@@ -105,27 +111,43 @@ function useIsCurrent() {
   )
 }
 
-/** One menu link: internal via next/link, outbound in a new tab with ↗. */
-function MenuLink({ link, onNavigate }: { link: NavLink; onNavigate?: () => void }) {
+/** One menu link: internal via next/link, outbound in a new tab with ↗.
+ *  `inMenu`: inside the desktop NavigationMenu card, where it's a
+ *  NavigationMenuLink (part of the menu's keyboard order, closes the card). */
+function MenuLink({ link, onNavigate, inMenu }: { link: NavLink; onNavigate?: () => void; inMenu?: boolean }) {
   const className =
     "ink relative -mx-2 flex items-center gap-1 rounded-md px-2 py-1.5 text-sm text-muted-foreground transition-interactive hover:bg-muted hover:text-foreground"
-  if (link.external) {
+  const content = (
+    <>
+      {link.label}
+      {link.external && <ArrowUpRight className="size-3.5 shrink-0" aria-hidden />}
+    </>
+  )
+  const element = link.external ? (
+    <a href={link.href} target="_blank" rel="noreferrer noopener" onClick={onNavigate} />
+  ) : (
+    <Link href={link.href} onClick={onNavigate} />
+  )
+  if (inMenu) {
     return (
-      <a href={link.href} target="_blank" rel="noreferrer noopener" onClick={onNavigate} className={className}>
-        {link.label}
-        <ArrowUpRight className="size-3.5 shrink-0" aria-hidden />
-      </a>
+      <NavigationMenuLink render={element} className={className}>
+        {content}
+      </NavigationMenuLink>
     )
   }
-  return (
-    <Link href={link.href} onClick={onNavigate} className={className}>
-      {link.label}
-    </Link>
-  )
+  return React.cloneElement(element, { className }, content)
 }
 
 /** A labelled column: icon + heading, then its links. */
-function MenuSection({ section, onNavigate }: { section: NavSection; onNavigate?: () => void }) {
+function MenuSection({
+  section,
+  onNavigate,
+  inMenu,
+}: {
+  section: NavSection
+  onNavigate?: () => void
+  inMenu?: boolean
+}) {
   const Icon = SECTION_ICONS[section.icon]
   return (
     <div className="flex flex-col gap-3">
@@ -136,7 +158,7 @@ function MenuSection({ section, onNavigate }: { section: NavSection; onNavigate?
       <ul className="flex flex-col">
         {section.items.map((link) => (
           <li key={link.label}>
-            <MenuLink link={link} onNavigate={onNavigate} />
+            <MenuLink link={link} onNavigate={onNavigate} inMenu={inMenu} />
           </li>
         ))}
       </ul>
@@ -257,78 +279,69 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
             </Link>
 
             {variant === "default" && (
-              // Leaving the nav (its menu cards are inside it) closes the menu,
-              // so moving on to search or the buttons never leaves one open.
-              <nav
+              // Base UI NavigationMenu owns the behaviour: hover-intent open,
+              // a grace period on leave, click opens and pins (a click on a
+              // menu hover already opened keeps it open), outside click /
+              // Escape close, arrow keys between triggers. Triggers never
+              // navigate — each section's landing page is its card's first
+              // link ("Overview").
+              <NavigationMenu
                 aria-label="Main"
-                className="relative hidden items-center gap-0.5 self-stretch py-2 xl:flex"
-                onMouseLeave={() => setOpenPanel(null)}
+                value={openPanel}
+                onValueChange={(value) => setOpenPanel((value as string | null) ?? null)}
+                className="hidden self-stretch xl:flex"
               >
-                {MAIN_NAV.map((group) => {
-                  const current = isCurrent(group)
-
-                  if (!group.sections) {
+                <NavigationMenuList className="h-full py-2">
+                  {MAIN_NAV.map((group) => {
+                    const current = isCurrent(group)
+                    if (!group.sections) {
+                      return (
+                        <NavigationMenuItem key={group.label}>
+                          <NavigationMenuLink
+                            render={<Link href={group.href!} />}
+                            aria-current={current ? "page" : undefined}
+                            className={cn(navItemClass(current), "h-full")}
+                          >
+                            {group.label}
+                          </NavigationMenuLink>
+                        </NavigationMenuItem>
+                      )
+                    }
                     return (
-                      <Link
-                        key={group.label}
-                        href={group.href!}
-                        aria-current={current ? "page" : undefined}
-                        onMouseEnter={() => setOpenPanel(null)}
-                        className={navItemClass(current)}
-                      >
-                        {group.label}
-                      </Link>
+                      <NavigationMenuItem key={group.label} value={group.label}>
+                        <NavigationMenuTrigger
+                          aria-current={current ? "page" : undefined}
+                          className={cn(navItemClass(current), "h-full data-[popup-open]:bg-foreground/5")}
+                        >
+                          {group.label}
+                        </NavigationMenuTrigger>
+                        <NavigationMenuContent>
+                          <div className="flex divide-x divide-border p-6">
+                            {group.sections.map((section) => (
+                              <div key={section.heading} className="min-w-48 px-6 first:pl-0 last:pr-0">
+                                <MenuSection section={section} inMenu />
+                              </div>
+                            ))}
+                          </div>
+                        </NavigationMenuContent>
+                      </NavigationMenuItem>
                     )
-                  }
-
-                  const open = openPanel === group.label
-                  return (
-                    <button
-                      key={group.label}
-                      type="button"
-                      aria-expanded={open}
-                      aria-controls={`menu-${group.label}`}
-                      aria-current={current ? "page" : undefined}
-                      onMouseEnter={() => setOpenPanel(group.label)}
-                      onClick={() => setOpenPanel(open ? null : group.label)}
-                      className={navItemClass(current)}
+                  })}
+                  <NavigationMenuItem>
+                    <NavigationMenuLink
+                      render={<a href={LOOKING_FOR_A_JOB.href} />}
+                      className={cn(navItemClass(false), "h-full")}
                     >
-                      {group.label}
-                      <ChevronDown className={cn("size-4 transition-select", open && "rotate-180")} aria-hidden />
-                    </button>
-                  )
-                })}
-
-                <a
-                  href={LOOKING_FOR_A_JOB.href}
-                  onMouseEnter={() => setOpenPanel(null)}
-                  className={navItemClass(false)}
-                >
-                  {LOOKING_FOR_A_JOB.label}
-                  <ArrowUpRight className="size-4" aria-hidden />
-                </a>
-
-                {/* ── Menu card ── hangs below the pill, left-aligned to the
-                     nav (a card anchored to its own trigger runs off the right
-                     edge for the later, wider menus). The top padding bridges
-                     the gap so the pointer can travel from trigger to card. */}
-                {MAIN_NAV.filter((g) => g.sections).map((group) => (
-                  <div
-                    key={group.label}
-                    id={`menu-${group.label}`}
-                    hidden={openPanel !== group.label}
-                    className="absolute top-full left-0 pt-4"
-                  >
-                    <div className="flex divide-x divide-border rounded-2xl bg-popover p-6 shadow-popover ring-1 ring-foreground/10">
-                      {group.sections!.map((section) => (
-                        <div key={section.heading} className="min-w-48 px-6 first:pl-0 last:pr-0">
-                          <MenuSection section={section} onNavigate={() => setOpenPanel(null)} />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </nav>
+                      {LOOKING_FOR_A_JOB.label}
+                      <ArrowUpRight className="size-4" aria-hidden />
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+                {/* The card hangs 12px under the pill (the offset is from the
+                    trigger, which ends 12px above the pill's edge), aligned
+                    to its trigger and kept on screen. */}
+                <NavigationMenuPopup sideOffset={24} />
+              </NavigationMenu>
             )}
           </div>
 
