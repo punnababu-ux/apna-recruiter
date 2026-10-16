@@ -14,19 +14,33 @@
 
 import Link from "next/link"
 import {
+  ArrowRight,
   Badge,
+  Briefcase,
   Card,
+  CardContent,
   CheckCircle2,
+  InfinityIcon,
   LogoWall,
+  PhoneCall,
   Quote,
+  Search,
   Section,
   SectionHeading,
+  type IconComponent,
 } from "@apna/design-system"
 import { HeroBackdrop } from "@/components/marketing/hero-backdrop"
 import { HeroLeadCard } from "@/components/marketing/hero-lead-card"
-import { ProductShowcase } from "@/components/marketing/product-showcase"
-import { HOME_HERO, HOME_PRESS, HOME_SUITE, HOME_TRUSTED_BY } from "@/content/home"
+import {
+  HOME_HERO,
+  HOME_PRESS,
+  HOME_PRODUCT_DETAILS,
+  HOME_SUITE,
+  HOME_TRUSTED_BY,
+} from "@/content/home"
 import { CLIENT_LOGOS } from "@/content/logos"
+import { PRODUCT_LINKS } from "@/content/nav"
+import { cn } from "@/lib/utils"
 
 const CLIENT_LOGO_ITEMS = CLIENT_LOGOS.map((client) => ({
   name: client.name,
@@ -35,6 +49,19 @@ const CLIENT_LOGO_ITEMS = CLIENT_LOGOS.map((client) => ({
     <img src={client.src} alt={client.name} height={36} width={client.width} />
   ),
 }))
+
+const SUITE_ICONS: Record<(typeof HOME_SUITE.items)[number]["icon"], IconComponent> = {
+  briefcase: Briefcase,
+  phone: PhoneCall,
+  search: Search,
+  infinity: InfinityIcon,
+}
+
+// nav.ts's PRODUCT_LINKS is the one place a product's href is defined —
+// cross-referenced by name rather than duplicating the URL here too.
+function hrefFor(name: string) {
+  return PRODUCT_LINKS.find((p) => p.label === name)?.href ?? "#"
+}
 
 export default function HomePage() {
   return (
@@ -119,9 +146,97 @@ export default function HomePage() {
             description={HOME_SUITE.description}
           />
 
-          {/* One interactive showcase: products as tabs, each with a live
-              demo — replaces the product grid + alternating detail rows. */}
-          <ProductShowcase />
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {HOME_SUITE.items.map((item) => {
+              const Icon = SUITE_ICONS[item.icon]
+              return (
+                <Card key={item.name} padding="none" interactive className="overflow-hidden">
+                  {/* Plain tinted block + icon, not a mockup illustration —
+                      see the file header for why. */}
+                  <div className="flex h-32 items-center justify-center bg-muted">
+                    <Icon className="size-10 text-primary" aria-hidden />
+                  </div>
+                  <CardContent className="flex flex-col gap-3 p-6">
+                    <div className="flex flex-col gap-1.5">
+                      <h3 className="text-h6 text-foreground">
+                        {item.name}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">{item.tagline}</p>
+                    </div>
+                    <Link
+                      href={hrefFor(item.name)}
+                      className="inline-flex items-center gap-1 text-sm font-semibold text-primary"
+                    >
+                      Learn more <ArrowRight className="size-4" aria-hidden />
+                    </Link>
+                  </CardContent>
+                </Card>
+              )
+            })}
+          </div>
+
+          {/* Detail rows — one per product, description alternating left/
+              right against a media panel. The grid above stays as the
+              compact overview; this is the detail underneath it, not a
+              replacement (user call, 2026-09-28). Media is a placeholder:
+              the same plain tinted-icon-block language as the grid cards
+              above, scaled up — standing in for a real product screenshot
+              or recording, which doesn't exist in this repo yet. See
+              content/home.ts's HOME_PRODUCT_DETAILS header for the full
+              sourcing note. */}
+          <div className="flex flex-col gap-16">
+            {HOME_PRODUCT_DETAILS.map((product, i) => {
+              const Icon = SUITE_ICONS[HOME_SUITE.items.find((s) => s.name === product.name)!.icon]
+              const reversed = i % 2 === 1
+              return (
+                <div
+                  key={product.name}
+                  className={cn(
+                    "flex flex-col items-center gap-8 lg:flex-row lg:gap-12",
+                    reversed && "lg:flex-row-reverse"
+                  )}
+                >
+                  <div className="flex flex-1 flex-col gap-5">
+                    <span className="text-overline text-primary">{product.eyebrow}</span>
+                    <h3 className="text-h4 text-foreground">{product.heading}</h3>
+                    <ul className="flex flex-col gap-4">
+                      {product.features.map((feature) => (
+                        <li key={feature.title} className="flex items-start gap-3">
+                          <CheckCircle2
+                            className="mt-0.5 size-5 shrink-0 text-primary"
+                            aria-hidden
+                          />
+                          <div className="flex flex-col gap-0.5">
+                            <p className="text-sm font-semibold text-foreground">
+                              {feature.title}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              {feature.description}
+                            </p>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                    <Link
+                      href={hrefFor(product.name)}
+                      className="inline-flex w-fit items-center gap-1 text-sm font-semibold text-primary"
+                    >
+                      Learn more <ArrowRight className="size-4" aria-hidden />
+                    </Link>
+                  </div>
+
+                  <div className="w-full flex-1">
+                    <Card
+                      padding="none"
+                      className="flex h-64 items-center justify-center overflow-hidden bg-muted"
+                    >
+                      <Icon className="size-16 text-primary" aria-hidden />
+                    </Card>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
         </div>
       </Section>
 

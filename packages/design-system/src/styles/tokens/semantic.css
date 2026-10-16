@@ -237,9 +237,6 @@
   /* The wandering light's loop — quicker than the blobs, so it reads as
    * light moving across the colour. Its pulse runs at 0.4× this. */
   --duration-ambient-wander: 14s;
-  /* StoryTabs: one tab's turn before the next takes over — long enough
-   * for its demo to play through once. */
-  --duration-story: 7s;
 
   --press-scale:        var(--scale-97);    /* buttons, chips, controls      */
   --press-scale-subtle: var(--scale-99);    /* cards and large surfaces      */
