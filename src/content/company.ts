@@ -176,51 +176,23 @@ export const ABOUT_NUMBERS = {
   meta: { title: "apna by the numbers", description: "The scale of India's largest early-career hiring marketplace." },
   eyebrow: "About apna",
   title: "apna by the numbers.",
-  /** The switcher's section — Lovable's "By the numbers" block. */
+  /** Lovable's "By the numbers" block. */
   sectionTitle: "By the numbers",
   description:
     "The scale of India's largest early-career hiring marketplace, measured across candidates, recruiters, and the towns and cities we reach.",
-  groups: [
-    {
-      key: "overall",
-      label: "Overall",
-      blurb: "Live counts from India’s largest early-career hiring engine.",
-      stats: [
-        { value: "6 Cr+", label: "Registered job seekers" },
-        { value: "7 L+", label: "Verified recruiters" },
-        { value: "7,200+", label: "Towns & cities covered" },
-        { value: "30%+", label: "Of Nifty 500 companies hire on apna" },
-        { value: "20+", label: "Industries scaling hiring with apna" },
-        { value: "10 Cr+", label: "Applications submitted till date" },
-      ],
-    },
-    {
-      key: "recruiters",
-      label: "For recruiters",
-      blurb: "What hiring on apna looks like for businesses of every size.",
-      stats: [
-        { value: "7 L+", label: "Recruiters hiring on apna" },
-        { value: "50 L+", label: "Jobs posted till date" },
-        { value: "72 hrs", label: "Median time to first qualified applicant" },
-        { value: "20+", label: "Industries hiring across the platform" },
-        { value: "900+", label: "Enterprise accounts served" },
-        { value: "3x", label: "Faster closures vs traditional channels" },
-      ],
-    },
-    {
-      key: "candidates",
-      label: "For candidates",
-      blurb: "How job seekers find and win work on apna.",
-      stats: [
-        { value: "6 Cr+", label: "Registered candidates" },
-        { value: "10 Cr+", label: "Applications submitted" },
-        { value: "7,200+", label: "Towns & cities with active jobs" },
-        { value: "5 L+", label: "Interviews scheduled every month" },
-        { value: "70%", label: "Candidates from Tier 2 & 3 India" },
-        { value: "₹0", label: "Cost to apply, always free" },
-      ],
-    },
-  ],
+  /** Recruiter numbers only (user call, 2026-10-17: this is the recruiter
+   *  site — Lovable's Overall and For candidates tabs are left out). */
+  recruiters: {
+    blurb: "What hiring on apna looks like for businesses of every size.",
+    stats: [
+      { value: "7 L+", label: "Recruiters hiring on apna" },
+      { value: "50 L+", label: "Jobs posted till date" },
+      { value: "72 hrs", label: "Median time to first qualified applicant" },
+      { value: "20+", label: "Industries hiring across the platform" },
+      { value: "900+", label: "Enterprise accounts served" },
+      { value: "3x", label: "Faster closures vs traditional channels" },
+    ],
+  },
 } as const
 
 export interface Person {

@@ -117,7 +117,8 @@ export function StatGrid({
   className,
 }: {
   stats: readonly { value: string; label: string }[]
-  /** "lg" for a page that is about its numbers (By the numbers); "facts"
+  /** "lg" for a page that is about its numbers (By the numbers) — bigger
+   *  numbers on a lifted, gradient card; "facts"
    *  for short text values (a case study's client / industry / …): label
    *  first as an overline, the value in body weight. */
   size?: "default" | "lg" | "facts"
@@ -125,7 +126,15 @@ export function StatGrid({
 }) {
   const facts = size === "facts"
   return (
-    <Card padding="none" className="w-full border-card/60 bg-card/70 shadow-card backdrop-blur-xl">
+    <Card
+      padding="none"
+      className={cn(
+        "w-full border-card/60",
+        // "lg" is the page's subject, so it's lifted: the mother gradient
+        // inside and the elevated shadow, not the frosted strip.
+        size === "lg" ? "bg-gradient-checkout-hero shadow-elevated" : "bg-card/70 shadow-card backdrop-blur-xl"
+      )}
+    >
       <dl
         className={cn(
           "grid grid-cols-2 divide-border sm:grid-cols-3 sm:divide-x",

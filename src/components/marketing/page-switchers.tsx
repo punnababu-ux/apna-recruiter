@@ -1,8 +1,7 @@
 "use client"
 
 /**
- * The company-page views that switch or filter: "apna by the numbers"
- * (Overall / For recruiters / For candidates) and the newsroom's press
+ * The company-page views that switch or filter: the newsroom's press
  * list (2026 / 2025 / Earlier). Both switch with ChipTabs, the system's
  * segmented chip control. Plus the customer story library (industry
  * Select, search Input, numbered pages).
@@ -19,37 +18,11 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SectionHeading,
   SelectValue,
 } from "@apna/design-system"
-import { CompanyMark, StatGrid } from "@/components/marketing/page-blocks"
-import { ABOUT_NUMBERS, CUSTOMER_STORIES } from "@/content/company"
+import { CompanyMark } from "@/components/marketing/page-blocks"
+import { CUSTOMER_STORIES } from "@/content/company"
 import { PRESS } from "@/content/press"
-
-type GroupKey = (typeof ABOUT_NUMBERS.groups)[number]["key"]
-
-export function NumbersSwitcher() {
-  const [key, setKey] = React.useState<GroupKey>("overall")
-  const group = ABOUT_NUMBERS.groups.find((g) => g.key === key)!
-  return (
-    <div className="flex w-full flex-col items-center gap-10">
-      <SectionHeading
-        level={2}
-        align="center"
-        title={ABOUT_NUMBERS.sectionTitle}
-        // The line follows the tab (Lovable's own per-tab blurb).
-        description={group.blurb}
-      />
-      <ChipTabs
-        aria-label="Numbers for"
-        items={ABOUT_NUMBERS.groups.map((g) => ({ value: g.key, label: g.label }))}
-        value={key}
-        onValueChange={setKey}
-      />
-      <StatGrid stats={group.stats} size="lg" />
-    </div>
-  )
-}
 
 type Filter = (typeof PRESS.filters)[number]
 
