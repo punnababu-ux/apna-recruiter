@@ -9,5 +9,7 @@
 import { AmbientBackdrop } from "@apna/design-system"
 
 export function HeroBackdrop() {
-  return <AmbientBackdrop className="inset-x-0 -top-18 bottom-0" />
+  // -z-10: always behind the content of its (isolated) wrapper, so cards and
+  // text paint over it even when they aren't positioned themselves.
+  return <AmbientBackdrop className="inset-x-0 -top-18 bottom-0 -z-10" />
 }
