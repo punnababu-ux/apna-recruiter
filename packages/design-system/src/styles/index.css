@@ -402,6 +402,15 @@
   & em { font-style: italic; }
 }
 
+/* A person's own words beside their portrait (Leadership): between the card
+ * quote and the featured one. */
+@utility text-quote-md {
+  font-family:     var(--font-quote);
+  font-size:       var(--text-3xl);
+  line-height:     var(--line-height-snug);
+  font-weight:     var(--font-weight-regular);
+}
+
 @utility text-quote-lg {
   font-family:     var(--font-quote);
   font-size:       var(--text-display-fluid);

@@ -301,7 +301,7 @@ export function PersonCard({
           )}
         />
         <div className="flex flex-col gap-6 md:col-span-8">
-          <p className="text-quote text-pretty text-foreground">&ldquo;{person.bio}&rdquo;</p>
+          <p className="text-quote text-pretty text-foreground sm:text-quote-md">&ldquo;{person.bio}&rdquo;</p>
           <div className="flex flex-col gap-0.5">
             <h3 className="text-h5 text-foreground">{person.name}</h3>
             <p className="text-overline text-muted-foreground">{person.role}</p>
