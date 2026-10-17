@@ -873,15 +873,29 @@
   --cta-emphasis:       var(--color-gray-700);
   --cta-emphasis-hover: var(--color-gray-600);
 
-  /* No dark override for --checkout-discount-fg/-bg (or --checkout-primary,
-   * --checkout-info, --checkout-ribbon below it in :root): every checkout-*
-   * role on this surface is fixed across themes, same as the hero gradient
-   * and the inset card. A stale pre-Figma override used to sit here
-   * (apna-green-400 on apna-green-900) — a genuinely dark-mode-safe pairing,
-   * but the wrong one now: it silently diverged from the gray-200/
-   * apna-green-700 pill the current design draws, so the discount badge
-   * changed colour between light and dark instead of staying put like the
-   * rest of this surface. */
+  /* Dark mode for the plan surfaces (2026-10-17, Punna's dark audit). These
+   * used to be "fixed across themes", which left a white discount chip, a
+   * bright light-mode green offer header and an unlifted Unlimited card on
+   * the dark plans page.
+   *   discount     a tint of brand green with light green text, like the
+   *                product's other dark chips
+   *   offer        the green pop-up header, deeper (700 → 950): it was the
+   *                light sweep starting at green-500, loud beside the plum one
+   *   unlimited    one step lighter than the page, so the card lifts off it
+   *                (with its ring — ring-checkout-unlimited-line in dark) */
+  --checkout-discount-bg: color-mix(in srgb, var(--color-apna-green-500) 18%, transparent);
+  --checkout-discount-fg: var(--color-apna-green-300);
+  --gradient-offer: linear-gradient(137deg, var(--color-apna-green-700) 0%, var(--color-apna-green-900) 55%, var(--color-apna-green-950) 112%);
+  --gradient-checkout-unlimited: linear-gradient(180deg,
+                                   var(--color-apna-plum-600) 0%,
+                                   var(--color-apna-plum-700) 55%,
+                                   var(--color-apna-plum-800) 100%);
+  /* Ribbon and CTA, one step quieter on dark: sky-500 / green-600 were the
+   * loudest marks on the dark cards. Green stays the one primary; hover
+   * steps back up so a press still answers. */
+  --checkout-info:          var(--color-apna-sky-700);
+  --checkout-primary:       var(--color-apna-green-700);
+  --checkout-primary-hover: var(--color-apna-green-600);
 }
 
 /* ==========================================================================

@@ -102,7 +102,7 @@ export function UnlimitedSideCard({
         data-card-lift-group
         onClick={onBuyNow}
         className={cn(
-          "hidden w-full cursor-pointer flex-col rounded-card bg-gradient-checkout-unlimited p-4 md:flex",
+          "hidden w-full cursor-pointer flex-col rounded-card bg-gradient-checkout-unlimited p-4 md:flex dark:ring-1 dark:ring-checkout-unlimited-line",
           className
         )}
       >

@@ -268,7 +268,7 @@ export function MobileUnlimitedCard({
     // 16px in from the frame's edge.
     <div
       className={cn(
-        "flex flex-col gap-3 rounded-card bg-gradient-checkout-unlimited px-2.5 pt-5 pb-2.5 text-surface-inverted-fg",
+        "flex flex-col gap-3 rounded-card bg-gradient-checkout-unlimited px-2.5 pt-5 pb-2.5 text-surface-inverted-fg dark:ring-1 dark:ring-checkout-unlimited-line",
         className
       )}
     >

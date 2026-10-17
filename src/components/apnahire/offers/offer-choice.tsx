@@ -65,8 +65,14 @@ function OptionTile({
         upgrade ? "border-checkout-primary bg-accent sm:col-span-5" : "border-border bg-card sm:col-span-4"
       )}
     >
+      {/* The upgrade's ribbon takes the checkout green, same as its CTA
+          (--primary brightens in dark; the plan surface's green doesn't). */}
       {option.badge && (
-        <Badge variant={upgrade ? "default" : "discount"} size="ribbon" className="absolute top-0 right-0">
+        <Badge
+          variant={upgrade ? "default" : "discount"}
+          size="ribbon"
+          className={cn("absolute top-0 right-0", upgrade && "bg-checkout-primary text-checkout-primary-foreground")}
+        >
           {option.badge}
         </Badge>
       )}
