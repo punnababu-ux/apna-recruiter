@@ -25,8 +25,10 @@ import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
 import {
+  ArrowDown,
   ArrowRight,
   BarChart2,
+  Briefcase,
   Building2,
   Button,
   Card,
@@ -37,10 +39,12 @@ import {
   Landmark,
   Languages,
   Lock,
+  Mic,
   RefreshCw,
   ScrollStack,
   Section,
   SectionHeading,
+  Sparkles,
   Target,
   UserRound,
 } from "@apna/design-system"
@@ -54,6 +58,10 @@ import { LOUNGE } from "@/content/interview-lounge"
 import { cn } from "@/lib/utils"
 
 type Icon = ComponentType<{ className?: string; "aria-hidden"?: boolean }>
+
+/** The journey's steps, in order: role & company, live interview,
+ *  personalised, feedback report. */
+const JOURNEY_ICONS: Icon[] = [Briefcase, Mic, Sparkles, FileText]
 
 const AUDIENCE_ICONS: Record<(typeof LOUNGE.audiences)[number]["icon"], Icon> = {
   student: GraduationCap,
@@ -313,19 +321,39 @@ export default function InterviewPrepLoungePage() {
 
           <div className="flex flex-col gap-10">
             <SectionHeading level={2} align="center" title={journey.title} description={journey.description} />
-            <ol className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {journey.items.map((step, i) => (
-                <li key={step.title}>
-                  <Card padding="lg" className="surface-frosted h-full gap-3">
-                    <span className="font-heading text-h3 font-semibold text-foreground tabular-nums">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <h3 className="text-h6 text-foreground">{step.title}</h3>
-                    <p className="text-sm text-pretty text-muted-foreground">{step.description}</p>
-                  </Card>
-                </li>
-              ))}
-            </ol>
+            {/* One card, the four steps divided by lines (stacked on phones,
+                side by side from md), an arrow on each line into the next
+                step. The step number is a corner watermark; a flat icon
+                leads each step. */}
+            <Card padding="none" className="surface-frosted overflow-hidden">
+              <ol className="grid divide-y divide-border md:grid-cols-4 md:divide-x md:divide-y-0">
+                {journey.items.map((step, i) => {
+                  const StepIcon = JOURNEY_ICONS[i]
+                  return (
+                    <li key={step.title} className="relative isolate flex flex-col gap-3 p-6 lg:p-8">
+                      <span
+                        aria-hidden
+                        className="pointer-events-none absolute top-3 right-4 -z-10 font-heading text-6xl font-bold text-foreground/10 tabular-nums select-none"
+                      >
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <StepIcon className="size-7 text-foreground" aria-hidden />
+                      <h3 className="text-h6 text-foreground">{step.title}</h3>
+                      <p className="text-sm text-pretty text-muted-foreground">{step.description}</p>
+                      {i > 0 && (
+                        <span
+                          aria-hidden
+                          className="absolute top-0 left-1/2 flex size-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card text-foreground md:top-1/2 md:left-0"
+                        >
+                          <ArrowDown className="size-4 md:hidden" />
+                          <ArrowRight className="hidden size-4 md:block" />
+                        </span>
+                      )}
+                    </li>
+                  )
+                })}
+              </ol>
+            </Card>
           </div>
         </div>
       </Section>
