@@ -138,7 +138,6 @@ export const MAIN_NAV: NavGroup[] = [
         icon: "newsroom",
         items: [
           { label: "Press Releases", href: "/newsroom" },
-          { label: "Events", href: "/newsroom/events" },
         ],
       },
       {
