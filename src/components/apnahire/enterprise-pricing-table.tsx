@@ -187,7 +187,7 @@ export function EnterprisePricingTable({
             // Same hover lift as the Jobs / Database / Subscription plan
             // cards (PricingCard, SubscriptionPlans use card-hover-lift).
             interactive
-            className="gap-5 border-transparent"
+            className="gap-5 border-transparent bg-plan-card"
           >
             <div className="flex flex-col gap-2">
               <CardTitle>{tier.name}</CardTitle>

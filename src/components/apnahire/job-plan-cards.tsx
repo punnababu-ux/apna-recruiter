@@ -578,7 +578,7 @@ function MonthlySubscriptionCard({
       data-card-lift-group
       onClick={onSelect}
       className={cn(
-        "flex cursor-pointer flex-col gap-5 rounded-card bg-gradient-checkout-unlimited p-4 dark:ring-1 dark:ring-checkout-unlimited-line",
+        "flex cursor-pointer flex-col gap-5 rounded-card bg-gradient-checkout-unlimited p-4",
         className
       )}
     >

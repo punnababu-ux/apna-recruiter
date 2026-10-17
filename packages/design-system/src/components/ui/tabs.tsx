@@ -75,7 +75,9 @@ function TabsList({
           "top-(--active-tab-top) left-(--active-tab-left) h-(--active-tab-height) w-(--active-tab-width)",
           "group-data-[variant=default]/tabs-list:rounded-full group-data-[variant=default]/tabs-list:bg-background group-data-[variant=default]/tabs-list:shadow-card dark:group-data-[variant=default]/tabs-list:border dark:group-data-[variant=default]/tabs-list:border-input dark:group-data-[variant=default]/tabs-list:bg-input/30",
           "group-data-[variant=inverted]/tabs-list:rounded-full group-data-[variant=inverted]/tabs-list:bg-foreground",
-          "group-data-[variant=checkout]/tabs-list:rounded-full group-data-[variant=checkout]/tabs-list:bg-card group-data-[variant=checkout]/tabs-list:ring-1 group-data-[variant=checkout]/tabs-list:ring-border",
+          // Dark: a lifted plum pill (the plan cards' --muted), not a white one.
+          "dark:group-data-[variant=inverted]/tabs-list:bg-muted",
+          "group-data-[variant=checkout]/tabs-list:rounded-full group-data-[variant=checkout]/tabs-list:bg-plan-card group-data-[variant=checkout]/tabs-list:ring-1 group-data-[variant=checkout]/tabs-list:ring-border dark:group-data-[variant=checkout]/tabs-list:ring-0",
           "group-data-[variant=line]/tabs-list:rounded-full group-data-[variant=line]/tabs-list:bg-foreground",
           "group-data-horizontal/tabs:group-data-[variant=line]/tabs-list:top-auto group-data-horizontal/tabs:group-data-[variant=line]/tabs-list:bottom-0 group-data-horizontal/tabs:group-data-[variant=line]/tabs-list:h-0.5",
           "group-data-vertical/tabs:group-data-[variant=line]/tabs-list:left-auto group-data-vertical/tabs:group-data-[variant=line]/tabs-list:right-0 group-data-vertical/tabs:group-data-[variant=line]/tabs-list:w-0.5"
@@ -99,9 +101,8 @@ function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
         "group-data-[variant=checkout]/tabs-list:font-semibold group-data-[variant=checkout]/tabs-list:text-checkout-hero-fg-secondary group-data-[variant=checkout]/tabs-list:not-data-active:hover:text-checkout-hero-fg",
         "data-active:text-foreground dark:data-active:text-foreground",
         "group-data-[variant=checkout]/tabs-list:data-active:text-checkout-primary dark:group-data-[variant=checkout]/tabs-list:data-active:text-checkout-primary",
-        // Inverted needs the same dark override: the line above made its
-        // active label foreground (white) on its foreground (white) pill.
-        "dark:group-data-[variant=inverted]/tabs-list:data-active:text-background",
+        // Inverted on dark: light label on the lifted plum pill.
+        "dark:group-data-[variant=inverted]/tabs-list:data-active:text-foreground",
         className
       )}
       {...props}

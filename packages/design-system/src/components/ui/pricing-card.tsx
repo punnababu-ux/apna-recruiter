@@ -206,7 +206,7 @@ export function PricingCard({
     // clips its own corner instead.
     "relative flex h-full flex-col gap-4 rounded-card-nested border p-4 pt-8",
     interactive && "card-hover-lift",
-    inset ? "border-checkout-inset-border bg-checkout-inset" : "border-border bg-card",
+    inset ? "border-checkout-inset-border bg-checkout-inset" : "border-border bg-plan-card",
     // A clickable card answers a press like every other surface.
     props.onClick && "cursor-pointer ink press-subtle",
     className

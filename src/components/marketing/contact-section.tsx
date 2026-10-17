@@ -98,7 +98,7 @@ export function ContactSection({
       {/* Frosted, like the header pill: the gradient shows through. */}
       <Card
         padding="lg"
-        className="surface-feature flex flex-col items-center gap-8 text-center sm:p-12"
+        className="surface-band flex flex-col items-center gap-8 text-center sm:p-12"
       >
         {/* The page's closing line: the h1 type preset (it stays an h2 —
             the hero owns the h1). One line on desktop; on phones the h3 size

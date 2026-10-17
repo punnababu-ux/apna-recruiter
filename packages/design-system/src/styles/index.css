@@ -113,6 +113,9 @@
   --color-cta-emphasis-foreground: var(--cta-emphasis-foreground);
   --color-checkout-discount-fg:        var(--checkout-discount-fg);
   --color-checkout-discount-bg:        var(--checkout-discount-bg);
+  --color-cta-primary:                 var(--cta-primary);
+  --color-cta-primary-hover:           var(--cta-primary-hover);
+  --color-plan-card:                   var(--surface-plan-card);
   --color-checkout-info:               var(--checkout-info);
   --color-checkout-info-foreground:    var(--checkout-info-foreground);
   --color-night-sky-fg:       var(--night-sky-fg);
@@ -1089,6 +1092,34 @@
   }
   section[data-tone="card"] &[data-slot] {
     background-color: var(--muted);
+    border-color: transparent;
+    backdrop-filter: none;
+  }
+}
+/* The closing contact band (ContactSection, every marketing page): the
+   feature surface on light; on dark the solid plan-card plum, so it matches
+   the cards around it (the frosting has no gradient to show on a dark page).
+   One rule site-wide, so the band looks the same on every page. */
+@utility surface-band {
+  &[data-slot] {
+    background-color: color-mix(in srgb, var(--card) 70%, transparent);
+    border-color: color-mix(in srgb, var(--card) 60%, transparent);
+    box-shadow: var(--shadow-card);
+    backdrop-filter: blur(24px);
+  }
+  section[data-tone="card"] &[data-slot] {
+    background-color: var(--card);
+    background-image: var(--gradient-checkout-hero);
+    background-size: cover;
+    background-position: center;
+    border-color: var(--border);
+    box-shadow: var(--shadow-elevated);
+    backdrop-filter: none;
+  }
+  .dark &[data-slot],
+  .dark section[data-tone="card"] &[data-slot] {
+    background-color: var(--surface-plan-card);
+    background-image: none;
     border-color: transparent;
     backdrop-filter: none;
   }

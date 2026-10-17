@@ -106,7 +106,8 @@ const APPEARANCES = {
     active: "text-checkout-primary",
     inactive: "text-checkout-hero-fg-secondary",
     muted: "text-checkout-hero-fg-secondary",
-    activeItem: "bg-card ring-1 ring-border shadow-none",
+    // bg-plan-card: on dark the pill matches the plan cards below it.
+    activeItem: "bg-plan-card ring-1 ring-border shadow-none dark:ring-0",
   },
 } as const
 
@@ -231,7 +232,7 @@ export function SegmentedTabSwitcher<V extends string = string>({
             // The ring (--border) keeps the white selected chip
             // visible on a white surface (a card, a panel), not just on a
             // grey one; the shadow alone vanished there.
-            className="sliding-indicator rounded-full bg-card shadow-control ring-1 ring-border"
+            className={cn("sliding-indicator rounded-full shadow-control ring-1 ring-border", appearance === "checkout" ? "bg-plan-card dark:ring-0" : "bg-card")}
           />
           {items.map(({ value: v, label, shortLabel, icon }) => {
             const active = v === value

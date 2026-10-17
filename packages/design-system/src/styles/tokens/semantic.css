@@ -605,6 +605,14 @@
   /* The "apna" of the logo: brand plum on light, near-white on dark (the
      wordmark would vanish on a dark sidebar). `-deep` is the marketing
      header's darkest plum; on dark it is the same near-white. */
+  /* Plan surfaces (pricing, plans step): the cards. Same as --card on
+     light; on dark they take the open FAQ item's plum (--muted). */
+  --surface-plan-card: var(--card);
+  /* The green button fill (Button default). Same as --primary on light;
+     on dark it is green-700, deeper than --primary (green-500), which stays
+     bright for green text, links and icons. */
+  --cta-primary:       var(--primary);
+  --cta-primary-hover: color-mix(in srgb, var(--primary) 90%, transparent);
   --logo-apna:      var(--color-apna-plum-400);
   --logo-apna-deep: var(--color-apna-plum-950);
   --gradient-offer-premium:
@@ -646,13 +654,16 @@
  * Dark theme — only the mapping changes, primitives are untouched.
  * ========================================================================== */
 .dark {
+  --surface-plan-card: var(--muted);
+  --cta-primary:       var(--color-apna-green-700);
+  --cta-primary-hover: var(--color-apna-green-600);
   --logo-apna:      var(--color-apna-plum-50);
   --logo-apna-deep: var(--color-apna-plum-50);
-  /* Plans button: on a dark sidebar the light gradient's plum-950 end
-     merged into the surface, so it stays in the lighter plums here. */
+  /* Plans button on dark: a quiet plum one step above the sidebar (600 →
+     800), no gold bloom; the gold Coin icon carries the premium accent.
+     (The light plums and gold glow glared on a dark sidebar.) */
   --gradient-offer-premium:
-    radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--color-apna-gold-500) 60%, transparent) 0%, transparent 60%),
-    linear-gradient(137deg, var(--color-apna-plum-300) -20%, var(--color-apna-plum-400) 45%, var(--color-apna-plum-500) 110%);
+    linear-gradient(137deg, var(--color-apna-plum-600) 0%, var(--color-apna-plum-700) 55%, var(--color-apna-plum-800) 110%);
   /* Surfaces — tinted dark, not neutral gray.
    *
    * Previously gray-950/-900/-800 (Zinc): HSL(240°, 4–10%, 4–16%) — a faint
@@ -835,7 +846,7 @@
    * port — this is an original value, like the dark hero gradient above. */
   --surface-checkout-hero-fg-secondary: var(--color-gray-300);
   /* Mirrors the light track's alpha-black overlay, inverted for a dark hero. */
-  --surface-checkout-track: rgba(255, 255, 255, 0.08);
+  --surface-checkout-track: color-mix(in srgb, var(--card) 40%, transparent); /* tab bar + Job credits panel: the Unlimited outer plum at 40% */
 
   /* Chip — inverted so the solid chip still reads against the dark track. */
   --chip-solid:            var(--color-gray-100);
@@ -862,7 +873,8 @@
    *
    * Light mode is untouched: this card still renders fixed white with
    * fixed dark text there, matching Figma exactly. Only dark mode changes. */
-  --surface-checkout-inset:        var(--color-alpha-black-20);
+  /* The Unlimited inner card: the same colour as every plan card on dark. */
+  --surface-checkout-inset:        var(--surface-plan-card);
   --surface-checkout-inset-border: var(--border);
   --surface-checkout-inset-fg:     var(--card-foreground);
   --surface-checkout-inset-fg-muted: var(--muted-foreground);
@@ -879,20 +891,24 @@
    * the dark plans page.
    *   discount     a tint of brand green with light green text, like the
    *                product's other dark chips
-   *   offer        the green pop-up header, deeper (700 → 950): it was the
-   *                light sweep starting at green-500, loud beside the plum one
-   *   unlimited    one step lighter than the page, so the card lifts off it
-   *                (with its ring — ring-checkout-unlimited-line in dark) */
+   *   offer        the green pop-up header: green glows on dark plum, like
+   *                the product pages' dark canvases
+   *   unlimited    a black tint, the mirror of the Job credits white tint */
   --checkout-discount-bg: color-mix(in srgb, var(--color-apna-green-500) 18%, transparent);
   --checkout-discount-fg: var(--color-apna-green-300);
-  --gradient-offer: linear-gradient(137deg, var(--color-apna-green-700) 0%, var(--color-apna-green-900) 55%, var(--color-apna-green-950) 112%);
-  --gradient-checkout-unlimited: linear-gradient(180deg,
-                                   var(--color-apna-plum-600) 0%,
-                                   var(--color-apna-plum-700) 55%,
-                                   var(--color-apna-plum-800) 100%);
-  /* Ribbon and CTA, one step quieter on dark: sky-500 / green-600 were the
-   * loudest marks on the dark cards. Green stays the one primary; hover
-   * steps back up so a press still answers. */
+  /* Green offer header on dark: the product pages' dark canvas treatment
+     (--gradient-canvas-ai-calling): green glows over the dark plum base,
+     not a flat green sweep. */
+  --gradient-offer:
+    radial-gradient(circle at 8% 12%, color-mix(in srgb, var(--color-apna-green-700) 75%, transparent) 0%, transparent 60%),
+    radial-gradient(circle at 92% 90%, color-mix(in srgb, var(--color-apna-green-900) 80%, transparent) 0%, transparent 65%),
+    linear-gradient(var(--color-apna-plum-900), var(--color-apna-plum-900));
+  /* Unlimited on dark: a black tint over the page, the mirror of the Job
+     credits strip's white tint (--surface-checkout-track). Plum read muddy. */
+  --gradient-checkout-unlimited: linear-gradient(var(--card), var(--card)); /* trial: the FAQ band's colour */
+  /* Ribbon one step quieter on dark (sky-500 was the loudest mark on the
+   * dark cards). The CTA is green-700 on dark, the same as --cta-primary,
+   * so the plan pages' green button matches every other green button. */
   --checkout-info:          var(--color-apna-sky-700);
   --checkout-primary:       var(--color-apna-green-700);
   --checkout-primary-hover: var(--color-apna-green-600);

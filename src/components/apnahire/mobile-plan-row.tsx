@@ -111,7 +111,7 @@ export function MobilePlanRow({
         aria-checked={selected}
         tabIndex={0}
         className={cn(
-          "ink press-subtle @container relative flex cursor-pointer flex-col gap-3 overflow-hidden rounded-card bg-card p-4 shadow-card transition-interactive",
+          "ink press-subtle @container relative flex cursor-pointer flex-col gap-3 overflow-hidden rounded-card bg-plan-card p-4 shadow-card transition-interactive",
           selected
             ? "border-2 border-checkout-primary ring-1 ring-checkout-primary/20"
             : "border border-border hover:border-border/80",
@@ -268,7 +268,7 @@ export function MobileUnlimitedCard({
     // 16px in from the frame's edge.
     <div
       className={cn(
-        "flex flex-col gap-3 rounded-card bg-gradient-checkout-unlimited px-2.5 pt-5 pb-2.5 text-surface-inverted-fg dark:ring-1 dark:ring-checkout-unlimited-line",
+        "flex flex-col gap-3 rounded-card bg-gradient-checkout-unlimited px-2.5 pt-5 pb-2.5 text-surface-inverted-fg",
         className
       )}
     >
@@ -278,7 +278,7 @@ export function MobileUnlimitedCard({
 
       <div
         className={cn(
-          "relative flex flex-col gap-3 overflow-hidden rounded-card-nested bg-card p-4 text-card-foreground shadow-card",
+          "relative flex flex-col gap-3 overflow-hidden rounded-card-nested bg-plan-card p-4 text-card-foreground shadow-card",
           cardClassName
         )}
       >
