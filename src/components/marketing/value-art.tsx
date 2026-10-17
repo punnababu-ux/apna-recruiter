@@ -1,6 +1,6 @@
 /**
  * ValueArt — a stack card's 3D clay picture (Culture's values, Join us's
- * Life at apna): its 3D clay object
+ * Life at apna, the Lounge's How it works): its 3D clay object
  * (public/images/company/values/<name>.png) once generated. Until then, a
  * stand-in of the same size and weight: the value's icon on a large
  * frosted disc, so the card's layout is final and the swap is one line
@@ -11,15 +11,19 @@ import type { ComponentType } from "react"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import {
+  BarChart2,
   Building2,
+  DoorOpen,
   GraduationCap,
   HeartHandshake,
   KeyRound,
   Landmark,
+  MessagesSquare,
   Rocket,
   Scale,
   Target,
   TrendingUp,
+  Wrench,
 } from "@apna/design-system"
 
 export type ValueName =
@@ -35,6 +39,12 @@ export type ValueName =
   | "student"
   | "university"
   | "government"
+  // The Lounge's How it works
+  | "deploy"
+  | "access"
+  | "practise"
+  | "improve"
+  | "track"
 
 const ICON: Record<ValueName, ComponentType<{ className?: string; "aria-hidden"?: boolean }>> = {
   ownership: KeyRound,
@@ -47,6 +57,11 @@ const ICON: Record<ValueName, ComponentType<{ className?: string; "aria-hidden"?
   student: GraduationCap,
   university: Building2,
   government: Landmark,
+  deploy: Wrench,
+  access: DoorOpen,
+  practise: MessagesSquare,
+  improve: TrendingUp,
+  track: BarChart2,
 }
 
 /** Values whose clay image is in public/images/company/values. */

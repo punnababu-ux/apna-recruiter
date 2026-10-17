@@ -188,24 +188,29 @@ export const LOUNGE = {
     items: [
       {
         title: "Deploy",
+        art: "deploy",
         description:
           "The Lounge is installed within the institution's campus environment as a dedicated interview preparation facility.",
       },
       {
         title: "Access",
+        art: "access",
         description: "Students access the Lounge and select the role or career pathway they want to prepare for.",
       },
       {
         title: "Practise",
+        art: "practise",
         description: "The AI conducts a structured interview based on the candidate's profile and selected role.",
       },
       {
         title: "Improve",
+        art: "improve",
         description:
           "Students receive immediate, actionable feedback and can continue practising to strengthen specific areas.",
       },
       {
         title: "Track",
+        art: "track",
         description:
           "Institutions gain cohort-level visibility into interview readiness and areas requiring further intervention.",
       },

@@ -299,7 +299,7 @@ export default function InterviewPrepLoungePage() {
                 <StackCard
                   key={step.title}
                   index={i}
-                  watermark={String(i + 1).padStart(2, "0")}
+                  art={<ValueArt name={step.art} />}
                   overline={deckPosition(i, howItWorks.items.length)}
                   title={step.title}
                 >
