@@ -52,7 +52,9 @@ export interface ProductPageContent {
   /** The hero's one primary action. Logged-out visitors go through login. */
   cta: { label: string; href: string }
   stats?: { value: string; label: string }[]
-  steps?: { title: string; heading: string; items: { icon: ProductIconName; title: string; description: string }[] }
+  /** How it works, step by step — shown first, in the same card grid as
+   *  the features, under the eyebrow `title` ("How it works"). */
+  steps?: { title: string; items: { icon: ProductIconName; title: string; description: string }[] }
   features: { title: string; items: ProductPageFeature[] }
 }
 
@@ -111,7 +113,8 @@ export const PRODUCT_PAGES = {
     product: "AI Calling Agent",
     metaTitle: "AI Calling Agent",
     metaDescription: "apna's AI Calling Agent interviews and shortlists candidates 24/7.",
-    eyebrow: "Job with AI Calling Agent",
+    // AI calling is an add-on on any job (not a premium job type).
+    eyebrow: "AI Calling Agent",
     heading: "AI Calling Agent interviews and shortlists candidates 24/7",
     cta: { label: "Post a job now", href: login("/apnahire/jobs/new") },
     stats: [
@@ -122,7 +125,6 @@ export const PRODUCT_PAGES = {
     ],
     steps: {
       title: "How it works",
-      heading: "Post a Premium job with AI Calling Agent",
       items: [
         {
           icon: "sliders",

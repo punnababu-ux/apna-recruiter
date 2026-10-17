@@ -6,8 +6,8 @@
  *             "Contact sales" outline link to the page's contact band; the
  *             product's illustration opposite (the homepage card's art)
  *   Stats     optional, a row of numbers under the hero
- *   Steps     optional, "How it works" as numbered cards
- *   Features  a grid of cards: icon, title, description
+ *   Features  one grid of cards (icon, title, description): the steps
+ *             first when there are any, under a "How it works" eyebrow
  *   Contact   the shared closing band (ContactSection)
  *
  * Pure layout over Section, SectionHeading, Card and Button, so the four
@@ -113,46 +113,25 @@ export function ProductPage({ content }: { content: ProductPageContent }) {
         </Section>
       )}
 
-      {steps && (
-        <Section size="md">
-          <div className="flex flex-col gap-10">
-            <SectionHeading
-              level={2}
-              align="center"
-              eyebrow={<span className="text-overline text-muted-foreground">{steps.title}</span>}
-              title={steps.heading}
-            />
-            {/* Simple white cards, like the features: icon, title, line. */}
-            <ol className="grid gap-6 md:grid-cols-3">
-              {steps.items.map((step) => {
-                const Icon = ICONS[step.icon]
-                return (
-                  <li key={step.title}>
-                    <Card padding="lg" className="h-full gap-3 border-card/60 bg-card/70 backdrop-blur-xl">
-                      <Icon className="size-6 text-product-accent" aria-hidden />
-                      <h3 className="text-h6 text-foreground">{step.title}</h3>
-                      <p className="text-sm text-muted-foreground">{step.description}</p>
-                    </Card>
-                  </li>
-                )
-              })}
-            </ol>
-          </div>
-        </Section>
-      )}
-
+      {/* One section: the steps (if any) then the features, one card grid,
+          one title — with steps, "How it works" sits over it as the eyebrow. */}
       <Section size="md">
         <div className="flex flex-col gap-10">
-          <SectionHeading level={2} align="center" title={features.title} />
+          <SectionHeading
+            level={2}
+            align="center"
+            eyebrow={steps && <span className="text-overline text-muted-foreground">{steps.title}</span>}
+            title={features.title}
+          />
           <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {features.items.map((feature) => {
-              const Icon = ICONS[feature.icon]
+            {[...(steps?.items ?? []), ...features.items].map((item) => {
+              const Icon = ICONS[item.icon]
               return (
-                <li key={feature.title}>
+                <li key={item.title}>
                   <Card padding="lg" className="h-full gap-3 border-card/60 bg-card/70 backdrop-blur-xl">
                     <Icon className="size-6 text-product-accent" aria-hidden />
-                    <h3 className="text-h6 text-foreground">{feature.title}</h3>
-                    <p className="text-sm text-muted-foreground">{feature.description}</p>
+                    <h3 className="text-h6 text-foreground">{item.title}</h3>
+                    <p className="text-sm text-muted-foreground">{item.description}</p>
                   </Card>
                 </li>
               )

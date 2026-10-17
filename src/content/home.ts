@@ -140,7 +140,8 @@ export const HOME_PRODUCT_DETAILS: ProductDetailRow[] = [
   },
   {
     name: "AI Calling Agent",
-    eyebrow: "Job with AI Calling Agent",
+    // AI calling is an add-on on any job (not a premium job type).
+    eyebrow: "AI Calling Agent",
     heading: "AI Calling Agent interviews and shortlists candidates 24/7",
     features: [
       {
