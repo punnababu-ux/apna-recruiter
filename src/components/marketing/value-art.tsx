@@ -30,7 +30,7 @@ export function ValueArt({ name }: { name: ValueName }) {
         alt=""
         width={320}
         height={320}
-        className="size-64 object-contain md:size-80 lg:size-96"
+        className="size-56 object-contain md:size-72 lg:size-80"
       />
     )
   }

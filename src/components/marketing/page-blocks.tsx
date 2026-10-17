@@ -211,19 +211,30 @@ export function StackCard({
           {watermark}
         </span>
       )}
-      <div className={cn(art && "grid items-center gap-6 md:grid-cols-5")}>
-        <div className="flex min-h-80 max-w-3xl flex-col justify-center gap-5 p-6 sm:p-10 md:col-span-3 lg:min-h-96 lg:p-14">
+      {art ? (
+        // Built like the homepage product cards: the picture in its own
+        // frosted tile, inset 8px so the corners nest, filling the card's
+        // height on the left; the copy right beside it. Phones: tile on top.
+        <div className="grid gap-2 p-2 md:grid-cols-5">
+          <div
+            aria-hidden
+            className="flex min-h-64 items-center justify-center rounded-card-nested bg-card/50 p-6 md:col-span-2 md:min-h-96"
+          >
+            {art}
+          </div>
+          <div className="flex flex-col justify-center gap-5 p-6 sm:p-8 md:col-span-3 lg:p-12">
+            <span className="text-overline text-muted-foreground tabular-nums">{overline}</span>
+            <h3 className="text-h3 text-balance text-foreground sm:text-h2">{title}</h3>
+            {children}
+          </div>
+        </div>
+      ) : (
+        <div className="flex min-h-80 max-w-3xl flex-col justify-center gap-5 p-6 sm:p-10 lg:min-h-96 lg:p-14">
           <span className="text-overline text-muted-foreground tabular-nums">{overline}</span>
           <h3 className="text-h3 text-balance text-foreground sm:text-h2">{title}</h3>
           {children}
         </div>
-        {art && (
-          // The picture leads: on the card's left from md, on top on phones.
-          <div aria-hidden className="order-first flex items-center justify-center px-6 pt-8 md:col-span-2 md:p-6">
-            {art}
-          </div>
-        )}
-      </div>
+      )}
     </ScrollStackItem>
   )
 }

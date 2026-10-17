@@ -4,8 +4,8 @@
  *
  *   Hero     the chip, the serif headline, the line
  *   Values   the four values as stacking cards in the suite gradients,
- *            each with its 3D clay object beside it (ValueArt), its four
- *            commitments as a checked 2×2 under the title
+ *            each with its 3D clay object in a tile on the left (ValueArt),
+ *            its four commitments as one checked column beside it
  *   Closing  the line as a statement band in the mother gradient
  */
 
@@ -40,7 +40,7 @@ export default function CulturePage() {
                 overline={deckPosition(i, values.length)}
                 title={value.title}
               >
-                <ul className="grid gap-x-8 gap-y-4 sm:grid-cols-2">
+                <ul className="flex flex-col gap-4">
                   {value.points.map((point) => (
                     <li key={point} className="flex items-start gap-3">
                       <CheckCircle2 className="mt-1 size-5 shrink-0 text-foreground" aria-hidden />
