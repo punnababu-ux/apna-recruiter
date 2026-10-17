@@ -14,7 +14,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@a
 import { Button, ChevronDown } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 
-interface FaqItem {
+export interface FaqItem {
   value: string
   question: string
   answer?: string
@@ -33,13 +33,18 @@ const FAQS: FaqItem[] = [
 ]
 
 interface FaqSectionProps {
+  /** The questions; defaults to the pricing page's set. The first opens. */
+  items?: readonly FaqItem[]
+  /** Hide the "Help & support" and "Show more" buttons (a page whose
+   *  list is complete, like Enterprise). */
+  hideActions?: boolean
   onHelpAndSupport?: () => void
   onShowMore?: () => void
   className?: string
 }
 
-export function FaqSection({ onHelpAndSupport, onShowMore, className }: FaqSectionProps) {
-  const [open, setOpen] = React.useState<string[]>(["why-apna"])
+export function FaqSection({ items = FAQS, hideActions, onHelpAndSupport, onShowMore, className }: FaqSectionProps) {
+  const [open, setOpen] = React.useState<string[]>(items[0] ? [items[0].value] : [])
 
   return (
     <div
@@ -55,9 +60,11 @@ export function FaqSection({ onHelpAndSupport, onShowMore, className }: FaqSecti
           <br />
           asked questions
         </h2>
-        <Button type="button" variant="outline" size="sm" onClick={onHelpAndSupport}>
-          Help &amp; support
-        </Button>
+        {!hideActions && (
+          <Button type="button" variant="outline" size="sm" onClick={onHelpAndSupport}>
+            Help &amp; support
+          </Button>
+        )}
       </div>
 
       <div className="flex w-full flex-col items-end gap-4">
@@ -66,7 +73,7 @@ export function FaqSection({ onHelpAndSupport, onShowMore, className }: FaqSecti
           onValueChange={(v) => setOpen(v as string[])}
           className="w-full gap-4"
         >
-          {FAQS.map((faq) => {
+          {items.map((faq) => {
             const isOpen = open.includes(faq.value)
             return (
               <AccordionItem
@@ -96,9 +103,11 @@ export function FaqSection({ onHelpAndSupport, onShowMore, className }: FaqSecti
           })}
         </Accordion>
 
-        <Button type="button" variant="link" className="self-start" onClick={onShowMore} trailingIcon={<ChevronDown aria-hidden />}>
-          Show more
-        </Button>
+        {!hideActions && (
+          <Button type="button" variant="link" className="self-start" onClick={onShowMore} trailingIcon={<ChevronDown aria-hidden />}>
+            Show more
+          </Button>
+        )}
       </div>
     </div>
   )
