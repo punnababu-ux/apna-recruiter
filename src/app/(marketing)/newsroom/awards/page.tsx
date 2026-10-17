@@ -55,7 +55,14 @@ export default function AwardsPage() {
                     alt={award.title}
                     width={i === 0 ? 1200 : 600}
                     height={i === 0 ? 675 : 600}
-                    className={cn("w-full object-cover", i === 0 ? "aspect-video" : "aspect-square")}
+                    className={cn(
+                      "w-full object-cover",
+                      i === 0 ? "aspect-video" : "aspect-square",
+                      // From lg the wide card and the one beside it share a
+                      // row: one picture height for both, so the narrow
+                      // card isn't left with a white gap under its text.
+                      i < 2 && "lg:aspect-auto lg:h-80"
+                    )}
                   />
                   <div className="flex flex-1 flex-col gap-3 p-5 sm:p-6">
                     <div className="flex items-start justify-between gap-3">
