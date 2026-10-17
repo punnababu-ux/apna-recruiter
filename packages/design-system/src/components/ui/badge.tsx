@@ -29,10 +29,10 @@ const badgeVariants = cva(
          * light in either theme, so they use the fixed checkout-* roles rather
          * than --info / --success, which remap in dark. Pair `ribbon` with
          * size="ribbon" for the corner treatment. */
-        // Dark: the sidebar "New" tag's tint (info at 20%, info text), so blue
-        // tags read alike across the product; solid blue stays on light.
+        // --ribbon-fill / --ribbon-fg: solid blue on light; on dark the
+        // sidebar "New" tag's tint, opaque (see semantic.css).
         ribbon:
-          "bg-ribbon-fill font-semibold text-checkout-info-foreground dark:text-info",
+          "bg-ribbon-fill font-semibold text-ribbon-fg",
         discount:
           "bg-checkout-discount-bg font-semibold text-checkout-discount-fg",
         /* Unread / attention marker on an icon: a solid red count (size

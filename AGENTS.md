@@ -401,9 +401,11 @@ To change how round the cards feel, retune `--radius-card` in
   one of two surfaces and the band decides:
   - `surface-frosted` — cards in a grid or list. Frosted white on a
     gradient band; the muted fill on a white band.
-  - `surface-feature` — the one standout card of a band (the contact card,
-    a lead story). Frosted on a gradient band; on a white band it lifts:
+  - `surface-feature` — the one standout card of a band (a lead story,
+    the Enterprise playbook). Frosted on a gradient band; on a white band it lifts:
     the mother gradient plus `shadow-elevated`.
+  - `surface-band` — the closing contact band only: `surface-feature` on
+    light; on dark the solid plan-card plum, the same on every page.
   No `bg-card/70 backdrop-blur-*` hand-mixes on marketing cards.
 - **A product page is its colour, top to bottom.** Its canvas — header,
   every band, footer — is the homepage gradient re-tinted in the product's

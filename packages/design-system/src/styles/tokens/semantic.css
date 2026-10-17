@@ -516,7 +516,6 @@
    * themes — a "marketing surface" like the hero gradient — while
    * --primary/--success brighten one step in dark mode (apna-green-500). */
   --checkout-primary:            var(--color-apna-green-600);
-  --checkout-primary-hover:       var(--color-apna-green-700);
   --checkout-primary-foreground: var(--color-gray-0);
 
   /* Emphasis CTA — dark gray. The "push this, but it isn't THE action"
@@ -574,8 +573,8 @@
   --close-bubble-hover:      var(--color-alpha-black-60);
   --close-bubble-foreground: var(--color-gray-0);
 
-  /* Offer pop-up headers. Both fixed across themes (dark surfaces in both),
-   * white text, gold "new price".
+  /* Offer pop-up headers: dark surfaces with white text and a gold "new
+   * price". Their dark-mode mappings are in the .dark block.
    *   offer          job bundles, credit packs, exit nudge: the apna-green
    *                  sweep (Figma "offer-gradeint")
    *   offer-premium  subscription upgrades — the subscription upsell and the
@@ -618,6 +617,14 @@
      card plum), because the ribbon straddles a card edge and a see-through
      tint let that edge show through. */
   --ribbon-fill: var(--checkout-info);
+  --ribbon-fg:   var(--checkout-info-foreground);
+  /* Plan surfaces' edges: the plan cards' border and the selected tab pill's
+     ring. Borders on light; none on dark (they read as noise there). */
+  --plan-card-line: var(--border);
+  --plan-pill-ring: var(--border);
+  /* The selected pill of an app phone chip row (MobileChipRow). On dark the
+     app page is the pill's own plum, so it lifts one step. */
+  --app-chip-pill: var(--surface-plan-card);
   --logo-apna:      var(--color-apna-plum-400);
   --logo-apna-deep: var(--color-apna-plum-950);
   --gradient-offer-premium:
@@ -663,6 +670,10 @@
   --cta-primary:       var(--color-apna-green-500);
   --cta-primary-hover: var(--color-apna-green-600);
   --ribbon-fill: color-mix(in srgb, var(--info) 20%, var(--surface-plan-card));
+  --ribbon-fg:   var(--info);
+  --plan-card-line: transparent;
+  --plan-pill-ring: transparent;
+  --app-chip-pill: color-mix(in srgb, var(--foreground) 10%, var(--surface-plan-card));
   --logo-apna:      var(--color-apna-plum-50);
   --logo-apna-deep: var(--color-apna-plum-50);
   /* Plans button on dark: a quiet plum one step above the sidebar (600 →
@@ -911,7 +922,7 @@
     linear-gradient(var(--color-apna-plum-900), var(--color-apna-plum-900));
   /* Unlimited on dark: a black tint over the page, the mirror of the Job
      credits strip's white tint (--surface-checkout-track). Plum read muddy. */
-  --gradient-checkout-unlimited: linear-gradient(var(--card), var(--card)); /* trial: the FAQ band's colour */
+  --gradient-checkout-unlimited: linear-gradient(var(--card), var(--card)); /* the FAQ band's colour */
   /* Ribbon one step quieter on dark (sky-500 was the loudest mark on the
    * dark cards). --checkout-primary is the plan pages' green TEXT and
    * icons (labels, ticks, savings lines): bright green-500 on dark so it

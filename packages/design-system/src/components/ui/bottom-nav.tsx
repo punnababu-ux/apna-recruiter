@@ -92,7 +92,7 @@ export function BottomNav({ items, className }: BottomNavProps) {
                 <Icon
                   className={cn(
                     "size-5 transition-interactive",
-                    item.active ? "text-primary dark:text-cta-primary" : "text-muted-foreground"
+                    item.active ? "text-primary" : "text-muted-foreground"
                   )}
                   aria-hidden
                 />
@@ -108,7 +108,7 @@ export function BottomNav({ items, className }: BottomNavProps) {
             <span
               className={cn(
                 "text-2xs leading-none transition-interactive",
-                item.active ? "font-semibold text-primary dark:text-cta-primary" : "font-medium text-muted-foreground"
+                item.active ? "font-semibold text-primary" : "font-medium text-muted-foreground"
               )}
             >
               {item.label}

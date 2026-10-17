@@ -142,8 +142,6 @@ export function PricingHero({
               value={activeTab}
               onValueChange={onTabChange}
               appearance="checkout"
-              // Selected label + icon: the CTA green on dark (green-700).
-              activeClassName="text-checkout-primary dark:text-cta-primary"
               mobileBleedClassName="-mx-4 sm:-mx-8"
               mobileGutterClassName="px-4 sm:px-8"
             />

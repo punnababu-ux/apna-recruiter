@@ -117,9 +117,9 @@ change between themes.
 | `--surface-checkout-hero-fg`       | gray-900 | gray-50  | text on the checkout-hero gradient (see Gradients) |
 | `--surface-checkout-hero-fg-secondary` | gray-700 | gray-300 | secondary ink on the checkout-hero gradient — inactive tab labels + their glyphs, tab descriptions, the "Available credits" label, body subtitles. A step darker than `-muted`; the designs use it widely enough to earn a role rather than an opacity dim |
 | `--surface-checkout-hero-fg-muted`| gray-500  | gray-400 | helper text on the checkout-hero gradient |
-| `--surface-checkout-track`        | gray-100  | gray-800 | pricing-hero tab-selector track background |
+| `--surface-checkout-track`        | black 8%  | `--card` at 40% | the plan pages' tab track and the Job credits / plans-step panel |
 | `--surface-checkout-track-border` | gray-200  | gray-700 | pricing-hero tab-selector track border |
-| `--surface-checkout-inset`        | gray-0    | alpha-black-20 | nested card inside an always-dark card (e.g. the Unlimited side-card). Fixed white in light mode (matches Figma). Dark mode went through 4 revisions live: literal gray tints (gray-100/-200/-300 — all still read as "a light card"), then aliasing `--card` (matched the sibling job-credit cards' darkness, but the neutral card colour clashed against the warm plum gradient it sits inside). Landed on a translucent black overlay instead of any opaque colour — it's the same gradient showing through, just darkened, so it can't clash with whatever hue that gradient is |
+| `--surface-checkout-inset`        | gray-0    | `--surface-plan-card` | the Unlimited card's inner card (white on light; the plan-card plum on dark, like every plan card) |
 | `--surface-checkout-inset-border` | gray-200  | = `--border` | border on the inset card, aliases the ordinary role in dark mode |
 | `--surface-checkout-inset-fg`     | gray-900  | = `--card-foreground` | text on the inset card — fixed light-mode value (matches `--surface-checkout-hero-fg`'s ORIGINAL failure mode reasoning doesn't apply here anymore: now that the background itself darkens in dark mode, the text has to flip with it) |
 | `--surface-checkout-inset-fg-muted` | gray-500 | = `--muted-foreground` | muted text on the inset card, aliases the ordinary role in dark mode |
@@ -170,15 +170,18 @@ Composed from primitives only, exposed as `bg-gradient-<name>` utilities
 | `surface-frosted` / `surface-feature` (utilities) | Frosted white on a gradient band; on a white band (`section[data-tone=card]`) `--muted` (frosted) or the mother gradient + `--shadow-elevated` (feature) | Marketing cards: the fill follows the band, so a card never disappears on white |
 | `--font-editorial` | `--font-family-editorial` (Playfair Display via next/font) | Marketing serif: `text-editorial-display` / `-h1` / `-h2`, applied by `SectionHeading` inside `[data-voice=editorial]` (the marketing shell); quotes via `--font-quote` (`text-quote`, `text-quote-lg`), which now points here too. Rules: AGENTS.md "Serif — where and only where" |
 | `--gradient-text-brand` | Light: apna-green 700 → 500 → 400 → 500 → 700. Dark: apna-green 500 → 300 → 200 → 300 → 500 | A brand word in moving green (`animate-text-gradient`): the hero's "AI-Native" |
-| `--gradient-checkout-unlimited` | `linear-gradient(180deg, apna-plum-800 → apna-plum-900 → apna-plum-950)` | dark noir card background for the "apna Unlimited" promo banner (`bg-gradient-checkout-unlimited`) — fixed across themes, it's a deliberately-dark card in both. Pair with `--surface-inverted-fg` for its (white) text and `--checkout-unlimited-border(-hover)` / `--checkout-unlimited-cta(-hover)` for its border/CTA |
+| `--gradient-checkout-unlimited` | `linear-gradient(180deg, apna-plum-800 → apna-plum-900 → apna-plum-950)`; dark: solid `--card` (the FAQ band's colour) | the apna Unlimited outer card (`bg-gradient-checkout-unlimited`) |
 | `--gradient-night-sky` | `linear-gradient(160deg, apna-royal-900 → apna-sky-950 → apna-royal-950)` | the night sky on the job wizard's night-shift card when switched on (`bg-gradient-night-sky`) — fixed across themes. Pairs with `--night-sky-fg` (gray-0), `--night-sky-fg-muted` (apna-sky-200), `--night-sky-border` (apna-royal-800), `--night-sky-cloud` (gray-0 at 14%) and `--night-sky-star` (apna-gold-100) |
 | `--close-bubble` / `-hover` / `-foreground` | alpha-black-50 / alpha-black-60 / gray-0, same in both themes | the pop-up CloseBubble that sits on the dimmed backdrop outside the card (`bg-close-bubble`, `text-close-bubble-foreground`) |
-| `--gradient-offer` | `linear-gradient(137deg, apna-green-500 → apna-green-800 → apna-green-950)`, fixed across themes | header of the job bundle, credit pack and exit-nudge pop-ups (`bg-gradient-offer`). White text (`--surface-inverted-fg`), the new price in `--highlight` gold |
+| `--gradient-offer` | `linear-gradient(137deg, apna-green-500 → apna-green-800 → apna-green-950)`; dark: green-700 / green-900 glows over plum-900, like the product pages' dark canvases | header of the job bundle, credit-pack and exit-offer pop-ups (`bg-gradient-offer`) |
 | `--surface-plan-card` | `--card`; dark: `--muted` | Plan surfaces: every plan card and Contact sales (`bg-plan-card`) |
 | `--ribbon-fill` | `--checkout-info`; dark: info 20% mixed into `--surface-plan-card` (opaque) | The Recommended corner ribbon (`Badge variant="ribbon"`) |
+| `--ribbon-fg` | `--checkout-info-foreground`; dark: `--info` | The Recommended ribbon's label |
+| `--plan-card-line` / `--plan-pill-ring` | `--border`; dark: transparent | Plan cards' border (Contact sales) and the selected plan-tab pill's ring (`border-plan-card-line`, `ring-plan-pill-ring`) |
+| `--app-chip-pill` | `--surface-plan-card`; dark: foreground 10% over it | The selected pill of an app phone chip row (`MobileChipRow`) |
 | `--cta-primary` / `--cta-primary-hover` | `--primary` (hover 90%); dark: apna-green-500 / 600 | The green button fill (Button `default`); `--primary` stays brighter in dark for green text, links, icons |
 | `--logo-apna` / `--logo-apna-deep` | apna-plum-400 / plum-950; dark: plum-50 for both | The "apna" of the logos (`LogoApnaHire`, `LogoApnaWordmark`), so the wordmark turns near-white in dark mode |
-| `--gradient-offer-premium` | 55% apna-gold-500 radial bloom top-left over `linear-gradient(137deg, apna-plum-400 → plum-700 → plum-950)`; dark: the lighter plums (300 → 400 → 500) so it doesn't merge into a dark sidebar | header of every subscription upgrade pop-up — the subscription upsell and the "All job slots are in use" slot upgrade (`bg-gradient-offer-premium`), in the Unlimited card and logo colours |
+| `--gradient-offer-premium` | 55% apna-gold-500 radial bloom top-left over `linear-gradient(137deg, apna-plum-400 → plum-700 → plum-950)`; dark: a quiet `plum-600 → 700 → 800`, no gold bloom (the gold Coin carries the accent) | subscription upgrade pop-up headers and every Plans button (`variant="premium"`) |
 | `--gradient-ai-subtle` | Light: `linear-gradient(100deg, apna-plum-50 → apna-sky-50 → apna-green-50)`. Dark: the 950 steps of the same ramps at 45–70% over the surface | soft "AI" wash behind the AI calling add-on in the express-checkout order summary (`bg-gradient-ai-subtle`); quiet enough for body text on top |
 | `--gradient-ai-demo` | Light: `linear-gradient(90deg, apna-navy-100 → apna-green-100)`. Dark: the 950 steps at 70% over the surface | violet → mint card behind the AI calling demo player in the "How AI calling works" pop-up (`bg-gradient-ai-demo`); a step stronger than `--gradient-ai-subtle` |
 
@@ -194,16 +197,15 @@ while `--primary`/`--success` brighten one step in dark mode
 
 | Token                          | Light                  | Dark                    | Intent                                    |
 |---------------------------------|-------------------------|--------------------------|--------------------------------------------|
-| `--checkout-primary`           | apna-green-600 (#1F8268) | apna-green-600 (fixed) | checkout CTAs |
-| `--checkout-primary-hover`     | apna-green-700 (#186954) | apna-green-700 (fixed) | checkout CTA hover |
+| `--checkout-primary`           | apna-green-600 (#1F8268) | apna-green-500 | the plan pages' green text and icons (selected tab labels, ticks, savings lines); their buttons fill from `--cta-primary` |
 | `--checkout-primary-foreground`| gray-0                 | gray-0                   | text/icon on checkout-primary             |
 | `--cta-emphasis`               | gray-800               | gray-700                 | emphasis CTA (`Button variant="emphasis"`) — an add-on/upsell push on a screen whose primary CTA is taken |
 | `--cta-inverted` / `-hover` / `-foreground` | gray-0 / gray-100 / gray-900 | same (fixed) | the `emphasis` CTA on a dark surface — inside `data-surface="dark"` it renders white with a dark label ("Upgrade now" on an offer header) |
 | `--cta-emphasis-hover`         | gray-900               | gray-600                 | emphasis CTA hover                         |
 | `--cta-emphasis-foreground`    | gray-0                 | gray-0                   | text/icon on cta-emphasis                  |
-| `--checkout-discount-fg`       | apna-green-700 (#186954) | apna-green-700 (fixed) | discount-pill and itemized discount text (drawer, cards). Consumed via `<Badge variant="discount">` |
-| `--checkout-discount-bg`       | gray-200                | gray-200 (fixed)         | discount pill background                  |
-| `--checkout-info`              | apna-sky-500 (#2F87E4)  | apna-sky-500 (fixed)     | the checkout surface's fixed accent blue — the "Recommended" ribbon (`<Badge variant="ribbon">`) and the single-credit link. Not `--info`: that is apna-sky-600 and remaps in dark, while this surface stays light in both themes |
+| `--checkout-discount-fg`       | apna-green-700 (#186954) | apna-green-300 | discount-pill and itemized discount text |
+| `--checkout-discount-bg`       | gray-200                | apna-green-500 at 18%    | discount pill background                  |
+| `--checkout-info`              | apna-sky-500 (#2F87E4)  | apna-sky-700 | the checkout surface's fixed accent blue — the "Recommended" ribbon (`<Badge variant="ribbon">`) and the single-credit link. Not `--info`: that is apna-sky-600 and remaps in dark, while this surface stays light in both themes |
 | `--checkout-info-foreground`   | gray-0                  | gray-0 (fixed)           | text/icon on `--checkout-info`            |
 
 ### Third-party brand

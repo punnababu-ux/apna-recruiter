@@ -115,6 +115,10 @@
   --color-checkout-discount-bg:        var(--checkout-discount-bg);
   --color-cta-primary:                 var(--cta-primary);
   --color-ribbon-fill:                 var(--ribbon-fill);
+  --color-ribbon-fg:                   var(--ribbon-fg);
+  --color-plan-card-line:              var(--plan-card-line);
+  --color-plan-pill-ring:              var(--plan-pill-ring);
+  --color-app-chip-pill:               var(--app-chip-pill);
   --color-cta-primary-hover:           var(--cta-primary-hover);
   --color-plan-card:                   var(--surface-plan-card);
   --color-checkout-info:               var(--checkout-info);
