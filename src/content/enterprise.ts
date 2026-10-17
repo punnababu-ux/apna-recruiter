@@ -86,7 +86,8 @@ export const ENTERPRISE = {
       "Insights from 140+ People & Talent Leaders on hiring, engaging, and retaining India’s largest workforce generation.",
     cta: "Download Playbook",
     href: "https://apna.co/genzplaybook#download",
-    image: "/images/enterprise/genz-playbook.avif",
+    /** The cover as a 3D clay object (Punna, 2026-10-17), title spelled right. */
+    image: "/images/enterprise/genz-playbook-clay.png",
   },
   testimonials: {
     title: "Customer testimonials",

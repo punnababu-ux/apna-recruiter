@@ -123,13 +123,16 @@ export default function EnterprisePage() {
       <Section tone="card" size="md">
         {/* The one standout card on its band (surface-feature). */}
         <Card padding="none" className="surface-feature grid overflow-hidden md:grid-cols-2">
-          <Image
-            src={playbook.image}
-            alt={playbook.title}
-            width={1330}
-            height={888}
-            className="aspect-3/2 h-full w-full object-cover md:aspect-auto"
-          />
+          {/* The clay book on a soft tile, like the product cards' art. */}
+          <div className="flex items-center justify-center bg-gradient-illustration-plum p-8">
+            <Image
+              src={playbook.image}
+              alt={playbook.title}
+              width={800}
+              height={800}
+              className="size-64 object-contain sm:size-80"
+            />
+          </div>
           <div className="flex flex-col justify-center gap-6 p-8 lg:p-12">
             <SectionHeading
               level={2}
