@@ -35,6 +35,7 @@ import {
   type PricingTab,
 } from "@/components/apnahire/pricing-hero"
 import { HeroBackdrop } from "@/components/marketing/hero-backdrop"
+import { PRICING_INTRO } from "@/content/pricing"
 import { Button, SegmentedTabSwitcher, StickyCtaBar, Tabs, TabsList, TabsTrigger } from "@apna/design-system"
 import {
   JobCreditBundles,
@@ -498,7 +499,12 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
            over it, logged in and out alike. ── */}
       <div className="relative isolate flex-1">
         <HeroBackdrop />
-        <PricingHero activeTab={activeTab} onTabChange={changeTab} tabsRef={heroTabsRef} />
+        <PricingHero
+          activeTab={activeTab}
+          onTabChange={changeTab}
+          tabsRef={heroTabsRef}
+          intro={isLoggedOut ? PRICING_INTRO : undefined}
+        />
 
         <div className={"px-4 pb-28 sm:px-8 md:pb-12 lg:px-12"}>
           {activeTab === "jobs" ? (
