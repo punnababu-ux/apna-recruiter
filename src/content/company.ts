@@ -122,6 +122,9 @@ export const ABOUT_VALUES = {
   values: [
     {
       title: "Ownership",
+      /** Its 3D clay object (public/images/company/values/ownership.png) — pending
+       *  generation; until it lands the card shows its icon instead. */
+      art: "ownership",
       points: [
         "We think and act like owners when making any decision at the company.",
         "We collaborate, think, and act to drive outcomes.",
@@ -131,6 +134,9 @@ export const ABOUT_VALUES = {
     },
     {
       title: "Customer obsession",
+      /** Its 3D clay object (public/images/company/values/customer-obsession.png) — pending
+       *  generation; until it lands the card shows its icon instead. */
+      art: "customer-obsession",
       points: [
         "We solve for long-term customer success, not happiness.",
         "We build simple, high quality, and scalable products.",
@@ -140,6 +146,9 @@ export const ABOUT_VALUES = {
     },
     {
       title: "Empathy",
+      /** Its 3D clay object (public/images/company/values/empathy.png) — pending
+       *  generation; until it lands the card shows its icon instead. */
+      art: "empathy",
       points: [
         "We listen to understand.",
         "We are brutally honest but respectful.",
@@ -149,6 +158,9 @@ export const ABOUT_VALUES = {
     },
     {
       title: "Transparency & fairness",
+      /** Its 3D clay object (public/images/company/values/transparency.png) — pending
+       *  generation; until it lands the card shows its icon instead. */
+      art: "transparency",
       points: [
         "We believe in sharing across the organisation.",
         "We take unbiased decisions, purely on their merit, aligned to our values.",

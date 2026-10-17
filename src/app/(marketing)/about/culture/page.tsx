@@ -3,8 +3,8 @@
  * ABOUT_VALUES (Lovable "Our Cultures and Values").
  *
  *   Hero     the chip, the serif headline, the line
- *   Values   the four values as the About story's stacking cards: each in
- *            the mother gradient, its number a watermark, its four
+ *   Values   the four values as stacking cards in the suite gradients,
+ *            each with its 3D clay object beside it (ValueArt), its four
  *            commitments as a checked 2×2 under the title
  *   Closing  the line as a statement band in the mother gradient
  */
@@ -16,6 +16,7 @@ import {
   ScrollStack,
   Section,
 } from "@apna/design-system"
+import { ValueArt } from "@/components/marketing/value-art"
 import { ContactSection } from "@/components/marketing/contact-section"
 import { PageHero, StackCard, StatementBand, deckPosition } from "@/components/marketing/page-blocks"
 import { ABOUT_VALUES } from "@/content/company"
@@ -35,7 +36,7 @@ export default function CulturePage() {
               <StackCard
                 key={value.title}
                 index={i}
-                watermark={String(i + 1).padStart(2, "0")}
+                art={<ValueArt name={value.art} />}
                 overline={deckPosition(i, values.length)}
                 title={value.title}
               >
