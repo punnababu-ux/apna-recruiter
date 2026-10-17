@@ -99,8 +99,10 @@ const buttonVariants = cva(
          * inside the always-dark Unlimited card. `outline` cannot be used
          * there: it carries dark: overrides that would paint a dark button on
          * a box that stays white. */
+        // Dark: the same secondary as every other plan card (outline's dark
+        // look). Its own inset fill read as a recessed, different button there.
         "checkout-inset":
-          "border-checkout-inset-border bg-checkout-inset text-checkout-inset-fg hover:bg-checkout-inset-hover",
+          "border-checkout-inset-border bg-checkout-inset text-checkout-inset-fg hover:bg-checkout-inset-hover dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
         /* "Plans": the promoted way to buy — the gold-on-plum offer gradient
          * (the subscription offer's), white label, a gold `Coin` icon. Same
          * look as the bottom bar's raised Plans tile and the sidebar's
