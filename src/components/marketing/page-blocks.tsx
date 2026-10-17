@@ -37,6 +37,7 @@ import {
 import { HeroBackdrop } from "@/components/marketing/hero-backdrop"
 import type { Person } from "@/content/company"
 import { CLIENT_LOGOS } from "@/content/logos"
+import { ILLUSTRATION_TONE, type IllustrationTone } from "@/components/marketing/product-illustrations"
 import { cn } from "@/lib/utils"
 
 /** Sets one word of a headline in italic (`em`, styled by the editorial
@@ -157,17 +158,26 @@ export function StackCard({
   watermark,
   overline,
   title,
+  tone,
   children,
 }: {
   watermark: string
   overline: ReactNode
   title: ReactNode
+  /** One of the homepage hiring-suite gradients (sky, green, plum, gold),
+   *  in place of the mother gradient — About's story deck uses all four
+   *  in the suite's own order. */
+  tone?: IllustrationTone
   children?: ReactNode
 }) {
   return (
     <ScrollStackItem
-      // The mother gradient — or, on a product page, that product's own.
-      className="relative isolate overflow-hidden bg-gradient-checkout-hero [[data-product]_&]:bg-gradient-product"
+      // The mother gradient — or, on a product page, that product's own —
+      // unless a suite tone is given.
+      className={cn(
+        "relative isolate overflow-hidden",
+        tone ? ILLUSTRATION_TONE[tone] : "bg-gradient-checkout-hero [[data-product]_&]:bg-gradient-product"
+      )}
     >
       <span
         aria-hidden

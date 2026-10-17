@@ -373,7 +373,10 @@ To change how round the cards feel, retune `--radius-card` in
 - **Each product owns one gradient** (`bg-gradient-product-*`): Smart Jobs
   sky, AI Calling Agent green, apna Database plum, apna Unlimited gold. Use
   it only with that product: its homepage card, its product page hero, its
-  illustration. Company pages (About, Newsroom, Careers, …) use none.
+  illustration. Company pages (About, Newsroom, Careers, …) use none —
+  one exception: About's four "How we got here" cards wear the four
+  hiring-suite gradients together, in the suite's order, as a set
+  (`StackCard tone`). Never one product's colour alone on a company page.
 - **A product page is its colour, top to bottom.** Its canvas — header,
   every band, footer — is the homepage gradient re-tinted in the product's
   hue (`--gradient-canvas-*`, set by `data-product-canvas`). Bands stay

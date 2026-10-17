@@ -4,8 +4,8 @@
  *   Hero       the chip ("Founded in 2019"), the serif headline, the intro
  *              and the founding story — no numbers
  *              (the founding story sits in the hero, under the intro)
- *   Story      the four beats as the homepage's stacking cards, in the
- *              mother gradient, each year a large watermark
+ *   Story      the four beats as the homepage's stacking cards, each in
+ *              one of the hiring-suite gradients, its year a large watermark
  *   Mission    its own full-width band in the mother gradient, no card
  *   Recruiters the offers as a ProgressAccordion that walks itself, the
  *              picture beside it following the open one (FeatureShowcase)
@@ -26,6 +26,11 @@ import { PageHero, StackCard, StatementBand, deckPosition, withAccent } from "@/
 import { ABOUT_OVERVIEW } from "@/content/company"
 
 export const metadata: Metadata = ABOUT_OVERVIEW.meta
+
+/** The story cards wear the homepage hiring-suite gradients, in the suite's
+ *  own order (Smart Jobs sky, AI Calling green, Database plum, Unlimited
+ *  gold) — the user's call, 2026-10-17: the four cards echo its four. */
+const STORY_TONES = ["sky", "green", "plum", "gold"] as const
 
 
 export default function AboutPage() {
@@ -55,6 +60,7 @@ export default function AboutPage() {
             {story.map((beat, i) => (
               <StackCard
                 key={beat.marker}
+                tone={STORY_TONES[i % STORY_TONES.length]}
                 watermark={beat.marker}
                 overline={`${beat.marker} · ${deckPosition(i, story.length)}`}
                 title={beat.title}
