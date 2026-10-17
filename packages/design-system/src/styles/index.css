@@ -292,6 +292,7 @@
   --transition-duration-large:   var(--duration-large);
   --transition-duration-press:   var(--duration-press);
   --transition-duration-select:  var(--duration-select);
+  --transition-duration-carousel: var(--duration-carousel);
 
   --ease-linear:   var(--ease-linear);
   --ease-standard: var(--ease-standard);
@@ -301,6 +302,8 @@
   --ease-in-ui:    var(--ease-in-ui);
   --ease-out-ui:   var(--ease-out-ui);
   --ease-select:   var(--ease-select);
+  --ease-glide:    var(--ease-glide);
+  --ease-carousel: var(--ease-carousel);
 
   /* --------------------------------------------------------------------
    * Typography — line-height + tracking. Enables `leading-snug`,

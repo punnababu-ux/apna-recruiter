@@ -236,6 +236,11 @@
   --ease-select:       var(--ease-spring);  /* selection lands with a nudge  */
   --duration-slide:    var(--duration-300); /* selection pill travelling    */
   --ease-slide:        var(--ease-standard); /* quick start, soft landing   */
+  --duration-carousel: var(--duration-700); /* a card travelling to its next
+                                               place in a deck (the Lounge's
+                                               demo carousel) — long enough
+                                               to read as weight            */
+  --ease-carousel:     var(--ease-glide);   /* pushed, then coasts to rest   */
   /* Ambient backdrop: one blob's full loop. Long on purpose — the motion
    * should register as "the light is shifting", never as "something moved".
    * Blobs run at 0.8–1.2× this so the pattern never visibly repeats. */

@@ -77,12 +77,17 @@ export function MomentCarousel({ moments, label }: { moments: readonly Moment[];
               aria-hidden={!front}
               inert={!front}
               className={cn(
-                "surface-frosted col-start-1 row-start-1 w-full max-w-xs items-center gap-5 text-center transition-interactive duration-enter ease-out-ui sm:max-w-sm",
-                front && "z-10 shadow-elevated",
-                offset === -1 && "-translate-x-1/4 scale-90 opacity-50 sm:-translate-x-1/3",
-                offset === 1 && "translate-x-1/4 scale-90 opacity-50 sm:translate-x-1/3",
+                // One slow glide for every property (duration-carousel,
+                // ease-carousel): pushed, then coasting to rest, so the
+                // cards read as having weight.
+                "surface-frosted col-start-1 row-start-1 w-full max-w-xs items-center gap-5 text-center transition-interactive duration-carousel ease-carousel sm:max-w-sm",
+                front && "z-20 shadow-elevated",
+                offset === -1 && "z-10 -translate-x-1/4 scale-90 opacity-50 sm:-translate-x-1/3",
+                offset === 1 && "z-10 translate-x-1/4 scale-90 opacity-50 sm:translate-x-1/3",
                 !front && "pointer-events-none shadow-card",
-                Math.abs(offset) > 1 && "opacity-0"
+                // The rest wait behind the front card, smaller, so the one
+                // coming round slides out from behind instead of popping in.
+                Math.abs(offset) > 1 && "z-0 scale-75 opacity-0"
               )}
             >
               <Disc tone={TONES[i % TONES.length]}>
