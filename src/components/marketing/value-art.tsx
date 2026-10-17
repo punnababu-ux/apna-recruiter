@@ -20,7 +20,7 @@ const ICON: Record<ValueName, ComponentType<{ className?: string; "aria-hidden"?
 }
 
 /** Values whose clay image is in public/images/company/values. */
-const READY = new Set<ValueName>(["ownership", "customer-obsession"])
+const READY = new Set<ValueName>(["ownership", "customer-obsession", "empathy", "transparency"])
 
 export function ValueArt({ name }: { name: ValueName }) {
   if (READY.has(name)) {
