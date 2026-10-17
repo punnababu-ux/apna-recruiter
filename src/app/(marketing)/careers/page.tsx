@@ -63,6 +63,7 @@ export default function CareersPage() {
             {life.items.map((item, i) => (
               <StackCard
                 key={item.title}
+                index={i}
                 watermark={String(i + 1).padStart(2, "0")}
                 overline={deckPosition(i, life.items.length)}
                 title={item.title}

@@ -193,6 +193,7 @@ export default function InterviewPrepLoungePage() {
             {howItWorks.items.map((step, i) => (
               <StackCard
                 key={step.title}
+                index={i}
                 watermark={String(i + 1).padStart(2, "0")}
                 overline={deckPosition(i, howItWorks.items.length)}
                 title={step.title}

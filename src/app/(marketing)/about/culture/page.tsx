@@ -34,6 +34,7 @@ export default function CulturePage() {
             {values.map((value, i) => (
               <StackCard
                 key={value.title}
+                index={i}
                 watermark={String(i + 1).padStart(2, "0")}
                 overline={deckPosition(i, values.length)}
                 title={value.title}

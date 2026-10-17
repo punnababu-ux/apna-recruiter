@@ -11,10 +11,10 @@
  *               `children` go under it
  *   StatGrid    numbers over their labels (value first visually, label
  *               first for screen readers)
- *   StackCard   one card of a ScrollStack: the mother gradient (the
- *               product's on a product page), a very
- *               large light watermark (a year, a number) the copy reads
- *               over, an overline, an Inter title and the body
+ *   StackCard   one card of a ScrollStack, in the suite gradients by
+ *               position (sky, green, plum, gold); a very large light
+ *               watermark the copy reads over, or a picture beside it; an
+ *               overline, an Inter title and the body
  *   StatementBand  a full-width band in the mother gradient carrying one
  *               serif statement (About's mission, Culture's closing line)
  *   PersonCard  a leader: initials, name, role, their own words, LinkedIn
@@ -158,41 +158,55 @@ export function StatGrid({
   )
 }
 
+/** Stacking cards take the four hiring-suite gradients in turn, in the
+ *  suite's order — a deck always reads as one set (AGENTS.md). */
+const STACK_TONES: IllustrationTone[] = ["sky", "green", "plum", "gold"]
+
 export function StackCard({
+  index,
   watermark,
+  art,
   overline,
   title,
-  tone,
   children,
 }: {
-  watermark: string
+  /** The card's place in its deck: picks its gradient (sky, green, plum,
+   *  gold, then round again). */
+  index: number
+  /** A very large, very light word or number behind the copy… */
+  watermark?: string
+  /** …or a picture (a 3D clay object) on the card's right, in its place. */
+  art?: ReactNode
   overline: ReactNode
   title: ReactNode
-  /** One of the homepage hiring-suite gradients (sky, green, plum, gold),
-   *  in place of the mother gradient — About's story deck uses all four
-   *  in the suite's own order. */
-  tone?: IllustrationTone
   children?: ReactNode
 }) {
   return (
     <ScrollStackItem
-      // The mother gradient — or, on a product page, that product's own —
-      // unless a suite tone is given.
       className={cn(
         "relative isolate overflow-hidden",
-        tone ? ILLUSTRATION_TONE[tone] : "bg-gradient-checkout-hero [[data-product]_&]:bg-gradient-product"
+        ILLUSTRATION_TONE[STACK_TONES[index % STACK_TONES.length]]
       )}
     >
-      <span
-        aria-hidden
-        className="text-watermark pointer-events-none absolute -right-6 -bottom-10 -z-10 select-none lg:-bottom-16"
-      >
-        {watermark}
-      </span>
-      <div className="flex min-h-80 max-w-3xl flex-col justify-center gap-5 p-6 sm:p-10 lg:min-h-96 lg:p-14">
-        <span className="text-overline text-muted-foreground tabular-nums">{overline}</span>
-        <h3 className="text-h3 text-balance text-foreground sm:text-h2">{title}</h3>
-        {children}
+      {watermark && !art && (
+        <span
+          aria-hidden
+          className="text-watermark pointer-events-none absolute -right-6 -bottom-10 -z-10 select-none lg:-bottom-16"
+        >
+          {watermark}
+        </span>
+      )}
+      <div className={cn(art && "grid items-center gap-6 md:grid-cols-5")}>
+        <div className="flex min-h-80 max-w-3xl flex-col justify-center gap-5 p-6 sm:p-10 md:col-span-3 lg:min-h-96 lg:p-14">
+          <span className="text-overline text-muted-foreground tabular-nums">{overline}</span>
+          <h3 className="text-h3 text-balance text-foreground sm:text-h2">{title}</h3>
+          {children}
+        </div>
+        {art && (
+          <div aria-hidden className="flex items-center justify-center px-6 pb-8 md:col-span-2 md:p-8">
+            {art}
+          </div>
+        )}
       </div>
     </ScrollStackItem>
   )

@@ -374,9 +374,10 @@ To change how round the cards feel, retune `--radius-card` in
   sky, AI Calling Agent green, apna Database plum, apna Unlimited gold. Use
   it only with that product: its homepage card, its product page hero, its
   illustration. Company pages (About, Newsroom, Careers, …) use none —
-  one exception: About's four "How we got here" cards wear the four
-  hiring-suite gradients together, in the suite's order, as a set
-  (`StackCard tone`). Never one product's colour alone on a company page.
+  one exception: stacking cards (`StackCard`) take the four hiring-suite
+  gradients in turn by position (sky, green, plum, gold), so a deck reads
+  as one set, on every page. Never one product's colour alone on a
+  company page.
 - **Section rhythm (every page but product pages).** The hero sits on the
   gradient; the bands under it alternate white (`Section tone="card"`) and
   gradient (the canvas, or a `bg-gradient-checkout-hero` band), never two

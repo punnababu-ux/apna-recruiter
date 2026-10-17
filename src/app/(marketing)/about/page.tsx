@@ -28,10 +28,6 @@ import { ABOUT_OVERVIEW } from "@/content/company"
 
 export const metadata: Metadata = ABOUT_OVERVIEW.meta
 
-/** The story cards wear the homepage hiring-suite gradients, in the suite's
- *  own order (Smart Jobs sky, AI Calling green, Database plum, Unlimited
- *  gold) — the user's call, 2026-10-17: the four cards echo its four. */
-const STORY_TONES = ["sky", "green", "plum", "gold"] as const
 
 
 export default function AboutPage() {
@@ -61,7 +57,7 @@ export default function AboutPage() {
             {story.map((beat, i) => (
               <StackCard
                 key={beat.marker}
-                tone={STORY_TONES[i % STORY_TONES.length]}
+                index={i}
                 watermark={beat.marker}
                 overline={`${beat.marker} · ${deckPosition(i, story.length)}`}
                 title={beat.title}
