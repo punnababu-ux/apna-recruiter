@@ -874,10 +874,13 @@
   --ambient-blob-4: color-mix(in srgb, var(--color-apna-sky-900) 40%, transparent);
   --ambient-glow:   var(--color-alpha-white-10);
   --ambient-grain-opacity: 0.08;
-  --gradient-illustration-green: linear-gradient(160deg, color-mix(in srgb, var(--color-apna-green-900) 55%, transparent) 0%, transparent 100%);
-  --gradient-illustration-sky:   linear-gradient(160deg, color-mix(in srgb, var(--color-apna-sky-900) 55%, transparent) 0%, transparent 100%);
-  --gradient-illustration-plum:  linear-gradient(160deg, color-mix(in srgb, var(--color-apna-plum-900) 55%, transparent) 0%, transparent 100%);
-  --gradient-illustration-gold:  linear-gradient(160deg, color-mix(in srgb, var(--color-apna-gold-900) 55%, transparent) 0%, transparent 100%);
+  /* Product tints on dark: each hue a few steps lighter than the card it
+     sits on (stack cards are now solid card plum), so a deck keeps its four
+     product colours instead of one flat plum. */
+  --gradient-illustration-green: linear-gradient(160deg, color-mix(in srgb, var(--color-apna-green-800) 60%, transparent) 0%, transparent 100%);
+  --gradient-illustration-sky:   linear-gradient(160deg, color-mix(in srgb, var(--color-apna-sky-800) 55%, transparent) 0%, transparent 100%);
+  --gradient-illustration-plum:  linear-gradient(160deg, color-mix(in srgb, var(--color-apna-plum-400) 75%, transparent) 0%, transparent 100%);
+  --gradient-illustration-gold:  linear-gradient(160deg, color-mix(in srgb, var(--color-apna-gold-800) 45%, transparent) 0%, transparent 100%);
   --gradient-text-brand: linear-gradient(90deg, var(--color-apna-green-500) 0%, var(--color-apna-green-300) 35%, var(--color-apna-green-200) 50%, var(--color-apna-green-300) 65%, var(--color-apna-green-500) 100%);
   --surface-checkout-hero-fg:       var(--color-gray-50);
   --surface-checkout-hero-fg-muted: var(--color-gray-400);

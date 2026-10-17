@@ -88,15 +88,18 @@ export function ProductPage({ content }: { content: ProductPageContent }) {
     <div data-product={PRODUCT_KEY[product]} data-product-canvas={PRODUCT_KEY[product]}>
       <div>
         <Section size="lg" className="relative max-md:pt-8">
-          <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-12">
-            <div className="flex flex-col gap-8">
+          {/* Phones: headline, then the illustration, then the two buttons (the
+              text column dissolves below lg so the three can be reordered).
+              From lg: copy + buttons left, illustration right. */}
+          <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
+            <div className="flex flex-col gap-8 max-lg:contents">
               <SectionHeading
                 level={1}
                 eyebrow={<HeroChip icon={<ChipIcon aria-hidden />}>{eyebrow}</HeroChip>}
                 title={heading}
                 description={description}
               />
-              <div className="flex flex-col gap-3 sm:flex-row">
+              <div className="flex flex-col gap-3 max-lg:order-last sm:flex-row">
                 <Button
                   size="lg"
                   nativeButton={false}
@@ -110,7 +113,10 @@ export function ProductPage({ content }: { content: ProductPageContent }) {
                 </Button>
               </div>
             </div>
-            <ProductIllustration product={product} size="lg" bare className="h-72 sm:h-96" />
+            {/* On its product tile (not bare): without a panel the snippets read
+                as hanging in space, worst on phones where they stack under
+                the copy. A card on the page, so the card corner. */}
+            <ProductIllustration product={product} size="lg" className="h-72 rounded-card border border-border sm:h-96" />
           </div>
         </Section>
       </div>

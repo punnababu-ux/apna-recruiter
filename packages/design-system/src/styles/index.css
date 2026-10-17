@@ -583,8 +583,12 @@
   }
 
   /* :not(:has(.ink:active)) — surfaces nest (a pill or a banner inside a
-   * clickable card): only the innermost pressed one ripples, never both. */
-  &:active:not(:disabled, [aria-disabled="true"], [data-disabled]):not(:has(.ink:active))::before {
+   * clickable card): only the innermost pressed one ripples, never both.
+   * :not(:has([data-popup-open])) — a menu trigger inside a card (the job
+   * card's ⋮) opens on press-down and its pop-up takes the pointer, which
+   * left the card looking pressed; a surface with an open pop-up inside
+   * never ripples. */
+  &:active:not(:disabled, [aria-disabled="true"], [data-disabled]):not(:has(.ink:active, [data-popup-open]))::before {
     opacity: var(--ink-opacity);
     transition-duration: 0ms;
     animation: ink-spread var(--duration-ink) var(--ease-standard) both;
@@ -602,7 +606,10 @@
 }
 
 @utility press-subtle {
-  &:active:not(:disabled, [aria-disabled="true"], [data-disabled]) {
+  /* A card presses only when the press is on the card itself: not while an
+     inner control (a chip, a button, a menu trigger) is pressed or has its
+     pop-up open — the same innermost rule as ink. */
+  &:active:not(:disabled, [aria-disabled="true"], [data-disabled]):not(:has(.ink:active, .press:active, [data-popup-open])) {
     scale: var(--press-scale-subtle);
   }
 
@@ -1163,12 +1170,15 @@
     box-shadow: var(--shadow-elevated);
     backdrop-filter: none;
   }
+  /* Dark: the same frosted surface as the page's own cards (surface-frosted:
+     card at 80%, a 60% edge, a blur), so on a product page the canvas tint
+     shows through and the band matches that page's cards. */
   .dark &[data-slot],
   .dark section[data-tone="card"] &[data-slot] {
-    background-color: var(--surface-plan-card);
+    background-color: color-mix(in srgb, var(--card) 80%, transparent);
     background-image: none;
-    border-color: transparent;
-    backdrop-filter: none;
+    border-color: color-mix(in srgb, var(--card) 60%, transparent);
+    backdrop-filter: blur(24px);
   }
 }
 @utility surface-feature {
