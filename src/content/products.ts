@@ -196,18 +196,13 @@ export const PRODUCT_PAGES = {
           description: "Effortlessly locate candidates within a 5km radius to optimize your hiring.",
         },
         {
-          icon: "whatsapp",
-          title: "Bulk WhatsApp Invites",
-          description:
-            "Skip endless calls by sending custom WhatsApp Invites and engage high-intent candidates quickly",
-        },
-        {
           // A free feature, not a product of its own (Punna, 2026-10-17).
           // Copy from employer.apna.co's WhatsApp Fast Recruit section.
           icon: "whatsapp",
           title: "WhatsApp Fast Recruit",
+          // Also folds in the old "Bulk WhatsApp Invites" card (one feature).
           description:
-            "Send WhatsApp messages to up to 320 candidates daily, free, in a single click, with saved templates to collect CVs, schedule walk-ins and send assessments.",
+            "Skip endless calls: send custom WhatsApp invites to up to 320 candidates daily, free, in a single click, with saved templates to collect CVs, schedule walk-ins and send assessments.",
         },
         {
           icon: "eye",
