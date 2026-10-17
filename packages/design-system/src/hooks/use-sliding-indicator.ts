@@ -58,10 +58,14 @@ export function useSlidingIndicator<
       indicator.style.setProperty("--indicator-top", `${active.offsetTop}px`)
       indicator.style.setProperty("--indicator-width", `${active.offsetWidth}px`)
       indicator.style.setProperty("--indicator-height", `${active.offsetHeight}px`)
-      if (!indicator.dataset.state) {
-        indicator.dataset.state = "placed"
-        // Turn the transition on only after the instant first placement
-        // has painted.
+      if (!indicator.dataset.state) indicator.dataset.state = "placed"
+      // Turn the transition on only after the instant first placement has
+      // painted. Re-armed on every measure while still "placed": a re-render
+      // inside those two frames runs the cleanup (cancelling the frame), and
+      // arming only on the very first placement left the pill stuck at
+      // "placed" — it jumped between options instead of sliding.
+      if (indicator.dataset.state === "placed") {
+        cancelAnimationFrame(frame)
         frame = requestAnimationFrame(() => {
           frame = requestAnimationFrame(() => {
             if (indicator.dataset.state === "placed") indicator.dataset.state = "ready"
