@@ -4,7 +4,8 @@
  * MomentCarousel — the Lounge hero's demo recordings, in onlyround.ai's
  * hero pattern: one card in front with a suite-gradient disc and a play
  * button, its neighbours dimmed and tucked behind on either side, ← → to
- * turn. Rotates every 5s; pauses on hover, while a recording is open, and
+ * turn. The cards are frosted (surface-frosted), so the hero gradient
+ * tints through rather than reading flat white. Rotates every 5s; pauses on hover, while a recording is open, and
  * stays put with reduced motion.
  *
  * Play opens the recording in a pop-up (DemoPlayer): the disc with
@@ -76,7 +77,7 @@ export function MomentCarousel({ moments, label }: { moments: readonly Moment[];
               aria-hidden={!front}
               inert={!front}
               className={cn(
-                "col-start-1 row-start-1 w-full max-w-xs items-center gap-5 text-center transition-interactive duration-enter ease-out-ui sm:max-w-sm",
+                "surface-frosted col-start-1 row-start-1 w-full max-w-xs items-center gap-5 text-center transition-interactive duration-enter ease-out-ui sm:max-w-sm",
                 front && "z-10 shadow-elevated",
                 offset === -1 && "-translate-x-1/4 scale-90 opacity-50 sm:-translate-x-1/3",
                 offset === 1 && "translate-x-1/4 scale-90 opacity-50 sm:translate-x-1/3",
