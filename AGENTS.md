@@ -1,5 +1,8 @@
 # Poneglyph — Agent & Designer Guide
 
+> Picking up mid-project? Read `docs/AI-HANDOFF.md` after this file: the
+> working context, workflows and what is pending.
+
 This file is the contract for any AI agent or designer working in this
 repository. Read it before you generate code. The rules are short and they
 are strict.
