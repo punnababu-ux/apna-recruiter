@@ -40,7 +40,8 @@ export const FOOTER_COLUMNS: FooterColumn[] = [
         href: "https://employer-help-centre.apna.co/support/home",
         external: true,
       },
-      { label: "Blog", href: "/resources/blog" },
+      // External, as on employer.apna.co — we don't build a blog.
+      { label: "Blog", href: "https://apna.co/career-central/category/hiring-platform/", external: true },
       { label: "Trust & safety", href: "/trust-and-safety" },
     ],
   },
