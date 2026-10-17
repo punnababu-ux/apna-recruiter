@@ -53,7 +53,7 @@ export default function CulturePage() {
 
       <StatementBand title={closing} />
 
-      <ContactSection />
+      <ContactSection tone="card" />
     </>
   )
 }

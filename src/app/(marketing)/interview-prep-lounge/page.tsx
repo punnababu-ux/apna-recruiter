@@ -226,7 +226,7 @@ export default function InterviewPrepLoungePage() {
         </div>
       </Section>
 
-      <ContactSection title={closing.title} description={closing.description} cta={closing.cta} />
+      <ContactSection title={closing.title} description={closing.description} cta={closing.cta} tone="card" />
     </>
   )
 }

@@ -8,8 +8,7 @@
  *             mother gradient; the other results as cards, each with the
  *             company's logo where we have one (content/logos.ts)
  *   Talent    the four talent stories
- *   Library   the story library (industry filter, search) on a mother-
- *             gradient band
+ *   Library   the story library (industry filter, search), on white
  */
 
 import type { Metadata } from "next"
@@ -97,7 +96,7 @@ export default function CustomerStoriesPage() {
         </div>
       </Section>
 
-      <Section size="md" className="bg-gradient-checkout-hero">
+      <Section tone="card" size="md">
         <div className="flex flex-col gap-10">
           <SectionHeading level={2} title={library.title} />
           <StoryLibrary />

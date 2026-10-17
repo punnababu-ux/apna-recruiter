@@ -52,7 +52,7 @@ export default function LeadershipPage() {
         </div>
       </Section>
 
-      <ContactSection />
+      <ContactSection tone="card" />
     </>
   )
 }

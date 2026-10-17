@@ -377,6 +377,12 @@ To change how round the cards feel, retune `--radius-card` in
   one exception: About's four "How we got here" cards wear the four
   hiring-suite gradients together, in the suite's order, as a set
   (`StackCard tone`). Never one product's colour alone on a company page.
+- **Section rhythm (every page but product pages).** The hero sits on the
+  gradient; the bands under it alternate white (`Section tone="card"`) and
+  gradient (the canvas, or a `bg-gradient-checkout-hero` band), never two
+  of the same in a row. A stats/facts card tucked under the hero counts as
+  part of the hero. `ContactSection tone="card"` keeps the closing band in
+  step when the band before it is a gradient.
 - **A product page is its colour, top to bottom.** Its canvas — header,
   every band, footer — is the homepage gradient re-tinted in the product's
   hue (`--gradient-canvas-*`, set by `data-product-canvas`). Bands stay
