@@ -5,8 +5,8 @@
  * pages (it's apna's, not one hiring product's — no product colour).
  *
  *   Hero          chip, serif headline, line, the one green CTA (to the
- *                 contact band), and the prototype's rotating product
- *                 moments beside it (MomentCarousel)
+ *                 contact band), and the demo recordings beside it
+ *                 (MomentCarousel, onlyround.ai's pattern)
  *   Numbers       the anchored stats card under the hero
  *   Audiences     students / universities / government, each led by its
  *                 3D clay object on a suite-gradient tile
@@ -128,7 +128,7 @@ export default function InterviewPrepLoungePage() {
                 {hero.cta}
               </Button>
             </div>
-            <MomentCarousel moments={hero.moments} />
+            <MomentCarousel moments={hero.moments} label="Lounge demo recordings" />
           </div>
         </Section>
       </div>

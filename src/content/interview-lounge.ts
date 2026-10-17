@@ -29,19 +29,22 @@ export const LOUNGE = {
     description:
       "The apna AI Interview Preparation Lounge is an AI-powered interview readiness solution designed for universities, colleges and training institutions, bringing personalised, always-available interview preparation directly to campus.",
     cta: "Bring the Lounge to your campus",
-    /** The prototype's hero carousel: one product moment at a time. */
+    /** The hero's demo recordings (onlyround.ai's pattern): the prototype's
+     *  product moments, each to open its recording. PROTOTYPE: no files yet
+     *  — add `src` (e.g. "/demos/lounge-mock-interview.mp3") when Punna
+     *  shares them; `durationSec` is a placeholder until then. */
     moments: [
-      { icon: "mic", title: "AI-led mock interview", tags: ["Role-specific", "Resume-aware", "Instant feedback"] },
-      { icon: "briefcase", title: "Prepare for 25,000+ top roles", tags: ["Sales", "BPO", "IT", "Finance", "Retail"] },
+      { title: "AI-led mock interview", tags: ["Role-specific", "Resume-aware", "Instant feedback"], durationSec: 120 },
+      { title: "Prepare for 25,000+ top roles", tags: ["Sales", "BPO", "IT", "Finance", "Retail"], durationSec: 120 },
       {
-        icon: "users",
         title: "Everyday 10k students are preparing using our lounge",
         tags: ["Campus-ready", "Always available", "Scalable"],
+        durationSec: 120,
       },
       {
-        icon: "whatsapp",
         title: "Get a report card on WhatsApp",
         tags: ["Customized report", "Post-interview", "Actionable insights"],
+        durationSec: 120,
       },
     ],
   },
