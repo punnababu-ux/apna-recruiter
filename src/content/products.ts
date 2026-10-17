@@ -193,8 +193,7 @@ export const PRODUCT_PAGES = {
           icon: "whatsapp",
           title: "WhatsApp Fast Recruit",
           // Also folds in the old "Bulk WhatsApp Invites" card (one feature).
-          description:
-            "Skip endless calls: send custom WhatsApp invites to up to 320 candidates daily, free, in a single click, with saved templates to collect CVs, schedule walk-ins and send assessments.",
+          description: "Send free WhatsApp invites to up to 320 candidates a day, in one click.",
         },
         {
           icon: "eye",
