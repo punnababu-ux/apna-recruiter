@@ -112,8 +112,11 @@ const buttonVariants = cva(
         /* The companion push for a screen whose green primary is already
          * taken (add-ons, upsells) — see the RULEs above. Dark gray on light;
          * inside a `data-surface="dark"` area it inverts to white. */
+        // Dark mode: the outline button's look (the product heroes' "Contact
+        // sales"), so every secondary action reads the same on dark. A dark
+        // header surface (data-surface="dark") still gets the white inverted.
         emphasis:
-          "bg-cta-emphasis text-cta-emphasis-foreground hover:bg-cta-emphasis-hover active:bg-cta-emphasis-hover in-data-[surface=dark]:bg-cta-inverted in-data-[surface=dark]:text-cta-inverted-foreground in-data-[surface=dark]:hover:bg-cta-inverted-hover in-data-[surface=dark]:active:bg-cta-inverted-hover",
+          "bg-cta-emphasis text-cta-emphasis-foreground hover:bg-cta-emphasis-hover active:bg-cta-emphasis-hover in-data-[surface=dark]:bg-cta-inverted in-data-[surface=dark]:text-cta-inverted-foreground in-data-[surface=dark]:hover:bg-cta-inverted-hover in-data-[surface=dark]:active:bg-cta-inverted-hover dark:not-in-data-[surface=dark]:border-input dark:not-in-data-[surface=dark]:bg-input/30 dark:not-in-data-[surface=dark]:text-foreground dark:not-in-data-[surface=dark]:hover:bg-input/50 dark:not-in-data-[surface=dark]:active:bg-input/50",
       },
       size: {
         default:

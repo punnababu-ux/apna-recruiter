@@ -305,6 +305,7 @@
   --transition-duration-press:   var(--duration-press);
   --transition-duration-select:  var(--duration-select);
   --transition-duration-carousel: var(--duration-carousel);
+  --transition-duration-sheet: var(--duration-sheet);
 
   --ease-linear:   var(--ease-linear);
   --ease-standard: var(--ease-standard);
@@ -960,11 +961,39 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
+/* Expand / collapse in place — one motion for every disclosure (sidebar
+   sub-menus, accordions): height glides on --ease-expand with a soft fade.
+     expand-panel       an always-mounted wrapper, rows 0fr → 1fr while
+                        [data-open]; its one child is clipped (min-h-0)
+     transition-expand  the transition alone (Base UI panels animating their
+                        own height via --accordion-panel-height) */
+@utility transition-expand {
+  transition-property: height, opacity, grid-template-rows;
+  transition-duration: var(--duration-expand);
+  transition-timing-function: var(--ease-expand);
+  @media (prefers-reduced-motion: reduce) { transition-duration: 0ms; }
+}
+@utility expand-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition-property: grid-template-rows, opacity;
+  transition-duration: var(--duration-expand);
+  transition-timing-function: var(--ease-expand);
+  &[data-open] { grid-template-rows: 1fr; opacity: 1; }
+  & > * { min-height: 0; overflow: hidden; }
+  @media (prefers-reduced-motion: reduce) { transition-duration: 0ms; }
+}
+
 /* ScrollStack's cards: each card eases back 4% for every card lying on
  * top of it (anchored at its top edge), so the back of the deck is the
  * smallest. ScrollStack writes --stack-depth; it stays 0 below lg and
  * under reduced motion. */
 @utility stack-item {
+  /* The card's solid base lives here, not as bg-card in className: cn()
+     treats bg-card and a deck's bg-gradient-* as one group and dropped the
+     colour, leaving dark mode's see-through gradients over the cards below. */
+  background-color: var(--card);
   transform-origin: 50% 0;
   scale: calc(1 - var(--stack-depth, 0) * 0.04);
 }

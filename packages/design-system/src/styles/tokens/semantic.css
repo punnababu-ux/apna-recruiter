@@ -242,6 +242,9 @@
                                                demo carousel) — long enough
                                                to read as weight            */
   --ease-carousel:     var(--ease-glide);   /* pushed, then coasts to rest   */
+  --duration-sheet:    var(--duration-500); /* a side panel / bottom sheet sliding in from its edge */
+  --duration-expand:   var(--duration-300); /* a panel opening / closing in place (sidebar sub-menus, accordions) */
+  --ease-expand:       var(--ease-glide);   /* opens with momentum, settles */
   /* Ambient backdrop: one blob's full loop. Long on purpose — the motion
    * should register as "the light is shifting", never as "something moved".
    * Blobs run at 0.8–1.2× this so the pattern never visibly repeats. */
@@ -678,6 +681,7 @@
  * Dark theme — only the mapping changes, primitives are untouched.
  * ========================================================================== */
 .dark {
+  --logo-hire:         var(--cta-primary); /* the logo's "Hire" on dark: the CTA green */
   --surface-plan-card: var(--muted);
   --cta-primary:       var(--color-apna-green-500);
   --cta-primary-hover: var(--color-apna-green-600);

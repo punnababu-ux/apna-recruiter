@@ -42,10 +42,11 @@ function DialogOverlay({
   )
 }
 
-/** Classes that size or time the whole pop-up, so they belong on the frame
- *  (the positioned wrapper) rather than the card: widths and the enter/exit
- *  timing. Everything else in `className` styles the card. */
-const FRAME_CLASS = /^(?:[\w-]+:)*-?(?:max-w|min-w|w|duration|ease)-/
+/** Classes that size, time or move the whole pop-up, so they belong on the
+ *  frame (the positioned wrapper, which carries data-open/closed) rather than
+ *  the card: widths, the enter/exit timing and the enter/exit motion
+ *  (slide/zoom/fade). Everything else in `className` styles the card. */
+const FRAME_CLASS = /^(?:[\w-]+:)*-?(?:max-w|min-w|w|duration|ease|slide-in|slide-out|zoom-in|zoom-out|fade-in|fade-out)-/
 
 function splitFrameClasses(className?: string) {
   const frame: string[] = []

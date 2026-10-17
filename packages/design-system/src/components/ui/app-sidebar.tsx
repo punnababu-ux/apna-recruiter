@@ -348,7 +348,14 @@ export function ReusableSidebar({
                               />
                             </span>
                           </SidebarMenuButton>
-                          {isExpanded && (
+                          {/* Always mounted, so it can glide open and shut
+                              (expand-panel); inert while closed. */}
+                          <div
+                            className="expand-panel"
+                            data-open={isExpanded || undefined}
+                            inert={!isExpanded}
+                          >
+                            <div>
                             <SidebarMenuSub>
                               {items.map((sub) => (
                                 <SidebarMenuSubItem key={sub.href}>
@@ -362,7 +369,8 @@ export function ReusableSidebar({
                                 </SidebarMenuSubItem>
                               ))}
                             </SidebarMenuSub>
-                          )}
+                            </div>
+                          </div>
                         </>
                       )
                     ) : (

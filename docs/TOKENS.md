@@ -460,6 +460,9 @@ steps, so one line here retunes every surface of that kind.
 | `--ease-out-ui` / `--ease-in-ui` | decel / emphasis | Enter / exit curves |
 | `--ease-select` | spring | Selection lands with a nudge (`ease-select`) |
 | `--duration-slide` / `--ease-slide` | 500ms / glide (`cubic-bezier(0.22, 1, 0.36, 1)`) | A selection pill travelling between options (`tab-indicator`, `sliding-indicator`) |
+| `--duration-sheet` | 500ms (with `ease-carousel`) | A side panel or bottom sheet sliding fully in from its edge; the upsell pop-ups rising from below |
+| `--duration-expand` / `--ease-expand` | 300ms / glide | A panel opening or closing in place: sidebar sub-menus, accordions (`expand-panel`, `transition-expand`) |
+| `--logo-hire` | dark only: `--cta-primary` | The "Hire" of `LogoApnaHire` on dark (light keeps the logo's #1EB892) |
 | `--duration-carousel` / `--ease-carousel` | 700ms / glide (`cubic-bezier(0.22, 1, 0.36, 1)`) | A card travelling to its next place in a deck (Lounge demo carousel): pushed, then coasts to rest |
 | `--duration-ambient` / `--duration-ambient-wander` | 16s / 14s | One AmbientBackdrop blob loop (blobs run at 0.85–1.2×) / one loop of its wandering light (pulse at 0.4×) |
 | `--duration-text-gradient` | 4s | One sweep of `animate-text-gradient`'s light across the word (it sweeps back, alternate) |
