@@ -36,7 +36,10 @@ export default function MarketingLayout({
         <main className="flex-1">{children}</main>
         {/* The one contact band, the same on every marketing page, sitting
             with the footer on the canvas (every "Contact us" lands here). */}
-        <ContactSection />
+        {/* Skipped on a page that brings its own closing card (ClosingBand). */}
+        <div className="[[data-slot=marketing-canvas]:has([data-closing-band])_&]:hidden">
+          <ContactSection />
+        </div>
         <div className="px-4 sm:px-8 lg:px-12">
           <div className="mx-auto max-w-band">
             <SiteFooter />

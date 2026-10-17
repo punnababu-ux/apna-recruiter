@@ -387,7 +387,9 @@ To change how round the cards feel, retune `--radius-card` in
 - **One contact band, from the layout.** "Join over 7 Lakhs+ employers…"
   is rendered once by the marketing layout, just above the footer, on the
   canvas — identical on every page; pages never add their own or vary its
-  copy. So a page's last band must be white: fold a closing line into the
+  copy. The one sanctioned swap: a page whose right ending is a different
+  action (Join us → open roles) renders a `ClosingBand` in the same place
+  and look, and the layout skips the contact band there. So a page's last band must be white: fold a closing line into the
   last white band as its sign-off (Culture, Join us) rather than adding a
   gradient band before the footer.
 - **Cards follow the band they sit on — never pick a card's fill by hand.**

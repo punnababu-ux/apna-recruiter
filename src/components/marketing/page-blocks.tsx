@@ -17,6 +17,9 @@
  *               overline, an Inter title and the body
  *   StatementBand  a full-width band in the mother gradient carrying one
  *               serif statement (About's mission, Culture's closing line)
+ *   ClosingBand a page's own closing card in the contact band's place and
+ *               look (Join us: "Ready to make an impact?"); the layout's
+ *               shared contact band steps aside for it
  *   PersonCard  a leader: initials, name, role, their own words, LinkedIn
  *
  * Pure layout over Section, SectionHeading, Card, Avatar and Button.
@@ -351,4 +354,30 @@ export function CompanyMark({ company }: { company: string }) {
   if (!logo) return <span className="text-h5 text-foreground">{company}</span>
   // eslint-disable-next-line @next/next/no-img-element
   return <img src={logo.src} alt={company} height={28} width={logo.width} className="h-7 w-auto self-start" />
+}
+
+/** A page's own closing card, in the shared contact band's place and look —
+ *  for the rare page where another action is the right ending (Join us:
+ *  open roles). `data-closing-band` tells the marketing layout to skip the
+ *  contact band on this page. */
+export function ClosingBand({
+  title,
+  description,
+  actions,
+}: {
+  title: ReactNode
+  description?: ReactNode
+  actions?: ReactNode
+}) {
+  return (
+    <Section data-closing-band size="md" className="pb-0 md:pb-0">
+      <Card padding="lg" className="surface-feature flex flex-col items-center gap-8 text-center sm:p-12">
+        <div className="flex flex-col items-center gap-3">
+          <h2 className="text-editorial-h2 text-balance text-foreground sm:text-editorial-h1">{title}</h2>
+          {description && <p className="text-lead max-w-prose text-pretty text-muted-foreground">{description}</p>}
+        </div>
+        {actions}
+      </Card>
+    </Section>
+  )
 }
