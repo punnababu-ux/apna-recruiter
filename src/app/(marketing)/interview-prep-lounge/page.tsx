@@ -58,8 +58,6 @@ const EXPERIENCE_ICONS: Record<(typeof LOUNGE.experience.items)[number]["icon"],
   private: Lock,
 }
 
-const FROSTED = "border-card/60 bg-card/80 backdrop-blur-xl"
-
 export const metadata: Metadata = LOUNGE.meta
 
 export default function InterviewPrepLoungePage() {
@@ -173,7 +171,7 @@ export default function InterviewPrepLoungePage() {
           <SectionHeading level={2} align="center" title={publicOutcomes.title} description={publicOutcomes.description} />
           <dl className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {publicOutcomes.items.map((item) => (
-              <Card key={item.title} padding="lg" className={`gap-2 shadow-card ${FROSTED}`}>
+              <Card key={item.title} padding="lg" className="surface-frosted gap-2 shadow-card">
                 <dt className="text-h5 text-foreground">{item.title}</dt>
                 <dd className="text-sm text-pretty text-muted-foreground">{item.description}</dd>
               </Card>
@@ -214,7 +212,7 @@ export default function InterviewPrepLoungePage() {
           <ol className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {journey.items.map((step, i) => (
               <li key={step.title}>
-                <Card padding="lg" className={`h-full gap-3 ${FROSTED}`}>
+                <Card padding="lg" className="surface-frosted h-full gap-3">
                   <span className="font-heading text-h3 font-semibold text-foreground tabular-nums">
                     {String(i + 1).padStart(2, "0")}
                   </span>

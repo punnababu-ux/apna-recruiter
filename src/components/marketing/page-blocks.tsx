@@ -133,12 +133,12 @@ export function StatGrid({
     <Card
       padding="none"
       className={cn(
-        "w-full border-card/60",
+        "w-full",
         // "lg" is the page's subject, so it's lifted: the mother gradient
         // inside and the elevated shadow, not the frosted strip.
         size === "lg"
           ? cn("shadow-elevated", tone ? ILLUSTRATION_TONE[tone] : "bg-gradient-checkout-hero")
-          : "bg-card/70 shadow-card backdrop-blur-xl"
+          : "surface-frosted shadow-card"
       )}
     >
       <dl

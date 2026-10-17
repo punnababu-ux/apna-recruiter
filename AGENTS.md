@@ -385,6 +385,15 @@ To change how round the cards feel, retune `--radius-card` in
   of the same in a row. A stats/facts card tucked under the hero counts as
   part of the hero. `ContactSection tone="card"` keeps the closing band in
   step when the band before it is a gradient.
+- **Cards follow the band they sit on — never pick a card's fill by hand.**
+  A frosted white card vanishes on a white band, so marketing cards take
+  one of two surfaces and the band decides:
+  - `surface-frosted` — cards in a grid or list. Frosted white on a
+    gradient band; the muted fill on a white band.
+  - `surface-feature` — the one standout card of a band (the contact card,
+    a lead story). Frosted on a gradient band; on a white band it lifts:
+    the mother gradient plus `shadow-elevated`.
+  No `bg-card/70 backdrop-blur-*` hand-mixes on marketing cards.
 - **A product page is its colour, top to bottom.** Its canvas — header,
   every band, footer — is the homepage gradient re-tinted in the product's
   hue (`--gradient-canvas-*`, set by `data-product-canvas`). Bands stay

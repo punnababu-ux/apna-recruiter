@@ -1063,6 +1063,51 @@
  * its overflow (no `overflow-hidden` — clip a corner ribbon on the ribbon
  * itself). It's an `::after` because `ink` owns `::before`; a card running
  * `animate-shimmer-once` (also `::after`) skips it for that one second. */
+/* Card surfaces that follow the section they sit on (marketing pages).
+ * Sections alternate white and gradient (AGENTS.md: section rhythm), and a
+ * frosted white card vanishes on a white band — so a card never picks its
+ * fill by hand; it takes one of these and the band decides:
+ *
+ *   surface-frosted  cards in a grid or list. On a gradient band: frosted
+ *                    white. On a white band (section[data-tone=card]): the
+ *                    muted fill, so it still reads as a card.
+ *   surface-feature  the one standout card of a band (the contact card, a
+ *                    lead story). On a gradient band: frosted white with the
+ *                    card shadow. On a white band: the mother gradient and
+ *                    the elevated shadow, so it lifts off the white.
+ *
+ * Scoped to [data-slot] (Card and friends) so it outranks Card's own tone
+ * fill without !important. */
+@utility surface-frosted {
+  &[data-slot] {
+    background-color: color-mix(in srgb, var(--card) 80%, transparent);
+    border-color: color-mix(in srgb, var(--card) 60%, transparent);
+    backdrop-filter: blur(24px);
+  }
+  section[data-tone="card"] &[data-slot] {
+    background-color: var(--muted);
+    border-color: transparent;
+    backdrop-filter: none;
+  }
+}
+@utility surface-feature {
+  &[data-slot] {
+    background-color: color-mix(in srgb, var(--card) 70%, transparent);
+    border-color: color-mix(in srgb, var(--card) 60%, transparent);
+    box-shadow: var(--shadow-card);
+    backdrop-filter: blur(24px);
+  }
+  section[data-tone="card"] &[data-slot] {
+    background-color: var(--card);
+    background-image: var(--gradient-checkout-hero);
+    background-size: cover;
+    background-position: center;
+    border-color: var(--border);
+    box-shadow: var(--shadow-elevated);
+    backdrop-filter: none;
+  }
+}
+
 @utility card-hover-lift {
   position: relative;
   will-change: translate;

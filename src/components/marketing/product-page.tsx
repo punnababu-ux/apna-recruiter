@@ -138,7 +138,7 @@ export function ProductPage({ content }: { content: ProductPageContent }) {
               const Icon = ICONS[item.icon]
               return (
                 <li key={item.title}>
-                  <Card padding="lg" className="h-full gap-3 border-card/60 bg-card/70 backdrop-blur-xl">
+                  <Card padding="lg" className="surface-frosted h-full gap-3">
                     <Icon className="size-6 text-product-accent" aria-hidden />
                     <h3 className="text-h6 text-foreground">{item.title}</h3>
                     <p className="text-sm text-muted-foreground">{item.description}</p>

@@ -84,7 +84,7 @@ export default function CustomerStoriesPage() {
           <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {talent.items.map((story) => (
               <li key={story.title}>
-                <Card padding="lg" className="h-full gap-4 border-card/60 bg-card/80 backdrop-blur-xl">
+                <Card padding="lg" className="surface-frosted h-full gap-4">
                   <Badge variant="outline" className="self-start">
                     {story.tag}
                   </Badge>

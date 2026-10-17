@@ -53,7 +53,7 @@ export function PressList() {
           <Card
             padding="lg"
             interactive
-            className="gap-4 border-card/60 bg-card/80 shadow-card backdrop-blur-xl sm:p-10"
+            className="surface-feature gap-4 sm:p-10"
           >
             <span className="text-overline text-muted-foreground tabular-nums">
               {lead.source} · {lead.date}
@@ -69,7 +69,7 @@ export function PressList() {
 
       {/* The rest of the year: one card of rows. */}
       {rest.length > 0 && (
-        <Card padding="none" className="border-card/60 bg-card/80 shadow-card backdrop-blur-xl">
+        <Card padding="none" className="surface-frosted">
           <ul className="flex flex-col divide-y divide-border">
             {rest.map((item) => (
               <li key={item.url + item.title}>
@@ -155,7 +155,7 @@ export function StoryLibrary() {
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {shown.map((c) => (
             <li key={c.company}>
-              <Card padding="md" className="h-full gap-3 border-card/60 bg-card/80 backdrop-blur-xl">
+              <Card padding="md" className="surface-frosted h-full gap-3">
                 <CompanyMark company={c.company} />
                 <span className="text-sm text-muted-foreground">{c.industry}</span>
               </Card>
