@@ -34,6 +34,7 @@ import {
   PRICING_TAB_SHORT_LABELS,
   type PricingTab,
 } from "@/components/apnahire/pricing-hero"
+import { HeroBackdrop } from "@/components/marketing/hero-backdrop"
 import { Button, SegmentedTabSwitcher, StickyCtaBar, Tabs, TabsList, TabsTrigger } from "@apna/design-system"
 import {
   JobCreditBundles,
@@ -492,8 +493,11 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
         </div>
       )}
 
-      {/* ── Hero + pricing body share the page-level ambient-gradient canvas ── */}
-      <div className="flex-1">
+      {/* ── Hero + pricing body share the page-level ambient-gradient canvas,
+           with the homepage hero's living background (HeroBackdrop) moving
+           over it, logged in and out alike. ── */}
+      <div className="relative isolate flex-1">
+        <HeroBackdrop />
         <PricingHero activeTab={activeTab} onTabChange={changeTab} tabsRef={heroTabsRef} />
 
         <div className={"px-4 pb-28 sm:px-8 md:pb-12 lg:px-12"}>
