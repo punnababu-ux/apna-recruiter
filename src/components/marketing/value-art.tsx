@@ -20,7 +20,7 @@ const ICON: Record<ValueName, ComponentType<{ className?: string; "aria-hidden"?
 }
 
 /** Values whose clay image is in public/images/company/values. */
-const READY = new Set<ValueName>([])
+const READY = new Set<ValueName>(["ownership", "customer-obsession"])
 
 export function ValueArt({ name }: { name: ValueName }) {
   if (READY.has(name)) {
@@ -30,7 +30,7 @@ export function ValueArt({ name }: { name: ValueName }) {
         alt=""
         width={320}
         height={320}
-        className="size-48 object-contain sm:size-64"
+        className="size-56 object-contain sm:size-80"
       />
     )
   }
