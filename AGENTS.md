@@ -253,7 +253,7 @@ primitives already do this; product code gets it by composing them.
 
 | Utility | Effect | Where it lives |
 |---|---|---|
-| `ink` | While pressed, an ink spreads from the touch point, then fills the surface and fades into the hover state | Button, Toggle, ToggleGroup, ChipTabs, SegmentedTabSwitcher, TabsTrigger, menu + select items, SidebarMenuButton, BottomNav, clickable PricingCard |
+| `ink` | While pressed, an ink spreads from the touch point, then fills the surface and fades into the hover state | Button, Toggle, ToggleGroup, ChipTabs `choice`, menu + select items, SidebarMenuButton, BottomNav, clickable PricingCard. **Not** on sliding-pill controls (Tabs, SegmentedTabSwitcher, ChipTabs default/solid): the pill is their feedback, and an ink on the tapped option reads as a second highlight |
 | `press` / `press-subtle` | Compresses while held (`--press-scale`, `--press-scale-subtle` for cards) | Buttons, chips, checkbox, radio, switch |
 | `transition-interactive` | Colour, border, shadow, focus ring and transform ease (`--duration-hover`) | Every interactive primitive |
 | `transition-select` | Selection lands with a slight spring (`--duration-select`, `--ease-select`) | Checkbox tick, radio dot, switch thumb, chevrons |

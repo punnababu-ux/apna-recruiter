@@ -114,7 +114,10 @@ export function ChipTabs<V extends string = string>({
             disabled={item.disabled}
             onClick={() => onValueChange(item.value)}
             className={cn(
-              "ink press relative inline-flex items-center justify-center gap-1 rounded-full border font-medium transition-interactive outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-40",
+              // No ink where a pill slides: the pill is the feedback, and an
+              // ink on the tapped option read as a second, competing highlight.
+              !slides && "ink",
+              "press relative inline-flex items-center justify-center gap-1 rounded-full border font-medium transition-interactive outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-40",
               size === "sm" ? "h-7 px-2.5 text-xs" : size === "lg" ? "h-10 px-4 text-sm" : "h-8 px-3 text-sm",
               variant === "solid" && size === "md" && "px-4",
               stateClass,

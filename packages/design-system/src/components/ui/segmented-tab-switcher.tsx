@@ -35,6 +35,8 @@
  * of scroll, use `ChipTabs`.
  */
 
+// Options carry no `ink`: the sliding pill is the press feedback (an ink on
+// the tapped option read as a second highlight crossing the first).
 import * as React from "react"
 import { cn } from "@/lib/utils"
 import { useSlidingIndicator } from "../../hooks/use-sliding-indicator"
@@ -170,7 +172,7 @@ export function SegmentedTabSwitcher<V extends string = string>({
               aria-pressed={active}
               data-indicator-active={active || undefined}
               className={cn(
-                "flex flex-1 flex-col items-start justify-center gap-1 rounded-full px-8 py-3 text-left ink relative transition-interactive outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+                "flex flex-1 flex-col items-start justify-center gap-1 rounded-full px-8 py-3 text-left relative transition-interactive outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
                 !active && "hover:bg-card/60"
               )}
             >
@@ -251,7 +253,7 @@ export function SegmentedTabSwitcher<V extends string = string>({
                 // bold — compact and quiet next to the 16px titles they
                 // filter (was 38px with a bold selected label).
                 className={cn(
-                  "flex shrink-0 items-center gap-1.5 ink press relative rounded-full border h-8 px-3.5 text-sm font-medium whitespace-nowrap transition-interactive [&_svg]:size-5",
+                  "flex shrink-0 items-center gap-1.5 press relative rounded-full border h-8 px-3.5 text-sm font-medium whitespace-nowrap transition-interactive [&_svg]:size-5",
                   active
                     ? cn("border-transparent font-semibold", mobileActiveClassName ?? activeClassName)
                     : cn("border-transparent bg-muted hover:bg-muted", inactiveClassName, trackClassName)
