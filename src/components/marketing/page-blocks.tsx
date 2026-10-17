@@ -212,13 +212,13 @@ export function StackCard({
         </span>
       )}
       {art ? (
-        // Built like the homepage product cards: the picture in its own
-        // frosted tile, inset 8px so the corners nest, filling the card's
-        // height on the left; the copy right beside it. Phones: tile on top.
+        // The picture in its own column on the left, centred in the card's
+        // full height, straight on the card's gradient (no tile fill); the
+        // copy right beside it. Phones: picture on top.
         <div className="grid gap-2 p-2 md:grid-cols-5">
           <div
             aria-hidden
-            className="flex min-h-64 items-center justify-center rounded-card-nested bg-card/50 p-6 md:col-span-2 md:min-h-96"
+            className="flex min-h-64 items-center justify-center p-6 md:col-span-2 md:min-h-96"
           >
             {art}
           </div>
