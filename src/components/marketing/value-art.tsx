@@ -30,13 +30,13 @@ export function ValueArt({ name }: { name: ValueName }) {
         alt=""
         width={320}
         height={320}
-        className="size-56 object-contain sm:size-80"
+        className="size-64 object-contain md:size-80 lg:size-96"
       />
     )
   }
   const Icon = ICON[name]
   return (
-    <span className="flex size-40 items-center justify-center rounded-full border border-card/60 bg-card/70 shadow-card backdrop-blur-xl sm:size-56">
+    <span className="flex size-48 items-center justify-center rounded-full border border-card/60 bg-card/70 shadow-card backdrop-blur-xl md:size-64">
       <Icon className="size-16 text-foreground sm:size-20" aria-hidden />
     </span>
   )

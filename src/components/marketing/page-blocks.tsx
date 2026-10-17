@@ -13,7 +13,7 @@
  *               first for screen readers)
  *   StackCard   one card of a ScrollStack, in the suite gradients by
  *               position (sky, green, plum, gold); a very large light
- *               watermark the copy reads over, or a picture beside it; an
+ *               watermark the copy reads over, or a picture on its left; an
  *               overline, an Inter title and the body
  *   StatementBand  a full-width band in the mother gradient carrying one
  *               serif statement (About's mission, Culture's closing line)
@@ -190,7 +190,7 @@ export function StackCard({
   index: number
   /** A very large, very light word or number behind the copy… */
   watermark?: string
-  /** …or a picture (a 3D clay object) on the card's right, in its place. */
+  /** …or a picture (a 3D clay object) on the card's left, in its place. */
   art?: ReactNode
   overline: ReactNode
   title: ReactNode
@@ -218,7 +218,8 @@ export function StackCard({
           {children}
         </div>
         {art && (
-          <div aria-hidden className="flex items-center justify-center px-6 pb-8 md:col-span-2 md:p-8">
+          // The picture leads: on the card's left from md, on top on phones.
+          <div aria-hidden className="order-first flex items-center justify-center px-6 pt-8 md:col-span-2 md:p-6">
             {art}
           </div>
         )}
