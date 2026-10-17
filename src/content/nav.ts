@@ -168,7 +168,7 @@ export const MAIN_NAV: NavGroup[] = [
         icon: "support",
         items: [
           { label: "Help Center", href: HELP_CENTRE, external: true },
-          { label: "FAQs", href: "/resources/faqs" },
+          { label: "FAQs", href: HELP_CENTRE, external: true },
           { label: "Trust & Safety", href: "/trust-and-safety" },
         ],
       },
