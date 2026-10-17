@@ -123,8 +123,9 @@ export default function EnterprisePage() {
       <Section tone="card" size="md">
         {/* The one standout card on its band (surface-feature). */}
         <Card padding="none" className="surface-feature grid overflow-hidden md:grid-cols-2">
-          {/* The clay book on a soft tile, like the product cards' art. */}
-          <div className="flex items-center justify-center bg-gradient-illustration-plum p-8">
+          {/* The clay book sits straight on the card — no tile of its own, so
+              the card reads as one surface. */}
+          <div className="flex items-center justify-center p-8 pb-0 md:pb-8">
             <Image
               src={playbook.image}
               alt={playbook.title}
