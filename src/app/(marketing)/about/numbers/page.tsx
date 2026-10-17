@@ -1,7 +1,8 @@
 /**
  * /about/numbers — apna by the numbers. Copy: content/company.ts
  * ABOUT_NUMBERS. Hero, then "By the numbers" on white: the recruiter
- * numbers only (no tabs), large, on one lifted gradient card.
+ * numbers only (no tabs), large, on one lifted card in the green suite
+ * gradient (apna's own green — not the hero's mother gradient again).
  */
 
 import type { Metadata } from "next"
@@ -25,7 +26,7 @@ export default function NumbersPage() {
             title={ABOUT_NUMBERS.sectionTitle}
             description={ABOUT_NUMBERS.recruiters.blurb}
           />
-          <StatGrid stats={ABOUT_NUMBERS.recruiters.stats} size="lg" />
+          <StatGrid stats={ABOUT_NUMBERS.recruiters.stats} size="lg" tone="green" />
         </div>
       </Section>
       <ContactSection />

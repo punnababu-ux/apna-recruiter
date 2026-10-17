@@ -114,6 +114,7 @@ export function PageHero({
 export function StatGrid({
   stats,
   size = "default",
+  tone,
   className,
 }: {
   stats: readonly { value: string; label: string }[]
@@ -122,6 +123,9 @@ export function StatGrid({
    *  for short text values (a case study's client / industry / …): label
    *  first as an overline, the value in body weight. */
   size?: "default" | "lg" | "facts"
+  /** With "lg": one of the suite gradients for the lifted card, so it
+   *  doesn't repeat the hero's mother gradient. */
+  tone?: IllustrationTone
   className?: string
 }) {
   const facts = size === "facts"
@@ -132,7 +136,9 @@ export function StatGrid({
         "w-full border-card/60",
         // "lg" is the page's subject, so it's lifted: the mother gradient
         // inside and the elevated shadow, not the frosted strip.
-        size === "lg" ? "bg-gradient-checkout-hero shadow-elevated" : "bg-card/70 shadow-card backdrop-blur-xl"
+        size === "lg"
+          ? cn("shadow-elevated", tone ? ILLUSTRATION_TONE[tone] : "bg-gradient-checkout-hero")
+          : "bg-card/70 shadow-card backdrop-blur-xl"
       )}
     >
       <dl
