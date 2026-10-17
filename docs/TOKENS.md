@@ -178,7 +178,10 @@ Composed from primitives only, exposed as `bg-gradient-<name>` utilities
 | `--ribbon-fill` | `--checkout-info`; dark: info 20% mixed into `--surface-plan-card` (opaque) | The Recommended corner ribbon (`Badge variant="ribbon"`) |
 | `--ribbon-fg` | `--checkout-info-foreground`; dark: `--info` | The Recommended ribbon's label |
 | `--plan-card-line` / `--plan-pill-ring` | `--border`; dark: transparent | Plan cards' border (Contact sales) and the selected plan-tab pill's ring (`border-plan-card-line`, `ring-plan-pill-ring`) |
-| `--app-chip-pill` | `--surface-plan-card`; dark: foreground 10% over it | The selected pill of an app phone chip row (`MobileChipRow`) |
+| `--app-chip-pill` | `--surface-plan-card`; dark: foreground 16% over it | The selected pill of an app phone chip row (`MobileChipRow`) |
+| `--checkout-cta-hover` | apna-green-700; dark: `--cta-primary-hover` | Hover of the plan pages' green button (`variant="checkout"`) |
+| `--checkout-inset-cta` / `-border` / `-hover` | the inset card's white / border / hover; dark: `--input` 30% / `--input` / 50% | The button on the Unlimited inner card (`variant="checkout-inset"`) |
+| `--tabs-inverted-pill` / `--tabs-inverted-label` | `--foreground` / `--background`; dark: foreground 16% over `--muted` / `--foreground` | The jobs tabs' selected pill and label (`TabsList variant="inverted"`) |
 | `--cta-primary` / `--cta-primary-hover` | `--primary` (hover 90%); dark: apna-green-500 / 600 | The green button fill (Button `default`); `--primary` stays brighter in dark for green text, links, icons |
 | `--logo-apna` / `--logo-apna-deep` | apna-plum-400 / plum-950; dark: plum-50 for both | The "apna" of the logos (`LogoApnaHire`, `LogoApnaWordmark`), so the wordmark turns near-white in dark mode |
 | `--gradient-offer-premium` | 55% apna-gold-500 radial bloom top-left over `linear-gradient(137deg, apna-plum-400 → plum-700 → plum-950)`; dark: a quiet `plum-600 → 700 → 800`, no gold bloom (the gold Coin carries the accent) | subscription upgrade pop-up headers and every Plans button (`variant="premium"`) |

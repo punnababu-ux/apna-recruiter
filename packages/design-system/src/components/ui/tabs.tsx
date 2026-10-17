@@ -74,9 +74,7 @@ function TabsList({
           "absolute -z-1 tab-indicator",
           "top-(--active-tab-top) left-(--active-tab-left) h-(--active-tab-height) w-(--active-tab-width)",
           "group-data-[variant=default]/tabs-list:rounded-full group-data-[variant=default]/tabs-list:bg-background group-data-[variant=default]/tabs-list:shadow-card dark:group-data-[variant=default]/tabs-list:border dark:group-data-[variant=default]/tabs-list:border-input dark:group-data-[variant=default]/tabs-list:bg-input/30",
-          "group-data-[variant=inverted]/tabs-list:rounded-full group-data-[variant=inverted]/tabs-list:bg-foreground",
-          // Dark: a lifted plum pill (the plan cards' --muted), not a white one.
-          "dark:group-data-[variant=inverted]/tabs-list:bg-muted",
+          "group-data-[variant=inverted]/tabs-list:rounded-full group-data-[variant=inverted]/tabs-list:bg-tabs-inverted-pill",
           "group-data-[variant=checkout]/tabs-list:rounded-full group-data-[variant=checkout]/tabs-list:bg-plan-card group-data-[variant=checkout]/tabs-list:ring-1 group-data-[variant=checkout]/tabs-list:ring-plan-pill-ring",
           "group-data-[variant=line]/tabs-list:rounded-full group-data-[variant=line]/tabs-list:bg-foreground",
           "group-data-horizontal/tabs:group-data-[variant=line]/tabs-list:top-auto group-data-horizontal/tabs:group-data-[variant=line]/tabs-list:bottom-0 group-data-horizontal/tabs:group-data-[variant=line]/tabs-list:h-0.5",
@@ -97,12 +95,10 @@ function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
         // label text); the inter-tab spacing comes from TabsList's gap. No
         // ink either — there is no surface for it to fill.
         "group-data-[variant=line]/tabs-list:px-0 group-data-[variant=line]/tabs-list:before:hidden",
-        "group-data-[variant=inverted]/tabs-list:data-active:text-background",
+        "group-data-[variant=inverted]/tabs-list:data-active:text-tabs-inverted-label",
         "group-data-[variant=checkout]/tabs-list:font-semibold group-data-[variant=checkout]/tabs-list:text-checkout-hero-fg-secondary group-data-[variant=checkout]/tabs-list:not-data-active:hover:text-checkout-hero-fg",
         "data-active:text-foreground dark:data-active:text-foreground",
         "group-data-[variant=checkout]/tabs-list:data-active:text-checkout-primary dark:group-data-[variant=checkout]/tabs-list:data-active:text-checkout-primary",
-        // Inverted on dark: light label on the lifted plum pill.
-        "dark:group-data-[variant=inverted]/tabs-list:data-active:text-foreground",
         className
       )}
       {...props}

@@ -119,6 +119,12 @@
   --color-plan-card-line:              var(--plan-card-line);
   --color-plan-pill-ring:              var(--plan-pill-ring);
   --color-app-chip-pill:               var(--app-chip-pill);
+  --color-checkout-cta-hover:          var(--checkout-cta-hover);
+  --color-checkout-inset-cta:          var(--checkout-inset-cta);
+  --color-checkout-inset-cta-border:   var(--checkout-inset-cta-border);
+  --color-checkout-inset-cta-hover:    var(--checkout-inset-cta-hover);
+  --color-tabs-inverted-pill:          var(--tabs-inverted-pill);
+  --color-tabs-inverted-label:         var(--tabs-inverted-label);
   --color-cta-primary-hover:           var(--cta-primary-hover);
   --color-plan-card:                   var(--surface-plan-card);
   --color-checkout-info:               var(--checkout-info);
@@ -128,8 +134,6 @@
   --color-night-sky-border:   var(--night-sky-border);
   --color-night-sky-cloud:    var(--night-sky-cloud);
   --color-night-sky-star:     var(--night-sky-star);
-  --color-checkout-unlimited-line:      var(--checkout-unlimited-border);
-  --color-checkout-unlimited-line-hover: var(--checkout-unlimited-border-hover);
   --color-checkout-unlimited-cta:       var(--checkout-unlimited-cta-bg);
   --color-checkout-unlimited-cta-hover: var(--checkout-unlimited-cta-bg-hover);
 

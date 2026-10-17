@@ -94,15 +94,15 @@ const buttonVariants = cva(
          * (--primary brightens a step in dark), matching a surface that is
          * deliberately light in both. */
         checkout:
-          "bg-cta-primary text-checkout-primary-foreground hover:bg-cta-primary-hover active:bg-cta-primary-hover",
+          "bg-cta-primary text-checkout-primary-foreground hover:bg-checkout-cta-hover active:bg-checkout-cta-hover",
         /* The secondary CTA on a fixed-white inset card — e.g. the white box
          * inside the always-dark Unlimited card. `outline` cannot be used
          * there: it carries dark: overrides that would paint a dark button on
          * a box that stays white. */
-        // Dark: the same secondary as every other plan card (outline's dark
-        // look). Its own inset fill read as a recessed, different button there.
+        // --checkout-inset-cta*: the inset white on light, the plan cards'
+        // outline look on dark (semantic.css).
         "checkout-inset":
-          "border-checkout-inset-border bg-checkout-inset text-checkout-inset-fg hover:bg-checkout-inset-hover dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
+          "border-checkout-inset-cta-border bg-checkout-inset-cta text-checkout-inset-fg hover:bg-checkout-inset-cta-hover",
         /* "Plans": the promoted way to buy — the gold-on-plum offer gradient
          * (the subscription offer's), white label, a gold `Coin` icon. Same
          * look as the bottom bar's raised Plans tile and the sidebar's

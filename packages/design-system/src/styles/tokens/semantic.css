@@ -625,6 +625,19 @@
   /* The selected pill of an app phone chip row (MobileChipRow). On dark the
      app page is the pill's own plum, so it lifts one step. */
   --app-chip-pill: var(--surface-plan-card);
+  /* The plan pages' green button hover: one step darker on light (as the
+     checkout CTA always was); on dark the shared --cta-primary-hover. */
+  --checkout-cta-hover: var(--color-apna-green-700);
+  /* The CTA on the Unlimited card's inner (inset) card: the inset surface's
+     own white on light; on dark the outline look of every other plan card's
+     secondary, so the four plan cards' buttons match. */
+  --checkout-inset-cta:        var(--surface-checkout-inset);
+  --checkout-inset-cta-border: var(--surface-checkout-inset-border);
+  --checkout-inset-cta-hover:  var(--surface-checkout-inset-hover);
+  /* Tabs "inverted" (the jobs tabs): a near-black pill with a light label on
+     light; on dark a lifted plum pill with a light label. */
+  --tabs-inverted-pill:  var(--foreground);
+  --tabs-inverted-label: var(--background);
   --logo-apna:      var(--color-apna-plum-400);
   --logo-apna-deep: var(--color-apna-plum-950);
   --gradient-offer-premium:
@@ -641,8 +654,6 @@
                                    var(--color-apna-plum-700) 0%,
                                    var(--color-apna-plum-800) 60%,
                                    var(--color-apna-plum-900) 100%);
-  --checkout-unlimited-border:        rgba(255, 255, 255, 0.12);
-  --checkout-unlimited-border-hover:  rgba(255, 255, 255, 0.3);
   --checkout-unlimited-cta-bg:        rgba(255, 255, 255, 0.16);
   --checkout-unlimited-cta-bg-hover:  rgba(255, 255, 255, 0.26);
 
@@ -673,7 +684,13 @@
   --ribbon-fg:   var(--info);
   --plan-card-line: transparent;
   --plan-pill-ring: transparent;
-  --app-chip-pill: color-mix(in srgb, var(--foreground) 10%, var(--surface-plan-card));
+  --app-chip-pill: color-mix(in srgb, var(--foreground) 16%, var(--surface-plan-card));
+  --checkout-cta-hover: var(--cta-primary-hover);
+  --checkout-inset-cta:        color-mix(in srgb, var(--input) 30%, transparent);
+  --checkout-inset-cta-border: var(--input);
+  --checkout-inset-cta-hover:  color-mix(in srgb, var(--input) 50%, transparent);
+  --tabs-inverted-pill:  color-mix(in srgb, var(--foreground) 16%, var(--muted));
+  --tabs-inverted-label: var(--foreground);
   --logo-apna:      var(--color-apna-plum-50);
   --logo-apna-deep: var(--color-apna-plum-50);
   /* Plans button on dark: a quiet plum one step above the sidebar (600 →
