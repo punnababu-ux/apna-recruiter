@@ -70,7 +70,11 @@ function validate(v: Values): Errors {
  *  contact form everywhere. A page that wants its own line on it (Culture)
  *  renders it itself with `title`; that marks it as the page's closing band
  *  (data-closing-band), so the layout skips the shared one there. */
-export function ContactSection({ title }: { title?: string } = {}) {
+export function ContactSection({
+  title,
+  description,
+  cta,
+}: { title?: string; description?: string; cta?: string } = {}) {
   const [open, setOpen] = React.useState(false)
   const isMobile = useIsMobile()
   // A new key per opening, so a reopened pop-up starts with a fresh form
@@ -99,7 +103,10 @@ export function ContactSection({ title }: { title?: string } = {}) {
         {/* The page's closing line: the h1 type preset (it stays an h2 —
             the hero owns the h1). One line on desktop; on phones the h3 size
             (at 36px it broke into five lines on a 375px screen). */}
-        <h2 className="text-editorial-h2 text-balance text-foreground sm:text-editorial-h1">{title ?? CONTACT.title}</h2>
+        <div className="flex flex-col gap-3">
+          <h2 className="text-editorial-h2 text-balance text-foreground sm:text-editorial-h1">{title ?? CONTACT.title}</h2>
+          {description && <p className="text-lg text-pretty text-muted-foreground">{description}</p>}
+        </div>
         <Button
           variant="emphasis"
           size="lg"
@@ -109,7 +116,7 @@ export function ContactSection({ title }: { title?: string } = {}) {
             setOpen(true)
           }}
         >
-          {CONTACT.cta}
+          {cta ?? CONTACT.cta}
         </Button>
       </Card>
 

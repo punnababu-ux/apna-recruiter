@@ -49,6 +49,7 @@ import {
   UserRound,
 } from "@apna/design-system"
 import { HeroBackdrop } from "@/components/marketing/hero-backdrop"
+import { ContactSection } from "@/components/marketing/contact-section"
 import { MomentCarousel } from "@/components/marketing/moment-carousel"
 import { ILLUSTRATION_TONE } from "@/components/marketing/product-illustrations"
 import { ValueArt } from "@/components/marketing/value-art"
@@ -99,7 +100,7 @@ const EXPERIENCE_ICONS: Record<(typeof LOUNGE.experience.items)[number]["icon"],
 export const metadata: Metadata = LOUNGE.meta
 
 export default function InterviewPrepLoungePage() {
-  const { hero, stats, audiences, pillars, experience, institutions, publicOutcomes, howItWorks, journey } = LOUNGE
+  const { hero, stats, audiences, pillars, experience, institutions, publicOutcomes, howItWorks, journey, closing } = LOUNGE
   // "The government outcome:" leads its sentence in bold.
   const [outcomeHead, ...outcomeTail] = publicOutcomes.footnote.split(":")
   const outcomeLead = `${outcomeHead}:`
@@ -354,6 +355,8 @@ export default function InterviewPrepLoungePage() {
           </div>
         </div>
       </Section>
+      {/* The page's ending: the contact band, with the Lounge's own line. */}
+      <ContactSection title={closing.title} description={closing.description} cta={closing.cta} />
     </>
   )
 }

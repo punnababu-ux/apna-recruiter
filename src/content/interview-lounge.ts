@@ -182,6 +182,11 @@ export const LOUNGE = {
     footnote:
       "The government outcome: deployable, multilingual, 24×7 readiness infrastructure, tracked by usage, improvement and placement linkage.",
   },
+  closing: {
+    title: "Talent is everywhere. Preparation should be too.",
+    description: "Bring the AI Interview Prep Lounge to your campus.",
+    cta: "Talk to our team",
+  },
   howItWorks: {
     title: "How it works",
     loop: "A continuous loop — practise, improve, track.",
