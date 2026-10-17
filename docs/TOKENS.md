@@ -459,7 +459,7 @@ steps, so one line here retunes every surface of that kind.
 | `--duration-select` | 200ms | Selection changes: tab indicator, tick, thumb (`duration-select`) |
 | `--ease-out-ui` / `--ease-in-ui` | decel / emphasis | Enter / exit curves |
 | `--ease-select` | spring | Selection lands with a nudge (`ease-select`) |
-| `--duration-slide` / `--ease-slide` | 300ms / standard | A selection pill travelling between options (`tab-indicator`, `sliding-indicator`) |
+| `--duration-slide` / `--ease-slide` | 500ms / glide (`cubic-bezier(0.22, 1, 0.36, 1)`) | A selection pill travelling between options (`tab-indicator`, `sliding-indicator`) |
 | `--duration-carousel` / `--ease-carousel` | 700ms / glide (`cubic-bezier(0.22, 1, 0.36, 1)`) | A card travelling to its next place in a deck (Lounge demo carousel): pushed, then coasts to rest |
 | `--duration-ambient` / `--duration-ambient-wander` | 16s / 14s | One AmbientBackdrop blob loop (blobs run at 0.85–1.2×) / one loop of its wandering light (pulse at 0.4×) |
 | `--duration-text-gradient` | 4s | One sweep of `animate-text-gradient`'s light across the word (it sweeps back, alternate) |

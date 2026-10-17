@@ -234,8 +234,9 @@
   --duration-ink-fade: var(--duration-300); /* ink settling after release    */
   --duration-select:   var(--duration-200); /* indicator / check / thumb move */
   --ease-select:       var(--ease-spring);  /* selection lands with a nudge  */
-  --duration-slide:    var(--duration-300); /* selection pill travelling    */
-  --ease-slide:        var(--ease-standard); /* quick start, soft landing   */
+  --duration-slide:    var(--duration-500); /* selection pill travelling    */
+  --ease-slide:        var(--ease-glide);   /* momentum, then a soft glide to
+                                               rest: fluid, no overshoot     */
   --duration-carousel: var(--duration-700); /* a card travelling to its next
                                                place in a deck (the Lounge's
                                                demo carousel) — long enough
