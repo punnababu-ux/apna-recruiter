@@ -256,6 +256,7 @@ primitives already do this; product code gets it by composing them.
 | `ink` | While pressed, an ink spreads from the touch point, then fills the surface and fades into the hover state | Button, Toggle, ToggleGroup, ChipTabs `choice`, menu + select items, SidebarMenuButton, BottomNav, clickable PricingCard. **Not** on sliding-pill controls (Tabs, SegmentedTabSwitcher, ChipTabs default/solid): the pill is their feedback, and an ink on the tapped option reads as a second highlight |
 | `press` / `press-subtle` | Compresses while held (`--press-scale`, `--press-scale-subtle` for cards) | Buttons, chips, checkbox, radio, switch |
 | `transition-interactive` | Colour, border, shadow, focus ring and transform ease (`--duration-hover`) | Every interactive primitive |
+| `transition-option` | Only the label/icon colour eases; no background fade, so a hover tint vanishes the instant an option is chosen | Options of sliding-pill controls (Tabs, SegmentedTabSwitcher) |
 | `transition-select` | Selection lands with a slight spring (`--duration-select`, `--ease-select`) | Checkbox tick, radio dot, switch thumb, chevrons |
 | `animate-unread-ping` | An unread dot pings three times as it appears, then rests (never an endless pulse) | Unread dot on JobMetricPill's count |
 | `tab-indicator` / `sliding-indicator` | One selection pill glides to the active option, never a cross-fade (`--duration-slide`, `--ease-slide`) | TabsList (Base UI indicator); SegmentedTabSwitcher, ChipTabs and hand-built segmented controls via `useSlidingIndicator` |

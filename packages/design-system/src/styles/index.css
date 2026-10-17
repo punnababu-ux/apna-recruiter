@@ -624,6 +624,15 @@
   }
 }
 
+/* An option on a sliding-pill control: only its label and icon colour ease;
+   its hover tint has no transition, so it is gone the instant the option is
+   chosen (a fading tint lingered while the pill slid in). */
+@utility transition-option {
+  transition-property: color, fill, stroke, outline-color;
+  transition-duration: var(--duration-hover);
+  transition-timing-function: var(--ease-standard);
+}
+
 @utility transition-interactive {
   transition-property: color, background-color, border-color, outline-color,
     text-decoration-color, fill, stroke, box-shadow, opacity, scale, translate,

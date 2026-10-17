@@ -104,6 +104,8 @@ const APPEARANCES = {
     active: "text-primary",
     inactive: "text-muted-foreground",
     muted: "text-muted-foreground",
+    // Hover lifts the option's text and icon to full strength; no tint.
+    hover: "group-hover/option:text-foreground",
     activeItem: "bg-card shadow-card",
   },
   checkout: {
@@ -111,6 +113,7 @@ const APPEARANCES = {
     active: "text-checkout-primary",
     inactive: "text-checkout-hero-fg-secondary",
     muted: "text-checkout-hero-fg-secondary",
+    hover: "group-hover/option:text-checkout-hero-fg",
     // bg-plan-card: on dark the pill matches the plan cards below it.
     activeItem: "bg-plan-card ring-1 ring-plan-pill-ring shadow-none",
   },
@@ -172,8 +175,9 @@ export function SegmentedTabSwitcher<V extends string = string>({
               aria-pressed={active}
               data-indicator-active={active || undefined}
               className={cn(
-                "flex flex-1 flex-col items-start justify-center gap-1 rounded-full px-8 py-3 text-left relative transition-interactive outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
-                !active && "hover:bg-card/60"
+                // Hover changes text only (icon, title, description), never a
+                // background: no tint to linger as the pill slides in.
+                "group/option flex flex-1 flex-col items-start justify-center gap-1 rounded-full px-8 py-3 text-left relative transition-option outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
               )}
             >
               {/* 18px/28 label with 24px glyphs — the switcher sets the icon
@@ -182,15 +186,15 @@ export function SegmentedTabSwitcher<V extends string = string>({
                   selector outranks a `size-*` on the icon element. */}
               <span
                 className={cn(
-                  "flex items-center gap-2 text-lg leading-7 font-semibold [&_svg]:size-6",
-                  active ? activeClassName : inactiveClassName
+                  "flex items-center gap-2 text-lg leading-7 font-semibold transition-option [&_svg]:size-6",
+                  active ? activeClassName : cn(inactiveClassName, preset.hover)
                 )}
               >
                 {icon}
                 {label}
               </span>
               {description && (
-                <span className={cn("text-xs leading-4", mutedClassName)}>
+                <span className={cn("text-xs leading-4 transition-option", mutedClassName, !active && preset.hover)}>
                   {description}
                 </span>
               )}
@@ -253,7 +257,7 @@ export function SegmentedTabSwitcher<V extends string = string>({
                 // bold — compact and quiet next to the 16px titles they
                 // filter (was 38px with a bold selected label).
                 className={cn(
-                  "flex shrink-0 items-center gap-1.5 press relative rounded-full border h-8 px-3.5 text-sm font-medium whitespace-nowrap transition-interactive [&_svg]:size-5",
+                  "flex shrink-0 items-center gap-1.5 press relative rounded-full border h-8 px-3.5 text-sm font-medium whitespace-nowrap transition-option [&_svg]:size-5",
                   active
                     ? cn("border-transparent font-semibold", mobileActiveClassName ?? activeClassName)
                     : cn("border-transparent bg-muted hover:bg-muted", inactiveClassName, trackClassName)
