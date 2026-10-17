@@ -66,9 +66,11 @@ function validate(v: Values): Errors {
 }
 
 /** One band for every marketing page, rendered by the marketing layout just
- *  above the footer (user call, 2026-10-17: the same "Join over 7 Lakhs+
- *  employers" card everywhere, never a per-page variant). */
-export function ContactSection() {
+ *  above the footer — the same "Join over 7 Lakhs+ employers" card and
+ *  contact form everywhere. A page that wants its own line on it (Culture)
+ *  renders it itself with `title`; that marks it as the page's closing band
+ *  (data-closing-band), so the layout skips the shared one there. */
+export function ContactSection({ title }: { title?: string } = {}) {
   const [open, setOpen] = React.useState(false)
   const isMobile = useIsMobile()
   // A new key per opening, so a reopened pop-up starts with a fresh form
@@ -80,7 +82,12 @@ export function ContactSection() {
     // 80px top padding is the gap (with the band's padding too it was 176px).
     // On the canvas, with the footer: the footer's own top padding is the
     // gap below, so the band has none.
-    <Section id={CONTACT_ANCHOR} size="md" className="scroll-mt-20 pb-0 md:pb-0">
+    <Section
+      id={CONTACT_ANCHOR}
+      data-closing-band={title ? true : undefined}
+      size="md"
+      className="scroll-mt-20 pb-0 md:pb-0"
+    >
       {/* Card's own corner (rounded-card), like every card. Title centred,
           the button under it — the dark emphasis button, like the product
           cards' "Learn more" (green stays with the hero's sign-up). */}
@@ -92,7 +99,7 @@ export function ContactSection() {
         {/* The page's closing line: the h1 type preset (it stays an h2 —
             the hero owns the h1). One line on desktop; on phones the h3 size
             (at 36px it broke into five lines on a 375px screen). */}
-        <h2 className="text-editorial-h2 text-balance text-foreground sm:text-editorial-h1">{CONTACT.title}</h2>
+        <h2 className="text-editorial-h2 text-balance text-foreground sm:text-editorial-h1">{title ?? CONTACT.title}</h2>
         <Button
           variant="emphasis"
           size="lg"
