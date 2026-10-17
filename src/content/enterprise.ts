@@ -10,8 +10,6 @@
  *     company moves to his role line.
  */
 
-import type { ValueName } from "@/components/marketing/value-art"
-
 export const ENTERPRISE = {
   meta: {
     title: "apna Enterprise",
