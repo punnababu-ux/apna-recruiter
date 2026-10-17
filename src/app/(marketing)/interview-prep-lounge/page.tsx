@@ -92,6 +92,10 @@ export const metadata: Metadata = LOUNGE.meta
 
 export default function InterviewPrepLoungePage() {
   const { hero, stats, audiences, pillars, experience, institutions, publicOutcomes, howItWorks, journey } = LOUNGE
+  // "The government outcome:" leads its sentence in bold.
+  const [outcomeHead, ...outcomeTail] = publicOutcomes.footnote.split(":")
+  const outcomeLead = `${outcomeHead}:`
+  const outcomeRest = outcomeTail.join(":")
 
   return (
     <>
@@ -250,8 +254,10 @@ export default function InterviewPrepLoungePage() {
             title={publicOutcomes.title}
             description={publicOutcomes.description}
           />
-          <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
-            <Card padding="none" className="surface-frosted shadow-card">
+          {/* The policy fit and its conclusion in one card; the minister's
+              visit beside it, captioned on the photo itself — nothing loose. */}
+          <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
+            <Card padding="none" className="surface-frosted overflow-hidden shadow-card">
               <dl className="flex flex-col divide-y divide-border">
                 {publicOutcomes.items.map((item) => (
                   <div key={item.title} className="flex flex-col gap-1 p-5 sm:p-6">
@@ -260,21 +266,24 @@ export default function InterviewPrepLoungePage() {
                   </div>
                 ))}
               </dl>
+              <p className="border-t border-border bg-muted p-5 text-sm text-pretty text-foreground sm:p-6">
+                <span className="font-semibold">{outcomeLead}</span>
+                {outcomeRest}
+              </p>
             </Card>
-            <figure className="flex flex-col gap-3">
+            <figure className="relative min-h-72 overflow-hidden rounded-card shadow-card">
               <Image
                 src={publicOutcomes.image.src}
                 alt={publicOutcomes.image.alt}
-                width={1200}
-                height={800}
-                className="aspect-3/2 w-full rounded-card object-cover shadow-card"
+                fill
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                className="object-cover"
               />
-              <figcaption className="text-sm text-muted-foreground">{publicOutcomes.image.caption}</figcaption>
+              <figcaption className="absolute inset-x-3 bottom-3 rounded-card-nested bg-card/85 px-4 py-3 text-sm text-foreground shadow-card backdrop-blur-xl">
+                {publicOutcomes.image.caption}
+              </figcaption>
             </figure>
           </div>
-          <p className="mx-auto max-w-prose text-center text-base text-pretty text-muted-foreground">
-            {publicOutcomes.footnote}
-          </p>
         </div>
       </Section>
 
