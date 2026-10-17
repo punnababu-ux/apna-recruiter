@@ -183,7 +183,7 @@ export default function HomePage() {
                   <ul className="flex flex-col gap-4">
                     {product.features.map((feature) => (
                       <li key={feature.title} className="flex items-start gap-3">
-                        <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-product-accent" aria-hidden />
+                        <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-foreground" aria-hidden />
                         <div className="flex flex-col gap-0.5">
                           <p className="text-sm font-semibold text-foreground">{feature.title}</p>
                           <p className="text-sm text-muted-foreground">{feature.description}</p>

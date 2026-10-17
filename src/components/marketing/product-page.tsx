@@ -31,7 +31,6 @@ import {
   MapPin,
   PhoneCall,
   RefreshCw,
-  ScrollStack,
   Search,
   Section,
   SectionHeading,
@@ -43,7 +42,7 @@ import {
   Zap,
 } from "@apna/design-system"
 import { ContactSection } from "@/components/marketing/contact-section"
-import { HeroChip, StackCard, StatGrid, deckPosition } from "@/components/marketing/page-blocks"
+import { HeroChip, StatGrid } from "@/components/marketing/page-blocks"
 import { PRODUCT_KEY, ProductIllustration } from "@/components/marketing/product-illustrations"
 import { CONTACT_ANCHOR } from "@/content/contact"
 import type { ProductIconName, ProductPageContent } from "@/content/products"
@@ -123,20 +122,21 @@ export function ProductPage({ content }: { content: ProductPageContent }) {
               eyebrow={<span className="text-overline text-muted-foreground">{steps.title}</span>}
               title={steps.heading}
             />
-            <ScrollStack>
-              {steps.items.map((step, i) => (
-                <StackCard
-                  key={step.title}
-                  watermark={String(i + 1).padStart(2, "0")}
-                  overline={deckPosition(i, steps.items.length)}
-                  title={step.title}
-                >
-                  <p className="max-w-2xl text-lg leading-relaxed text-pretty text-foreground sm:text-xl">
-                    {step.description}
-                  </p>
-                </StackCard>
-              ))}
-            </ScrollStack>
+            {/* Simple white cards, like the features: icon, title, line. */}
+            <ol className="grid gap-6 md:grid-cols-3">
+              {steps.items.map((step) => {
+                const Icon = ICONS[step.icon]
+                return (
+                  <li key={step.title}>
+                    <Card padding="lg" className="h-full gap-3 border-card/60 bg-card/70 backdrop-blur-xl">
+                      <Icon className="size-6 text-product-accent" aria-hidden />
+                      <h3 className="text-h6 text-foreground">{step.title}</h3>
+                      <p className="text-sm text-muted-foreground">{step.description}</p>
+                    </Card>
+                  </li>
+                )
+              })}
+            </ol>
           </div>
         </Section>
       )}

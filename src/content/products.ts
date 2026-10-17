@@ -52,7 +52,7 @@ export interface ProductPageContent {
   /** The hero's one primary action. Logged-out visitors go through login. */
   cta: { label: string; href: string }
   stats?: { value: string; label: string }[]
-  steps?: { title: string; heading: string; items: { title: string; description: string }[] }
+  steps?: { title: string; heading: string; items: { icon: ProductIconName; title: string; description: string }[] }
   features: { title: string; items: ProductPageFeature[] }
 }
 
@@ -125,15 +125,18 @@ export const PRODUCT_PAGES = {
       heading: "Post a Premium job with AI Calling Agent",
       items: [
         {
+          icon: "sliders",
           title: "Talk to the AI agent and set your hiring criteria",
           description: "AI agent creates expert, role-specific questions",
         },
         {
+          icon: "phone",
           title: "AI agent calls candidates on your behalf 24/7",
           description:
             "Interviews all interested candidates. Follows up 5 times via call, whatsapp & email even after work hours",
         },
         {
+          icon: "list",
           title: "Gives you a ready shortlist of top candidates",
           description: "Get a dashboard with candidates pre-sorted by job fit whom you can interview",
         },
