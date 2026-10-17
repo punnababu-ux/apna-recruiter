@@ -108,6 +108,17 @@ const READY = new Set<ValueName>([
   "practise",
   "improve",
   "track",
+  // Enterprise — PROTOTYPE renders: each has its file name engraved on it
+  // (a generator slip); Punna will regenerate without the names.
+  "employer-branding",
+  "team-management",
+  "ats-integrations",
+  "reports",
+  "power-features",
+  "dedicated-support",
+  "smart-inbound",
+  "database-search",
+  "walk-ins",
 ])
 
 /** sm: a picture at the top of a grid card (Enterprise's features). */
