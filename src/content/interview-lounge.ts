@@ -82,10 +82,10 @@ export const LOUNGE = {
     description:
       "An AI career mentor on every campus, in the student’s language, for the job they want, backed by India’s largest jobs marketplace.",
     items: [
-      { title: "Visible", description: "A physical lounge that signals real institutional commitment towards learning" },
-      { title: "Repeatable", description: "Unlimited practice every week, not a single pre-placement workshop." },
-      { title: "Measurable", description: "Live dashboards by campus, stream and role-level readiness." },
-      { title: "Personalised", description: "Preparation personalised to students’ aspirations & career/scholastic history" },
+      { icon: "eye", title: "Visible", description: "A physical lounge that signals real institutional commitment towards learning" },
+      { icon: "repeat", title: "Repeatable", description: "Unlimited practice every week, not a single pre-placement workshop." },
+      { icon: "chart", title: "Measurable", description: "Live dashboards by campus, stream and role-level readiness." },
+      { icon: "person", title: "Personalised", description: "Preparation personalised to students’ aspirations & career/scholastic history" },
     ],
   },
   experience: {

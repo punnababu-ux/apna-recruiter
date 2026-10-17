@@ -26,10 +26,12 @@ import Image from "next/image"
 import Link from "next/link"
 import {
   ArrowRight,
+  BarChart2,
   Building2,
   Button,
   Card,
   CheckCircle2,
+  Eye,
   FileText,
   GraduationCap,
   Landmark,
@@ -40,6 +42,7 @@ import {
   Section,
   SectionHeading,
   Target,
+  UserRound,
 } from "@apna/design-system"
 import { HeroBackdrop } from "@/components/marketing/hero-backdrop"
 import { MomentCarousel } from "@/components/marketing/moment-carousel"
@@ -56,6 +59,22 @@ const AUDIENCE_ICONS: Record<(typeof LOUNGE.audiences)[number]["icon"], Icon> = 
   student: GraduationCap,
   campus: Building2,
   government: Landmark,
+}
+
+const PILLAR_ICONS: Record<(typeof LOUNGE.pillars.items)[number]["icon"], Icon> = {
+  eye: Eye,
+  repeat: RefreshCw,
+  chart: BarChart2,
+  person: UserRound,
+}
+
+function PillarIcon({ name }: { name: keyof typeof PILLAR_ICONS }) {
+  const PI = PILLAR_ICONS[name]
+  return (
+    <span className="flex size-10 items-center justify-center rounded-full bg-muted">
+      <PI className="size-5 text-foreground" aria-hidden />
+    </span>
+  )
 }
 
 /** The audience tiles take three of the suite gradients, in turn. */
@@ -141,7 +160,10 @@ export default function InterviewPrepLoungePage() {
           <dl className="grid gap-px overflow-hidden rounded-card border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
             {pillars.items.map((p) => (
               <div key={p.title} className="flex flex-col gap-2 bg-card p-6 lg:p-8">
-                <dt className="text-h4 text-foreground">{p.title}</dt>
+                <dt className="flex flex-col gap-4 text-h4 text-foreground">
+                  <PillarIcon name={p.icon} />
+                  {p.title}
+                </dt>
                 <dd className="text-sm text-pretty text-muted-foreground">{p.description}</dd>
               </div>
             ))}
