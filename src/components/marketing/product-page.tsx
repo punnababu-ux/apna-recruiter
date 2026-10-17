@@ -8,7 +8,7 @@
  *   Stats     optional, a row of numbers under the hero
  *   Features  one grid of cards (icon, title, description): the steps
  *             first when there are any, under a "How it works" eyebrow
- *   Contact   the shared closing band (ContactSection)
+ *   (The contact band comes from the marketing layout.)
  *
  * Pure layout over Section, SectionHeading, Card and Button, so the four
  * product pages and the homepage read as one site. One primary (green) CTA
@@ -42,7 +42,6 @@ import {
   WhatsApp,
   Zap,
 } from "@apna/design-system"
-import { ContactSection } from "@/components/marketing/contact-section"
 import { HeroChip, StatGrid } from "@/components/marketing/page-blocks"
 import { PRODUCT_KEY, ProductIllustration } from "@/components/marketing/product-illustrations"
 import { CONTACT_ANCHOR } from "@/content/contact"
@@ -149,8 +148,6 @@ export function ProductPage({ content }: { content: ProductPageContent }) {
           </ul>
         </div>
       </Section>
-
-      <ContactSection />
     </div>
   )
 }

@@ -65,21 +65,10 @@ function validate(v: Values): Errors {
   return e
 }
 
-export function ContactSection({
-  title = CONTACT.title,
-  cta = CONTACT.cta,
-  description,
-  tone = "transparent",
-}: {
-  /** The band's closing line; each page can say its own (the lounge does). */
-  title?: string
-  cta?: string
-  description?: string
-  /** "card" puts the band on white — for a page whose previous section is
-   *  already a gradient, so bands keep alternating (AGENTS.md: section
-   *  rhythm). Default: on the page canvas. */
-  tone?: "transparent" | "card"
-} = {}) {
+/** One band for every marketing page, rendered by the marketing layout just
+ *  above the footer (user call, 2026-10-17: the same "Join over 7 Lakhs+
+ *  employers" card everywhere, never a per-page variant). */
+export function ContactSection() {
   const [open, setOpen] = React.useState(false)
   const isMobile = useIsMobile()
   // A new key per opening, so a reopened pop-up starts with a fresh form
@@ -89,14 +78,9 @@ export function ContactSection({
   return (
     // No bottom padding: the card sits right above the footer, whose own
     // 80px top padding is the gap (with the band's padding too it was 176px).
-    <Section
-      id={CONTACT_ANCHOR}
-      size="md"
-      tone={tone}
-      // On the canvas the footer's own top padding is the gap below, so the
-      // band has none; on white it needs its own, or the card meets the edge.
-      className={cn("scroll-mt-20", tone === "transparent" && "pb-0 md:pb-0")}
-    >
+    // On the canvas, with the footer: the footer's own top padding is the
+    // gap below, so the band has none.
+    <Section id={CONTACT_ANCHOR} size="md" className="scroll-mt-20 pb-0 md:pb-0">
       {/* Card's own corner (rounded-card), like every card. Title centred,
           the button under it — the dark emphasis button, like the product
           cards' "Learn more" (green stays with the hero's sign-up). */}
@@ -108,10 +92,7 @@ export function ContactSection({
         {/* The page's closing line: the h1 type preset (it stays an h2 —
             the hero owns the h1). One line on desktop; on phones the h3 size
             (at 36px it broke into five lines on a 375px screen). */}
-        <div className="flex flex-col items-center gap-3">
-          <h2 className="text-editorial-h2 text-balance text-foreground sm:text-editorial-h1">{title}</h2>
-          {description && <p className="text-lead max-w-prose text-pretty text-muted-foreground">{description}</p>}
-        </div>
+        <h2 className="text-editorial-h2 text-balance text-foreground sm:text-editorial-h1">{CONTACT.title}</h2>
         <Button
           variant="emphasis"
           size="lg"
@@ -121,7 +102,7 @@ export function ContactSection({
             setOpen(true)
           }}
         >
-          {cta}
+          {CONTACT.cta}
         </Button>
       </Card>
 

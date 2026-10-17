@@ -28,7 +28,6 @@ import {
   Section,
   SectionHeading,
 } from "@apna/design-system"
-import { ContactSection } from "@/components/marketing/contact-section"
 import { HeroBackdrop } from "@/components/marketing/hero-backdrop"
 import { HeroLeadCard } from "@/components/marketing/hero-lead-card"
 import { PRODUCT_KEY, ProductIllustration } from "@/components/marketing/product-illustrations"
@@ -238,10 +237,6 @@ export default function HomePage() {
           </div>
         </div>
       </Section>
-
-      {/* Contact us — the live contact form as the page's closing band;
-          every "Contact us" link lands here (/#contact-us). */}
-      <ContactSection />
     </>
   )
 }

@@ -22,7 +22,6 @@ import {
   Section,
   SectionHeading,
 } from "@apna/design-system"
-import { ContactSection } from "@/components/marketing/contact-section"
 import { CompanyMark, PageHero, StatGrid, withAccent } from "@/components/marketing/page-blocks"
 import { StoryLibrary } from "@/components/marketing/page-switchers"
 import { CUSTOMER_STORIES } from "@/content/company"
@@ -30,7 +29,7 @@ import { CUSTOMER_STORIES } from "@/content/company"
 export const metadata: Metadata = CUSTOMER_STORIES.meta
 
 export default function CustomerStoriesPage() {
-  const { eyebrow, title, description, stats, featured, talent, library, closing } = CUSTOMER_STORIES
+  const { eyebrow, title, description, stats, featured, talent, library, } = CUSTOMER_STORIES
   const [lead, ...others] = featured.items
   return (
     <>
@@ -102,8 +101,6 @@ export default function CustomerStoriesPage() {
           <StoryLibrary />
         </div>
       </Section>
-
-      <ContactSection title={closing.title} cta={closing.cta} />
     </>
   )
 }

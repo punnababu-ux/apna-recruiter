@@ -13,7 +13,7 @@
  *   Institutions  the case beside what they get
  *   Outcomes      the public-policy fit, frosted cards on the mother band
  *   How it works  the five steps as stacking cards
- *   Journey       the student's four steps
+ *   Journey       the student's four steps, in the same white band
  */
 
 import type { ComponentType } from "react"
@@ -36,7 +36,6 @@ import {
   SectionHeading,
   Target,
 } from "@apna/design-system"
-import { ContactSection } from "@/components/marketing/contact-section"
 import { PageHero, StackCard, StatGrid, StatementBand, deckPosition } from "@/components/marketing/page-blocks"
 import { CONTACT_ANCHOR } from "@/content/contact"
 import { LOUNGE } from "@/content/interview-lounge"
@@ -61,12 +60,12 @@ const EXPERIENCE_ICONS: Record<(typeof LOUNGE.experience.items)[number]["icon"],
 export const metadata: Metadata = LOUNGE.meta
 
 export default function InterviewPrepLoungePage() {
-  const { hero, stats, audiences, pillars, experience, institutions, publicOutcomes, howItWorks, journey, closing } =
-    LOUNGE
+  const { hero, stats, audiences, pillars, experience, institutions, publicOutcomes, howItWorks, journey } = LOUNGE
 
   return (
     <>
-      <PageHero icon={<GraduationCap aria-hidden />}
+      <PageHero
+        icon={<GraduationCap aria-hidden />}
         eyebrow={hero.eyebrow}
         title={hero.title}
         description={hero.description}
@@ -168,7 +167,12 @@ export default function InterviewPrepLoungePage() {
       {/* Public outcomes: frosted cards on the mother gradient. */}
       <Section size="lg" className="bg-gradient-checkout-hero">
         <div className="flex flex-col gap-10">
-          <SectionHeading level={2} align="center" title={publicOutcomes.title} description={publicOutcomes.description} />
+          <SectionHeading
+            level={2}
+            align="center"
+            title={publicOutcomes.title}
+            description={publicOutcomes.description}
+          />
           <dl className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {publicOutcomes.items.map((item) => (
               <Card key={item.title} padding="lg" className="surface-frosted gap-2 shadow-card">
@@ -183,49 +187,48 @@ export default function InterviewPrepLoungePage() {
         </div>
       </Section>
 
-      {/* How it works: the institution's five steps, as stacking cards. */}
+      {/* How it works: the institution's five steps as stacking cards, then
+          the student's four, in one white band (the contact band below is
+          on the canvas, so this band closes the page). */}
       <Section tone="card" size="md">
-        <div className="flex flex-col gap-10">
-          <SectionHeading level={2} align="center" title={howItWorks.title} />
-          <ScrollStack>
-            {howItWorks.items.map((step, i) => (
-              <StackCard
-                key={step.title}
-                index={i}
-                watermark={String(i + 1).padStart(2, "0")}
-                overline={deckPosition(i, howItWorks.items.length)}
-                title={step.title}
-              >
-                <p className="max-w-2xl text-lg leading-relaxed text-pretty text-foreground sm:text-xl">
-                  {step.description}
-                </p>
-              </StackCard>
-            ))}
-          </ScrollStack>
+        <div className="flex flex-col gap-24">
+          <div className="flex flex-col gap-10">
+            <SectionHeading level={2} align="center" title={howItWorks.title} />
+            <ScrollStack>
+              {howItWorks.items.map((step, i) => (
+                <StackCard
+                  key={step.title}
+                  index={i}
+                  watermark={String(i + 1).padStart(2, "0")}
+                  overline={deckPosition(i, howItWorks.items.length)}
+                  title={step.title}
+                >
+                  <p className="max-w-2xl text-lg leading-relaxed text-pretty text-foreground sm:text-xl">
+                    {step.description}
+                  </p>
+                </StackCard>
+              ))}
+            </ScrollStack>
+          </div>
+
+          <div className="flex flex-col gap-10">
+            <SectionHeading level={2} align="center" title={journey.title} description={journey.description} />
+            <ol className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {journey.items.map((step, i) => (
+                <li key={step.title}>
+                  <Card padding="lg" className="surface-frosted h-full gap-3">
+                    <span className="font-heading text-h3 font-semibold text-foreground tabular-nums">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <h3 className="text-h6 text-foreground">{step.title}</h3>
+                    <p className="text-sm text-pretty text-muted-foreground">{step.description}</p>
+                  </Card>
+                </li>
+              ))}
+            </ol>
+          </div>
         </div>
       </Section>
-
-      {/* The student's journey: four steps. */}
-      <Section size="md">
-        <div className="flex flex-col gap-10">
-          <SectionHeading level={2} align="center" title={journey.title} description={journey.description} />
-          <ol className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {journey.items.map((step, i) => (
-              <li key={step.title}>
-                <Card padding="lg" className="surface-frosted h-full gap-3">
-                  <span className="font-heading text-h3 font-semibold text-foreground tabular-nums">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <h3 className="text-h6 text-foreground">{step.title}</h3>
-                  <p className="text-sm text-pretty text-muted-foreground">{step.description}</p>
-                </Card>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </Section>
-
-      <ContactSection title={closing.title} description={closing.description} cta={closing.cta} tone="card" />
     </>
   )
 }

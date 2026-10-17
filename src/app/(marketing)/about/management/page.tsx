@@ -9,7 +9,6 @@ import {
   Section,
   Users,
 } from "@apna/design-system"
-import { ContactSection } from "@/components/marketing/contact-section"
 import { PageHero, PersonCard } from "@/components/marketing/page-blocks"
 import { ABOUT_MANAGEMENT } from "@/content/company"
 
@@ -29,7 +28,6 @@ export default function ManagementPage() {
           ))}
         </ul>
       </Section>
-      <ContactSection />
     </>
   )
 }

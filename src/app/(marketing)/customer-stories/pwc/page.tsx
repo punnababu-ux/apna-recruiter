@@ -16,14 +16,13 @@ import {
   TableHeader,
   TableRow,
 } from "@apna/design-system"
-import { ContactSection } from "@/components/marketing/contact-section"
 import { PageHero, StatGrid } from "@/components/marketing/page-blocks"
 import { STORY_PWC } from "@/content/company"
 
 export const metadata: Metadata = STORY_PWC.meta
 
 export default function PwcStoryPage() {
-  const { eyebrow, title, description, facts, headline, sections, solution, results, impact, closing } = STORY_PWC
+  const { eyebrow, title, description, facts, headline, sections, solution, results, impact } = STORY_PWC
   return (
     <>
       <PageHero icon={<GraduationCap aria-hidden />} eyebrow={eyebrow} title={title} description={description} />
@@ -105,8 +104,6 @@ export default function PwcStoryPage() {
           </section>
         </article>
       </Section>
-
-      <ContactSection title={closing.title} cta={closing.cta} />
     </>
   )
 }

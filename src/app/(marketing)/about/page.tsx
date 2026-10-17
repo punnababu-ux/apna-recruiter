@@ -21,7 +21,6 @@ import {
   Section,
   SectionHeading,
 } from "@apna/design-system"
-import { ContactSection } from "@/components/marketing/contact-section"
 import { FeatureShowcase } from "@/components/marketing/feature-showcase"
 import { PageHero, StackCard, StatementBand, deckPosition, withAccent } from "@/components/marketing/page-blocks"
 import { ABOUT_OVERVIEW } from "@/content/company"
@@ -92,8 +91,6 @@ export default function AboutPage() {
           items={recruiters.items}
         />
       </Section>
-
-      <ContactSection />
     </>
   )
 }

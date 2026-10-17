@@ -17,7 +17,6 @@ import {
   Section,
   SectionHeading,
 } from "@apna/design-system"
-import { ContactSection } from "@/components/marketing/contact-section"
 import { PageHero } from "@/components/marketing/page-blocks"
 import { AWARDS } from "@/content/company"
 import { cn } from "@/lib/utils"
@@ -74,8 +73,6 @@ export default function AwardsPage() {
           </ul>
         </div>
       </Section>
-
-      <ContactSection />
     </>
   )
 }

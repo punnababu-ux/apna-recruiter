@@ -7,7 +7,6 @@
 
 import type { Metadata } from "next"
 import { BarChart2, Section, SectionHeading } from "@apna/design-system"
-import { ContactSection } from "@/components/marketing/contact-section"
 import { PageHero, StatGrid } from "@/components/marketing/page-blocks"
 import { ABOUT_NUMBERS } from "@/content/company"
 
@@ -29,7 +28,6 @@ export default function NumbersPage() {
           <StatGrid stats={ABOUT_NUMBERS.recruiters.stats} size="lg" tone="green" />
         </div>
       </Section>
-      <ContactSection />
     </>
   )
 }

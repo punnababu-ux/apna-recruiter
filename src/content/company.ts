@@ -455,7 +455,6 @@ export const CUSTOMER_STORIES = {
     industries: ["Staffing", "BPO", "BFSI", "Logistics & Delivery", "Manufacturing", "Retail", "Food & QSR", "Travel & Hospitality", "Healthcare", "Construction", "IT/Tech", "Others"],
     companies: ([["Delhivery","Logistics & Delivery"],["HDFC Bank","BFSI"],["Zomato","Food & QSR"],["Amazon","Logistics & Delivery"],["Flipkart","Retail"],["Reliance Retail","Retail"],["Swiggy","Food & QSR"],["Tata Motors","Manufacturing"],["ICICI Bank","BFSI"],["Licious","Food & QSR"],["BigBasket","Retail"],["Teamlease","Staffing"],["Quess Corp","Staffing"],["Randstad India","Staffing"],["Adecco India","Staffing"],["Concentrix","BPO"],["Teleperformance","BPO"],["WNS Global","BPO"],["Firstsource","BPO"],["Axis Bank","BFSI"],["Bajaj Finserv","BFSI"],["Paytm","BFSI"],["PolicyBazaar","BFSI"],["Blue Dart","Logistics & Delivery"],["Ecom Express","Logistics & Delivery"],["Porter","Logistics & Delivery"],["Zepto","Logistics & Delivery"],["Mahindra & Mahindra","Manufacturing"],["Havells","Manufacturing"],["Foxconn India","Manufacturing"],["DMart","Retail"],["Lenskart","Retail"],["Titan","Retail"],["Domino's India","Food & QSR"],["Rebel Foods","Food & QSR"],["Cafe Coffee Day","Food & QSR"],["OYO","Travel & Hospitality"],["MakeMyTrip","Travel & Hospitality"],["IndiGo","Travel & Hospitality"],["Taj Hotels","Travel & Hospitality"],["Apollo Hospitals","Healthcare"],["PharmEasy","Healthcare"],["Practo","Healthcare"],["L&T Construction","Construction"],["Godrej Properties","Construction"],["Shapoorji Pallonji","Construction"],["TCS","IT/Tech"],["Infosys BPM","IT/Tech"],["Wipro","IT/Tech"],["Byju's","Others"],["Urban Company","Others"],["Vodafone Idea","Others"]] as const).map(([company, industry]) => ({ company, industry })),
   },
-  closing: { title: "Your industry's next hiring story starts here.", cta: "Talk to sales" },
 } as const
 
 /** /customer-stories/pwc — the prototype's one full case study. */
@@ -521,5 +520,4 @@ export const STORY_PWC = {
     title: "Business impact",
     body: "By partnering with apna, PwC turned Campus Contender from a reliable registration driver into a differentiated employer branding moment, reinforcing PwC's position with top MBA talent at a time when every leading consulting firm is competing for the same candidates.",
   },
-  closing: { title: "Want a campus campaign like this?", cta: "Get in touch" },
 } as const

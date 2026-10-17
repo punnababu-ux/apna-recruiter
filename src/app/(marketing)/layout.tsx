@@ -14,6 +14,7 @@
  * a band is transparent, this gradient shows through.
  */
 
+import { ContactSection } from "@/components/marketing/contact-section"
 import { HeaderSlotProvider } from "@/components/marketing/header-slot"
 import { SiteFooter } from "@/components/marketing/site-footer"
 import { SiteHeader } from "@/components/marketing/site-header"
@@ -33,6 +34,9 @@ export default function MarketingLayout({
       <div data-slot="marketing-canvas" data-voice="editorial" className="flex min-h-dvh flex-col bg-cover bg-top bg-no-repeat">
         <SiteHeader />
         <main className="flex-1">{children}</main>
+        {/* The one contact band, the same on every marketing page, sitting
+            with the footer on the canvas (every "Contact us" lands here). */}
+        <ContactSection />
         <div className="px-4 sm:px-8 lg:px-12">
           <div className="mx-auto max-w-band">
             <SiteFooter />

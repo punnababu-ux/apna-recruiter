@@ -189,10 +189,4 @@ export const LOUNGE = {
       },
     ],
   },
-  closing: {
-    title: "Talent is everywhere. Preparation should be too.",
-    description:
-      "Give your students access to an always-available AI-powered interview preparation environment.",
-    cta: "Talk to our team",
-  },
 } as const

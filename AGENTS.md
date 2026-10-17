@@ -383,8 +383,13 @@ To change how round the cards feel, retune `--radius-card` in
   gradient; the bands under it alternate white (`Section tone="card"`) and
   gradient (the canvas, or a `bg-gradient-checkout-hero` band), never two
   of the same in a row. A stats/facts card tucked under the hero counts as
-  part of the hero. `ContactSection tone="card"` keeps the closing band in
-  step when the band before it is a gradient.
+  part of the hero.
+- **One contact band, from the layout.** "Join over 7 Lakhs+ employers…"
+  is rendered once by the marketing layout, just above the footer, on the
+  canvas — identical on every page; pages never add their own or vary its
+  copy. So a page's last band must be white: fold a closing line into the
+  last white band as its sign-off (Culture, Join us) rather than adding a
+  gradient band before the footer.
 - **Cards follow the band they sit on — never pick a card's fill by hand.**
   A frosted white card vanishes on a white band, so marketing cards take
   one of two surfaces and the band decides:

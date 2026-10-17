@@ -5,8 +5,8 @@
  *            the pace), the green "See open roles" (careers.apna.co),
  *            the team's faces in an avatar row
  *   Life     "Life at apna" as stacking cards, each with its 3D clay object
- *   Closing  "Ready to make an impact?" as a statement band, the roles link
- *            again as the dark companion
+ *   Closing  "Ready to make an impact?" as the Life band's sign-off, the
+ *            roles link again as the dark companion
  */
 
 import type { Metadata } from "next"
@@ -23,7 +23,7 @@ import {
   Target,
 } from "@apna/design-system"
 import { ValueArt } from "@/components/marketing/value-art"
-import { PageHero, StackCard, StatementBand, deckPosition } from "@/components/marketing/page-blocks"
+import { PageHero, StackCard, deckPosition } from "@/components/marketing/page-blocks"
 import { ABOUT_LEADERSHIP, ABOUT_MANAGEMENT, CAREERS } from "@/content/company"
 
 export const metadata: Metadata = CAREERS.meta
@@ -36,7 +36,8 @@ export default function CareersPage() {
   const { eyebrow, title, description, body, cta, life, closing } = CAREERS
   return (
     <>
-      <PageHero icon={<Target aria-hidden />}
+      <PageHero
+        icon={<Target aria-hidden />}
         eyebrow={eyebrow}
         title={title}
         description={`${description} ${body}`}
@@ -75,24 +76,24 @@ export default function CareersPage() {
               </StackCard>
             ))}
           </ScrollStack>
+
+          {/* The sign-off, in the same band under the last card: the
+              question, its line, the roles link as the dark companion. */}
+          <div className="flex flex-col items-center gap-6 text-center">
+            <h2 className="text-editorial-h2 text-balance text-foreground">{closing.title}</h2>
+            <p className="text-lead max-w-prose text-pretty text-muted-foreground">{closing.description}</p>
+            <Button
+              variant="emphasis"
+              size="lg"
+              nativeButton={false}
+              render={rolesLink}
+              trailingIcon={<ArrowUpRight aria-hidden />}
+            >
+              {cta.label}
+            </Button>
+          </div>
         </div>
       </Section>
-
-      <StatementBand
-        title={closing.title}
-        description={closing.description}
-        actions={
-          <Button
-            variant="emphasis"
-            size="lg"
-            nativeButton={false}
-            render={rolesLink}
-            trailingIcon={<ArrowUpRight aria-hidden />}
-          >
-            {cta.label}
-          </Button>
-        }
-      />
     </>
   )
 }
