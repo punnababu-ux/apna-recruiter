@@ -602,6 +602,11 @@
    * "AI-Native"): only the apna-green ramp, deep → bright → deep, so the
    * word stays the brand colour while the light travels across it. */
   --gradient-text-brand: linear-gradient(90deg, var(--color-apna-green-700) 0%, var(--color-apna-green-500) 35%, var(--color-apna-green-400) 50%, var(--color-apna-green-500) 65%, var(--color-apna-green-700) 100%);
+  /* The "apna" of the logo: brand plum on light, near-white on dark (the
+     wordmark would vanish on a dark sidebar). `-deep` is the marketing
+     header's darkest plum; on dark it is the same near-white. */
+  --logo-apna:      var(--color-apna-plum-400);
+  --logo-apna-deep: var(--color-apna-plum-950);
   --gradient-offer-premium:
     radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--color-apna-gold-500) 55%, transparent) 0%, transparent 55%),
     linear-gradient(137deg, var(--color-apna-plum-400) 5%, var(--color-apna-plum-700) 50%, var(--color-apna-plum-950) 112%);
@@ -641,6 +646,13 @@
  * Dark theme — only the mapping changes, primitives are untouched.
  * ========================================================================== */
 .dark {
+  --logo-apna:      var(--color-apna-plum-50);
+  --logo-apna-deep: var(--color-apna-plum-50);
+  /* Plans button: on a dark sidebar the light gradient's plum-950 end
+     merged into the surface, so it stays in the lighter plums here. */
+  --gradient-offer-premium:
+    radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--color-apna-gold-500) 60%, transparent) 0%, transparent 60%),
+    linear-gradient(137deg, var(--color-apna-plum-300) -20%, var(--color-apna-plum-400) 45%, var(--color-apna-plum-500) 110%);
   /* Surfaces — tinted dark, not neutral gray.
    *
    * Previously gray-950/-900/-800 (Zinc): HSL(240°, 4–10%, 4–16%) — a faint

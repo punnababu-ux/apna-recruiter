@@ -19,9 +19,10 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
 
-const APNA_PLUM = "#4D3951"
-/** The plum ramp's darkest step, read from the token so it follows it. */
-const APNA_PLUM_DEEP = "var(--color-apna-plum-950)"
+/** "apna" reads the logo tokens, so it turns near-white in dark mode. */
+const APNA_PLUM = "var(--logo-apna)"
+/** The plum ramp's darkest step on light (the marketing header); near-white on dark. */
+const APNA_PLUM_DEEP = "var(--logo-apna-deep)"
 const apnaFill = (variant: "default" | "deep" | "white") =>
   variant === "white" ? "#FFFFFF" : variant === "deep" ? APNA_PLUM_DEEP : APNA_PLUM
 const HIRE_GREEN = "#1EB892"
