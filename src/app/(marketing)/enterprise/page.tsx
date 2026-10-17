@@ -4,17 +4,17 @@
  * alternating gradient / white, the shared contact band at the end (every
  * "Contact sales" lands there).
  *
- *   Hero          chip, serif headline, the line, the one green CTA; the
- *                 clients' logos under it
- *   Features      the six Enterprise-only features (white band)
- *   Plus          what every plan also gets (gradient band)
+ *   Hero          chip, serif headline, the line, the one green CTA
+ *   Clients       the logos in their own white band, as on the homepage
+ *   Features      the six Enterprise-only features, then "Plus you will
+ *                 get", one gradient band; each card led by its 3D clay
+ *                 picture (ValueArt)
  *   Playbook      the Gen Z Talent Playbook, linking out to apna.co (white)
  *   Testimonials  three customers in their own words (gradient)
  *   FAQs          the live page's four, in the pricing page's FaqSection
  *                 (white — the page's last band before the contact band)
  */
 
-import type { ComponentType } from "react"
 import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
@@ -23,42 +23,21 @@ import {
   ArrowUpRight,
   Avatar,
   AvatarImage,
-  Award,
-  BarChart2,
   Building2,
   Button,
-  CalendarCheck,
   Card,
-  Headset,
   LogoWall,
-  Search,
   Section,
   SectionHeading,
-  Share2,
-  UserPlus,
-  Users,
-  Zap,
 } from "@apna/design-system"
 import { FaqSection } from "@/components/apnahire/faq-section"
 import { PageHero } from "@/components/marketing/page-blocks"
+import { ValueArt, type ValueName } from "@/components/marketing/value-art"
 import { CONTACT_ANCHOR } from "@/content/contact"
 import { ENTERPRISE } from "@/content/enterprise"
 import { CLIENT_LOGOS } from "@/content/logos"
 
 export const metadata: Metadata = ENTERPRISE.meta
-
-type Icon = ComponentType<{ className?: string; "aria-hidden"?: boolean }>
-const ICONS: Record<string, Icon> = {
-  award: Award,
-  users: Users,
-  share: Share2,
-  chart: BarChart2,
-  zap: Zap,
-  headset: Headset,
-  userPlus: UserPlus,
-  search: Search,
-  calendar: CalendarCheck,
-}
 
 const LOGO_ITEMS = CLIENT_LOGOS.filter((c) => (ENTERPRISE.hero.logos as readonly string[]).includes(c.name)).map(
   (client) => ({
@@ -70,21 +49,20 @@ const LOGO_ITEMS = CLIENT_LOGOS.filter((c) => (ENTERPRISE.hero.logos as readonly
   })
 )
 
-function FeatureGrid({ items, columns }: { items: readonly { icon: string; title: string; description: string }[]; columns: string }) {
+/** Feature cards led by their 3D clay picture (ValueArt; an icon stand-in
+ *  until the render exists), centred like the Lounge's cards. */
+function FeatureGrid({ items }: { items: readonly { art: ValueName; title: string; description: string }[] }) {
   return (
-    <ul className={`grid gap-6 sm:grid-cols-2 ${columns}`}>
-      {items.map((item) => {
-        const ItemIcon = ICONS[item.icon]
-        return (
-          <li key={item.title}>
-            <Card padding="lg" className="surface-frosted h-full gap-3">
-              <ItemIcon className="size-6 text-foreground" aria-hidden />
-              <h3 className="text-h6 text-foreground">{item.title}</h3>
-              <p className="text-sm text-pretty text-muted-foreground">{item.description}</p>
-            </Card>
-          </li>
-        )
-      })}
+    <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {items.map((item) => (
+        <li key={item.title}>
+          <Card padding="lg" className="surface-frosted h-full items-center gap-4 text-center">
+            <ValueArt name={item.art} size="sm" />
+            <h3 className="text-h6 text-foreground">{item.title}</h3>
+            <p className="text-sm text-pretty text-muted-foreground">{item.description}</p>
+          </Card>
+        </li>
+      ))}
     </ul>
   )
 }
@@ -108,29 +86,37 @@ export default function EnterprisePage() {
             {hero.cta}
           </Button>
         }
-      >
-        <div className="flex w-full flex-col items-center gap-6">
-          <p className="text-center text-sm text-muted-foreground">{hero.logosTitle}</p>
-          <LogoWall items={LOGO_ITEMS} muted />
-        </div>
-      </PageHero>
+      />
 
+      {/* The clients, as on the homepage: their own white band. */}
       <Section tone="card" size="md">
-        <div className="flex flex-col gap-10">
+        <div className="flex flex-col items-center gap-10">
           <SectionHeading
             level={2}
             align="center"
-            eyebrow={<span className="text-overline text-muted-foreground">{features.eyebrow}</span>}
-            title={features.title}
+            eyebrow={<span className="text-overline text-muted-foreground">{hero.logosEyebrow}</span>}
+            title={hero.logosTitle}
           />
-          <FeatureGrid items={features.items} columns="lg:grid-cols-3" />
+          <LogoWall items={LOGO_ITEMS} muted />
         </div>
       </Section>
 
+      {/* The exclusive features, then what every plan also gets: one band. */}
       <Section size="md">
-        <div className="flex flex-col gap-10">
-          <SectionHeading level={2} align="center" title={plus.title} />
-          <FeatureGrid items={plus.items} columns="lg:grid-cols-3" />
+        <div className="flex flex-col gap-16">
+          <div className="flex flex-col gap-10">
+            <SectionHeading
+              level={2}
+              align="center"
+              eyebrow={<span className="text-overline text-muted-foreground">{features.eyebrow}</span>}
+              title={features.title}
+            />
+            <FeatureGrid items={features.items} />
+          </div>
+          <div className="flex flex-col gap-10">
+            <SectionHeading level={3} align="center" title={plus.title} />
+            <FeatureGrid items={plus.items} />
+          </div>
         </div>
       </Section>
 

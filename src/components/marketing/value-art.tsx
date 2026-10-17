@@ -11,19 +11,27 @@ import type { ComponentType } from "react"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import {
+  Award,
   BarChart2,
   Building2,
+  CalendarCheck,
   DoorOpen,
   GraduationCap,
+  Headset,
   HeartHandshake,
   KeyRound,
   Landmark,
   MessagesSquare,
   Rocket,
   Scale,
+  Search,
+  Share2,
   Target,
   TrendingUp,
+  UserPlus,
+  Users,
   Wrench,
+  Zap,
 } from "@apna/design-system"
 
 export type ValueName =
@@ -45,6 +53,16 @@ export type ValueName =
   | "practise"
   | "improve"
   | "track"
+  // Enterprise: the exclusive features, then "Plus you will get"
+  | "employer-branding"
+  | "team-management"
+  | "ats-integrations"
+  | "reports"
+  | "power-features"
+  | "dedicated-support"
+  | "smart-inbound"
+  | "database-search"
+  | "walk-ins"
 
 const ICON: Record<ValueName, ComponentType<{ className?: string; "aria-hidden"?: boolean }>> = {
   ownership: KeyRound,
@@ -62,6 +80,15 @@ const ICON: Record<ValueName, ComponentType<{ className?: string; "aria-hidden"?
   practise: MessagesSquare,
   improve: TrendingUp,
   track: BarChart2,
+  "employer-branding": Award,
+  "team-management": Users,
+  "ats-integrations": Share2,
+  reports: BarChart2,
+  "power-features": Zap,
+  "dedicated-support": Headset,
+  "smart-inbound": UserPlus,
+  "database-search": Search,
+  "walk-ins": CalendarCheck,
 }
 
 /** Values whose clay image is in public/images/company/values. */
@@ -83,7 +110,8 @@ const READY = new Set<ValueName>([
   "track",
 ])
 
-export function ValueArt({ name, size = "lg" }: { name: ValueName; size?: "md" | "lg" }) {
+/** sm: a picture at the top of a grid card (Enterprise's features). */
+export function ValueArt({ name, size = "lg" }: { name: ValueName; size?: "sm" | "md" | "lg" }) {
   if (READY.has(name)) {
     return (
       <Image
@@ -91,7 +119,10 @@ export function ValueArt({ name, size = "lg" }: { name: ValueName; size?: "md" |
         alt=""
         width={320}
         height={320}
-        className={size === "md" ? "size-48 object-contain sm:size-56" : "size-56 object-contain md:size-72 lg:size-80"}
+        className={cn(
+          "object-contain",
+          size === "sm" ? "size-32" : size === "md" ? "size-48 sm:size-56" : "size-56 md:size-72 lg:size-80"
+        )}
       />
     )
   }
@@ -100,10 +131,13 @@ export function ValueArt({ name, size = "lg" }: { name: ValueName; size?: "md" |
     <span
       className={cn(
         "flex items-center justify-center rounded-full border border-card/60 bg-card/70 shadow-card backdrop-blur-xl",
-        size === "md" ? "size-32" : "size-48 md:size-64"
+        size === "sm" ? "size-20" : size === "md" ? "size-32" : "size-48 md:size-64"
       )}
     >
-      <Icon className={cn("text-foreground", size === "md" ? "size-12" : "size-16 sm:size-20")} aria-hidden />
+      <Icon
+        className={cn("text-foreground", size === "sm" ? "size-8" : size === "md" ? "size-12" : "size-16 sm:size-20")}
+        aria-hidden
+      />
     </span>
   )
 }

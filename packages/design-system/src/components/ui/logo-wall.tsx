@@ -52,10 +52,13 @@ function LogoWall({
   return (
     <div
       data-slot="logo-wall"
-      className={cn("no-scrollbar w-full -mx-4 overflow-x-auto px-4", className)}
+      // No negative-margin bleed: with w-full it shifted the wall 16px left
+      // of its column. The row centres itself (mx-auto) when it fits and
+      // scrolls from its start when it doesn't.
+      className={cn("no-scrollbar w-full overflow-x-auto", className)}
       {...props}
     >
-      <div className="flex w-max items-center gap-14">
+      <div className="mx-auto flex w-max items-center gap-14">
         {items.map((item) => (
           <div
             key={item.name}

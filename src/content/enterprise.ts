@@ -10,6 +10,8 @@
  *     company moves to his role line.
  */
 
+import type { ValueName } from "@/components/marketing/value-art"
+
 export const ENTERPRISE = {
   meta: {
     title: "apna Enterprise",
@@ -22,6 +24,7 @@ export const ENTERPRISE = {
     description:
       "Get closer to your target fillrate! Hire from a pool of 50M jobseekers in 200+ industries across 900+ cities in India.",
     cta: "Contact sales",
+    logosEyebrow: "Trusted by",
     logosTitle: "Innovative brands achieve significant results with apna Enterprise.",
     /** The live page's wall, limited to the marks we have (content/logos.ts). */
     logos: ["Aditya Birla Capital", "Bajaj Allianz", "BigBasket", "Jio", "Urban Company"],
@@ -30,29 +33,29 @@ export const ENTERPRISE = {
     eyebrow: "Hiring which scales with your needs",
     title: "Everything your business needs with our Enterprise-exclusive features",
     items: [
-      { icon: "award", title: "Employer branding", description: "Brand your company and become an employer of choice!" },
+      { art: "employer-branding", title: "Employer branding", description: "Brand your company and become an employer of choice!" },
       {
-        icon: "users",
+        art: "team-management",
         title: "Team management",
         description: "Give logins to your entire recruitment team. Specify access and usage permissions!",
       },
       {
-        icon: "share",
+        art: "ats-integrations",
         title: "ATS Integrations",
         description: "Connect with your ATS, google-sheets or ERPs, right out of the box.",
       },
       {
-        icon: "chart",
+        art: "reports",
         title: "Reports",
         description: "Download candidate applications received across all your jobs.",
       },
       {
-        icon: "zap",
+        art: "power-features",
         title: "Power features to optimise hiring",
         description: "WA invites, AI lead management, Job Boosting, templates",
       },
       {
-        icon: "headset",
+        art: "dedicated-support",
         title: "Dedicated Customer Support",
         description: "Our team will help you onboard and solve issues to improve hiring outcomes.",
       },
@@ -62,17 +65,17 @@ export const ENTERPRISE = {
     title: "Plus you will get",
     items: [
       {
-        icon: "userPlus",
+        art: "smart-inbound",
         title: "Smart Inbound hiring",
         description: "Get Inbound Applications from High-Intent, Relevant Candidates",
       },
       {
-        icon: "search",
+        art: "database-search",
         title: "AI-Powered Database Search",
         description: "Quickly connect with and hire relevant, active jobseekers around your office.",
       },
       {
-        icon: "calendar",
+        art: "walk-ins",
         title: "Walk-ins",
         description: "Publish Walk-in details and get up to 5X more walk-ins compared to competition.",
       },
