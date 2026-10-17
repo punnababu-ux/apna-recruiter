@@ -45,6 +45,11 @@ export function MobileChipRow<V extends string>({
       value={value}
       onValueChange={onValueChange}
       appearance="checkout"
+      // In the app the page itself is the plan-card plum on dark, so the
+      // selected pill lifts one step (a light layer) to show, and its label
+      // takes the CTA green like the plans page tabs.
+      mobileActiveItemClassName="dark:bg-foreground/10"
+      mobileActiveClassName="text-checkout-primary dark:text-cta-primary"
       mobileBleedClassName={gutter === "page-start" ? "-ml-4" : gutter === "panel" ? "-mx-5" : "-mx-4 sm:-mx-6"}
       mobileGutterClassName={gutter === "page-start" ? "pr-2 pl-4" : gutter === "panel" ? "px-5" : "px-4 sm:px-6"}
     />

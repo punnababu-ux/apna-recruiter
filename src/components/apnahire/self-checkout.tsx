@@ -731,6 +731,7 @@ function DockedPlanTabs({
           value={value}
           onValueChange={onValueChange}
           appearance="checkout"
+          activeClassName="text-checkout-primary dark:text-cta-primary"
           mobileBleedClassName="-mx-4"
           mobileGutterClassName="px-4"
         />

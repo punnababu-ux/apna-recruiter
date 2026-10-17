@@ -114,6 +114,7 @@
   --color-checkout-discount-fg:        var(--checkout-discount-fg);
   --color-checkout-discount-bg:        var(--checkout-discount-bg);
   --color-cta-primary:                 var(--cta-primary);
+  --color-ribbon-fill:                 var(--ribbon-fill);
   --color-cta-primary-hover:           var(--cta-primary-hover);
   --color-plan-card:                   var(--surface-plan-card);
   --color-checkout-info:               var(--checkout-info);

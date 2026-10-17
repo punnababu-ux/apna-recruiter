@@ -94,7 +94,7 @@ const buttonVariants = cva(
          * (--primary brightens a step in dark), matching a surface that is
          * deliberately light in both. */
         checkout:
-          "bg-checkout-primary text-checkout-primary-foreground hover:bg-checkout-primary-hover active:bg-checkout-primary-hover",
+          "bg-cta-primary text-checkout-primary-foreground hover:bg-cta-primary-hover active:bg-cta-primary-hover",
         /* The secondary CTA on a fixed-white inset card — e.g. the white box
          * inside the always-dark Unlimited card. `outline` cannot be used
          * there: it carries dark: overrides that would paint a dark button on

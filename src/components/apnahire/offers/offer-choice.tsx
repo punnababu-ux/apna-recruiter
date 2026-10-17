@@ -71,7 +71,7 @@ function OptionTile({
         <Badge
           variant={upgrade ? "default" : "discount"}
           size="ribbon"
-          className={cn("absolute top-0 right-0", upgrade && "bg-checkout-primary text-checkout-primary-foreground")}
+          className={cn("absolute top-0 right-0", upgrade && "bg-cta-primary text-checkout-primary-foreground")}
         >
           {option.badge}
         </Badge>

@@ -32,7 +32,7 @@ const badgeVariants = cva(
         // Dark: the sidebar "New" tag's tint (info at 20%, info text), so blue
         // tags read alike across the product; solid blue stays on light.
         ribbon:
-          "bg-checkout-info font-semibold text-checkout-info-foreground dark:bg-info/20 dark:text-info",
+          "bg-ribbon-fill font-semibold text-checkout-info-foreground dark:text-info",
         discount:
           "bg-checkout-discount-bg font-semibold text-checkout-discount-fg",
         /* Unread / attention marker on an icon: a solid red count (size

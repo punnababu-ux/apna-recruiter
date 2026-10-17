@@ -100,7 +100,7 @@ function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
         "group-data-[variant=inverted]/tabs-list:data-active:text-background",
         "group-data-[variant=checkout]/tabs-list:font-semibold group-data-[variant=checkout]/tabs-list:text-checkout-hero-fg-secondary group-data-[variant=checkout]/tabs-list:not-data-active:hover:text-checkout-hero-fg",
         "data-active:text-foreground dark:data-active:text-foreground",
-        "group-data-[variant=checkout]/tabs-list:data-active:text-checkout-primary dark:group-data-[variant=checkout]/tabs-list:data-active:text-checkout-primary",
+        "group-data-[variant=checkout]/tabs-list:data-active:text-checkout-primary dark:group-data-[variant=checkout]/tabs-list:data-active:text-cta-primary",
         // Inverted on dark: light label on the lifted plum pill.
         "dark:group-data-[variant=inverted]/tabs-list:data-active:text-foreground",
         className

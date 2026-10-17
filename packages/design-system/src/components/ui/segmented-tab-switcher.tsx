@@ -77,6 +77,9 @@ export interface SegmentedTabSwitcherProps<V extends string = string> {
    *  with it. Use an inset ring, not `border`, for a stroke: a real border
    *  grows the pill and therefore the whole track. */
   activeItemClassName?: string
+  /** Extra classes for the phone chip row's selected pill (e.g. a lift for
+   *  a surface whose colour matches the default pill). */
+  mobileActiveItemClassName?: string
   /** The mobile carousel is full-bleed: it cancels the parent's gutter and
    *  re-adds it inside, so the scroll area reaches the screen edge while the
    *  first and last chips keep a gutter that scrolls away. These two must
@@ -122,6 +125,7 @@ export function SegmentedTabSwitcher<V extends string = string>({
   inactiveClassName: inactiveProp,
   mutedClassName: mutedProp,
   activeItemClassName: activeItemProp,
+  mobileActiveItemClassName,
   mobileBleedClassName = "-mx-4 sm:-mx-10",
   mobileGutterClassName = "px-4 sm:px-10",
   className,
@@ -232,7 +236,7 @@ export function SegmentedTabSwitcher<V extends string = string>({
             // The ring (--border) keeps the white selected chip
             // visible on a white surface (a card, a panel), not just on a
             // grey one; the shadow alone vanished there.
-            className={cn("sliding-indicator rounded-full shadow-control ring-1 ring-border", appearance === "checkout" ? "bg-plan-card dark:ring-0" : "bg-card")}
+            className={cn("sliding-indicator rounded-full shadow-control ring-1 ring-border", appearance === "checkout" ? "bg-plan-card dark:ring-0" : "bg-card", mobileActiveItemClassName)}
           />
           {items.map(({ value: v, label, shortLabel, icon }) => {
             const active = v === value

@@ -609,10 +609,15 @@
      light; on dark they take the open FAQ item's plum (--muted). */
   --surface-plan-card: var(--card);
   /* The green button fill (Button default). Same as --primary on light;
-     on dark it is green-700, deeper than --primary (green-500), which stays
+     on dark it is green-500, the same as --primary there, which stays
      bright for green text, links and icons. */
   --cta-primary:       var(--primary);
   --cta-primary-hover: color-mix(in srgb, var(--primary) 90%, transparent);
+  /* The Recommended ribbon's fill. Solid on light (--checkout-info); on
+     dark the sidebar "New" tag's tint, but OPAQUE (info mixed into the plan
+     card plum), because the ribbon straddles a card edge and a see-through
+     tint let that edge show through. */
+  --ribbon-fill: var(--checkout-info);
   --logo-apna:      var(--color-apna-plum-400);
   --logo-apna-deep: var(--color-apna-plum-950);
   --gradient-offer-premium:
@@ -655,8 +660,9 @@
  * ========================================================================== */
 .dark {
   --surface-plan-card: var(--muted);
-  --cta-primary:       var(--color-apna-green-700);
+  --cta-primary:       var(--color-apna-green-500);
   --cta-primary-hover: var(--color-apna-green-600);
+  --ribbon-fill: color-mix(in srgb, var(--info) 20%, var(--surface-plan-card));
   --logo-apna:      var(--color-apna-plum-50);
   --logo-apna-deep: var(--color-apna-plum-50);
   /* Plans button on dark: a quiet plum one step above the sidebar (600 →
@@ -907,11 +913,11 @@
      credits strip's white tint (--surface-checkout-track). Plum read muddy. */
   --gradient-checkout-unlimited: linear-gradient(var(--card), var(--card)); /* trial: the FAQ band's colour */
   /* Ribbon one step quieter on dark (sky-500 was the loudest mark on the
-   * dark cards). The CTA is green-700 on dark, the same as --cta-primary,
-   * so the plan pages' green button matches every other green button. */
+   * dark cards). --checkout-primary is the plan pages' green TEXT and
+   * icons (labels, ticks, savings lines): bright green-500 on dark so it
+   * reads. Their green BUTTONS fill from --cta-primary (green-500). */
   --checkout-info:          var(--color-apna-sky-700);
-  --checkout-primary:       var(--color-apna-green-700);
-  --checkout-primary-hover: var(--color-apna-green-600);
+  --checkout-primary:       var(--color-apna-green-500);
 }
 
 /* ==========================================================================

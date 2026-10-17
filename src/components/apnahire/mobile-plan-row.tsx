@@ -77,7 +77,9 @@ export function MobilePlanRow({
   priceNote,
   className,
 }: MobilePlanRowProps) {
-  const radio = <RadioMark checked={selected} size="lg" />
+  const radio = (
+    <RadioMark checked={selected} size="lg" className="data-checked:border-cta-primary [&>span]:bg-cta-primary" />
+  )
   const priceBlock = (
     <div className="flex shrink-0 flex-col items-end gap-1 text-right">
       <div className="flex items-baseline justify-end gap-1.5 whitespace-nowrap">
@@ -113,7 +115,8 @@ export function MobilePlanRow({
         className={cn(
           "ink press-subtle @container relative flex cursor-pointer flex-col gap-3 overflow-hidden rounded-card bg-plan-card p-4 shadow-card transition-interactive",
           selected
-            ? "border-2 border-checkout-primary ring-1 ring-checkout-primary/20"
+            // The selection green is the CTA green (green-700 on dark).
+            ? "border-2 border-cta-primary ring-1 ring-cta-primary/20"
             : "border border-border hover:border-border/80",
           className
         )}
