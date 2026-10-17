@@ -5,7 +5,10 @@
  */
 
 import type { Metadata } from "next"
-import { Section } from "@apna/design-system"
+import {
+  BarChart2,
+  Section,
+} from "@apna/design-system"
 import { ContactSection } from "@/components/marketing/contact-section"
 import { PageHero } from "@/components/marketing/page-blocks"
 import { NumbersSwitcher } from "@/components/marketing/page-switchers"
@@ -16,7 +19,7 @@ export const metadata: Metadata = ABOUT_NUMBERS.meta
 export default function NumbersPage() {
   return (
     <>
-      <PageHero eyebrow={ABOUT_NUMBERS.eyebrow} title={ABOUT_NUMBERS.title} description={ABOUT_NUMBERS.description} />
+      <PageHero icon={<BarChart2 aria-hidden />} eyebrow={ABOUT_NUMBERS.eyebrow} title={ABOUT_NUMBERS.title} description={ABOUT_NUMBERS.description} />
       {/* The numbers on the mother gradient, the frosted stats card on it. */}
       <Section size="lg" className="bg-gradient-checkout-hero">
         <NumbersSwitcher />

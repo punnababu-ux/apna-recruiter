@@ -16,6 +16,7 @@
 
 import type { Metadata } from "next"
 import {
+  Flag,
   ScrollStack,
   Section,
   SectionHeading,
@@ -38,7 +39,7 @@ export default function AboutPage() {
   const recruiters = audiences[0]
   return (
     <>
-      <PageHero
+      <PageHero icon={<Flag aria-hidden />}
         eyebrow={eyebrow}
         title={withAccent(title, titleAccent)}
         // The founding story belongs with the claim it explains: one

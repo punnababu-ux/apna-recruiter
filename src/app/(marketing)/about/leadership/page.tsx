@@ -9,7 +9,11 @@
  */
 
 import type { Metadata } from "next"
-import { Section, SectionHeading } from "@apna/design-system"
+import {
+  Compass,
+  Section,
+  SectionHeading,
+} from "@apna/design-system"
 import { ContactSection } from "@/components/marketing/contact-section"
 import { PageHero, PersonCard, withAccent } from "@/components/marketing/page-blocks"
 import { ABOUT_LEADERSHIP } from "@/content/company"
@@ -20,7 +24,7 @@ export default function LeadershipPage() {
   const { eyebrow, title, description, people, investors } = ABOUT_LEADERSHIP
   return (
     <>
-      <PageHero eyebrow={eyebrow} title={withAccent(title, "best")} description={description} />
+      <PageHero icon={<Compass aria-hidden />} eyebrow={eyebrow} title={withAccent(title, "best")} description={description} />
 
       <Section tone="card" size="md">
         <ul className="flex flex-col gap-16 lg:gap-24">

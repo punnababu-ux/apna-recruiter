@@ -37,7 +37,7 @@ export {
   LinkIcon, ListChecks, ListTodo, Loader2, Loader2Icon,
   Lock, Mail, MapPin, Mars, Maximize2,
   Menu, MessageCircle, MessageCircleQuestion, MessageSquare, MessagesSquare,
-  Mic, MicOff, Minus, Monitor, Moon, MoreHorizontal,
+  Mic, MicOff, Minus, Monitor, Moon, MoreHorizontal, Newspaper,
   MoreHorizontalIcon, MoreVertical, Navigation, OctagonXIcon, Palette,
   PanelLeft, PanelLeftIcon, Paperclip, Pause, Pencil,
   Phone, PhoneCall, PhoneIncoming, PhoneOff, PhoneOutgoing,

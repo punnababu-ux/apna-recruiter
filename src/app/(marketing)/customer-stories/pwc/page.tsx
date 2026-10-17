@@ -7,6 +7,7 @@ import {
   Button,
   Card,
   CheckCircle2,
+  GraduationCap,
   Section,
   Table,
   TableBody,
@@ -25,7 +26,7 @@ export default function PwcStoryPage() {
   const { eyebrow, title, description, facts, headline, sections, solution, results, impact, closing } = STORY_PWC
   return (
     <>
-      <PageHero eyebrow={eyebrow} title={title} description={description} />
+      <PageHero icon={<GraduationCap aria-hidden />} eyebrow={eyebrow} title={title} description={description} />
 
       {/* The campaign at a glance: one anchored card under the hero. */}
       <Section size="none" className="relative -mt-8 pb-8 md:-mt-12 md:pb-12">

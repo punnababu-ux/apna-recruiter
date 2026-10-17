@@ -14,7 +14,15 @@
 
 import type { Metadata } from "next"
 import Link from "next/link"
-import { ArrowRight, Badge, Button, Card, Section, SectionHeading } from "@apna/design-system"
+import {
+  ArrowRight,
+  Badge,
+  Button,
+  Card,
+  Quote,
+  Section,
+  SectionHeading,
+} from "@apna/design-system"
 import { ContactSection } from "@/components/marketing/contact-section"
 import { CompanyMark, PageHero, StatGrid, withAccent } from "@/components/marketing/page-blocks"
 import { StoryLibrary } from "@/components/marketing/page-switchers"
@@ -27,7 +35,7 @@ export default function CustomerStoriesPage() {
   const [lead, ...others] = featured.items
   return (
     <>
-      <PageHero eyebrow={eyebrow} title={withAccent(title, "hires")} description={description} />
+      <PageHero icon={<Quote aria-hidden />} eyebrow={eyebrow} title={withAccent(title, "hires")} description={description} />
 
       <Section size="none" className="relative -mt-8 pb-8 md:-mt-12 md:pb-12">
         <StatGrid stats={stats} className="lg:grid-cols-5 lg:[&>*]:border-t-0" />

@@ -20,6 +20,7 @@ import {
   ScrollStack,
   Section,
   SectionHeading,
+  Target,
 } from "@apna/design-system"
 import { PageHero, StackCard, StatementBand, deckPosition } from "@/components/marketing/page-blocks"
 import { ABOUT_LEADERSHIP, ABOUT_MANAGEMENT, CAREERS } from "@/content/company"
@@ -34,7 +35,7 @@ export default function CareersPage() {
   const { eyebrow, title, description, body, cta, life, closing } = CAREERS
   return (
     <>
-      <PageHero
+      <PageHero icon={<Target aria-hidden />}
         eyebrow={eyebrow}
         title={title}
         description={`${description} ${body}`}

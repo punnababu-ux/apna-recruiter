@@ -10,7 +10,13 @@
 
 import type { Metadata } from "next"
 import Image from "next/image"
-import { Badge, Card, Section, SectionHeading } from "@apna/design-system"
+import {
+  Award,
+  Badge,
+  Card,
+  Section,
+  SectionHeading,
+} from "@apna/design-system"
 import { ContactSection } from "@/components/marketing/contact-section"
 import { PageHero } from "@/components/marketing/page-blocks"
 import { AWARDS } from "@/content/company"
@@ -22,7 +28,7 @@ export default function AwardsPage() {
   const { eyebrow, title, description, heroImage, shelf, items } = AWARDS
   return (
     <>
-      <PageHero eyebrow={eyebrow} title={title} description={description}>
+      <PageHero icon={<Award aria-hidden />} eyebrow={eyebrow} title={title} description={description}>
         <Image
           src={heroImage}
           alt=""

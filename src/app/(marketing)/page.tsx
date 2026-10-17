@@ -24,6 +24,7 @@ import {
   Quote,
   ScrollStack,
   ScrollStackItem,
+  Trophy,
   Section,
   SectionHeading,
 } from "@apna/design-system"
@@ -79,7 +80,7 @@ export default function HomePage() {
                   // Says what "India's Largest" says right under it; phones
                   // can't spare the row.
                   <Badge size="lg" variant="outline" className="bg-card max-sm:hidden">
-                    <CheckCircle2 aria-hidden />
+                    <Trophy aria-hidden />
                     {HOME_HERO.eyebrow}
                   </Badge>
                 }

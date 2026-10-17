@@ -66,6 +66,7 @@ export function HeroChip({ children, icon }: { children: ReactNode; icon?: React
 
 export function PageHero({
   eyebrow,
+  icon,
   title,
   description,
   actions,
@@ -73,6 +74,9 @@ export function PageHero({
 }: {
   /** The chip's label. */
   eyebrow: string
+  /** The chip's icon — one that says what the label says (Trophy for "#1",
+   *  Flag for "Founded", Heart for culture…). Defaults to a check. */
+  icon?: ReactNode
   title: ReactNode
   description?: ReactNode
   actions?: ReactNode
@@ -87,7 +91,7 @@ export function PageHero({
             <SectionHeading
               level={1}
               align="center"
-              eyebrow={<HeroChip>{eyebrow}</HeroChip>}
+              eyebrow={<HeroChip icon={icon}>{eyebrow}</HeroChip>}
               title={title}
               description={description}
             />

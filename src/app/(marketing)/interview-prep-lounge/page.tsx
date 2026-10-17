@@ -68,7 +68,7 @@ export default function InterviewPrepLoungePage() {
 
   return (
     <>
-      <PageHero
+      <PageHero icon={<GraduationCap aria-hidden />}
         eyebrow={hero.eyebrow}
         title={hero.title}
         description={hero.description}

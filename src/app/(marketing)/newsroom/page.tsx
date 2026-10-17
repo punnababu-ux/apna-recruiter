@@ -5,7 +5,10 @@
  */
 
 import type { Metadata } from "next"
-import { Section } from "@apna/design-system"
+import {
+  Newspaper,
+  Section,
+} from "@apna/design-system"
 import { ContactSection } from "@/components/marketing/contact-section"
 import { PageHero } from "@/components/marketing/page-blocks"
 import { PressList } from "@/components/marketing/page-switchers"
@@ -16,7 +19,7 @@ export const metadata: Metadata = PRESS.meta
 export default function NewsroomPage() {
   return (
     <>
-      <PageHero eyebrow={PRESS.eyebrow} title={PRESS.title} description={PRESS.description} />
+      <PageHero icon={<Newspaper aria-hidden />} eyebrow={PRESS.eyebrow} title={PRESS.title} description={PRESS.description} />
       <Section size="lg" className="bg-gradient-checkout-hero">
         <PressList />
       </Section>

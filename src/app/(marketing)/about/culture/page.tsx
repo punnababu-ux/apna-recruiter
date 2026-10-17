@@ -10,7 +10,12 @@
  */
 
 import type { Metadata } from "next"
-import { CheckCircle2, ScrollStack, Section } from "@apna/design-system"
+import {
+  CheckCircle2,
+  Heart,
+  ScrollStack,
+  Section,
+} from "@apna/design-system"
 import { ContactSection } from "@/components/marketing/contact-section"
 import { PageHero, StackCard, StatementBand, deckPosition } from "@/components/marketing/page-blocks"
 import { ABOUT_VALUES } from "@/content/company"
@@ -21,7 +26,7 @@ export default function CulturePage() {
   const { eyebrow, title, description, values, closing } = ABOUT_VALUES
   return (
     <>
-      <PageHero eyebrow={eyebrow} title={title} description={description} />
+      <PageHero icon={<Heart aria-hidden />} eyebrow={eyebrow} title={title} description={description} />
 
       <Section tone="card" size="md">
         {/* No section title: the hero already names them (Lovable has none). */}

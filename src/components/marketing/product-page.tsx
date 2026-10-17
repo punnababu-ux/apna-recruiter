@@ -26,6 +26,7 @@ import {
   Database,
   Eye,
   FileText,
+  InfinityIcon,
   Filter,
   ListChecks,
   MapPin,
@@ -67,8 +68,17 @@ const ICONS: Record<ProductIconName, ComponentType<{ className?: string; "aria-h
   database: Database,
 }
 
+/** The hero chip's icon: the product itself. */
+const PRODUCT_CHIP_ICON: Record<ProductPageContent["product"], ComponentType<{ className?: string; "aria-hidden"?: boolean }>> = {
+  "Smart Jobs": Briefcase,
+  "AI Calling Agent": PhoneCall,
+  "Hyperlocal Database": Database,
+  "apna Unlimited": InfinityIcon,
+}
+
 export function ProductPage({ content }: { content: ProductPageContent }) {
   const { product, eyebrow, heading, description, cta, stats, steps, features } = content
+  const ChipIcon = PRODUCT_CHIP_ICON[product]
 
   return (
     // The product's colour is the page's identity, header to footer: the
@@ -83,7 +93,7 @@ export function ProductPage({ content }: { content: ProductPageContent }) {
             <div className="flex flex-col gap-8">
               <SectionHeading
                 level={1}
-                eyebrow={<HeroChip>{eyebrow}</HeroChip>}
+                eyebrow={<HeroChip icon={<ChipIcon aria-hidden />}>{eyebrow}</HeroChip>}
                 title={heading}
                 description={description}
               />
