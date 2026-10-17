@@ -76,6 +76,11 @@ const READY = new Set<ValueName>([
   "student",
   "university",
   "government",
+  "deploy",
+  "access",
+  "practise",
+  "improve",
+  "track",
 ])
 
 export function ValueArt({ name, size = "lg" }: { name: ValueName; size?: "md" | "lg" }) {
