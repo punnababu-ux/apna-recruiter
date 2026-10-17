@@ -9,7 +9,18 @@
 
 import type { ComponentType } from "react"
 import Image from "next/image"
-import { HeartHandshake, KeyRound, Rocket, Scale, Target, TrendingUp } from "@apna/design-system"
+import { cn } from "@/lib/utils"
+import {
+  Building2,
+  GraduationCap,
+  HeartHandshake,
+  KeyRound,
+  Landmark,
+  Rocket,
+  Scale,
+  Target,
+  TrendingUp,
+} from "@apna/design-system"
 
 export type ValueName =
   | "ownership"
@@ -20,6 +31,10 @@ export type ValueName =
   | "momentum"
   | "ownership-over-hierarchy"
   | "raise-the-bar"
+  // The Lounge's audiences
+  | "student"
+  | "university"
+  | "government"
 
 const ICON: Record<ValueName, ComponentType<{ className?: string; "aria-hidden"?: boolean }>> = {
   ownership: KeyRound,
@@ -29,6 +44,9 @@ const ICON: Record<ValueName, ComponentType<{ className?: string; "aria-hidden"?
   momentum: Rocket,
   "ownership-over-hierarchy": KeyRound,
   "raise-the-bar": TrendingUp,
+  student: GraduationCap,
+  university: Building2,
+  government: Landmark,
 }
 
 /** Values whose clay image is in public/images/company/values. */
@@ -42,7 +60,7 @@ const READY = new Set<ValueName>([
   "raise-the-bar",
 ])
 
-export function ValueArt({ name }: { name: ValueName }) {
+export function ValueArt({ name, size = "lg" }: { name: ValueName; size?: "md" | "lg" }) {
   if (READY.has(name)) {
     return (
       <Image
@@ -50,14 +68,19 @@ export function ValueArt({ name }: { name: ValueName }) {
         alt=""
         width={320}
         height={320}
-        className="size-56 object-contain md:size-72 lg:size-80"
+        className={size === "md" ? "size-40 object-contain sm:size-48" : "size-56 object-contain md:size-72 lg:size-80"}
       />
     )
   }
   const Icon = ICON[name]
   return (
-    <span className="flex size-48 items-center justify-center rounded-full border border-card/60 bg-card/70 shadow-card backdrop-blur-xl md:size-64">
-      <Icon className="size-16 text-foreground sm:size-20" aria-hidden />
+    <span
+      className={cn(
+        "flex items-center justify-center rounded-full border border-card/60 bg-card/70 shadow-card backdrop-blur-xl",
+        size === "md" ? "size-32" : "size-48 md:size-64"
+      )}
+    >
+      <Icon className={cn("text-foreground", size === "md" ? "size-12" : "size-16 sm:size-20")} aria-hidden />
     </span>
   )
 }

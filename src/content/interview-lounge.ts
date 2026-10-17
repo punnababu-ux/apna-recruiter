@@ -8,8 +8,13 @@
  * page's counter targets (its text reads "0L+" until the counters run).
  * Light edits, only where a line didn't parse: the universities card
  * ("…and prepares, coaches students at scale"), and "apna" in lower case,
- * as everywhere on this site. The minister photo and its caption are left
- * out until we have the photo.
+ * as everywhere on this site.
+ *
+ * Photos (public/images/lounge) are the prototype's own, fetched
+ * 2026-10-17: the booth and practising photos, the booths photo and the
+ * minister's visit. The audiences get 3D clay objects instead of the
+ * prototype's line illustrations (user call). The hero's rotating
+ * "moments" are the prototype's hero carousel copy.
  */
 
 export const LOUNGE = {
@@ -24,6 +29,21 @@ export const LOUNGE = {
     description:
       "The apna AI Interview Preparation Lounge is an AI-powered interview readiness solution designed for universities, colleges and training institutions, bringing personalised, always-available interview preparation directly to campus.",
     cta: "Bring the Lounge to your campus",
+    /** The prototype's hero carousel: one product moment at a time. */
+    moments: [
+      { icon: "mic", title: "AI-led mock interview", tags: ["Role-specific", "Resume-aware", "Instant feedback"] },
+      { icon: "briefcase", title: "Prepare for 25,000+ top roles", tags: ["Sales", "BPO", "IT", "Finance", "Retail"] },
+      {
+        icon: "users",
+        title: "Everyday 10k students are preparing using our lounge",
+        tags: ["Campus-ready", "Always available", "Scalable"],
+      },
+      {
+        icon: "whatsapp",
+        title: "Get a report card on WhatsApp",
+        tags: ["Customized report", "Post-interview", "Actionable insights"],
+      },
+    ],
   },
   stats: [
     { value: "14L+", label: "Interviews completed" },
@@ -34,18 +54,24 @@ export const LOUNGE = {
   audiences: [
     {
       icon: "student",
+      /** Its 3D clay object (ValueArt) — pending generation. */
+      art: "student",
       eyebrow: "For students",
       title: "Functional readiness and earned confidence.",
       description: "Practise privately in Hindi, English or regional languages, with real-time improvement.",
     },
     {
       icon: "campus",
+      /** Its 3D clay object (ValueArt) — pending generation. */
+      art: "university",
       eyebrow: "For universities",
       title: "Knowledge loop that enables candidate-readiness for interviews.",
       description: "Raise readiness at scale, track gaps, and coach every student.",
     },
     {
       icon: "government",
+      /** Its 3D clay object (ValueArt) — pending generation. */
+      art: "government",
       eyebrow: "For government",
       title: "Inclusive access to preparation and measurable impact.",
       description: "A visible AI skilling asset that reaches all first-generation learners, freshers & students.",
@@ -94,8 +120,19 @@ export const LOUNGE = {
       },
     ],
     footnote: "apna’s AI Preparation Lounge allows students to prepare for 25,000+ roles for top companies.",
+    images: [
+      { src: "/images/lounge/booth.jpg", alt: "Candidate using an apna AI Interview Preparation booth" },
+      {
+        src: "/images/lounge/candidate-practising.jpg",
+        alt: "Student practising a live spoken AI interview with headphones on",
+      },
+    ],
   },
   institutions: {
+    image: {
+      src: "/images/lounge/booths.jpg",
+      alt: "Three candidates practising interviews in apna AI Interview Preparation Centre booths",
+    },
     title: "Institutions deploy it. Students benefit from it.",
     description:
       "The Lounge turns interview readiness from a one-time workshop into an always-on operating system for learning.",
@@ -119,6 +156,11 @@ export const LOUNGE = {
     ],
   },
   publicOutcomes: {
+    image: {
+      src: "/images/lounge/minister.jpg",
+      alt: "Hon'ble Union Minister Shri Piyush Goyal at the AI Interview Preparation Centre",
+      caption: "Hon'ble Union Minister Shri Piyush Goyal at the AI Interview Preparation Centre",
+    },
     title: "A visible AI skilling asset, with measurable public outcomes",
     description:
       "The Lounge complements existing programmes by solving the last-mile employability gap: practice, confidence, reporting and job connection.",
@@ -142,6 +184,7 @@ export const LOUNGE = {
   },
   howItWorks: {
     title: "How it works",
+    loop: "A continuous loop — practise, improve, track.",
     items: [
       {
         title: "Deploy",

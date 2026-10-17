@@ -5,19 +5,24 @@
  * pages (it's apna's, not one hiring product's — no product colour).
  *
  *   Hero          chip, serif headline, line, the one green CTA (to the
- *                 contact band)
+ *                 contact band), and the prototype's rotating product
+ *                 moments beside it (MomentCarousel)
  *   Numbers       the anchored stats card under the hero
- *   Audiences     students / universities / government
+ *   Audiences     students / universities / government, each led by its
+ *                 3D clay object on a suite-gradient tile
  *   Pillars       visible · repeatable · measurable · personalised
- *   Experience    five features, then the 25,000+ roles line as a band
- *   Institutions  the case beside what they get
- *   Outcomes      the public-policy fit, frosted cards on the mother band
+ *   Experience    five features beside the booth photos, then the 25,000+
+ *                 roles line as a band
+ *   Institutions  the case and what they get, beside the booths photo
+ *   Outcomes      the public-policy fit beside the minister's visit, on the
+ *                 mother band
  *   How it works  the five steps as stacking cards
  *   Journey       the student's four steps, in the same white band
  */
 
 import type { ComponentType } from "react"
 import type { Metadata } from "next"
+import Image from "next/image"
 import Link from "next/link"
 import {
   ArrowRight,
@@ -36,7 +41,11 @@ import {
   SectionHeading,
   Target,
 } from "@apna/design-system"
-import { PageHero, StackCard, StatGrid, StatementBand, deckPosition } from "@/components/marketing/page-blocks"
+import { HeroBackdrop } from "@/components/marketing/hero-backdrop"
+import { MomentCarousel } from "@/components/marketing/moment-carousel"
+import { ILLUSTRATION_TONE } from "@/components/marketing/product-illustrations"
+import { ValueArt } from "@/components/marketing/value-art"
+import { HeroChip, StackCard, StatGrid, StatementBand, deckPosition } from "@/components/marketing/page-blocks"
 import { CONTACT_ANCHOR } from "@/content/contact"
 import { LOUNGE } from "@/content/interview-lounge"
 import { cn } from "@/lib/utils"
@@ -48,6 +57,9 @@ const AUDIENCE_ICONS: Record<(typeof LOUNGE.audiences)[number]["icon"], Icon> = 
   campus: Building2,
   government: Landmark,
 }
+
+/** The audience tiles take three of the suite gradients, in turn. */
+const AUDIENCE_TONES = ["sky", "green", "gold"] as const
 
 const EXPERIENCE_ICONS: Record<(typeof LOUNGE.experience.items)[number]["icon"], Icon> = {
   target: Target,
@@ -64,22 +76,30 @@ export default function InterviewPrepLoungePage() {
 
   return (
     <>
-      <PageHero
-        icon={<GraduationCap aria-hidden />}
-        eyebrow={hero.eyebrow}
-        title={hero.title}
-        description={hero.description}
-        actions={
-          <Button
-            size="lg"
-            nativeButton={false}
-            render={<Link href={`#${CONTACT_ANCHOR}`} />}
-            trailingIcon={<ArrowRight aria-hidden />}
-          >
-            {hero.cta}
-          </Button>
-        }
-      />
+      <div className="relative isolate">
+        <HeroBackdrop />
+        <Section size="lg" className="relative max-md:pt-8">
+          <div className="grid items-center gap-12 lg:grid-cols-2">
+            <div className="flex flex-col items-start gap-8">
+              <SectionHeading
+                level={1}
+                eyebrow={<HeroChip icon={<GraduationCap aria-hidden />}>{hero.eyebrow}</HeroChip>}
+                title={hero.title}
+                description={hero.description}
+              />
+              <Button
+                size="lg"
+                nativeButton={false}
+                render={<Link href={`#${CONTACT_ANCHOR}`} />}
+                trailingIcon={<ArrowRight aria-hidden />}
+              >
+                {hero.cta}
+              </Button>
+            </div>
+            <MomentCarousel moments={hero.moments} />
+          </div>
+        </Section>
+      </div>
 
       <Section size="none" className="relative -mt-8 pb-8 md:-mt-12 md:pb-12">
         <StatGrid stats={stats} className="lg:grid-cols-4 lg:[&>*]:border-t-0" />
@@ -88,17 +108,25 @@ export default function InterviewPrepLoungePage() {
       {/* Who it's for. */}
       <Section tone="card" size="md">
         <ul className="grid gap-6 md:grid-cols-3">
-          {audiences.map((a) => {
+          {audiences.map((a, i) => {
             const AudienceIcon = AUDIENCE_ICONS[a.icon]
             return (
               <li key={a.eyebrow}>
-                <Card padding="lg" className="h-full gap-4 bg-gradient-checkout-hero">
-                  <AudienceIcon className="size-7 text-foreground" aria-hidden />
-                  <div className="flex flex-col gap-2">
-                    <span className="text-overline text-muted-foreground">{a.eyebrow}</span>
-                    <h2 className="text-h4 text-balance text-foreground">{a.title}</h2>
+                <Card padding="none" className="h-full overflow-hidden">
+                  <div
+                    aria-hidden
+                    className={cn("flex aspect-4/3 items-center justify-center", ILLUSTRATION_TONE[AUDIENCE_TONES[i]])}
+                  >
+                    <ValueArt name={a.art} size="md" />
                   </div>
-                  <p className="text-base text-pretty text-muted-foreground">{a.description}</p>
+                  <div className="flex flex-1 flex-col gap-3 p-6">
+                    <span className="flex items-center gap-2 text-overline text-muted-foreground">
+                      <AudienceIcon className="size-4" aria-hidden />
+                      {a.eyebrow}
+                    </span>
+                    <h2 className="text-h5 text-balance text-foreground">{a.title}</h2>
+                    <p className="text-sm text-pretty text-muted-foreground">{a.description}</p>
+                  </div>
                 </Card>
               </li>
             )
@@ -121,26 +149,44 @@ export default function InterviewPrepLoungePage() {
         </div>
       </Section>
 
-      {/* The experience. */}
+      {/* The experience: what the AI interviewer does, beside the booth. */}
       <Section tone="card" size="md">
-        <div className="flex flex-col gap-10">
-          <SectionHeading level={2} align="center" title={experience.title} description={experience.description} />
-          {/* Three over two, the bottom pair centred (a 6-column grid, each
-              card two wide, the fourth starting a column in). */}
-          <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-6">
-            {experience.items.map((item, i) => {
-              const ItemIcon = EXPERIENCE_ICONS[item.icon]
-              return (
-                <li key={item.title} className={cn("lg:col-span-2", i === 3 && "lg:col-start-2")}>
-                  <Card padding="lg" tone="muted" className="h-full gap-3">
-                    <ItemIcon className="size-6 text-foreground" aria-hidden />
-                    <h3 className="text-h6 text-foreground">{item.title}</h3>
-                    <p className="text-sm text-pretty text-muted-foreground">{item.description}</p>
-                  </Card>
-                </li>
-              )
-            })}
-          </ul>
+        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+          <div className="flex flex-col gap-8">
+            <SectionHeading level={2} title={experience.title} description={experience.description} />
+            <ul className="flex flex-col gap-5">
+              {experience.items.map((item) => {
+                const ItemIcon = EXPERIENCE_ICONS[item.icon]
+                return (
+                  <li key={item.title} className="flex items-start gap-4">
+                    <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted">
+                      <ItemIcon className="size-5 text-foreground" aria-hidden />
+                    </span>
+                    <div className="flex flex-col gap-1">
+                      <h3 className="text-base font-semibold text-foreground">{item.title}</h3>
+                      <p className="text-sm text-pretty text-muted-foreground">{item.description}</p>
+                    </div>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+          <div className="grid grid-cols-5 gap-4">
+            <Image
+              src={experience.images[0].src}
+              alt={experience.images[0].alt}
+              width={560}
+              height={840}
+              className="col-span-2 aspect-2/3 w-full rounded-card object-cover"
+            />
+            <Image
+              src={experience.images[1].src}
+              alt={experience.images[1].alt}
+              width={840}
+              height={840}
+              className="col-span-3 aspect-2/3 w-full rounded-card object-cover"
+            />
+          </div>
         </div>
       </Section>
 
@@ -148,23 +194,32 @@ export default function InterviewPrepLoungePage() {
 
       {/* For institutions: the case on the left, what they get on the right. */}
       <Section tone="card" size="md">
-        <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
-          <SectionHeading level={2} title={institutions.title} description={institutions.description} />
-          <ul className="flex flex-col divide-y divide-border border-y border-border">
-            {institutions.items.map((item) => (
-              <li key={item.title} className="flex items-start gap-3 py-5">
-                <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-foreground" aria-hidden />
-                <div className="flex flex-col gap-1">
-                  <h3 className="text-base font-semibold text-foreground">{item.title}</h3>
-                  <p className="text-sm text-pretty text-muted-foreground">{item.description}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
+        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+          <Image
+            src={institutions.image.src}
+            alt={institutions.image.alt}
+            width={1200}
+            height={900}
+            className="aspect-4/3 w-full rounded-card object-cover lg:order-last"
+          />
+          <div className="flex flex-col gap-8">
+            <SectionHeading level={2} title={institutions.title} description={institutions.description} />
+            <ul className="flex flex-col divide-y divide-border border-y border-border">
+              {institutions.items.map((item) => (
+                <li key={item.title} className="flex items-start gap-3 py-5">
+                  <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-foreground" aria-hidden />
+                  <div className="flex flex-col gap-1">
+                    <h3 className="text-base font-semibold text-foreground">{item.title}</h3>
+                    <p className="text-sm text-pretty text-muted-foreground">{item.description}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </Section>
 
-      {/* Public outcomes: frosted cards on the mother gradient. */}
+      {/* Public outcomes: the policy fit beside the minister's visit. */}
       <Section size="lg" className="bg-gradient-checkout-hero">
         <div className="flex flex-col gap-10">
           <SectionHeading
@@ -173,14 +228,28 @@ export default function InterviewPrepLoungePage() {
             title={publicOutcomes.title}
             description={publicOutcomes.description}
           />
-          <dl className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {publicOutcomes.items.map((item) => (
-              <Card key={item.title} padding="lg" className="surface-frosted gap-2 shadow-card">
-                <dt className="text-h5 text-foreground">{item.title}</dt>
-                <dd className="text-sm text-pretty text-muted-foreground">{item.description}</dd>
-              </Card>
-            ))}
-          </dl>
+          <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
+            <Card padding="none" className="surface-frosted shadow-card">
+              <dl className="flex flex-col divide-y divide-border">
+                {publicOutcomes.items.map((item) => (
+                  <div key={item.title} className="flex flex-col gap-1 p-5 sm:p-6">
+                    <dt className="text-base font-semibold text-foreground">{item.title}</dt>
+                    <dd className="text-sm text-pretty text-muted-foreground">{item.description}</dd>
+                  </div>
+                ))}
+              </dl>
+            </Card>
+            <figure className="flex flex-col gap-3">
+              <Image
+                src={publicOutcomes.image.src}
+                alt={publicOutcomes.image.alt}
+                width={1200}
+                height={800}
+                className="aspect-3/2 w-full rounded-card object-cover shadow-card"
+              />
+              <figcaption className="text-sm text-muted-foreground">{publicOutcomes.image.caption}</figcaption>
+            </figure>
+          </div>
           <p className="mx-auto max-w-prose text-center text-base text-pretty text-muted-foreground">
             {publicOutcomes.footnote}
           </p>
@@ -193,7 +262,7 @@ export default function InterviewPrepLoungePage() {
       <Section tone="card" size="md">
         <div className="flex flex-col gap-24">
           <div className="flex flex-col gap-10">
-            <SectionHeading level={2} align="center" title={howItWorks.title} />
+            <SectionHeading level={2} align="center" title={howItWorks.title} description={howItWorks.loop} />
             <ScrollStack>
               {howItWorks.items.map((step, i) => (
                 <StackCard
