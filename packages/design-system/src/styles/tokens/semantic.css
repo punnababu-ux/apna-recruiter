@@ -425,31 +425,31 @@
    * Switched by the marketing shell when the page holds a
    * [data-product-canvas] (see the rule at the end of this file). */
   --gradient-canvas-smart-jobs:
-    radial-gradient(ellipse 70% 40% at 10% 0%,  color-mix(in srgb, var(--color-logo-sky-200) 75%, transparent) 0%, color-mix(in srgb, var(--color-logo-sky-100) 45%, transparent) 45%, transparent 75%),
-    radial-gradient(ellipse 60% 35% at 95% 45%, color-mix(in srgb, var(--color-logo-sky-100) 60%, transparent) 0%, transparent 70%),
-    radial-gradient(ellipse 70% 40% at 15% 95%, color-mix(in srgb, var(--color-logo-sky-100) 65%, transparent) 0%, transparent 70%),
-    linear-gradient(180deg, color-mix(in srgb, var(--color-logo-sky-100) 55%, transparent) 0%, color-mix(in srgb, var(--color-logo-sky-50) 45%, transparent) 50%, color-mix(in srgb, var(--color-logo-sky-100) 55%, transparent) 100%),
+    radial-gradient(ellipse 70% 40% at 10% 0%,  color-mix(in srgb, var(--color-apna-sky-200) 75%, transparent) 0%, color-mix(in srgb, var(--color-apna-sky-100) 45%, transparent) 45%, transparent 75%),
+    radial-gradient(ellipse 60% 35% at 95% 45%, color-mix(in srgb, var(--color-apna-sky-100) 60%, transparent) 0%, transparent 70%),
+    radial-gradient(ellipse 70% 40% at 15% 95%, color-mix(in srgb, var(--color-apna-sky-100) 65%, transparent) 0%, transparent 70%),
+    linear-gradient(180deg, color-mix(in srgb, var(--color-apna-sky-100) 55%, transparent) 0%, color-mix(in srgb, var(--color-apna-sky-50) 45%, transparent) 50%, color-mix(in srgb, var(--color-apna-sky-100) 55%, transparent) 100%),
     linear-gradient(rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25)),
     url("/bg-ambient-mesh.jpg");
   --gradient-canvas-ai-calling:
-    radial-gradient(ellipse 70% 40% at 10% 0%,  color-mix(in srgb, var(--color-logo-green-200) 75%, transparent) 0%, color-mix(in srgb, var(--color-logo-green-100) 45%, transparent) 45%, transparent 75%),
-    radial-gradient(ellipse 60% 35% at 95% 45%, color-mix(in srgb, var(--color-logo-green-100) 60%, transparent) 0%, transparent 70%),
-    radial-gradient(ellipse 70% 40% at 15% 95%, color-mix(in srgb, var(--color-logo-green-100) 65%, transparent) 0%, transparent 70%),
-    linear-gradient(180deg, color-mix(in srgb, var(--color-logo-green-100) 55%, transparent) 0%, color-mix(in srgb, var(--color-logo-green-50) 45%, transparent) 50%, color-mix(in srgb, var(--color-logo-green-100) 55%, transparent) 100%),
+    radial-gradient(ellipse 70% 40% at 10% 0%,  color-mix(in srgb, var(--color-apna-green-200) 75%, transparent) 0%, color-mix(in srgb, var(--color-apna-green-100) 45%, transparent) 45%, transparent 75%),
+    radial-gradient(ellipse 60% 35% at 95% 45%, color-mix(in srgb, var(--color-apna-green-100) 60%, transparent) 0%, transparent 70%),
+    radial-gradient(ellipse 70% 40% at 15% 95%, color-mix(in srgb, var(--color-apna-green-100) 65%, transparent) 0%, transparent 70%),
+    linear-gradient(180deg, color-mix(in srgb, var(--color-apna-green-100) 55%, transparent) 0%, color-mix(in srgb, var(--color-apna-green-50) 45%, transparent) 50%, color-mix(in srgb, var(--color-apna-green-100) 55%, transparent) 100%),
     linear-gradient(rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25)),
     url("/bg-ambient-mesh.jpg");
   --gradient-canvas-database:
-    radial-gradient(ellipse 70% 40% at 10% 0%,  color-mix(in srgb, var(--color-logo-plum-200) 75%, transparent) 0%, color-mix(in srgb, var(--color-logo-plum-100) 45%, transparent) 45%, transparent 75%),
-    radial-gradient(ellipse 60% 35% at 95% 45%, color-mix(in srgb, var(--color-logo-plum-100) 60%, transparent) 0%, transparent 70%),
-    radial-gradient(ellipse 70% 40% at 15% 95%, color-mix(in srgb, var(--color-logo-plum-100) 65%, transparent) 0%, transparent 70%),
-    linear-gradient(180deg, color-mix(in srgb, var(--color-logo-plum-100) 55%, transparent) 0%, color-mix(in srgb, var(--color-logo-plum-50) 45%, transparent) 50%, color-mix(in srgb, var(--color-logo-plum-100) 55%, transparent) 100%),
+    radial-gradient(ellipse 70% 40% at 10% 0%,  color-mix(in srgb, var(--color-apna-plum-200) 75%, transparent) 0%, color-mix(in srgb, var(--color-apna-plum-100) 45%, transparent) 45%, transparent 75%),
+    radial-gradient(ellipse 60% 35% at 95% 45%, color-mix(in srgb, var(--color-apna-plum-100) 60%, transparent) 0%, transparent 70%),
+    radial-gradient(ellipse 70% 40% at 15% 95%, color-mix(in srgb, var(--color-apna-plum-100) 65%, transparent) 0%, transparent 70%),
+    linear-gradient(180deg, color-mix(in srgb, var(--color-apna-plum-100) 55%, transparent) 0%, color-mix(in srgb, var(--color-apna-plum-50) 45%, transparent) 50%, color-mix(in srgb, var(--color-apna-plum-100) 55%, transparent) 100%),
     linear-gradient(rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25)),
     url("/bg-ambient-mesh.jpg");
   --gradient-canvas-unlimited:
-    radial-gradient(ellipse 70% 40% at 10% 0%,  color-mix(in srgb, var(--color-logo-gold-200) 75%, transparent) 0%, color-mix(in srgb, var(--color-logo-gold-100) 45%, transparent) 45%, transparent 75%),
-    radial-gradient(ellipse 60% 35% at 95% 45%, color-mix(in srgb, var(--color-logo-gold-100) 60%, transparent) 0%, transparent 70%),
-    radial-gradient(ellipse 70% 40% at 15% 95%, color-mix(in srgb, var(--color-logo-gold-100) 65%, transparent) 0%, transparent 70%),
-    linear-gradient(180deg, color-mix(in srgb, var(--color-logo-gold-100) 55%, transparent) 0%, color-mix(in srgb, var(--color-logo-gold-50) 45%, transparent) 50%, color-mix(in srgb, var(--color-logo-gold-100) 55%, transparent) 100%),
+    radial-gradient(ellipse 70% 40% at 10% 0%,  color-mix(in srgb, var(--color-apna-gold-200) 75%, transparent) 0%, color-mix(in srgb, var(--color-apna-gold-100) 45%, transparent) 45%, transparent 75%),
+    radial-gradient(ellipse 60% 35% at 95% 45%, color-mix(in srgb, var(--color-apna-gold-100) 60%, transparent) 0%, transparent 70%),
+    radial-gradient(ellipse 70% 40% at 15% 95%, color-mix(in srgb, var(--color-apna-gold-100) 65%, transparent) 0%, transparent 70%),
+    linear-gradient(180deg, color-mix(in srgb, var(--color-apna-gold-100) 55%, transparent) 0%, color-mix(in srgb, var(--color-apna-gold-50) 45%, transparent) 50%, color-mix(in srgb, var(--color-apna-gold-100) 55%, transparent) 100%),
     linear-gradient(rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25)),
     url("/bg-ambient-mesh.jpg");
   /* Ambient backdrop (AmbientBackdrop) — the slow-moving blobs, cursor glow
@@ -580,10 +580,10 @@
   /* Illustration tiles (ProductIllustration): the soft pastel wash behind a
    * floating snippet of product UI on the homepage product cards. One per
    * brand hue so a row of cards reads as a family, not four copies. */
-  --gradient-illustration-green: linear-gradient(160deg, var(--color-logo-green-100) 0%, var(--color-logo-sky-50) 100%);
-  --gradient-illustration-sky:   linear-gradient(160deg, var(--color-logo-sky-100) 0%, var(--color-logo-plum-50) 100%);
-  --gradient-illustration-plum:  linear-gradient(160deg, var(--color-logo-plum-100) 0%, var(--color-logo-sky-50) 100%);
-  --gradient-illustration-gold:  linear-gradient(160deg, var(--color-logo-gold-100) 0%, var(--color-logo-plum-50) 100%);
+  --gradient-illustration-green: linear-gradient(160deg, var(--color-apna-green-100) 0%, var(--color-apna-sky-50) 100%);
+  --gradient-illustration-sky:   linear-gradient(160deg, var(--color-apna-sky-100) 0%, var(--color-apna-plum-50) 100%);
+  --gradient-illustration-plum:  linear-gradient(160deg, var(--color-apna-plum-100) 0%, var(--color-apna-sky-50) 100%);
+  --gradient-illustration-gold:  linear-gradient(160deg, var(--color-apna-gold-100) 0%, var(--color-apna-plum-50) 100%);
   /* Product identity — each product owns one illustration gradient, used
    * only with that product: its homepage card, its product page's hero, its
    * illustrations. Company pages (About, Newsroom, …) use none of them.
@@ -784,20 +784,20 @@
    * Switched by the marketing shell when the page holds a
    * [data-product-canvas] (see the rule at the end of this file). */
   --gradient-canvas-smart-jobs:
-    radial-gradient(circle at 8% 12%,  color-mix(in srgb, var(--color-logo-sky) 35%, transparent) 0%, transparent 50%),
-    radial-gradient(circle at 90% 75%, color-mix(in srgb, var(--color-logo-sky) 28%, transparent) 0%, transparent 60%),
+    radial-gradient(circle at 8% 12%,  color-mix(in srgb, var(--color-apna-sky-800) 55%, transparent) 0%, transparent 50%),
+    radial-gradient(circle at 90% 75%, color-mix(in srgb, var(--color-apna-sky-900) 60%, transparent) 0%, transparent 60%),
     var(--gradient-checkout-hero);
   --gradient-canvas-ai-calling:
-    radial-gradient(circle at 8% 12%,  color-mix(in srgb, var(--color-logo-green) 35%, transparent) 0%, transparent 50%),
-    radial-gradient(circle at 90% 75%, color-mix(in srgb, var(--color-logo-green) 28%, transparent) 0%, transparent 60%),
+    radial-gradient(circle at 8% 12%,  color-mix(in srgb, var(--color-apna-green-800) 55%, transparent) 0%, transparent 50%),
+    radial-gradient(circle at 90% 75%, color-mix(in srgb, var(--color-apna-green-900) 60%, transparent) 0%, transparent 60%),
     var(--gradient-checkout-hero);
   --gradient-canvas-database:
-    radial-gradient(circle at 8% 12%,  color-mix(in srgb, var(--color-logo-plum) 35%, transparent) 0%, transparent 50%),
-    radial-gradient(circle at 90% 75%, color-mix(in srgb, var(--color-logo-plum) 28%, transparent) 0%, transparent 60%),
+    radial-gradient(circle at 8% 12%,  color-mix(in srgb, var(--color-apna-plum-800) 55%, transparent) 0%, transparent 50%),
+    radial-gradient(circle at 90% 75%, color-mix(in srgb, var(--color-apna-plum-900) 60%, transparent) 0%, transparent 60%),
     var(--gradient-checkout-hero);
   --gradient-canvas-unlimited:
-    radial-gradient(circle at 8% 12%,  color-mix(in srgb, var(--color-logo-gold) 35%, transparent) 0%, transparent 50%),
-    radial-gradient(circle at 90% 75%, color-mix(in srgb, var(--color-logo-gold) 28%, transparent) 0%, transparent 60%),
+    radial-gradient(circle at 8% 12%,  color-mix(in srgb, var(--color-apna-gold-800) 55%, transparent) 0%, transparent 50%),
+    radial-gradient(circle at 90% 75%, color-mix(in srgb, var(--color-apna-gold-900) 60%, transparent) 0%, transparent 60%),
     var(--gradient-checkout-hero);
   --gradient-ai-subtle: linear-gradient(100deg, color-mix(in srgb, var(--color-apna-plum-950) 70%, transparent) 0%, color-mix(in srgb, var(--color-apna-sky-950) 45%, transparent) 55%, color-mix(in srgb, var(--color-apna-green-950) 60%, transparent) 100%);
   --gradient-ai-demo: linear-gradient(90deg, color-mix(in srgb, var(--color-apna-navy-950) 70%, transparent) 0%, color-mix(in srgb, var(--color-apna-green-950) 70%, transparent) 100%);
@@ -807,10 +807,10 @@
   --ambient-blob-4: color-mix(in srgb, var(--color-apna-sky-900) 40%, transparent);
   --ambient-glow:   var(--color-alpha-white-10);
   --ambient-grain-opacity: 0.08;
-  --gradient-illustration-green: linear-gradient(160deg, color-mix(in srgb, var(--color-logo-green) 30%, transparent) 0%, transparent 100%);
-  --gradient-illustration-sky:   linear-gradient(160deg, color-mix(in srgb, var(--color-logo-sky) 30%, transparent) 0%, transparent 100%);
-  --gradient-illustration-plum:  linear-gradient(160deg, color-mix(in srgb, var(--color-logo-plum) 30%, transparent) 0%, transparent 100%);
-  --gradient-illustration-gold:  linear-gradient(160deg, color-mix(in srgb, var(--color-logo-gold) 30%, transparent) 0%, transparent 100%);
+  --gradient-illustration-green: linear-gradient(160deg, color-mix(in srgb, var(--color-apna-green-900) 55%, transparent) 0%, transparent 100%);
+  --gradient-illustration-sky:   linear-gradient(160deg, color-mix(in srgb, var(--color-apna-sky-900) 55%, transparent) 0%, transparent 100%);
+  --gradient-illustration-plum:  linear-gradient(160deg, color-mix(in srgb, var(--color-apna-plum-900) 55%, transparent) 0%, transparent 100%);
+  --gradient-illustration-gold:  linear-gradient(160deg, color-mix(in srgb, var(--color-apna-gold-900) 55%, transparent) 0%, transparent 100%);
   --gradient-text-brand: linear-gradient(90deg, var(--color-apna-green-500) 0%, var(--color-apna-green-300) 35%, var(--color-apna-green-200) 50%, var(--color-apna-green-300) 65%, var(--color-apna-green-500) 100%);
   --surface-checkout-hero-fg:       var(--color-gray-50);
   --surface-checkout-hero-fg-muted: var(--color-gray-400);
@@ -878,8 +878,7 @@
  *   --product-accent    solid: icons, step numbers, small highlights
  *   --product-tint      the light wash behind a band or a tile
  *   --product-gradient  the product's gradient (hero, illustration tile)
- * Smart Jobs sky · AI Calling Agent green · Database plum · Unlimited gold —
- * the apna logo's four colours (--color-logo-*).
+ * Smart Jobs sky · AI Calling Agent green · Database plum · Unlimited gold.
  * ======================================================================== */
 :root {
   --product-accent:   var(--muted-foreground);
@@ -887,40 +886,40 @@
   --product-gradient: none;
 }
 [data-product="smart-jobs"] {
-  --product-accent:   var(--color-logo-sky-600);
-  --product-tint:     var(--color-logo-sky-50);
+  --product-accent:   var(--color-apna-sky-600);
+  --product-tint:     var(--color-apna-sky-50);
   --product-gradient: var(--gradient-product-smart-jobs);
 }
 [data-product="ai-calling"] {
-  --product-accent:   var(--color-logo-green-600);
-  --product-tint:     var(--color-logo-green-50);
+  --product-accent:   var(--color-apna-green-600);
+  --product-tint:     var(--color-apna-green-50);
   --product-gradient: var(--gradient-product-ai-calling);
 }
 [data-product="database"] {
-  --product-accent:   var(--color-logo-plum-600);
-  --product-tint:     var(--color-logo-plum-50);
+  --product-accent:   var(--color-apna-plum-400); /* the logo plum; the ramp has no brighter mid-tone */
+  --product-tint:     var(--color-apna-plum-50);
   --product-gradient: var(--gradient-product-database);
 }
 [data-product="unlimited"] {
-  --product-accent:   var(--color-logo-gold-600);
-  --product-tint:     var(--color-logo-gold-50);
+  --product-accent:   var(--color-apna-gold-700);
+  --product-tint:     var(--color-apna-gold-50);
   --product-gradient: var(--gradient-product-unlimited);
 }
 .dark [data-product="smart-jobs"] {
-  --product-accent: var(--color-logo-sky-300);
-  --product-tint:   color-mix(in srgb, var(--color-logo-sky) 25%, transparent);
+  --product-accent: var(--color-apna-sky-300);
+  --product-tint:   color-mix(in srgb, var(--color-apna-sky-900) 35%, transparent);
 }
 .dark [data-product="ai-calling"] {
-  --product-accent: var(--color-logo-green-300);
-  --product-tint:   color-mix(in srgb, var(--color-logo-green) 25%, transparent);
+  --product-accent: var(--color-apna-green-300);
+  --product-tint:   color-mix(in srgb, var(--color-apna-green-900) 35%, transparent);
 }
 .dark [data-product="database"] {
-  --product-accent: var(--color-logo-plum-300);
-  --product-tint:   color-mix(in srgb, var(--color-logo-plum) 25%, transparent);
+  --product-accent: var(--color-apna-plum-300);
+  --product-tint:   color-mix(in srgb, var(--color-apna-plum-900) 35%, transparent);
 }
 .dark [data-product="unlimited"] {
-  --product-accent: var(--color-logo-gold-300);
-  --product-tint:   color-mix(in srgb, var(--color-logo-gold) 25%, transparent);
+  --product-accent: var(--color-apna-gold-300);
+  --product-tint:   color-mix(in srgb, var(--color-apna-gold-900) 35%, transparent);
 }
 
 /* The marketing shell's canvas: the mother gradient, or — when the page is a
