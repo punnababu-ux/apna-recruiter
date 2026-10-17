@@ -91,14 +91,6 @@ export const PRODUCT_PAGES = {
             "Stay informed on the go with real-time candidate calls and application alerts directly on WhatsApp.",
         },
         {
-          // A free feature, not a product of its own (Punna, 2026-10-17).
-          // Copy from employer.apna.co's WhatsApp Fast Recruit section.
-          icon: "whatsapp",
-          title: "WhatsApp Fast Recruit",
-          description:
-            "Send WhatsApp messages to up to 320 candidates daily, free, in a single click, with saved templates to collect CVs, schedule walk-ins and send assessments.",
-        },
-        {
           icon: "users",
           title: "AI-Suggested Candidates",
           description: "Get AI-recommended candidates from our database matching to your job postings.",
