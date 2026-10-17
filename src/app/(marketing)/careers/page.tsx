@@ -4,7 +4,7 @@
  *   Hero     the chip, the serif headline, one paragraph (the hook and
  *            the pace), the green "See open roles" (careers.apna.co),
  *            the team's faces in an avatar row
- *   Life     "Life at apna" as the About story's stacking cards
+ *   Life     "Life at apna" as stacking cards, each with its 3D clay object
  *   Closing  "Ready to make an impact?" as a statement band, the roles link
  *            again as the dark companion
  */
@@ -22,6 +22,7 @@ import {
   SectionHeading,
   Target,
 } from "@apna/design-system"
+import { ValueArt } from "@/components/marketing/value-art"
 import { PageHero, StackCard, StatementBand, deckPosition } from "@/components/marketing/page-blocks"
 import { ABOUT_LEADERSHIP, ABOUT_MANAGEMENT, CAREERS } from "@/content/company"
 
@@ -64,7 +65,7 @@ export default function CareersPage() {
               <StackCard
                 key={item.title}
                 index={i}
-                watermark={String(i + 1).padStart(2, "0")}
+                art={<ValueArt name={item.art} />}
                 overline={deckPosition(i, life.items.length)}
                 title={item.title}
               >

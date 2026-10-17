@@ -1,5 +1,6 @@
 /**
- * ValueArt — a culture value's picture on its card: its 3D clay object
+ * ValueArt — a stack card's 3D clay picture (Culture's values, Join us's
+ * Life at apna): its 3D clay object
  * (public/images/company/values/<name>.png) once generated. Until then, a
  * stand-in of the same size and weight: the value's icon on a large
  * frosted disc, so the card's layout is final and the swap is one line
@@ -8,19 +9,38 @@
 
 import type { ComponentType } from "react"
 import Image from "next/image"
-import { HeartHandshake, KeyRound, Scale, Target } from "@apna/design-system"
+import { HeartHandshake, KeyRound, Rocket, Scale, Target, TrendingUp } from "@apna/design-system"
 
-type ValueName = "ownership" | "customer-obsession" | "empathy" | "transparency"
+export type ValueName =
+  | "ownership"
+  | "customer-obsession"
+  | "empathy"
+  | "transparency"
+  // Life at apna (Join us)
+  | "momentum"
+  | "ownership-over-hierarchy"
+  | "raise-the-bar"
 
 const ICON: Record<ValueName, ComponentType<{ className?: string; "aria-hidden"?: boolean }>> = {
   ownership: KeyRound,
   "customer-obsession": Target,
   empathy: HeartHandshake,
   transparency: Scale,
+  momentum: Rocket,
+  "ownership-over-hierarchy": KeyRound,
+  "raise-the-bar": TrendingUp,
 }
 
 /** Values whose clay image is in public/images/company/values. */
-const READY = new Set<ValueName>(["ownership", "customer-obsession", "empathy", "transparency"])
+const READY = new Set<ValueName>([
+  "ownership",
+  "customer-obsession",
+  "empathy",
+  "transparency",
+  "momentum",
+  "ownership-over-hierarchy",
+  "raise-the-bar",
+])
 
 export function ValueArt({ name }: { name: ValueName }) {
   if (READY.has(name)) {

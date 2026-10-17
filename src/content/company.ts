@@ -318,16 +318,19 @@ export const CAREERS = {
     items: [
       {
         title: "Bold calls over safe ones. Momentum over meetings.",
+        art: "momentum",
         description:
           "Speed is the culture. Markets shift. AI shifts. We shift faster. If “figure it out” excites you more than it scares you, you'll feel at home.",
       },
       {
         title: "Ownership over hierarchy.",
+        art: "ownership-over-hierarchy",
         description:
           "We trust our people. You'll run projects that matter, not sit in on ones that don't. Your impact is measured by outcomes, not micromanagement.",
       },
       {
         title: "People who raise your bar.",
+        art: "raise-the-bar",
         description:
           "Honest feedback. High standards. You will be surrounded by teammates who want you to be better, not just busier.",
       },

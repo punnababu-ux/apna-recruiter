@@ -1,7 +1,11 @@
 """Remove a flat light background from a 3D render, keeping a soft shadow.
 Background = pixels connected to the image border that are either close to
 the backdrop colour or a neutral darkening of it (the contact shadow), so
-light parts *inside* the object stay opaque.  usage: python scripts/clay-cutout.py in.png out.png   (needs numpy + pillow)
+light parts *inside* the object stay opaque.  usage: python scripts/clay-cutout.py in.png out.png [near] [hole] [close]   (needs numpy + pillow)
+  near (default 9) / hole (default 6): how close to the backdrop a pixel must
+  be to count as background; lower both for objects with near-white parts.
+  close (default 0): px radius of a closing pass that fills pinholes inside
+  the object (near-white parts the fill nibbled) while big openings stay.
 
 Used for the marketing pages' 3D clay objects (public/images/company/values),
 which the image generator returns on a flat light-gray backdrop. Resize the
@@ -21,7 +25,9 @@ bg_l = float(bg @ W)
 chroma = src.max(-1) - src.min(-1)
 dist = np.linalg.norm(src - bg, axis=-1)
 
-near = dist < 9
+NEAR = float(sys.argv[3]) if len(sys.argv) > 3 else 9
+HOLE = float(sys.argv[4]) if len(sys.argv) > 4 else 6
+near = dist < NEAR
 shadowish = (chroma < 9) & (lum < bg_l) & (lum > bg_l - 70)
 grow = near | shadowish
 
@@ -44,7 +50,7 @@ while q:
 
 # Enclosed holes (a key's bow): any sizeable patch that matches the backdrop
 # closely is background too, even if the border fill can't reach it.
-strict = dist < 6
+strict = dist < HOLE
 lab = np.zeros((h, w), np.int32); cur = 0
 for sy in range(h):
     for sx in range(w):
@@ -60,6 +66,12 @@ for sy in range(h):
                 ys, xs = zip(*comp); seen[list(ys), list(xs)] = True
 
 obj = ~seen
+CLOSE = int(sys.argv[5]) if len(sys.argv) > 5 else 0
+if CLOSE:
+    m = Image.fromarray((obj * 255).astype(np.uint8))
+    m = m.filter(ImageFilter.MaxFilter(CLOSE * 2 + 1)).filter(ImageFilter.MinFilter(CLOSE * 2 + 1))
+    obj = np.asarray(m) > 127
+    seen = ~obj
 # Soften the object edge by a pixel or two.
 obj_a = np.asarray(Image.fromarray((obj * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(1.2))).astype(np.float32) / 255
 shadow_a = np.where(seen, np.clip((bg_l - lum) / bg_l * 2.4, 0, 0.5), 0)
