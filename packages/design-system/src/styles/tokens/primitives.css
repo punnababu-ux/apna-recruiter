@@ -167,17 +167,23 @@
   --color-apna-plum-900: #1C151E;
   --color-apna-plum-950: #120E13;
 
-  --color-apna-sky-50:  #EFF6FF;
-  --color-apna-sky-100: #DBEAFE;
-  --color-apna-sky-200: #BFDBFE;
-  --color-apna-sky-300: #93C5FD;
-  --color-apna-sky-400: #60A5FA;
-  --color-apna-sky-500: #3B82F6;
-  --color-apna-sky-600: #2563EB;
-  --color-apna-sky-700: #1D4ED8;
-  --color-apna-sky-800: #1E40AF;
-  --color-apna-sky-900: #1E3A8A;
-  --color-apna-sky-950: #172554;
+  /* Sky — re-anchored on the apna logo's sky (#83BDE4 at 300), 2026-10-17.
+   * A graded blend: the light steps (50–300: washes, the Smart Jobs colour,
+   * info backgrounds) lean ~80% to the logo sky; the dark steps (600–950:
+   * info text, links, banners) keep ~60% of the earlier royal blue, so
+   * informational colour stays vivid. Every step keeps the earlier scale's
+   * contrast against white (WCAG luminance matched step for step). */
+  --color-apna-sky-50:  #EEF6FC;
+  --color-apna-sky-100: #D9EBF9;
+  --color-apna-sky-200: #BDDDF5;
+  --color-apna-sky-300: #83BDE4;   /* Apna Logo Sky Anchor */
+  --color-apna-sky-400: #5DA8E9;
+  --color-apna-sky-500: #2F87E4;
+  --color-apna-sky-600: #226CCA;
+  --color-apna-sky-700: #235AAE;
+  --color-apna-sky-800: #214A8C;
+  --color-apna-sky-900: #204071;
+  --color-apna-sky-950: #172845;
 
   /* Apna Royal Blue — royal blue for inverted/hero marketing surfaces.
    * Anchored at #004BA9, the Apna web primary action blue used in pricing hero,

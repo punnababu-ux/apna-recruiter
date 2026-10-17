@@ -544,9 +544,9 @@
   --checkout-avatar:             var(--color-apna-green-400);
   /* The "Recommended" ribbon is blue, not the checkout brand green. It needs
    * its own checkout-scoped token rather than --info: --info resolves to
-   * apna-sky-600 (#2563EB) and remaps to apna-sky-400 in dark, whereas this
+   * apna-sky-600 (#226CCA) and remaps to apna-sky-400 in dark, whereas this
    * ribbon sits on a surface that is deliberately light in both themes and
-   * is drawn at apna-sky-500 (#3B82F6) — a step the design system already
+   * is drawn at apna-sky-500 (#2F87E4) — a step the design system already
    * carries at exactly that hex. Consumed via Badge's `ribbon` variant. */
   --checkout-info:               var(--color-apna-sky-500);
   --checkout-info-foreground:    var(--color-gray-0);
