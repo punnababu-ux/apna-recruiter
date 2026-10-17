@@ -18,7 +18,6 @@ export const FOOTER_COLUMNS: FooterColumn[] = [
     links: [
       { label: "Job posting", href: "/products/smart-jobs" },
       { label: "Database", href: "/products/database" },
-      { label: "WhatsApp Fast Recruit", href: "/products/whatsapp-fast-recruit" },
       { label: "Enterprise", href: "/enterprise" },
       { label: "Pricing", href: "/pricing" },
     ],
