@@ -156,7 +156,7 @@ export const MAIN_NAV: NavGroup[] = [
         items: [
           {
             label: "Blogs",
-            href: "https://apna.co/career-central/category/hiring-advice/",
+            href: "https://apna.co/career-central/category/hiring-platform/",
             external: true,
           },
           { label: "Product Guides", href: "/resources/product-guides" },
