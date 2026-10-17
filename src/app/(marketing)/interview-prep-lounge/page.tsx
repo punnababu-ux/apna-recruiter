@@ -322,31 +322,28 @@ export default function InterviewPrepLoungePage() {
           <div className="flex flex-col gap-10">
             <SectionHeading level={2} align="center" title={journey.title} description={journey.description} />
             {/* One card, the four steps divided by lines (stacked on phones,
-                side by side from md), an arrow on each line into the next
-                step. The step number is a corner watermark; a flat icon
-                leads each step. */}
+                side by side from lg), an arrow on each line into the next
+                step. A flat icon leads each step; its number sits in
+                front of the title. */}
             <Card padding="none" className="surface-frosted overflow-hidden">
-              <ol className="grid divide-y divide-border md:grid-cols-4 md:divide-x md:divide-y-0">
+              <ol className="grid divide-y divide-border lg:grid-cols-4 lg:divide-x lg:divide-y-0">
                 {journey.items.map((step, i) => {
                   const StepIcon = JOURNEY_ICONS[i]
                   return (
                     <li key={step.title} className="relative isolate flex flex-col gap-3 p-6 lg:p-8">
-                      <span
-                        aria-hidden
-                        className="pointer-events-none absolute top-3 right-4 -z-10 font-heading text-6xl font-bold text-foreground/10 tabular-nums select-none"
-                      >
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
                       <StepIcon className="size-7 text-foreground" aria-hidden />
-                      <h3 className="text-h6 text-foreground">{step.title}</h3>
+                      <h3 className="text-h6 text-foreground">
+                        <span className="text-muted-foreground tabular-nums">{String(i + 1).padStart(2, "0")}</span>{" "}
+                        {step.title}
+                      </h3>
                       <p className="text-sm text-pretty text-muted-foreground">{step.description}</p>
                       {i > 0 && (
                         <span
                           aria-hidden
-                          className="absolute top-0 left-1/2 flex size-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card text-foreground md:top-1/2 md:left-0"
+                          className="absolute top-0 left-1/2 flex size-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card text-foreground lg:top-1/2 lg:left-0"
                         >
-                          <ArrowDown className="size-4 md:hidden" />
-                          <ArrowRight className="hidden size-4 md:block" />
+                          <ArrowDown className="size-4 lg:hidden" />
+                          <ArrowRight className="hidden size-4 lg:block" />
                         </span>
                       )}
                     </li>
