@@ -54,7 +54,7 @@ export const LOUNGE = {
   audiences: [
     {
       icon: "student",
-      /** Its 3D clay object (ValueArt) — pending generation. */
+      /** Its 3D clay object (ValueArt). */
       art: "student",
       eyebrow: "For students",
       title: "Functional readiness and earned confidence.",
@@ -62,7 +62,7 @@ export const LOUNGE = {
     },
     {
       icon: "campus",
-      /** Its 3D clay object (ValueArt) — pending generation. */
+      /** Its 3D clay object (ValueArt). */
       art: "university",
       eyebrow: "For universities",
       title: "Knowledge loop that enables candidate-readiness for interviews.",
@@ -70,7 +70,7 @@ export const LOUNGE = {
     },
     {
       icon: "government",
-      /** Its 3D clay object (ValueArt) — pending generation. */
+      /** Its 3D clay object (ValueArt). */
       art: "government",
       eyebrow: "For government",
       title: "Inclusive access to preparation and measurable impact.",

@@ -92,8 +92,6 @@ new session needs to pick up where the last one stopped.
 
 ## Pending (Punna's call when to resume)
 
-- **Lounge audience clay objects:** `student`, `university`, `government`
-  — prompts given; slots ready (stand-in icons now).
 - **AI Calling Agent page:** "Screening that never clocks off" is our
   wording (not Lovable's) — confirm or replace; two feature cards repeat
   the stats card (80% / 50%) — suggestion was to drop those two cards.

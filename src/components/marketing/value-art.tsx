@@ -58,6 +58,9 @@ const READY = new Set<ValueName>([
   "momentum",
   "ownership-over-hierarchy",
   "raise-the-bar",
+  "student",
+  "university",
+  "government",
 ])
 
 export function ValueArt({ name, size = "lg" }: { name: ValueName; size?: "md" | "lg" }) {
@@ -68,7 +71,7 @@ export function ValueArt({ name, size = "lg" }: { name: ValueName; size?: "md" |
         alt=""
         width={320}
         height={320}
-        className={size === "md" ? "size-40 object-contain sm:size-48" : "size-56 object-contain md:size-72 lg:size-80"}
+        className={size === "md" ? "size-48 object-contain sm:size-56" : "size-56 object-contain md:size-72 lg:size-80"}
       />
     )
   }
