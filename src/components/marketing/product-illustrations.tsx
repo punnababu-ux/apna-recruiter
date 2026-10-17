@@ -39,8 +39,6 @@ export const ILLUSTRATION_TONE = {
   green: "bg-gradient-illustration-green",
   plum: "bg-gradient-illustration-plum",
   gold: "bg-gradient-illustration-gold",
-  /** No product's colour: for a picture that isn't one product's. */
-  neutral: "bg-muted",
 } as const
 export type IllustrationTone = keyof typeof ILLUSTRATION_TONE
 
@@ -257,10 +255,12 @@ export function ProductIllustration({
 }
 
 /** Trust & verification: a verified recruiter and a passed scam check.
- *  Neutral — it's every product's promise, not one product's. */
+ *  On the green gradient — green reads as "verified/safe", and in About's
+ *  feature list it comes three items after the AI Calling Agent's green,
+ *  so the repeat is far enough apart (user call, 2026-10-17). */
 export function TrustIllustration({ size = "default", className }: { size?: "default" | "lg"; className?: string }) {
   return (
-    <IllustrationTile tone="neutral" size={size} className={className}>
+    <IllustrationTile tone="green" size={size} className={className}>
       <div className="flex w-64 flex-col gap-2">
         <Float className="flex items-center gap-3">
           <Avatar>
