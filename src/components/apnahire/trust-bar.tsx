@@ -1,7 +1,7 @@
 "use client"
 
 /**
- * TrustBar — "Trusted by companies from all sizes": a full-colour client
+ * TrustBar — "Trusted by 1000+ enterprises and 7 lakh+ MSMEs" (the live site's line): a full-colour client
  * logo strip + 4 stat tiles, shown at the bottom of every pricing tab.
  *
  * Logos are the design's own exported assets (public/logos/*), rendered at
@@ -59,12 +59,8 @@ export function TrustBar({ className }: { className?: string }) {
       <div className="flex flex-col gap-10">
         <div className="flex flex-col gap-4">
           <h2 className="text-h3 font-heading font-semibold text-foreground [[data-voice=editorial]_&]:font-editorial">
-            Trusted by companies from all sizes
+            Trusted by 1000+ enterprises and 7 lakh+ MSMEs for hiring
           </h2>
-          <p className="text-sm text-muted-foreground">
-            Businesses across industries and around the India have built better customer
-            relationships with apna.
-          </p>
         </div>
 
         <LogoWall items={CLIENT_LOGO_ITEMS} />

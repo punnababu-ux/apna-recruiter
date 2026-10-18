@@ -224,7 +224,8 @@ export const HOME_PRESS = {
  * and the redesign had dropped: "Why hire from apna?" outcome stats,
  * customer testimonials and the FAQ. Copy is the live site's, verbatim
  * (only "Apna" → "apna", and the FAQ's candidate and city counts set to
- * the hero's 6 crore+ / 7,200+, so the site states one set of numbers); companies for the first two quotes are the brands
+ * the hero's 6 crore+ / 7,200+, so the site states one set of numbers); the Tata 1mg quote drops its dated
+ * last clause, "especially during the present times"; companies for the first two quotes are the brands
  * the live carousel shows beside them.
  */
 export const HOME_PROOF = {
@@ -235,15 +236,14 @@ export const HOME_PROOF = {
     stats: [
       { value: "2 Lakhs+", label: "New candidates join apna every month." },
       { value: "160+", label: "Job categories to publish your job." },
-      { value: "Upto 1x", label: "More walk-ins than competitors" },
-      { value: "60%", label: "business get qualified candidates within 24 hrs" },
+      { value: "60%", label: "of businesses get qualified candidates within 24 hrs" },
     ],
   },
   testimonials: {
     items: [
       {
         quote:
-          "We are closely working with apna for talent discovery and hiring across job families. Their quickest turn-around time is enabling us to uninterruptedly continue our daily functions and services, especially during the present times.",
+          "We are closely working with apna for talent discovery and hiring across job families. Their quickest turn-around time is enabling us to uninterruptedly continue our daily functions and services.",
         name: "Dr Varun",
         role: "SVP, Medical Affairs · Tata 1mg",
       },

@@ -7,21 +7,24 @@
  * background of its own, unlike the white FAQ/trust bands around it), so
  * the cards are plain white with no border.
  *
- * Figma repeats the same placeholder quote/person across all 3, varying
- * only the client logo — kept as-is rather than inventing copy.
+ * Figma repeated one placeholder quote three times; these are the real
+ * ones from the homepage. No lift on hover: the cards aren't clickable.
  */
 
 import * as React from "react"
 import { cn } from "@/lib/utils"
+import { HOME_PROOF } from "@/content/home"
 
-const QUOTE =
-  "We replaced four hiring tools with one hiring pass. Time-to-shortlist dropped from 8 days to under 36 hours, and our recruiter spend halved."
+// The homepage's real customer quotes (content/home.ts HOME_PROOF), so
+// pricing and home tell the same story.
+const TESTIMONIALS = HOME_PROOF.testimonials.items
 
-const TESTIMONIALS = [
-  { company: "Paytm", logo: "/logos/paytm.svg", width: 116, name: "Priya R.", role: "Head of Talent · Logistics Co." },
-  { company: "Tech Mahindra", logo: "/logos/tech-mahindra.svg", width: 131, name: "Priya R.", role: "Head of Talent · Logistics Co." },
-  { company: "HDFC Bank", logo: "/logos/hdfc-bank.svg", width: 208, name: "Priya R.", role: "Head of Talent · Logistics Co." },
-]
+const initials = (name: string) =>
+  name
+    .split(" ")
+    .map((w) => w[0])
+    .join("")
+    .slice(0, 2)
 
 export function TestimonialGrid({ className }: { className?: string }) {
   return (
@@ -30,19 +33,11 @@ export function TestimonialGrid({ className }: { className?: string }) {
       className={cn("grid grid-cols-1 gap-6 py-12 lg:grid-cols-3", className)}
     >
       {TESTIMONIALS.map((t) => (
-        <div key={t.company} className="card-hover-lift flex flex-col gap-6 rounded-card bg-card p-8">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={t.logo}
-            alt={t.company}
-            height={36}
-            width={t.width}
-            className="brand-logo h-9 w-auto self-start object-contain"
-          />
-          <p className="text-quote text-foreground">{QUOTE}</p>
-          <div className="flex items-center gap-3.5">
+        <div key={t.name} className="flex flex-col gap-6 rounded-card bg-card p-8">
+          <p className="text-quote text-foreground">&ldquo;{t.quote}&rdquo;</p>
+          <div className="mt-auto flex items-center gap-3.5">
             <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-checkout-avatar text-sm font-bold text-white">
-              PR
+              {initials(t.name)}
             </span>
             <div className="flex flex-col gap-0.5">
               <p className="text-base font-semibold text-foreground">{t.name}</p>
