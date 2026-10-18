@@ -13,6 +13,7 @@ import * as React from "react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@apna/design-system"
 import { Button, ChevronDown } from "@apna/design-system"
 import { cn } from "@/lib/utils"
+import { HELP_CENTRE } from "@/content/nav"
 import { HOME_PROOF } from "@/content/home"
 
 export interface FaqItem {
@@ -53,11 +54,22 @@ export function FaqSection({ items = FAQS, hideActions, onHelpAndSupport, onShow
           <br />
           asked questions
         </h2>
-        {!hideActions && (
-          <Button type="button" variant="outline" size="sm" onClick={onHelpAndSupport}>
-            Help &amp; support
-          </Button>
-        )}
+        {/* Without a handler it opens the Help Center in a new tab. */}
+        {!hideActions &&
+          (onHelpAndSupport ? (
+            <Button type="button" variant="outline" size="sm" onClick={onHelpAndSupport}>
+              Help &amp; support
+            </Button>
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              nativeButton={false}
+              render={<a href={HELP_CENTRE} target="_blank" rel="noreferrer noopener" />}
+            >
+              Help &amp; support
+            </Button>
+          ))}
       </div>
 
       <div className="flex w-full flex-col items-end gap-4">
@@ -96,7 +108,8 @@ export function FaqSection({ items = FAQS, hideActions, onHelpAndSupport, onShow
           })}
         </Accordion>
 
-        {!hideActions && (
+        {/* Only when there are more questions to load. */}
+        {!hideActions && onShowMore && (
           <Button type="button" variant="link" className="self-start" onClick={onShowMore} trailingIcon={<ChevronDown aria-hidden />}>
             Show more
           </Button>

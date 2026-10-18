@@ -84,7 +84,7 @@ export const PRODUCT_LINKS: NavLink[] = [
 
 const productHref = (label: string) => PRODUCT_LINKS.find((p) => p.label === label)!.href
 
-const HELP_CENTRE = "https://employer-help-centre.apna.co/support/home"
+export const HELP_CENTRE = "https://employer-help-centre.apna.co/support/home"
 
 export const MAIN_NAV: NavGroup[] = [
   {

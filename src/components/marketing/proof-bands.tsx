@@ -66,7 +66,7 @@ export function WhyHireBand({
 export function FaqBand() {
   return (
     <Section tone="card" size="md">
-      <FaqSection items={HOME_PROOF.faqs} hideActions className="py-0" />
+      <FaqSection items={HOME_PROOF.faqs} className="py-0" />
     </Section>
   )
 }
