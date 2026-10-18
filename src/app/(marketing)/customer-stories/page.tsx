@@ -22,6 +22,7 @@ import {
   Section,
   SectionHeading,
 } from "@apna/design-system"
+import { TestimonialCard } from "@/components/apnahire/testimonial-grid"
 import { CompanyMark, PageHero, StatGrid, withAccent } from "@/components/marketing/page-blocks"
 import { StoryLibrary } from "@/components/marketing/page-switchers"
 import { CUSTOMER_STORIES } from "@/content/company"
@@ -67,10 +68,7 @@ export default function CustomerStoriesPage() {
           <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {others.map((story) => (
               <li key={story.company}>
-                <Card padding="lg" tone="muted" className="h-full gap-6">
-                  <CompanyMark company={story.company} />
-                  <p className="text-quote text-pretty text-foreground">&ldquo;{story.result}&rdquo;</p>
-                </Card>
+                <TestimonialCard quote={story.result} mark={<CompanyMark company={story.company} />} />
               </li>
             ))}
           </ul>

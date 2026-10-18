@@ -319,11 +319,13 @@ export function PersonCard({
           )}
         />
         <div className="flex flex-col gap-6 md:col-span-8">
-          <p className="text-quote text-pretty text-foreground sm:text-quote-md">&ldquo;{person.bio}&rdquo;</p>
+          {/* Same order and type as the card: who, then the bio (a bio, not
+              a quote — never set it in quote marks). */}
           <div className="flex flex-col gap-0.5">
             <h3 className="text-h5 text-foreground">{person.name}</h3>
             <p className="text-overline text-muted-foreground">{person.role}</p>
           </div>
+          <p className="text-base text-pretty text-muted-foreground sm:text-lg">{person.bio}</p>
           {linkedIn}
         </div>
       </article>
@@ -331,7 +333,7 @@ export function PersonCard({
   }
 
   return (
-    <Card padding="none" className="h-full overflow-hidden">
+    <Card padding="none" className="surface-frosted h-full overflow-hidden">
       <Image
         src={person.photo}
         alt={person.name}
@@ -341,7 +343,7 @@ export function PersonCard({
       />
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div className="flex flex-col gap-0.5">
-          <h3 className="text-h6 text-foreground">{person.name}</h3>
+          <h3 className="text-h5 text-foreground">{person.name}</h3>
           <p className="text-overline text-muted-foreground">{person.role}</p>
         </div>
         <p className="text-sm text-pretty text-muted-foreground">{person.bio}</p>

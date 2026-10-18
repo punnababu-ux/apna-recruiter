@@ -636,7 +636,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
 
       <div className="px-4 sm:px-8 lg:px-12">
         <div className="mx-auto max-w-6xl">
-          <TestimonialGrid />
+          <TestimonialGrid className="py-12" />
         </div>
       </div>
 

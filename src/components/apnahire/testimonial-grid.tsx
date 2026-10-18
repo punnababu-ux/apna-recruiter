@@ -1,51 +1,64 @@
-"use client"
-
 /**
- * TestimonialGrid — 3 quote cards shown between the FAQ and trust sections.
+ * TestimonialCard / TestimonialGrid — the one way a customer quote is drawn,
+ * on every page (home, pricing, customer stories).
  *
- * Sits directly on the page's ambient gradient (Figma gives this band no
- * background of its own, unlike the white FAQ/trust bands around it), so
- * the cards are plain white with no border.
+ *   TestimonialCard  frosted card (surface-frosted: frosted on a gradient
+ *                    band, muted on a white one), a quote mark or the
+ *                    company's mark, the quote in text-quote, then who said
+ *                    it pinned to the bottom so sibling cards align.
+ *   TestimonialGrid  three across from lg; defaults to the homepage's real
+ *                    customer quotes (content/home.ts HOME_PROOF).
  *
- * Figma repeated one placeholder quote three times; these are the real
- * ones from the homepage. No lift on hover: the cards aren't clickable.
+ * Not clickable, so no hover lift.
  */
 
-import * as React from "react"
-import { cn } from "@/lib/utils"
+import type { ReactNode } from "react"
+import { Card, Quote } from "@apna/design-system"
 import { HOME_PROOF } from "@/content/home"
+import { cn } from "@/lib/utils"
 
-// The homepage's real customer quotes (content/home.ts HOME_PROOF), so
-// pricing and home tell the same story.
-const TESTIMONIALS = HOME_PROOF.testimonials.items
-
-const initials = (name: string) =>
-  name
-    .split(" ")
-    .map((w) => w[0])
-    .join("")
-    .slice(0, 2)
-
-export function TestimonialGrid({ className }: { className?: string }) {
+export function TestimonialCard({
+  quote,
+  name,
+  role,
+  mark,
+  className,
+}: {
+  quote: string
+  name?: string
+  role?: string
+  /** The company's logo (CompanyMark) in place of the quote mark. */
+  mark?: ReactNode
+  className?: string
+}) {
   return (
-    <div
-      data-slot="testimonial-grid"
-      className={cn("grid grid-cols-1 gap-6 py-12 lg:grid-cols-3", className)}
-    >
-      {TESTIMONIALS.map((t) => (
-        <div key={t.name} className="flex flex-col gap-6 rounded-card bg-card p-8">
-          <p className="text-quote text-foreground">&ldquo;{t.quote}&rdquo;</p>
-          <div className="mt-auto flex items-center gap-3.5">
-            <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-checkout-avatar text-sm font-bold text-white">
-              {initials(t.name)}
-            </span>
-            <div className="flex flex-col gap-0.5">
-              <p className="text-base font-semibold text-foreground">{t.name}</p>
-              <p className="text-sm text-foreground">{t.role}</p>
-            </div>
-          </div>
+    <Card padding="lg" className={cn("surface-frosted h-full gap-6", className)}>
+      {mark ?? <Quote className="size-6 text-muted-foreground" aria-hidden />}
+      <p className="text-quote text-pretty text-foreground">&ldquo;{quote}&rdquo;</p>
+      {name && (
+        <div className="mt-auto flex flex-col gap-0.5">
+          <p className="text-base font-semibold text-foreground">{name}</p>
+          {role && <p className="text-sm text-muted-foreground">{role}</p>}
         </div>
+      )}
+    </Card>
+  )
+}
+
+export function TestimonialGrid({
+  items = HOME_PROOF.testimonials.items,
+  className,
+}: {
+  items?: readonly { quote: string; name: string; role: string }[]
+  className?: string
+}) {
+  return (
+    <ul data-slot="testimonial-grid" className={cn("grid gap-6 lg:grid-cols-3", className)}>
+      {items.map((t) => (
+        <li key={t.name}>
+          <TestimonialCard quote={t.quote} name={t.name} role={t.role} />
+        </li>
       ))}
-    </div>
+    </ul>
   )
 }
