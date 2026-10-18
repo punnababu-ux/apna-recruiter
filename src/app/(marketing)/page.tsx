@@ -30,9 +30,10 @@ import {
   SectionHeading,
 } from "@apna/design-system"
 import { Stat } from "@/components/marketing/page-blocks"
-import { FaqBand, TrustedByBand, WhyHireBand } from "@/components/marketing/proof-bands"
+import { TrustedByBand, WhyHireBand } from "@/components/marketing/proof-bands"
 import { ContactButton } from "@/components/marketing/contact-section"
 import { ValueArt } from "@/components/marketing/value-art"
+import { FaqSection } from "@/components/apnahire/faq-section"
 import { HeroBackdrop } from "@/components/marketing/hero-backdrop"
 import { HeroLeadCard } from "@/components/marketing/hero-lead-card"
 import { PRODUCT_ICON, PRODUCT_KEY, ProductIllustration } from "@/components/marketing/product-illustrations"
@@ -40,6 +41,7 @@ import {
   HOME_ENTERPRISE,
   HOME_HERO,
   HOME_PRESS,
+  HOME_PROOF,
   HOME_PRODUCT_DETAILS,
   HOME_SUITE,
 } from "@/content/home"
@@ -197,8 +199,12 @@ export default function HomePage() {
               </ScrollStackItem>
             ))}
           </ScrollStack>
+        </div>
+      </Section>
 
-          {/* Enterprise (the live site's band): the suite's closing card, for
+      <Section tone="card" size="md">
+          {/* Enterprise (the live site's band), its own white band under the
+              suite: the card lifts (surface-feature on white). For
               buyers hiring at scale — the route in for new enterprise
               customers (Enterprise login is for existing ones). */}
           <Card padding="none" className="surface-feature grid gap-8 p-6 sm:p-10 lg:grid-cols-5 lg:items-center lg:gap-8 lg:p-12">
@@ -235,41 +241,39 @@ export default function HomePage() {
               <ValueArt name="enterprise" size="lg" />
             </div>
           </Card>
-        </div>
       </Section>
 
+      {/* The proof (gradient), then one white band: the press, then the FAQ
+          (the page's last band is white, so they share it). */}
+      <WhyHireBand />
+      <Section tone="card" size="md">
+        <div className="flex flex-col gap-24">
+          <div className="flex flex-col gap-10">
+            <SectionHeading level={2} align="center" title={HOME_PRESS.title} />
 
-      {/* The proof (white), the press (gradient), then the FAQ (white, the
-          page's last band). */}
-      <WhyHireBand tone="card" />
-      {/* In the press (gradient): after the proof, so white and gradient
-          still alternate. */}
-      <Section size="md">
-        <div className="flex flex-col gap-10">
-          <SectionHeading level={2} align="center" title={HOME_PRESS.title} />
-
-          <div className="grid gap-6 sm:grid-cols-3">
-            {HOME_PRESS.items.map((item) => (
-              <Link key={item.outlet} href={item.href} target="_blank" rel="noreferrer noopener">
-                {/* A headline, not a quote: the outlet up top (the newspaper
-                    mark), the headline as a headline, then the way to it. */}
-                <Card padding="lg" interactive className="flex h-full flex-col gap-4">
-                  <span className="flex items-center gap-2 text-overline text-muted-foreground">
-                    <Newspaper className="size-4 shrink-0 text-primary" aria-hidden />
-                    {item.outlet}
-                  </span>
-                  <p className="text-h5 text-pretty text-foreground">{item.headline}</p>
-                  <span className="mt-auto flex items-center gap-1 text-sm font-semibold text-foreground">
-                    Read the story
-                    <ArrowUpRight className="size-4" aria-hidden />
-                  </span>
-                </Card>
-              </Link>
-            ))}
+            <div className="grid gap-6 sm:grid-cols-3">
+              {HOME_PRESS.items.map((item) => (
+                <Link key={item.outlet} href={item.href} target="_blank" rel="noreferrer noopener">
+                  {/* A headline, not a quote: the outlet up top (the newspaper
+                      mark), the headline as a headline, then the way to it. */}
+                  <Card padding="lg" interactive className="surface-frosted flex h-full flex-col gap-4">
+                    <span className="flex items-center gap-2 text-overline text-muted-foreground">
+                      <Newspaper className="size-4 shrink-0 text-primary" aria-hidden />
+                      {item.outlet}
+                    </span>
+                    <p className="text-h5 text-pretty text-foreground">{item.headline}</p>
+                    <span className="mt-auto flex items-center gap-1 text-sm font-semibold text-foreground">
+                      Read the story
+                      <ArrowUpRight className="size-4" aria-hidden />
+                    </span>
+                  </Card>
+                </Link>
+              ))}
+            </div>
           </div>
+          <FaqSection items={HOME_PROOF.faqs} className="py-0" />
         </div>
       </Section>
-      <FaqBand />
     </>
   )
 }
