@@ -65,7 +65,20 @@
  *     priceCaption="For 3 months · That's just ₹1,800 /month"  // optional, below the price row
  *     ribbon={<Badge variant="outline" className="rounded-none rounded-bl-xl border-transparent bg-foreground/10 text-foreground"><Clock /> Offer ends in 4 days</Badge>}  // optional, pinned top-right
  *     cta={<Button variant="secondary" trailingIcon={<ArrowRight />}>Renew now</Button>}
+ *     itemsLayout="stacked"                          // optional: one fact per line
+ *     surface="premium"                              // optional: the Unlimited upsell gradient
  *   />
+ *
+ * `itemsLayout="stacked"` puts each checklist fact on its own line (the
+ * banner grows taller). Use it when an inline row would run into the
+ * `ribbon` (e.g. "1 Active job slot for 3 months" + "600 database credits"
+ * under an "Offer ends in 4 days" ribbon), rather than letting the second
+ * fact wrap or crowd the ribbon.
+ *
+ * `surface="premium"` paints the card with `bg-gradient-offer-premium`, the
+ * same gold-on-plum gradient as the subscription upsell pop-up, so an
+ * Unlimited promo banner and its upsell read as one family. Implies the
+ * dark, white-text treatment of `appearance="primary"`.
  */
 
 import * as React from "react"
@@ -109,6 +122,10 @@ export interface RenewalBannerProps extends Omit<React.ComponentProps<typeof Ale
   ribbon?: React.ReactNode
   /** Style appearance. 'secondary' (default) is a subtle tint, 'primary' is a solid gradient. */
   appearance?: "primary" | "secondary"
+  /** "inline" (default): the checklist facts in one row. "stacked": one per line. */
+  itemsLayout?: "inline" | "stacked"
+  /** "premium": the Unlimited upsell gradient (`bg-gradient-offer-premium`). */
+  surface?: "default" | "premium"
 }
 
 const RenewalBanner = React.forwardRef<HTMLDivElement, RenewalBannerProps>(
@@ -127,11 +144,14 @@ const RenewalBanner = React.forwardRef<HTMLDivElement, RenewalBannerProps>(
       cta,
       ribbon,
       appearance = "secondary",
+      itemsLayout = "inline",
+      surface = "default",
       ...props
     },
     ref
   ) => {
-    const isPrimary = appearance === "primary"
+    const isPremium = surface === "premium"
+    const isPrimary = appearance === "primary" || isPremium
     const safeVariant = variant || "default"
     const accentColor = isPrimary ? "text-white" : bannerAccentColorMap[safeVariant]
     const textColor = isPrimary ? "text-white" : "text-foreground"
@@ -163,7 +183,7 @@ const RenewalBanner = React.forwardRef<HTMLDivElement, RenewalBannerProps>(
           // actually give this card much room, or sit stacked on a wide,
           // roomy one.
           "@container/renewal-banner relative overflow-hidden rounded-xl border-0 p-4 text-left shadow-none",
-          isPrimary && cn("bg-transparent", bannerPrimaryBgMap[safeVariant]),
+          isPrimary && cn("bg-transparent", isPremium ? "bg-gradient-offer-premium" : bannerPrimaryBgMap[safeVariant]),
           className
         )}
         {...props}
@@ -210,7 +230,7 @@ const RenewalBanner = React.forwardRef<HTMLDivElement, RenewalBannerProps>(
           >
             <ul
               className={cn(
-                "flex flex-wrap items-center gap-x-4 gap-y-2",
+                itemsLayout === "stacked" ? "flex flex-col gap-1.5" : "flex flex-wrap items-center gap-x-4 gap-y-2",
                 // Reserve clearance from the ribbon on this one row (the
                 // row physically nearest it) instead of padding the whole
                 // card from the top — that pushed everything down and left

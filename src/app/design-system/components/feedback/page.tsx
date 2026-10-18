@@ -51,6 +51,8 @@ function RibbonBadge({
 export default function FeedbackComponentsPage() {
   const [showIcon, setShowIcon] = React.useState(true)
   const [showCTA, setShowCTA] = React.useState(true)
+  const [stackItems, setStackItems] = React.useState(true)
+  const [premiumSurface, setPremiumSurface] = React.useState(false)
   const [showClose, setShowClose] = React.useState(true)
   const [appearance, setAppearance] = React.useState<"primary" | "secondary">("secondary")
 
@@ -206,6 +208,16 @@ export default function FeedbackComponentsPage() {
             cta={<Button variant="secondary" trailingIcon={<ChevronRight />}>Renew now</Button>}
           />
 
+          <div className="flex flex-wrap items-center gap-6">
+            <div className="flex items-center gap-2">
+              <Switch id="toggle-stack" checked={stackItems} onCheckedChange={setStackItems} />
+              <Label htmlFor="toggle-stack">Checklist on its own lines (itemsLayout=&quot;stacked&quot;)</Label>
+            </div>
+            <div className="flex items-center gap-2">
+              <Switch id="toggle-premium" checked={premiumSurface} onCheckedChange={setPremiumSurface} />
+              <Label htmlFor="toggle-premium">Unlimited gradient (surface=&quot;premium&quot;)</Label>
+            </div>
+          </div>
           {/* Fixed single-state exception to the "both appearances" rule —
               a deliberately dark, premium promo treatment, not a tone that's
               meant to flip with the toggle. See the file header's note. */}
@@ -217,6 +229,8 @@ export default function FeedbackComponentsPage() {
                 <InfinityIcon className="size-8 text-highlight" />
               </div>
             }
+            itemsLayout={stackItems ? "stacked" : "inline"}
+            surface={premiumSurface ? "premium" : "default"}
             title="Unlimited hiring for 3 months."
             subtitle="0 job credits left. Repost any job, any time."
             items={[{ label: "1 Active job slot for 3 months" }, { label: "600 database credits" }]}
