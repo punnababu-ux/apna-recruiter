@@ -584,22 +584,7 @@
   --close-bubble-hover:      var(--color-alpha-black-60);
   --close-bubble-foreground: var(--color-gray-0);
 
-  /* Offer pop-up headers: dark surfaces with white text and a gold "new
-   * price". Their dark-mode mappings are in the .dark block.
-   *   offer          job bundles, credit packs, exit nudge: the apna-green
-   *                  sweep (Figma "offer-gradeint")
-   *   offer-premium  subscription upgrades — the subscription upsell and the
-   *                  slot upgrade alike: a gold bloom on plum, the Unlimited
-   *                  card and logo's own colours */
-  /* Offer pop-up headers: the dark product-page canvas of the product they
-   * sell (Jobs green, Unlimited gold), the same in light and dark mode. */
-  --gradient-offer:
-    radial-gradient(circle at 8% 12%,  color-mix(in srgb, var(--color-apna-green-800) 55%, transparent) 0%, transparent 50%),
-    radial-gradient(circle at 90% 75%, color-mix(in srgb, var(--color-apna-green-900) 60%, transparent) 0%, transparent 60%),
-    radial-gradient(circle at 8% 15%,  var(--color-alpha-white-10) 0%, transparent 45%),
-    radial-gradient(circle at 90% 18%, var(--color-alpha-white-10) 0%, transparent 55%),
-    radial-gradient(circle at 50% 90%, var(--color-alpha-white-5)  0%, transparent 60%),
-    linear-gradient(135deg, var(--color-apna-plum-950) 0%, var(--color-apna-plum-900) 50%, var(--color-apna-plum-800) 100%);
+  --gradient-offer: linear-gradient(137deg, var(--color-apna-green-500) 5%, var(--color-apna-green-800) 50%, var(--color-apna-green-950) 112%);
   /* Illustration tiles (ProductIllustration): the soft pastel wash behind a
    * floating snippet of product UI on the homepage product cards. One per
    * brand hue so a row of cards reads as a family, not four copies. */
@@ -670,12 +655,8 @@
      and the primary buttons are one green (2026-10-18). */
   --logo-hire:      var(--cta-primary);
   --gradient-offer-premium:
-    radial-gradient(circle at 8% 12%,  color-mix(in srgb, var(--color-apna-gold-800) 55%, transparent) 0%, transparent 50%),
-    radial-gradient(circle at 90% 75%, color-mix(in srgb, var(--color-apna-gold-900) 60%, transparent) 0%, transparent 60%),
-    radial-gradient(circle at 8% 15%,  var(--color-alpha-white-10) 0%, transparent 45%),
-    radial-gradient(circle at 90% 18%, var(--color-alpha-white-10) 0%, transparent 55%),
-    radial-gradient(circle at 50% 90%, var(--color-alpha-white-5)  0%, transparent 60%),
-    linear-gradient(135deg, var(--color-apna-plum-950) 0%, var(--color-apna-plum-900) 50%, var(--color-apna-plum-800) 100%);
+    radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--color-apna-gold-500) 55%, transparent) 0%, transparent 55%),
+    linear-gradient(137deg, var(--color-apna-plum-400) 5%, var(--color-apna-plum-700) 50%, var(--color-apna-plum-950) 112%);
   /* AI add-on wash — plum → sky → green, the soft "AI" tint behind the
    * AI calling upsell in the order summary. Quiet enough for body text. */
   --gradient-ai-subtle: linear-gradient(100deg, var(--color-apna-plum-50) 0%, var(--color-apna-sky-50) 55%, var(--color-apna-green-50) 100%);
@@ -731,6 +712,11 @@
   /* Plans button on dark: a quiet plum one step above the sidebar (600 →
      800), no gold bloom; the gold Coin icon carries the premium accent.
      (The light plums and gold glow glared on a dark sidebar.) */
+  /* Plans button on dark: a quiet plum one step above the sidebar (600 →
+     800), no gold bloom; the gold Coin icon carries the premium accent.
+     (The light plums and gold glow glared on a dark sidebar.) */
+  --gradient-offer-premium:
+    linear-gradient(137deg, var(--color-apna-plum-600) 0%, var(--color-apna-plum-700) 55%, var(--color-apna-plum-800) 110%);
   /* Surfaces — tinted dark, not neutral gray.
    *
    * Previously gray-950/-900/-800 (Zinc): HSL(240°, 4–10%, 4–16%) — a faint
@@ -970,6 +956,13 @@
    *   unlimited    a black tint, the mirror of the Job credits white tint */
   --checkout-discount-bg: color-mix(in srgb, var(--color-apna-green-500) 18%, transparent);
   --checkout-discount-fg: var(--color-apna-green-300);
+  /* Green offer header on dark: the product pages' dark canvas treatment
+     (--gradient-canvas-ai-calling): green glows over the dark plum base,
+     not a flat green sweep. */
+  --gradient-offer:
+    radial-gradient(circle at 8% 12%, color-mix(in srgb, var(--color-apna-green-700) 75%, transparent) 0%, transparent 60%),
+    radial-gradient(circle at 92% 90%, color-mix(in srgb, var(--color-apna-green-900) 80%, transparent) 0%, transparent 65%),
+    linear-gradient(var(--color-apna-plum-900), var(--color-apna-plum-900));
   /* Unlimited on dark: a black tint over the page, the mirror of the Job
      credits strip's white tint (--surface-checkout-track). Plum read muddy. */
   --gradient-checkout-unlimited: linear-gradient(var(--card), var(--card)); /* the FAQ band's colour */
