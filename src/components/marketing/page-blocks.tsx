@@ -115,6 +115,57 @@ export function PageHero({
  * company pages). Numbers are Inter, tabular. Phones: two columns with
  * the dividers between rows instead.
  */
+/**
+ * Stat — the one way a number is shown on the site: a short accent bar, the
+ * value (Inter, semibold, tabular), its label in muted small text under it.
+ * StatGrid's cells, the homepage hero strip and the login panel all use it;
+ * only the size changes. Render inside a <dl>.
+ *
+ *   size  "sm" (hero / login strips) · "default" (StatGrid) · "lg" (By the
+ *         numbers) · "facts" (text values: label as overline, value in body)
+ */
+export function Stat({
+  value,
+  label,
+  size = "default",
+  className,
+}: {
+  value: string
+  label: string
+  size?: "sm" | "default" | "lg" | "facts"
+  className?: string
+}) {
+  const facts = size === "facts"
+  return (
+    <div className={cn("flex flex-col gap-2", className)}>
+      {!facts && <span aria-hidden className="h-1 w-8 rounded-full bg-product-accent" />}
+      <dt className={cn("text-pretty", facts ? "text-overline text-muted-foreground" : "order-3 text-sm text-muted-foreground")}>
+        {label}
+      </dt>
+      <dd
+        className={cn(
+          facts
+            ? "text-base font-semibold text-pretty text-foreground"
+            : "order-2 font-heading font-semibold whitespace-nowrap text-foreground tabular-nums",
+          size === "sm" && "text-xl sm:text-h3",
+          size === "default" && "text-h3 sm:text-h2",
+          size === "lg" && "text-h3 sm:text-h1 lg:text-display"
+        )}
+      >
+        {value}
+      </dd>
+    </div>
+  )
+}
+
+const STAT_COLUMNS: Record<number, string> = {
+  1: "sm:grid-cols-1",
+  2: "sm:grid-cols-2",
+  3: "sm:grid-cols-3",
+  4: "sm:grid-cols-4",
+  5: "sm:grid-cols-3 sm:[&>*:nth-child(n+4)]:border-t lg:grid-cols-5 lg:[&>*]:border-t-0",
+}
+
 export function StatGrid({
   stats,
   size = "default",
@@ -132,7 +183,6 @@ export function StatGrid({
   tone?: IllustrationTone
   className?: string
 }) {
-  const facts = size === "facts"
   return (
     <Card
       padding="none"
@@ -148,8 +198,10 @@ export function StatGrid({
       <dl
         className={cn(
           "grid grid-cols-2 divide-border sm:divide-x",
-          // Four stats sit in one row of four; any other count, rows of three.
-          stats.length === 4 ? "sm:grid-cols-4" : "sm:grid-cols-3 sm:[&>*:nth-child(n+4)]:border-t",
+          // The card sets its own columns from the count, so every page lays
+          // the same number of stats out the same way: up to four in one row,
+          // five in one row from lg (rows of three below), more in rows of three.
+          STAT_COLUMNS[stats.length] ?? "sm:grid-cols-3 sm:[&>*:nth-child(n+4)]:border-t",
           "max-sm:[&>*:nth-child(odd)]:border-r max-sm:[&>*:nth-child(n+3)]:border-t [&>*]:border-border",
           // An odd last stat on phones takes the full row (no empty cell).
           "max-sm:[&>*:last-child:nth-child(odd)]:col-span-2 max-sm:[&>*:last-child:nth-child(odd)]:border-r-0",
@@ -157,22 +209,13 @@ export function StatGrid({
         )}
       >
         {stats.map((stat) => (
-          <div key={stat.label} className={cn("flex flex-col gap-2 p-5 sm:p-6 lg:p-8", size === "lg" && "lg:p-10")}>
-            {!facts && <span aria-hidden className="h-1 w-8 rounded-full bg-product-accent" />}
-            <dt className={cn("text-pretty", facts ? "text-overline text-muted-foreground" : "order-3 text-sm text-muted-foreground")}>
-              {stat.label}
-            </dt>
-            <dd
-              className={cn(
-                facts
-                  ? "text-base font-semibold text-pretty text-foreground"
-                  : "order-2 font-heading text-h3 font-semibold whitespace-nowrap text-foreground tabular-nums sm:text-h2",
-                size === "lg" && "sm:text-h1 lg:text-display"
-              )}
-            >
-              {stat.value}
-            </dd>
-          </div>
+          <Stat
+            key={stat.label}
+            value={stat.value}
+            label={stat.label}
+            size={size}
+            className={cn("p-5 sm:p-6 lg:p-8", size === "lg" && "lg:p-10")}
+          />
         ))}
       </dl>
     </Card>

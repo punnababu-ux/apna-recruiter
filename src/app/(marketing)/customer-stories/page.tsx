@@ -37,7 +37,7 @@ export default function CustomerStoriesPage() {
       <PageHero icon={<Quote aria-hidden />} eyebrow={eyebrow} title={withAccent(title, "hires")} description={description} />
 
       <Section size="none" className="relative -mt-8 pb-8 md:-mt-12 md:pb-12">
-        <StatGrid stats={stats} className="lg:grid-cols-5 lg:[&>*]:border-t-0" />
+        <StatGrid stats={stats} />
       </Section>
 
       <Section tone="card" size="md">

@@ -6,14 +6,15 @@
  *
  * Logos are the design's own exported assets (public/logos/*), rendered at
  * their designed 36px height with widths left to each asset's own aspect
- * ratio. Composes `LogoWall` and `MetricCard variant="stat"` — this file was
+ * ratio. Composes `LogoWall` and `StatGrid` — this file was
  * where both were hand-rolled before they were promoted to the design system;
  * it keeps only the content (which clients, which numbers).
  */
 
 import * as React from "react"
-import { LogoWall, MetricCard } from "@apna/design-system"
+import { LogoWall } from "@apna/design-system"
 import { cn } from "@/lib/utils"
+import { StatGrid } from "@/components/marketing/page-blocks"
 
 interface ClientLogo {
   name: string
@@ -46,10 +47,11 @@ const CLIENT_LOGO_ITEMS = CLIENTS.map((client) => ({
   ),
 }))
 
+// Same numbers and format as the homepage (6 Cr+, 7 L+, 7,200+).
 const STATS = [
-  { value: "6 crore+", label: "Candidates use apna" },
-  { value: "2 lakhs+", label: "New candidates every month" },
-  { value: "7 lakhs+", label: "Employers already at apna" },
+  { value: "6 Cr+", label: "Candidates use apna" },
+  { value: "2 L+", label: "New candidates every month" },
+  { value: "7 L+", label: "Employers already at apna" },
   { value: "7,200+", label: "Towns & cities covered" },
 ]
 
@@ -66,11 +68,8 @@ export function TrustBar({ className }: { className?: string }) {
         <LogoWall items={CLIENT_LOGO_ITEMS} />
       </div>
 
-      <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
-        {STATS.map((stat) => (
-          <MetricCard key={stat.label} variant="stat" value={stat.value} label={stat.label} />
-        ))}
-      </div>
+      {/* The site's one numbers card (StatGrid), as on home and About. */}
+      <StatGrid stats={STATS} />
     </div>
   )
 }

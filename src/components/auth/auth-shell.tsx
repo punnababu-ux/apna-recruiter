@@ -18,6 +18,7 @@ import Link from "next/link"
 import { AmbientBackdrop, ArrowUpRight, Button, Card, LogoApnaRecruiter, Separator } from "@apna/design-system"
 import { AUTH_PANEL, LEGAL_LINE, LOOKING_FOR_A_JOB_LINK } from "@/content/auth"
 import { LEGAL_LINKS } from "@/content/footer"
+import { Stat } from "@/components/marketing/page-blocks"
 import { cn } from "@/lib/utils"
 
 const TERMS_HREF = LEGAL_LINKS.find((l) => l.label === "Terms of service")!.href
@@ -93,10 +94,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
               wrapping row dropped the third stat onto a line of its own. */}
           <dl className="grid grid-cols-3 gap-6">
             {AUTH_PANEL.stats.map((s) => (
-              <div key={s.label} className="flex flex-col gap-1">
-                <dt className="order-2 text-sm text-muted-foreground">{s.label}</dt>
-                <dd className="order-1 font-heading text-h3 font-semibold text-foreground">{s.value}</dd>
-              </div>
+              <Stat key={s.label} value={s.value} label={s.label} size="sm" />
             ))}
           </dl>
         </div>

@@ -134,7 +134,7 @@ export default function InterviewPrepLoungePage() {
       </div>
 
       <Section size="none" className="relative -mt-8 pb-8 md:-mt-12 md:pb-12">
-        <StatGrid stats={stats} className="lg:grid-cols-4 lg:[&>*]:border-t-0" />
+        <StatGrid stats={stats} />
       </Section>
 
       {/* Who it's for. */}

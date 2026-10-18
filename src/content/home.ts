@@ -234,8 +234,8 @@ export const HOME_PROOF = {
     description:
       "From startups to SMEs to established enterprises, apna revolutionizes the way businesses find high-quality talent quickly & effortlessly.",
     stats: [
-      { value: "2 Lakhs+", label: "New candidates join apna every month." },
-      { value: "160+", label: "Job categories to publish your job." },
+      { value: "2 L+", label: "New candidates join apna every month" },
+      { value: "160+", label: "Job categories to publish your job" },
       { value: "60%", label: "of businesses get qualified candidates within 24 hrs" },
     ],
   },

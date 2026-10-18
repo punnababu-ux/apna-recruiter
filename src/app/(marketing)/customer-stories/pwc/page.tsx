@@ -32,7 +32,6 @@ export default function PwcStoryPage() {
         <StatGrid
           size="facts"
           stats={facts.map((f) => ({ label: f.label, value: f.value }))}
-          className="lg:grid-cols-4 lg:[&>*]:border-t-0"
         />
       </Section>
 

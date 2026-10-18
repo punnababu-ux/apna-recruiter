@@ -425,9 +425,9 @@ export const CUSTOMER_STORIES = {
   stats: [
     { value: "30%+", label: "Of Nifty 500 companies hire on apna" },
     { value: "20+", label: "Industries scaling hiring with apna" },
-    { value: "7 Lakh+", label: "Recruiters trust apna" },
+    { value: "7 L+", label: "Recruiters trust apna" },
     { value: "6 Cr+", label: "Job seekers on the platform" },
-    { value: "900+", label: "Cities covered" },
+    { value: "7,200+", label: "Towns & cities covered" },
   ],
   featured: {
     title: "Featured stories",

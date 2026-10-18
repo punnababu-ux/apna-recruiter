@@ -30,7 +30,7 @@ import {
 } from "@apna/design-system"
 import { TestimonialGrid } from "@/components/apnahire/testimonial-grid"
 import { FaqSection } from "@/components/apnahire/faq-section"
-import { StatGrid } from "@/components/marketing/page-blocks"
+import { Stat, StatGrid } from "@/components/marketing/page-blocks"
 import { HeroBackdrop } from "@/components/marketing/hero-backdrop"
 import { HeroLeadCard } from "@/components/marketing/hero-lead-card"
 import { PRODUCT_ICON, PRODUCT_KEY, ProductIllustration } from "@/components/marketing/product-illustrations"
@@ -112,15 +112,7 @@ export default function HomePage() {
               {/* Phones: a compact 3-up strip under the form. */}
               <dl className="grid w-full grid-cols-3 gap-4 max-lg:order-last sm:flex sm:flex-wrap sm:gap-x-12 sm:gap-y-6">
                 {HOME_HERO.stats.map((stat) => (
-                  <div key={stat.label} className="flex flex-col gap-1">
-                    <dt className="sr-only">{stat.label}</dt>
-                    <dd className="font-heading text-xl font-semibold text-foreground sm:text-h3">
-                      {stat.value}
-                    </dd>
-                    <p aria-hidden className="text-xs text-muted-foreground sm:text-sm">
-                      {stat.label}
-                    </p>
-                  </div>
+                  <Stat key={stat.label} value={stat.value} label={stat.label} size="sm" />
                 ))}
               </dl>
             </div>
