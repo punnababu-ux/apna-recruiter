@@ -76,10 +76,6 @@ export function ContactSection({
   cta,
 }: { title?: string; description?: string; cta?: string } = {}) {
   const [open, setOpen] = React.useState(false)
-  const isMobile = useIsMobile()
-  // A new key per opening, so a reopened pop-up starts with a fresh form
-  // (not the last one's values or its thank-you state).
-  const [round, setRound] = React.useState(0)
 
   return (
     // No bottom padding: the card sits right above the footer, whose own
@@ -111,15 +107,35 @@ export function ContactSection({
           variant="emphasis"
           size="lg"
           className="w-full sm:w-auto"
-          onClick={() => {
-            setRound((r) => r + 1)
-            setOpen(true)
-          }}
+          onClick={() => setOpen(true)}
         >
           {cta ?? CONTACT.cta}
         </Button>
       </Card>
 
+      <ContactPopup open={open} onOpenChange={setOpen} />
+    </Section>
+  )
+}
+
+/** The contact form pop-up, on its own, for any button that should open it
+ *  (the contact band's "Contact us", the homepage Enterprise card's "Contact
+ *  sales"): a bottom sheet on phones, a centred dialog from md. Every
+ *  opening starts a fresh form. */
+export function ContactPopup({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
+  const isMobile = useIsMobile()
+  // A new key per opening, so a reopened pop-up starts with a fresh form
+  // (not the last one's values or its thank-you state).
+  const [round, setRound] = React.useState(0)
+  const [wasOpen, setWasOpen] = React.useState(open)
+  if (open !== wasOpen) {
+    setWasOpen(open)
+    if (open) setRound((r) => r + 1)
+  }
+  const setOpen = onOpenChange
+
+  return (
+    <>
       {/* Phones: a bottom sheet (the system's pop-up on a phone); from md, a
           centred dialog. Same form in both. */}
       {isMobile ? (
@@ -140,7 +156,19 @@ export function ContactSection({
           </DialogContent>
         </Dialog>
       )}
-    </Section>
+    </>
+  )
+}
+
+/** A button that opens the contact pop-up — for places outside the contact
+ *  band (the homepage Enterprise card). Takes Button's own props. */
+export function ContactButton(props: React.ComponentProps<typeof Button>) {
+  const [open, setOpen] = React.useState(false)
+  return (
+    <>
+      <Button {...props} onClick={() => setOpen(true)} />
+      <ContactPopup open={open} onOpenChange={setOpen} />
+    </>
   )
 }
 

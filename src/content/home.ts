@@ -57,7 +57,8 @@ export const HOME_ENTERPRISE = {
   title: "Performance and productivity for every level of your enterprise",
   description:
     "Unleash your full potential with tailor-made, enterprise-grade features that help you stay secure, compliant and on brand.",
-  primary: { label: "Contact sales", href: "/enterprise#contact-us" },
+  /** Opens the contact form pop-up. */
+  primary: { label: "Contact sales" },
   secondary: { label: "Learn more", href: "/enterprise" },
 }
 

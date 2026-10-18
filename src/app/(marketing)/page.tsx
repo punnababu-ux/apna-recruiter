@@ -30,6 +30,7 @@ import {
 } from "@apna/design-system"
 import { Stat } from "@/components/marketing/page-blocks"
 import { FaqBand, TrustedByBand, WhyHireBand } from "@/components/marketing/proof-bands"
+import { ContactButton } from "@/components/marketing/contact-section"
 import { HeroBackdrop } from "@/components/marketing/hero-backdrop"
 import { HeroLeadCard } from "@/components/marketing/hero-lead-card"
 import { PRODUCT_ICON, PRODUCT_KEY, ProductIllustration } from "@/components/marketing/product-illustrations"
@@ -208,9 +209,10 @@ export default function HomePage() {
               <p className="text-base text-muted-foreground">{HOME_ENTERPRISE.description}</p>
             </div>
             <div className="flex shrink-0 flex-wrap gap-3">
-              <Button variant="emphasis" size="lg" nativeButton={false} render={<Link href={HOME_ENTERPRISE.primary.href} />}>
+              {/* Opens the contact form pop-up, as "Contact us" does. */}
+              <ContactButton variant="emphasis" size="lg">
                 {HOME_ENTERPRISE.primary.label}
-              </Button>
+              </ContactButton>
               <Button
                 variant="outline"
                 size="lg"
