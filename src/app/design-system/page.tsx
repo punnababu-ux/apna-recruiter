@@ -10,67 +10,62 @@ export default function DesignSystemOverviewPage() {
       title: "1. Actions",
       href: "/design-system/components/actions",
       icon: Zap,
-      desc: "Button, ButtonGroup, BackButton, Toggle, ToggleGroup",
-      count: "5 Components",
+      items: ["Button", "ButtonGroup", "BackButton", "Toggle", "ToggleGroup"],
       badge: "Core",
     },
     {
       title: "2. Form & Inputs",
       href: "/design-system/components/inputs",
       icon: CheckSquare,
-      desc: "Field, Label, Input, Textarea, Checkbox, RadioGroup, Switch, Select",
-      count: "8 Components",
+      items: ["Field", "Label", "Input", "Textarea", "Checkbox", "RadioGroup", "Switch", "Select"],
       badge: "Form",
     },
     {
       title: "3. Data Display",
       href: "/design-system/components/display",
       icon: Eye,
-      desc: "Avatar, Badge, Skeleton, Spinner, Separator, Empty",
-      count: "6 Components",
+      items: ["Avatar", "Badge", "Skeleton", "Spinner", "Separator", "Empty"],
       badge: "Display",
     },
     {
       title: "4. Navigation",
       href: "/design-system/components/navigation",
       icon: Navigation,
-      desc: "Tabs, ChipTabs, Breadcrumb, Sidebar, ReusableSidebar",
-      count: "5 Components",
+      items: ["Tabs", "ChipTabs", "Breadcrumb", "Sidebar", "ReusableSidebar"],
       badge: "Nav",
     },
     {
       title: "5. Overlays & Dialogs",
       href: "/design-system/components/overlays",
       icon: MessageSquare,
-      desc: "Tooltip, Popover, DropdownMenu, Dialog, AlertDialog, Sheet",
-      count: "6 Components",
+      items: ["Tooltip", "Popover", "DropdownMenu", "Dialog", "AlertDialog", "Sheet"],
       badge: "Overlays",
     },
     {
       title: "6. Feedback & Status",
       href: "/design-system/components/feedback",
       icon: Bell,
-      desc: "Alert, Sonner (Toast)",
-      count: "2 Components",
+      items: ["Alert", "Sonner (Toast)"],
       badge: "Status",
     },
     {
       title: "7. Data & Layout",
       href: "/design-system/components/data-layout",
       icon: TableIcon,
-      desc: "Table, Accordion, Brand Logos",
-      count: "4 Components",
+      items: ["Table", "Accordion", "Brand Logos"],
       badge: "Layout",
     },
     {
       title: "8. Marketing & Layout",
       href: "/design-system/components/marketing",
       icon: Layout,
-      desc: "Section, SectionHeading, Card tones, AmbientBackdrop, ScrollStack, LogoWall",
-      count: "7 Components",
+      items: ["Section", "SectionHeading", "Card tones", "AmbientBackdrop", "ScrollStack", "LogoWall"],
       badge: "Marketing",
     },
   ]
+
+  // Counts come from the lists, so a card can never claim more than it shows.
+  const total = categories.reduce((sum, cat) => sum + cat.items.length, 0)
 
   const foundations = [
     { title: "Colors & Tokens", href: "/design-system/foundations/colors", icon: Palette, desc: "Semantic roles & primitive ramps" },
@@ -99,7 +94,7 @@ export default function DesignSystemOverviewPage() {
             </h1>
 
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Structured component library built on Base UI primitives, strict semantic tokens, and atomic composition. apna&apos;s design system: 70 components in 8 categories, one token system for light and dark, the website and the product.
+              Structured component library built on Base UI primitives, strict semantic tokens, and atomic composition. apna&apos;s design system: {total} components in {categories.length} categories, one token system for light and dark, the website and the product.
             </p>
           </div>
 
@@ -122,10 +117,10 @@ export default function DesignSystemOverviewPage() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold text-foreground font-heading">
-            Component Taxonomy (8 Categories)
+            Component Taxonomy ({categories.length} Categories)
           </h2>
           <span className="text-xs text-muted-foreground font-mono">
-            70 Components
+            {total} Components
           </span>
         </div>
 
@@ -149,11 +144,11 @@ export default function DesignSystemOverviewPage() {
                       </h3>
                     </div>
                     <Badge variant="outline" className="text-3xs font-mono">
-                      {cat.count}
+                      {cat.items.length} Components
                     </Badge>
                   </div>
                   <p className="text-xs text-muted-foreground leading-normal">
-                    {cat.desc}
+                    {cat.items.join(", ")}
                   </p>
                 </div>
 
