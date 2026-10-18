@@ -155,6 +155,27 @@
   --color-apna-navy-900: #1E182A;
   --color-apna-navy-950: #0F0B1A;   /* #0F0B1A dark surface */
 
+  /* Atmosphere — the homepage hero's mood colours (light mode), sampled
+   * from the ambient mesh: its drifting blobs, soft washes and pale base.
+   * Not a ramp and not for UI: only the hero canvas and AmbientBackdrop
+   * read them, through --gradient-checkout-hero and --ambient-blob-*.
+   * Made official 2026-10-18 (they were raw values in semantic.css). */
+  --color-atmosphere-peach: #FDE2D6;      /* blob 1, the warm corner */
+  --color-atmosphere-pink: #F4C4D2;       /* blob 2 */
+  --color-atmosphere-periwinkle: #8697CD; /* blob 3, the cool depth */
+  --color-atmosphere-mist: #A9C3E4;       /* blob 4 */
+  --color-atmosphere-cream: #FFF7ED;      /* top-left wash */
+  --color-atmosphere-blush: #FEE2E2;      /* top-left wash edge */
+  --color-atmosphere-rose: #FCE7F3;       /* left wash */
+  --color-atmosphere-lilac: #F3E8FF;      /* left wash edge */
+  --color-atmosphere-iris: #E0E7FF;       /* bottom-left wash */
+  --color-atmosphere-ice: #DBEAFE;        /* bottom-left wash edge */
+  --color-atmosphere-frost: #EFF6FF;      /* top-right wash */
+  --color-atmosphere-haze: #F0F9FF;       /* top-right wash edge */
+  --color-atmosphere-cloud: #F8FAFC;      /* base, light */
+  --color-atmosphere-fog: #F1F5F9;        /* base, mid */
+  --color-atmosphere-slate: #E2E8F0;      /* base, deep */
+
   --color-apna-plum-50:  #F8F6F9;
   --color-apna-plum-100: #F0ECF1;
   --color-apna-plum-200: #DFD6E2;

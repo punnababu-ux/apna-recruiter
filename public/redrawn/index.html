@@ -1,0 +1,1618 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<base href="/redrawn/">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="apna, redrawn: the new website, brand and Poneglyph design system.">
+<title>apna, Redrawn</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: a keynote stage. One idea per full-screen slide, dark plum
+   ground, the brand's own colours as the only light on stage. */
+:root {
+  /* Two looks, switched on purpose by the final slide (data-mode on <html>):
+     the website's light canvas first, then its dark twin. */
+  color-scheme: light;
+  --stage: #FBFAFC;          /* the site's canvas */
+  --stage-2: #F0ECF1;        /* plum 100 */
+  --ink: #1C151E;            /* plum 900 */
+  --ink-dim: #5E5161;
+  --ink-faint: rgba(28, 21, 30, 0.12);
+  --chrome: rgba(251, 250, 252, 0.75);
+  --bezel: #E4DEE6;
+  --bar: #ECE7EE;
+  --shadow: rgba(46, 34, 48, 0.28);
+  --glow-opacity: 0.32;
+  --green: #1F8268;          /* logo green */
+  --green-bright: #3EBA8D;
+  --sky: #83BDE4;            /* logo sky */
+  --gold: #FFD166;           /* logo yellow */
+  --plum: #4E3A52;           /* logo plum (the wordmark) */
+  --plum-soft: #BDB0C3;
+  --paper: #FFFFFF;
+  --font-display: "Playfair Display", "Iowan Old Style", Georgia, serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --slide-pad: clamp(24px, 6vw, 96px);
+}
+:root[data-mode="dark"] {
+  color-scheme: dark;
+  --stage: #120E13;          /* plum 950 */
+  --stage-2: #1C151E;
+  --ink: #F8F6F9;
+  --ink-dim: #BDB0C3;
+  --ink-faint: rgba(248, 246, 249, 0.14);
+  --chrome: rgba(18, 14, 19, 0.6);
+  --bezel: #2A202C;
+  --bar: #241B26;
+  --shadow: rgba(0, 0, 0, 0.75);
+  --glow-opacity: 0.55;
+  --plum-soft: #DFD6E2;
+}
+/* The switch itself: one slow cross-fade of every surface. */
+body, .slide, .prod, .page, .page .bar, .page .chip, .page .cards i, .living, .browser, .browser-bar, .phone img, .toggle button, .counter button, .sitemap span, .tile {
+  transition: background-color 1200ms cubic-bezier(0.22, 1, 0.36, 1), color 1200ms ease, border-color 1200ms ease, box-shadow 1200ms ease, transform 700ms cubic-bezier(0.22, 1, 0.36, 1), opacity 500ms ease, filter 500ms ease;
+}
+html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  background: var(--stage);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+.slide {
+  scroll-snap-align: start;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: clamp(56px, 9vh, 120px);
+}
+.inner { width: min(1120px, 100%); display: flex; flex-direction: column; gap: clamp(20px, 3.5vh, 40px); }
+.center { align-items: center; text-align: center; }
+
+.kicker { font-size: 13px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-dim); }
+h1, h2 { font-family: var(--font-display); font-weight: 500; letter-spacing: -0.015em; text-wrap: balance; margin: 0; line-height: 1.04; }
+h1 { font-size: clamp(56px, 11vw, 168px); }
+/* The real wordmark in the title: its letters sized to the serif's lowercase
+   (x-height 7.46 of 11), sitting on the same baseline. */
+.title-wordmark { height: 0.8em; width: auto; vertical-align: -0.257em; color: currentColor; margin-right: -0.03em; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+h2 { font-size: clamp(40px, 6.6vw, 96px); }
+h2 em, h1 em { font-style: italic; }
+.lede { font-size: clamp(18px, 1.9vw, 26px); line-height: 1.45; color: var(--ink-dim); max-width: 40ch; margin: 0; text-wrap: pretty; }
+.center .lede { margin-inline: auto; }
+
+/* Reveal: everything is visible at rest; entering a slide only adds a lift. */
+.rise { transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1), opacity 900ms cubic-bezier(0.22, 1, 0.36, 1); }
+.slide:not(.seen) .rise { transform: translateY(18px); opacity: 0.001; }
+.slide.seen .rise:nth-child(2) { transition-delay: 90ms; }
+.slide.seen .rise:nth-child(3) { transition-delay: 180ms; }
+.slide.seen .rise:nth-child(4) { transition-delay: 270ms; }
+@media (prefers-reduced-motion: reduce) { .slide:not(.seen) .rise { transform: none; opacity: 1; } }
+/* No script / thumbnail: show everything. */
+.no-js .slide .rise { transform: none !important; opacity: 1 !important; }
+
+/* ── 1. Title ─────────────────────────────────────────── */
+.glow { position: absolute; inset: -20%; z-index: -1; filter: blur(70px); opacity: var(--glow-opacity); transition: opacity 1200ms ease; }
+.glow i { position: absolute; border-radius: 50%; width: 46vmax; height: 46vmax; animation: drift 18s ease-in-out infinite alternate; }
+.glow i:nth-child(1) { background: var(--green); left: 2%; top: 8%; }
+.glow i:nth-child(2) { background: var(--sky); right: 0; top: 18%; animation-duration: 22s; }
+.glow i:nth-child(3) { background: var(--gold); left: 30%; bottom: -6%; opacity: 0.7; animation-duration: 26s; }
+@keyframes drift { to { transform: translate(6vmax, -4vmax) scale(1.12); } }
+@media (prefers-reduced-motion: reduce) { .glow i { animation: none; } }
+.title-mark { font-family: var(--font-display); }
+
+/* ── 2. The legacy tile ───────────────────────────────── */
+.tile {
+  width: clamp(200px, 26vw, 320px); aspect-ratio: 1; max-width: 100%;
+  background: var(--paper); border-radius: 22%;
+  display: flex; flex-direction: column; overflow: hidden;
+  box-shadow: 0 40px 80px -30px var(--shadow);
+}
+/* The real wordmark (LogoApnaWordmark's path), centred above the stripes. */
+/* The official app icon (brand SVG): it carries its own white tile and stripes. */
+.icon-tile { background: none !important; padding: 0; border: 0; overflow: visible; display: block; box-shadow: none; }
+.icon-tile .app-icon { display: block; width: 100%; height: 100%; filter: drop-shadow(0 18px 30px var(--shadow)); }
+.tile .wordmark { flex: 1; width: 64%; max-width: 100%; margin-inline: auto; display: block; }
+.bars { display: grid; grid-template-columns: repeat(3, 1fr); flex: 0 0 14%; }
+.bars span:nth-child(1) { background: #2BB793; }
+.bars span:nth-child(2) { background: var(--sky); }
+.bars span:nth-child(3) { background: var(--gold); }
+.swatches { display: flex; flex-wrap: wrap; gap: 28px; justify-content: center; }
+.sw { display: flex; flex-direction: column; align-items: center; gap: 10px; font-size: 14px; color: var(--ink-dim); }
+.sw i { width: 64px; height: 64px; border-radius: 50%; }
+
+/* ── 3. Stripes become light ──────────────────────────── */
+.morph { position: relative; width: min(860px, 100%); aspect-ratio: 16 / 7; border-radius: 28px; overflow: hidden; background: var(--stage-2); }
+.morph { --m: 0; }
+.morph .stripe {
+  position: absolute; top: 0; bottom: 0; width: 33.4%;
+  filter: blur(calc(var(--m) * 48px));
+  transform: scale(calc(1 + var(--m) * 0.5));
+  border-radius: calc(var(--m) * 50%);
+  transition: filter 500ms cubic-bezier(0.22, 1, 0.36, 1), transform 500ms cubic-bezier(0.22, 1, 0.36, 1), border-radius 500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.morph.dragging .stripe { transition: none; }
+.scrub { display: flex; flex-direction: column; align-items: center; gap: 12px; width: min(860px, 100%); }
+.scrub input { width: 100%; accent-color: var(--green-bright); height: 28px; cursor: grab; }
+.scrub input:focus-visible { outline: 2px solid var(--sky); outline-offset: 4px; border-radius: 99px; }
+.hint { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-dim); }
+.morph .s1 { left: 0; background: #2BB793; }
+.morph .s2 { left: 33.3%; background: var(--sky); }
+.morph .s3 { left: 66.6%; background: var(--gold); }
+.morph-labels { display: flex; justify-content: space-between; width: min(860px, 100%); font-size: 14px; color: var(--ink-dim); }
+
+/* ── 4. Four products ─────────────────────────────────── */
+.products { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; width: 100%; }
+.prod {
+  border-radius: 24px; padding: 22px; min-height: 260px; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start;
+  color: #1C151E; min-width: 0; border: 0; font: inherit; text-align: left; cursor: pointer;
+  transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 500ms cubic-bezier(0.22, 1, 0.36, 1), opacity 400ms ease;
+}
+.prod:hover { transform: translateY(-6px); }
+.prod:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+.prod[aria-pressed="true"] { transform: translateY(-10px) scale(1.03); box-shadow: 0 30px 60px -20px var(--shadow); }
+.products.has-pick .prod:not([aria-pressed="true"]) { opacity: 0.45; }
+.stage-tint { position: absolute; inset: 0; z-index: -1; opacity: 0; transition: opacity 900ms cubic-bezier(0.22, 1, 0.36, 1), background 900ms ease; }
+.tintable[data-tint] .stage-tint { opacity: 1; }
+.tintable[data-tint="sky"]   .stage-tint { background: radial-gradient(ellipse 80% 70% at 20% 10%, rgba(131, 189, 228, 0.45), transparent 70%), radial-gradient(ellipse 60% 60% at 90% 90%, rgba(131, 189, 228, 0.25), transparent 70%); }
+.tintable[data-tint="green"] .stage-tint { background: radial-gradient(ellipse 80% 70% at 20% 10%, rgba(62, 186, 141, 0.42), transparent 70%), radial-gradient(ellipse 60% 60% at 90% 90%, rgba(31, 130, 104, 0.3), transparent 70%); }
+.tintable[data-tint="plum"]  .stage-tint { background: radial-gradient(ellipse 80% 70% at 20% 10%, rgba(189, 176, 195, 0.35), transparent 70%), radial-gradient(ellipse 60% 60% at 90% 90%, rgba(78, 58, 82, 0.55), transparent 70%); }
+.tintable[data-tint="gold"]  .stage-tint { background: radial-gradient(ellipse 80% 70% at 20% 10%, rgba(255, 209, 102, 0.4), transparent 70%), radial-gradient(ellipse 60% 60% at 90% 90%, rgba(255, 209, 102, 0.2), transparent 70%); }
+.prod small { font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.7; }
+.prod strong { font-family: var(--font-display); font-weight: 500; font-size: clamp(24px, 2.4vw, 32px); line-height: 1.1; }
+.p-sky   { background: linear-gradient(160deg, #D9EBF9 0%, #F8F6F9 100%); }
+.p-green { background: linear-gradient(160deg, #C6EFE0 0%, #EEF6FC 100%); }
+.p-plum  { background: linear-gradient(160deg, #F0ECF1 0%, #EEF6FC 100%); }
+.p-gold  { background: linear-gradient(160deg, #FEF3C7 0%, #F8F6F9 100%); }
+.dot { width: 28px; height: 28px; border-radius: 50%; }
+@media (max-width: 860px) { .products { grid-template-columns: repeat(2, 1fr); } }
+
+/* ── 5. Pages continue the colour ─────────────────────── */
+.pages { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; width: 100%; }
+.page {
+  border-radius: 18px; overflow: hidden; background: #FBFAFC; color: #1C151E; aspect-ratio: 3 / 4; max-width: 100%;
+  display: flex; flex-direction: column; box-shadow: 0 30px 60px -30px var(--shadow); min-width: 0; cursor: pointer;
+  transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1), opacity 500ms ease, filter 500ms ease;
+}
+.page:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+.pages.has-pick .page { opacity: 0.4; filter: saturate(0.6); transform: scale(0.94); }
+.pages.has-pick .page.picked { opacity: 1; filter: none; transform: scale(1.12); z-index: 2; position: relative; }
+.page .bar { height: 26px; display: flex; align-items: center; padding: 0 12px; gap: 6px; font-weight: 700; font-size: 11px; color: var(--plum); background: rgba(255, 255, 255, 0.7); }
+.page .hero { flex: 1; padding: 16px 14px; display: flex; flex-direction: column; gap: 10px; text-align: left; align-items: flex-start; }
+.page .bar .mini-mark { height: 11px; width: auto; display: block; }
+.page .cards { align-self: stretch; }
+.page .chip { align-self: flex-start; font-size: 9px; font-weight: 600; padding: 3px 8px; border-radius: 99px; background: #FFFFFF; border: 1px solid rgba(28, 21, 30, 0.12); }
+.page h3 em { font-style: italic; white-space: nowrap; }
+.page h3 { margin: 0; font-family: var(--font-display); font-weight: 500; font-size: clamp(15px, 1.5vw, 19px); line-height: 1.15; text-wrap: balance; }
+.page .btn { align-self: flex-start; font-size: 9px; font-weight: 600; color: #FFFFFF; background: var(--green); padding: 5px 10px; border-radius: 99px; }
+.page .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: auto; }
+.page .cards i { height: 34px; border-radius: 8px; background: rgba(255, 255, 255, 0.75); }
+.c-sky   { background: radial-gradient(ellipse 90% 60% at 10% 0%, #BDDDF5, transparent 75%), radial-gradient(ellipse 70% 50% at 90% 80%, #D9EBF9, transparent 70%), #FBFAFC; }
+.c-green { background: radial-gradient(ellipse 90% 60% at 10% 0%, #9DE2C9, transparent 75%), radial-gradient(ellipse 70% 50% at 90% 80%, #C6EFE0, transparent 70%), #FBFAFC; }
+.c-plum  { background: radial-gradient(ellipse 90% 60% at 10% 0%, #DFD6E2, transparent 75%), radial-gradient(ellipse 70% 50% at 90% 80%, #F0ECF1, transparent 70%), #FBFAFC; }
+.c-gold  { background: radial-gradient(ellipse 90% 60% at 10% 0%, #FDE68A, transparent 75%), radial-gradient(ellipse 70% 50% at 90% 80%, #FEF3C7, transparent 70%), #FBFAFC; }
+.caption { font-size: 13px; color: var(--ink-dim); text-align: center; }
+@media (max-width: 860px) { .pages { grid-template-columns: repeat(2, 1fr); } }
+
+/* ── Product screens ─────────────────────────────────── */
+/* Width follows the screen's height too, so the whole window (bar + full
+   screenshot) fits on the slide under the heading — never cropped. */
+.browser { margin: 0; width: min(1040px, 100%, calc((100dvh - 340px) * 1.6 + 2px)); border-radius: 18px; overflow: hidden; background: var(--stage-2); border: 1px solid var(--ink-faint); box-shadow: 0 50px 100px -40px var(--shadow); }
+.browser-bar { display: flex; align-items: center; gap: 8px; height: 38px; padding: 0 14px; background: var(--bar); }
+.browser-bar i { width: 11px; height: 11px; border-radius: 50%; background: var(--ink-faint); }
+.browser-bar span { margin-left: 12px; font-size: 12px; color: var(--ink-dim); padding: 4px 14px; border-radius: 99px; background: rgba(255, 255, 255, 0.06); }
+.browser-view { display: grid; aspect-ratio: 1440 / 900; max-width: 100%; overflow: hidden; background: #FFFFFF; }
+.browser { min-width: min(320px, 100%); }
+.browser-view .screen { grid-area: 1 / 1; width: 100%; height: 100%; object-fit: contain; object-position: top; opacity: 0; transform: scale(1.02); transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 900ms cubic-bezier(0.22, 1, 0.36, 1); }
+.browser-view .screen.on { opacity: 1; transform: none; }
+.phones { display: flex; justify-content: center; gap: clamp(20px, 5vw, 64px); flex-wrap: wrap; }
+.phone { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.phone img {
+  /* Height-aware too, so a whole phone screen shows on shorter displays. */
+  width: min(290px, 22vw, calc((100dvh - 330px) * 0.462)); min-width: 160px; max-width: 100%; aspect-ratio: 390 / 844; object-fit: cover; object-position: top;
+  border-radius: 38px; border: 8px solid var(--bezel); background: var(--bezel); background-clip: padding-box;
+  box-shadow: 0 50px 90px -40px var(--shadow);
+  transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.phone:nth-child(1) img { transform: rotate(-4deg) translateY(10px); }
+.phone:nth-child(2) img { transform: rotate(4deg) translateY(-10px); }
+.phone:hover img { transform: rotate(0deg) translateY(-16px); }
+.phone figcaption { font-size: 14px; color: var(--ink-dim); }
+.glow.soft { opacity: calc(var(--glow-opacity) * 0.55); }
+
+/* Dark twins: the system's dark canvases (semantic.css .dark). */
+[data-mode="dark"] .prod { color: var(--ink); }
+[data-mode="dark"] .p-sky   { background: linear-gradient(160deg, rgba(32, 64, 113, 0.75) 0%, var(--stage-2) 100%); }
+[data-mode="dark"] .p-green { background: linear-gradient(160deg, rgba(14, 65, 52, 0.8) 0%, var(--stage-2) 100%); }
+[data-mode="dark"] .p-plum  { background: linear-gradient(160deg, rgba(78, 58, 82, 0.8) 0%, var(--stage-2) 100%); }
+[data-mode="dark"] .p-gold  { background: linear-gradient(160deg, rgba(120, 53, 15, 0.7) 0%, var(--stage-2) 100%); }
+[data-mode="dark"] .page { color: var(--ink); background-color: var(--stage-2); }
+[data-mode="dark"] .page .bar { background: rgba(255, 255, 255, 0.04); color: var(--ink); }
+[data-mode="dark"] .page .chip { background: rgba(255, 255, 255, 0.06); border-color: var(--ink-faint); color: var(--ink); }
+[data-mode="dark"] .page .cards i { background: rgba(255, 255, 255, 0.07); }
+[data-mode="dark"] .c-sky   { background: radial-gradient(ellipse 90% 60% at 10% 0%, rgba(35, 90, 174, 0.55), transparent 75%), var(--stage-2); }
+[data-mode="dark"] .c-green { background: radial-gradient(ellipse 90% 60% at 10% 0%, rgba(24, 105, 84, 0.6), transparent 75%), var(--stage-2); }
+[data-mode="dark"] .c-plum  { background: radial-gradient(ellipse 90% 60% at 10% 0%, rgba(78, 58, 82, 0.8), transparent 75%), var(--stage-2); }
+[data-mode="dark"] .c-gold  { background: radial-gradient(ellipse 90% 60% at 10% 0%, rgba(180, 83, 9, 0.45), transparent 75%), var(--stage-2); }
+[data-mode="dark"] .living p { color: var(--ink); }
+[data-mode="dark"] .tile { background: #F8F6F9; }
+
+/* ── Component kit (light/dark per cell) ── */
+.kit { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; width: 100%; }
+@media (max-width: 860px) { .kit { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 520px) { .kit { grid-template-columns: 1fr; } }
+.kit-cell {
+  --k-bg: #FFFFFF; --k-fg: #1C151E; --k-dim: #6B5F6E; --k-line: rgba(28, 21, 30, 0.12); --k-soft: #F0ECF1; --k-primary: #1F8268; --k-primary-fg: #FFFFFF;
+  background: var(--k-bg); color: var(--k-fg); border-radius: 20px; border: 1px solid var(--k-line);
+  display: flex; flex-direction: column; min-width: 0; overflow: hidden;
+  transition: background-color 900ms cubic-bezier(0.22, 1, 0.36, 1), color 900ms ease, border-color 900ms ease;
+}
+.kit-cell[data-look="dark"] { --k-bg: #1C151E; --k-fg: #F8F6F9; --k-dim: #BDB0C3; --k-line: rgba(248, 246, 249, 0.14); --k-soft: #2E2230; --k-primary: #3EBA8D; --k-primary-fg: #082820; }
+.kit-cell * { transition: background-color 900ms cubic-bezier(0.22, 1, 0.36, 1), color 900ms ease, border-color 900ms ease; }
+.kit-demo { flex: 1; min-height: 130px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; padding: 22px; }
+.kit-foot { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-top: 1px solid var(--k-line); font-size: 13px; color: var(--k-dim); }
+.mini-switch { width: 40px; height: 22px; border-radius: 99px; border: 1px solid var(--k-line); background: var(--k-soft); position: relative; cursor: pointer; padding: 0; }
+.mini-switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: var(--gold); transition: transform 600ms cubic-bezier(0.34, 1.56, 0.64, 1), background 600ms ease; }
+.kit-cell[data-look="dark"] .mini-switch::after { transform: translateX(18px); background: var(--k-fg); }
+.mini-switch:focus-visible { outline: 2px solid var(--sky); outline-offset: 2px; }
+.k-btn { display: inline-flex; align-items: center; justify-content: center; border-radius: 99px; padding: 10px 18px; font-size: 14px; font-weight: 600; border: 1px solid transparent; }
+.k-primary { background: var(--k-primary, #1F8268); color: var(--k-primary-fg, #FFFFFF); }
+.k-outline { border-color: var(--k-line); color: var(--k-fg); background: transparent; }
+.k-small { padding: 7px 14px; font-size: 12px; }
+.k-card { width: 100%; max-width: 220px; border: 2px solid var(--k-primary); border-radius: 16px; padding: 14px; display: grid; gap: 4px; background: var(--k-bg); }
+.k-card small { font-size: 13px; font-weight: 600; } .k-card b { font-size: 26px; font-variant-numeric: tabular-nums; }
+.k-badge { justify-self: start; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 6px; background: var(--k-soft); color: var(--k-dim); }
+.k-chips { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.k-chips span { font-size: 13px; padding: 7px 12px; border-radius: 99px; background: var(--k-soft); color: var(--k-fg); border: 1px solid transparent; }
+.k-chips .on { background: var(--k-bg); border-color: var(--k-primary); color: var(--k-primary); font-weight: 600; }
+.k-input { width: 100%; max-width: 240px; display: flex; gap: 10px; align-items: center; border: 1px solid var(--k-line); border-radius: 12px; padding: 11px 14px; font-size: 14px; }
+.k-input i { font-style: normal; color: var(--k-dim); }
+/* The product's badges: Recommended (Badge ribbon) and a job's Active
+   status (Badge success), light and dark. */
+.k-pill { font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 99px; background: #2F87E4; color: #FFFFFF; }
+.kit-cell[data-look="dark"] .k-pill { background: #2F374D; color: #5DA8E9; }
+.k-pill.k-soft { background: rgba(31, 130, 104, 0.1); color: #1F8268; }
+.kit-cell[data-look="dark"] .k-pill.k-soft { background: rgba(0, 168, 107, 0.2); color: #00A86B; }
+.k-toggle { width: 46px; height: 26px; border-radius: 99px; background: var(--k-primary); position: relative; }
+.k-toggle i { position: absolute; top: 3px; right: 3px; width: 20px; height: 20px; border-radius: 50%; background: var(--k-primary-fg); }
+.k-check { width: 26px; height: 26px; border-radius: 8px; background: var(--k-primary); color: var(--k-primary-fg); display: grid; place-items: center; font-size: 14px; font-weight: 700; }
+
+/* ── Token chain ── */
+.chain { display: flex; align-items: stretch; justify-content: center; gap: 14px; flex-wrap: wrap; width: 100%; }
+.link { flex: 1 1 200px; max-width: 280px; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 24px 18px; border-radius: 20px; border: 1px solid var(--ink-faint); }
+.link b { font-family: var(--font-display); font-weight: 500; font-size: 24px; }
+.link small { font-size: 13px; color: var(--ink-dim); }
+.sw-dot { width: 40px; height: 40px; border-radius: 50%; }
+.tag { font-size: 13px; font-weight: 600; padding: 8px 14px; border-radius: 10px; background: var(--stage-2); border: 1px dashed var(--green-bright); color: var(--green-bright); }
+.arrow { align-self: center; font-size: 28px; color: var(--ink-dim); }
+@media (max-width: 720px) { .arrow { transform: rotate(90deg); width: 100%; text-align: center; } }
+
+/* ── Press to try ── */
+.play { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; width: 100%; }
+@media (max-width: 1000px) { .play { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 760px) { .play { grid-template-columns: 1fr; } }
+.play-cell { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 36px 16px; border-radius: 22px; border: 1px solid var(--ink-faint); min-width: 0; }
+.play-cell small { font-size: 13px; color: var(--ink-dim); text-align: center; }
+.k-big { font: inherit; font-size: 17px; font-weight: 600; padding: 14px 28px; cursor: pointer; background: var(--green); color: #FFFFFF; position: relative; overflow: hidden; isolation: isolate; transition: transform 120ms ease; }
+.k-big:active { transform: scale(0.96); }
+.k-big:focus-visible { outline: 2px solid var(--sky); outline-offset: 3px; }
+.ripple { position: absolute; z-index: -1; border-radius: 50%; background: rgba(255, 255, 255, 0.45); transform: scale(0); pointer-events: none; animation: ripple 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+@keyframes ripple { to { transform: scale(1); opacity: 0; } }
+/* The product's plan tabs (TabsList variant=checkout), light and dark. */
+.k-seg { position: relative; display: inline-flex; padding: 4px; border-radius: 99px; background: rgba(0, 0, 0, 0.08); }
+[data-mode="dark"] .k-seg { background: rgba(28, 21, 30, 0.4); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1); }
+.k-seg button { position: relative; z-index: 1; font: inherit; font-size: 14px; font-weight: 600; padding: 7px 14px; border: 0; background: transparent; color: #3F3F46; border-radius: 99px; cursor: pointer; transition: color 300ms ease; }
+.k-seg button:hover { color: #1C151E; }
+[data-mode="dark"] .k-seg button { color: #A1A1AA; }
+[data-mode="dark"] .k-seg button:hover { color: var(--ink); }
+.k-seg button[aria-pressed="true"] { color: #1F8268; }
+[data-mode="dark"] .k-seg button[aria-pressed="true"] { color: #00A86B; }
+.k-seg button:focus-visible { outline: 2px solid var(--sky); outline-offset: 2px; }
+.seg-pill { position: absolute; top: 4px; bottom: 4px; left: 4px; border-radius: 99px; background: #FFFFFF; box-shadow: 0 0 0 1px #E4E4E7; transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1), width 500ms cubic-bezier(0.22, 1, 0.36, 1), background-color 1200ms ease; }
+[data-mode="dark"] .seg-pill { background: #241B26; box-shadow: none; }
+/* The system's radio (radio-group.tsx: 2px ring, a dot that springs in) on
+   the phone plan rows (the picked row takes the green border). */
+.k-plans { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 280px; }
+.k-plan {
+  display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; font: inherit; cursor: pointer;
+  padding: 12px 14px; border-radius: 16px; background: var(--paper); color: #1C151E;
+  border: 2px solid rgba(28, 21, 30, 0.08); transition: border-color 300ms ease, transform 120ms ease;
+}
+.k-plan:active { transform: scale(0.98); }
+.k-plan:focus-visible { outline: 2px solid var(--sky); outline-offset: 3px; }
+.k-plan[aria-checked="true"] { border-color: var(--green); }
+.k-plan-text { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.k-plan-text b { font-size: 14px; font-weight: 600; } .k-plan-text small { font-size: 12px; color: #6B5F6E; }
+.k-price { font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.k-radio { width: 18px; height: 18px; flex: none; border-radius: 50%; border: 2px solid #BDB0C3; position: relative; transition: border-color 300ms ease; }
+.k-radio::after { content: ""; position: absolute; inset: 0; margin: auto; width: 8px; height: 8px; border-radius: 50%; background: var(--green); transform: scale(0); transition: transform 450ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+.k-plan[aria-checked="true"] .k-radio { border-color: var(--green); }
+.k-plan[aria-checked="true"] .k-radio::after { transform: scale(1); }
+[data-mode="dark"] .k-plan { background: var(--stage-2); color: var(--ink); border-color: var(--ink-faint); }
+[data-mode="dark"] .k-plan[aria-checked="true"] { border-color: var(--green-bright); }
+[data-mode="dark"] .k-plan-text small { color: var(--ink-dim); }
+[data-mode="dark"] .k-radio::after, [data-mode="dark"] .k-plan[aria-checked="true"] .k-radio { background-color: transparent; }
+[data-mode="dark"] .k-radio::after { background: var(--green-bright); }
+[data-mode="dark"] .k-plan[aria-checked="true"] .k-radio { border-color: var(--green-bright); }
+.k-tick { width: 56px; height: 56px; border-radius: 16px; border: 2px solid var(--ink-faint); background: transparent; color: #FFFFFF; font-size: 26px; font-weight: 700; cursor: pointer; display: grid; place-items: center; transition: background 300ms ease, border-color 300ms ease; }
+.k-tick span { transform: scale(0); transition: transform 450ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+.k-tick[aria-pressed="true"] { background: var(--green); border-color: var(--green); }
+.k-tick[aria-pressed="true"] span { transform: scale(1); }
+.k-tick:active { transform: scale(0.94); }
+.k-tick:focus-visible { outline: 2px solid var(--sky); outline-offset: 3px; }
+
+/* Sidebar sub-menu demo: the product's expand motion (300ms glide). */
+.k-nav { width: 100%; max-width: 230px; border-radius: 16px; border: 1px solid var(--ink-faint); padding: 6px; text-align: left; }
+.k-nav-row { width: 100%; display: flex; justify-content: space-between; align-items: center; font: inherit; font-size: 14px; font-weight: 500; color: var(--ink); background: transparent; border: 0; padding: 10px 12px; border-radius: 10px; cursor: pointer; }
+.k-nav-row:hover { background: var(--stage-2); }
+.k-nav-row:focus-visible { outline: 2px solid var(--sky); outline-offset: 2px; }
+.k-chev { transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+.k-nav-row[aria-expanded="true"] .k-chev { transform: rotate(180deg); }
+.k-expand { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows 300ms cubic-bezier(0.22, 1, 0.36, 1), opacity 300ms cubic-bezier(0.22, 1, 0.36, 1); }
+.k-expand.open { grid-template-rows: 1fr; opacity: 1; }
+/* Sub-items left-aligned under the label, on a guide line, like the
+   product sidebar's sub-menu. */
+.k-expand > div { min-height: 0; overflow: hidden; display: flex; flex-direction: column; align-items: stretch; margin-left: 14px; padding-left: 8px; border-left: 1px solid var(--ink-faint); }
+.k-expand a { display: block; text-align: left; font-size: 13px; color: var(--ink-dim); padding: 8px 10px; border-radius: 8px; }
+.k-expand a:first-child { color: var(--ink); background: var(--stage-2); }
+@media (prefers-reduced-motion: reduce) { .k-expand, .k-chev { transition: none; } }
+
+/* Segmented before/after switches (Before/After, Recruiter dashboard/Pricing,
+   one typeface/serif). */
+.inner > .toggle { align-self: flex-start; }
+.toggle[hidden] { display: none; }
+.center > .toggle { align-self: center; }
+.toggle { display: inline-flex; padding: 4px; border-radius: 99px; border: 1px solid var(--ink-faint); gap: 4px; }
+.toggle button { font: inherit; font-size: 14px; font-weight: 500; color: var(--ink-dim); background: transparent; border: 0; padding: 10px 18px; border-radius: 99px; cursor: pointer; transition: background 300ms ease, color 300ms ease; }
+.toggle button:hover { color: var(--ink); }
+.toggle button[aria-pressed="true"] { background: var(--ink); color: var(--stage); }
+.toggle button:focus-visible { outline: 2px solid var(--sky); outline-offset: 2px; }
+
+/* ── One token, everything follows ── */
+.token-picker { display: inline-flex; align-items: center; gap: 12px; padding: 8px 10px 8px 16px; border-radius: 99px; border: 1px solid var(--ink-faint); }
+.token-name { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 13px; color: var(--ink-dim); margin-right: 4px; }
+.token-picker button { width: 30px; height: 30px; border-radius: 50%; border: 0; background: var(--sw); cursor: pointer; box-shadow: 0 0 0 2px var(--stage), 0 0 0 3px transparent; transition: box-shadow 200ms ease, transform 200ms ease; }
+.token-picker button[aria-checked="true"] { box-shadow: 0 0 0 2px var(--stage), 0 0 0 4px var(--sw); transform: scale(1.08); }
+.token-picker button:focus-visible { outline: 2px solid var(--sky); outline-offset: 4px; }
+.token-screen { --brand: #1F8268; width: min(720px, 100%); border-radius: 24px; border: 1px solid var(--ink-faint); background: var(--stage-2); padding: 24px; display: flex; flex-direction: column; gap: 18px; text-align: left; }
+.token-screen * { transition: background-color 600ms cubic-bezier(0.22, 1, 0.36, 1), color 600ms ease, border-color 600ms ease, box-shadow 600ms ease; }
+.ts-tabs { display: flex; gap: 22px; border-bottom: 1px solid var(--ink-faint); }
+.ts-tabs span { font-size: 14px; font-weight: 600; color: var(--ink-dim); padding: 8px 0; }
+.ts-tabs .on { color: var(--brand); box-shadow: inset 0 -2px 0 var(--brand); }
+.ts-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.ts-btn { font-size: 14px; font-weight: 600; color: #fff; background: var(--brand); padding: 10px 18px; border-radius: 99px; }
+.ts-chip { font-size: 13px; font-weight: 600; color: var(--brand); border: 1.5px solid var(--brand); background: var(--stage); padding: 6px 12px; border-radius: 99px; }
+.ts-badge { font-size: 12px; font-weight: 600; color: var(--brand); background: color-mix(in srgb, var(--brand) 14%, transparent); padding: 4px 9px; border-radius: 6px; }
+.ts-link { font-size: 14px; font-weight: 600; color: var(--brand); text-decoration: underline; text-underline-offset: 3px; }
+.ts-check { width: 22px; height: 22px; border-radius: 6px; background: var(--brand); color: #fff; font-size: 13px; font-weight: 700; display: grid; place-items: center; }
+.ts-switch { width: 40px; height: 22px; border-radius: 99px; background: var(--brand); position: relative; margin-left: 12px; }
+.ts-switch i { position: absolute; top: 3px; right: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; }
+.ts-label { font-size: 14px; color: var(--ink); }
+.ts-progress { height: 8px; border-radius: 99px; background: var(--ink-faint); overflow: hidden; }
+.ts-progress i { display: block; height: 100%; width: 64%; border-radius: inherit; background: var(--brand); }
+
+/* ── Pre-show: the house lights go down. Only the moving brand colour, then
+   (on the first press, which also starts the music) the title rises in. ── */
+.preshow-hint { position: absolute; left: 0; right: 0; bottom: calc(env(safe-area-inset-bottom, 0px) + 40px); margin: 0; text-align: center; font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-dim); opacity: 0; pointer-events: none; transition: opacity 1200ms ease; }
+.preshow .preshow-hint { opacity: 0.55; transition-delay: 2.5s; animation: hint-breathe 3.2s ease-in-out 3s infinite; }
+@keyframes hint-breathe { 50% { opacity: 0.2; } }
+.preshow [aria-label="Title"] .inner { opacity: 0; transform: translateY(24px) scale(0.98); }
+[aria-label="Title"] .inner { transition: opacity 1800ms cubic-bezier(0.22, 1, 0.36, 1), transform 2200ms cubic-bezier(0.22, 1, 0.36, 1); }
+.preshow [aria-label="Title"] .glow { opacity: calc(var(--glow-opacity) * 1.25); }
+.preshow .counter, .preshow .dots { opacity: 0; pointer-events: none; }
+.counter, .dots { transition: opacity 1200ms ease 1.5s; }
+@media (prefers-reduced-motion: reduce) { [aria-label="Title"] .inner { transition: none; } .preshow .preshow-hint { animation: none; } }
+
+/* ── Typography ── */
+.type-demo { box-sizing: border-box; width: 100%; border-radius: 24px; border: 1px solid var(--ink-faint); background-color: var(--stage-2); background-size: cover; background-position: center; padding: clamp(20px, 3vw, 36px); display: flex; flex-direction: column; gap: 12px; text-align: left; }
+/* The homepage hero gradient behind the type card, as on the site. */
+.type-demo { background-image:
+    linear-gradient(rgba(255, 255, 255, 0.52), rgba(255, 255, 255, 0.52)),
+    url("img/bg-ambient-mesh.jpg"),
+    radial-gradient(circle at 8% 12%,  rgba(255, 247, 237, 0.75) 0%, rgba(254, 226, 226, 0.50) 28%, transparent 55%),
+    radial-gradient(circle at 10% 42%, rgba(252, 231, 243, 0.55) 0%, rgba(243, 232, 255, 0.45) 30%, transparent 58%),
+    radial-gradient(circle at 12% 82%, rgba(224, 231, 255, 0.60) 0%, rgba(219, 234, 254, 0.45) 32%, transparent 60%),
+    radial-gradient(circle at 85% 15%, rgba(239, 246, 255, 0.70) 0%, rgba(240, 249, 255, 0.50) 40%, transparent 65%),
+    radial-gradient(circle at 92% 88%, rgba(255, 255, 255, 1) 0%, rgba(248, 250, 252, 0.80) 45%, transparent 70%),
+    linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 40%, #F1F5F9 80%, #E2E8F0 100%); }
+[data-mode="dark"] .type-demo { background-image:
+    radial-gradient(circle at 8% 15%, rgba(255, 255, 255, 0.10) 0%, transparent 45%),
+    radial-gradient(circle at 90% 18%, rgba(255, 255, 255, 0.10) 0%, transparent 55%),
+    radial-gradient(circle at 50% 90%, rgba(255, 255, 255, 0.05) 0%, transparent 60%),
+    linear-gradient(135deg, #120E13 0%, #1C151E 50%, #241B26 100%); }
+.type-eyebrow { margin: 0; align-self: flex-start; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 99px; border: 1px solid var(--ink-faint); color: var(--ink-dim); }
+.type-head { margin: 0; font-family: var(--font-display); font-weight: 500; font-size: clamp(28px, 3.6vw, 48px); line-height: 1.05; letter-spacing: -0.015em; text-wrap: balance; color: var(--ink); transition: letter-spacing 500ms ease; }
+.type-demo.before .type-head { font-family: var(--font-body); font-weight: 700; letter-spacing: -0.03em; }
+.type-body { margin: 0; font-size: clamp(15px, 1.4vw, 18px); line-height: 1.5; color: var(--ink-dim); max-width: 56ch; }
+.type-stats { display: flex; flex-wrap: wrap; gap: 28px; padding-top: 8px; }
+.type-stats span { display: flex; flex-direction: column; gap: 2px; font-size: 13px; color: var(--ink-dim); }
+.type-stats b { font-size: clamp(22px, 2.4vw, 30px); font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+.type-rules { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; }
+@media (max-width: 640px) { .type-rules { grid-template-columns: 1fr; } }
+.type-rules > div { display: flex; flex-direction: column; gap: 4px; padding: 16px 20px; border-radius: 18px; border: 1px solid var(--ink-faint); text-align: left; }
+.type-rules strong { font-size: 22px; font-weight: 500; color: var(--ink); }
+.tr-serif { font-family: var(--font-display); } .tr-sans { font-family: var(--font-body); font-weight: 600 !important; }
+.type-rules span { font-size: 15px; line-height: 1.5; color: var(--ink-dim); }
+[aria-label="Typography"] .inner { gap: clamp(14px, 2.4vh, 28px); }
+.type-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
+.type-product { margin: 0; flex: 1 1 320px; min-width: 0; font-size: 15px; line-height: 1.45; color: var(--ink-dim); text-align: left; }
+
+/* Try it yourself: two live links, on the Thank you slide. */
+.ty-try { margin-top: clamp(12px, 3vh, 32px); }
+.links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(14px, 2vw, 24px); width: min(920px, 100%); }
+.link-card { display: flex; flex-direction: column; gap: 8px; padding: clamp(20px, 2.6vw, 32px); border-radius: 20px; border: 1px solid var(--ink-faint); background: var(--chrome); color: var(--ink); text-decoration: none; text-align: left; transition: border-color 300ms ease, transform 300ms cubic-bezier(0.22, 1, 0.36, 1); }
+.link-card:hover { border-color: var(--green-bright); transform: translateY(-3px); }
+.link-card:focus-visible { outline: 2px solid var(--sky); outline-offset: 3px; }
+.link-card small { font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-dim); }
+.link-card strong { font-family: var(--font-display); font-weight: 500; font-size: clamp(20px, 2.2vw, 30px); line-height: 1.15; overflow-wrap: normal; word-break: keep-all; }
+.link-card span { font-size: 15px; line-height: 1.45; color: var(--ink-dim); }
+@media (max-width: 640px) { .links { grid-template-columns: 1fr; } }
+/* ── Credits ── one left edge for everything: the block is centred on the
+   slide, and inside it every label, name and line starts at the same edge.
+   Names in one column, their lines in a second. Each line comes into focus
+   in turn. */
+.credits .inner { gap: clamp(16px, 3vh, 34px); }
+.cr-roll { width: min(760px, 100%); display: flex; flex-direction: column; gap: clamp(6px, 1.1vh, 12px); text-align: left; --name-col: clamp(120px, 14vw, 180px); }
+.cr-block, .cr-pair, .cr-head, .cr-row { opacity: 0; translate: 0 14px; filter: blur(5px);
+  transition: opacity 800ms cubic-bezier(0.22, 1, 0.36, 1), translate 800ms cubic-bezier(0.22, 1, 0.36, 1), filter 800ms ease;
+  transition-delay: calc(300ms + var(--i, 0) * 180ms); }
+.credits.seen :is(.cr-block, .cr-pair, .cr-head, .cr-row) { opacity: 1; translate: 0 0; filter: none; }
+.cr-role, .cr-head { margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-dim); }
+.cr-top { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin-bottom: clamp(8px, 1.6vh, 18px); }
+.cr-lead-name { margin: 0; font-family: var(--font-display); font-weight: 500; font-size: clamp(36px, 4.2vw, 60px); line-height: 1; color: var(--ink); }
+.cr-lead-name em { font-style: italic; }
+/* Two columns, both left-aligned: label or name | the person or their line. */
+.cr-pair, .cr-row { margin: 0; display: grid; grid-template-columns: var(--name-col) minmax(0, 1fr); column-gap: clamp(16px, 2.4vw, 32px); align-items: baseline; }
+.cr-who { font-size: clamp(15px, 1.4vw, 18px); font-weight: 600; color: var(--ink); }
+.cr-who i { font-style: normal; color: var(--ink-dim); font-weight: 400; }
+.cr-who em { font-family: var(--font-display); font-style: italic; font-weight: 500; }
+.cr-head { margin-top: clamp(10px, 1.8vh, 22px); padding-bottom: 8px; border-bottom: 1px solid var(--ink-faint); }
+.cr-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: clamp(2px, 0.6vh, 6px); }
+.cr-list + .cr-pair { margin-top: clamp(14px, 2.2vh, 24px); }
+.cr-fuel { margin-top: 2px; }
+.cr-name { font-family: var(--font-display); font-weight: 500; font-size: clamp(22px, 2.2vw, 30px); line-height: 1.15; color: var(--ink); }
+.cr-row:hover .cr-name { font-style: italic; }
+.cr-tag { font-size: clamp(13px, 1.1vw, 15px); line-height: 1.4; color: var(--ink-dim); }
+.cr-tag s { text-decoration-thickness: 1.5px; text-decoration-color: var(--green); }
+.cr-sign { margin: clamp(10px, 1.8vh, 22px) 0 0; max-width: 40ch; text-align: left; font-family: var(--font-display); font-size: clamp(17px, 1.6vw, 22px); line-height: 1.35; color: var(--ink-dim); text-wrap: balance;
+  opacity: 0; transition: opacity 1000ms ease; transition-delay: calc(300ms + 13 * 180ms + 400ms); }
+.credits.seen .cr-sign { opacity: 1; }
+.cr-sign em { font-style: italic; color: var(--ink); }
+/* Phones: one column; each name above its line, still on the one edge. */
+@media (max-width: 640px) {
+  .cr-pair, .cr-row { grid-template-columns: 1fr; row-gap: 2px; }
+  .cr-list { gap: 12px; }
+}
+@media (prefers-reduced-motion: reduce) { .cr-block, .cr-pair, .cr-head, .cr-row, .cr-sign { transition: none; opacity: 1; translate: none; filter: none; } }
+
+/* ── Final reveal ── */
+.reveal-line { display: grid; }
+.reveal-line > * { grid-area: 1 / 1; transition: opacity 900ms cubic-bezier(0.22, 1, 0.36, 1), transform 900ms cubic-bezier(0.22, 1, 0.36, 1); }
+.reveal-line .after { opacity: 0; transform: translateY(14px); }
+[data-mode="dark"] .reveal-line .before { opacity: 0; transform: translateY(-14px); }
+[data-mode="dark"] .reveal-line .after { opacity: 1; transform: none; }
+.switch { display: inline-flex; align-items: center; gap: 12px; font: inherit; font-size: 16px; font-weight: 500; color: var(--ink); background: transparent; border: 1px solid var(--ink-faint); border-radius: 99px; padding: 8px 18px 8px 8px; cursor: pointer; }
+.switch:focus-visible { outline: 2px solid var(--sky); outline-offset: 3px; }
+.switch .knob { width: 52px; height: 30px; border-radius: 99px; background: var(--stage-2); border: 1px solid var(--ink-faint); position: relative; transition: background 600ms ease; }
+.switch .knob::after { content: ""; position: absolute; top: 4px; left: 4px; width: 22px; height: 22px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 16px var(--gold); transition: transform 700ms cubic-bezier(0.34, 1.56, 0.64, 1), background 600ms ease, box-shadow 600ms ease; }
+[data-mode="dark"] .switch .knob::after { transform: translateX(22px); background: var(--ink); box-shadow: 0 0 10px rgba(248, 246, 249, 0.4); }
+
+/* ── 6. Clay ──────────────────────────────────────────── */
+.clay { display: grid; grid-template-columns: repeat(6, 1fr); gap: clamp(8px, 2vw, 28px); width: 100%; }
+.clay img { width: 100%; aspect-ratio: 1; max-width: 100%; object-fit: contain; filter: drop-shadow(0 24px 30px var(--shadow)); transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1); }
+.clay { perspective: 900px; }
+.clay img { transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(var(--tz, 0px)); cursor: grab; }
+.clay img.tilting { transition: transform 120ms linear; }
+@media (max-width: 720px) { .clay { grid-template-columns: repeat(3, 1fr); } }
+
+/* ── 7. Motion ───────────────────────────────────────── */
+/* The homepage hero, reproduced from its tokens (--gradient-checkout-hero,
+   --ambient-blob-1..4, AmbientBackdrop's seven blobs and wandering light). */
+.living {
+  --blob-1: rgba(253, 226, 214, 1); --blob-2: rgba(244, 196, 210, 0.95);
+  --blob-3: rgba(134, 151, 205, 0.75); --blob-4: rgba(169, 195, 228, 0.90);
+  --glow: rgba(255, 255, 255, 0.85);
+  position: relative; width: min(860px, 100%); aspect-ratio: 16 / 8; border-radius: 28px; overflow: hidden; display: grid; place-items: center;
+  container-type: size;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.52), rgba(255, 255, 255, 0.52)),
+    url("img/bg-ambient-mesh.jpg"),
+    radial-gradient(circle at 8% 12%,  rgba(255, 247, 237, 0.75) 0%, rgba(254, 226, 226, 0.50) 28%, transparent 55%),
+    radial-gradient(circle at 10% 42%, rgba(252, 231, 243, 0.55) 0%, rgba(243, 232, 255, 0.45) 30%, transparent 58%),
+    radial-gradient(circle at 12% 82%, rgba(224, 231, 255, 0.60) 0%, rgba(219, 234, 254, 0.45) 32%, transparent 60%),
+    radial-gradient(circle at 85% 15%, rgba(239, 246, 255, 0.70) 0%, rgba(240, 249, 255, 0.50) 40%, transparent 65%),
+    radial-gradient(circle at 92% 88%, rgba(255, 255, 255, 1) 0%, rgba(248, 250, 252, 0.80) 45%, transparent 70%),
+    linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 40%, #F1F5F9 80%, #E2E8F0 100%);
+  background-size: cover; background-position: center;
+}
+[data-mode="dark"] .living {
+  --blob-1: rgba(56, 42, 59, 0.45); --blob-2: rgba(67, 50, 71, 0.35);
+  --blob-3: rgba(33, 74, 140, 0.35); --blob-4: rgba(32, 64, 113, 0.40);
+  --glow: rgba(255, 255, 255, 0.10);
+  background-image:
+    radial-gradient(circle at 8% 15%, rgba(255, 255, 255, 0.10) 0%, transparent 45%),
+    radial-gradient(circle at 90% 18%, rgba(255, 255, 255, 0.10) 0%, transparent 55%),
+    radial-gradient(circle at 50% 90%, rgba(255, 255, 255, 0.05) 0%, transparent 60%),
+    linear-gradient(135deg, #120E13 0%, #1C151E 50%, #241B26 100%);
+}
+.living .blobs { position: absolute; inset: 0; transition: opacity 900ms cubic-bezier(0.22, 1, 0.36, 1); }
+.living .blobs i { position: absolute; width: 55%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle closest-side, var(--c) 0%, transparent 100%); animation: float-a 16s ease-in-out infinite; }
+.living .blobs i:nth-child(1) { --c: var(--blob-1); top: -30%; left: -20%; animation-duration: 13.6s; }
+.living .blobs i:nth-child(2) { --c: var(--blob-2); top: 20%; left: -25%; animation-name: float-b; animation-duration: 18.4s; }
+.living .blobs i:nth-child(3) { --c: var(--blob-3); bottom: -45%; left: 15%; animation-duration: 19.2s; animation-delay: -6.4s; }
+.living .blobs i:nth-child(4) { --c: var(--blob-4); top: -35%; right: -20%; animation-name: float-b; animation-delay: -9.6s; }
+.living .blobs i:nth-child(5) { --c: var(--blob-2); width: 30%; top: 10%; left: 20%; animation-name: float-c; animation-duration: 9.6s; }
+.living .blobs i:nth-child(6) { --c: var(--blob-4); width: 26%; top: 35%; left: 55%; animation-name: float-c; animation-direction: reverse; animation-duration: 11.2s; animation-delay: -4.8s; }
+.living .blobs i:nth-child(7) { --c: var(--blob-1); width: 24%; top: 50%; left: 5%; animation-name: float-c; animation-duration: 8.8s; animation-delay: -8s; }
+.living .wander { position: absolute; top: 0; left: 0; width: 70%; aspect-ratio: 1; border-radius: 50%;
+  background: radial-gradient(circle closest-side, var(--glow) 0%, color-mix(in srgb, var(--glow) 55%, transparent) 30%, color-mix(in srgb, var(--glow) 20%, transparent) 60%, transparent 100%);
+  translate: calc(15cqw - 50%) calc(30cqh - 50%);
+  animation: wander 14s ease-in-out infinite, pulse 5.6s ease-in-out infinite alternate; }
+@keyframes float-a { 0%, 100% { translate: 0 0; scale: 1; } 33% { translate: 22% 14%; scale: 1.18; } 66% { translate: -14% 22%; scale: 0.88; } }
+@keyframes float-b { 0%, 100% { translate: 0 0; scale: 1; } 33% { translate: -22% 10%; scale: 0.86; } 66% { translate: 10% -16%; scale: 1.16; } }
+@keyframes float-c { 0%, 100% { translate: 0 0; scale: 1; } 25% { translate: 45% -25%; scale: 1.2; } 50% { translate: 80% 20%; scale: 0.85; } 75% { translate: 30% 45%; scale: 1.1; } }
+@keyframes wander { 0%, 100% { translate: calc(15cqw - 50%) calc(30cqh - 50%); } 25% { translate: calc(50cqw - 50%) calc(12cqh - 50%); } 50% { translate: calc(88cqw - 50%) calc(40cqh - 50%); } 75% { translate: calc(55cqw - 50%) calc(72cqh - 50%); } }
+@keyframes pulse { from { opacity: 0.65; scale: 0.92; } to { opacity: 1; scale: 1.08; } }
+@media (prefers-reduced-motion: reduce) { .living .blobs i, .living .wander { animation: none; } }
+.living.flat .blobs { opacity: 0; }
+/* "AI-Native": the hero's moving brand green (--gradient-text-brand). */
+.living p em, .type-head em { font-style: italic; white-space: nowrap; padding-inline: 0.15em; margin-inline: -0.15em; background: linear-gradient(90deg, #186954 0%, #00A86B 35%, #3EBA8D 50%, #00A86B 65%, #186954 100%); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: text-sheen 4s linear infinite; }
+[data-mode="dark"] .living p em, [data-mode="dark"] .type-head em { background-image: linear-gradient(90deg, #00A86B 0%, #6CD3AE 35%, #9DE2C9 50%, #6CD3AE 65%, #00A86B 100%); }
+@keyframes text-sheen { to { background-position: -200% 0; } }
+.type-demo.before .type-head em { font-style: normal; animation: none; background: none; color: inherit; -webkit-background-clip: border-box; background-clip: border-box; }
+.living.flat p em { animation: none; background: none; color: inherit; -webkit-background-clip: border-box; background-clip: border-box; }
+.living p { position: relative; margin: 0; font-family: var(--font-display); font-size: clamp(26px, 4vw, 52px); color: #1C151E; text-align: center; line-height: 1.1; padding: 0 24px; }
+
+/* ── 8. System numbers ───────────────────────────────── */
+.facts { display: grid; grid-template-columns: repeat(4, 1fr); width: 100%; border-top: 1px solid var(--ink-faint); }
+.fact { padding: 28px 18px 0 0; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.fact b { font-family: var(--font-display); font-weight: 500; font-size: clamp(48px, 6vw, 88px); line-height: 1; font-variant-numeric: tabular-nums; }
+.fact span { color: var(--ink-dim); font-size: 15px; line-height: 1.4; }
+@media (max-width: 760px) { .facts { grid-template-columns: repeat(2, 1fr); row-gap: 24px; } }
+
+/* ── 9. Rules ────────────────────────────────────────── */
+/* Introducing Poneglyph — a carved tablet of its tokens beside the laws. */
+.pg { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 72px); align-items: center; }
+.pg-copy { display: flex; flex-direction: column; gap: clamp(16px, 2.6vh, 28px); min-width: 0; }
+.pg-copy .lede { max-width: 46ch; }
+.pg-laws { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; counter-reset: law; }
+.pg-laws li { counter-increment: law; display: grid; grid-template-columns: 2.2em minmax(0, 1fr); column-gap: 12px; row-gap: 4px; padding-block: 14px; border-top: 1px solid var(--ink-faint); }
+.pg-laws li::before { content: counter(law, upper-roman); grid-row: span 2; font-family: var(--font-display); font-style: italic; font-size: 22px; color: var(--green); }
+.pg-laws strong { font-family: var(--font-display); font-weight: 500; font-size: clamp(20px, 2vw, 26px); line-height: 1.15; }
+.pg-laws span { color: var(--ink-dim); font-size: clamp(14px, 1.2vw, 16px); line-height: 1.5; }
+.pg-tablet { position: relative; justify-self: center; width: min(100%, 380px); border-radius: 28px; padding: 26px 24px; display: flex; flex-direction: column; justify-content: flex-end; gap: 12px; overflow: hidden; min-height: min(60vh, 460px);
+  background: radial-gradient(80% 60% at 75% 0%, rgba(62, 186, 141, 0.28) 0%, transparent 60%), radial-gradient(70% 60% at 0% 100%, rgba(131, 189, 228, 0.22) 0%, transparent 60%), linear-gradient(160deg, #4E3A52 0%, #2E2231 60%, #241B26 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 30px 60px -30px var(--shadow); }
+.pg-tablet::after { content: ""; position: absolute; inset: 0; opacity: 0.1; mix-blend-mode: overlay; background-size: 140px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); pointer-events: none; }
+.pg-mark { position: absolute; top: 2%; right: 8%; font-family: var(--font-display); font-style: italic; font-size: clamp(110px, 14vw, 180px); line-height: 1; color: transparent; -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.22); }
+.pg-carved { position: relative; margin: 0 0 6px; font-family: var(--font-display); font-size: clamp(18px, 1.8vw, 22px); line-height: 1.2; color: #F8F6F9; max-width: 22ch; text-wrap: balance; }
+.pg-carved em { color: #9DE2C9; white-space: nowrap; }
+.pg-tok { position: relative; display: flex; align-items: center; gap: 8px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.1); font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: clamp(11px, 1vw, 13px); opacity: 0; translate: 0 8px; transition: opacity 600ms ease, translate 600ms cubic-bezier(0.22, 1, 0.36, 1); }
+.slide.seen .pg-tok { opacity: 1; translate: 0 0; }
+.pg-tok code { color: rgba(240, 236, 241, 0.88); margin-right: auto; }
+.pg-tok b { font-weight: 400; color: #9DE2C9; transition: opacity 300ms ease; }
+.pg-tok b.swap { opacity: 0; }
+.pg-sw { width: 12px; height: 12px; border-radius: 3px; background: var(--v, #1F8268); transition: background-color 600ms ease; }
+.pg-rad { width: 14px; height: 14px; border: 1.5px solid #9DE2C9; border-right: 0; border-bottom: 0; border-top-left-radius: var(--v, 8px); transition: border-radius 600ms cubic-bezier(0.22, 1, 0.36, 1); }
+.pg-tok:nth-of-type(2) { transition-delay: 120ms; } .pg-tok:nth-of-type(3) { transition-delay: 240ms; } .pg-tok:nth-of-type(4) { transition-delay: 360ms; }
+.pg-note { position: relative; margin: 4px 0 0; font-size: 12px; color: rgba(240, 236, 241, 0.6); }
+.pg-tok:nth-of-type(5) { transition-delay: 480ms; } .pg-tok:nth-of-type(6) { transition-delay: 600ms; }
+@media (max-width: 760px) { .pg { grid-template-columns: 1fr; } .pg-tablet { aspect-ratio: 4 / 3; width: 100%; } }
+@media (prefers-reduced-motion: reduce) { .pg-tok { transition: none; opacity: 1; translate: none; } }
+/* Rules, shown — four rules with a live before/after each. */
+.rx { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(24px, 4vw, 56px); align-items: start; }
+.rx-list { display: flex; flex-direction: column; }
+.rx-rule { display: flex; flex-direction: column; gap: 6px; text-align: left; font: inherit; color: var(--ink-dim); background: none; border: 0; border-top: 1px solid var(--ink-faint); padding: 18px 0 18px 18px; cursor: pointer; position: relative; transition: color 300ms ease; }
+.rx-rule:last-child { border-bottom: 1px solid var(--ink-faint); }
+.rx-rule::before { content: ""; position: absolute; left: 0; top: 18px; bottom: 18px; width: 3px; border-radius: 3px; background: var(--green); transform: scaleY(0); transition: transform 400ms cubic-bezier(0.22, 1, 0.36, 1); }
+.rx-rule[aria-selected="true"] { color: var(--ink); }
+.rx-rule[aria-selected="true"]::before { transform: scaleY(1); }
+.rx-rule strong { font-family: var(--font-display); font-weight: 500; font-size: clamp(22px, 2.2vw, 30px); line-height: 1.15; }
+.rx-rule span { font-size: clamp(14px, 1.2vw, 17px); line-height: 1.5; max-width: 42ch; }
+.rx-rule:focus-visible { outline: 2px solid var(--sky); outline-offset: 4px; }
+.rx-stage { display: flex; flex-direction: column; gap: 14px; align-items: flex-start; min-width: 0; }
+.rx-demo { position: relative; width: 100%; aspect-ratio: 16 / 10; max-height: 46vh; border-radius: 20px; overflow: hidden; border: 1px solid var(--ink-faint); background: #FBFAFC; }
+.rx-pane[hidden] { display: none; }
+.rx-pane { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: clamp(18px, 3vw, 36px); gap: 14px; }
+/* glass */
+.rx-mesh { position: absolute; inset: 0; background: #F4F1F5; }
+.rx-mesh i { position: absolute; border-radius: 50%; filter: blur(30px); }
+.rx-mesh i:nth-child(1) { width: 40%; aspect-ratio: 1; left: 2%; top: -18%; background: #F7B9A0; }
+.rx-mesh i:nth-child(2) { width: 38%; aspect-ratio: 1; right: 4%; top: 28%; background: #7FA6DB; animation: rx-drift 7s ease-in-out infinite alternate; }
+.rx-mesh i:nth-child(3) { width: 34%; aspect-ratio: 1; left: 40%; bottom: -12%; background: #EE9DB6; animation: rx-drift 9s ease-in-out infinite alternate-reverse; }
+@keyframes rx-drift { to { translate: -18% 10%; } }
+.rx-mesh i { filter: blur(18px); }
+.rx-nav, .rx-card { position: relative; border: 1px solid rgba(255, 255, 255, 0.6); transition: background-color 700ms ease, backdrop-filter 700ms ease; }
+.rx-nav { display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 16px; border-radius: 99px; font-size: 13px; color: #1C151E; }
+.rx-nav b { font-weight: 800; margin-right: auto; }
+.rx-nav span { width: 34px; height: 6px; border-radius: 3px; background: rgba(28, 21, 30, 0.18); }
+.rx-nav em { font-style: normal; font-weight: 600; background: #1C151E; color: #fff; padding: 5px 12px; border-radius: 99px; }
+.rx-card { align-self: flex-end; width: 58%; display: flex; flex-direction: column; gap: 10px; padding: 18px; border-radius: 18px; color: #1C151E; font-size: 15px; }
+.rx-field { height: 28px; border-radius: 8px; border: 1px solid rgba(28, 21, 30, 0.14); background: rgba(255, 255, 255, 0.6); }
+.rx-btn { height: 28px; border-radius: 99px; background: #1F8268; }
+[data-after="0"] .rx-nav, [data-after="0"] .rx-card { background: #FFFFFF; }
+[data-after="1"] .rx-nav, [data-after="1"] .rx-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
+/* accent */
+.rx-head { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: clamp(22px, 2.6vw, 36px); line-height: 1.12; color: #1C151E; text-wrap: balance; }
+.rx-head.sm { font-size: clamp(16px, 1.6vw, 22px); color: #5E5161; }
+.rx-head em { font-style: normal; transition: color 600ms ease; display: inline-block; white-space: nowrap; }
+[data-after="1"] .rx-head em { font-style: italic; }
+[data-after="1"] .rx-head:first-child em { color: #1F8268; }
+/* one green: the real order summary, with the AI calling add-on */
+.rx-pane[data-rx="green"] { align-items: center; background: #F4F1F5; }
+.rx-order { width: min(88%, 340px); display: flex; flex-direction: column; gap: 10px; padding: 18px; border-radius: 18px; background: #fff; border: 1px solid rgba(28, 21, 30, 0.1); box-shadow: 0 10px 30px -18px rgba(46, 34, 48, 0.4); color: #1C151E; font-size: 13px; }
+.rx-o-title { font-size: 15px; }
+.rx-o-row { display: flex; justify-content: space-between; gap: 12px; }
+.rx-o-row.total { padding-top: 10px; border-top: 1px dashed rgba(28, 21, 30, 0.16); font-weight: 600; font-size: 15px; }
+.rx-addon { display: flex; flex-direction: column; gap: 10px; padding: 12px; border-radius: 12px; background: #F0ECF1; }
+.rx-addon-copy { display: flex; flex-direction: column; gap: 2px; }
+.rx-addon-copy span { color: #5E5161; font-size: 12px; }
+.rx-addon-copy .rx-addon-price { color: #1C151E; font-weight: 600; }
+.rx-cta { text-align: center; font-weight: 600; border-radius: 99px; color: #fff; background: #1F8268; transition: background-color 600ms ease; }
+.rx-cta.second { align-self: flex-start; font-size: 12px; padding: 6px 12px; }
+.rx-cta.primary { font-size: 14px; padding: 10px; }
+[data-after="1"] .rx-cta.second { background: #2A202C; }
+@media (max-width: 760px) { .rx { grid-template-columns: 1fr; } .rx-demo { aspect-ratio: 5 / 4; } }
+@media (prefers-reduced-motion: reduce) { .rx-mesh i { animation: none; } .rx-rule::before, .rx-nav, .rx-card, .rx-cta, .rx-head em { transition: none; } }
+.rules { display: grid; gap: 0; width: 100%; }
+.rule { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 24px; padding-block: 22px; border-top: 1px solid var(--ink-faint); align-items: baseline; }
+.rule:last-child { border-bottom: 1px solid var(--ink-faint); }
+.rule strong { font-family: var(--font-display); font-weight: 500; font-size: clamp(24px, 2.8vw, 38px); line-height: 1.1; }
+.rule span { color: var(--ink-dim); font-size: clamp(16px, 1.4vw, 19px); line-height: 1.5; }
+@media (max-width: 640px) { .rule { grid-template-columns: 1fr; gap: 8px; } }
+
+/* ── 10. Pages built ─────────────────────────────────── */
+.sitemap { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 900px; }
+.sitemap span { font-size: 15px; padding: 9px 16px; border-radius: 99px; border: 1px solid var(--ink-faint); color: var(--ink); }
+.sitemap .prod-sky { border-color: var(--sky); }
+.sitemap .prod-green { border-color: var(--green-bright); }
+.sitemap .prod-plum { border-color: var(--plum-soft); }
+.sitemap .prod-gold { border-color: var(--gold); }
+
+/* ── Nav ─────────────────────────────────────────────── */
+.counter {
+  position: fixed; z-index: 10;
+  right: calc(max(16px, env(safe-area-inset-right, 0px)) + 8px);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 18px);
+  display: flex; gap: 8px; align-items: center;
+  font-size: 12px; color: var(--ink-dim); font-variant-numeric: tabular-nums;
+}
+.counter button {
+  width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--ink-faint);
+  background: var(--chrome); color: var(--ink); font: inherit; font-size: 16px; cursor: pointer;
+  backdrop-filter: blur(10px);
+}
+.counter button:hover { border-color: var(--ink-dim); }
+.counter button:focus-visible { outline: 2px solid var(--sky); outline-offset: 2px; }
+#full[aria-pressed="true"] { border-color: var(--ink-dim); }
+/* Presenting: the controls step back until the pointer moves over them. */
+.presenting .counter { opacity: 0.25; transition: opacity 300ms ease; }
+.presenting .counter:hover, .presenting .counter:focus-within { opacity: 1; }
+#music[aria-pressed="true"] { border-color: var(--green-bright); color: var(--green-bright); }
+.dots {
+  position: fixed; z-index: 10; top: 50%; transform: translateY(-50%);
+  right: calc(max(16px, env(safe-area-inset-right, 0px)) + 4px);
+  display: flex; flex-direction: column; gap: 10px;
+}
+.dots button { width: 10px; height: 10px; padding: 0; border-radius: 99px; border: 0; background: var(--ink-faint); cursor: pointer; transition: height 400ms cubic-bezier(0.22, 1, 0.36, 1), background 300ms ease; }
+.dots button[aria-current="true"] { height: 28px; background: var(--ink); }
+.dots button:hover { background: var(--ink-dim); }
+.dots button:focus-visible { outline: 2px solid var(--sky); outline-offset: 3px; }
+@media (max-width: 640px) { .dots { display: none; } }
+</style>
+
+</head>
+<body>
+<main id="deck">
+
+  <section class="slide" aria-label="Title">
+    <div class="glow" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="inner center">
+      <p class="kicker rise">apna for employers · Brand and design review</p>
+      <h1 class="rise title-mark"><span class="sr">apna</span><svg class="title-wordmark" viewBox="0 0 30 11" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.357 4.953C6.357 5.19567 6.38733 5.3755 6.448 5.4925C6.50867 5.6095 6.617 5.69833 6.773 5.759L6.253 7.41C5.785 7.37533 5.40367 7.2865 5.109 7.1435C4.81433 7.0005 4.57167 6.76867 4.381 6.448C3.93033 7.124 3.23267 7.462 2.288 7.462C1.60333 7.462 1.05084 7.25617 0.6305 6.8445C0.210165 6.43283 0 5.902 0 5.252C0 4.48066 0.285997 3.89134 0.858 3.484C1.43 3.07666 2.262 2.873 3.354 2.873H3.848V2.704C3.848 2.35733 3.77867 2.12333 3.64 2.002C3.50133 1.88067 3.237 1.82 2.847 1.82C2.639 1.82 2.3725 1.8525 2.0475 1.9175C1.7225 1.9825 1.391 2.07133 1.053 2.184L0.494 0.546C0.918669 0.372666 1.38016 0.238334 1.8785 0.143C2.37684 0.0476662 2.82967 0 3.237 0C4.32901 0 5.122 0.210165 5.616 0.6305C6.11 1.05084 6.357 1.69433 6.357 2.561V4.953ZM3.082 5.653C3.238 5.653 3.38316 5.614 3.5175 5.536C3.65183 5.458 3.76233 5.35833 3.849 5.237V4.21H3.576C3.212 4.21 2.94333 4.275 2.77 4.405C2.59666 4.535 2.51 4.73433 2.51 5.003C2.51 5.20233 2.562 5.3605 2.666 5.4775C2.77 5.5945 2.90866 5.653 3.082 5.653ZM13.8185 0.975C13.3808 0.324997 12.733 0 11.875 0C11.5283 0 11.1838 0.0736659 10.8415 0.221C10.4992 0.368334 10.1893 0.606665 9.912 0.936L9.808 0.26H7.52V10.153L10.094 9.893V6.773C10.51 7.23234 11.0473 7.462 11.706 7.462C12.252 7.462 12.7352 7.2995 13.1555 6.9745C13.5758 6.6495 13.9008 6.20317 14.1305 5.6355C14.3602 5.06783 14.475 4.42434 14.475 3.705C14.475 2.53499 14.2562 1.625 13.8185 0.975ZM10.857 5.633C11.507 5.633 11.832 5.00467 11.832 3.748C11.832 3.21933 11.7973 2.81634 11.728 2.539C11.6587 2.26167 11.5655 2.0775 11.4485 1.9865C11.3315 1.8955 11.182 1.85 11 1.85C10.636 1.85 10.3327 2.06666 10.09 2.5V5.152C10.2027 5.32533 10.3197 5.44883 10.441 5.5225C10.5623 5.59617 10.701 5.633 10.857 5.633ZM21.2085 0.546C20.8748 0.181998 20.4177 0 19.837 0C19.421 0 19.0462 0.0779992 18.7125 0.234C18.3788 0.390001 18.0517 0.636998 17.731 0.975L17.549 0.26H15.3V7.202H17.874V2.561C18.1687 2.10166 18.459 1.872 18.745 1.872C18.875 1.872 18.9725 1.91967 19.0375 2.015C19.1025 2.11033 19.135 2.288 19.135 2.548V7.202H21.709V2.08C21.709 1.42133 21.5422 0.910002 21.2085 0.546ZM28.747 4.953C28.747 5.19567 28.7773 5.3755 28.838 5.4925C28.8987 5.6095 29.007 5.69833 29.163 5.759L28.643 7.41C28.175 7.37533 27.7937 7.2865 27.499 7.1435C27.2043 7.0005 26.9617 6.76867 26.771 6.448C26.3203 7.124 25.6227 7.462 24.678 7.462C23.9933 7.462 23.4408 7.25617 23.0205 6.8445C22.6002 6.43283 22.39 5.902 22.39 5.252C22.39 4.48066 22.676 3.89134 23.248 3.484C23.82 3.07666 24.652 2.873 25.744 2.873H26.238V2.704C26.238 2.35733 26.1687 2.12333 26.03 2.002C25.8913 1.88067 25.627 1.82 25.237 1.82C25.029 1.82 24.7625 1.8525 24.4375 1.9175C24.1125 1.9825 23.781 2.07133 23.443 2.184L22.884 0.546C23.3087 0.372666 23.7702 0.238334 24.2685 0.143C24.7668 0.0476662 25.2197 0 25.627 0C26.719 0 27.512 0.210165 28.006 0.6305C28.5 1.05084 28.747 1.69433 28.747 2.561V4.953ZM25.9075 5.536C25.7732 5.614 25.628 5.653 25.472 5.653C25.2987 5.653 25.16 5.5945 25.056 5.4775C24.952 5.3605 24.9 5.20233 24.9 5.003C24.9 4.73433 24.9867 4.535 25.16 4.405C25.3333 4.275 25.602 4.21 25.966 4.21H26.239V5.237C26.1523 5.35833 26.0418 5.458 25.9075 5.536Z" fill="currentColor"/></svg>, <em>redrawn.</em></h1>
+      <p class="lede rise">A new website, a modern brand, and one design system behind every screen.</p>
+    </div>
+    <p class="preshow-hint" aria-hidden="true">Press any key to begin</p>
+  </section>
+
+  <section class="slide" aria-label="Where we started">
+    <div class="inner center">
+      <p class="kicker rise">Where we started</p>
+      <h2 class="rise">Four colours.<br>One <em>promise.</em></h2>
+      <div class="tile icon-tile rise" role="img" aria-label="The apna app icon: the plum wordmark over green, sky and yellow stripes"><svg class="app-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M7.21875 0H28.7812C32.7681 0 36 3.23194 36 7.21875V28.7812C36 32.7681 32.7681 36 28.7812 36H7.21875C3.23194 36 0 32.7681 0 28.7812V7.21875C0 3.23194 3.23194 0 7.21875 0Z" fill="white"/>
+<path d="M35.4688 31.5C34.3948 34.139 31.806 36 28.7812 36H24V31.5H35.4688Z" fill="#FFD166"/>
+<path d="M11.9995 36H7.21826C4.19347 36 1.60471 34.139 0.530762 31.5H11.9995V36Z" fill="#2BB793"/>
+<rect x="12" y="31.5" width="12" height="4.5" fill="#83BDE4"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M9.857 19.453C9.857 19.6957 9.88733 19.8755 9.948 19.9925C10.0087 20.1095 10.117 20.1983 10.273 20.259L9.753 21.91C9.285 21.8753 8.90367 21.7865 8.609 21.6435C8.31433 21.5005 8.07167 21.2687 7.881 20.948C7.43033 21.624 6.73267 21.962 5.788 21.962C5.10333 21.962 4.55084 21.7562 4.1305 21.3445C3.71016 20.9328 3.5 20.402 3.5 19.752C3.5 18.9807 3.786 18.3913 4.358 17.984C4.93 17.5767 5.762 17.373 6.854 17.373H7.348V17.204C7.348 16.8573 7.27867 16.6233 7.14 16.502C7.00133 16.3807 6.737 16.32 6.347 16.32C6.139 16.32 5.8725 16.3525 5.5475 16.4175C5.2225 16.4825 4.891 16.5713 4.553 16.684L3.994 15.046C4.41867 14.8727 4.88016 14.7383 5.3785 14.643C5.87684 14.5477 6.32967 14.5 6.737 14.5C7.82901 14.5 8.622 14.7102 9.116 15.1305C9.61 15.5508 9.857 16.1943 9.857 17.061V19.453ZM6.582 20.153C6.738 20.153 6.88316 20.114 7.0175 20.036C7.15183 19.958 7.26233 19.8583 7.349 19.737V18.71H7.076C6.712 18.71 6.44333 18.775 6.27 18.905C6.09666 19.035 6.01 19.2343 6.01 19.503C6.01 19.7023 6.062 19.8605 6.166 19.9775C6.27 20.0945 6.40866 20.153 6.582 20.153ZM17.3185 15.475C16.8808 14.825 16.233 14.5 15.375 14.5C15.0283 14.5 14.6838 14.5737 14.3415 14.721C13.9992 14.8683 13.6893 15.1067 13.412 15.436L13.308 14.76H11.02V24.653L13.594 24.393V21.273C14.01 21.7323 14.5473 21.962 15.206 21.962C15.752 21.962 16.2352 21.7995 16.6555 21.4745C17.0758 21.1495 17.4008 20.7032 17.6305 20.1355C17.8602 19.5678 17.975 18.9243 17.975 18.205C17.975 17.035 17.7562 16.125 17.3185 15.475ZM14.357 20.133C15.007 20.133 15.332 19.5047 15.332 18.248C15.332 17.7193 15.2973 17.3163 15.228 17.039C15.1587 16.7617 15.0655 16.5775 14.9485 16.4865C14.8315 16.3955 14.682 16.35 14.5 16.35C14.136 16.35 13.8327 16.5667 13.59 17V19.652C13.7027 19.8253 13.8197 19.9488 13.941 20.0225C14.0623 20.0962 14.201 20.133 14.357 20.133ZM24.7085 15.046C24.3748 14.682 23.9177 14.5 23.337 14.5C22.921 14.5 22.5462 14.578 22.2125 14.734C21.8788 14.89 21.5517 15.137 21.231 15.475L21.049 14.76H18.8V21.702H21.374V17.061C21.6687 16.6017 21.959 16.372 22.245 16.372C22.375 16.372 22.4725 16.4197 22.5375 16.515C22.6025 16.6103 22.635 16.788 22.635 17.048V21.702H25.209V16.58C25.209 15.9213 25.0422 15.41 24.7085 15.046ZM32.247 19.453C32.247 19.6957 32.2773 19.8755 32.338 19.9925C32.3987 20.1095 32.507 20.1983 32.663 20.259L32.143 21.91C31.675 21.8753 31.2937 21.7865 30.999 21.6435C30.7043 21.5005 30.4617 21.2687 30.271 20.948C29.8203 21.624 29.1227 21.962 28.178 21.962C27.4933 21.962 26.9408 21.7562 26.5205 21.3445C26.1002 20.9328 25.89 20.402 25.89 19.752C25.89 18.9807 26.176 18.3913 26.748 17.984C27.32 17.5767 28.152 17.373 29.244 17.373H29.738V17.204C29.738 16.8573 29.6687 16.6233 29.53 16.502C29.3913 16.3807 29.127 16.32 28.737 16.32C28.529 16.32 28.2625 16.3525 27.9375 16.4175C27.6125 16.4825 27.281 16.5713 26.943 16.684L26.384 15.046C26.8087 14.8727 27.2702 14.7383 27.7685 14.643C28.2668 14.5477 28.7197 14.5 29.127 14.5C30.219 14.5 31.012 14.7102 31.506 15.1305C32 15.5508 32.247 16.1943 32.247 17.061V19.453ZM29.4075 20.036C29.2732 20.114 29.128 20.153 28.972 20.153C28.7987 20.153 28.66 20.0945 28.556 19.9775C28.452 19.8605 28.4 19.7023 28.4 19.503C28.4 19.2343 28.4867 19.035 28.66 18.905C28.8333 18.775 29.102 18.71 29.466 18.71H29.739V19.737C29.6523 19.8583 29.5418 19.958 29.4075 20.036Z" fill="#4D3951"/>
+</svg></div>
+      <div class="swatches rise">
+        <div class="sw"><i style="background:#2BB793"></i>Green</div>
+        <div class="sw"><i style="background:var(--sky)"></i>Sky</div>
+        <div class="sw"><i style="background:var(--gold)"></i>Yellow</div>
+        <div class="sw"><i style="background:var(--plum)"></i>Plum</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="From stripes to light">
+    <div class="inner center">
+      <p class="kicker rise">The idea</p>
+      <h2 class="rise">We kept the colours.<br>We let them <em>breathe.</em></h2>
+      <div class="morph rise" id="morph" aria-hidden="true"><i class="stripe s1"></i><i class="stripe s2"></i><i class="stripe s3"></i></div>
+      <div class="scrub rise">
+        <label for="melt" class="morph-labels"><span>Flat stripes</span><span>Soft, living light</span></label>
+        <input type="range" id="melt" min="0" max="100" value="0" aria-label="From flat stripes to soft light">
+        <span class="hint">Drag to see it happen</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide tintable" id="products-slide" aria-label="One colour per product">
+    <div class="stage-tint" aria-hidden="true"></div>
+    <div class="inner">
+      <p class="kicker rise">Every product owns a colour</p>
+      <h2 class="rise">Four products.<br>Four <em>moods.</em></h2>
+      <div class="products rise" role="group" aria-label="Pick a product">
+        <button type="button" class="prod p-green" data-tint="green" aria-pressed="false"><small>Green</small><span class="dot" style="background:var(--green)"></span><strong>Smart Job Posting</strong></button>
+        <button type="button" class="prod p-sky" data-tint="sky" aria-pressed="false"><small>Sky</small><span class="dot" style="background:var(--sky)"></span><strong>AI Calling Agent</strong></button>
+        <button type="button" class="prod p-plum" data-tint="plum" aria-pressed="false"><small>Plum</small><span class="dot" style="background:var(--plum)"></span><strong>apna Database</strong></button>
+        <button type="button" class="prod p-gold" data-tint="gold" aria-pressed="false"><small>Gold</small><span class="dot" style="background:var(--gold)"></span><strong>apna Unlimited</strong></button>
+      </div>
+      <p class="lede rise">Pick one: the whole stage takes its colour. All four come from the logo, so the brand stays recognisable.</p>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="Product pages continue the brand">
+    <div class="inner center">
+      <p class="kicker rise">Header to footer</p>
+      <h2 class="rise">Each page wears <em>its</em> colour.</h2>
+      <div class="pages rise" id="pages" role="group" aria-label="Tap a page to bring it forward">
+        <div class="page c-green"><div class="bar"><svg class="mini-mark" viewBox="0 0 30 11" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.357 4.953C6.357 5.19567 6.38733 5.3755 6.448 5.4925C6.50867 5.6095 6.617 5.69833 6.773 5.759L6.253 7.41C5.785 7.37533 5.40367 7.2865 5.109 7.1435C4.81433 7.0005 4.57167 6.76867 4.381 6.448C3.93033 7.124 3.23267 7.462 2.288 7.462C1.60333 7.462 1.05084 7.25617 0.6305 6.8445C0.210165 6.43283 0 5.902 0 5.252C0 4.48066 0.285997 3.89134 0.858 3.484C1.43 3.07666 2.262 2.873 3.354 2.873H3.848V2.704C3.848 2.35733 3.77867 2.12333 3.64 2.002C3.50133 1.88067 3.237 1.82 2.847 1.82C2.639 1.82 2.3725 1.8525 2.0475 1.9175C1.7225 1.9825 1.391 2.07133 1.053 2.184L0.494 0.546C0.918669 0.372666 1.38016 0.238334 1.8785 0.143C2.37684 0.0476662 2.82967 0 3.237 0C4.32901 0 5.122 0.210165 5.616 0.6305C6.11 1.05084 6.357 1.69433 6.357 2.561V4.953ZM3.082 5.653C3.238 5.653 3.38316 5.614 3.5175 5.536C3.65183 5.458 3.76233 5.35833 3.849 5.237V4.21H3.576C3.212 4.21 2.94333 4.275 2.77 4.405C2.59666 4.535 2.51 4.73433 2.51 5.003C2.51 5.20233 2.562 5.3605 2.666 5.4775C2.77 5.5945 2.90866 5.653 3.082 5.653ZM13.8185 0.975C13.3808 0.324997 12.733 0 11.875 0C11.5283 0 11.1838 0.0736659 10.8415 0.221C10.4992 0.368334 10.1893 0.606665 9.912 0.936L9.808 0.26H7.52V10.153L10.094 9.893V6.773C10.51 7.23234 11.0473 7.462 11.706 7.462C12.252 7.462 12.7352 7.2995 13.1555 6.9745C13.5758 6.6495 13.9008 6.20317 14.1305 5.6355C14.3602 5.06783 14.475 4.42434 14.475 3.705C14.475 2.53499 14.2562 1.625 13.8185 0.975ZM10.857 5.633C11.507 5.633 11.832 5.00467 11.832 3.748C11.832 3.21933 11.7973 2.81634 11.728 2.539C11.6587 2.26167 11.5655 2.0775 11.4485 1.9865C11.3315 1.8955 11.182 1.85 11 1.85C10.636 1.85 10.3327 2.06666 10.09 2.5V5.152C10.2027 5.32533 10.3197 5.44883 10.441 5.5225C10.5623 5.59617 10.701 5.633 10.857 5.633ZM21.2085 0.546C20.8748 0.181998 20.4177 0 19.837 0C19.421 0 19.0462 0.0779992 18.7125 0.234C18.3788 0.390001 18.0517 0.636998 17.731 0.975L17.549 0.26H15.3V7.202H17.874V2.561C18.1687 2.10166 18.459 1.872 18.745 1.872C18.875 1.872 18.9725 1.91967 19.0375 2.015C19.1025 2.11033 19.135 2.288 19.135 2.548V7.202H21.709V2.08C21.709 1.42133 21.5422 0.910002 21.2085 0.546ZM28.747 4.953C28.747 5.19567 28.7773 5.3755 28.838 5.4925C28.8987 5.6095 29.007 5.69833 29.163 5.759L28.643 7.41C28.175 7.37533 27.7937 7.2865 27.499 7.1435C27.2043 7.0005 26.9617 6.76867 26.771 6.448C26.3203 7.124 25.6227 7.462 24.678 7.462C23.9933 7.462 23.4408 7.25617 23.0205 6.8445C22.6002 6.43283 22.39 5.902 22.39 5.252C22.39 4.48066 22.676 3.89134 23.248 3.484C23.82 3.07666 24.652 2.873 25.744 2.873H26.238V2.704C26.238 2.35733 26.1687 2.12333 26.03 2.002C25.8913 1.88067 25.627 1.82 25.237 1.82C25.029 1.82 24.7625 1.8525 24.4375 1.9175C24.1125 1.9825 23.781 2.07133 23.443 2.184L22.884 0.546C23.3087 0.372666 23.7702 0.238334 24.2685 0.143C24.7668 0.0476662 25.2197 0 25.627 0C26.719 0 27.512 0.210165 28.006 0.6305C28.5 1.05084 28.747 1.69433 28.747 2.561V4.953ZM25.9075 5.536C25.7732 5.614 25.628 5.653 25.472 5.653C25.2987 5.653 25.16 5.5945 25.056 5.4775C24.952 5.3605 24.9 5.20233 24.9 5.003C24.9 4.73433 24.9867 4.535 25.16 4.405C25.3333 4.275 25.602 4.21 25.966 4.21H26.239V5.237C26.1523 5.35833 26.0418 5.458 25.9075 5.536Z" fill="currentColor"/></svg></div><div class="hero"><span class="chip">Smart job posting</span><h3>Get applications from relevant, <em>high-intent</em> candidates</h3><span class="btn">Post a smart-AI job</span><div class="cards"><i></i><i></i><i></i><i></i></div></div></div>
+        <div class="page c-sky"><div class="bar"><svg class="mini-mark" viewBox="0 0 30 11" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.357 4.953C6.357 5.19567 6.38733 5.3755 6.448 5.4925C6.50867 5.6095 6.617 5.69833 6.773 5.759L6.253 7.41C5.785 7.37533 5.40367 7.2865 5.109 7.1435C4.81433 7.0005 4.57167 6.76867 4.381 6.448C3.93033 7.124 3.23267 7.462 2.288 7.462C1.60333 7.462 1.05084 7.25617 0.6305 6.8445C0.210165 6.43283 0 5.902 0 5.252C0 4.48066 0.285997 3.89134 0.858 3.484C1.43 3.07666 2.262 2.873 3.354 2.873H3.848V2.704C3.848 2.35733 3.77867 2.12333 3.64 2.002C3.50133 1.88067 3.237 1.82 2.847 1.82C2.639 1.82 2.3725 1.8525 2.0475 1.9175C1.7225 1.9825 1.391 2.07133 1.053 2.184L0.494 0.546C0.918669 0.372666 1.38016 0.238334 1.8785 0.143C2.37684 0.0476662 2.82967 0 3.237 0C4.32901 0 5.122 0.210165 5.616 0.6305C6.11 1.05084 6.357 1.69433 6.357 2.561V4.953ZM3.082 5.653C3.238 5.653 3.38316 5.614 3.5175 5.536C3.65183 5.458 3.76233 5.35833 3.849 5.237V4.21H3.576C3.212 4.21 2.94333 4.275 2.77 4.405C2.59666 4.535 2.51 4.73433 2.51 5.003C2.51 5.20233 2.562 5.3605 2.666 5.4775C2.77 5.5945 2.90866 5.653 3.082 5.653ZM13.8185 0.975C13.3808 0.324997 12.733 0 11.875 0C11.5283 0 11.1838 0.0736659 10.8415 0.221C10.4992 0.368334 10.1893 0.606665 9.912 0.936L9.808 0.26H7.52V10.153L10.094 9.893V6.773C10.51 7.23234 11.0473 7.462 11.706 7.462C12.252 7.462 12.7352 7.2995 13.1555 6.9745C13.5758 6.6495 13.9008 6.20317 14.1305 5.6355C14.3602 5.06783 14.475 4.42434 14.475 3.705C14.475 2.53499 14.2562 1.625 13.8185 0.975ZM10.857 5.633C11.507 5.633 11.832 5.00467 11.832 3.748C11.832 3.21933 11.7973 2.81634 11.728 2.539C11.6587 2.26167 11.5655 2.0775 11.4485 1.9865C11.3315 1.8955 11.182 1.85 11 1.85C10.636 1.85 10.3327 2.06666 10.09 2.5V5.152C10.2027 5.32533 10.3197 5.44883 10.441 5.5225C10.5623 5.59617 10.701 5.633 10.857 5.633ZM21.2085 0.546C20.8748 0.181998 20.4177 0 19.837 0C19.421 0 19.0462 0.0779992 18.7125 0.234C18.3788 0.390001 18.0517 0.636998 17.731 0.975L17.549 0.26H15.3V7.202H17.874V2.561C18.1687 2.10166 18.459 1.872 18.745 1.872C18.875 1.872 18.9725 1.91967 19.0375 2.015C19.1025 2.11033 19.135 2.288 19.135 2.548V7.202H21.709V2.08C21.709 1.42133 21.5422 0.910002 21.2085 0.546ZM28.747 4.953C28.747 5.19567 28.7773 5.3755 28.838 5.4925C28.8987 5.6095 29.007 5.69833 29.163 5.759L28.643 7.41C28.175 7.37533 27.7937 7.2865 27.499 7.1435C27.2043 7.0005 26.9617 6.76867 26.771 6.448C26.3203 7.124 25.6227 7.462 24.678 7.462C23.9933 7.462 23.4408 7.25617 23.0205 6.8445C22.6002 6.43283 22.39 5.902 22.39 5.252C22.39 4.48066 22.676 3.89134 23.248 3.484C23.82 3.07666 24.652 2.873 25.744 2.873H26.238V2.704C26.238 2.35733 26.1687 2.12333 26.03 2.002C25.8913 1.88067 25.627 1.82 25.237 1.82C25.029 1.82 24.7625 1.8525 24.4375 1.9175C24.1125 1.9825 23.781 2.07133 23.443 2.184L22.884 0.546C23.3087 0.372666 23.7702 0.238334 24.2685 0.143C24.7668 0.0476662 25.2197 0 25.627 0C26.719 0 27.512 0.210165 28.006 0.6305C28.5 1.05084 28.747 1.69433 28.747 2.561V4.953ZM25.9075 5.536C25.7732 5.614 25.628 5.653 25.472 5.653C25.2987 5.653 25.16 5.5945 25.056 5.4775C24.952 5.3605 24.9 5.20233 24.9 5.003C24.9 4.73433 24.9867 4.535 25.16 4.405C25.3333 4.275 25.602 4.21 25.966 4.21H26.239V5.237C26.1523 5.35833 26.0418 5.458 25.9075 5.536Z" fill="currentColor"/></svg></div><div class="hero"><span class="chip">AI Calling Agent</span><h3>AI Calling Agent interviews and <em>shortlists</em> candidates 24/7</h3><span class="btn">Post a job now</span><div class="cards"><i></i><i></i><i></i><i></i></div></div></div>
+        <div class="page c-plum"><div class="bar"><svg class="mini-mark" viewBox="0 0 30 11" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.357 4.953C6.357 5.19567 6.38733 5.3755 6.448 5.4925C6.50867 5.6095 6.617 5.69833 6.773 5.759L6.253 7.41C5.785 7.37533 5.40367 7.2865 5.109 7.1435C4.81433 7.0005 4.57167 6.76867 4.381 6.448C3.93033 7.124 3.23267 7.462 2.288 7.462C1.60333 7.462 1.05084 7.25617 0.6305 6.8445C0.210165 6.43283 0 5.902 0 5.252C0 4.48066 0.285997 3.89134 0.858 3.484C1.43 3.07666 2.262 2.873 3.354 2.873H3.848V2.704C3.848 2.35733 3.77867 2.12333 3.64 2.002C3.50133 1.88067 3.237 1.82 2.847 1.82C2.639 1.82 2.3725 1.8525 2.0475 1.9175C1.7225 1.9825 1.391 2.07133 1.053 2.184L0.494 0.546C0.918669 0.372666 1.38016 0.238334 1.8785 0.143C2.37684 0.0476662 2.82967 0 3.237 0C4.32901 0 5.122 0.210165 5.616 0.6305C6.11 1.05084 6.357 1.69433 6.357 2.561V4.953ZM3.082 5.653C3.238 5.653 3.38316 5.614 3.5175 5.536C3.65183 5.458 3.76233 5.35833 3.849 5.237V4.21H3.576C3.212 4.21 2.94333 4.275 2.77 4.405C2.59666 4.535 2.51 4.73433 2.51 5.003C2.51 5.20233 2.562 5.3605 2.666 5.4775C2.77 5.5945 2.90866 5.653 3.082 5.653ZM13.8185 0.975C13.3808 0.324997 12.733 0 11.875 0C11.5283 0 11.1838 0.0736659 10.8415 0.221C10.4992 0.368334 10.1893 0.606665 9.912 0.936L9.808 0.26H7.52V10.153L10.094 9.893V6.773C10.51 7.23234 11.0473 7.462 11.706 7.462C12.252 7.462 12.7352 7.2995 13.1555 6.9745C13.5758 6.6495 13.9008 6.20317 14.1305 5.6355C14.3602 5.06783 14.475 4.42434 14.475 3.705C14.475 2.53499 14.2562 1.625 13.8185 0.975ZM10.857 5.633C11.507 5.633 11.832 5.00467 11.832 3.748C11.832 3.21933 11.7973 2.81634 11.728 2.539C11.6587 2.26167 11.5655 2.0775 11.4485 1.9865C11.3315 1.8955 11.182 1.85 11 1.85C10.636 1.85 10.3327 2.06666 10.09 2.5V5.152C10.2027 5.32533 10.3197 5.44883 10.441 5.5225C10.5623 5.59617 10.701 5.633 10.857 5.633ZM21.2085 0.546C20.8748 0.181998 20.4177 0 19.837 0C19.421 0 19.0462 0.0779992 18.7125 0.234C18.3788 0.390001 18.0517 0.636998 17.731 0.975L17.549 0.26H15.3V7.202H17.874V2.561C18.1687 2.10166 18.459 1.872 18.745 1.872C18.875 1.872 18.9725 1.91967 19.0375 2.015C19.1025 2.11033 19.135 2.288 19.135 2.548V7.202H21.709V2.08C21.709 1.42133 21.5422 0.910002 21.2085 0.546ZM28.747 4.953C28.747 5.19567 28.7773 5.3755 28.838 5.4925C28.8987 5.6095 29.007 5.69833 29.163 5.759L28.643 7.41C28.175 7.37533 27.7937 7.2865 27.499 7.1435C27.2043 7.0005 26.9617 6.76867 26.771 6.448C26.3203 7.124 25.6227 7.462 24.678 7.462C23.9933 7.462 23.4408 7.25617 23.0205 6.8445C22.6002 6.43283 22.39 5.902 22.39 5.252C22.39 4.48066 22.676 3.89134 23.248 3.484C23.82 3.07666 24.652 2.873 25.744 2.873H26.238V2.704C26.238 2.35733 26.1687 2.12333 26.03 2.002C25.8913 1.88067 25.627 1.82 25.237 1.82C25.029 1.82 24.7625 1.8525 24.4375 1.9175C24.1125 1.9825 23.781 2.07133 23.443 2.184L22.884 0.546C23.3087 0.372666 23.7702 0.238334 24.2685 0.143C24.7668 0.0476662 25.2197 0 25.627 0C26.719 0 27.512 0.210165 28.006 0.6305C28.5 1.05084 28.747 1.69433 28.747 2.561V4.953ZM25.9075 5.536C25.7732 5.614 25.628 5.653 25.472 5.653C25.2987 5.653 25.16 5.5945 25.056 5.4775C24.952 5.3605 24.9 5.20233 24.9 5.003C24.9 4.73433 24.9867 4.535 25.16 4.405C25.3333 4.275 25.602 4.21 25.966 4.21H26.239V5.237C26.1523 5.35833 26.0418 5.458 25.9075 5.536Z" fill="currentColor"/></svg></div><div class="hero"><span class="chip">apna Database</span><h3>Quickly hire <em>active</em> jobseekers around your office.</h3><span class="btn">Search candidates</span><div class="cards"><i></i><i></i><i></i><i></i></div></div></div>
+        <div class="page c-gold"><div class="bar"><svg class="mini-mark" viewBox="0 0 30 11" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.357 4.953C6.357 5.19567 6.38733 5.3755 6.448 5.4925C6.50867 5.6095 6.617 5.69833 6.773 5.759L6.253 7.41C5.785 7.37533 5.40367 7.2865 5.109 7.1435C4.81433 7.0005 4.57167 6.76867 4.381 6.448C3.93033 7.124 3.23267 7.462 2.288 7.462C1.60333 7.462 1.05084 7.25617 0.6305 6.8445C0.210165 6.43283 0 5.902 0 5.252C0 4.48066 0.285997 3.89134 0.858 3.484C1.43 3.07666 2.262 2.873 3.354 2.873H3.848V2.704C3.848 2.35733 3.77867 2.12333 3.64 2.002C3.50133 1.88067 3.237 1.82 2.847 1.82C2.639 1.82 2.3725 1.8525 2.0475 1.9175C1.7225 1.9825 1.391 2.07133 1.053 2.184L0.494 0.546C0.918669 0.372666 1.38016 0.238334 1.8785 0.143C2.37684 0.0476662 2.82967 0 3.237 0C4.32901 0 5.122 0.210165 5.616 0.6305C6.11 1.05084 6.357 1.69433 6.357 2.561V4.953ZM3.082 5.653C3.238 5.653 3.38316 5.614 3.5175 5.536C3.65183 5.458 3.76233 5.35833 3.849 5.237V4.21H3.576C3.212 4.21 2.94333 4.275 2.77 4.405C2.59666 4.535 2.51 4.73433 2.51 5.003C2.51 5.20233 2.562 5.3605 2.666 5.4775C2.77 5.5945 2.90866 5.653 3.082 5.653ZM13.8185 0.975C13.3808 0.324997 12.733 0 11.875 0C11.5283 0 11.1838 0.0736659 10.8415 0.221C10.4992 0.368334 10.1893 0.606665 9.912 0.936L9.808 0.26H7.52V10.153L10.094 9.893V6.773C10.51 7.23234 11.0473 7.462 11.706 7.462C12.252 7.462 12.7352 7.2995 13.1555 6.9745C13.5758 6.6495 13.9008 6.20317 14.1305 5.6355C14.3602 5.06783 14.475 4.42434 14.475 3.705C14.475 2.53499 14.2562 1.625 13.8185 0.975ZM10.857 5.633C11.507 5.633 11.832 5.00467 11.832 3.748C11.832 3.21933 11.7973 2.81634 11.728 2.539C11.6587 2.26167 11.5655 2.0775 11.4485 1.9865C11.3315 1.8955 11.182 1.85 11 1.85C10.636 1.85 10.3327 2.06666 10.09 2.5V5.152C10.2027 5.32533 10.3197 5.44883 10.441 5.5225C10.5623 5.59617 10.701 5.633 10.857 5.633ZM21.2085 0.546C20.8748 0.181998 20.4177 0 19.837 0C19.421 0 19.0462 0.0779992 18.7125 0.234C18.3788 0.390001 18.0517 0.636998 17.731 0.975L17.549 0.26H15.3V7.202H17.874V2.561C18.1687 2.10166 18.459 1.872 18.745 1.872C18.875 1.872 18.9725 1.91967 19.0375 2.015C19.1025 2.11033 19.135 2.288 19.135 2.548V7.202H21.709V2.08C21.709 1.42133 21.5422 0.910002 21.2085 0.546ZM28.747 4.953C28.747 5.19567 28.7773 5.3755 28.838 5.4925C28.8987 5.6095 29.007 5.69833 29.163 5.759L28.643 7.41C28.175 7.37533 27.7937 7.2865 27.499 7.1435C27.2043 7.0005 26.9617 6.76867 26.771 6.448C26.3203 7.124 25.6227 7.462 24.678 7.462C23.9933 7.462 23.4408 7.25617 23.0205 6.8445C22.6002 6.43283 22.39 5.902 22.39 5.252C22.39 4.48066 22.676 3.89134 23.248 3.484C23.82 3.07666 24.652 2.873 25.744 2.873H26.238V2.704C26.238 2.35733 26.1687 2.12333 26.03 2.002C25.8913 1.88067 25.627 1.82 25.237 1.82C25.029 1.82 24.7625 1.8525 24.4375 1.9175C24.1125 1.9825 23.781 2.07133 23.443 2.184L22.884 0.546C23.3087 0.372666 23.7702 0.238334 24.2685 0.143C24.7668 0.0476662 25.2197 0 25.627 0C26.719 0 27.512 0.210165 28.006 0.6305C28.5 1.05084 28.747 1.69433 28.747 2.561V4.953ZM25.9075 5.536C25.7732 5.614 25.628 5.653 25.472 5.653C25.2987 5.653 25.16 5.5945 25.056 5.4775C24.952 5.3605 24.9 5.20233 24.9 5.003C24.9 4.73433 24.9867 4.535 25.16 4.405C25.3333 4.275 25.602 4.21 25.966 4.21H26.239V5.237C26.1523 5.35833 26.0418 5.458 25.9075 5.536Z" fill="currentColor"/></svg></div><div class="hero"><span class="chip">apna Unlimited</span><h3>Post <em>unlimited</em> jobs in one plan</h3><span class="btn">Subscribe now</span><div class="cards"><i></i><i></i><i></i><i></i></div></div></div>
+      </div>
+      <p class="caption rise">The headlines are the live product pages. Green stays the one action button everywhere.</p>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="Typography">
+    <div class="inner">
+      <p class="kicker rise">Type</p>
+      <h2 class="rise">A voice with <em>character.</em></h2>
+      <div class="type-demo rise" id="typedemo">
+        <p class="type-eyebrow">India's #1 Hiring Platform</p>
+        <p class="type-head">India's Largest <em>AI-Native</em> Early Talent Platform</p>
+        <p class="type-body">Streamlining end-to-end hiring process. Building Bharat's workforce in the AI economy.</p>
+        <div class="type-stats"><span><b>6 Cr+</b>Candidates</span><span><b>7 L+</b>Businesses &amp; Enterprises</span><span><b>7,200+</b>Towns &amp; Cities</span></div>
+      </div>
+      <div class="type-row rise">
+        <div class="toggle" role="group" aria-label="Compare type">
+          <button type="button" id="type-before" aria-pressed="false">Before: one typeface</button>
+          <button type="button" id="type-after" aria-pressed="true">After: an editorial serif</button>
+        </div>
+        <p class="type-product">The product itself is Inter only. The serif is the brand&rsquo;s voice, never the tool&rsquo;s; the one exception is a customer&rsquo;s quote.</p>
+      </div>
+      <div class="type-rules rise">
+        <div><strong class="tr-serif">Playfair Display</strong><span>Hero headlines, section headings and quotes. Where the brand speaks.</span></div>
+        <div><strong class="tr-sans">Inter</strong><span>Everything you read, tap and compare: body, buttons, forms, and every number.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="Clay illustrations">
+    <div class="inner center">
+      <p class="kicker rise">A warmer voice</p>
+      <h2 class="rise">Ideas you could <em>hold.</em></h2>
+      <div class="clay rise">
+        <img src="img/ownership.png" alt="Clay key: ownership">
+        <img src="img/student.png" alt="Clay graduation cap: students">
+        <img src="img/practise.png" alt="Clay speech bubbles and microphone: practise">
+        <img src="img/database-search.png" alt="Clay magnifier over a database: search">
+        <img src="img/walk-ins.png" alt="Clay calendar with footprints: walk-ins">
+        <img src="img/playbook.png" alt="Clay book: the Gen Z Talent Playbook">
+      </div>
+      <p class="lede rise">Hand-made 3D clay objects in the logo's colours. Twenty-five so far, across culture, campus and Enterprise.</p>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="Motion">
+    <div class="inner center">
+      <p class="kicker rise">Motion</p>
+      <h2 class="rise">A page that feels <em>alive.</em></h2>
+      <div class="living rise" id="living">
+        <div class="blobs" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><b class="wander"></b></div>
+        <p>India's Largest <em>AI-Native</em><br>Early Talent Platform</p>
+      </div>
+      <div class="toggle rise" role="group" aria-label="Compare">
+        <button type="button" id="flat-btn" aria-pressed="false">Before: flat</button>
+        <button type="button" id="alive-btn" aria-pressed="true">After: alive</button>
+      </div>
+      <p class="caption rise">The homepage hero: colour drifts slowly behind the content, and cards move with weight, never a jump.</p>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="Introducing Poneglyph">
+    <div class="inner pg">
+      <div class="pg-copy">
+        <p class="kicker rise">Introducing</p>
+        <h2 class="rise"><em>Poneglyph.</em></h2>
+        <p class="lede rise">apna&rsquo;s design system. Named after the stone tablets in One Piece that hold the true record: written once, in one script, and read by everyone who comes after.</p>
+        <ol class="pg-laws rise">
+          <li><strong>Written once, read everywhere</strong><span>Every colour, size and motion is a named token. Change it in one place and every screen follows.</span></li>
+          <li><strong>Compose, never re-style</strong><span>Pages are built from existing parts. A new need becomes a new part first, so nothing is drawn twice.</span></li>
+          <li><strong>Subtract the obvious, add the meaningful</strong><span>After Maeda&rsquo;s laws of simplicity: one green action, one italic word, and the warmth kept in.</span></li>
+        </ol>
+      </div>
+      <div class="pg-tablet rise" aria-hidden="true">
+        <span class="pg-mark">P</span>
+        <p class="pg-carved">The principles are carved. <em>The values are not.</em></p>
+        <div class="pg-tok"><code>--primary</code><i class="pg-sw"></i><b data-v='["#1F8268"]'>#1F8268</b></div>
+        <div class="pg-tok"><code>--radius-card</code><i class="pg-rad"></i><b data-v='["20px"]'>20px</b></div>
+        <div class="pg-tok"><code>--surface-glass</code><b data-v='["card 90%","card 80%"]'>card 90%</b></div>
+        <div class="pg-tok"><code>--ambient-glow</code><b data-v='["white 10%","none"]'>white 10%</b></div>
+        <div class="pg-tok"><code>--duration-ambient</code><b data-v='["16s","24s","12s","16s"]'>16s</b></div>
+        <div class="pg-tok"><code>--ease-glide</code><b data-v='["0.22, 1, 0.36, 1"]'>0.22, 1, 0.36, 1</b></div>
+        <p class="pg-note">Real values, retuned this week. The names never moved.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="The design system">
+    <div class="inner">
+      <p class="kicker rise">Poneglyph, in numbers</p>
+      <h2 class="rise">One system.<br>Every <em>screen.</em></h2>
+      <div class="facts rise">
+        <div class="fact"><b data-count="70">70</b><span>building blocks, from a button to a pricing card</span></div>
+        <div class="fact"><b data-count="4">4</b><span>product colours, all from the logo</span></div>
+        <div class="fact"><b data-count="2">2</b><span>typefaces, one voice: a serif for the brand, Inter for the work</span></div>
+        <div class="fact"><b data-count="1">1</b><span>green action per screen</span></div>
+      </div>
+      <p class="lede rise">Designers and engineers build from the same parts. A change made once shows up everywhere.</p>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="How the system is built">
+    <div class="inner center">
+      <p class="kicker rise">How it holds together</p>
+      <h2 class="rise">Change one colour. <em>Everything</em> follows.</h2>
+      <div class="token-picker rise" role="radiogroup" aria-label="Set the brand green token">
+        <span class="token-name">brand green</span>
+        <button type="button" role="radio" aria-checked="true" aria-label="Logo green" data-c="#1F8268" style="--sw:#1F8268"></button>
+        <button type="button" role="radio" aria-checked="false" aria-label="Sky" data-c="#2F87E4" style="--sw:#2F87E4"></button>
+        <button type="button" role="radio" aria-checked="false" aria-label="Plum" data-c="#4E3A52" style="--sw:#4E3A52"></button>
+        <button type="button" role="radio" aria-checked="false" aria-label="Gold" data-c="#D97706" style="--sw:#D97706"></button>
+      </div>
+      <div class="token-screen rise" id="token-screen" aria-hidden="true">
+        <div class="ts-tabs"><span class="on">Jobs</span><span>Database</span><span>Unlimited</span></div>
+        <div class="ts-row">
+          <span class="ts-btn">Post a job</span>
+          <span class="ts-chip">Active (3)</span>
+          <span class="ts-badge">13% OFF</span>
+          <span class="ts-link">View active leads →</span>
+        </div>
+        <div class="ts-row">
+          <span class="ts-check">✓</span><span class="ts-label">Verified recruiter</span>
+          <span class="ts-switch"><i></i></span><span class="ts-label">WhatsApp alerts</span>
+        </div>
+        <div class="ts-progress"><i></i></div>
+      </div>
+      <p class="caption rise">One name, set in one place. Colours can't be typed in by hand, so one change reaches every screen at once.</p>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="Simple rules">
+    <div class="inner">
+      <p class="kicker rise">Simple rules, kept everywhere</p>
+      <h2 class="rise">Consistency, <em>by design.</em></h2>
+      <div class="rx rise">
+        <div class="rx-list" role="tablist" aria-label="Rules">
+          <button class="rx-rule" role="tab" aria-selected="true" data-rx="glass"><strong>Cards on a gradient are glass</strong><span>One rule, on for every marketing page at once. Nobody edited a page.</span></button>
+          <button class="rx-rule" role="tab" aria-selected="false" data-rx="accent"><strong>One italic word per headline</strong><span>The brand&rsquo;s voice holds on every page, whoever writes the copy.</span></button>
+          <button class="rx-rule" role="tab" aria-selected="false" data-rx="green"><strong>One green button per screen</strong><span>The add-on used to wear the same green as &ldquo;Proceed to pay&rdquo;. Now it&rsquo;s dark, so paying is the one clear next step.</span></button>
+        </div>
+        <div class="rx-stage">
+          <div class="toggle rx-toggle" role="group" aria-label="Show">
+            <button type="button" aria-pressed="false" data-after="0">Before</button>
+            <button type="button" aria-pressed="true" data-after="1">After</button>
+          </div>
+          <div class="rx-demo" data-after="1">
+            <div class="rx-pane" data-rx="glass">
+              <div class="rx-mesh"><i></i><i></i><i></i></div>
+              <div class="rx-nav"><b>apna</b><span></span><span></span><span></span><em>Login</em></div>
+              <div class="rx-card"><b>Let&rsquo;s get started</b><span class="rx-field"></span><span class="rx-btn"></span></div>
+            </div>
+            <div class="rx-pane" data-rx="accent" hidden>
+              <p class="rx-head">India&rsquo;s Largest <em>AI-Native</em> Early Talent Platform</p>
+              <p class="rx-head sm">Get applications from relevant, <em>high-intent</em> candidates</p>
+              <p class="rx-head sm">Build what <em>millions</em> run on</p>
+            </div>
+            <div class="rx-pane" data-rx="green" hidden>
+              <div class="rx-order">
+                <b class="rx-o-title">Order summary</b>
+                <div class="rx-o-row"><span>Premium job &times; 1</span><span>&#8377;1,399</span></div>
+                <div class="rx-addon">
+                  <div class="rx-addon-copy"><b>AI calling agent</b><span>Calls and shortlists every applicant, 24/7</span><span class="rx-addon-price">&#8377;1,600 for this job</span></div>
+                  <span class="rx-cta second">Add AI calling agent</span>
+                </div>
+                <div class="rx-o-row total"><span>Total</span><span>&#8377;1,399</span></div>
+                <span class="rx-cta primary">Proceed to pay</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="Feedback and motion">
+    <div class="inner center">
+      <p class="kicker rise">Press to try</p>
+      <h2 class="rise">Everything answers <em>your touch.</em></h2>
+      <div class="play rise">
+        <div class="play-cell">
+          <button type="button" class="k-btn k-primary k-big ink">Press me</button>
+          <small>A ripple from your finger, a gentle press</small>
+        </div>
+        <div class="play-cell">
+          <div class="k-seg" id="seg" role="group" aria-label="Plan type">
+            <span class="seg-pill" aria-hidden="true"></span>
+            <button type="button" aria-pressed="true">Jobs</button><button type="button" aria-pressed="false">Database</button><button type="button" aria-pressed="false">Unlimited</button>
+          </div>
+          <small>The highlight glides; it never jumps</small>
+        </div>
+        <div class="play-cell">
+          <div class="k-plans" id="plans" role="radiogroup" aria-label="Pick a plan">
+            <button type="button" role="radio" class="k-plan" aria-checked="false"><span class="k-plan-text"><b>3 Job credits</b><small>Valid for 30 days</small></span><span class="k-price">₹1,949</span><span class="k-radio" aria-hidden="true"></span></button>
+            <button type="button" role="radio" class="k-plan" aria-checked="true"><span class="k-plan-text"><b>6 Job credits</b><small>Valid for 90 days</small></span><span class="k-price">₹3,649</span><span class="k-radio" aria-hidden="true"></span></button>
+          </div>
+          <small>Selections land with a small spring</small>
+        </div>
+        <div class="play-cell">
+          <div class="k-nav">
+            <button type="button" class="k-nav-row" id="navgroup" aria-expanded="false" aria-controls="navsub"><span>Database</span><span class="k-chev" aria-hidden="true">⌄</span></button>
+            <div class="k-expand" id="navsub"><div><a>Search Candidates</a><a>Saved Searches</a><a>Unlocked Candidates</a></div></div>
+          </div>
+          <small>Panels glide open, never pop</small>
+        </div>
+      </div>
+      <p class="lede rise">Every button, chip, panel and card in the product behaves like this: built in once, inherited everywhere, in light and dark.</p>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="What is live">
+    <div class="inner center">
+      <p class="kicker rise">What's built</p>
+      <h2 class="rise">A whole new <em>front door.</em></h2>
+      <div class="sitemap rise">
+        <span>Home</span><span>Pricing</span><span>Enterprise</span>
+        <span class="prod-green">Smart Job Posting</span><span class="prod-sky">AI Calling Agent</span><span class="prod-plum">apna Database</span><span class="prod-gold">apna Unlimited</span>
+        <span>About</span><span>Culture</span><span>Leadership</span><span>Management</span><span>By the numbers</span>
+        <span>Careers</span><span>Customer stories</span><span>Newsroom</span><span>Awards</span><span>AI Interview Prep Lounge</span><span>Login</span>
+      </div>
+      <p class="lede rise">Eighteen pages, one brand, one system.</p>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="The product on desktop">
+    <div class="inner center">
+      <p class="kicker rise">The product</p>
+      <h2 class="rise">Built for the <em>daily work.</em></h2>
+      <div class="toggle rise" role="group" aria-label="Choose a screen">
+        <button type="button" class="screen-btn" data-screen="dashboard" aria-pressed="true">Recruiter dashboard</button>
+        <button type="button" class="screen-btn" data-screen="pricing" aria-pressed="false">Pricing</button>
+      </div>
+      <figure class="browser rise">
+        <div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span id="browser-url">employer.apna.co/jobs</span></div>
+        <div class="browser-view">
+          <img src="img/dashboard.jpg" data-dark="img/dashboard-dark.jpg" alt="The recruiter dashboard: jobs list with applied, active leads and database matches" class="screen on" data-screen="dashboard" loading="lazy">
+          <img src="img/pricing.jpg" data-dark="img/pricing-dark.jpg" alt="The pricing page: job credit bundles, apna Unlimited and the plan tabs" class="screen" data-screen="pricing" loading="lazy">
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="The product on phones">
+    <div class="glow soft" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="inner center">
+      <p class="kicker rise">Mobile first</p>
+      <h2 class="rise">In every <em>pocket.</em></h2>
+      <div class="phones rise">
+        <figure class="phone"><img src="img/mobile-home.jpg" data-dark="img/mobile-home-dark.jpg" alt="The homepage on a phone: headline and sign-up card" loading="lazy"><figcaption>Sign up in the first screen</figcaption></figure>
+        <figure class="phone"><img src="img/mobile-pricing.jpg" data-dark="img/mobile-pricing-dark.jpg" alt="Pricing on a phone: plan chips and selectable credit bundles with a sticky buy bar" loading="lazy"><figcaption>Choose and pay with one thumb</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="Close">
+    <div class="glow" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="inner center">
+      <h2 class="rise reveal-line" aria-live="polite">
+        <span class="before">Same apna.<br><em>Brighter.</em></span>
+        <span class="after">…and <em>darker.</em></span>
+      </h2>
+      <div class="reveal-line rise">
+        <p class="lede before">Every colour, every product, every page.</p>
+        <p class="lede after">Every colour has a dark twin. The whole system switches with one setting, so apna is ready for dark mode.</p>
+      </div>
+      <button type="button" class="switch rise" id="lights" aria-pressed="false"><span class="knob" aria-hidden="true"></span><span id="lights-label">Lights off</span></button>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="Components in light and dark">
+    <div class="inner">
+      <p class="kicker rise">Lights off, part by part</p>
+      <h2 class="rise">Every part has <em>two looks.</em></h2>
+      <div class="kit rise">
+        <div class="kit-cell" data-look="light">
+          <div class="kit-demo"><span class="k-btn k-primary">Buy now</span><span class="k-btn k-outline">Contact sales</span></div>
+          <div class="kit-foot"><span>Buttons</span><button type="button" class="mini-switch" aria-label="Switch Buttons to dark"></button></div>
+        </div>
+        <div class="kit-cell" data-look="light">
+          <div class="kit-demo">
+            <div class="k-card"><small>6 Job credits</small><b>₹3,649</b><span class="k-badge">13% OFF</span></div>
+          </div>
+          <div class="kit-foot"><span>Plan card</span><button type="button" class="mini-switch" aria-label="Switch Plan card to dark"></button></div>
+        </div>
+        <div class="kit-cell" data-look="light">
+          <div class="kit-demo"><div class="k-chips"><span class="on">Jobs</span><span>Database</span><span>Unlimited</span></div></div>
+          <div class="kit-foot"><span>Chips</span><button type="button" class="mini-switch" aria-label="Switch Chips to dark"></button></div>
+        </div>
+        <div class="kit-cell" data-look="light">
+          <div class="kit-demo"><div class="k-input"><span>+91</span><i>Mobile number</i></div></div>
+          <div class="kit-foot"><span>Input</span><button type="button" class="mini-switch" aria-label="Switch Input to dark"></button></div>
+        </div>
+        <div class="kit-cell" data-look="light">
+          <div class="kit-demo"><span class="k-pill">Recommended</span><span class="k-pill k-soft">Active</span></div>
+          <div class="kit-foot"><span>Badges</span><button type="button" class="mini-switch" aria-label="Switch Badges to dark"></button></div>
+        </div>
+        <div class="kit-cell" data-look="light">
+          <div class="kit-demo"><span class="k-toggle" aria-hidden="true"><i></i></span><span class="k-check" aria-hidden="true">✓</span></div>
+          <div class="kit-foot"><span>Controls</span><button type="button" class="mini-switch" aria-label="Switch Controls to dark"></button></div>
+        </div>
+      </div>
+      <p class="caption rise">Watch each part turn dark. Nothing was redrawn: every part reads its colours from the system. Tap any switch to flip it back.</p>
+    </div>
+  </section>
+
+  <section class="slide credits" aria-label="Credits">
+    <div class="glow" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="inner center">
+      <div class="cr-roll">
+        <div class="cr-block cr-top" style="--i:0"><p class="cr-role">Envisioned by</p><p class="cr-lead-name"><em>Jagadeesh</em></p></div>
+        <p class="cr-pair" style="--i:1"><span class="cr-role">Built with</span><span class="cr-who">Claude <i>&amp;</i> Antigravity, on <em>Poneglyph</em></span></p>
+        <p class="cr-head" style="--i:2">Supported and designed by</p>
+        <ul class="cr-list">
+          <li class="cr-row" style="--i:2"><span class="cr-name">Bilal</span><span class="cr-tag">deep thinker &middot; dives <s>too</s> deep, surfaces with gold</span></li>
+          <li class="cr-row" style="--i:3"><span class="cr-name">Preeti</span><span class="cr-tag">quick gun &middot; fastest, sharpest &middot; your feedback? <s>noted</s> already done</span></li>
+          <li class="cr-row" style="--i:4"><span class="cr-name">Pragyan</span><span class="cr-tag">slow and <s>steady</s> ready &middot; lost in thought, found in 3D</span></li>
+        </ul>
+        <p class="cr-head" style="--i:5">Feedback that shaped it</p>
+        <ul class="cr-list">
+          <li class="cr-row" style="--i:5"><span class="cr-name">Sumit</span><span class="cr-tag">&ldquo;one small change&rdquo; <s>(it&rsquo;s never one)</s></span></li>
+          <li class="cr-row" style="--i:6"><span class="cr-name">Aniket</span><span class="cr-tag">realist &middot; feedback lands like a rock</span></li>
+          <li class="cr-row" style="--i:7"><span class="cr-name">Raj</span><span class="cr-tag">brutal, to the point &middot; sounds evil, somehow works</span></li>
+          <li class="cr-row" style="--i:8"><span class="cr-name">Arpan</span><span class="cr-tag">attention span: goldfish &middot; eye for detail: hawk</span></li>
+        </ul>
+        <p class="cr-pair" style="--i:9"><span class="cr-role">Words &amp; content</span><span class="cr-who">The marketing team</span></p>
+        <p class="cr-pair cr-fuel" style="--i:13"><span class="cr-role">Fueled by</span><span class="cr-who">Coffee. <i>A lot of it.</i></span></p>
+        <p class="cr-sign">The AI did the heavy lifting. Antigravity made it look weightless. <em>We took the credit.</em></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="Thank you">
+    <div class="glow" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="inner center">
+      <h1 class="rise">Thank <em>you.</em></h1>
+      <p class="lede rise">apna for employers · Brand and design</p>
+      <p class="kicker rise ty-try">It&rsquo;s all live. Try it yourself</p>
+      <div class="links rise">
+        <a class="link-card" href="https://poneglyphag.vercel.app" target="_blank" rel="noopener">
+          <small>The website</small>
+          <strong>poneglyphag.vercel.app</strong>
+          <span>Home, product pages, pricing, the login and the recruiter app.</span>
+        </a>
+        <a class="link-card" href="https://poneglyphag.vercel.app/design-system" target="_blank" rel="noopener">
+          <small>The design system</small>
+          <strong>poneglyphag.vercel.app<wbr>/design-system</strong>
+          <span>Every token and component, live, in light and dark.</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<nav class="dots" id="dots" aria-label="Jump to slide"></nav>
+<nav class="counter" aria-label="Slides">
+  <button type="button" id="music" aria-pressed="false" aria-label="Play background music">♪</button>
+  <button type="button" id="prev" aria-label="Previous slide">↑</button>
+  <span id="pos">1 / 18</span>
+  <button type="button" id="next" aria-label="Next slide">↓</button>
+  <button type="button" id="full" aria-label="Present full screen (F)" title="Full screen (F)" aria-pressed="false">⛶</button>
+</nav>
+
+<script>
+(function () {
+  var slides = Array.prototype.slice.call(document.querySelectorAll(".slide"));
+  var pos = document.getElementById("pos");
+  var current = 0;
+  if (!("IntersectionObserver" in window)) {
+    document.documentElement.classList.add("no-js");
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) {
+        e.target.classList.add("seen");
+        current = slides.indexOf(e.target);
+        pos.textContent = (current + 1) + " / " + slides.length;
+      }
+    });
+  }, { threshold: 0.5 });
+  slides.forEach(function (s) { io.observe(s); });
+  slides[0].classList.add("seen");
+  // Thumbnails / no scroll: reveal everything after a beat.
+  setTimeout(function () { slides.forEach(function (s, i) { if (i < 1) s.classList.add("seen"); }); }, 50);
+  function go(i) {
+    var n = Math.max(0, Math.min(slides.length - 1, i));
+    slides[n].scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  }
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Progress dots.
+  var dots = document.getElementById("dots");
+  slides.forEach(function (s, i) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.setAttribute("aria-label", "Slide " + (i + 1) + ": " + s.getAttribute("aria-label"));
+    b.addEventListener("click", function () { go(i); });
+    dots.appendChild(b);
+  });
+  function markDot() {
+    Array.prototype.forEach.call(dots.children, function (b, i) { b.setAttribute("aria-current", i === current ? "true" : "false"); });
+  }
+  markDot();
+  new MutationObserver(markDot).observe(pos, { childList: true, characterData: true, subtree: true });
+
+  // Stripes → light scrubber; plays itself once when the slide arrives.
+  var morph = document.getElementById("morph"), melt = document.getElementById("melt"), played = false;
+  function setMelt(v) { morph.style.setProperty("--m", v / 100); melt.value = v; }
+  melt.addEventListener("input", function () { morph.classList.add("dragging"); setMelt(+melt.value); });
+  melt.addEventListener("change", function () { morph.classList.remove("dragging"); });
+  new IntersectionObserver(function (es) {
+    es.forEach(function (e) {
+      if (e.isIntersecting && !played) {
+        played = true;
+        if (reduce) { setMelt(100); return; }
+        var t0 = null;
+        (function step(t) {
+          if (t0 === null) t0 = t;
+          var p = Math.min(1, (t - t0) / 2600), eased = 1 - Math.pow(1 - p, 3);
+          morph.classList.add("dragging"); setMelt(Math.round(eased * 100));
+          if (p < 1) requestAnimationFrame(step); else morph.classList.remove("dragging");
+        })(performance.now());
+      }
+    });
+  }, { threshold: 0.6 }).observe(morph);
+
+  // Products tint the stage.
+  var prodSlide = document.getElementById("products-slide"), prodWrap = prodSlide.querySelector(".products");
+  prodWrap.addEventListener("click", function (e) {
+    var b = e.target.closest(".prod"); if (!b) return;
+    var on = b.getAttribute("aria-pressed") !== "true";
+    prodWrap.querySelectorAll(".prod").forEach(function (x) { x.setAttribute("aria-pressed", "false"); });
+    if (on) { b.setAttribute("aria-pressed", "true"); prodSlide.dataset.tint = b.dataset.tint; prodWrap.classList.add("has-pick"); }
+    else { delete prodSlide.dataset.tint; prodWrap.classList.remove("has-pick"); }
+  });
+
+  // Pages: tap to bring one forward.
+  var pagesWrap = document.getElementById("pages");
+  pagesWrap.querySelectorAll(".page").forEach(function (p) {
+    p.tabIndex = 0;
+    p.setAttribute("role", "button");
+    p.setAttribute("aria-label", p.querySelector(".chip").textContent + " page");
+    function pick() {
+      var was = p.classList.contains("picked");
+      pagesWrap.querySelectorAll(".page").forEach(function (x) { x.classList.remove("picked"); x.setAttribute("aria-pressed", "false"); });
+      pagesWrap.classList.toggle("has-pick", !was);
+      if (!was) { p.classList.add("picked"); p.setAttribute("aria-pressed", "true"); }
+    }
+    p.addEventListener("click", pick);
+    p.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); e.stopPropagation(); pick(); } });
+  });
+
+  // Clay tilts under the pointer.
+  if (!reduce) document.querySelectorAll(".clay img").forEach(function (img) {
+    img.addEventListener("pointermove", function (e) {
+      var r = img.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+      img.classList.add("tilting");
+      img.style.setProperty("--ry", (x * 28) + "deg"); img.style.setProperty("--rx", (-y * 28) + "deg"); img.style.setProperty("--tz", "30px");
+    });
+    img.addEventListener("pointerleave", function () {
+      img.classList.remove("tilting");
+      img.style.setProperty("--ry", "0deg"); img.style.setProperty("--rx", "0deg"); img.style.setProperty("--tz", "0px");
+    });
+  });
+
+  // Desktop screens: switch between dashboard and pricing.
+  var urls = { dashboard: "employer.apna.co/jobs", pricing: "employer.apna.co/pricing" };
+  document.querySelectorAll(".screen-btn").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var k = b.dataset.screen;
+      document.querySelectorAll(".screen-btn").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+      document.querySelectorAll(".browser-view .screen").forEach(function (img) { img.classList.toggle("on", img.dataset.screen === k); });
+      document.getElementById("browser-url").textContent = urls[k];
+    });
+  });
+
+  // The finale: lights off, the whole deck goes dark (scroll back to see).
+  var lights = document.getElementById("lights"), lightsLabel = document.getElementById("lights-label");
+  // ── Sound: all synthesised (Web Audio), so nothing to load or license.
+  var ac = null, master = null, pad = null;
+  function audio() {
+    if (!ac) {
+      var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
+      ac = new AC(); master = ac.createGain(); master.gain.value = 0.9; master.connect(ac.destination);
+    }
+    if (ac.state === "suspended") ac.resume();
+    return ac;
+  }
+  // A finger snap: a bright burst of filtered noise, plus a soft low thunk.
+  function snap(dark) {
+    if (!audio()) return;
+    var t = ac.currentTime, len = Math.floor(ac.sampleRate * 0.12);
+    var buf = ac.createBuffer(1, len, ac.sampleRate), d = buf.getChannelData(0);
+    for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 6);
+    var n = ac.createBufferSource(); n.buffer = buf;
+    var bp = ac.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = dark ? 2200 : 3200; bp.Q.value = 1.4;
+    var g = ac.createGain(); g.gain.setValueAtTime(1.1, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+    n.connect(bp); bp.connect(g); g.connect(master); n.start(t);
+    var o = ac.createOscillator(), og = ac.createGain();
+    o.type = "sine"; o.frequency.setValueAtTime(dark ? 140 : 320, t); o.frequency.exponentialRampToValueAtTime(dark ? 55 : 180, t + 0.25);
+    og.gain.setValueAtTime(dark ? 0.5 : 0.18, t); og.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+    o.connect(og); og.connect(master); o.start(t); o.stop(t + 0.4);
+  }
+  // A slow ambient pad: four soft voices that drift; lights-off moves the chord down.
+  var CHORDS = { light: [261.63, 329.63, 392.0, 493.88], dark: [174.61, 220.0, 261.63, 329.63] }; // Cmaj7, Fmaj7 lower
+  function startPad() {
+    if (!audio() || pad) return;
+    var t = ac.currentTime, out = ac.createGain(); out.gain.setValueAtTime(0, t); out.gain.linearRampToValueAtTime(0.14, t + 3);
+    var lp = ac.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 1100; lp.Q.value = 0.4;
+    lp.connect(out); out.connect(master);
+    var chord = document.documentElement.dataset.mode === "dark" ? CHORDS.dark : CHORDS.light;
+    var voices = chord.map(function (f, i) {
+      var o = ac.createOscillator(), g = ac.createGain(), lfo = ac.createOscillator(), lg = ac.createGain();
+      o.type = i % 2 ? "triangle" : "sine"; o.frequency.value = f; o.detune.value = (i - 1.5) * 4;
+      g.gain.value = 0.22;
+      lfo.frequency.value = 0.07 + i * 0.03; lg.gain.value = 0.12; lfo.connect(lg); lg.connect(g.gain);
+      o.connect(g); g.connect(lp); o.start(t); lfo.start(t);
+      return o;
+    });
+    pad = { out: out, voices: voices, lp: lp };
+  }
+  function stopPad() {
+    if (!pad) return;
+    var t = ac.currentTime, p = pad; pad = null;
+    p.out.gain.cancelScheduledValues(t); p.out.gain.setValueAtTime(p.out.gain.value, t); p.out.gain.linearRampToValueAtTime(0, t + 1.5);
+    p.voices.forEach(function (o) { o.stop(t + 1.6); });
+  }
+  function padTo(dark) {
+    if (!pad) return;
+    var t = ac.currentTime, chord = dark ? CHORDS.dark : CHORDS.light;
+    pad.voices.forEach(function (o, i) { o.frequency.setTargetAtTime(chord[i], t, 0.6); });
+    pad.lp.frequency.setTargetAtTime(dark ? 700 : 1100, t, 0.8);
+  }
+  // Real tracks (Pixabay Content License): a looping bed and a reveal cue.
+  // They replace the generated pad; volume fades keep every change soft.
+  var bed = new Audio("audio/bed.mp3"); bed.loop = true; bed.preload = "auto"; bed.volume = 0;
+  var reveal = new Audio("audio/reveal.mp3"); reveal.preload = "auto"; reveal.volume = 0.9;
+  var BED_LEVEL = 0.38, fadeTimer = null;
+  function fadeBed(to, ms, done) {
+    clearInterval(fadeTimer);
+    var from = bed.volume, t0 = performance.now();
+    fadeTimer = setInterval(function () {
+      var p = Math.min(1, (performance.now() - t0) / ms);
+      bed.volume = Math.max(0, Math.min(1, from + (to - from) * p));
+      if (p >= 1) { clearInterval(fadeTimer); if (done) done(); }
+    }, 30);
+  }
+  startPad = function () { bed.play().then(function () { fadeBed(BED_LEVEL, 3000); }).catch(function () {}); };
+  stopPad = function () { fadeBed(0, 1500, function () { bed.pause(); }); };
+  padTo = function () {};
+  function playReveal() {
+    var on = !bed.paused;
+    if (on) fadeBed(0.1, 400);
+    reveal.currentTime = 0;
+    reveal.play().catch(function () {});
+    reveal.onended = function () { if (on && !bed.paused) fadeBed(BED_LEVEL, 2500); };
+  }
+  var music = document.getElementById("music");
+  music.addEventListener("click", function () {
+    var on = music.getAttribute("aria-pressed") !== "true";
+    music.setAttribute("aria-pressed", String(on));
+    music.setAttribute("aria-label", on ? "Stop background music" : "Play background music");
+    if (on) startPad(); else stopPad();
+  });
+
+  lights.addEventListener("click", function () {
+    var dark = document.documentElement.dataset.mode !== "dark";
+    if (dark) playReveal(); else snap(false);
+    if (dark) document.documentElement.dataset.mode = "dark"; else delete document.documentElement.dataset.mode;
+    lights.setAttribute("aria-pressed", String(dark));
+    lightsLabel.textContent = dark ? "Lights on" : "Lights off";
+  });
+  document.addEventListener("keydown", function (e) { if (e.key === "d" || e.key === "D") lights.click(); });
+
+  // Component kit: flip one part at a time. Lights-off flips them all.
+  document.querySelectorAll(".kit-cell").forEach(function (cell) {
+    var sw = cell.querySelector(".mini-switch"), name = cell.querySelector(".kit-foot span").textContent;
+    sw.addEventListener("click", function () {
+      var dark = cell.dataset.look !== "dark";
+      cell.dataset.look = dark ? "dark" : "light";
+      sw.setAttribute("aria-label", "Switch " + name + " to " + (dark ? "light" : "dark"));
+      snap(dark);
+    });
+  });
+  lights.addEventListener("click", function () {
+    var dark = document.documentElement.dataset.mode === "dark";
+    document.querySelectorAll(".kit-cell").forEach(function (cell) { cell.dataset.look = dark ? "dark" : "light"; });
+  });
+
+  // The payoff after "Lights off": on arriving, the parts start light and
+  // turn dark one after another (or the reverse if the lights are on).
+  // It waits until the presenter stays on the slide (passing through on the
+  // way elsewhere plays nothing), and leaving cancels the run: the parts just
+  // settle into their final look, silently.
+  var kitSlide = document.querySelector('[aria-label="Components in light and dark"]'), kitTimer = [], kitHere = false;
+  function kitTarget() { return document.documentElement.dataset.mode === "dark" ? "dark" : "light"; }
+  function kitStop() {
+    kitTimer.forEach(clearTimeout); kitTimer = [];
+    kitSlide.querySelectorAll(".kit-cell").forEach(function (c) { c.dataset.look = kitTarget(); });
+  }
+  new IntersectionObserver(function (es) {
+    es.forEach(function (e) {
+      kitHere = e.isIntersecting;
+      if (!kitHere) { kitStop(); return; }
+      kitTimer.forEach(clearTimeout); kitTimer = [];
+      var target = kitTarget(), from = target === "dark" ? "light" : "dark";
+      var cells = kitSlide.querySelectorAll(".kit-cell");
+      cells.forEach(function (c) { c.dataset.look = from; });
+      var dwell = reduce ? 0 : 1100;
+      cells.forEach(function (c, i) {
+        kitTimer.push(setTimeout(function () {
+          if (!kitHere) return;
+          c.dataset.look = target; snap(target === "dark");
+        }, dwell + i * (reduce ? 0 : 450)));
+      });
+    });
+  }, { threshold: 0.6 }).observe(kitSlide);
+
+  // Press to try: ripple from the press point.
+  document.querySelectorAll(".ink").forEach(function (b) {
+    b.addEventListener("pointerdown", function (e) {
+      var r = b.getBoundingClientRect(), size = Math.max(r.width, r.height) * 2.2, s = document.createElement("span");
+      s.className = "ripple"; s.style.width = s.style.height = size + "px";
+      s.style.left = (e.clientX - r.left - size / 2) + "px"; s.style.top = (e.clientY - r.top - size / 2) + "px";
+      b.appendChild(s); setTimeout(function () { s.remove(); }, 750);
+    });
+  });
+  // Segmented control: one pill glides to the chosen option.
+  var seg = document.getElementById("seg"), segPill = seg.querySelector(".seg-pill");
+  function placePill() {
+    var on = seg.querySelector('[aria-pressed="true"]'), sr = seg.getBoundingClientRect(), r = on.getBoundingClientRect();
+    segPill.style.width = r.width + "px"; segPill.style.transform = "translateX(" + (r.left - sr.left - 4) + "px)";
+  }
+  seg.querySelectorAll("button").forEach(function (b) {
+    b.addEventListener("click", function () { seg.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); }); placePill(); });
+  });
+  placePill(); addEventListener("resize", placePill);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(placePill);
+  var plans = document.getElementById("plans");
+  plans.querySelectorAll(".k-plan").forEach(function (p) {
+    p.addEventListener("click", function () { plans.querySelectorAll(".k-plan").forEach(function (x) { x.setAttribute("aria-checked", String(x === p)); }); });
+  });
+
+  // Sub-menu demo.
+  var navgroup = document.getElementById("navgroup"), navsub = document.getElementById("navsub");
+  navgroup.addEventListener("click", function () {
+    var open = navgroup.getAttribute("aria-expanded") !== "true";
+    navgroup.setAttribute("aria-expanded", String(open));
+    navsub.classList.toggle("open", open);
+  });
+
+  // Screenshots follow the lights: the dark captures after "Lights off".
+  document.querySelectorAll("img[data-dark]").forEach(function (img) { img.dataset.light = img.getAttribute("src"); new Image().src = img.dataset.dark; });
+  function swapShots(dark) {
+    document.querySelectorAll("img[data-dark]").forEach(function (img) { img.src = dark ? img.dataset.dark : img.dataset.light; });
+  }
+  lights.addEventListener("click", function () { swapShots(document.documentElement.dataset.mode === "dark"); });
+
+  // Type: one typeface vs the editorial serif.
+  var typedemo = document.getElementById("typedemo"), tb = document.getElementById("type-before"), ta = document.getElementById("type-after");
+  function setSerif(on) { typedemo.classList.toggle("before", !on); ta.setAttribute("aria-pressed", String(on)); tb.setAttribute("aria-pressed", String(!on)); }
+  tb.addEventListener("click", function () { setSerif(false); });
+  ta.addEventListener("click", function () { setSerif(true); });
+
+  // One token: pick a colour, every part on the screen follows.
+  var tokenScreen = document.getElementById("token-screen");
+  document.querySelectorAll(".token-picker button").forEach(function (b) {
+    b.addEventListener("click", function () {
+      document.querySelectorAll(".token-picker button").forEach(function (x) { x.setAttribute("aria-checked", String(x === b)); });
+      tokenScreen.style.setProperty("--brand", b.dataset.c);
+    });
+  });
+
+  // Pre-show: wait for the first press, then music fades in and the title
+  // rises a few seconds later. (No script: no pre-show, the title just shows.)
+  var root = document.documentElement;
+  // Only when the deck opens on the first slide (the viewer may restore a
+  // later scroll position): then the pre-show; anywhere else, skip it.
+  if ((window.scrollY || 0) < 40) root.classList.add("preshow");
+  function begin(e) {
+    if (!root.classList.contains("preshow")) return;
+    if (e) { e.preventDefault(); e.stopImmediatePropagation(); }
+    root.classList.remove("preshow-waiting");
+    // The opening press also takes the deck full screen (needs a gesture).
+    var fsReq = root.requestFullscreen || root.webkitRequestFullscreen;
+    if (fsReq && !document.fullscreenElement && !document.webkitFullscreenElement) {
+      try { var fp = fsReq.call(root); if (fp && fp.catch) fp.catch(function () {}); } catch (err) {}
+    }
+    if (music.getAttribute("aria-pressed") !== "true") music.click();
+    setTimeout(function () { root.classList.remove("preshow"); }, reduce ? 0 : 3200);
+    window.removeEventListener("keydown", begin, true);
+    window.removeEventListener("pointerdown", begin, true);
+  }
+  window.addEventListener("keydown", begin, true);
+  window.addEventListener("pointerdown", begin, true);
+  // Scrolling away also ends it, so the deck is never stuck behind it.
+  window.addEventListener("scroll", function () {
+    if (root.classList.contains("preshow") && window.scrollY > 40) root.classList.remove("preshow");
+  }, { passive: true });
+
+  // Before / after.
+  var living = document.getElementById("living"), flatBtn = document.getElementById("flat-btn"), aliveBtn = document.getElementById("alive-btn");
+  function setAlive(on) { living.classList.toggle("flat", !on); aliveBtn.setAttribute("aria-pressed", String(on)); flatBtn.setAttribute("aria-pressed", String(!on)); }
+  flatBtn.addEventListener("click", function () { setAlive(false); });
+  aliveBtn.addEventListener("click", function () { setAlive(true); });
+
+  // Numbers count up when their slide arrives.
+  var facts = document.querySelector(".facts"), counted = false;
+  new IntersectionObserver(function (es) {
+    es.forEach(function (e) {
+      if (!e.isIntersecting || counted || reduce) return;
+      counted = true;
+      facts.querySelectorAll("[data-count]").forEach(function (b) {
+        var end = +b.dataset.count, t0 = null;
+        (function step(t) {
+          if (t0 === null) t0 = t;
+          var p = Math.min(1, (t - t0) / 1400);
+          b.textContent = Math.max(end === 1 ? 1 : 0, Math.round(end * (1 - Math.pow(1 - p, 3))));
+          if (p < 1) requestAnimationFrame(step);
+        })(performance.now());
+      });
+    });
+  }, { threshold: 0.6 }).observe(facts);
+
+  document.getElementById("prev").addEventListener("click", function () { go(current - 1); });
+  document.getElementById("next").addEventListener("click", function () { go(current + 1); });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "ArrowDown" || e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") { e.preventDefault(); go(current + 1); }
+    if (e.key === "ArrowUp" || e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); go(current - 1); }
+  });
+
+  // Rules, shown: pick a rule, flip Before / After. The first view plays
+  // the flip once, so the room sees the change without anyone clicking.
+  (function () {
+    var root = document.querySelector('[aria-label="Simple rules"]');
+    if (!root) return;
+    var demo = root.querySelector(".rx-demo");
+    var flips = root.querySelectorAll(".rx-toggle button");
+    var timer;
+    function setAfter(on) {
+      demo.setAttribute("data-after", on ? "1" : "0");
+      flips.forEach(function (b) { b.setAttribute("aria-pressed", String((b.getAttribute("data-after") === "1") === on)); });
+    }
+    function show(key, play) {
+      root.querySelectorAll(".rx-rule").forEach(function (r) { r.setAttribute("aria-selected", String(r.getAttribute("data-rx") === key)); });
+      root.querySelectorAll(".rx-pane").forEach(function (p) { p.hidden = p.getAttribute("data-rx") !== key; });
+      clearTimeout(timer);
+      // Glass needs no "before": the frosted card is shown as it is.
+      var noBefore = key === "glass";
+      root.querySelector(".rx-toggle").hidden = noBefore;
+      if (noBefore) { setAfter(true); return; }
+      if (play) { setAfter(false); timer = setTimeout(function () { setAfter(true); }, 900); }
+    }
+    root.querySelectorAll(".rx-rule").forEach(function (r) {
+      r.addEventListener("click", function () { show(r.getAttribute("data-rx"), true); });
+    });
+    flips.forEach(function (b) { b.addEventListener("click", function () { clearTimeout(timer); setAfter(b.getAttribute("data-after") === "1"); }); });
+    var played = false;
+    new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting && !played) { played = true; show("glass", true); } });
+    }, { threshold: 0.6 }).observe(root);
+  })();
+
+  // Poneglyph: the names stay carved, the values keep changing.
+  (function () {
+    var tab = document.querySelector(".pg-tablet");
+    if (!tab || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var toks = Array.prototype.slice.call(tab.querySelectorAll(".pg-tok b"));
+    var step = 0;
+    function paint(b, v) {
+      b.textContent = v;
+      var row = b.parentNode, sw = row.querySelector(".pg-sw"), rad = row.querySelector(".pg-rad");
+      if (sw) sw.style.setProperty("--v", v);
+      if (rad) rad.style.setProperty("--v", (parseInt(v, 10) / 2) + "px");
+    }
+    toks.forEach(function (b) { paint(b, JSON.parse(b.dataset.v)[0]); });
+    setInterval(function () {
+      if (!tab.closest(".slide").classList.contains("seen")) return;
+      step++;
+      toks.forEach(function (b, i) {
+        var vals = JSON.parse(b.dataset.v), v = vals[step % vals.length];
+        if (v === b.textContent) return;
+        setTimeout(function () { b.classList.add("swap"); setTimeout(function () { paint(b, v); b.classList.remove("swap"); }, 300); }, i * 140);
+      });
+    }, 3200);
+  })();
+
+  // Present: full screen, the deck alone on the screen (F or the ⛶ button;
+  // Esc leaves). Optional: where the browser refuses it, nothing breaks.
+  (function () {
+    var btn = document.getElementById("full");
+    var root = document.documentElement;
+    if (!btn) return;
+    if (!root.requestFullscreen && !root.webkitRequestFullscreen) { btn.hidden = true; return; }
+    function isFull() { return !!(document.fullscreenElement || document.webkitFullscreenElement); }
+    function toggle() {
+      try {
+        if (isFull()) { (document.exitFullscreen || document.webkitExitFullscreen).call(document); return; }
+        var p = (root.requestFullscreen || root.webkitRequestFullscreen).call(root);
+        if (p && p.catch) p.catch(function () { btn.hidden = true; });
+      } catch (err) { btn.hidden = true; }
+    }
+    btn.addEventListener("click", toggle);
+    document.addEventListener("keydown", function (e) {
+      if ((e.key === "f" || e.key === "F") && !e.metaKey && !e.ctrlKey && !e.altKey && !/INPUT|TEXTAREA/.test(e.target.tagName)) toggle();
+    });
+    ["fullscreenchange", "webkitfullscreenchange"].forEach(function (ev) {
+      document.addEventListener(ev, function () { btn.setAttribute("aria-pressed", String(isFull())); document.body.classList.toggle("presenting", isFull()); });
+    });
+  })();
+
+  // Present full screen from the first press: browsers only allow it from a
+  // click or key, so the opening "press any key" (or any first tap) does it.
+  // Once per visit; Esc leaves, F or the button goes back in.
+  (function () {
+    var root = document.documentElement;
+    var req = root.requestFullscreen || root.webkitRequestFullscreen;
+    if (!req) return;
+    function first(e) {
+      window.removeEventListener("keydown", first, true);
+      window.removeEventListener("pointerdown", first, true);
+      if (e.key === "f" || e.key === "F" || (e.target.closest && e.target.closest("#full"))) return;
+      if (document.fullscreenElement || document.webkitFullscreenElement) return;
+      try { var p = req.call(root); if (p && p.catch) p.catch(function () {}); } catch (err) {}
+    }
+    window.addEventListener("keydown", first, true);
+    window.addEventListener("pointerdown", first, true);
+  })();
+})();
+</script>
+
+</body>
+</html>

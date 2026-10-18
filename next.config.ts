@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
   devIndicators: {
     position: "bottom-right",
   },
+  // The "apna, redrawn" presentation is a static page in public/redrawn
+  // (copied from the deck): serve it at /redrawn.
+  async rewrites() {
+    return [{ source: "/redrawn", destination: "/redrawn/index.html" }]
+  },
   async redirects() {
     return [
       // `/` used to redirect here because the root page was the component

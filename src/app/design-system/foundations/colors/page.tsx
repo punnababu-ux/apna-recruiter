@@ -152,6 +152,26 @@ export default function ColorsPage() {
         { name: "950", token: "--color-apna-sky-950", bg: "bg-[var(--color-apna-sky-950)]" },
       ],
     },
+    {
+      name: "Atmosphere (homepage hero mood, light mode only)",
+      steps: [
+        { name: "peach", token: "--color-atmosphere-peach", bg: "bg-[var(--color-atmosphere-peach)]", darkText: true },
+        { name: "pink", token: "--color-atmosphere-pink", bg: "bg-[var(--color-atmosphere-pink)]", darkText: true },
+        { name: "periwinkle", token: "--color-atmosphere-periwinkle", bg: "bg-[var(--color-atmosphere-periwinkle)]" },
+        { name: "mist", token: "--color-atmosphere-mist", bg: "bg-[var(--color-atmosphere-mist)]", darkText: true },
+        { name: "cream", token: "--color-atmosphere-cream", bg: "bg-[var(--color-atmosphere-cream)]", darkText: true },
+        { name: "blush", token: "--color-atmosphere-blush", bg: "bg-[var(--color-atmosphere-blush)]", darkText: true },
+        { name: "rose", token: "--color-atmosphere-rose", bg: "bg-[var(--color-atmosphere-rose)]", darkText: true },
+        { name: "lilac", token: "--color-atmosphere-lilac", bg: "bg-[var(--color-atmosphere-lilac)]", darkText: true },
+        { name: "iris", token: "--color-atmosphere-iris", bg: "bg-[var(--color-atmosphere-iris)]", darkText: true },
+        { name: "ice", token: "--color-atmosphere-ice", bg: "bg-[var(--color-atmosphere-ice)]", darkText: true },
+        { name: "frost", token: "--color-atmosphere-frost", bg: "bg-[var(--color-atmosphere-frost)]", darkText: true },
+        { name: "haze", token: "--color-atmosphere-haze", bg: "bg-[var(--color-atmosphere-haze)]", darkText: true },
+        { name: "cloud", token: "--color-atmosphere-cloud", bg: "bg-[var(--color-atmosphere-cloud)]", darkText: true },
+        { name: "fog", token: "--color-atmosphere-fog", bg: "bg-[var(--color-atmosphere-fog)]", darkText: true },
+        { name: "slate", token: "--color-atmosphere-slate", bg: "bg-[var(--color-atmosphere-slate)]", darkText: true },
+      ],
+    },
   ]
 
   const copySwatch = (event: React.MouseEvent<HTMLDivElement>, label: string) => {
