@@ -235,7 +235,6 @@ export const HOME_PROOF = {
       { value: "60%", label: "Businesses get qualified candidates within 24 hrs" },
       { value: "2 Lakhs+", label: "New candidates join apna every month" },
       { value: "160+", label: "Job categories to publish your job" },
-      { value: "90%", label: "Fulfilment rate" },
     ],
   },
   testimonials: {
