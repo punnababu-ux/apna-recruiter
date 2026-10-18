@@ -625,11 +625,11 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
       {/* ── Shared marketing chrome — identical across every tab in Figma
            (Jobs included), so it renders once here rather than being
            duplicated inside each tab's branch above. The homepage's
-           proof bands: trusted by (white), why hire from apna — numbers and
-           quotes (gradient), the FAQ (white, the page's last band). ── */}
-      <TrustedByBand />
-      <WhyHireBand stats={PRICING_STATS} />
+           bands, in pricing's order: the FAQ first (white), why hire from
+           apna — numbers and quotes (gradient), trusted by (white, last). ── */}
       <FaqBand />
+      <WhyHireBand stats={PRICING_STATS} />
+      <TrustedByBand />
 
       {/* No footer band here for logged-out: (marketing)/layout.tsx already
           renders SiteFooter below this component. The logged-in page ends
