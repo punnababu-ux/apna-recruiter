@@ -43,12 +43,15 @@ export function TrustedByBand() {
 
 export function WhyHireBand({
   stats = HOME_PROOF.why.stats,
+  tone,
 }: {
+  /** "card" for a white band where the page's rhythm needs one (home). */
+  tone?: "card"
   /** Pricing shows the platform's scale (PRICING_STATS) instead. */
   stats?: readonly { value: string; label: string }[]
 }) {
   return (
-    <Section size="md">
+    <Section tone={tone} size="md">
       <div className="flex flex-col gap-10">
         <SectionHeading
           level={2}

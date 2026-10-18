@@ -225,7 +225,13 @@ export default function HomePage() {
         </div>
       </Section>
 
-      <Section tone="card" size="md">
+
+      {/* The proof (white), the press (gradient), then the FAQ (white, the
+          page's last band). */}
+      <WhyHireBand tone="card" />
+      {/* In the press (gradient): after the proof, so white and gradient
+          still alternate. */}
+      <Section size="md">
         <div className="flex flex-col gap-10">
           <SectionHeading level={2} align="center" title={HOME_PRESS.title} />
 
@@ -246,9 +252,6 @@ export default function HomePage() {
           </div>
         </div>
       </Section>
-
-      {/* The proof (gradient), then the FAQ (white, the page's last band). */}
-      <WhyHireBand />
       <FaqBand />
     </>
   )
