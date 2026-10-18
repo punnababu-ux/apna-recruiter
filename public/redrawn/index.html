@@ -1560,13 +1560,24 @@ h2 em, h1 em { font-style: italic; }
       if (noBefore) { setAfter(true); return; }
       if (play) { setAfter(false); timer = setTimeout(function () { setAfter(true); }, 900); }
     }
+    // Tour: while the slide is on screen, the rules take turns (each plays
+    // its before/after), looping. A click on a rule or the toggle stops it.
+    var keys = ["glass", "accent", "green"], rxTour = null, rxI = 0, rxAuto = true;
+    function rxStop() { clearInterval(rxTour); rxTour = null; }
     root.querySelectorAll(".rx-rule").forEach(function (r) {
-      r.addEventListener("click", function () { show(r.getAttribute("data-rx"), true); });
+      r.addEventListener("click", function (e) { if (e.isTrusted) { rxAuto = false; rxStop(); } show(r.getAttribute("data-rx"), true); });
     });
+    root.querySelector(".rx-toggle").addEventListener("click", function (e) { if (e.isTrusted) { rxAuto = false; rxStop(); } });
     flips.forEach(function (b) { b.addEventListener("click", function () { clearTimeout(timer); setAfter(b.getAttribute("data-after") === "1"); }); });
-    var played = false;
     new IntersectionObserver(function (es) {
-      es.forEach(function (e) { if (e.isIntersecting && !played) { played = true; show("glass", true); } });
+      es.forEach(function (e) {
+        rxStop();
+        if (!e.isIntersecting) return;
+        if (!rxAuto) return;
+        rxI = 0; show(keys[0], true);
+        if (reduce) return;
+        rxTour = setInterval(function () { rxI = (rxI + 1) % keys.length; show(keys[rxI], true); }, 5000);
+      });
     }, { threshold: 0.6 }).observe(root);
   })();
 
