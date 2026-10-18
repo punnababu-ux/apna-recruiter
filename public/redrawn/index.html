@@ -464,7 +464,7 @@ h2 em, h1 em { font-style: italic; }
    Names in one column, their lines in a second. Each line comes into focus
    in turn. */
 .credits .inner { gap: clamp(16px, 3vh, 34px); }
-.cr-roll { width: min(760px, 100%); display: flex; flex-direction: column; gap: clamp(6px, 1.1vh, 12px); text-align: left; --name-col: clamp(120px, 14vw, 180px); }
+.cr-roll { width: min(760px, 100%); display: flex; flex-direction: column; gap: clamp(6px, 1.1vh, 12px); text-align: left; --name-col: clamp(150px, 17vw, 220px); }
 .cr-block, .cr-pair, .cr-head, .cr-row { opacity: 0; translate: 0 14px; filter: blur(5px);
   transition: opacity 800ms cubic-bezier(0.22, 1, 0.36, 1), translate 800ms cubic-bezier(0.22, 1, 0.36, 1), filter 800ms ease;
   transition-delay: calc(300ms + var(--i, 0) * 180ms); }
@@ -474,6 +474,7 @@ h2 em, h1 em { font-style: italic; }
 .cr-lead-name { margin: 0; font-family: var(--font-display); font-weight: 500; font-size: clamp(36px, 4.2vw, 60px); line-height: 1; color: var(--ink); }
 .cr-lead-name em { font-style: italic; }
 /* Two columns, both left-aligned: label or name | the person or their line. */
+.cr-pair .cr-role { white-space: nowrap; }
 .cr-pair, .cr-row { margin: 0; display: grid; grid-template-columns: var(--name-col) minmax(0, 1fr); column-gap: clamp(16px, 2.4vw, 32px); align-items: baseline; }
 .cr-who { font-size: clamp(15px, 1.4vw, 18px); font-weight: 600; color: var(--ink); }
 .cr-who i { font-style: normal; color: var(--ink-dim); font-weight: 400; }
@@ -487,7 +488,7 @@ h2 em, h1 em { font-style: italic; }
 .cr-tag { font-size: clamp(13px, 1.1vw, 15px); line-height: 1.4; color: var(--ink-dim); }
 .cr-tag s { text-decoration-thickness: 1.5px; text-decoration-color: var(--green); }
 .cr-sign { margin: clamp(10px, 1.8vh, 22px) 0 0; max-width: 40ch; text-align: left; font-family: var(--font-display); font-size: clamp(17px, 1.6vw, 22px); line-height: 1.35; color: var(--ink-dim); text-wrap: balance;
-  opacity: 0; transition: opacity 1000ms ease; transition-delay: calc(300ms + 13 * 180ms + 400ms); }
+  opacity: 0; transition: opacity 1000ms ease; transition-delay: calc(300ms + 7 * 180ms + 400ms); }
 .credits.seen .cr-sign { opacity: 1; }
 .cr-sign em { font-style: italic; color: var(--ink); }
 /* Phones: one column; each name above its line, still on the one edge. */
@@ -1093,23 +1094,15 @@ h2 em, h1 em { font-style: italic; }
     <div class="inner center">
       <div class="cr-roll">
         <div class="cr-block cr-top" style="--i:0"><p class="cr-role">Envisioned by</p><p class="cr-lead-name"><em>Jagadeesh</em></p></div>
-        <p class="cr-pair" style="--i:1"><span class="cr-role">Built with</span><span class="cr-who">Claude <i>&amp;</i> Antigravity, on <em>Poneglyph</em></span></p>
-        <p class="cr-head" style="--i:2">Supported and designed by</p>
-        <ul class="cr-list">
-          <li class="cr-row" style="--i:2"><span class="cr-name">Bilal</span><span class="cr-tag">deep thinker &middot; dives <s>too</s> deep, surfaces with gold</span></li>
-          <li class="cr-row" style="--i:3"><span class="cr-name">Preeti</span><span class="cr-tag">quick gun &middot; fastest, sharpest &middot; your feedback? <s>noted</s> already done</span></li>
-          <li class="cr-row" style="--i:4"><span class="cr-name">Pragyan</span><span class="cr-tag">slow and <s>steady</s> ready &middot; lost in thought, found in 3D</span></li>
+        <p class="cr-pair" style="--i:1"><span class="cr-role">Built with</span><span class="cr-who">Claude <i>&amp;</i> Antigravity</span></p>
+        <p class="cr-pair" style="--i:2"><span class="cr-role">Under the influence of</span><span class="cr-who">Coffee. <i>Dangerous amounts of it.</i></span></p>
+        <ul class="cr-list cr-gags">
+          <li class="cr-row" style="--i:3"><span class="cr-name">Claude</span><span class="cr-tag">wrote the code, never once asked for a raise</span></li>
+          <li class="cr-row" style="--i:4"><span class="cr-name">Antigravity</span><span class="cr-tag">kept the whole thing floating</span></li>
+          <li class="cr-row" style="--i:5"><span class="cr-name">Coffee</span><span class="cr-tag">did the actual thinking</span></li>
+          <li class="cr-row" style="--i:6"><span class="cr-name">The human</span><span class="cr-tag">said &ldquo;make it pop&rdquo; <s>once</s> 47 times</span></li>
         </ul>
-        <p class="cr-head" style="--i:5">Feedback that shaped it</p>
-        <ul class="cr-list">
-          <li class="cr-row" style="--i:5"><span class="cr-name">Sumit</span><span class="cr-tag">&ldquo;one small change&rdquo; <s>(it&rsquo;s never one)</s></span></li>
-          <li class="cr-row" style="--i:6"><span class="cr-name">Aniket</span><span class="cr-tag">realist &middot; feedback lands like a rock</span></li>
-          <li class="cr-row" style="--i:7"><span class="cr-name">Raj</span><span class="cr-tag">brutal, to the point &middot; sounds evil, somehow works</span></li>
-          <li class="cr-row" style="--i:8"><span class="cr-name">Arpan</span><span class="cr-tag">attention span: goldfish &middot; eye for detail: hawk</span></li>
-        </ul>
-        <p class="cr-pair" style="--i:9"><span class="cr-role">Words &amp; content</span><span class="cr-who">The marketing team</span></p>
-        <p class="cr-pair cr-fuel" style="--i:13"><span class="cr-role">Fueled by</span><span class="cr-who">Coffee. <i>A lot of it.</i></span></p>
-        <p class="cr-sign">The AI did the heavy lifting. Antigravity made it look weightless. <em>We took the credit.</em></p>
+        <p class="cr-sign">No designers were harmed in the making of this deck. <em>Several cups were.</em></p>
       </div>
     </div>
   </section>
