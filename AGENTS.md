@@ -392,8 +392,10 @@ To change how round the cards feel, retune `--radius-card` in
   same mapping holds inside the product: an add-on card for a product (the
   order summary's AI calling and Database add-ons) wears that product's
   gradient, light in light mode, dark in dark. Upsell and exit pop-ups are
-  the exception: they keep their dark headers in both modes (the green
-  sweep, `bg-gradient-offer`; gold on plum, `bg-gradient-offer-premium`). Use
+  the exception: they use their own offer gradients, not the product ones —
+  `bg-gradient-offer` (jobs and the exit offer: a green sweep; on dark,
+  green glows on plum) and `bg-gradient-offer-premium` (subscription: gold
+  on plum; on dark, a quiet plum). Use
   it only with that product: its homepage card, its product page hero, its
   illustration. Company pages (About, Newsroom, Careers, …) use none —
   one exception: stacking cards (`StackCard`) take the four hiring-suite
