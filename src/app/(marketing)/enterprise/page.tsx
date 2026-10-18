@@ -21,8 +21,6 @@ import Link from "next/link"
 import {
   ArrowRight,
   ArrowUpRight,
-  Avatar,
-  AvatarImage,
   Building2,
   Button,
   Card,
@@ -35,6 +33,7 @@ import { PageHero, withAccent } from "@/components/marketing/page-blocks"
 import { ValueArt, type ValueName } from "@/components/marketing/value-art"
 import { CONTACT_ANCHOR } from "@/content/contact"
 import { ENTERPRISE } from "@/content/enterprise"
+import { TestimonialGrid } from "@/components/apnahire/testimonial-grid"
 import { CLIENT_LOGOS } from "@/content/logos"
 
 export const metadata: Metadata = ENTERPRISE.meta
@@ -158,24 +157,7 @@ export default function EnterprisePage() {
       <Section size="md">
         <div className="flex flex-col gap-10">
           <SectionHeading level={2} align="center" title={testimonials.title} />
-          <ul className="grid gap-6 lg:grid-cols-3">
-            {testimonials.items.map((t) => (
-              <li key={t.name}>
-                <Card padding="lg" className="surface-frosted h-full justify-between gap-6">
-                  <p className="text-base text-pretty text-foreground">&ldquo;{t.quote}&rdquo;</p>
-                  <div className="flex items-center gap-3">
-                    <Avatar className="size-12">
-                      <AvatarImage src={t.photo} alt={t.name} />
-                    </Avatar>
-                    <div className="flex flex-col">
-                      <span className="text-sm font-semibold text-foreground">{t.name}</span>
-                      <span className="text-xs text-muted-foreground">{t.role}</span>
-                    </div>
-                  </div>
-                </Card>
-              </li>
-            ))}
-          </ul>
+          <TestimonialGrid items={testimonials.items} />
         </div>
       </Section>
 

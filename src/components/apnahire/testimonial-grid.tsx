@@ -13,7 +13,7 @@
  */
 
 import type { ReactNode } from "react"
-import { Card, Quote } from "@apna/design-system"
+import { Avatar, AvatarImage, Card, Quote } from "@apna/design-system"
 import { HOME_PROOF } from "@/content/home"
 import { cn } from "@/lib/utils"
 
@@ -21,12 +21,15 @@ export function TestimonialCard({
   quote,
   name,
   role,
+  photo,
   mark,
   className,
 }: {
   quote: string
   name?: string
   role?: string
+  /** Their photo, beside the name (enterprise quotes have them). */
+  photo?: string
   /** The company's logo (CompanyMark) in place of the quote mark. */
   mark?: ReactNode
   className?: string
@@ -36,9 +39,16 @@ export function TestimonialCard({
       {mark ?? <Quote className="size-6 text-muted-foreground" aria-hidden />}
       <p className="text-quote text-pretty text-foreground">&ldquo;{quote}&rdquo;</p>
       {name && (
-        <div className="mt-auto flex flex-col gap-0.5">
-          <p className="text-base font-semibold text-foreground">{name}</p>
-          {role && <p className="text-sm text-muted-foreground">{role}</p>}
+        <div className="mt-auto flex items-center gap-3">
+          {photo && (
+            <Avatar className="size-12">
+              <AvatarImage src={photo} alt={name} />
+            </Avatar>
+          )}
+          <div className="flex flex-col gap-0.5">
+            <p className="text-base font-semibold text-foreground">{name}</p>
+            {role && <p className="text-sm text-muted-foreground">{role}</p>}
+          </div>
         </div>
       )}
     </Card>
@@ -49,14 +59,14 @@ export function TestimonialGrid({
   items = HOME_PROOF.testimonials.items,
   className,
 }: {
-  items?: readonly { quote: string; name: string; role: string }[]
+  items?: readonly { quote: string; name: string; role: string; photo?: string }[]
   className?: string
 }) {
   return (
     <ul data-slot="testimonial-grid" className={cn("grid gap-6 lg:grid-cols-3", className)}>
       {items.map((t) => (
         <li key={t.name}>
-          <TestimonialCard quote={t.quote} name={t.name} role={t.role} />
+          <TestimonialCard quote={t.quote} name={t.name} role={t.role} photo={"photo" in t ? t.photo : undefined} />
         </li>
       ))}
     </ul>
