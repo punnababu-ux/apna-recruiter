@@ -147,8 +147,10 @@ export function StatGrid({
     >
       <dl
         className={cn(
-          "grid grid-cols-2 divide-border sm:grid-cols-3 sm:divide-x",
-          "max-sm:[&>*:nth-child(odd)]:border-r max-sm:[&>*:nth-child(n+3)]:border-t sm:[&>*:nth-child(n+4)]:border-t [&>*]:border-border",
+          "grid grid-cols-2 divide-border sm:divide-x",
+          // Four stats sit in one row of four; any other count, rows of three.
+          stats.length === 4 ? "sm:grid-cols-4" : "sm:grid-cols-3 sm:[&>*:nth-child(n+4)]:border-t",
+          "max-sm:[&>*:nth-child(odd)]:border-r max-sm:[&>*:nth-child(n+3)]:border-t [&>*]:border-border",
           // An odd last stat on phones takes the full row (no empty cell).
           "max-sm:[&>*:last-child:nth-child(odd)]:col-span-2 max-sm:[&>*:last-child:nth-child(odd)]:border-r-0",
           className

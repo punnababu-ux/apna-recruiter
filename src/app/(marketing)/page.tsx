@@ -261,9 +261,7 @@ export default function HomePage() {
             description={HOME_PROOF.why.description}
           />
           <StatGrid stats={HOME_PROOF.why.stats} />
-          <div className="flex flex-col gap-6">
-            <h3 className="text-h4 text-foreground">{HOME_PROOF.testimonials.title}</h3>
-            <div className="grid gap-6 lg:grid-cols-3">
+          <div className="grid gap-6 lg:grid-cols-3">
               {HOME_PROOF.testimonials.items.map((t) => (
                 <Card key={t.name} padding="lg" className="surface-frosted flex h-full flex-col gap-6">
                   <Quote className="size-6 text-muted-foreground" aria-hidden />
@@ -274,7 +272,6 @@ export default function HomePage() {
                   </div>
                 </Card>
               ))}
-            </div>
           </div>
         </div>
       </Section>
