@@ -51,7 +51,9 @@ export function WhyHireBand({
   stats?: readonly { value: string; label: string }[]
 }) {
   return (
-    <Section tone={tone} size="md">
+    // Brand green accents (stat bars, quote marks); the numbers card is the
+    // band's standout, in the green suite gradient (as By the numbers').
+    <Section tone={tone} size="md" data-accent="brand">
       <div className="flex flex-col gap-10">
         <SectionHeading
           level={2}
@@ -59,7 +61,7 @@ export function WhyHireBand({
           title={HOME_PROOF.why.title}
           description={HOME_PROOF.why.description}
         />
-        <StatGrid stats={stats} />
+        <StatGrid stats={stats} tone="green" />
         <TestimonialGrid />
       </div>
     </Section>

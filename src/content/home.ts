@@ -60,7 +60,7 @@ export const HOME_ENTERPRISE = {
   /** Opens the contact form pop-up. */
   primary: { label: "Contact sales" },
   secondary: { label: "Learn more", href: "/enterprise" },
-}
+} as const
 
 export const HOME_TRUSTED_BY = {
   eyebrow: "Trusted by",

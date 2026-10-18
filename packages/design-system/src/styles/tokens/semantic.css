@@ -993,6 +993,11 @@
   --product-tint:     var(--muted);
   --product-gradient: none;
 }
+/* A company band that speaks in apna's own green (not a product's): the
+ * accents — stat bars, quote marks — take the brand green. */
+[data-accent="brand"] {
+  --product-accent:   var(--color-apna-green-600);
+}
 [data-product="smart-jobs"] {
   --product-accent:   var(--color-apna-green-600);
   --product-tint:     var(--color-apna-green-50);

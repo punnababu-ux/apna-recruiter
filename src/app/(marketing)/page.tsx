@@ -15,13 +15,14 @@
 import Link from "next/link"
 import {
   ArrowRight,
+  ArrowUpRight,
   Building2,
   Badge,
   Button,
   Card,
   CheckCircle2,
   LogoApnaUnlimited,
-  Quote,
+  Newspaper,
   ScrollStack,
   ScrollStackItem,
   Trophy,
@@ -31,6 +32,7 @@ import {
 import { Stat } from "@/components/marketing/page-blocks"
 import { FaqBand, TrustedByBand, WhyHireBand } from "@/components/marketing/proof-bands"
 import { ContactButton } from "@/components/marketing/contact-section"
+import { ValueArt } from "@/components/marketing/value-art"
 import { HeroBackdrop } from "@/components/marketing/hero-backdrop"
 import { HeroLeadCard } from "@/components/marketing/hero-lead-card"
 import { PRODUCT_ICON, PRODUCT_KEY, ProductIllustration } from "@/components/marketing/product-illustrations"
@@ -199,29 +201,36 @@ export default function HomePage() {
           {/* Enterprise (the live site's band): the suite's closing card, for
               buyers hiring at scale — the route in for new enterprise
               customers (Enterprise login is for existing ones). */}
-          <Card padding="none" className="surface-feature flex flex-col gap-6 p-6 sm:p-10 lg:flex-row lg:items-center lg:justify-between lg:p-12">
-            <div className="flex max-w-2xl flex-col gap-3">
-              <span className="flex items-center gap-2 text-overline text-muted-foreground">
-                <Building2 className="size-4 shrink-0" aria-hidden />
-                {HOME_ENTERPRISE.eyebrow}
-              </span>
-              <h3 className="text-h4 text-foreground">{HOME_ENTERPRISE.title}</h3>
-              <p className="text-base text-muted-foreground">{HOME_ENTERPRISE.description}</p>
+          <Card padding="none" className="surface-feature grid gap-8 p-6 sm:p-10 lg:grid-cols-2 lg:items-center lg:gap-12 lg:p-12">
+            <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-3">
+                <span className="flex items-center gap-2 text-overline text-muted-foreground">
+                  <Building2 className="size-4 shrink-0" aria-hidden />
+                  {HOME_ENTERPRISE.eyebrow}
+                </span>
+                <h3 className="text-h3 text-balance text-foreground">{HOME_ENTERPRISE.title}</h3>
+                <p className="text-base text-pretty text-muted-foreground">{HOME_ENTERPRISE.description}</p>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                {/* Opens the contact form pop-up, as "Contact us" does. */}
+                <ContactButton variant="emphasis" size="lg">
+                  {HOME_ENTERPRISE.primary.label}
+                </ContactButton>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  nativeButton={false}
+                  render={<Link href={HOME_ENTERPRISE.secondary.href} />}
+                  trailingIcon={<ArrowRight aria-hidden />}
+                >
+                  {HOME_ENTERPRISE.secondary.label}
+                </Button>
+              </div>
             </div>
-            <div className="flex shrink-0 flex-wrap gap-3">
-              {/* Opens the contact form pop-up, as "Contact us" does. */}
-              <ContactButton variant="emphasis" size="lg">
-                {HOME_ENTERPRISE.primary.label}
-              </ContactButton>
-              <Button
-                variant="outline"
-                size="lg"
-                nativeButton={false}
-                render={<Link href={HOME_ENTERPRISE.secondary.href} />}
-                trailingIcon={<ArrowRight aria-hidden />}
-              >
-                {HOME_ENTERPRISE.secondary.label}
-              </Button>
+            {/* One picture, not a list: the Enterprise page's own 3D clay
+                object, as the product cards above pair copy with a picture. */}
+            <div className="flex justify-center max-lg:order-first">
+              <ValueArt name="team-management" size="md" />
             </div>
           </Card>
         </div>
@@ -240,13 +249,17 @@ export default function HomePage() {
           <div className="grid gap-6 sm:grid-cols-3">
             {HOME_PRESS.items.map((item) => (
               <Link key={item.outlet} href={item.href} target="_blank" rel="noreferrer noopener">
+                {/* A headline, not a quote: the outlet up top (the newspaper
+                    mark), the headline as a headline, then the way to it. */}
                 <Card padding="lg" interactive className="flex h-full flex-col gap-4">
-                  <Quote className="size-6 text-muted-foreground" aria-hidden />
-                  <p className="text-quote text-foreground italic">
-                    &ldquo;{item.headline}&rdquo;
-                  </p>
-                  <span className="mt-auto text-sm font-semibold text-foreground">
+                  <span className="flex items-center gap-2 text-overline text-muted-foreground">
+                    <Newspaper className="size-4 shrink-0 text-primary" aria-hidden />
                     {item.outlet}
+                  </span>
+                  <p className="text-h5 text-pretty text-foreground">{item.headline}</p>
+                  <span className="mt-auto flex items-center gap-1 text-sm font-semibold text-foreground">
+                    Read the story
+                    <ArrowUpRight className="size-4" aria-hidden />
                   </span>
                 </Card>
               </Link>

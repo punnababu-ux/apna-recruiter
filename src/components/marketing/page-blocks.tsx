@@ -178,8 +178,9 @@ export function StatGrid({
    *  for short text values (a case study's client / industry / …): label
    *  first as an overline, the value in body weight. */
   size?: "default" | "lg" | "facts"
-  /** With "lg": one of the suite gradients for the lifted card, so it
-   *  doesn't repeat the hero's mother gradient. */
+  /** One of the suite gradients: lifts the card (with "lg", or as a band's
+   *  standout at the default size), so it doesn't repeat the hero's mother
+   *  gradient. */
   tone?: IllustrationTone
   className?: string
 }) {
@@ -188,9 +189,10 @@ export function StatGrid({
       padding="none"
       className={cn(
         "w-full",
-        // "lg" is the page's subject, so it's lifted: the mother gradient
-        // inside and the elevated shadow, not the frosted strip.
-        size === "lg"
+        // "lg" is the page's subject, and a toned card is its band's
+        // standout: lifted — the gradient inside and the elevated shadow,
+        // not the frosted strip.
+        size === "lg" || tone
           ? cn("shadow-elevated", tone ? ILLUSTRATION_TONE[tone] : "bg-gradient-checkout-hero")
           : "surface-frosted shadow-card"
       )}

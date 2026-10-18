@@ -36,7 +36,7 @@ export function TestimonialCard({
 }) {
   return (
     <Card padding="lg" className={cn("surface-frosted h-full gap-6", className)}>
-      {mark ?? <Quote className="size-6 text-muted-foreground" aria-hidden />}
+      {mark ?? <Quote className="size-6 text-product-accent" aria-hidden />}
       <p className="text-quote text-pretty text-foreground">&ldquo;{quote}&rdquo;</p>
       {name && (
         <div className="mt-auto flex items-center gap-3">
