@@ -9,7 +9,7 @@ import {
   Newspaper,
   Section,
 } from "@apna/design-system"
-import { PageHero } from "@/components/marketing/page-blocks"
+import { PageHero, withAccent } from "@/components/marketing/page-blocks"
 import { PressList } from "@/components/marketing/page-switchers"
 import { PRESS } from "@/content/press"
 
@@ -18,7 +18,7 @@ export const metadata: Metadata = PRESS.meta
 export default function NewsroomPage() {
   return (
     <>
-      <PageHero icon={<Newspaper aria-hidden />} eyebrow={PRESS.eyebrow} title={PRESS.title} description={PRESS.description} />
+      <PageHero icon={<Newspaper aria-hidden />} eyebrow={PRESS.eyebrow} title={withAccent(PRESS.title, PRESS.titleAccent)} description={PRESS.description} />
       <Section tone="card" size="lg">
         <PressList />
       </Section>

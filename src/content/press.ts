@@ -78,6 +78,7 @@ export const PRESS = {
   meta: { title: "Press releases", description: "News, announcements and media coverage on how apna is building the future of work for Bharat." },
   eyebrow: "Newsroom",
   title: "Press releases",
+  titleAccent: "Press",
   description: "News, announcements and media coverage on how apna is building the future of work for Bharat.",
   /** The year filter: the two latest years, then everything older. */
   filters: ["2026", "2025", "Earlier"] as const,

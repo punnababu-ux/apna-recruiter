@@ -7,7 +7,7 @@
 
 import type { Metadata } from "next"
 import { BarChart2, Section, SectionHeading } from "@apna/design-system"
-import { PageHero, StatGrid } from "@/components/marketing/page-blocks"
+import { PageHero, StatGrid, withAccent } from "@/components/marketing/page-blocks"
 import { ABOUT_NUMBERS } from "@/content/company"
 
 export const metadata: Metadata = ABOUT_NUMBERS.meta
@@ -15,7 +15,7 @@ export const metadata: Metadata = ABOUT_NUMBERS.meta
 export default function NumbersPage() {
   return (
     <>
-      <PageHero icon={<BarChart2 aria-hidden />} eyebrow={ABOUT_NUMBERS.eyebrow} title={ABOUT_NUMBERS.title} description={ABOUT_NUMBERS.description} />
+      <PageHero icon={<BarChart2 aria-hidden />} eyebrow={ABOUT_NUMBERS.eyebrow} title={withAccent(ABOUT_NUMBERS.title, ABOUT_NUMBERS.titleAccent)} description={ABOUT_NUMBERS.description} />
       {/* The numbers on white (the hero above is the gradient). */}
       <Section tone="card" size="lg">
         <div className="flex flex-col items-center gap-10">

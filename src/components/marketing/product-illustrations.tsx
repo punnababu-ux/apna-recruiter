@@ -21,7 +21,9 @@ import {
   Avatar,
   AvatarFallback,
   Badge,
+  Briefcase,
   CheckCircle2,
+  Database as DatabaseIcon,
   InfinityIcon,
   MapPin,
   PhoneCall,
@@ -71,6 +73,15 @@ export const PRODUCT_KEY: Record<Product, string> = {
   "AI Calling Agent": "ai-calling",
   "Hyperlocal Database": "database",
   "apna Unlimited": "unlimited",
+}
+
+/** Each product's mark: the icon in its page's hero chip and beside its
+ *  eyebrow on the homepage card, so one product reads as one thing. */
+export const PRODUCT_ICON: Record<Product, React.ComponentType<{ className?: string; "aria-hidden"?: boolean }>> = {
+  "Smart Jobs": Briefcase,
+  "AI Calling Agent": PhoneCall,
+  "Hyperlocal Database": DatabaseIcon,
+  "apna Unlimited": InfinityIcon,
 }
 
 /** Each product's own gradient (the product identity tokens). */

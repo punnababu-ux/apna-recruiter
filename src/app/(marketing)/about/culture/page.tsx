@@ -13,17 +13,17 @@
 import type { Metadata } from "next"
 import { CheckCircle2, Heart, ScrollStack, Section } from "@apna/design-system"
 import { ContactSection } from "@/components/marketing/contact-section"
-import { PageHero, StackCard, deckPosition } from "@/components/marketing/page-blocks"
+import { PageHero, StackCard, deckPosition, withAccent } from "@/components/marketing/page-blocks"
 import { ValueArt } from "@/components/marketing/value-art"
 import { ABOUT_VALUES } from "@/content/company"
 
 export const metadata: Metadata = ABOUT_VALUES.meta
 
 export default function CulturePage() {
-  const { eyebrow, title, description, values, closing } = ABOUT_VALUES
+  const { eyebrow, title, titleAccent, description, values, closing } = ABOUT_VALUES
   return (
     <>
-      <PageHero icon={<Heart aria-hidden />} eyebrow={eyebrow} title={title} description={description} />
+      <PageHero icon={<Heart aria-hidden />} eyebrow={eyebrow} title={withAccent(title, titleAccent)} description={description} />
 
       <Section tone="card" size="md">
         {/* No section title: the hero already names them (Lovable has none). */}

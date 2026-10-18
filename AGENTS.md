@@ -365,7 +365,9 @@ To change how round the cards feel, retune `--radius-card` in
   3. **Quotes** — `text-quote` in a card (testimonials, press),
      `text-quote-lg` for a page's featured quote (the founder's line).
 
-  One word per headline may be italic (`<em>`, `withAccent`); never more.
+  **Every hero headline (h1) has exactly one italic accent** — one word
+  or one tight phrase ("AI-Native"), set with `withAccent` (the word lives
+  in the page's content as `titleAccent`). Section titles (h2) stay plain.
   **Everything else is Inter:** h3 and below, card / list / accordion
   titles, every number (stats, years, step numbers — numbers are data),
   eyebrows, chips, body, buttons, nav, forms, footer, and anything in the
@@ -408,6 +410,13 @@ To change how round the cards feel, retune `--radius-card` in
   - `surface-band` — the closing contact band only: `surface-feature` on
     light; on dark the solid plan-card plum, the same on every page.
   No `bg-card/70 backdrop-blur-*` hand-mixes on marketing cards.
+- **A card on a gradient is frosted glass** — `--surface-glass` (card at
+  80%) plus a blur, everywhere: marketing cards, the homepage login card, the nav
+  pill and docked header. It is automatic for a plain `Card` on a marketing
+  page (a CSS rule in the design system's `index.css`, like the serif);
+  hand-rolled surfaces use `bg-surface-glass backdrop-blur-xl`. Never pick
+  the fill by hand. Not glass: plan and pricing cards (`plan-card`), the
+  small tiles inside product illustrations, buttons and chips.
 - **A product page is its colour, top to bottom.** Its canvas — header,
   every band, footer — is the homepage gradient re-tinted in the product's
   hue (`--gradient-canvas-*`, set by `data-product-canvas`). Bands stay

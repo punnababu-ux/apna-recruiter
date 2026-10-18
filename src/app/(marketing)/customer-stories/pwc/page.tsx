@@ -16,16 +16,16 @@ import {
   TableHeader,
   TableRow,
 } from "@apna/design-system"
-import { PageHero, StatGrid } from "@/components/marketing/page-blocks"
+import { PageHero, StatGrid, withAccent } from "@/components/marketing/page-blocks"
 import { STORY_PWC } from "@/content/company"
 
 export const metadata: Metadata = STORY_PWC.meta
 
 export default function PwcStoryPage() {
-  const { eyebrow, title, description, facts, headline, sections, solution, results, impact } = STORY_PWC
+  const { eyebrow, title, titleAccent, description, facts, headline, sections, solution, results, impact } = STORY_PWC
   return (
     <>
-      <PageHero icon={<GraduationCap aria-hidden />} eyebrow={eyebrow} title={title} description={description} />
+      <PageHero icon={<GraduationCap aria-hidden />} eyebrow={eyebrow} title={withAccent(title, titleAccent)} description={description} />
 
       {/* The campaign at a glance: one anchored card under the hero. */}
       <Section size="none" className="relative -mt-8 pb-8 md:-mt-12 md:pb-12">

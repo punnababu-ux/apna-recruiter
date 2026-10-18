@@ -110,7 +110,7 @@ export function PhoneLoginForm({
 
 export function HeroLeadCard({ className, ...props }: PhoneLoginFormProps & { className?: string }) {
   return (
-    <Card padding="lg" className={cn("flex w-full max-w-md flex-col gap-6", className)}>
+    <Card padding="lg" className={cn("surface-frosted flex w-full max-w-md flex-col gap-6", className)}>
       <PhoneLoginForm ctaLabel="Continue" {...props} />
       <LegalLine className="text-xs" />
     </Card>

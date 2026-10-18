@@ -23,7 +23,7 @@ import {
   Target,
 } from "@apna/design-system"
 import { ValueArt } from "@/components/marketing/value-art"
-import { ClosingBand, PageHero, StackCard, deckPosition } from "@/components/marketing/page-blocks"
+import { ClosingBand, PageHero, StackCard, deckPosition, withAccent } from "@/components/marketing/page-blocks"
 import { ABOUT_LEADERSHIP, ABOUT_MANAGEMENT, CAREERS } from "@/content/company"
 
 export const metadata: Metadata = CAREERS.meta
@@ -33,13 +33,13 @@ const TEAM = [...ABOUT_LEADERSHIP.people, ...ABOUT_MANAGEMENT.people]
 const rolesLink = <a href={CAREERS.cta.href} target="_blank" rel="noreferrer noopener" />
 
 export default function CareersPage() {
-  const { eyebrow, title, description, body, cta, life, closing } = CAREERS
+  const { eyebrow, title, titleAccent, description, body, cta, life, closing } = CAREERS
   return (
     <>
       <PageHero
         icon={<Target aria-hidden />}
         eyebrow={eyebrow}
-        title={title}
+        title={withAccent(title, titleAccent)}
         description={`${description} ${body}`}
         actions={
           <Button size="lg" nativeButton={false} render={rolesLink} trailingIcon={<ArrowUpRight aria-hidden />}>

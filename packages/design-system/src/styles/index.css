@@ -127,6 +127,7 @@
   --color-tabs-inverted-label:         var(--tabs-inverted-label);
   --color-cta-primary-hover:           var(--cta-primary-hover);
   --color-plan-card:                   var(--surface-plan-card);
+  --color-surface-glass:               var(--surface-glass);
   --color-checkout-info:               var(--checkout-info);
   --color-checkout-info-foreground:    var(--checkout-info-foreground);
   --color-night-sky-fg:       var(--night-sky-fg);
@@ -789,6 +790,11 @@
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  /* The gradient paints only inside the box, and italic letters lean past
+     it (the "A" of AI-Native lost its foot). Widen the painted box by a
+     sliver and pull it back with margin, so nothing moves. */
+  padding-inline: 0.15em;
+  margin-inline: -0.15em;
   animation: text-gradient-flow var(--duration-text-gradient) ease-in-out infinite alternate;
 
   @media (prefers-reduced-motion: reduce) {
@@ -1140,7 +1146,7 @@
  * fill without !important. */
 @utility surface-frosted {
   &[data-slot] {
-    background-color: color-mix(in srgb, var(--card) 80%, transparent);
+    background-color: var(--surface-glass);
     border-color: color-mix(in srgb, var(--card) 60%, transparent);
     backdrop-filter: blur(24px);
   }
@@ -1150,13 +1156,27 @@
     backdrop-filter: none;
   }
 }
+/* RULE: a card on a gradient is frosted glass (--surface-glass + blur).
+   Automatic on marketing pages, like the serif: any plain Card (tone
+   default) that isn't on a white band and isn't nested in another card
+   takes the glass. Cards that set their own surface (surface-*, a
+   gradient fill) or another tone are left alone. In the utilities layer
+   so it outranks the Card's own bg-card. */
+@layer utilities {
+  [data-voice="editorial"] [data-slot="card"][data-tone="default"]:not(section[data-tone="card"] *, [data-slot="card"] *, [class*="surface-"], [class*="bg-gradient"]) {
+    background-color: var(--surface-glass);
+    border-color: color-mix(in srgb, var(--card) 60%, transparent);
+    backdrop-filter: blur(24px);
+  }
+}
+
 /* The closing contact band (ContactSection, every marketing page): the
    feature surface on light; on dark the solid plan-card plum, so it matches
    the cards around it (the frosting has no gradient to show on a dark page).
    One rule site-wide, so the band looks the same on every page. */
 @utility surface-band {
   &[data-slot] {
-    background-color: color-mix(in srgb, var(--card) 70%, transparent);
+    background-color: var(--surface-glass);
     border-color: color-mix(in srgb, var(--card) 60%, transparent);
     box-shadow: var(--shadow-card);
     backdrop-filter: blur(24px);
@@ -1175,7 +1195,7 @@
      shows through and the band matches that page's cards. */
   .dark &[data-slot],
   .dark section[data-tone="card"] &[data-slot] {
-    background-color: color-mix(in srgb, var(--card) 80%, transparent);
+    background-color: var(--surface-glass);
     background-image: none;
     border-color: color-mix(in srgb, var(--card) 60%, transparent);
     backdrop-filter: blur(24px);
@@ -1183,7 +1203,7 @@
 }
 @utility surface-feature {
   &[data-slot] {
-    background-color: color-mix(in srgb, var(--card) 70%, transparent);
+    background-color: var(--surface-glass);
     border-color: color-mix(in srgb, var(--card) 60%, transparent);
     box-shadow: var(--shadow-card);
     backdrop-filter: blur(24px);

@@ -47,6 +47,8 @@ export interface ProductPageContent {
   metaDescription: string
   eyebrow: string
   heading: string
+  /** The one italic word of the hero headline. */
+  headingAccent?: string
   /** One line under the heading — left out where it would only repeat it. */
   description?: string
   /** The hero's one primary action. Logged-out visitors go through login. */
@@ -68,6 +70,7 @@ export const PRODUCT_PAGES = {
     metaDescription: "Get applications from relevant, high-intent candidates with apna's smart job posting.",
     eyebrow: "Smart job posting",
     heading: "Get applications from relevant, high-intent candidates",
+    headingAccent: "high-intent",
     description: "Post Classic & Premium jobs",
     cta: { label: "Post a smart-AI job", href: login("/apnahire/jobs/new") },
     features: {
@@ -116,6 +119,7 @@ export const PRODUCT_PAGES = {
     // AI calling is an add-on on any job (not a premium job type).
     eyebrow: "AI Calling Agent",
     heading: "AI Calling Agent interviews and shortlists candidates 24/7",
+    headingAccent: "shortlists",
     cta: { label: "Post a job now", href: login("/apnahire/jobs/new") },
     stats: [
       { value: "80%", label: "Response rate with AI" },
@@ -172,6 +176,7 @@ export const PRODUCT_PAGES = {
     metaDescription: "Quickly hire active jobseekers around your office with apna Database.",
     eyebrow: "apna Database",
     heading: "Quickly hire active jobseekers around your office.",
+    headingAccent: "active",
     description: "Direct 5Cr+ verified profiles",
     cta: { label: "Search candidates", href: login("/apnahire/database/search-candidates") },
     features: {
@@ -220,6 +225,7 @@ export const PRODUCT_PAGES = {
     metaDescription: "Post unlimited jobs in one plan with apna Unlimited.",
     eyebrow: "apna Unlimited",
     heading: "Post unlimited jobs in one plan",
+    headingAccent: "unlimited",
     description: "Post 3+ roles every month. Fill them. Move on.",
     cta: { label: "Subscribe now", href: "/pricing" },
     stats: [

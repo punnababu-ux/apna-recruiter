@@ -26,7 +26,6 @@ import {
   Database,
   Eye,
   FileText,
-  InfinityIcon,
   Filter,
   ListChecks,
   MapPin,
@@ -42,8 +41,8 @@ import {
   WhatsApp,
   Zap,
 } from "@apna/design-system"
-import { HeroChip, StatGrid } from "@/components/marketing/page-blocks"
-import { PRODUCT_KEY, ProductIllustration } from "@/components/marketing/product-illustrations"
+import { HeroChip, StatGrid, withAccent } from "@/components/marketing/page-blocks"
+import { PRODUCT_ICON, PRODUCT_KEY, ProductIllustration } from "@/components/marketing/product-illustrations"
 import { CONTACT_ANCHOR } from "@/content/contact"
 import type { ProductIconName, ProductPageContent } from "@/content/products"
 
@@ -67,17 +66,10 @@ const ICONS: Record<ProductIconName, ComponentType<{ className?: string; "aria-h
   database: Database,
 }
 
-/** The hero chip's icon: the product itself. */
-const PRODUCT_CHIP_ICON: Record<ProductPageContent["product"], ComponentType<{ className?: string; "aria-hidden"?: boolean }>> = {
-  "Smart Jobs": Briefcase,
-  "AI Calling Agent": PhoneCall,
-  "Hyperlocal Database": Database,
-  "apna Unlimited": InfinityIcon,
-}
 
 export function ProductPage({ content }: { content: ProductPageContent }) {
-  const { product, eyebrow, heading, description, cta, stats, steps, features } = content
-  const ChipIcon = PRODUCT_CHIP_ICON[product]
+  const { product, eyebrow, heading, headingAccent, description, cta, stats, steps, features } = content
+  const ChipIcon = PRODUCT_ICON[product]
 
   return (
     // The product's colour is the page's identity, header to footer: the
@@ -96,7 +88,7 @@ export function ProductPage({ content }: { content: ProductPageContent }) {
               <SectionHeading
                 level={1}
                 eyebrow={<HeroChip icon={<ChipIcon aria-hidden />}>{eyebrow}</HeroChip>}
-                title={heading}
+                title={withAccent(heading, headingAccent)}
                 description={description}
               />
               <div className="flex flex-col gap-3 max-lg:order-last sm:flex-row">

@@ -57,3 +57,8 @@ next-env.d.ts
 poneglyph-figma-*.json
 scripter-*.js
 figma-*.js
+
+# Agent skills install globally (npx skills add -g); never commit a project copy
+.agents/
+.claude/skills/
+skills-lock.json

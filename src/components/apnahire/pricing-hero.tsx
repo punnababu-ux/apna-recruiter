@@ -26,7 +26,7 @@ import {
   UserSearch,
   type SegmentedTabItem,
 } from "@apna/design-system"
-import { HeroChip } from "@/components/marketing/page-blocks"
+import { HeroChip, withAccent } from "@/components/marketing/page-blocks"
 import { cn } from "@/lib/utils"
 
 export type PricingTab = "jobs" | "database" | "unlimited" | "enterprise"
@@ -85,7 +85,7 @@ interface PricingHeroProps {
   tabsRef?: React.Ref<HTMLDivElement>
   /** Logged-out only (/pricing): the marketing pages' hero heading — chip,
    *  serif headline, hook line — in place of the plain app title. */
-  intro?: { eyebrow: string; title: string; description: string }
+  intro?: { eyebrow: string; title: string; titleAccent?: string; description: string }
 }
 
 export function PricingHero({
@@ -120,7 +120,7 @@ export function PricingHero({
           <SectionHeading
             level={1}
             eyebrow={<HeroChip icon={<Tag aria-hidden />}>{intro.eyebrow}</HeroChip>}
-            title={intro.title}
+            title={withAccent(intro.title, intro.titleAccent)}
             description={intro.description}
           />
         ) : (

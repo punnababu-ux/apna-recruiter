@@ -611,6 +611,10 @@
   /* Plan surfaces (pricing, plans step): the cards. Same as --card on
      light; on dark they take the open FAQ item's plum (--muted). */
   --surface-plan-card: var(--card);
+  /* Frosted glass: every card that floats on a gradient (marketing cards,
+     the homepage login card, the nav pill). Almost white, the gradient
+     still showing through; paired with a blur. */
+  --surface-glass: color-mix(in srgb, var(--card) 80%, transparent);
   /* The green button fill (Button default). Same as --primary on light;
      on dark it is green-500, the same as --primary there, which stays
      bright for green text, links and icons. */
@@ -683,6 +687,7 @@
 .dark {
   --logo-hire:         var(--cta-primary); /* the logo's "Hire" on dark: the CTA green */
   --surface-plan-card: var(--muted);
+  --surface-glass: color-mix(in srgb, var(--card) 80%, transparent);
   --cta-primary:       var(--color-apna-green-500);
   --cta-primary-hover: var(--color-apna-green-600);
   --ribbon-fill: color-mix(in srgb, var(--info) 20%, var(--surface-plan-card));
@@ -868,11 +873,15 @@
     var(--gradient-checkout-hero);
   --gradient-ai-subtle: linear-gradient(100deg, color-mix(in srgb, var(--color-apna-plum-950) 70%, transparent) 0%, color-mix(in srgb, var(--color-apna-sky-950) 45%, transparent) 55%, color-mix(in srgb, var(--color-apna-green-950) 60%, transparent) 100%);
   --gradient-ai-demo: linear-gradient(90deg, color-mix(in srgb, var(--color-apna-navy-950) 70%, transparent) 0%, color-mix(in srgb, var(--color-apna-green-950) 70%, transparent) 100%);
-  --ambient-blob-1: color-mix(in srgb, var(--color-apna-plum-600) 45%, transparent);
-  --ambient-blob-2: color-mix(in srgb, var(--color-apna-plum-500) 35%, transparent);
-  --ambient-blob-3: color-mix(in srgb, var(--color-apna-sky-800) 35%, transparent);
-  --ambient-blob-4: color-mix(in srgb, var(--color-apna-sky-900) 40%, transparent);
-  --ambient-glow:   var(--color-alpha-white-10);
+  /* Brighter steps than the surface (plum-400/500, sky-600/700): at the
+     surface's own depth the blobs moved unseen (a 3s change ~1/7 of light's).
+     No wandering light on dark — a white sheen over a dark surface reads as
+     a torch behind a curtain; on dark the colour glows. */
+  --ambient-blob-1: color-mix(in srgb, var(--color-apna-plum-500) 60%, transparent);
+  --ambient-blob-2: color-mix(in srgb, var(--color-apna-plum-400) 45%, transparent);
+  --ambient-blob-3: color-mix(in srgb, var(--color-apna-sky-600) 50%, transparent);
+  --ambient-blob-4: color-mix(in srgb, var(--color-apna-sky-700) 55%, transparent);
+  --ambient-glow:   transparent;
   --ambient-grain-opacity: 0.08;
   /* Product tints on dark: each hue a few steps lighter than the card it
      sits on (stack cards are now solid card plum), so a deck keeps its four

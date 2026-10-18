@@ -141,7 +141,7 @@ export function ValueArt({ name, size = "lg" }: { name: ValueName; size?: "sm" |
   return (
     <span
       className={cn(
-        "flex items-center justify-center rounded-full border border-card/60 bg-card/70 shadow-card backdrop-blur-xl",
+        "flex items-center justify-center rounded-full border border-card/60 bg-surface-glass shadow-card backdrop-blur-xl",
         size === "sm" ? "size-20" : size === "md" ? "size-32" : "size-48 md:size-64"
       )}
     >

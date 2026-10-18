@@ -53,7 +53,7 @@ import { ContactSection } from "@/components/marketing/contact-section"
 import { MomentCarousel } from "@/components/marketing/moment-carousel"
 import { ILLUSTRATION_TONE } from "@/components/marketing/product-illustrations"
 import { ValueArt } from "@/components/marketing/value-art"
-import { HeroChip, StackCard, StatGrid, StatementBand, deckPosition } from "@/components/marketing/page-blocks"
+import { HeroChip, StackCard, StatGrid, StatementBand, deckPosition, withAccent } from "@/components/marketing/page-blocks"
 import { CONTACT_ANCHOR } from "@/content/contact"
 import { LOUNGE } from "@/content/interview-lounge"
 import { cn } from "@/lib/utils"
@@ -116,7 +116,7 @@ export default function InterviewPrepLoungePage() {
               <SectionHeading
                 level={1}
                 eyebrow={<HeroChip icon={<GraduationCap aria-hidden />}>{hero.eyebrow}</HeroChip>}
-                title={hero.title}
+                title={withAccent(hero.title, hero.titleAccent)}
                 description={hero.description}
               />
               <Button
@@ -288,7 +288,7 @@ export default function InterviewPrepLoungePage() {
                 sizes="(min-width: 1024px) 50vw, 100vw"
                 className="object-cover"
               />
-              <figcaption className="absolute inset-x-3 bottom-3 rounded-card-nested bg-card/85 px-4 py-3 text-sm text-foreground shadow-card backdrop-blur-xl">
+              <figcaption className="absolute inset-x-3 bottom-3 rounded-card-nested bg-surface-glass px-4 py-3 text-sm text-foreground shadow-card backdrop-blur-xl">
                 {publicOutcomes.image.caption}
               </figcaption>
             </figure>

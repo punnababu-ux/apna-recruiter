@@ -17,17 +17,17 @@ import {
   Section,
   SectionHeading,
 } from "@apna/design-system"
-import { PageHero } from "@/components/marketing/page-blocks"
+import { PageHero, withAccent } from "@/components/marketing/page-blocks"
 import { AWARDS } from "@/content/company"
 import { cn } from "@/lib/utils"
 
 export const metadata: Metadata = AWARDS.meta
 
 export default function AwardsPage() {
-  const { eyebrow, title, description, heroImage, shelf, items } = AWARDS
+  const { eyebrow, title, titleAccent, description, heroImage, shelf, items } = AWARDS
   return (
     <>
-      <PageHero icon={<Award aria-hidden />} eyebrow={eyebrow} title={title} description={description}>
+      <PageHero icon={<Award aria-hidden />} eyebrow={eyebrow} title={withAccent(title, titleAccent)} description={description}>
         <Image
           src={heroImage}
           alt=""

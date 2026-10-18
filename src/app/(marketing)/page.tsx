@@ -30,7 +30,7 @@ import {
 } from "@apna/design-system"
 import { HeroBackdrop } from "@/components/marketing/hero-backdrop"
 import { HeroLeadCard } from "@/components/marketing/hero-lead-card"
-import { PRODUCT_KEY, ProductIllustration } from "@/components/marketing/product-illustrations"
+import { PRODUCT_ICON, PRODUCT_KEY, ProductIllustration } from "@/components/marketing/product-illustrations"
 import {
   HOME_HERO,
   HOME_PRESS,
@@ -86,8 +86,9 @@ export default function HomePage() {
                 title={
                   <>
                     India&apos;s Largest{" "}
-                      {/* The green ramp flowing across the word. */}
-                      <span className="animate-text-gradient text-primary">AI-Native</span>{" "}
+                      {/* The green ramp flowing across the word, and its one italic
+                          accent (every hero headline has one). */}
+                      <em className="animate-text-gradient whitespace-nowrap text-primary">AI-Native</em>{" "}
                     Early Talent Platform
                   </>
                 }
@@ -177,7 +178,15 @@ export default function HomePage() {
                   {product.name === "apna Unlimited" ? (
                     <LogoApnaUnlimited variant="theme" className="h-4 w-auto self-start text-foreground" />
                   ) : (
-                    <span className="text-overline text-muted-foreground">{product.eyebrow}</span>
+                    // The product's mark from its page's hero chip, so the card
+                    // and the page it opens read as one product.
+                    <span className="flex items-center gap-2 text-overline text-muted-foreground">
+                      {(() => {
+                        const Icon = PRODUCT_ICON[product.name as ProductName]
+                        return <Icon className="size-4 shrink-0" aria-hidden />
+                      })()}
+                      {product.eyebrow}
+                    </span>
                   )}
                   <h3 className="text-h4 text-foreground">{product.heading}</h3>
                   <ul className="flex flex-col gap-4">

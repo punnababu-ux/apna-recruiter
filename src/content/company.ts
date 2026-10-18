@@ -118,6 +118,7 @@ export const ABOUT_VALUES = {
   meta: { title: "Our culture and values", description: "The principles that guide how we work at apna." },
   eyebrow: "Our culture",
   title: "Our culture and values",
+  titleAccent: "values",
   description: "The principles that guide how we work and decide how we grow together.",
   values: [
     {
@@ -176,6 +177,7 @@ export const ABOUT_NUMBERS = {
   meta: { title: "apna by the numbers", description: "The scale of India's largest early-career hiring marketplace." },
   eyebrow: "About apna",
   title: "apna by the numbers.",
+  titleAccent: "numbers",
   /** Lovable's "By the numbers" block. */
   sectionTitle: "By the numbers",
   description:
@@ -243,6 +245,7 @@ export const ABOUT_MANAGEMENT = {
   meta: { title: "Management team", description: "The team leading apna forward." },
   eyebrow: "Management team",
   title: "Leading apna forward",
+  titleAccent: "forward",
   description:
     "Behind apna is a team united by a shared vision: to make hiring smarter and opportunities more accessible through AI. Across product, engineering, AI, business, operations, customer success, people, and marketing, our teams work together to solve real-world hiring challenges.",
   people: [
@@ -309,6 +312,7 @@ export const CAREERS = {
   meta: { title: "Join us", description: "Build what millions run on. Careers at apna." },
   eyebrow: "Join the mission",
   title: "Build what millions run on",
+  titleAccent: "millions",
   description:
     "In the time it takes to read this sentence, someone in India just got hired. Now imagine building that.",
   body: "We move at the pace of real lives. Every launch, every experiment, every line of code closes the gap between someone and their next paycheck. If you want to see your work change lives in seconds, this is your place.",
@@ -350,6 +354,7 @@ export const AWARDS = {
   heroImage: "/images/company/awards/hero-room.jpg",
   shelf: { eyebrow: "8 recognitions", title: "On the shelf" },
   title: "Recognition that belongs to everyone we empower",
+  titleAccent: "everyone",
   description:
     "Every trophy, certification, and accreditation is a marker of the same thing: hiring built with trust, security, and scale for Bharat.",
   items: [
@@ -463,6 +468,7 @@ export const STORY_PWC = {
   eyebrow: "Customer story · CampusAI",
   // Lovable's own line for this story (its featured-card copy).
   title: "43% more quality campus registrations by turning Campus Contender into an employer branding moment.",
+  titleAccent: "moment",
   description:
     "Campus Contender went from a reliable registration driver to a differentiated employer branding moment for top MBA talent.",
   facts: [

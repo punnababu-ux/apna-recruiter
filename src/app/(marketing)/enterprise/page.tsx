@@ -31,7 +31,7 @@ import {
   SectionHeading,
 } from "@apna/design-system"
 import { FaqSection } from "@/components/apnahire/faq-section"
-import { PageHero } from "@/components/marketing/page-blocks"
+import { PageHero, withAccent } from "@/components/marketing/page-blocks"
 import { ValueArt, type ValueName } from "@/components/marketing/value-art"
 import { CONTACT_ANCHOR } from "@/content/contact"
 import { ENTERPRISE } from "@/content/enterprise"
@@ -74,7 +74,7 @@ export default function EnterprisePage() {
       <PageHero
         icon={<Building2 aria-hidden />}
         eyebrow={hero.eyebrow}
-        title={hero.title}
+        title={withAccent(hero.title, hero.titleAccent)}
         description={hero.description}
         actions={
           <Button

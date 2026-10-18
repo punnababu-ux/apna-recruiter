@@ -26,6 +26,7 @@ export const LOUNGE = {
   hero: {
     eyebrow: "For campuses",
     title: "AI Interview Preparation Lounge",
+    titleAccent: "Lounge",
     description:
       "The apna AI Interview Preparation Lounge is an AI-powered interview readiness solution designed for universities, colleges and training institutions, bringing personalised, always-available interview preparation directly to campus.",
     cta: "Bring the Lounge to your campus",

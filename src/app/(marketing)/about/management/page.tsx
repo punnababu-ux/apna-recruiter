@@ -9,16 +9,16 @@ import {
   Section,
   Users,
 } from "@apna/design-system"
-import { PageHero, PersonCard } from "@/components/marketing/page-blocks"
+import { PageHero, PersonCard, withAccent } from "@/components/marketing/page-blocks"
 import { ABOUT_MANAGEMENT } from "@/content/company"
 
 export const metadata: Metadata = ABOUT_MANAGEMENT.meta
 
 export default function ManagementPage() {
-  const { eyebrow, title, description, people } = ABOUT_MANAGEMENT
+  const { eyebrow, title, titleAccent, description, people } = ABOUT_MANAGEMENT
   return (
     <>
-      <PageHero icon={<Users aria-hidden />} eyebrow={eyebrow} title={title} description={description} />
+      <PageHero icon={<Users aria-hidden />} eyebrow={eyebrow} title={withAccent(title, titleAccent)} description={description} />
       <Section tone="card" size="md">
         <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {people.map((person) => (

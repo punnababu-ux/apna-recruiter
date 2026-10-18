@@ -43,7 +43,35 @@ import { NavigationMenu as NavigationMenuPrimitive } from "@base-ui/react/naviga
 import { cn } from "@/lib/utils"
 import { ChevronDown } from "@/icons/icons"
 
-function NavigationMenu({ className, ...props }: NavigationMenuPrimitive.Root.Props) {
+function NavigationMenu({ className, onValueChange, ...props }: NavigationMenuPrimitive.Root.Props) {
+  // Click opens and pins. Base UI's trigger click toggles, so a click on a
+  // menu that hover had just opened CLOSED it — the menu seemed to open and
+  // shut at random. Here, a click on a hover-opened menu pins it instead,
+  // and a pinned menu doesn't close when the pointer leaves; outside click,
+  // Escape, a link or a second click close it as before.
+  const hoverOpened = React.useRef(false)
+  const pinned = React.useRef(false)
+  const handleValueChange: NavigationMenuPrimitive.Root.Props["onValueChange"] = (value, details) => {
+    const press = details.reason === "trigger-press"
+    const hover = details.reason === "trigger-hover"
+    if (value == null) {
+      if ((press && hoverOpened.current) || (hover && pinned.current)) {
+        if (press) {
+          hoverOpened.current = false
+          pinned.current = true
+        }
+        details.cancel()
+        return
+      }
+      hoverOpened.current = false
+      pinned.current = false
+    } else {
+      // A hover onto another trigger moves the card; it's no longer pinned.
+      hoverOpened.current = hover
+      pinned.current = press
+    }
+    onValueChange?.(value, details)
+  }
   return (
     <NavigationMenuPrimitive.Root
       data-slot="navigation-menu"
@@ -51,6 +79,7 @@ function NavigationMenu({ className, ...props }: NavigationMenuPrimitive.Root.Pr
       delay={100}
       closeDelay={200}
       className={cn("relative", className)}
+      onValueChange={handleValueChange}
       {...props}
     />
   )

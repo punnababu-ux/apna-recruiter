@@ -256,7 +256,7 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
           docked
             ? cn(
                 // The docked bar: edge to edge, square, page gutters.
-                "h-18 max-w-full rounded-none border-x-0 border-t-0 border-border bg-card/95 px-4 sm:px-8 lg:px-12",
+                "h-18 max-w-full rounded-none border-x-0 border-t-0 border-border bg-surface-glass px-4 sm:px-8 lg:px-12",
                 // With a sub-nav docked under it, the bar and the strip are
                 // one block: one shadow, under the strip (the bar's own fell
                 // across the strip as a crease); the hairline divides them.
@@ -264,10 +264,11 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
               )
             : cn(
                 "h-14 max-w-band rounded-full pr-2.25 pl-2 xl:pr-2.75",
-                // Frosted at rest; more solid while a menu or search is open.
+                // Frosted glass at rest (the cards' surface); solid while a
+                // menu or search is open.
                 openPanel || mobileOpen || searchOpen
-                  ? "border-border bg-card/85 shadow-popover"
-                  : "border-card/60 bg-card/60 shadow-card"
+                  ? "border-border bg-card shadow-popover"
+                  : "border-card/60 bg-surface-glass shadow-card"
               )
         )}
       >
@@ -492,7 +493,7 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
             // once the page's own tab row has scrolled away. Scrolls sideways
             // if its content can't fit (the content centres itself with mx-auto,
             // so nothing is cut off on the left).
-            "absolute inset-x-0 top-full -z-10 flex h-16 items-center no-scrollbar overflow-x-auto border-b border-border bg-card/95 px-4 shadow-card backdrop-blur-xl transition-interactive duration-enter ease-out-ui",
+            "absolute inset-x-0 top-full -z-10 flex h-16 items-center no-scrollbar overflow-x-auto border-b border-border bg-surface-glass px-4 shadow-card backdrop-blur-xl transition-interactive duration-enter ease-out-ui",
             slot.showSubNav
               ? "translate-y-0 opacity-100"
               : "pointer-events-none -translate-y-full opacity-0"

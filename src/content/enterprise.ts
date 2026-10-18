@@ -19,6 +19,7 @@ export const ENTERPRISE = {
   hero: {
     eyebrow: "Enterprise",
     title: "apna enterprise hiring solutions.",
+    titleAccent: "enterprise",
     description:
       "Get closer to your target fillrate! Hire from a pool of 50M jobseekers in 200+ industries across 900+ cities in India.",
     cta: "Contact sales",

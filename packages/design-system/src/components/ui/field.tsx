@@ -173,14 +173,19 @@ function FieldSeparator({
       )}
       {...props}
     >
-      <Separator className="absolute inset-0 top-1/2" />
-      {children && (
-        <span
-          className="relative mx-auto block w-fit bg-background px-2 text-muted-foreground"
-          data-slot="field-separator-content"
-        >
-          {children}
-        </span>
+      {/* Two lines either side of the label, not one line behind a filled
+          label: the label has no fill of its own, so it sits cleanly on any
+          surface (a frosted card, a gradient), not as a box. */}
+      {children ? (
+        <div className="flex h-full items-center gap-2">
+          <Separator className="flex-1" />
+          <span className="text-muted-foreground" data-slot="field-separator-content">
+            {children}
+          </span>
+          <Separator className="flex-1" />
+        </div>
+      ) : (
+        <Separator className="absolute inset-0 top-1/2" />
       )}
     </div>
   )
