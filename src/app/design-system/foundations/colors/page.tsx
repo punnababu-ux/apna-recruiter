@@ -273,6 +273,52 @@ export default function ColorsPage() {
         </div>
       </div>
 
+      {/* Offer gradients — the pop-up headers */}
+      <div className="pt-4 space-y-3 border-t border-border">
+        <div>
+          <h2 className="text-lg font-semibold text-foreground font-heading">Offer Gradients</h2>
+          <p className="text-2xs text-muted-foreground">
+            The headers of upsell, slot and exit pop-ups (<code>OfferDialog</code>). Their own tokens, not the product
+            gradients, built only from the system&apos;s green, plum and gold ramps. Shown here in light and dark.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {[
+            {
+              token: "bg-gradient-offer",
+              label: "Offer — brand",
+              recipe: "Light: green-500 → 800 → 950. Dark: green-700 and green-900 glows on plum-900.",
+              use: "Job bundle and credit pack upsells, the exit offer.",
+            },
+            {
+              token: "bg-gradient-offer-premium",
+              label: "Offer — premium",
+              recipe: "Light: a gold-500 bloom on plum-400 → 700 → 950. Dark: a quiet plum-600 → 700 → 800.",
+              use: "Subscription upsell and the “All job slots are in use” slot upgrade.",
+            },
+          ].map((g) => (
+            <div key={g.token} className="rounded-xl border border-border bg-card overflow-hidden shadow-xs flex flex-col">
+              <div className="grid grid-cols-2">
+                <div className={`h-24 ${g.token} flex items-end p-2`}>
+                  <span className="text-3xs font-semibold text-surface-inverted-fg">Light</span>
+                </div>
+                <div className="dark">
+                  <div className={`h-24 ${g.token} flex items-end p-2`}>
+                    <span className="text-3xs font-semibold text-surface-inverted-fg">Dark</span>
+                  </div>
+                </div>
+              </div>
+              <div className="p-3 space-y-1">
+                <span className="text-xs font-semibold text-foreground">{g.label}</span>
+                <p className="text-3xs text-muted-foreground font-mono">{g.token}</p>
+                <p className="text-3xs text-muted-foreground">{g.recipe}</p>
+                <p className="text-3xs text-muted-foreground">{g.use}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Tier 1: Primitives (Collapsed by default in Accordion) */}
       <div className="pt-4 border-t border-border">
         <Accordion className="w-full">
