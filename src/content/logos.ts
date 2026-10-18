@@ -3,7 +3,7 @@
  *
  * The design's own exported assets (`public/logos/*`), used wherever the
  * site says "trusted by" — the homepage's "Top Hiring Partners" band and
- * `trust-bar.tsx` (which predates this file and keeps its own copy of the
+ * `proof-bands.tsx` (home and pricing share it; formerly trust-bar.tsx kept its own copy of the
  * same list; not worth churning that component just to point it here).
  *
  * This is deliberately NOT the logo set shown on the Lovable prototype's

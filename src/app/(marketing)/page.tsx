@@ -20,7 +20,6 @@ import {
   Card,
   CheckCircle2,
   LogoApnaUnlimited,
-  LogoWall,
   Quote,
   ScrollStack,
   ScrollStackItem,
@@ -28,30 +27,19 @@ import {
   Section,
   SectionHeading,
 } from "@apna/design-system"
-import { TestimonialGrid } from "@/components/apnahire/testimonial-grid"
-import { FaqSection } from "@/components/apnahire/faq-section"
-import { Stat, StatGrid } from "@/components/marketing/page-blocks"
+import { Stat } from "@/components/marketing/page-blocks"
+import { FaqBand, TrustedByBand, WhyHireBand } from "@/components/marketing/proof-bands"
 import { HeroBackdrop } from "@/components/marketing/hero-backdrop"
 import { HeroLeadCard } from "@/components/marketing/hero-lead-card"
 import { PRODUCT_ICON, PRODUCT_KEY, ProductIllustration } from "@/components/marketing/product-illustrations"
 import {
   HOME_HERO,
   HOME_PRESS,
-  HOME_PROOF,
   HOME_PRODUCT_DETAILS,
   HOME_SUITE,
-  HOME_TRUSTED_BY,
 } from "@/content/home"
-import { CLIENT_LOGOS } from "@/content/logos"
 import { PRODUCT_LINKS } from "@/content/nav"
 
-const CLIENT_LOGO_ITEMS = CLIENT_LOGOS.map((client) => ({
-  name: client.name,
-  logo: (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img src={client.src} alt={client.name} height={36} width={client.width} />
-  ),
-}))
 
 
 type ProductName = (typeof HOME_SUITE.items)[number]["name"]
@@ -124,21 +112,7 @@ export default function HomePage() {
         </Section>
       </div>
 
-      <Section tone="card" size="md">
-        <div className="flex flex-col items-center gap-10">
-          <SectionHeading
-            level={2}
-            align="center"
-            eyebrow={
-              <span className="text-overline text-muted-foreground">
-                {HOME_TRUSTED_BY.eyebrow}
-              </span>
-            }
-            title={HOME_TRUSTED_BY.title}
-          />
-          <LogoWall items={CLIENT_LOGO_ITEMS} muted />
-        </div>
-      </Section>
+      <TrustedByBand />
 
       <Section size="md">
         <div className="flex flex-col gap-10">
@@ -243,25 +217,9 @@ export default function HomePage() {
         </div>
       </Section>
 
-      {/* Proof (gradient band): the live site's outcome stats and its real
-          customer quotes — SMB recruiters convert on these. */}
-      <Section size="md">
-        <div className="flex flex-col gap-10">
-          <SectionHeading
-            level={2}
-            align="center"
-            title={HOME_PROOF.why.title}
-            description={HOME_PROOF.why.description}
-          />
-          <StatGrid stats={HOME_PROOF.why.stats} />
-          <TestimonialGrid />
-        </div>
-      </Section>
-
-      {/* The page's last band is white; the layout's contact band follows. */}
-      <Section tone="card" size="md">
-        <FaqSection items={HOME_PROOF.faqs} hideActions className="py-0" />
-      </Section>
+      {/* The proof (gradient), then the FAQ (white, the page's last band). */}
+      <WhyHireBand />
+      <FaqBand />
     </>
   )
 }
