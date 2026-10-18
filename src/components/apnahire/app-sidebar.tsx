@@ -6,7 +6,7 @@ import { Briefcase, CreditCard, Database, HelpCircle, IndianRupee, Mail, BarChar
 import {
   ReusableSidebar,
   ApnaLogo,
-  LogoApnaHire,
+  LogoApnaRecruiter,
   LogoApnaWordmark,
   type SidebarWorkspace,
   type SidebarNavItem,
@@ -115,7 +115,7 @@ export function ApnaHireSidebar({
         name: "Hire",
         logo: <ApnaLogo className="size-10 shrink-0" />,
         // The apna Hire wordmark expanded, "apna" alone collapsed.
-        wordmark: <LogoApnaHire className="h-6 w-auto" />,
+        wordmark: <LogoApnaRecruiter className="h-6 w-auto" />,
         // 40px: the collapsed rail's tile width, its widest.
         collapsedLogo: <LogoApnaWordmark className="h-auto w-10" />,
         href: "/apnahire/dashboard",

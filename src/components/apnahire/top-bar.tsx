@@ -40,7 +40,7 @@ import {
   BackButton,
   Button,
   ChevronRight,
-  LogoApnaHire,
+  LogoApnaRecruiter,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -109,7 +109,7 @@ export function ApnaHireTopBar({
         ) : (
           <Link href="/apnahire/dashboard" aria-label="apna Hire home" className="flex items-center">
             {/* 24px: the wordmark's native size, as in the expanded sidebar. */}
-            <LogoApnaHire className="h-6" />
+            <LogoApnaRecruiter className="h-6" />
           </Link>
         )}
       </div>

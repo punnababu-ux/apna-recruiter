@@ -1172,6 +1172,10 @@
   }
 }
 
+/* The editorial serif is switched on here and only here: the marketing
+   site's voice. Everywhere else --font-editorial stays Inter (semantic.css). */
+[data-voice="editorial"] { --font-editorial: var(--font-family-editorial); }
+
 /* RULE: a card on a gradient is frosted glass (--surface-glass + blur).
    Automatic on marketing pages, like the serif: any plain Card (tone
    default) that isn't on a white band and isn't nested in another card

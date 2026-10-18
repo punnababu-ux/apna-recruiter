@@ -376,6 +376,16 @@ To change how round the cards feel, retune `--radius-card` in
   is no prop to set or forget. A hand-built h1/h2 uses
   `text-editorial-display` / `-h1` / `-h2`. `npm run lint:tokens` refuses
   the serif presets outside the marketing folders.
+- **🛑 No serif in the product. Ever.** The dashboard, checkout, job
+  posting, login, OnlyRounds and every workflow are Inter only, headlines
+  included. This is enforced twice: the token lint refuses the serif
+  presets outside marketing files, and `--font-editorial` itself resolves
+  to Inter everywhere except inside `[data-voice="editorial"]` (the
+  marketing layout). So a shared component that uses the serif on the
+  website (PricingHero, FaqSection, TrustBar) turns Inter by itself inside
+  the product. Never set `data-voice="editorial"` on a product surface.
+  **The one exception: testimonial quotes** (`text-quote*`) keep the serif
+  everywhere, the plans step in checkout included.
 - **Each product owns one gradient** (`bg-gradient-product-*`): Smart Jobs
   sky, AI Calling Agent green, apna Database plum, apna Unlimited gold. Use
   it only with that product: its homepage card, its product page hero, its

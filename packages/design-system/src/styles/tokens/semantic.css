@@ -293,13 +293,20 @@
   /* Editorial voice — the marketing pages' serif (Playfair Display) for
    * hero headlines, big section titles and pull quotes. Paired with Inter,
    * which keeps everything else: body, labels, cards, UI. Read through the
-   * text-editorial-* presets, not `font-editorial` on ad-hoc type. */
-  --font-editorial: var(--font-family-editorial);
+   * text-editorial-* presets, not `font-editorial` on ad-hoc type.
+   *
+   * RULE: no serif in the product. This resolves to Inter by default, and
+   * to the serif only inside the marketing site ([data-voice="editorial"],
+   * set by the marketing layout; rule below). A serif headline can't leak
+   * into the dashboard, checkout or any workflow, whatever classes it has. */
+  --font-editorial: var(--font-body);
 
   /* Quote voice — pull quotes and testimonials: the editorial serif, the
    * same face as the marketing headlines (one serif in the system, not a
    * browser-default Georgia beside a Playfair). */
-  --font-quote:   var(--font-editorial);
+  --font-quote:   var(--font-family-editorial);
+  /* The one serif exception in the product: testimonial quotes keep it
+   * everywhere (the plans step in checkout included). */
 
   /* Weight roles — industry-standard defaults. Re-alias to shift the whole
      system's weight feel (e.g. regular → 300 for a lighter brand). */
@@ -646,8 +653,13 @@
      light; on dark a lifted plum pill with a light label. */
   --tabs-inverted-pill:  var(--foreground);
   --tabs-inverted-label: var(--background);
-  --logo-apna:      var(--color-apna-plum-400);
+  /* One "apna" colour everywhere: the landing page header's darkest plum,
+     now the dashboard and login lockups too (2026-10-18). */
+  --logo-apna:      var(--logo-apna-deep);
   --logo-apna-deep: var(--color-apna-plum-950);
+  /* "Recruiter" of the lockup: the CTA green, light and dark, so the logo
+     and the primary buttons are one green (2026-10-18). */
+  --logo-hire:      var(--cta-primary);
   --gradient-offer-premium:
     radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--color-apna-gold-500) 55%, transparent) 0%, transparent 55%),
     linear-gradient(137deg, var(--color-apna-plum-400) 5%, var(--color-apna-plum-700) 50%, var(--color-apna-plum-950) 112%);
@@ -685,7 +697,7 @@
  * Dark theme — only the mapping changes, primitives are untouched.
  * ========================================================================== */
 .dark {
-  --logo-hire:         var(--cta-primary); /* the logo's "Hire" on dark: the CTA green */
+  --logo-hire:         var(--cta-primary); /* "Recruiter": the CTA green, as on light */
   --surface-plan-card: var(--muted);
   --surface-glass: color-mix(in srgb, var(--card) 80%, transparent);
   --cta-primary:       var(--color-apna-green-500);

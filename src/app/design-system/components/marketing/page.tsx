@@ -38,7 +38,9 @@ const DEMO_STATS = [
 
 export default function MarketingComponentsPage() {
   return (
-    <div className="space-y-10">
+    // The marketing components shown in their own voice (the serif only
+    // resolves under data-voice="editorial", as on the marketing site).
+    <div className="space-y-10" data-voice="editorial">
       <div>
         <div className="flex items-center gap-2">
           <Badge variant="outline">Components</Badge>

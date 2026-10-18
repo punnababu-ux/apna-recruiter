@@ -15,7 +15,7 @@
  */
 
 import Link from "next/link"
-import { AmbientBackdrop, ArrowUpRight, Button, Card, LogoApnaHire, Separator } from "@apna/design-system"
+import { AmbientBackdrop, ArrowUpRight, Button, Card, LogoApnaRecruiter, Separator } from "@apna/design-system"
 import { AUTH_PANEL, LEGAL_LINE, LOOKING_FOR_A_JOB_LINK } from "@/content/auth"
 import { LEGAL_LINKS } from "@/content/footer"
 import { cn } from "@/lib/utils"
@@ -69,7 +69,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
       {/* Phones: the brand bar. */}
       <header className="flex items-center justify-between gap-4 border-b border-border px-4 py-4 shadow-card md:hidden">
         <Link href="/" aria-label="apna Hire, home">
-          <LogoApnaHire className="h-6 w-auto" />
+          <LogoApnaRecruiter className="h-6 w-auto" />
         </Link>
         <LookingForJob />
       </header>
@@ -80,7 +80,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
       <aside className="bg-gradient-checkout-hero relative isolate hidden flex-1 flex-col overflow-hidden px-10 py-8 md:flex lg:px-20">
         <AmbientBackdrop className="inset-0" />
         <Link href="/" aria-label="apna Hire, home" className="relative self-start">
-          <LogoApnaHire className="h-6 w-auto" />
+          <LogoApnaRecruiter className="h-6 w-auto" />
         </Link>
         <div className="relative my-auto flex max-w-md flex-col gap-6 py-10">
           <h1 className="text-h1 text-foreground">{AUTH_PANEL.headline}</h1>

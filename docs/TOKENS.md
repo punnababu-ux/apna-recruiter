@@ -184,7 +184,7 @@ Composed from primitives only, exposed as `bg-gradient-<name>` utilities
 | `--checkout-inset-cta` / `-border` / `-hover` | the inset card's white / border / hover; dark: `--input` 30% / `--input` / 50% | The button on the Unlimited inner card (`variant="checkout-inset"`) |
 | `--tabs-inverted-pill` / `--tabs-inverted-label` | `--foreground` / `--background`; dark: foreground 16% over `--muted` / `--foreground` | The jobs tabs' selected pill and label (`TabsList variant="inverted"`) |
 | `--cta-primary` / `--cta-primary-hover` | `--primary` (hover 90%); dark: apna-green-500 / 600 | The green button fill (Button `default`); `--primary` stays brighter in dark for green text, links, icons |
-| `--logo-apna` / `--logo-apna-deep` | apna-plum-400 / plum-950; dark: plum-50 for both | The "apna" of the logos (`LogoApnaHire`, `LogoApnaWordmark`), so the wordmark turns near-white in dark mode |
+| `--logo-apna` / `--logo-apna-deep` | plum-950 for both (one "apna" colour, the landing page header's); dark: plum-50 for both | The "apna" of the logos (`LogoApnaRecruiter`, `LogoApnaWordmark`), so the wordmark turns near-white in dark mode |
 | `--gradient-offer-premium` | 55% apna-gold-500 radial bloom top-left over `linear-gradient(137deg, apna-plum-400 → plum-700 → plum-950)`; dark: a quiet `plum-600 → 700 → 800`, no gold bloom (the gold Coin carries the accent) | subscription upgrade pop-up headers and every Plans button (`variant="premium"`) |
 | `--gradient-ai-subtle` | Light: `linear-gradient(100deg, apna-plum-50 → apna-sky-50 → apna-green-50)`. Dark: the 950 steps of the same ramps at 45–70% over the surface | soft "AI" wash behind the AI calling add-on in the express-checkout order summary (`bg-gradient-ai-subtle`); quiet enough for body text on top |
 | `--gradient-ai-demo` | Light: `linear-gradient(90deg, apna-navy-100 → apna-green-100)`. Dark: the 950 steps at 70% over the surface | violet → mint card behind the AI calling demo player in the "How AI calling works" pop-up (`bg-gradient-ai-demo`); a step stronger than `--gradient-ai-subtle` |
@@ -463,7 +463,7 @@ steps, so one line here retunes every surface of that kind.
 | `--duration-slide` / `--ease-slide` | 500ms / glide (`cubic-bezier(0.22, 1, 0.36, 1)`) | A selection pill travelling between options (`tab-indicator`, `sliding-indicator`) |
 | `--duration-sheet` | 500ms (with `ease-carousel`) | A side panel or bottom sheet sliding fully in from its edge; the upsell pop-ups rising from below |
 | `--duration-expand` / `--ease-expand` | 300ms / glide | A panel opening or closing in place: sidebar sub-menus, accordions (`expand-panel`, `transition-expand`) |
-| `--logo-hire` | dark only: `--cta-primary` | The "Hire" of `LogoApnaHire` on dark (light keeps the logo's #1EB892) |
+| `--logo-hire` | `--cta-primary` (light and dark) | The "Recruiter" of `LogoApnaRecruiter`: the same green as the primary buttons |
 | `--duration-carousel` / `--ease-carousel` | 700ms / glide (`cubic-bezier(0.22, 1, 0.36, 1)`) | A card travelling to its next place in a deck (Lounge demo carousel): pushed, then coasts to rest |
 | `--duration-ambient` / `--duration-ambient-wander` | 16s / 14s | One AmbientBackdrop blob loop (blobs run at 0.85–1.2×) / one loop of its wandering light (pulse at 0.4×) |
 | `--duration-text-gradient` | 4s | One sweep of `animate-text-gradient`'s light across the word (it sweeps back, alternate) |
