@@ -13,6 +13,7 @@ import * as React from "react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@apna/design-system"
 import { Button, ChevronDown } from "@apna/design-system"
 import { cn } from "@/lib/utils"
+import { HOME_PROOF } from "@/content/home"
 
 export interface FaqItem {
   value: string
@@ -20,17 +21,9 @@ export interface FaqItem {
   answer?: string
 }
 
-const FAQS: FaqItem[] = [
-  {
-    value: "why-apna",
-    question: "Why should I use Apna over others?",
-    answer:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed",
-  },
-  { value: "not-enough-candidates", question: "What happens if I don't receive enough candidates?" },
-  { value: "cities", question: "In which cities can I hire via Apna?" },
-  { value: "validity", question: "Is job validity different than credits validity?" },
-]
+// The live site's answers (employer.apna.co, 2026-10-19), shared with the
+// homepage. "Is job validity…" has no live answer yet, so it isn't listed.
+const FAQS: readonly FaqItem[] = HOME_PROOF.faqs
 
 interface FaqSectionProps {
   /** The questions; defaults to the pricing page's set. The first opens. */
