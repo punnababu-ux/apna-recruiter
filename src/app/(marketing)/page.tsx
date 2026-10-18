@@ -15,6 +15,7 @@
 import Link from "next/link"
 import {
   ArrowRight,
+  Building2,
   Badge,
   Button,
   Card,
@@ -33,6 +34,7 @@ import { HeroBackdrop } from "@/components/marketing/hero-backdrop"
 import { HeroLeadCard } from "@/components/marketing/hero-lead-card"
 import { PRODUCT_ICON, PRODUCT_KEY, ProductIllustration } from "@/components/marketing/product-illustrations"
 import {
+  HOME_ENTERPRISE,
   HOME_HERO,
   HOME_PRESS,
   HOME_PRODUCT_DETAILS,
@@ -192,6 +194,34 @@ export default function HomePage() {
               </ScrollStackItem>
             ))}
           </ScrollStack>
+
+          {/* Enterprise (the live site's band): the suite's closing card, for
+              buyers hiring at scale — the route in for new enterprise
+              customers (Enterprise login is for existing ones). */}
+          <Card padding="none" className="surface-feature flex flex-col gap-6 p-6 sm:p-10 lg:flex-row lg:items-center lg:justify-between lg:p-12">
+            <div className="flex max-w-2xl flex-col gap-3">
+              <span className="flex items-center gap-2 text-overline text-muted-foreground">
+                <Building2 className="size-4 shrink-0" aria-hidden />
+                {HOME_ENTERPRISE.eyebrow}
+              </span>
+              <h3 className="text-h4 text-foreground">{HOME_ENTERPRISE.title}</h3>
+              <p className="text-base text-muted-foreground">{HOME_ENTERPRISE.description}</p>
+            </div>
+            <div className="flex shrink-0 flex-wrap gap-3">
+              <Button variant="emphasis" size="lg" nativeButton={false} render={<Link href={HOME_ENTERPRISE.primary.href} />}>
+                {HOME_ENTERPRISE.primary.label}
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                nativeButton={false}
+                render={<Link href={HOME_ENTERPRISE.secondary.href} />}
+                trailingIcon={<ArrowRight aria-hidden />}
+              >
+                {HOME_ENTERPRISE.secondary.label}
+              </Button>
+            </div>
+          </Card>
         </div>
       </Section>
 

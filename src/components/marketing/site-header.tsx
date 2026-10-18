@@ -388,6 +388,15 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
                 page has its own one green action (the hero's sign-up, the
                 recommended plan's Buy now), and a returning user's way in
                 needn't compete with it. */}
+            {/* A text link, not a second button: Login stays the one action. */}
+            <Button
+              variant="ghost"
+              className="hidden shrink-0 rounded-full font-semibold md:inline-flex"
+              nativeButton={false}
+              render={<Link href={HEADER_ACTIONS.sales.href} />}
+            >
+              {HEADER_ACTIONS.sales.label}
+            </Button>
             <Button
               variant="emphasis"
               className="shrink-0 rounded-full font-semibold"
@@ -467,6 +476,12 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
                     )
                   )}
                 </Accordion>
+                <Link
+                  href={HEADER_ACTIONS.sales.href}
+                  className="ink relative flex border-b border-border py-3 text-base font-semibold text-foreground transition-interactive"
+                >
+                  {HEADER_ACTIONS.sales.label}
+                </Link>
                 <a
                   href={LOOKING_FOR_A_JOB.href}
                   className="ink relative flex items-center gap-1.5 py-3 text-base font-semibold text-foreground transition-interactive"

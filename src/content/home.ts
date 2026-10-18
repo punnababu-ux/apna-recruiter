@@ -49,6 +49,18 @@ export const HOME_HERO = {
  * are `CLIENT_LOGOS` (content/logos.ts), our own vetted roster, not the
  * different set (Zomato, Amazon, Reliance, …) shown on that prototype.
  */
+/** The live homepage's Enterprise band (employer.apna.co, 2026-10-19). The
+ *  description's grammar is tidied ("a tailor-made Enterprise graded
+ *  features that helps…"). */
+export const HOME_ENTERPRISE = {
+  eyebrow: "apna Enterprise",
+  title: "Performance and productivity for every level of your enterprise",
+  description:
+    "Unleash your full potential with tailor-made, enterprise-grade features that help you stay secure, compliant and on brand.",
+  primary: { label: "Contact sales", href: "/enterprise#contact-us" },
+  secondary: { label: "Learn more", href: "/enterprise" },
+}
+
 export const HOME_TRUSTED_BY = {
   eyebrow: "Trusted by",
   title: "Top Hiring Partners",

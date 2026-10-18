@@ -195,4 +195,7 @@ export const HEADER_ACTIONS = {
   // "Login" alone (user call, 2026-10-16) — the same /login flow signs new
   // recruiters up too.
   primary: { label: "Login", href: "/login" } satisfies NavLink,
+  // New enterprise buyers' way in (Enterprise login is for existing
+  // customers): the enterprise page's contact band.
+  sales: { label: "Contact sales", href: "/enterprise#contact-us" } satisfies NavLink,
 }
