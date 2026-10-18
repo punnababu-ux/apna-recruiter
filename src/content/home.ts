@@ -218,3 +218,73 @@ export const HOME_PRESS = {
     },
   ] as const,
 }
+
+/**
+ * The proof the live homepage (employer.apna.co, read 2026-10-19) carries
+ * and the redesign had dropped: "Why hire from apna?" outcome stats,
+ * customer testimonials and the FAQ. Copy is the live site's, verbatim
+ * (only "Apna" → "apna"); companies for the first two quotes are the brands
+ * the live carousel shows beside them.
+ */
+export const HOME_PROOF = {
+  why: {
+    title: "Why hire from apna?",
+    description:
+      "From startups to SMEs to established enterprises, apna revolutionizes the way businesses find high-quality talent quickly & effortlessly.",
+    stats: [
+      { value: "60%", label: "Businesses get qualified candidates within 24 hrs" },
+      { value: "2 Lakhs+", label: "New candidates join apna every month" },
+      { value: "160+", label: "Job categories to publish your job" },
+      { value: "90%", label: "Fulfilment rate" },
+    ],
+  },
+  testimonials: {
+    title: "Customer testimonials",
+    items: [
+      {
+        quote:
+          "We are closely working with apna for talent discovery and hiring across job families. Their quickest turn-around time is enabling us to uninterruptedly continue our daily functions and services, especially during the present times.",
+        name: "Dr Varun",
+        role: "SVP, Medical Affairs · Tata 1mg",
+      },
+      {
+        quote:
+          "Team apna has provided us with great support. 75% of our job fulfillment for delivery personnel has been through apna. I love the skill tag feature as we don't have to manually type requirements.",
+        name: "Neraj Gupta",
+        role: "City Head of Supply, Mumbai · Shadowfox",
+      },
+      {
+        quote:
+          "Before hearing about apna from a friend, I had doubts about tech solutions, but it proved to be beneficial to me. I added a listing, received 30-40 candidates, and was able to hire 3 people. These folks will now be trained and ramp up!",
+        name: "Kabir Chugh",
+        role: "Restaurateur, Owner Nizams",
+      },
+    ],
+  },
+  faqs: [
+    {
+      value: "why-apna",
+      question: "Why should I use apna over others?",
+      answer:
+        "apna boasts the largest pool of active candidates, achieving a candidate base of over 5 crore in just five years. The platform personalizes the hiring experience, allowing you to opt for callbacks from relevant candidates, send bulk WhatsApp messages, or use the dashboard to shortlist candidates effectively. Additionally, you can enhance your job visibility by posting premium or super premium jobs, tailored to meet your specific hiring needs.",
+    },
+    {
+      value: "not-enough-candidates",
+      question: "What happens if I don't receive enough candidates?",
+      answer:
+        "You can always chat with apna Support team for any help regarding your job posting. On a single click, our Support team will be available to guide you on ways to increase the application rate and close your hiring faster.",
+    },
+    {
+      value: "cities",
+      question: "In which cities can I hire via apna?",
+      answer:
+        "apna is now LIVE in 900+ cities across India. You can easily find candidates from any city just by posting the job or searching candidates in apna Database for that city.",
+    },
+    {
+      value: "bulk",
+      question: "I want to hire more than 10 candidates, do you have any bulk-hiring plans?",
+      answer:
+        "Yes, we offer bulk-hiring plans personalised for your needs at discounted prices. You can request a callback from our Sales team by clicking on Contact us.",
+    },
+  ],
+} as const

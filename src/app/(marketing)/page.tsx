@@ -28,12 +28,15 @@ import {
   Section,
   SectionHeading,
 } from "@apna/design-system"
+import { FaqSection } from "@/components/apnahire/faq-section"
+import { StatGrid } from "@/components/marketing/page-blocks"
 import { HeroBackdrop } from "@/components/marketing/hero-backdrop"
 import { HeroLeadCard } from "@/components/marketing/hero-lead-card"
 import { PRODUCT_ICON, PRODUCT_KEY, ProductIllustration } from "@/components/marketing/product-illustrations"
 import {
   HOME_HERO,
   HOME_PRESS,
+  HOME_PROOF,
   HOME_PRODUCT_DETAILS,
   HOME_SUITE,
   HOME_TRUSTED_BY,
@@ -245,6 +248,40 @@ export default function HomePage() {
             ))}
           </div>
         </div>
+      </Section>
+
+      {/* Proof (gradient band): the live site's outcome stats and its real
+          customer quotes — SMB recruiters convert on these. */}
+      <Section size="md">
+        <div className="flex flex-col gap-10">
+          <SectionHeading
+            level={2}
+            align="center"
+            title={HOME_PROOF.why.title}
+            description={HOME_PROOF.why.description}
+          />
+          <StatGrid stats={HOME_PROOF.why.stats} />
+          <div className="flex flex-col gap-6">
+            <h3 className="text-h4 text-foreground">{HOME_PROOF.testimonials.title}</h3>
+            <div className="grid gap-6 lg:grid-cols-3">
+              {HOME_PROOF.testimonials.items.map((t) => (
+                <Card key={t.name} padding="lg" className="surface-frosted flex h-full flex-col gap-6">
+                  <Quote className="size-6 text-muted-foreground" aria-hidden />
+                  <p className="text-quote text-foreground">&ldquo;{t.quote}&rdquo;</p>
+                  <div className="mt-auto flex flex-col gap-0.5">
+                    <p className="text-base font-semibold text-foreground">{t.name}</p>
+                    <p className="text-sm text-muted-foreground">{t.role}</p>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      {/* The page's last band is white; the layout's contact band follows. */}
+      <Section tone="card" size="md">
+        <FaqSection items={HOME_PROOF.faqs} hideActions className="py-0" />
       </Section>
     </>
   )
