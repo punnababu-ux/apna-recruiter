@@ -1188,16 +1188,20 @@ h2 em, h1 em { font-style: italic; }
   markDot();
   new MutationObserver(markDot).observe(pos, { childList: true, characterData: true, subtree: true });
 
-  // Stripes → light scrubber; plays itself once when the slide arrives.
-  var morph = document.getElementById("morph"), melt = document.getElementById("melt"), played = false;
+  // Stripes → light scrubber: after a beat on the slide (the stripes read
+  // first), it plays itself once. Leaving before then, or dragging, cancels.
+  var morph = document.getElementById("morph"), melt = document.getElementById("melt"), played = false, meltWait = null;
   function setMelt(v) { morph.style.setProperty("--m", v / 100); melt.value = v; }
-  melt.addEventListener("input", function () { morph.classList.add("dragging"); setMelt(+melt.value); });
+  melt.addEventListener("input", function () { played = true; clearTimeout(meltWait); morph.classList.add("dragging"); setMelt(+melt.value); });
   melt.addEventListener("change", function () { morph.classList.remove("dragging"); });
   new IntersectionObserver(function (es) {
     es.forEach(function (e) {
-      if (e.isIntersecting && !played) {
+      if (!e.isIntersecting) { clearTimeout(meltWait); return; }
+      if (!played) {
+        if (reduce) { played = true; setMelt(100); return; }
+        clearTimeout(meltWait);
+        meltWait = setTimeout(function () {
         played = true;
-        if (reduce) { setMelt(100); return; }
         var t0 = null;
         (function step(t) {
           if (t0 === null) t0 = t;
@@ -1205,14 +1209,34 @@ h2 em, h1 em { font-style: italic; }
           morph.classList.add("dragging"); setMelt(Math.round(eased * 100));
           if (p < 1) requestAnimationFrame(step); else morph.classList.remove("dragging");
         })(performance.now());
+        }, 1800);
       }
     });
   }, { threshold: 0.6 }).observe(morph);
 
   // Products tint the stage.
   var prodSlide = document.getElementById("products-slide"), prodWrap = prodSlide.querySelector(".products");
+  function pick(b) {
+    prodWrap.querySelectorAll(".prod").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+    prodSlide.dataset.tint = b.dataset.tint; prodWrap.classList.add("has-pick");
+  }
+  // Tour: while the slide is on screen, it steps through the four products
+  // on its own (after a beat), looping. A click stops the tour.
+  var prodBtns = Array.prototype.slice.call(prodWrap.querySelectorAll(".prod")), tour = null, tourStart = null, tourI = 0, toured = true;
+  function tourStop() { clearInterval(tour); clearTimeout(tourStart); tour = tourStart = null; }
+  new IntersectionObserver(function (es) {
+    es.forEach(function (e) {
+      tourStop();
+      if (!e.isIntersecting || !toured || reduce) return;
+      tourStart = setTimeout(function () {
+        pick(prodBtns[tourI % prodBtns.length]); tourI++;
+        tour = setInterval(function () { pick(prodBtns[tourI % prodBtns.length]); tourI++; }, 2200);
+      }, 1200);
+    });
+  }, { threshold: 0.6 }).observe(prodSlide);
   prodWrap.addEventListener("click", function (e) {
     var b = e.target.closest(".prod"); if (!b) return;
+    if (e.isTrusted) { toured = false; tourStop(); }
     var on = b.getAttribute("aria-pressed") !== "true";
     prodWrap.querySelectorAll(".prod").forEach(function (x) { x.setAttribute("aria-pressed", "false"); });
     if (on) { b.setAttribute("aria-pressed", "true"); prodSlide.dataset.tint = b.dataset.tint; prodWrap.classList.add("has-pick"); }
