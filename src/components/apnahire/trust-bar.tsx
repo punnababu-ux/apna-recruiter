@@ -48,9 +48,9 @@ const CLIENT_LOGO_ITEMS = CLIENTS.map((client) => ({
 
 const STATS = [
   { value: "6 crore+", label: "Candidates use apna" },
-  { value: "5 lakhs+", label: "New candidates every month" },
+  { value: "2 lakhs+", label: "New candidates every month" },
   { value: "7 lakhs+", label: "Employers already at apna" },
-  { value: "1000+", label: "Available cities & Metros" },
+  { value: "7,200+", label: "Towns & cities covered" },
 ]
 
 export function TrustBar({ className }: { className?: string }) {

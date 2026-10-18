@@ -223,7 +223,8 @@ export const HOME_PRESS = {
  * The proof the live homepage (employer.apna.co, read 2026-10-19) carries
  * and the redesign had dropped: "Why hire from apna?" outcome stats,
  * customer testimonials and the FAQ. Copy is the live site's, verbatim
- * (only "Apna" → "apna"); companies for the first two quotes are the brands
+ * (only "Apna" → "apna", and the FAQ's candidate and city counts set to
+ * the hero's 6 crore+ / 7,200+, so the site states one set of numbers); companies for the first two quotes are the brands
  * the live carousel shows beside them.
  */
 export const HOME_PROOF = {
@@ -265,7 +266,7 @@ export const HOME_PROOF = {
       value: "why-apna",
       question: "Why should I use apna over others?",
       answer:
-        "apna boasts the largest pool of active candidates, achieving a candidate base of over 5 crore in just five years. The platform personalizes the hiring experience, allowing you to opt for callbacks from relevant candidates, send bulk WhatsApp messages, or use the dashboard to shortlist candidates effectively. Additionally, you can enhance your job visibility by posting premium or super premium jobs, tailored to meet your specific hiring needs.",
+        "apna boasts the largest pool of active candidates, achieving a candidate base of over 6 crore. The platform personalizes the hiring experience, allowing you to opt for callbacks from relevant candidates, send bulk WhatsApp messages, or use the dashboard to shortlist candidates effectively. Additionally, you can enhance your job visibility by posting premium or super premium jobs, tailored to meet your specific hiring needs.",
     },
     {
       value: "not-enough-candidates",
@@ -277,7 +278,7 @@ export const HOME_PROOF = {
       value: "cities",
       question: "In which cities can I hire via apna?",
       answer:
-        "apna is now LIVE in 900+ cities across India. You can easily find candidates from any city just by posting the job or searching candidates in apna Database for that city.",
+        "apna is now LIVE in 7,200+ towns and cities across India. You can easily find candidates from any city just by posting the job or searching candidates in apna Database for that city.",
     },
     {
       value: "bulk",
