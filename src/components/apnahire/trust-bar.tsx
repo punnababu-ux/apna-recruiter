@@ -15,6 +15,7 @@ import * as React from "react"
 import { LogoWall } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 import { StatGrid } from "@/components/marketing/page-blocks"
+import { TestimonialGrid } from "@/components/apnahire/testimonial-grid"
 
 interface ClientLogo {
   name: string
@@ -68,8 +69,12 @@ export function TrustBar({ className }: { className?: string }) {
         <LogoWall items={CLIENT_LOGO_ITEMS} />
       </div>
 
-      {/* The site's one numbers card (StatGrid), as on home and About. */}
-      <StatGrid stats={STATS} />
+      {/* The proof, in one band: the numbers (StatGrid, as on home and
+          About), then the customers' own words. */}
+      <div className="flex flex-col gap-6">
+        <StatGrid stats={STATS} />
+        <TestimonialGrid />
+      </div>
     </div>
   )
 }

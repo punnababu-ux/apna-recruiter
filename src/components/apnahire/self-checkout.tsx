@@ -60,7 +60,6 @@ import {
 } from "@/components/apnahire/enterprise-pricing-table"
 import { FaqSection } from "@/components/apnahire/faq-section"
 import { TrustBar } from "@/components/apnahire/trust-bar"
-import { TestimonialGrid } from "@/components/apnahire/testimonial-grid"
 import { UnlimitedSideCard } from "@/components/apnahire/unlimited-side-card"
 import { CheckoutTopBar } from "@/components/apnahire/checkout-top-bar"
 import { HOME } from "@/lib/apnahire/nav"
@@ -625,24 +624,14 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
 
       {/* ── Shared marketing chrome — identical across every tab in Figma
            (Jobs included), so it renders once here rather than being
-           duplicated inside each tab's branch above. The bands alternate:
-           FAQ and trust bar sit on white, the testimonial band is left
-           transparent so the page gradient shows through. ── */}
+           duplicated inside each tab's branch above. One white band under
+           the plans (the page's last band is white): the proof — who hires
+           here, the numbers, what they say (TrustBar, as on the homepage) —
+           then the FAQ. ── */}
       <div className="border-t border-border bg-card px-4 sm:px-8 lg:px-12">
-        <div className="mx-auto max-w-6xl">
+        <div className="mx-auto flex max-w-6xl flex-col pt-16">
+          <TrustBar className="py-0" />
           <FaqSection />
-        </div>
-      </div>
-
-      <div className="px-4 sm:px-8 lg:px-12">
-        <div className="mx-auto max-w-6xl">
-          <TestimonialGrid className="py-12" />
-        </div>
-      </div>
-
-      <div className="bg-card px-4 sm:px-8 lg:px-12">
-        <div className="mx-auto max-w-6xl">
-          <TrustBar />
         </div>
       </div>
 
