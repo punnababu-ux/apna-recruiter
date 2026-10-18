@@ -111,6 +111,7 @@ change between themes.
 | `--card`                 | gray-0             | apna-plum-900       | elevated container              |
 | `--card-foreground`      | gray-950           | gray-50             | text on card                    |
 | `--popover`              | gray-0             | apna-plum-900       | floating surface                |
+| `--scrim`                | alpha-black-65     | alpha-black-65      | the dimmed, blurred backdrop behind every dialog, alert dialog, sheet, drawer and the bottom-nav menu (`bg-scrim`) |
 | `--popover-foreground`   | gray-950           | gray-50             | text on popover                 |
 | `--surface-inverted`     | apna-royal-900     | apna-royal-950      | inverted hero / marketing banner|
 | `--surface-inverted-fg`  | gray-0             | gray-0              | text on inverted surface        |

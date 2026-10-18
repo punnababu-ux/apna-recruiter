@@ -210,7 +210,7 @@ export function BottomNavMenu({ open, onOpenChange, items, label = "More", clear
       <div
         aria-hidden
         onClick={() => onOpenChange(false)}
-        className="fixed inset-0 z-overlay bg-black/10 animate-in fade-in duration-150 supports-backdrop-filter:backdrop-blur-xs md:hidden"
+        className="fixed inset-0 z-overlay bg-scrim animate-in fade-in duration-150 supports-backdrop-filter:backdrop-blur-xs md:hidden"
       />
       {/* pb-safe-16: the bar's 64px plus the home-indicator inset, so the
           card sits just above the bar on every phone. */}

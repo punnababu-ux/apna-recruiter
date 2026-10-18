@@ -192,10 +192,8 @@ export const LOOKING_FOR_A_JOB: NavLink = {
 export const HEADER_ACTIONS = {
   secondary: { label: "Contact us", href: "/#contact-us" } satisfies NavLink,
   // The live site's header login entry (employer.apna.co).
-  // "Login" alone (user call, 2026-10-16) — the same /login flow signs new
-  // recruiters up too.
-  primary: { label: "Login", href: "/login" } satisfies NavLink,
-  // New enterprise buyers' way in (Enterprise login is for existing
-  // customers): the enterprise page's contact band.
-  sales: { label: "Contact sales", href: "/enterprise#contact-us" } satisfies NavLink,
+  // "Login / Sign up" (user call, 2026-10-19): the same /login flow signs new
+  // recruiters up too, so the label says so. Contact sales lives on the
+  // homepage Enterprise card, not in the header.
+  primary: { label: "Login / Sign up", href: "/login" } satisfies NavLink,
 }

@@ -33,7 +33,7 @@ function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
       // panel (the AI explainer over the order summary) dims that panel too.
       forceRender
       className={cn(
-        "fixed inset-0 z-modal bg-black/10 transition-interactive duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-backdrop-filter:backdrop-blur-xs",
+        "fixed inset-0 z-modal bg-scrim transition-interactive duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-backdrop-filter:backdrop-blur-xs",
         className
       )}
       {...props}

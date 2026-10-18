@@ -30,6 +30,7 @@
   --card:                var(--color-gray-0);     /* elevated container       */
   --card-foreground:     var(--color-gray-950);
   --popover:             var(--color-gray-0);     /* floating surface         */
+  --scrim:               var(--color-alpha-black-65); /* behind every pop-up, sheet and drawer (with a blur); same in dark */
   --popover-foreground:  var(--color-gray-950);
 
   /* Inverted hero surface — Apna Royal Blue for full-bleed pricing/marketing banners.
