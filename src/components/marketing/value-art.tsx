@@ -56,6 +56,7 @@ export type ValueName =
   // Enterprise: the exclusive features, then "Plus you will get"
   | "employer-branding"
   | "team-management"
+  | "enterprise"
   | "ats-integrations"
   | "reports"
   | "power-features"
@@ -82,6 +83,7 @@ const ICON: Record<ValueName, ComponentType<{ className?: string; "aria-hidden"?
   track: BarChart2,
   "employer-branding": Award,
   "team-management": Users,
+  enterprise: Building2,
   "ats-integrations": Share2,
   reports: BarChart2,
   "power-features": Zap,
@@ -93,6 +95,7 @@ const ICON: Record<ValueName, ComponentType<{ className?: string; "aria-hidden"?
 
 /** Values whose clay image is in public/images/company/values. */
 const READY = new Set<ValueName>([
+  "enterprise",
   "ownership",
   "customer-obsession",
   "empathy",

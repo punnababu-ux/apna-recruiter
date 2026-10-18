@@ -227,10 +227,10 @@ export default function HomePage() {
                 </Button>
               </div>
             </div>
-            {/* One picture, not a list: the Enterprise page's own 3D clay
-                object, as the product cards above pair copy with a picture. */}
+            {/* One picture, not a list: Enterprise's own 3D clay building, as
+                the product cards above pair copy with a picture. */}
             <div className="flex justify-center max-lg:order-first">
-              <ValueArt name="team-management" size="md" />
+              <ValueArt name="enterprise" size="md" />
             </div>
           </Card>
         </div>
