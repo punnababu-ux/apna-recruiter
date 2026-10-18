@@ -133,6 +133,9 @@ export function ValueArt({ name, size = "lg" }: { name: ValueName; size?: "sm" |
         alt=""
         width={320}
         height={320}
+        // Served as-is: Next's re-encode (WebP/AVIF at q75) smears the
+        // transparent edges into a visible fringe. The PNGs are 640px already.
+        unoptimized
         className={cn(
           "object-contain",
           size === "sm" ? "size-32" : size === "md" ? "size-48 sm:size-56" : "size-56 md:size-72 lg:size-80"
