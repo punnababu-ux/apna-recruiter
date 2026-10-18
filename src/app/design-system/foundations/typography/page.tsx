@@ -195,6 +195,70 @@ export default function TypographyPage() {
         </div>
       </div>
 
+      {/* Editorial serif — where and only where (AGENTS.md) */}
+      <div className="space-y-4 pt-4 border-t border-border">
+        <div className="flex items-center justify-between border-b border-border/60 pb-2">
+          <div>
+            <h2 className="text-lg font-semibold text-foreground font-heading">
+              Editorial Serif — Where and Only Where
+            </h2>
+            <p className="text-2xs text-muted-foreground">
+              Playfair Display, the brand&apos;s voice. <code>--font-editorial</code> resolves to the serif only inside{" "}
+              <code>[data-voice=&quot;editorial&quot;]</code> (the marketing layout); everywhere else it is Inter.
+            </p>
+          </div>
+          <Badge variant="outline">Brand voice</Badge>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Live specimens, in the marketing voice */}
+          <div data-voice="editorial" className="rounded-xl border border-border bg-card p-5 space-y-4 shadow-xs">
+            <span className="text-3xs font-bold uppercase tracking-wider text-muted-foreground">On marketing pages</span>
+            <div className="space-y-1">
+              <p className="text-editorial-h1 text-foreground">
+                India&apos;s Largest <em className="whitespace-nowrap">AI-Native</em> Talent Platform
+              </p>
+              <code className="text-3xs font-mono text-muted-foreground">text-editorial-h1 · hero headline, one italic accent</code>
+            </div>
+            <div className="space-y-1">
+              <p className="text-editorial-h2 text-foreground">A single platform for every hiring need</p>
+              <code className="text-3xs font-mono text-muted-foreground">text-editorial-h2 · section title (h2), plain</code>
+            </div>
+            <div className="space-y-1">
+              <p className="text-quote text-foreground">&ldquo;Time-to-shortlist dropped from 8 days to under 36 hours.&rdquo;</p>
+              <code className="text-3xs font-mono text-muted-foreground">text-quote · testimonials and press</code>
+            </div>
+          </div>
+
+          {/* The rules */}
+          <div className="rounded-xl border border-border bg-card p-5 space-y-4 shadow-xs">
+            <span className="text-3xs font-bold uppercase tracking-wider text-muted-foreground">The rules</span>
+            <ul className="space-y-3 text-xs text-muted-foreground">
+              <li>
+                <strong className="text-foreground">Exactly three uses, marketing only:</strong>{" "}the hero headline (h1), section
+                titles (h2, the contact band&apos;s included) and quotes.
+              </li>
+              <li>
+                <strong className="text-foreground">Every hero headline has one italic accent</strong> — a word or a tight
+                phrase (<code>withAccent</code>, the page&apos;s <code>titleAccent</code>). Section titles stay plain.
+              </li>
+              <li>
+                <strong className="text-foreground">Everything else is Inter:</strong> h3 and below, card titles, every number,
+                eyebrows, chips, body, buttons, forms, nav, footer.
+              </li>
+              <li>
+                <strong className="text-foreground">No serif in the product. Ever.</strong> Dashboard, checkout, job posting,
+                login and every workflow are Inter only. The one exception: testimonial quotes (<code>text-quote</code>).
+              </li>
+              <li>
+                <strong className="text-foreground">Enforced twice:</strong> <code>npm run lint:tokens</code> refuses the serif
+                presets outside marketing files, and the token itself falls back to Inter outside the marketing voice.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
       {/* Heading Presets (48px to 12px) */}
       <div className="space-y-4 pt-4 border-t border-border">
         <div className="flex items-center justify-between border-b border-border/60 pb-2">

@@ -577,7 +577,9 @@ export function CheckoutDrawer({
                 </p>
               </div>
 
-              <div className="flex flex-col gap-4 rounded-card-nested border border-border bg-muted p-4">
+              {/* The Database add-on wears the Database gradient (one gradient
+                  per product, light in light mode, dark in dark). */}
+              <div data-product="database" className="flex flex-col gap-4 rounded-card-nested border border-border bg-gradient-product-database p-4">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex flex-col gap-3">
                     <p className="text-sm font-semibold text-foreground">

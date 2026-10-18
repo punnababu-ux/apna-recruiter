@@ -20,7 +20,8 @@
  * "How it works" opens AiCallingExplainer, whose CTA adds the same add-on.
  *
  * Composition only: Button from the design system, a token gradient
- * (`bg-gradient-ai-subtle`). No palette of its own.
+ * (`bg-gradient-product-ai-calling`, the AI Calling Agent's own sky, as on
+ * its product page). No palette of its own.
  */
 
 import * as React from "react"
@@ -48,9 +49,9 @@ export function AiCallingAddonCard({
   const useCredit = offer.creditsAvailable > 0
 
   return (
-    <section data-slot="ai-calling-addon" className="bg-card p-4 shadow-card">
+    <section data-slot="ai-calling-addon" data-product="ai-calling" className="bg-card p-4 shadow-card">
       <div className="overflow-hidden rounded-card-nested border border-border">
-        <div className="flex flex-col gap-3 bg-gradient-ai-subtle p-4">
+        <div className="flex flex-col gap-3 bg-gradient-product-ai-calling p-4">
           {/* The headline gives: it wraps to two or three lines while
               "How it works" keeps its width opposite, on every screen. */}
           <div className="flex items-start justify-between gap-3">

@@ -387,7 +387,13 @@ To change how round the cards feel, retune `--radius-card` in
   **The one exception: testimonial quotes** (`text-quote*`) keep the serif
   everywhere, the plans step in checkout included.
 - **Each product owns one gradient** (`bg-gradient-product-*`): Smart Jobs
-  sky, AI Calling Agent green, apna Database plum, apna Unlimited gold. Use
+  green, AI Calling Agent sky, apna Database plum, apna Unlimited gold
+  (swapped 2026-10-18: Jobs, the core product, wears the brand green). The
+  same mapping holds inside the product: an add-on card for a product (the
+  order summary's AI calling and Database add-ons) wears that product's
+  gradient, light in light mode, dark in dark. Upsell and exit pop-ups are
+  the exception: they keep their dark headers in both modes (the green
+  sweep, `bg-gradient-offer`; gold on plum, `bg-gradient-offer-premium`). Use
   it only with that product: its homepage card, its product page hero, its
   illustration. Company pages (About, Newsroom, Careers, …) use none —
   one exception: stacking cards (`StackCard`) take the four hiring-suite

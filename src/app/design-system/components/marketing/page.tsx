@@ -188,12 +188,18 @@ export default function MarketingComponentsPage() {
           <h2 className="text-h6 text-foreground">AmbientBackdrop</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             The homepage hero&apos;s living layer over <code>bg-gradient-checkout-hero</code>: drifting
-            blobs in the mesh&apos;s hues, a light wandering across them, film grain.
+            blobs in the mesh&apos;s hues, a light wandering across them (light mode only; on dark the
+            colour alone moves, a white sheen there read as a torch), film grain. A card on it is frosted
+            glass by itself: <code>--surface-glass</code> (card at 80%) plus a blur, automatic for a plain{" "}
+            <code>Card</code> on a gradient band on any marketing page.
           </p>
         </div>
         <div className="bg-gradient-checkout-hero relative isolate flex h-72 items-center justify-center">
           <AmbientBackdrop className="inset-0" />
-          <p className="relative text-h4 text-foreground">Moves by itself</p>
+          <Card padding="lg" className="relative w-72 gap-1">
+            <CardTitle>Cards on a gradient are glass</CardTitle>
+            <CardDescription>No class needed: the rule applies itself.</CardDescription>
+          </Card>
         </div>
       </div>
 
@@ -227,7 +233,9 @@ export default function MarketingComponentsPage() {
             Lifted out of <code>trust-bar.tsx</code>, where both were
             hand-rolled. <code>LogoWall</code> takes nodes, not{" "}
             <code>src</code> strings — the system can&apos;t import{" "}
-            <code>next/image</code>.
+            <code>next/image</code>. On dark, each logo is a light silhouette
+            (<code>brand-logo</code>: inverted, grey, screen-blended), so the brand files&apos; white
+            backgrounds disappear. Use <code>brand-logo</code> on any client logo outside the wall too.
           </p>
         </div>
 

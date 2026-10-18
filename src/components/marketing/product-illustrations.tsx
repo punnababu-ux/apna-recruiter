@@ -158,7 +158,7 @@ function AiCalling() {
   return (
     <div className="flex w-64 flex-col gap-2">
       <Float className="flex items-center gap-3">
-        <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+        <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-product-accent text-primary-foreground">
           <PhoneCall className="size-4" />
         </span>
         <div className="flex min-w-0 flex-1 flex-col">

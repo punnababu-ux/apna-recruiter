@@ -15,6 +15,8 @@ import {
   ProgressAccordion,
   ApnaLogo,
   LogoApnaUnlimited,
+  LogoApnaRecruiter,
+  LogoApnaWordmark,
   Badge,
   Button,
   JobCardFrame,
@@ -150,6 +152,27 @@ export default function DataLayoutComponentsPage() {
 
           <div className="flex flex-col gap-1.5">
             <div className="p-4 bg-card rounded-lg inline-block border border-border">
+              <LogoApnaWordmark className="h-6 w-auto" />
+            </div>
+            <span className="text-3xs text-muted-foreground font-mono">LogoApnaWordmark</span>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <div className="p-4 bg-foreground rounded-lg inline-block">
+              <LogoApnaWordmark variant="white" className="h-6 w-auto" />
+            </div>
+            <span className="text-3xs text-muted-foreground font-mono">variant=&quot;white&quot;</span>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <div className="p-4 bg-card rounded-lg inline-block border border-border">
+              <LogoApnaRecruiter className="h-6 w-auto" />
+            </div>
+            <span className="text-3xs text-muted-foreground font-mono">LogoApnaRecruiter</span>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <div className="p-4 bg-card rounded-lg inline-block border border-border">
               <LogoApnaUnlimited variant="default" className="h-5 w-auto" />
             </div>
             <span className="text-3xs text-muted-foreground font-mono">LogoApnaUnlimited variant=&quot;default&quot;</span>
@@ -169,6 +192,12 @@ export default function DataLayoutComponentsPage() {
             <span className="text-3xs text-muted-foreground font-mono">variant=&quot;gradient&quot; (Accent Gradient)</span>
           </div>
         </div>
+        <p className="text-xs text-muted-foreground">
+          <code className="font-mono bg-muted px-1 rounded">LogoApnaWordmark</code> is the website header and footer and the
+          collapsed sidebar; <code className="font-mono bg-muted px-1 rounded">LogoApnaRecruiter</code> is the expanded sidebar,
+          the phone top bar and login. &ldquo;apna&rdquo; is one colour everywhere (<code className="font-mono bg-muted px-1 rounded">--logo-apna</code>),
+          &ldquo;Recruiter&rdquo; the CTA green (<code className="font-mono bg-muted px-1 rounded">--logo-hire</code>), both flip for dark.
+        </p>
         <p className="text-xs text-muted-foreground">
           <code className="font-mono bg-muted px-1 rounded">default</code> for light surfaces, <code className="font-mono bg-muted px-1 rounded">white</code> or <code className="font-mono bg-muted px-1 rounded">gradient</code> for dark/noir cards — used on the self-checkout Unlimited card.
         </p>
