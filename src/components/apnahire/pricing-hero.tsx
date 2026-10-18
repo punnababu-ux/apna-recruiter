@@ -52,13 +52,13 @@ export const PRICING_TABS: SegmentedTabItem<PricingTab>[] = [
   },
   {
     value: "unlimited",
-    label: "Unlimited",
+    label: "Subscription",
     description: "Unlimited hiring for 3 months",
     icon: <InfinityIcon className="shrink-0" aria-hidden />,
   },
   {
     value: "enterprise",
-    label: "Enterprise",
+    label: "Enterprise plans",
     description: "Custom plans for bulk hiring",
     icon: <Building2 className="shrink-0" aria-hidden />,
   },
@@ -67,13 +67,14 @@ export const PRICING_TABS: SegmentedTabItem<PricingTab>[] = [
 /**
  * Labels used by the two *compact* (scrolled, icon + word) tab bars — the
  * logged-in header's inline switcher and the logged-out sticky sub-nav.
- * Figma shortens two of them there so all four fit on one row.
+ * The same words as the full tab row (user call, 2026-10-19: one name per
+ * tab, everywhere — "Subscription", "Enterprise plans").
  */
 export const PRICING_TAB_SHORT_LABELS: Record<PricingTab, string> = {
   jobs: "Jobs",
   database: "Database",
-  unlimited: "Unlimited",
-  enterprise: "Enterprise",
+  unlimited: "Subscription",
+  enterprise: "Enterprise plans",
 }
 
 interface PricingHeroProps {
