@@ -29,6 +29,10 @@ const cardVariants = cva(
     variants: {
       tone: {
         default: "border-border bg-card",
+        /** Opaque white even on a marketing gradient (where `default` turns
+         *  to frosted glass): a band's one standout card, with
+         *  shadow-elevated (the homepage Enterprise card). */
+        solid: "border-border bg-card",
         muted: "border-transparent bg-muted",
         ink: "border-ink-border bg-ink text-ink-fg",
         ghost: "border-transparent bg-transparent",
