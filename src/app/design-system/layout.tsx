@@ -55,7 +55,7 @@ export default function DesignSystemLayout({
                 render={
                   <Link href="/apnahire/jobs">
                     <ArrowLeft className="mr-1 size-3.5" />
-                    Back to Apna Hire Product
+                    Back to apna Recruiter
                   </Link>
                 }
               />

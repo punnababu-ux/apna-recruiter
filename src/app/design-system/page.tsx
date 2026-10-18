@@ -1,6 +1,6 @@
 import * as React from "react"
 import Link from "next/link"
-import { Palette, Type, Maximize2, Sparkles, Zap, CheckSquare, Eye, Navigation, MessageSquare, Bell, TableIcon, ArrowRight, ShieldCheck } from "@apna/design-system"
+import { Palette, Type, Maximize2, Sparkles, Zap, CheckSquare, Eye, Navigation, MessageSquare, Bell, TableIcon, ArrowRight, ShieldCheck, Layout } from "@apna/design-system"
 
 import { ApnaLogo, Badge, Button } from "@apna/design-system"
 
@@ -62,6 +62,14 @@ export default function DesignSystemOverviewPage() {
       count: "4 Components",
       badge: "Layout",
     },
+    {
+      title: "8. Marketing & Layout",
+      href: "/design-system/components/marketing",
+      icon: Layout,
+      desc: "Section, SectionHeading, Card tones, AmbientBackdrop, ScrollStack, LogoWall",
+      count: "7 Components",
+      badge: "Marketing",
+    },
   ]
 
   const foundations = [
@@ -87,11 +95,11 @@ export default function DesignSystemOverviewPage() {
 
             <h1 className="text-3xl font-bold font-heading text-foreground tracking-tight flex items-center gap-3">
               <ApnaLogo className="h-9 w-auto" />
-              Design System
+              Poneglyph
             </h1>
 
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Structured component library built on Base UI primitives, strict semantic tokens, and atomic composition. Organized cleanly into 7 functional categories.
+              Structured component library built on Base UI primitives, strict semantic tokens, and atomic composition. apna&apos;s design system: 70 components in 8 categories, one token system for light and dark, the website and the product.
             </p>
           </div>
 
@@ -114,10 +122,10 @@ export default function DesignSystemOverviewPage() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold text-foreground font-heading">
-            Component Taxonomy (7 Categories)
+            Component Taxonomy (8 Categories)
           </h2>
           <span className="text-xs text-muted-foreground font-mono">
-            36+ Components
+            70 Components
           </span>
         </div>
 

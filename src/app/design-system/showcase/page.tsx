@@ -40,7 +40,7 @@ import {
   AvatarGroup,
   AvatarImage,
 } from "@/components/ui/avatar"
-import { ApnaLogo, Badge, badgeVariants } from "@apna/design-system"
+import { ApnaLogo, Badge, LogoApnaRecruiter, LogoApnaWordmark, badgeVariants } from "@apna/design-system"
 // import {
 //   Breadcrumb,
 //   BreadcrumbItem,
@@ -527,7 +527,7 @@ const TOC_GROUPS: TocGroup[] = [
     ],
   },
   {
-    label: "Apna Hire · Product",
+    label: "apna Recruiter · Product",
     items: [
       { id: "or-overview",   label: "Overview" },
       { id: "or-molecules",  label: "Molecules" },
@@ -1045,18 +1045,32 @@ export default function Home() {
             <Sub title="Brand marks">
               <div className="grid gap-4 sm:grid-cols-2">
                 <LogoTile
-                  name="Apna Hire"
+                  name="apna app icon"
                   filename="apna-logo"
-                  description="Parent brand lockup · gold · green · sky · plum"
+                  description="Parent brand app icon · green · sky · yellow · plum"
                 >
                   <ApnaLogo className="h-12 w-auto" />
+                </LogoTile>
+                <LogoTile
+                  name="apna wordmark"
+                  filename="logo-apna-recruiter"
+                  description="Website header and footer, collapsed sidebar"
+                >
+                  <LogoApnaWordmark className="h-8 w-auto" />
+                </LogoTile>
+                <LogoTile
+                  name="apna Recruiter"
+                  filename="logo-apna-recruiter"
+                  description="Expanded sidebar, phone top bar, login"
+                >
+                  <LogoApnaRecruiter className="h-8 w-auto" />
                 </LogoTile>
               </div>
               <p className="mt-4 text-xs text-muted-foreground">
                 Brand marks are fixed assets — their colours <em>are</em> the
                 brand, not themeable roles. Import from{" "}
-                <code className="font-mono">@/components/ui/logo-apna</code> and{" "}
-                <code className="font-mono">@/components/ui/logo-onlyrounds</code>.
+                <code className="font-mono">@apna/design-system</code> (<code className="font-mono">ApnaLogo</code>,{" "}
+                <code className="font-mono">LogoApnaWordmark</code>, <code className="font-mono">LogoApnaRecruiter</code>).
                 Size with <code className="font-mono">className=&quot;h-…&quot;</code>;
                 width scales automatically.
               </p>
@@ -2106,9 +2120,9 @@ export default function Home() {
            * Components under src/components/apnahire/* — the recruiter-facing
            * side of the Apna platform.
            * =================================================================*/}
-          <Section id="ah-overview" title="Apna Hire · Overview">
+          <Section id="ah-overview" title="apna Recruiter · Overview">
             <p className="max-w-3xl text-sm text-muted-foreground">
-              Apna Hire is the recruiter portal for Apna&apos;s job platform. It reuses the shared
+              apna Recruiter is the recruiter portal for Apna&apos;s job platform. It reuses the shared
               design-system primitives and adds a product-specific sidebar shell with the official
               Apna brand mark, nested navigation, workspace switching, and a{" "}
               <code className="font-mono text-foreground">+ Invite Recruiter</code> CTA.
