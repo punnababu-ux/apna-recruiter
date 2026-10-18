@@ -201,8 +201,8 @@ export default function HomePage() {
           {/* Enterprise (the live site's band): the suite's closing card, for
               buyers hiring at scale — the route in for new enterprise
               customers (Enterprise login is for existing ones). */}
-          <Card padding="none" className="surface-feature grid gap-8 p-6 sm:p-10 lg:grid-cols-2 lg:items-center lg:gap-12 lg:p-12">
-            <div className="flex flex-col gap-6">
+          <Card padding="none" className="surface-feature grid gap-8 p-6 sm:p-10 lg:grid-cols-5 lg:items-center lg:gap-8 lg:p-12">
+            <div className="flex flex-col gap-6 lg:col-span-3">
               <div className="flex flex-col gap-3">
                 <span className="flex items-center gap-2 text-overline text-muted-foreground">
                   <Building2 className="size-4 shrink-0" aria-hidden />
@@ -229,8 +229,10 @@ export default function HomePage() {
             </div>
             {/* One picture, not a list: Enterprise's own 3D clay building, as
                 the product cards above pair copy with a picture. */}
-            <div className="flex justify-center max-lg:order-first">
-              <ValueArt name="enterprise" size="md" />
+            {/* Copy 3/5, picture 2/5 at its large size, so the picture fills
+                its side instead of floating in it. */}
+            <div className="flex justify-center max-lg:order-first lg:col-span-2">
+              <ValueArt name="enterprise" size="lg" />
             </div>
           </Card>
         </div>
