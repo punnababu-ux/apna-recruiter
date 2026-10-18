@@ -10,8 +10,12 @@
 export const CONTACT_ANCHOR = "contact-us"
 
 export const CONTACT = {
-  cta: "Contact us",
-  title: "Join over 7 Lakhs+ employers. We're happy to help.",
+  // The closing band (user call, 2026-10-19): post a job, or talk to sales
+  // (opens the contact form).
+  cta: "Talk to sales",
+  title: "Your next hire could apply today.",
+  description: "60% of businesses get qualified candidates within 24 hours.",
+  post: { label: "Post a job", href: `/login?next=${encodeURIComponent("/apnahire/jobs/new")}` },
   steps: [
     "Submit this simple form.",
     "A dedicated talent executive will get back to you shortly.",

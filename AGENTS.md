@@ -408,7 +408,7 @@ To change how round the cards feel, retune `--radius-card` in
   gradient (the canvas, or a `bg-gradient-checkout-hero` band), never two
   of the same in a row. A stats/facts card tucked under the hero counts as
   part of the hero.
-- **One contact band, from the layout.** "Join over 7 Lakhs+ employers…"
+- **One contact band, from the layout.** "Your next hire could apply today." (Post a job · Talk to sales)
   is rendered once by the marketing layout, just above the footer, on the
   canvas — identical on every page; pages never add their own or vary its
   copy. The one sanctioned swap: a page whose right ending is a different

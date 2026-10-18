@@ -18,6 +18,7 @@
  */
 
 import * as React from "react"
+import Link from "next/link"
 import {
   Button,
   Card,
@@ -66,7 +67,7 @@ function validate(v: Values): Errors {
 }
 
 /** One band for every marketing page, rendered by the marketing layout just
- *  above the footer — the same "Join over 7 Lakhs+ employers" card and
+ *  above the footer — the same "Your next hire could apply today." card and
  *  contact form everywhere. A page that wants its own line on it (Culture)
  *  renders it itself with `title`; that marks it as the page's closing band
  *  (data-closing-band), so the layout skips the shared one there. */
@@ -76,6 +77,8 @@ export function ContactSection({
   cta,
 }: { title?: string; description?: string; cta?: string } = {}) {
   const [open, setOpen] = React.useState(false)
+  // The shared band's own line under the title; a page's override brings its own.
+  const shown = description ?? (title ? undefined : CONTACT.description)
 
   return (
     // No bottom padding: the card sits right above the footer, whose own
@@ -101,16 +104,32 @@ export function ContactSection({
             (at 36px it broke into five lines on a 375px screen). */}
         <div className="flex flex-col gap-3">
           <h2 className="text-editorial-h2 text-balance text-foreground sm:text-editorial-h1">{title ?? CONTACT.title}</h2>
-          {description && <p className="text-lg text-pretty text-muted-foreground">{description}</p>}
+          {shown && <p className="text-lg text-pretty text-muted-foreground">{shown}</p>}
         </div>
-        <Button
-          variant="emphasis"
-          size="lg"
-          className="w-full sm:w-auto"
-          onClick={() => setOpen(true)}
-        >
-          {cta ?? CONTACT.cta}
-        </Button>
+        {/* The shared band: Post a job (dark emphasis — green stays with each
+            page's own one primary), Talk to sales opens the contact form. A
+            page with its own line (Culture, the Lounge) keeps one button. */}
+        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+          {!title && (
+            <Button
+              variant="emphasis"
+              size="lg"
+              className="w-full sm:w-auto"
+              nativeButton={false}
+              render={<Link href={CONTACT.post.href} />}
+            >
+              {CONTACT.post.label}
+            </Button>
+          )}
+          <Button
+            variant={title ? "emphasis" : "outline"}
+            size="lg"
+            className="w-full sm:w-auto"
+            onClick={() => setOpen(true)}
+          >
+            {cta ?? CONTACT.cta}
+          </Button>
+        </div>
       </Card>
 
       <ContactPopup open={open} onOpenChange={setOpen} />
