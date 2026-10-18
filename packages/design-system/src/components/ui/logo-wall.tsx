@@ -65,6 +65,8 @@ function LogoWall({
             className={cn(
               ITEM_HEIGHT[itemHeight],
               "flex shrink-0 items-center [&_img]:h-full [&_img]:w-auto [&_img]:object-contain [&_svg]:h-full [&_svg]:w-auto",
+              // Dark: a light silhouette (brand-logo in index.css).
+              "brand-logo",
               muted && "opacity-60 grayscale transition-interactive hover:opacity-100 hover:grayscale-0"
             )}
           >

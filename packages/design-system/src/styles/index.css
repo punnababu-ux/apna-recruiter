@@ -1156,6 +1156,22 @@
     backdrop-filter: none;
   }
 }
+/* A client's brand logo (LogoWall, testimonials, company marks). The brand
+   files carry a white background, a gray box on a dark page, so on dark the
+   logo is inverted (that background turns black, the marks light) and
+   screen-blended (the black drops into the page): a clean light
+   silhouette, kept gray, since inverted brand colours are wrong colours.
+   Light mode shows the file as it is. */
+@utility brand-logo {
+  /* :hover too, so a hover's grayscale-0 (LogoWall muted) can't swap the
+     filter back to the white box. */
+  .dark &,
+  .dark &:hover {
+    filter: invert(1) grayscale(1);
+    mix-blend-mode: screen;
+  }
+}
+
 /* RULE: a card on a gradient is frosted glass (--surface-glass + blur).
    Automatic on marketing pages, like the serif: any plain Card (tone
    default) that isn't on a white band and isn't nested in another card

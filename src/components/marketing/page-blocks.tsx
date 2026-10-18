@@ -354,7 +354,7 @@ export function CompanyMark({ company }: { company: string }) {
   const logo = CLIENT_LOGOS.find((l) => l.name === company)
   if (!logo) return <span className="text-h5 text-foreground">{company}</span>
   // eslint-disable-next-line @next/next/no-img-element
-  return <img src={logo.src} alt={company} height={28} width={logo.width} className="h-7 w-auto self-start" />
+  return <img src={logo.src} alt={company} height={28} width={logo.width} className="brand-logo h-7 w-auto self-start" />
 }
 
 /** A page's own closing card, in the shared contact band's place and look —
