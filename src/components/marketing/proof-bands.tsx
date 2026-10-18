@@ -41,7 +41,12 @@ export function TrustedByBand() {
   )
 }
 
-export function WhyHireBand() {
+export function WhyHireBand({
+  stats = HOME_PROOF.why.stats,
+}: {
+  /** Pricing shows the platform's scale (PRICING_STATS) instead. */
+  stats?: readonly { value: string; label: string }[]
+}) {
   return (
     <Section size="md">
       <div className="flex flex-col gap-10">
@@ -51,7 +56,7 @@ export function WhyHireBand() {
           title={HOME_PROOF.why.title}
           description={HOME_PROOF.why.description}
         />
-        <StatGrid stats={HOME_PROOF.why.stats} />
+        <StatGrid stats={stats} />
         <TestimonialGrid />
       </div>
     </Section>

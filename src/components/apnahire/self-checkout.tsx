@@ -59,6 +59,7 @@ import {
   EnterprisePricingTable,
 } from "@/components/apnahire/enterprise-pricing-table"
 import { FaqBand, TrustedByBand, WhyHireBand } from "@/components/marketing/proof-bands"
+import { PRICING_STATS } from "@/content/home"
 import { UnlimitedSideCard } from "@/components/apnahire/unlimited-side-card"
 import { CheckoutTopBar } from "@/components/apnahire/checkout-top-bar"
 import { HOME } from "@/lib/apnahire/nav"
@@ -627,7 +628,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
            proof bands: trusted by (white), why hire from apna — numbers and
            quotes (gradient), the FAQ (white, the page's last band). ── */}
       <TrustedByBand />
-      <WhyHireBand />
+      <WhyHireBand stats={PRICING_STATS} />
       <FaqBand />
 
       {/* No footer band here for logged-out: (marketing)/layout.tsx already

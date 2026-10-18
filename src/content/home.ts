@@ -228,6 +228,15 @@ export const HOME_PRESS = {
  * last clause, "especially during the present times"; companies for the first two quotes are the brands
  * the live carousel shows beside them.
  */
+/** Pricing's numbers in "Why hire from apna?": the platform's scale, in the
+ *  hero's format (user call, 2026-10-19). */
+export const PRICING_STATS = [
+  { value: "6 Cr+", label: "Candidates use apna" },
+  { value: "2 L+", label: "New candidates every month" },
+  { value: "7 L+", label: "Employers already at apna" },
+  { value: "7,200+", label: "Towns & cities covered" },
+] as const
+
 export const HOME_PROOF = {
   why: {
     title: "Why hire from apna?",
