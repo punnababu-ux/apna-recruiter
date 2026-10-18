@@ -21,8 +21,11 @@ import { RequireSession } from "@/components/apnahire/require-session"
  *
  * Signed-out visits go to /login and come back (RequireSession).
  */
+import { RECRUITER_INSTALL } from "@/lib/recruiter-install"
+
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
+  ...RECRUITER_INSTALL,
 }
 
 export default function ApnaHireLayout({
