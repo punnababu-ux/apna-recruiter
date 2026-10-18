@@ -52,13 +52,13 @@ export const PRICING_TABS: SegmentedTabItem<PricingTab>[] = [
   },
   {
     value: "unlimited",
-    label: "Subscription",
+    label: "Unlimited",
     description: "Unlimited hiring for 3 months",
     icon: <InfinityIcon className="shrink-0" aria-hidden />,
   },
   {
     value: "enterprise",
-    label: "Enterprise plans",
+    label: "Enterprise",
     description: "Custom plans for bulk hiring",
     icon: <Building2 className="shrink-0" aria-hidden />,
   },
