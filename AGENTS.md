@@ -482,10 +482,18 @@ every line may break; never let the width of a string decide it.**
    reserve its band on every tile in the row. Bottom-pin footers and CTAs
    as one group (`mt-auto flex flex-col gap-4`), so lines align whatever is
    above them.
-6. **Mixed sizes align on the baseline.** Price rows that mix a large
+6. **Side-by-side choices compare one to one.** Two tiles that offer a
+   choice (the upsell pop-ups' `OfferChoice`, any plan comparison) share
+   one row grid (CSS subgrid): the same kind of line — price group,
+   validity, note, database credits, city, CTA — sits on the same line in
+   both, so the eye reads straight across. A tile without that line keeps
+   the row empty; never let one tile's extra line push the rest out of
+   step. The price group is one unit: amount + unit, struck price, % tag
+   and any extra-off line, together.
+7. **Mixed sizes align on the baseline.** Price rows that mix a large
    amount with a small unit or struck price use `items-baseline`, not
    `items-center`.
-7. **Test at 320px with the longest realistic string.** Check 320, 360 and
+8. **Test at 320px with the longest realistic string.** Check 320, 360 and
    375px, a six-digit price (₹12,99,999) and the longest plan name. If
    anything splits, overflows or misaligns, the layout is wrong, not the
    copy.
