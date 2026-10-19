@@ -42,7 +42,7 @@ const tabsListVariants = cva(
         /** Self-checkout's look (the plans hero switcher): grey track, white
          *  pill with a strong inset ring, active label in checkout green.
          *  Fixed across themes, like the checkout surfaces it sits on. */
-        checkout: "bg-checkout-track",
+        checkout: "bg-checkout-track surface-glass-dark",
       },
     },
     defaultVariants: {

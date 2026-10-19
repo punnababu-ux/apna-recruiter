@@ -1182,10 +1182,11 @@
    Automatic on marketing pages, like the serif: any plain Card (tone
    default) that isn't on a white band and isn't nested in another card
    takes the glass. Cards that set their own surface (surface-*, a
-   gradient fill) or another tone are left alone. In the utilities layer
+   gradient fill, the plan-card fill — plan and pricing cards are never
+   glass) or another tone are left alone. In the utilities layer
    so it outranks the Card's own bg-card. */
 @layer utilities {
-  [data-voice="editorial"] [data-slot="card"][data-tone="default"]:not(section[data-tone="card"] *, [data-slot="card"] *, [class*="surface-"], [class*="bg-gradient"]) {
+  [data-voice="editorial"] [data-slot="card"][data-tone="default"]:not(section[data-tone="card"] *, [data-slot="card"] *, [class*="surface-"], [class*="bg-gradient"], [class*="bg-plan-card"]) {
     background-color: var(--surface-glass);
     border-color: color-mix(in srgb, var(--card) 60%, transparent);
     backdrop-filter: blur(24px);
@@ -1297,6 +1298,15 @@
 @utility bg-gradient-banner-destructive {
   background-image: var(--gradient-banner-destructive);
 }
+/* Frosted dark glass (--surface-glass-dark): the smoked counterpart of the
+ * white glass — an 8% black pane, blurred, with a hairline light edge, for a
+ * recess that holds white cards (the pricing tab bar, the plan panels). */
+@utility surface-glass-dark {
+  background-color: var(--surface-glass-dark);
+  backdrop-filter: blur(20px);
+  box-shadow: inset 0 0 0 1px var(--surface-glass-dark-edge);
+}
+
 @utility bg-gradient-checkout-hero {
   background-image: var(--gradient-checkout-hero);
   background-size: cover;

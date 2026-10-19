@@ -120,7 +120,9 @@ const APPEARANCES = {
     activeItem: "bg-card shadow-card",
   },
   checkout: {
-    track: "bg-checkout-track",
+    // bg-checkout-track (a background class, so it replaces the base bg-muted
+    // when merged) + surface-glass-dark (blur and the light edge).
+    track: "bg-checkout-track surface-glass-dark",
     active: "text-checkout-primary",
     inactive: "text-checkout-hero-fg-secondary",
     muted: "text-checkout-hero-fg-secondary",

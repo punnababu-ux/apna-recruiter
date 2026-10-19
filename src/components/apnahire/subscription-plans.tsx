@@ -147,7 +147,7 @@ function PlanCard({
     <div
       onClick={onBuy}
       data-compare-card
-      className="card-hover-lift ink press-subtle relative flex flex-1 cursor-pointer flex-col justify-between gap-5 rounded-card border border-border bg-plan-card px-4 pb-5 pt-8"
+      className="card-hover-lift ink press-subtle relative flex flex-1 cursor-pointer flex-col justify-between gap-5 rounded-card border border-transparent bg-plan-card px-4 pb-5 pt-8"
     >
       {recommended && (
         <div className="absolute right-0 top-0 flex overflow-hidden rounded-tr-[inherit] rounded-bl-xl">
@@ -298,7 +298,7 @@ export function SubscriptionPlans({
           items={jobSlotOptions(jobSlots)}
           value={jobSlots}
           onValueChange={setJobSlots}
-          className="w-full flex-nowrap gap-1 rounded-full bg-checkout-track p-0.5 sm:w-auto sm:shrink-0 sm:gap-2"
+          className="w-full flex-nowrap gap-1 rounded-full surface-glass-dark p-0.5 sm:w-auto sm:shrink-0 sm:gap-2"
           // Content-sized, not equal thirds: the active label is the long
           // one, so equal widths wrapped it onto a second line on phones.
           // flex-auto shares the spare width without squeezing it.

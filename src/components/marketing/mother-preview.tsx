@@ -10,9 +10,13 @@ import * as React from "react"
 
 export function MotherPreview() {
   React.useEffect(() => {
-    const value = new URLSearchParams(window.location.search).get("mother")
-    if (value) document.documentElement.dataset.mother = value
-    else delete document.documentElement.dataset.mother
+    const params = new URLSearchParams(window.location.search)
+    // ?mother=brand (the saved gradient).
+    for (const key of ["mother"] as const) {
+      const value = params.get(key)
+      if (value) document.documentElement.dataset[key] = value
+      else delete document.documentElement.dataset[key]
+    }
   }, [])
   return null
 }

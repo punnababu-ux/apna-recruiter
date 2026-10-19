@@ -123,7 +123,7 @@ export function JobCreditBundles({
   return (
     <div
       data-slot="job-credit-bundles"
-      className={cn("flex flex-col gap-3 sm:gap-5 sm:rounded-card sm:bg-checkout-track sm:p-4", className)}
+      className={cn("flex flex-col gap-3 sm:gap-5 sm:rounded-card sm:surface-glass-dark sm:p-4", className)}
     >
       {/* ── Mobile-first selectable radio cards (< md) ── */}
       <div className="flex flex-col gap-3 md:hidden">

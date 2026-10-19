@@ -179,8 +179,9 @@ export function DatabaseCreditBundles({
           return (
             <PricingCard
               key={bundle.id}
-              // On the page background here (no plan track), so the page card corner.
-              className="rounded-card"
+              // On the page background here (no plan track), so the page card
+              // corner. Borderless, like the Enterprise plan cards.
+              className="rounded-card border-transparent"
               onClick={() => onBuyNow(bundle)}
               ribbon={
                 bundle.recommended && (

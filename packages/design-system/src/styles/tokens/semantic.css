@@ -493,6 +493,14 @@
    * gray fill, and no border) — confirmed from the winning (later,
    * `!important`) rule in index.html: `background: rgba(0,0,0,0.08)`. */
   --surface-checkout-track: rgba(0, 0, 0, 0.08);
+  /* Frosted dark glass — the smoked counterpart of --surface-glass: a
+   * recessed pane that holds white cards (the pricing tab bar, the Job
+   * credits panel). 8% black, the same as the track, with a blur and a
+   * clear light edge (the surface-glass-dark utility) — the edge the white
+   * glass shows. Desktop only in practice: on phones these panels and tracks
+   * don't render. */
+  --surface-glass-dark: rgba(0, 0, 0, 0.08);
+  --surface-glass-dark-edge: color-mix(in srgb, var(--color-gray-0) 30%, transparent);
 
   /* Checkout inset — a nested card, used for the light content box inside
    * the always-dark Unlimited side-card (and any similar "card inside a
@@ -917,6 +925,8 @@
   --surface-checkout-hero-fg-secondary: var(--color-gray-300);
   /* Mirrors the light track's alpha-black overlay, inverted for a dark hero. */
   --surface-checkout-track: color-mix(in srgb, var(--card) 40%, transparent); /* tab bar + Job credits panel: the Unlimited outer plum at 40% */
+  --surface-glass-dark: color-mix(in srgb, var(--card) 40%, transparent);
+  --surface-glass-dark-edge: color-mix(in srgb, var(--color-gray-0) 8%, transparent);
 
   /* Chip — inverted so the solid chip still reads against the dark track. */
   --chip-solid:            var(--color-gray-100);
@@ -1102,3 +1112,4 @@
   --ambient-blob-3: color-mix(in srgb, var(--color-apna-green-200) 30%, transparent);
   --ambient-blob-4: color-mix(in srgb, var(--color-apna-gold-200) 85%, transparent);
 }
+

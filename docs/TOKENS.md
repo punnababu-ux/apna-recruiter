@@ -122,6 +122,7 @@ change between themes.
 | `--surface-checkout-track-border` | gray-200  | gray-700 | pricing-hero tab-selector track border |
 | `--surface-checkout-inset`        | gray-0    | `--surface-glass` | `--card` at 80% (light and dark) | Frosted glass on gradients: `surface-frosted` / `-feature` / `-band`, the homepage login card, the nav pill (`bg-surface-glass`), always with a blur |
 | `--surface-glass-faint` | `--card` at 40% (light and dark) | Sheer glass: a panel that only hints at itself over a coloured canvas — the product page's illustration tile (`bg-surface-glass-faint`), with a blur |
+| `--surface-glass-dark` / `--surface-glass-dark-edge` | 8% black / white at 30% (dark: `--card` at 40% / white at 8%) | Frosted dark glass, the smoked counterpart of `--surface-glass`: a recessed pane holding white cards — the pricing tab bars and the plan panels (`surface-glass-dark` utility: the tint, a 20px blur and the light edge) |
 | `--surface-plan-card` | the Unlimited card's inner card (white on light; the plan-card plum on dark, like every plan card) |
 | `--surface-checkout-inset-border` | gray-200  | = `--border` | border on the inset card, aliases the ordinary role in dark mode |
 | `--surface-checkout-inset-fg`     | gray-900  | = `--card-foreground` | text on the inset card — fixed light-mode value (matches `--surface-checkout-hero-fg`'s ORIGINAL failure mode reasoning doesn't apply here anymore: now that the background itself darkens in dark mode, the text has to flip with it) |

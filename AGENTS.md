@@ -346,6 +346,14 @@ has the same corner. Two roles, nothing else:
 To change how round the cards feel, retune `--radius-card` in
 `semantic.css` — once, for the whole product.
 
+**Plan cards are borderless** (user call, 2026-10-19). Every plan and
+pricing card — job credits, apna Unlimited / Subscription, Database,
+Enterprise, both checkouts — is a solid white `bg-plan-card` card with a
+transparent border (`border-transparent`, so sizes don't shift), sitting in
+the frosted dark glass panel (`surface-glass-dark`). No grey outline, never
+frosted glass. The exception is a *selectable* row on phones, whose border
+is the selection state (grey → green).
+
 ---
 
 ## Marketing pages — the visual language
