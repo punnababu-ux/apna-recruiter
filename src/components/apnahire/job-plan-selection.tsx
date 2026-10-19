@@ -170,6 +170,12 @@ export function JobPlanSelection() {
   // shows it only when that order needs a payment (a partial-credit top-up,
   // a paid plan), never when credits cover it.
   const holdsCredits = hasAnyCredits(creditBalance)
+  // The order as it stands when the summary closes: a paid job line, or the
+  // AI calling agent added with no AI calling credit to cover it (a covered
+  // classic job + a paid AI agent is a paying order).
+  const [aiAdded, setAiAdded] = React.useState(false)
+  const orderNeedsPayment =
+    (checkoutItem?.price ?? 0) > 0 || (aiAdded && creditBalance["ai-calling"] < 1)
   const attemptExit = (proceed: () => void, paymentRequired = !holdsCredits) => {
     if (offer.nudgeAvailable && paymentRequired) setExitPrompt({ proceed })
     else proceed()
@@ -368,13 +374,14 @@ export function JobPlanSelection() {
       <CheckoutDrawer
         open={drawerOpen}
         onOpenChange={(next) =>
-          next ? setDrawerOpen(true) : attemptExit(() => setDrawerOpen(false), (checkoutItem?.price ?? 0) > 0)
+          next ? setDrawerOpen(true) : attemptExit(() => setDrawerOpen(false), orderNeedsPayment)
         }
         item={checkoutItem}
         onProceedToPay={handleProceedToPay}
         aiAddon={{ price: AI_CALLING_ADDON.price, creditsAvailable: creditBalance["ai-calling"] }}
         extraOffer={offer.deadline ? { code: EXTRA_OFF.code, deadline: offer.deadline } : undefined}
         onExtraOfferExpired={offer.expire}
+        onAiAddedChange={setAiAdded}
       />
 
       <JobBundleOfferDialog

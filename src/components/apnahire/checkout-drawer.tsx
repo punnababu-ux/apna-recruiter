@@ -202,6 +202,10 @@ interface CheckoutDrawerProps {
    *  `onExtraOfferExpired` fires. */
   extraOffer?: { code: string; deadline: number }
   onExtraOfferExpired?: () => void
+  /** Fires when the AI calling add-on is added or removed. With a paid add-on
+   *  a credit-covered order becomes one that needs payment, which the caller
+   *  needs to know (the exit offer shows only when paying). */
+  onAiAddedChange?: (added: boolean) => void
 }
 
 
@@ -364,6 +368,7 @@ export function CheckoutDrawer({
   aiAddon,
   extraOffer,
   onExtraOfferExpired,
+  onAiAddedChange,
 }: CheckoutDrawerProps) {
   // The back button / gesture closes the summary through its own close
   // path (so the exit offer still shows), rather than leaving the page.
@@ -416,6 +421,10 @@ export function CheckoutDrawer({
       onExtraOfferExpired?.()
     }
   }, [open, extraCode, appliedCoupon, extraRemaining, onExtraOfferExpired])
+
+  React.useEffect(() => {
+    onAiAddedChange?.(aiAdded)
+  }, [aiAdded, onAiAddedChange])
 
   if (!item) return null
 
