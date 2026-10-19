@@ -17,7 +17,7 @@
  */
 
 import * as React from "react"
-import { Badge, BadgePercent, Button, ClockFading, Database, MapPin } from "@apna/design-system"
+import { Badge, BadgePercent, Button, ClockFading, Database } from "@apna/design-system"
 import { EXTRA_OFF } from "@/content/offers"
 import { cn } from "@/lib/utils"
 import { inr } from "@/lib/format"
@@ -32,6 +32,9 @@ export interface OfferOption {
   /** One italic line: "That's just ₹1,099 /job", "Billed monthly". */
   note?: React.ReactNode
   validDays?: number
+  /** A time limit right under the price, plain with the clock icon
+   *  ("Valid for 30 days", "1 active job slot for 30 days"). */
+  term?: string
   /** A subscription's terms, above the CTA: the database credits it brings
    *  (with their value) and its one city. */
   planFacts?: { dbCredits: number; dbWorth: number; singleCity?: boolean; slotDays?: number }
@@ -101,6 +104,12 @@ function OptionTile({
             </span>
           )}
         </p>
+        {option.term && (
+          <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <ClockFading className="size-4 shrink-0" aria-hidden />
+            {option.term}
+          </span>
+        )}
         {option.note && (
           <p className={cn("text-xs italic", upgrade ? "text-checkout-primary" : "text-muted-foreground")}>
             {option.note}
@@ -123,12 +132,8 @@ function OptionTile({
                     {option.planFacts.dbWorth.toLocaleString("en-IN")}
                   </span>
                 </span>
-                {option.planFacts.singleCity && (
-                  <span className="flex items-center gap-1.5 text-muted-foreground">
-                    <MapPin className="size-4 shrink-0" aria-hidden />
-                    Valid in a single city
-                  </span>
-                )}
+                {/* A caveat, not a feature: no icon, italic. */}
+                {option.planFacts.singleCity && <span className="text-muted-foreground italic">Valid in a single city</span>}
                 {/* Last, so it sits level with the other tile's "Valid for
                     N days" (both groups are bottom-pinned). */}
                 {option.planFacts.slotDays != null && (
