@@ -58,6 +58,10 @@ export function UnlimitedSideCard({
   // Truncated, as the design does for ₹5,999 / 3 = ₹1,999.
   if (extraOff) monthlyPrice = Math.floor(price / jobSlotMonths)
   const pct = extraOff ? Math.round((1 - price / basePrice) * 100) : null
+  // Works for any plan length: the Jobs tab sells the monthly plan (1), the
+  // card was first drawn for the quarterly one (3).
+  const monthly = jobSlotMonths === 1
+  const slotDays = jobSlotMonths * 30
   const strike = extraOff ? inr(basePrice) : undefined
   return (
     <>
@@ -68,14 +72,14 @@ export function UnlimitedSideCard({
         // Same card, same structure as express checkout's Monthly plan: name
         // and price with its unit on top, the reposts promise as subtitle,
         // three plan lines, then the note and CTA.
-        title="Quarterly plan"
+        title={monthly ? "Monthly plan" : "Quarterly plan"}
         subtitle="Unlimited job reposts"
         mrp={strike}
         price={inr(price)}
-        unit="/quarter"
+        unit={monthly ? "/month" : "/quarter"}
         belowPrice={<MobileDiscountRow pct={pct} note={extraOff ? "Incl. 10% extra" : undefined} />}
         features={[
-          [<BriefcaseBusiness key="i" aria-hidden />, <><strong>1 active job slot</strong> for {jobSlotMonths * 30} days</>],
+          [<BriefcaseBusiness key="i" aria-hidden />, <><strong>1 active job slot</strong> for {slotDays} days</>],
           [<Database key="i" aria-hidden />, `${dbCredits} database credits worth ${inr(dbCreditsWorth)}`],
           [<WhatsApp key="i" aria-hidden />, "WhatsApp outreach to matched candidates"],
         ]}
@@ -115,7 +119,7 @@ export function UnlimitedSideCard({
               <LogoApnaUnlimited variant="gradient" className="h-4 w-auto" />
             </div>
             <p className="text-sm text-surface-inverted-fg/80">
-              Unlimited hiring for {jobSlotMonths} months
+              Unlimited hiring for {monthly ? "a month" : `${jobSlotMonths} months`}
             </p>
           </div>
 
@@ -126,21 +130,33 @@ export function UnlimitedSideCard({
             subtitle="Free job reposts and swapping"
             meta={[
               <>
-                <ClockFading aria-hidden />1 Active job slot for {jobSlotMonths} months
+                <ClockFading aria-hidden />1 Active job slot for {monthly ? `${slotDays} days` : `${jobSlotMonths} months`}
               </>,
               <>
                 <UserSearch aria-hidden />
                 {dbCredits} database credits worth {inr(dbCreditsWorth)}
               </>,
             ]}
-            price={inr(price)}
+            price={
+              monthly ? (
+                <>
+                  {inr(price)}
+                  <span className="text-sm font-regular">/month</span>
+                </>
+              ) : (
+                inr(price)
+              )
+            }
             mrp={strike}
             badge={pct ? <Badge variant="discount">{pct}% OFF</Badge> : undefined}
             priceSuffix={
               <span className="flex flex-col gap-1">
-                <span className="text-checkout-primary">
-                  That&apos;s just {inr(monthlyPrice)}{"\u00A0"}/month
-                </span>
+                {/* Monthly already shows /month on the price. */}
+                {!monthly && (
+                  <span className="text-checkout-primary">
+                    That&apos;s just {inr(monthlyPrice)}{"\u00A0"}/month
+                  </span>
+                )}
                 {extraOff && <ExtraOffLine />}
               </span>
             }

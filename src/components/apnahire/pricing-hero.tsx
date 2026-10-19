@@ -42,6 +42,12 @@ export const PRICING_TABS: SegmentedTabItem<PricingTab>[] = [
     icon: <Briefcase className="shrink-0" aria-hidden />,
   },
   {
+    value: "unlimited",
+    label: "Subscription",
+    description: "Unlimited hiring for 3 months",
+    icon: <InfinityIcon className="shrink-0" aria-hidden />,
+  },
+  {
     value: "database",
     label: "Database",
     description: "Search & hire from 6 Cr+ candidates",
@@ -49,12 +55,6 @@ export const PRICING_TABS: SegmentedTabItem<PricingTab>[] = [
     // inside a magnifier lens. `UserSearch` is the nearest lucide glyph;
     // plain `Search` loses the "candidate" half of the meaning.
     icon: <UserSearch className="shrink-0" aria-hidden />,
-  },
-  {
-    value: "unlimited",
-    label: "Subscription",
-    description: "Unlimited hiring for 3 months",
-    icon: <InfinityIcon className="shrink-0" aria-hidden />,
   },
   {
     value: "enterprise",

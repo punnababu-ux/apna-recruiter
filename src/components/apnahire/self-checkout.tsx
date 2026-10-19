@@ -42,6 +42,7 @@ import {
   SINGLE_CREDIT,
   BUNDLES,
   type Bundle,
+  UPSELL_PACK_22,
 } from "@/components/apnahire/job-credit-bundles"
 import {
   DatabaseCreditBundles,
@@ -61,6 +62,7 @@ import {
 import { FaqBand, TrustedByBand, WhyHireBand } from "@/components/marketing/proof-bands"
 import { PRICING_STATS } from "@/content/home"
 import { UnlimitedSideCard } from "@/components/apnahire/unlimited-side-card"
+import { AnnualUpgradeDialog, CreditPackOfferDialog } from "@/components/apnahire/offers/upsell-dialogs"
 import { CheckoutTopBar } from "@/components/apnahire/checkout-top-bar"
 import { HOME } from "@/lib/apnahire/nav"
 import { useSession } from "@/hooks/use-session"
@@ -78,6 +80,19 @@ import { ExitOfferDialog } from "@/components/apnahire/offers/exit-offer-dialog"
 import { useExtraOff } from "@/components/apnahire/offers/use-extra-off"
 import { ANNUAL_PLAN, EXTRA_OFF, withExtraOff } from "@/content/offers"
 import { inr, num } from "@/lib/format"
+
+/** The Jobs tab's apna Unlimited card sells the monthly plan (user call,
+ *  2026-10-19), not the quarterly one. */
+const MONTHLY_SIDE_CARD = {
+  price: SUBSCRIPTION_PLANS.monthly.price,
+  monthlyPrice: SUBSCRIPTION_PLANS.monthly.price,
+  jobSlotMonths: SUBSCRIPTION_PLANS.monthly.months,
+  dbCredits: SUBSCRIPTION_PLANS.monthly.dbCredits,
+  dbCreditsWorth: SUBSCRIPTION_PLANS.monthly.dbWorth,
+}
+
+/** The bundle the 22-credit pack is offered against. */
+const BUNDLE_13 = BUNDLES.find((b) => b.credits === 13)
 
 export type CheckoutAuthState = "logged-in" | "logged-out"
 
@@ -257,9 +272,12 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
     null
   )
 
-  // Exit loop (Figma 2525:23488). Self-checkout has no upsells (product
-  // decision): every Buy goes straight to the order summary.
+  // Exit loop (Figma 2525:23488).
   const offer = useExtraOff()
+  // Upsells (user call, 2026-10-19), the express checkout's pop-ups: the
+  // 13-credit bundle offers 22 credits for ₹9,999; the monthly subscription
+  // offers the annual plan. Every other Buy goes straight to the summary.
+  const [upsell, setUpsell] = React.useState<"pack" | "annual" | null>(null)
   const [exitPrompt, setExitPrompt] = React.useState<{ proceed: () => void } | null>(null)
 
   // Leaving (the top bar's back button, closing the order summary) goes
@@ -311,6 +329,19 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
 
   const handleBuySingleCredit = () => handleBuyBundle(SINGLE_CREDIT)
 
+  // A job bundle's Buy: the biggest bundle (13) offers the 22-credit pack.
+  const BIGGEST_BUNDLE = 13
+  const handleSelectBundle = (bundle: Parameters<typeof handleBuyBundle>[0]) => {
+    if (bundle.credits === BIGGEST_BUNDLE) setUpsell("pack")
+    else handleBuyBundle(bundle)
+  }
+  const buyPack22 = () =>
+    openOrder({
+      id: `job-${UPSELL_PACK_22.credits}`,
+      label: `${UPSELL_PACK_22.credits} Job credits`,
+      price: UPSELL_PACK_22.price,
+    })
+
   const handleBuyDatabaseBundle = (bundle: {
     credits: number
     validDays: number
@@ -342,14 +373,14 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
 
   const handleStickyCtaClick = () => {
     if (activeTab === "unlimited") {
-      if (subscriptionPlan === "monthly") handleBuyUnlimitedMonthly()
+      if (subscriptionPlan === "monthly") setUpsell("annual")
       else if (subscriptionPlan === "annual") handleBuyUnlimitedAnnual()
       else handleBuyUnlimitedQuarterly()
     } else if (activeTab === "enterprise") {
       // Figma defines no destination for "Contact sales" (the desktop
       // cards' buttons are inert too).
     } else if (selectedPackage.kind === "job") {
-      handleBuyBundle(selectedPackage.bundle)
+      handleSelectBundle(selectedPackage.bundle)
     } else {
       handleBuyDatabaseBundle(selectedPackage.bundle)
     }
@@ -519,7 +550,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                     <JobCreditBundles
                       extraOff={offer.claimed}
                       className="flex-1"
-                      onBuyNow={handleBuyBundle}
+                      onBuyNow={handleSelectBundle}
                       onBuySingleCredit={handleBuySingleCredit}
                       selectedBundleId={selectedPackage.kind === "job" ? selectedPackage.bundle.id : undefined}
                       onSelectBundle={(bundle) => setSelectedPackage({ kind: "job", bundle })}
@@ -537,7 +568,8 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                     <UnlimitedSideCard
                       extraOff={offer.claimed}
                       className="flex-1"
-                      onBuyNow={handleBuyUnlimitedQuarterly}
+                      {...MONTHLY_SIDE_CARD}
+                      onBuyNow={() => setUpsell("annual")}
                     />
                     <p className="hidden text-xs text-checkout-hero-fg-muted md:block">
                       Note: This plan is valid in a single city.
@@ -552,7 +584,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                   <div className="flex flex-col gap-3">
                     <JobCreditBundles
                       extraOff={offer.claimed}
-                      onBuyNow={handleBuyBundle}
+                      onBuyNow={handleSelectBundle}
                       onBuySingleCredit={handleBuySingleCredit}
                       selectedBundleId={selectedPackage.kind === "job" ? selectedPackage.bundle.id : undefined}
                       onSelectBundle={(bundle) => setSelectedPackage({ kind: "job", bundle })}
@@ -567,7 +599,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                   </div>
 
                   {/* 2. apna Unlimited Inset Card */}
-                  <UnlimitedSideCard extraOff={offer.claimed} onBuyNow={handleBuyUnlimitedQuarterly} />
+                  <UnlimitedSideCard {...MONTHLY_SIDE_CARD} extraOff={offer.claimed} onBuyNow={() => setUpsell("annual")} />
                 </div>
 
                 {/* Both auth states — the updated Jobs frame draws this card
@@ -603,7 +635,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                 extraOff={offer.claimed}
                 selectedPlan={subscriptionPlan}
                 onSelectPlan={setSubscriptionPlan}
-                onBuyMonthly={handleBuyUnlimitedMonthly}
+                onBuyMonthly={() => setUpsell("annual")}
                 onBuyQuarterly={handleBuyUnlimitedQuarterly}
                 onBuyAnnual={handleBuyUnlimitedAnnual}
               />
@@ -652,6 +684,38 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
         onProceedToPay={handleProceedToPay}
         extraOffer={offer.deadline ? { code: EXTRA_OFF.code, deadline: offer.deadline } : undefined}
         onExtraOfferExpired={offer.expire}
+      />
+
+      <CreditPackOfferDialog
+        open={upsell === "pack"}
+        need={BUNDLE_13 ? { credits: BUNDLE_13.credits, price: BUNDLE_13.price, mrp: BUNDLE_13.mrp } : null}
+        pack={UPSELL_PACK_22}
+        needNote={BUNDLE_13 ? `Valid for ${BUNDLE_13.validDays} days` : undefined}
+        extraOff={offer.claimed}
+        onClose={() => setUpsell(null)}
+        onStay={() => {
+          setUpsell(null)
+          if (BUNDLE_13) handleBuyBundle(BUNDLE_13)
+        }}
+        onTake={() => {
+          setUpsell(null)
+          buyPack22()
+        }}
+      />
+
+      <AnnualUpgradeDialog
+        open={upsell === "annual"}
+        from={{ label: "Monthly plan", price: SUBSCRIPTION_PLANS.monthly.price, months: 1 }}
+        extraOff={offer.claimed}
+        onClose={() => setUpsell(null)}
+        onStay={() => {
+          setUpsell(null)
+          handleBuyUnlimitedMonthly()
+        }}
+        onTake={() => {
+          setUpsell(null)
+          handleBuyUnlimitedAnnual()
+        }}
       />
 
       <ExitOfferDialog
