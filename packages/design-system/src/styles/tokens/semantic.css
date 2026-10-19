@@ -1043,24 +1043,33 @@
   --product-tint:   color-mix(in srgb, var(--color-apna-gold-900) 35%, transparent);
 }
 
-/* The marketing shell's canvas: the mother gradient, or — when the page is a
- * product page — that product's canvas, header to footer. */
-[data-slot="marketing-canvas"] { background-image: var(--gradient-checkout-hero); }
-[data-slot="marketing-canvas"]:has([data-product-canvas="smart-jobs"]) { background-image: var(--gradient-canvas-smart-jobs); }
-[data-slot="marketing-canvas"]:has([data-product-canvas="ai-calling"]) { background-image: var(--gradient-canvas-ai-calling); }
-[data-slot="marketing-canvas"]:has([data-product-canvas="database"])   { background-image: var(--gradient-canvas-database); }
-[data-slot="marketing-canvas"]:has([data-product-canvas="unlimited"])  { background-image: var(--gradient-canvas-unlimited); }
-/* Every gradient band carries its own whole copy of the mother gradient,
- * so the press band, the foot (contact band + footer) and the rest look
- * like the hero, not like a slice of one page-tall canvas. The hero itself
- * (a section after its AmbientBackdrop) keeps the moving canvas; product
- * pages keep their one continuous re-tint. */
-[data-slot="marketing-canvas"]:not(:has([data-product-canvas])) main section[data-tone="transparent"]:not([data-slot="ambient-backdrop"] ~ section),
-[data-slot="marketing-canvas"]:not(:has([data-product-canvas])) [data-slot="marketing-foot"] {
-  background-image: var(--gradient-checkout-hero);
+/* The marketing shell's canvas: ONE gradient behind the whole page — the
+ * mother gradient, or a product page's own canvas — painted on a layer
+ * fixed to the viewport. Every transparent band (hero, press, the stats
+ * tucked under a hero, the closing card, the footer) shows the same
+ * continuous gradient, so there's never a seam where two gradient bands
+ * meet, and each looks like the hero (the gradient is always screen-sized).
+ * White bands cover it. A fixed layer rather than background-attachment:
+ * fixed, which iOS Safari ignores. */
+[data-slot="marketing-canvas"] {
+  --canvas-image: var(--gradient-checkout-hero);
+  position: relative;
+  isolation: isolate;
+}
+[data-slot="marketing-canvas"]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: var(--canvas-image);
   background-size: cover;
   background-position: center;
 }
+[data-slot="marketing-canvas"]:has([data-product-canvas="smart-jobs"]) { --canvas-image: var(--gradient-canvas-smart-jobs); }
+[data-slot="marketing-canvas"]:has([data-product-canvas="ai-calling"]) { --canvas-image: var(--gradient-canvas-ai-calling); }
+[data-slot="marketing-canvas"]:has([data-product-canvas="database"])   { --canvas-image: var(--gradient-canvas-database); }
+[data-slot="marketing-canvas"]:has([data-product-canvas="unlimited"])  { --canvas-image: var(--gradient-canvas-unlimited); }
 
 
 /* CLASSIC (kept ready, 2026-10-19) — the previous mother gradient: the

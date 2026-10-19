@@ -405,9 +405,14 @@ To change how round the cards feel, retune `--radius-card` in
   hero. Otherwise never one product's colour alone on a company page.
 - **Section rhythm (every page but product pages).** The hero sits on the
   gradient; the bands under it alternate white (`Section tone="card"`) and
-  gradient (the canvas, or a `bg-gradient-checkout-hero` band), never two
-  of the same in a row. A stats/facts card tucked under the hero counts as
-  part of the hero.
+  gradient, never two of the same in a row. A stats/facts card tucked under
+  the hero counts as part of the hero.
+- **One gradient per page.** The page's gradient is a single layer fixed
+  behind the whole page (the marketing canvas, `semantic.css`); a gradient
+  band is simply a transparent `Section` that lets it show through — hero,
+  stats, closing card and footer all sit on the same gradient. Never paint
+  a band's own `bg-gradient-checkout-hero`: two painted bands side by side
+  meet in a visible seam. (Cards may still lift with it: `surface-feature`.)
 - **One contact band, from the layout.** "Your next hire could apply today." (Post a job · Talk to sales)
   is rendered once by the marketing layout, just above the footer, on the
   canvas — identical on every page; pages never add their own or vary its

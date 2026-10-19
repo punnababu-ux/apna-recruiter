@@ -255,7 +255,7 @@ export default function InterviewPrepLoungePage() {
       </Section>
 
       {/* Public outcomes: the policy fit beside the minister's visit. */}
-      <Section size="lg" className="bg-gradient-checkout-hero">
+      <Section size="lg">
         <div className="flex flex-col gap-10">
           <SectionHeading
             level={2}

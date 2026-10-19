@@ -32,7 +32,7 @@ export default function MarketingLayout({
     <HeaderSlotProvider>
       {/* The canvas: the homepage's mesh gradient, or a product page's own
           re-tint of it (semantic.css, [data-slot=marketing-canvas]). */}
-      <div data-slot="marketing-canvas" data-voice="editorial" className="flex min-h-dvh flex-col bg-cover bg-top bg-no-repeat">
+      <div data-slot="marketing-canvas" data-voice="editorial" className="flex min-h-dvh flex-col">
         <MotherPreview />
         <SiteHeader />
         <main className="flex-1">{children}</main>
