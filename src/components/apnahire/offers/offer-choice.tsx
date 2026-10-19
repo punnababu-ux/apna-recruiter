@@ -116,11 +116,11 @@ function OptionTile({
           <div className="flex flex-col gap-2.5 text-xs">
             {option.planFacts && (
               <>
-                <span className="flex items-center gap-1.5 text-foreground">
-                  <Database className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+                <span className="flex items-center gap-1.5 text-muted-foreground">
+                  <Database className="size-4 shrink-0" aria-hidden />
                   <span>
-                    <strong className="font-semibold">{option.planFacts.dbCredits.toLocaleString("en-IN")} database credits</strong>
-                    {" "}worth{"\u00A0"}₹{option.planFacts.dbWorth.toLocaleString("en-IN")}
+                    {option.planFacts.dbCredits.toLocaleString("en-IN")} database credits worth{"\u00A0"}₹
+                    {option.planFacts.dbWorth.toLocaleString("en-IN")}
                   </span>
                 </span>
                 {option.planFacts.singleCity && (
