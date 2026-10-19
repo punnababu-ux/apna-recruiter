@@ -214,7 +214,7 @@ while `--primary`/`--success` brighten one step in dark mode
 | `--cta-emphasis-hover`         | gray-900               | gray-600                 | emphasis CTA hover                         |
 | `--cta-emphasis-foreground`    | gray-0                 | gray-0                   | text/icon on cta-emphasis                  |
 | `--checkout-discount-fg`       | apna-green-700 (#186954) | apna-green-300 | discount-pill and itemized discount text |
-| `--checkout-discount-bg`       | apna-green-600 at 14% (translucent: works on white and green tiles) | apna-green-500 at 18%    | discount pill background                  |
+| `--checkout-discount-bg`       | `--surface-glass-dark` (8% black, the job credits panel's smoked glass) | `--surface-glass-dark` | discount pill background                  |
 | `--checkout-info`              | apna-sky-500 (#2F87E4)  | apna-sky-700 | the checkout surface's fixed accent blue — the "Recommended" ribbon (`<Badge variant="ribbon">`) and the single-credit link. Not `--info`: that is apna-sky-600 and remaps in dark, while this surface stays light in both themes |
 | `--checkout-info-foreground`   | gray-0                  | gray-0 (fixed)           | text/icon on `--checkout-info`            |
 
