@@ -56,6 +56,9 @@ export interface SegmentedTabItem<V extends string = string> {
    *  label (the label stays for screen readers). Phone chips keep icon +
    *  label: a wordmark is too small to read at chip size. */
   logo?: React.ReactNode
+  /** The wordmark at chip size, for the phone chips (and any compact tab
+   *  bar). Falls back to icon + label. */
+  compactLogo?: React.ReactNode
 }
 
 export interface SegmentedTabSwitcherProps<V extends string = string> {
@@ -267,7 +270,7 @@ export function SegmentedTabSwitcher<V extends string = string>({
             // grey one; the shadow alone vanished there.
             className={cn("sliding-indicator rounded-full shadow-control ring-1", appearance === "checkout" ? "bg-plan-card ring-plan-pill-ring" : "bg-card ring-border", mobileActiveItemClassName)}
           />
-          {items.map(({ value: v, label, shortLabel, icon, accent }) => {
+          {items.map(({ value: v, label, shortLabel, icon, accent, compactLogo }) => {
             const active = v === value
             return (
               <button
@@ -288,8 +291,21 @@ export function SegmentedTabSwitcher<V extends string = string>({
                   accent && "text-product-accent"
                 )}
               >
-                {icon}
-                {shortLabel ?? label}
+                {compactLogo ? (
+                  <>
+                    {/* 1px down onto the chip text's baseline (the "p"
+                        descends below it). */}
+                    <span aria-hidden className="flex translate-y-px items-center">
+                      {compactLogo}
+                    </span>
+                    <span className="sr-only">{shortLabel ?? label}</span>
+                  </>
+                ) : (
+                  <>
+                    {icon}
+                    {shortLabel ?? label}
+                  </>
+                )}
               </button>
             )
           })}

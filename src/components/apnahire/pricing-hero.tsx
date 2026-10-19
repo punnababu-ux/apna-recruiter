@@ -35,6 +35,18 @@ export type PricingTab = "jobs" | "database" | "unlimited" | "enterprise"
 /** Icons carry no size class — every consumer (the hero switcher, the two
  *  compact scrolled bars) sets its own glyph size, and Figma uses a
  *  different one in each. */
+/** The apna Unlimited wordmark for the pricing tabs: the deeper gold on
+ *  light tracks, the standard (brighter) gold in dark mode, where the deep
+ *  one would be dim. */
+function UnlimitedWordmark({ className }: { className?: string }) {
+  return (
+    <>
+      <LogoApnaUnlimited variant="gradient-deep" className={cn(className, "dark:hidden!")} />
+      <LogoApnaUnlimited variant="gradient" className={cn(className, "hidden! dark:block!")} />
+    </>
+  )
+}
+
 export const PRICING_TABS: SegmentedTabItem<PricingTab>[] = [
   {
     value: "jobs",
@@ -51,8 +63,10 @@ export const PRICING_TABS: SegmentedTabItem<PricingTab>[] = [
     accent: "unlimited",
     // The wordmark in the big desktop tab; chips and the sticky bar keep the
     // gold icon + label.
-    // "!": the switcher sizes every svg in a tab to a 24px square.
-    logo: <LogoApnaUnlimited variant="gradient-deep" className="h-4.5! w-auto!" />,
+    // "!": the switcher sizes every svg in a tab to a square.
+    logo: <UnlimitedWordmark className="h-4.5! w-auto!" />,
+    // Phone chips and the sticky bar: 14px, the chips' text size.
+    compactLogo: <UnlimitedWordmark className="h-3.5! w-auto!" />,
   },
   {
     value: "database",

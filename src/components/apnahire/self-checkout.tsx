@@ -873,10 +873,21 @@ function CompactPlanTabs({
             data-product={tab.accent}
             className={cn("px-3.5", tab.accent && "text-product-accent!")}
           >
-            {React.isValidElement<{ className?: string }>(tab.icon)
-              ? React.cloneElement(tab.icon, { className: "size-5 shrink-0" })
-              : tab.icon}
-            {PRICING_TAB_SHORT_LABELS[tab.value]}
+            {tab.compactLogo ? (
+              <>
+                <span aria-hidden className="flex translate-y-px items-center">
+                  {tab.compactLogo}
+                </span>
+                <span className="sr-only">{PRICING_TAB_SHORT_LABELS[tab.value]}</span>
+              </>
+            ) : (
+              <>
+                {React.isValidElement<{ className?: string }>(tab.icon)
+                  ? React.cloneElement(tab.icon, { className: "size-5 shrink-0" })
+                  : tab.icon}
+                {PRICING_TAB_SHORT_LABELS[tab.value]}
+              </>
+            )}
           </TabsTrigger>
         ))}
       </TabsList>
