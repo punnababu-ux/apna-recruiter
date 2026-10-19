@@ -195,6 +195,6 @@ export const HEADER_ACTIONS = {
   // The live site's header login entry (employer.apna.co).
   // "Login / Sign up" (user call, 2026-10-19): the same /login flow signs new
   // recruiters up too, so the label says so. Contact sales lives on the
-  // homepage Enterprise card, not in the header.
+  // homepage Enterprise stacking card, not in the header.
   primary: { label: "Login / Sign up", href: "/login" } satisfies NavLink,
 }

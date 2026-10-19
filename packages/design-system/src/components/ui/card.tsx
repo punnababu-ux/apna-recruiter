@@ -31,7 +31,7 @@ const cardVariants = cva(
         default: "border-border bg-card",
         /** Opaque white even on a marketing gradient (where `default` turns
          *  to frosted glass): a band's one standout card, set apart by its
-         *  fill alone (the homepage Enterprise card). */
+         *  fill alone. */
         solid: "border-border bg-card",
         muted: "border-transparent bg-muted",
         ink: "border-ink-border bg-ink text-ink-fg",

@@ -56,12 +56,11 @@ export const HOME_HERO = {
  *  features that helps…"). */
 export const HOME_ENTERPRISE = {
   eyebrow: "apna Enterprise",
-  title: "Performance and productivity for every level of your enterprise",
-  description:
-    "Unleash your full potential with tailor-made, enterprise-grade features that help you stay secure, compliant and on brand.",
+  title: "Hiring at scale, tailored to you",
   /** Opens the contact form pop-up. */
   primary: { label: "Contact sales" },
-  secondary: { label: "Learn more", href: "/enterprise" },
+  /** Says there's more than the two features the card lists. */
+  secondary: { label: "See all features", href: "/enterprise" },
 } as const
 
 export const HOME_TRUSTED_BY = {

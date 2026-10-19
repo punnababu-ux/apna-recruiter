@@ -22,7 +22,9 @@ import {
   AvatarFallback,
   Badge,
   Briefcase,
+  Building2,
   CheckCircle2,
+  RefreshCw,
   Database as DatabaseIcon,
   InfinityIcon,
   MapPin,
@@ -292,5 +294,52 @@ export function TrustIllustration({ size = "default", className }: { size?: "def
         </Float>
       </div>
     </IllustrationTile>
+  )
+}
+
+/** apna Enterprise's art in the same style —
+ *  the company's hiring team (team management) over an ATS sync (ATS
+ *  integrations), on the mother gradient. */
+export function EnterpriseIllustration({ className }: { className?: string }) {
+  return (
+    <div
+      aria-hidden
+      className={cn("flex items-center justify-center overflow-hidden rounded-xl bg-gradient-checkout-hero p-4", className)}
+    >
+      <div className="sm:scale-150">
+        <div className="flex w-72 flex-col gap-2">
+          <Float className="flex flex-col gap-3">
+            <div className="flex items-center gap-3">
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-foreground">
+                <Building2 className="size-4" />
+              </span>
+              <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+                <span className="truncate text-sm font-semibold text-foreground">Hiring team</span>
+                <Lines widths={["w-16"]} />
+              </div>
+              <Badge variant="outline" className="shrink-0">Admin</Badge>
+            </div>
+            <div className="flex items-center -space-x-2">
+              {["AM", "SK", "RV", "PS"].map((initials) => (
+                <Avatar key={initials} size="sm" className="ring-2 ring-card">
+                  <AvatarFallback>{initials}</AvatarFallback>
+                </Avatar>
+              ))}
+              <span className="pl-4 text-xs font-semibold text-muted-foreground">+12 recruiters</span>
+            </div>
+          </Float>
+          <Float className="ml-8 flex items-center justify-between gap-2 py-2">
+            <span className="flex items-center gap-2 whitespace-nowrap text-xs font-semibold text-foreground">
+              <RefreshCw className="size-4 shrink-0 text-muted-foreground" />
+              Synced to your ATS
+            </span>
+            <Badge variant="success">
+              <CheckCircle2 />
+              Live
+            </Badge>
+          </Float>
+        </div>
+      </div>
+    </div>
   )
 }

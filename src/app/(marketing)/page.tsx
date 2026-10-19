@@ -32,10 +32,9 @@ import {
 import { Stat } from "@/components/marketing/page-blocks"
 import { FaqBand, TrustedByBand, WhyHireBand } from "@/components/marketing/proof-bands"
 import { ContactButton } from "@/components/marketing/contact-section"
-import { ValueArt } from "@/components/marketing/value-art"
 import { HeroBackdrop } from "@/components/marketing/hero-backdrop"
 import { HeroLeadCard } from "@/components/marketing/hero-lead-card"
-import { PRODUCT_ICON, PRODUCT_KEY, ProductIllustration } from "@/components/marketing/product-illustrations"
+import { EnterpriseIllustration, PRODUCT_ICON, PRODUCT_KEY, ProductIllustration } from "@/components/marketing/product-illustrations"
 import {
   HOME_ENTERPRISE,
   HOME_HERO,
@@ -45,6 +44,7 @@ import {
 } from "@/content/home"
 import { PRODUCT_LINKS } from "@/content/nav"
 import { PRESS } from "@/content/press"
+import { ENTERPRISE } from "@/content/enterprise"
 
 
 
@@ -59,6 +59,11 @@ type ProductName = (typeof HOME_SUITE.items)[number]["name"]
 function hrefFor(name: string) {
   return PRODUCT_LINKS.find((p) => p.label === name)?.href ?? "#"
 }
+
+/** Enterprise is the deck's last stacking card: two of its features here,
+ *  the rest behind "See all features". */
+const ENTERPRISE_STACK_FEATURES = ["Team management", "ATS Integrations"]
+  .map((title) => ENTERPRISE.features.items.find((item) => item.title === title)!)
 
 export default function HomePage() {
   return (
@@ -201,47 +206,45 @@ export default function HomePage() {
                 />
               </ScrollStackItem>
             ))}
-          </ScrollStack>
-
-          {/* Enterprise (the live site's band): the suite's closing card, for
-              buyers hiring at scale — the route in for new enterprise
-              customers (Enterprise login is for existing ones). */}
-          {/* Solid white (flat, no resting shadow), so the suite's closing card
-              stands apart from its gradient band (frosted glass would blend in). */}
-          <Card tone="solid" padding="none" className="grid gap-8 p-6 sm:p-10 lg:grid-cols-5 lg:items-center lg:gap-8 lg:p-12">
-            <div className="flex flex-col gap-6 lg:col-span-3">
-              <div className="flex flex-col gap-3">
+            <ScrollStackItem className="group grid gap-2 p-2 lg:grid-cols-2">
+              <div className="flex flex-col gap-5 p-4 sm:p-6 lg:p-8">
                 <span className="flex items-center gap-2 text-overline text-muted-foreground">
                   <Building2 className="size-4 shrink-0" aria-hidden />
                   {HOME_ENTERPRISE.eyebrow}
                 </span>
-                <h3 className="text-h3 text-balance text-foreground">{HOME_ENTERPRISE.title}</h3>
-                <p className="text-base text-pretty text-muted-foreground">{HOME_ENTERPRISE.description}</p>
+                <h3 className="text-h4 text-foreground">{HOME_ENTERPRISE.title}</h3>
+                <ul className="flex flex-col gap-4">
+                  {ENTERPRISE_STACK_FEATURES.map((feature) => (
+                    <li key={feature.title} className="flex items-start gap-3">
+                      <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-foreground" aria-hidden />
+                      <div className="flex flex-col gap-0.5">
+                        <p className="text-sm font-semibold text-foreground">{feature.title}</p>
+                        <p className="text-sm text-muted-foreground">{feature.description}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+                <div className="flex flex-wrap gap-3">
+                  <ContactButton variant="emphasis" size="lg">
+                    {HOME_ENTERPRISE.primary.label}
+                  </ContactButton>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    nativeButton={false}
+                    render={<Link href={HOME_ENTERPRISE.secondary.href} />}
+                    trailingIcon={<ArrowRight aria-hidden />}
+                  >
+                    {HOME_ENTERPRISE.secondary.label}
+                  </Button>
+                </div>
               </div>
-              <div className="flex flex-wrap gap-3">
-                {/* Opens the contact form pop-up, as "Contact us" does. */}
-                <ContactButton variant="emphasis" size="lg">
-                  {HOME_ENTERPRISE.primary.label}
-                </ContactButton>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  nativeButton={false}
-                  render={<Link href={HOME_ENTERPRISE.secondary.href} />}
-                  trailingIcon={<ArrowRight aria-hidden />}
-                >
-                  {HOME_ENTERPRISE.secondary.label}
-                </Button>
-              </div>
-            </div>
-            {/* One picture, not a list: Enterprise's own 3D clay building, as
-                the product cards above pair copy with a picture. */}
-            {/* Copy 3/5, picture 2/5 at its large size, so the picture fills
-                its side instead of floating in it. */}
-            <div className="flex justify-center max-lg:order-first lg:col-span-2">
-              <ValueArt name="enterprise" size="lg" />
-            </div>
-          </Card>
+              {/* The mother gradient: Enterprise is all of apna, tailored,
+                  so it wears the brand's own gradient, not a fifth hue. */}
+              <EnterpriseIllustration className="h-64 max-lg:order-first lg:h-full lg:min-h-80" />
+            </ScrollStackItem>
+          </ScrollStack>
+
         </div>
       </Section>
 
