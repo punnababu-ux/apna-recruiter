@@ -867,7 +867,12 @@ function CompactPlanTabs({
     <Tabs value={value} onValueChange={(v) => onValueChange(v as PricingTab)} className={className}>
       <TabsList variant="checkout">
         {PRICING_TABS.map((tab) => (
-          <TabsTrigger key={tab.value} value={tab.value} className="px-3.5">
+          <TabsTrigger
+            key={tab.value}
+            value={tab.value}
+            data-product={tab.accent}
+            className={cn("px-3.5", tab.accent && "text-product-accent!")}
+          >
             {React.isValidElement<{ className?: string }>(tab.icon)
               ? React.cloneElement(tab.icon, { className: "size-5 shrink-0" })
               : tab.icon}

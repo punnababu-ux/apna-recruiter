@@ -49,6 +49,9 @@ export interface SegmentedTabItem<V extends string = string> {
   shortLabel?: string
   description?: string
   icon?: React.ReactNode
+  /** A product's own colour for this option's label and icon, selected or
+   *  not — "unlimited": apna Unlimited's gold (the product accent). */
+  accent?: "unlimited"
 }
 
 export interface SegmentedTabSwitcherProps<V extends string = string> {
@@ -165,7 +168,7 @@ export function SegmentedTabSwitcher<V extends string = string>({
           data-slot="segmented-tab-indicator"
           className={cn("sliding-indicator rounded-full", activeItemClassName)}
         />
-        {items.map(({ value: v, label, description, icon }) => {
+        {items.map(({ value: v, label, description, icon, accent }) => {
           const active = v === value
           return (
             <button
@@ -174,6 +177,7 @@ export function SegmentedTabSwitcher<V extends string = string>({
               onClick={() => onValueChange(v)}
               aria-pressed={active}
               data-indicator-active={active || undefined}
+              data-product={accent}
               className={cn(
                 // Hover changes text only (icon, title, description), never a
                 // background: no tint to linger as the pill slides in.
@@ -187,7 +191,7 @@ export function SegmentedTabSwitcher<V extends string = string>({
               <span
                 className={cn(
                   "flex items-center gap-2 text-lg leading-7 font-semibold transition-option [&_svg]:size-6",
-                  active ? activeClassName : cn(inactiveClassName, preset.hover)
+                  accent ? "text-product-accent" : active ? activeClassName : cn(inactiveClassName, preset.hover)
                 )}
               >
                 {icon}
@@ -244,7 +248,7 @@ export function SegmentedTabSwitcher<V extends string = string>({
             // grey one; the shadow alone vanished there.
             className={cn("sliding-indicator rounded-full shadow-control ring-1", appearance === "checkout" ? "bg-plan-card ring-plan-pill-ring" : "bg-card ring-border", mobileActiveItemClassName)}
           />
-          {items.map(({ value: v, label, shortLabel, icon }) => {
+          {items.map(({ value: v, label, shortLabel, icon, accent }) => {
             const active = v === value
             return (
               <button
@@ -253,6 +257,7 @@ export function SegmentedTabSwitcher<V extends string = string>({
                 onClick={() => onValueChange(v)}
                 aria-pressed={active}
                 data-indicator-active={active || undefined}
+                data-product={accent}
                 // 32px chips, 14px labels; the selected one semibold, not
                 // bold — compact and quiet next to the 16px titles they
                 // filter (was 38px with a bold selected label).
@@ -260,7 +265,8 @@ export function SegmentedTabSwitcher<V extends string = string>({
                   "flex shrink-0 items-center gap-1.5 press relative rounded-full border h-8 px-3.5 text-sm font-medium whitespace-nowrap transition-option [&_svg]:size-5",
                   active
                     ? cn("border-transparent font-semibold", mobileActiveClassName ?? activeClassName)
-                    : cn("border-transparent bg-muted hover:bg-muted", inactiveClassName, trackClassName)
+                    : cn("border-transparent bg-muted hover:bg-muted", inactiveClassName, trackClassName),
+                  accent && "text-product-accent"
                 )}
               >
                 {icon}

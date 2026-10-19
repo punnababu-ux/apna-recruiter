@@ -43,9 +43,11 @@ export const PRICING_TABS: SegmentedTabItem<PricingTab>[] = [
   },
   {
     value: "unlimited",
-    label: "Subscription",
+    label: "apna Unlimited",
     description: "Unlimited hiring for 3 months",
     icon: <InfinityIcon className="shrink-0" aria-hidden />,
+    // apna Unlimited's gold, selected or not (user call, 2026-10-19).
+    accent: "unlimited",
   },
   {
     value: "database",
@@ -73,7 +75,7 @@ export const PRICING_TABS: SegmentedTabItem<PricingTab>[] = [
 export const PRICING_TAB_SHORT_LABELS: Record<PricingTab, string> = {
   jobs: "Jobs",
   database: "Database",
-  unlimited: "Subscription",
+  unlimited: "apna Unlimited",
   enterprise: "Enterprise plans",
 }
 
