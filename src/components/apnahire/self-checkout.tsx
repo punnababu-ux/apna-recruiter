@@ -721,9 +721,12 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
 
       <CreditPackOfferDialog
         open={upsell === "pack"}
-        need={BUNDLE_13 ? { credits: BUNDLE_13.credits, price: BUNDLE_13.price, mrp: BUNDLE_13.mrp } : null}
+        need={
+          BUNDLE_13
+            ? { credits: BUNDLE_13.credits, price: BUNDLE_13.price, mrp: BUNDLE_13.mrp, validDays: BUNDLE_13.validDays }
+            : null
+        }
         pack={UPSELL_PACK_22}
-        needNote={BUNDLE_13 ? `Valid for ${BUNDLE_13.validDays} days` : undefined}
         extraOff={offer.claimed}
         onClose={() => setUpsell(null)}
         onStay={() => {

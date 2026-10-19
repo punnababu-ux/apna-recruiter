@@ -137,7 +137,15 @@ function OptionTile({
           </span>
         )}
         {option.note && (
-          <p className={cn("text-xs italic", upgrade ? "text-checkout-primary" : "text-muted-foreground")}>
+          // Green only on the upgrade tile and only on its own: under the
+          // "10% extra off applied" line it steps back to gray, as on the
+          // plan cards, so only one line is green.
+          <p
+            className={cn(
+              "text-xs italic",
+              upgrade && !option.extraOff ? "text-checkout-primary" : "text-muted-foreground"
+            )}
+          >
             {option.note}
           </p>
         )}

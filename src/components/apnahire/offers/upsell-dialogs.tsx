@@ -134,6 +134,10 @@ export function CreditPackOfferDialog({
           price: needPrice,
           mrp: need.mrp,
           note: needNote,
+          // Self-checkout passes the stay pack's validity (both tiles show it,
+          // with the clock); express checkout's stay is the credits this one
+          // job needs, so it has none — only the bundle on offer does.
+          validDays: need.validDays,
           extraOff: props.extraOff,
           ctaLabel: `Continue with ${need.credits} credit${need.credits === 1 ? "" : "s"}`,
           ctaShortLabel: "Continue",
