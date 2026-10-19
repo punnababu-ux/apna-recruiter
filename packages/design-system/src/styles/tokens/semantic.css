@@ -667,12 +667,11 @@
    * pop-up (Figma 3025:52815, #F0E6FF → #B7F5DD). */
   --gradient-ai-demo: linear-gradient(90deg, var(--color-apna-navy-100) 0%, var(--color-apna-green-100) 100%);
   /* Lighter than plum 700-900, which read near-black (user call,
-   * 2026-10-19), and darkest at the TOP: plum 700 behind the logo, easing to
-   * the logo plum (400) at the bottom, with a soft plum-300 glow there. The
-   * gold logo sits on the deepest plum, so it reads best where it matters. */
+   * 2026-10-19): plum 600 → 400 (the logo plum) → 600, darker at both ends
+   * with a lighter band through the middle; the gold logo sits on plum 600
+   * at the top (6.3:1). */
   --gradient-checkout-unlimited:
-    radial-gradient(ellipse 90% 60% at 80% 100%, color-mix(in srgb, var(--color-apna-plum-300) 35%, transparent) 0%, transparent 70%),
-    linear-gradient(170deg, var(--color-apna-plum-700) 0%, var(--color-apna-plum-500) 50%, var(--color-apna-plum-400) 100%);
+    linear-gradient(180deg, var(--color-apna-plum-600) 0%, var(--color-apna-plum-400) 50%, var(--color-apna-plum-600) 100%);
   --checkout-unlimited-cta-bg:        rgba(255, 255, 255, 0.16);
   --checkout-unlimited-cta-bg-hover:  rgba(255, 255, 255, 0.26);
 
