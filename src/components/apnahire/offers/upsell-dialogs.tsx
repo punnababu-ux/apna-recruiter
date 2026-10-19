@@ -135,7 +135,7 @@ export function CreditPackOfferDialog({
           mrp: need.mrp,
           note: needNote,
           extraOff: props.extraOff,
-          ctaLabel: `Continue with ${credits(need.credits)}`,
+          ctaLabel: `Continue with ${need.credits} credit${need.credits === 1 ? "" : "s"}`,
           ctaShortLabel: "Continue",
           onSelect: props.onStay,
         }}
@@ -147,7 +147,7 @@ export function CreditPackOfferDialog({
           note: `That's just ${inr(perPack)}\u00A0/job\u00A0credit`,
           validDays: pack.validDays,
           extraOff: props.extraOff,
-          ctaLabel: `Get ${credits(pack.credits)} for ${inr(packPrice)}`,
+          ctaLabel: `Get ${pack.credits} credits for ${inr(packPrice)}`,
           ctaShortLabel: `Get ${pack.credits} credits`,
           onSelect: props.onTake,
         }}
