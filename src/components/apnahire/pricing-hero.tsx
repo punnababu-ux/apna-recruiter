@@ -49,7 +49,7 @@ function UnlimitedWordmark({ className }: { className?: string }) {
 
 /* ── apna Unlimited wordmark in the tabs: a preview switch ────────────
  * On (default): the gold wordmark in every pricing tab bar. Off: the ∞ icon
- * + "apna Unlimited" in the standard tab colours, like the other tabs. Set from the page's settings gear; kept in
+ * + "Apna Unlimited" in the standard tab colours, like the other tabs. Set from the page's settings gear; kept in
  * localStorage, and every tab bar on the page follows a change at once. */
 const WORDMARK_KEY = "apnahire:pricing-tab-wordmark"
 const WORDMARK_EVENT = "apnahire:pricing-tab-wordmark"
@@ -104,7 +104,8 @@ export const PRICING_TABS: SegmentedTabItem<PricingTab>[] = [
   },
   {
     value: "unlimited",
-    label: "apna Unlimited",
+    // Capital "Apna" on this tab label (user call, 2026-10-19).
+    label: "Apna Unlimited",
     description: "Unlimited hiring for 3 months",
     icon: <InfinityIcon className="shrink-0" aria-hidden />,
     // apna Unlimited's gold, selected or not (user call, 2026-10-19).
@@ -142,7 +143,7 @@ export const PRICING_TABS: SegmentedTabItem<PricingTab>[] = [
 export const PRICING_TAB_SHORT_LABELS: Record<PricingTab, string> = {
   jobs: "Jobs",
   database: "Database",
-  unlimited: "apna Unlimited",
+  unlimited: "Apna Unlimited",
   enterprise: "Enterprise plans",
 }
 
