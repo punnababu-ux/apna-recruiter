@@ -1140,9 +1140,9 @@
  *                    white. On a white band (section[data-tone=card]): the
  *                    muted fill, so it still reads as a card.
  *   surface-feature  the one standout card of a band (the contact card, a
- *                    lead story). On a gradient band: frosted white with the
- *                    card shadow. On a white band: the mother gradient and
- *                    the elevated shadow, so it lifts off the white.
+ *                    lead story). On a gradient band: frosted white. On a
+ *                    white band: the mother gradient, flat (no resting
+ *                    shadow — AGENTS.md "Card shadows").
  *
  * Scoped to [data-slot] (Card and friends) so it outranks Card's own tone
  * fill without !important. */
@@ -1201,7 +1201,6 @@
   &[data-slot] {
     background-color: var(--surface-glass);
     border-color: color-mix(in srgb, var(--card) 60%, transparent);
-    box-shadow: var(--shadow-card);
     backdrop-filter: blur(24px);
   }
   section[data-tone="card"] &[data-slot] {
@@ -1210,7 +1209,6 @@
     background-size: cover;
     background-position: center;
     border-color: var(--border);
-    box-shadow: var(--shadow-elevated);
     backdrop-filter: none;
   }
   /* Dark: the same frosted surface as the page's own cards (surface-frosted:
@@ -1228,7 +1226,6 @@
   &[data-slot] {
     background-color: var(--surface-glass);
     border-color: color-mix(in srgb, var(--card) 60%, transparent);
-    box-shadow: var(--shadow-card);
     backdrop-filter: blur(24px);
   }
   section[data-tone="card"] &[data-slot] {
@@ -1237,7 +1234,6 @@
     background-size: cover;
     background-position: center;
     border-color: var(--border);
-    box-shadow: var(--shadow-elevated);
     backdrop-filter: none;
   }
 }

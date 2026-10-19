@@ -201,11 +201,11 @@ export function StatGrid({
       className={cn(
         "w-full",
         // "lg" is the page's subject, and a toned card is its band's
-        // standout: lifted — the gradient inside and the elevated shadow,
+        // standout: set apart by the gradient inside (flat: no resting shadow),
         // not the frosted strip.
         size === "lg" || tone
-          ? cn("shadow-elevated", tone ? ILLUSTRATION_TONE[tone] : "bg-gradient-checkout-hero")
-          : "surface-frosted shadow-card"
+          ? tone ? ILLUSTRATION_TONE[tone] : "bg-gradient-checkout-hero"
+          : "surface-frosted"
       )}
     >
       <dl
@@ -372,7 +372,7 @@ export function PersonCard({
           width={560}
           height={700}
           className={cn(
-            "aspect-4/5 w-full max-w-xs justify-self-center rounded-card object-cover shadow-card md:col-span-4 md:max-w-none",
+            "aspect-4/5 w-full max-w-xs justify-self-center rounded-card object-cover md:col-span-4 md:max-w-none",
             reverse && "md:order-last"
           )}
         />

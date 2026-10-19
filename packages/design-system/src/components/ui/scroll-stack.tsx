@@ -125,7 +125,7 @@ function ScrollStackItem({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="scroll-stack-item"
-      className={cn("stack-item rounded-card border border-border lg:sticky lg:mb-(--stack-tail) lg:shadow-card", className)}
+      className={cn("stack-item rounded-card border border-border lg:sticky lg:mb-(--stack-tail)", className)}
       {...props}
     />
   )

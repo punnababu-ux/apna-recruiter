@@ -206,9 +206,9 @@ export default function HomePage() {
           {/* Enterprise (the live site's band): the suite's closing card, for
               buyers hiring at scale — the route in for new enterprise
               customers (Enterprise login is for existing ones). */}
-          {/* Solid white with the elevated shadow, so the suite's closing card
-              lifts off its gradient band (frosted glass would blend in). */}
-          <Card tone="solid" padding="none" className="grid gap-8 shadow-elevated p-6 sm:p-10 lg:grid-cols-5 lg:items-center lg:gap-8 lg:p-12">
+          {/* Solid white (flat, no resting shadow), so the suite's closing card
+              stands apart from its gradient band (frosted glass would blend in). */}
+          <Card tone="solid" padding="none" className="grid gap-8 p-6 sm:p-10 lg:grid-cols-5 lg:items-center lg:gap-8 lg:p-12">
             <div className="flex flex-col gap-6 lg:col-span-3">
               <div className="flex flex-col gap-3">
                 <span className="flex items-center gap-2 text-overline text-muted-foreground">

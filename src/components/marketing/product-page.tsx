@@ -114,7 +114,7 @@ export function ProductPage({ content }: { content: ProductPageContent }) {
               product={product}
               size="lg"
               bare
-              className="h-72 rounded-card border border-card/60 bg-surface-glass-faint shadow-card backdrop-blur-xl sm:h-96"
+              className="h-72 rounded-card border border-card/60 bg-surface-glass-faint backdrop-blur-xl sm:h-96"
             />
           </div>
         </Section>

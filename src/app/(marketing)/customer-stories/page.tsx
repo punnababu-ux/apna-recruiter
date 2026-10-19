@@ -47,7 +47,7 @@ export default function CustomerStoriesPage() {
           {/* The lead story: the only one with a full story behind it. */}
           <Card
             padding="none"
-            className="gap-8 border-card/60 bg-gradient-checkout-hero p-8 shadow-card sm:p-12 lg:p-16"
+            className="gap-8 border-card/60 bg-gradient-checkout-hero p-8 sm:p-12 lg:p-16"
           >
             <CompanyMark company={lead.company} />
             <p className="text-quote-lg max-w-4xl text-balance text-foreground">&ldquo;{lead.result}&rdquo;</p>

@@ -356,6 +356,22 @@ has a border — green; unselected cards stay borderless.
 
 ---
 
+**Card shadows — resting cards are flat** (user call, 2026-10-19). No card
+carries a shadow at rest: plan and pricing cards, testimonials, stats, the
+login cards, a band's standout card, the contact band. Cards separate from
+the page by fill (frosted glass, solid white, a gradient), never a shadow.
+A shadow means exactly two things:
+
+- **Hover lift** — `card-hover-lift` / `interactive` raises a clickable card
+  onto `shadow-elevated` while hovered.
+- **It floats above the page** — popovers, menus, dialogs, sheets, the sticky
+  header, a FAB. Stacking cards (`ScrollStack`) stay flat too.
+
+Never add `shadow-card` / `shadow-elevated` to a resting card to make it
+"stand out"; give it the standout fill instead.
+
+---
+
 ## Marketing pages — the visual language
 
 - **Heroes have a chip, not an eyebrow.** The opening band carries the

@@ -55,7 +55,7 @@ export function AuthCard({ className, children }: { className?: string; children
   return (
     <Card
       className={cn(
-        "flex w-full flex-col gap-6 shadow-elevated max-md:border-transparent max-md:bg-transparent max-md:p-0 max-md:shadow-none",
+        "flex w-full flex-col gap-6 max-md:border-transparent max-md:bg-transparent max-md:p-0",
         className
       )}
     >
