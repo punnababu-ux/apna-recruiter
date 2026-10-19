@@ -10,9 +10,10 @@
  *            ("27% OFF", "8 MONTHS FREE") and the primary CTA
  *
  * Side by side at every size (the upgrade tile wider from sm, 4:5), CTAs
- * pinned to the tile bottoms so they line up. On phones a tile
- * is ~160px wide, so CTAs switch to `ctaShortLabel` ("Continue",
- * "Get 3 jobs") to stay on one line. The price is already right above.
+ * pinned to the tile bottoms so they line up. A CTA never wraps, at any
+ * size: it shows the short label ("Continue", "Get 3 jobs", "Get 22
+ * credits") — the price is already right above it — and keeps the full one
+ * ("Continue with 13 job credits") as its accessible name.
  */
 
 import * as React from "react"
@@ -35,8 +36,10 @@ export interface OfferOption {
   badge?: string
   /** Show the "10% extra off applied" line. */
   extraOff?: boolean
+  /** The full label, the button's accessible name. Shown when there's no
+   *  `ctaShortLabel`; keep it short enough for one line then. */
   ctaLabel: string
-  /** Phone label (< sm), where the tile is too narrow for `ctaLabel`. */
+  /** The label shown on the button, at every size (one line, always). */
   ctaShortLabel?: string
   onSelect: () => void
 }
@@ -128,17 +131,11 @@ function OptionTile({
         <Button
           type="button"
           variant={upgrade ? "checkout" : "outline"}
-          className="h-auto min-h-10 w-full py-2 whitespace-normal"
+          className="h-10 w-full whitespace-nowrap"
+          aria-label={option.ctaShortLabel ? option.ctaLabel : undefined}
           onClick={option.onSelect}
         >
-          {option.ctaShortLabel ? (
-            <>
-              <span className="sm:hidden">{option.ctaShortLabel}</span>
-              <span className="hidden sm:inline">{option.ctaLabel}</span>
-            </>
-          ) : (
-            option.ctaLabel
-          )}
+          {option.ctaShortLabel ?? option.ctaLabel}
         </Button>
       </div>
     </div>
