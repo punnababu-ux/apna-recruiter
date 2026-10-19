@@ -669,10 +669,13 @@
    * "AI calling agent in action" demo player in the How AI calling works
    * pop-up (Figma 3025:52815, #F0E6FF → #B7F5DD). */
   --gradient-ai-demo: linear-gradient(90deg, var(--color-apna-navy-100) 0%, var(--color-apna-green-100) 100%);
-  --gradient-checkout-unlimited: linear-gradient(180deg,
-                                   var(--color-apna-plum-700) 0%,
-                                   var(--color-apna-plum-800) 60%,
-                                   var(--color-apna-plum-900) 100%);
+  /* Lighter (user call, 2026-10-19): from the logo plum (400) instead of
+   * plum 700-900, which read near-black, with a diagonal shift through the
+   * ramp and a soft plum-300 glow top-left. White text and the gold logo
+   * still read on it. */
+  --gradient-checkout-unlimited:
+    radial-gradient(ellipse 80% 60% at 10% 0%, color-mix(in srgb, var(--color-apna-plum-300) 35%, transparent) 0%, transparent 70%),
+    linear-gradient(135deg, var(--color-apna-plum-400) 0%, var(--color-apna-plum-500) 55%, var(--color-apna-plum-700) 100%);
   --checkout-unlimited-cta-bg:        rgba(255, 255, 255, 0.16);
   --checkout-unlimited-cta-bg-hover:  rgba(255, 255, 255, 0.26);
 

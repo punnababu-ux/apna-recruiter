@@ -52,6 +52,10 @@ export interface SegmentedTabItem<V extends string = string> {
   /** A product's own colour for this option's label and icon, selected or
    *  not — "unlimited": apna Unlimited's gold (the product accent). */
   accent?: "unlimited"
+  /** A product wordmark shown in the desktop row in place of the icon and
+   *  label (the label stays for screen readers). Phone chips keep icon +
+   *  label: a wordmark is too small to read at chip size. */
+  logo?: React.ReactNode
 }
 
 export interface SegmentedTabSwitcherProps<V extends string = string> {
@@ -168,7 +172,7 @@ export function SegmentedTabSwitcher<V extends string = string>({
           data-slot="segmented-tab-indicator"
           className={cn("sliding-indicator rounded-full", activeItemClassName)}
         />
-        {items.map(({ value: v, label, description, icon, accent }) => {
+        {items.map(({ value: v, label, description, icon, accent, logo }) => {
           const active = v === value
           return (
             <button
@@ -194,8 +198,19 @@ export function SegmentedTabSwitcher<V extends string = string>({
                   accent ? "text-product-accent" : active ? activeClassName : cn(inactiveClassName, preset.hover)
                 )}
               >
-                {icon}
-                {label}
+                {logo ? (
+                  <>
+                    <span aria-hidden className="flex h-7 items-center">
+                      {logo}
+                    </span>
+                    <span className="sr-only">{label}</span>
+                  </>
+                ) : (
+                  <>
+                    {icon}
+                    {label}
+                  </>
+                )}
               </span>
               {description && (
                 <span className={cn("text-xs leading-4 transition-option", mutedClassName, !active && preset.hover)}>

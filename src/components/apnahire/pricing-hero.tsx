@@ -25,6 +25,7 @@ import {
   Tag,
   UserSearch,
   type SegmentedTabItem,
+  LogoApnaUnlimited,
 } from "@apna/design-system"
 import { HeroChip, withAccent } from "@/components/marketing/page-blocks"
 import { cn } from "@/lib/utils"
@@ -48,6 +49,10 @@ export const PRICING_TABS: SegmentedTabItem<PricingTab>[] = [
     icon: <InfinityIcon className="shrink-0" aria-hidden />,
     // apna Unlimited's gold, selected or not (user call, 2026-10-19).
     accent: "unlimited",
+    // The wordmark in the big desktop tab; chips and the sticky bar keep the
+    // gold icon + label.
+    // "!": the switcher sizes every svg in a tab to a 24px square.
+    logo: <LogoApnaUnlimited variant="gradient-deep" className="h-4.5! w-auto!" />,
   },
   {
     value: "database",
