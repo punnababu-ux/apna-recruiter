@@ -1043,6 +1043,17 @@
 [data-slot="marketing-canvas"]:has([data-product-canvas="ai-calling"]) { background-image: var(--gradient-canvas-ai-calling); }
 [data-slot="marketing-canvas"]:has([data-product-canvas="database"])   { background-image: var(--gradient-canvas-database); }
 [data-slot="marketing-canvas"]:has([data-product-canvas="unlimited"])  { background-image: var(--gradient-canvas-unlimited); }
+/* Every gradient band carries its own whole copy of the mother gradient,
+ * so the press band, the foot (contact band + footer) and the rest look
+ * like the hero, not like a slice of one page-tall canvas. The hero itself
+ * (a section after its AmbientBackdrop) keeps the moving canvas; product
+ * pages keep their one continuous re-tint. */
+[data-slot="marketing-canvas"]:not(:has([data-product-canvas])) main section[data-tone="transparent"]:not([data-slot="ambient-backdrop"] ~ section),
+[data-slot="marketing-canvas"]:not(:has([data-product-canvas])) [data-slot="marketing-foot"] {
+  background-image: var(--gradient-checkout-hero);
+  background-size: cover;
+  background-position: center;
+}
 
 
 /* CLASSIC (kept ready, 2026-10-19) — the previous mother gradient: the
