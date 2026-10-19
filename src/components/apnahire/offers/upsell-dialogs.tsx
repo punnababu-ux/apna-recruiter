@@ -204,6 +204,7 @@ export function AnnualUpgradeDialog({ from, ...props }: UpsellCallbacks & { from
           price: fromPrice,
           mrp: props.extraOff ? from.price : undefined,
           unit,
+          term: `1 active job slot for ${from.months * 30}\u00A0days`,
           extraOff: props.extraOff,
           // The same details as the annual tile, so they compare line for line.
           planFacts:
@@ -220,6 +221,7 @@ export function AnnualUpgradeDialog({ from, ...props }: UpsellCallbacks & { from
           price: annual.price,
           mrp: props.extraOff ? ANNUAL_PLAN.price : undefined,
           unit: "/year",
+          term: `1 active job slot for ${ANNUAL_PLAN.slotDays}\u00A0days`,
           badge: `${ANNUAL_PLAN.monthsFree} MONTHS FREE`,
           // No "Valid in a single city" here: they've seen it on the plan
           // already, and the order summary repeats it.

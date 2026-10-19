@@ -90,17 +90,17 @@ function OptionTile({
         {/* One line from sm (price, unit, struck price) so the two tiles
             compare like for like; phone sheets may wrap. */}
         <p className="flex flex-wrap items-baseline gap-x-1.5 sm:flex-nowrap sm:whitespace-nowrap">
-          <span className="text-xl font-semibold text-foreground sm:text-2xl">{inr(option.price)}</span>
-          {/* Unit and struck price never split. On phones they ALWAYS take
-              the second line under the price, in every tile — left to text
-              width, "/year" fitted beside its price and "/month" didn't, so
-              the two tiles looked different. One line from sm. */}
-          {(option.unit || (option.mrp != null && option.mrp > option.price)) && (
-            <span className="inline-flex w-full items-baseline gap-1.5 whitespace-nowrap sm:w-auto">
-              {option.unit && <span className="text-sm text-muted-foreground">{option.unit}</span>}
-              {option.mrp != null && option.mrp > option.price && (
-                <span className="text-sm text-muted-foreground line-through">{inr(option.mrp)}</span>
-              )}
+          {/* The price and its unit never split ("₹2,499 /month"). The
+              struck price ALWAYS takes the second line on phones, in every
+              tile, so the tiles match whatever the text widths; one line
+              from sm. */}
+          <span className="inline-flex items-baseline gap-1 whitespace-nowrap">
+            <span className="text-xl font-semibold text-foreground sm:text-2xl">{inr(option.price)}</span>
+            {option.unit && <span className="text-sm text-muted-foreground">{option.unit}</span>}
+          </span>
+          {option.mrp != null && option.mrp > option.price && (
+            <span className="w-full text-sm whitespace-nowrap text-muted-foreground line-through sm:w-auto">
+              {inr(option.mrp)}
             </span>
           )}
         </p>
