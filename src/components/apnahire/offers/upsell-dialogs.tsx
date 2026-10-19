@@ -298,8 +298,11 @@ export function CreditsToPlanDialog({
           mrp: props.extraOff ? plan.price : undefined,
           unit: monthly ? "/month" : "/quarter",
           badge: "UNLIMITED POSTS",
-          note: monthly ? "1 active job slot for 30 days" : `That's just ${inr(Math.floor(planPrice / plan.months))}\u00A0/month`,
-          planFacts: { dbCredits: plan.dbCredits, dbWorth: plan.dbWorth, singleCity: true },
+          // Compares row for row with the credits tile: its "Valid for N
+          // days" sits level with the plan's slot line; the city limit goes
+          // under the price.
+          note: "Valid in a single city",
+          planFacts: { dbCredits: plan.dbCredits, dbWorth: plan.dbWorth, slotDays: plan.months * 30 },
           extraOff: props.extraOff,
           ctaLabel: `Get ${name} for ${inr(planPrice)}`,
           ctaShortLabel: `Get ${name}`,

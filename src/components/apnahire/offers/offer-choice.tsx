@@ -34,7 +34,7 @@ export interface OfferOption {
   validDays?: number
   /** A subscription's terms, above the CTA: the database credits it brings
    *  (with their value) and its one city. */
-  planFacts?: { dbCredits: number; dbWorth: number; singleCity?: boolean }
+  planFacts?: { dbCredits: number; dbWorth: number; singleCity?: boolean; slotDays?: number }
   /** Corner ribbon, e.g. "27% OFF". */
   badge?: string
   /** Show the "10% extra off applied" line. */
@@ -127,6 +127,17 @@ function OptionTile({
                   <span className="flex items-center gap-1.5 text-muted-foreground">
                     <MapPin className="size-4 shrink-0" aria-hidden />
                     Valid in a single city
+                  </span>
+                )}
+                {/* Last, so it sits level with the other tile's "Valid for
+                    N days" (both groups are bottom-pinned). */}
+                {option.planFacts.slotDays != null && (
+                  <span className="flex items-center gap-1.5 text-muted-foreground">
+                    <ClockFading className="size-4 shrink-0" aria-hidden />
+                    <span>
+                      1 active job slot for {option.planFacts.slotDays}
+                      {"\u00A0"}days
+                    </span>
                   </span>
                 )}
               </>
