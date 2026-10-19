@@ -70,6 +70,7 @@ import {
   SheetPanelHeader,
 } from "@apna/design-system"
 import { cn } from "@/lib/utils"
+import { useAttentionRing } from "@/components/apnahire/use-attention-ring"
 import { useBackToClose } from "@/hooks/use-back-to-close"
 import { AiCallingAddonCard, type AiAddonOffer } from "@/components/apnahire/ai-calling-addon-card"
 import { CountdownChip, useCountdown } from "@/components/apnahire/offers/countdown-chip"
@@ -394,6 +395,7 @@ export function CheckoutDrawer({
   const extraDeadline = extraOffer?.deadline
   const extraRemaining = useCountdown(extraDeadline ?? null)
   const [aiAdded, setAiAdded] = React.useState(false)
+  const dbRing = useAttentionRing("database", open)
   const [packValue, setPackValue] = React.useState(DEFAULT_PACK)
   const [addonCredits, setAddonCredits] = React.useState<number | null>(null)
   const [couponInput, setCouponInput] = React.useState("")
@@ -602,7 +604,8 @@ export function CheckoutDrawer({
 
               {/* The Database add-on wears the Database gradient (one gradient
                   per product, light in light mode, dark in dark). */}
-              <div data-product="database" className="flex flex-col gap-4 rounded-card-nested border border-border bg-gradient-product-database p-4">
+              <div data-product="database" className="relative flex flex-col gap-4 rounded-card-nested border border-border bg-gradient-product-database p-4">
+                {dbRing && <span aria-hidden className="attention-ring" />}
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex flex-col gap-3">
                     <p className="text-sm font-semibold text-foreground">

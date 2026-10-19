@@ -612,6 +612,12 @@
   --gradient-product-ai-calling: var(--gradient-illustration-sky);
   --gradient-product-database:   var(--gradient-illustration-plum);
   --gradient-product-unlimited:  var(--gradient-illustration-gold);
+  /* attention-ring: the brand light that runs around an add-on card once as
+   * the order summary opens. Logo gold → green → sky (no plum: it reads as a shadow on light), transparent tail so it
+   * reads as a travelling strip, not a full border. Stops only: the angle is
+   * animated in the utility. */
+  --attention-ring-stops: transparent 0deg, transparent 200deg, var(--color-apna-gold-400) 250deg, var(--color-apna-green-500) 290deg, var(--color-apna-sky-500) 335deg, transparent 360deg;
+  --attention-ring-still: linear-gradient(90deg, var(--color-apna-gold-400), var(--color-apna-green-500), var(--color-apna-sky-500));
   /* Brand words set in a moving green (animate-text-gradient — the hero's
    * "AI-Native"): only the apna-green ramp, deep → bright → deep, so the
    * word stays the brand colour while the light travels across it. */
@@ -917,6 +923,8 @@
   --gradient-illustration-sky:   linear-gradient(160deg, color-mix(in srgb, var(--color-apna-sky-800) 55%, transparent) 0%, transparent 100%);
   --gradient-illustration-plum:  linear-gradient(160deg, color-mix(in srgb, var(--color-apna-plum-400) 75%, transparent) 0%, transparent 100%);
   --gradient-illustration-gold:  linear-gradient(160deg, color-mix(in srgb, var(--color-apna-gold-800) 45%, transparent) 0%, transparent 100%);
+  --attention-ring-stops: transparent 0deg, transparent 200deg, var(--color-apna-gold-300) 250deg, var(--color-apna-green-400) 290deg, var(--color-apna-sky-400) 335deg, transparent 360deg;
+  --attention-ring-still: linear-gradient(90deg, var(--color-apna-gold-300), var(--color-apna-green-400), var(--color-apna-sky-400));
   --gradient-text-brand: linear-gradient(90deg, var(--color-apna-green-500) 0%, var(--color-apna-green-300) 35%, var(--color-apna-green-200) 50%, var(--color-apna-green-300) 65%, var(--color-apna-green-500) 100%);
   --surface-checkout-hero-fg:       var(--color-gray-50);
   --surface-checkout-hero-fg-muted: var(--color-gray-400);

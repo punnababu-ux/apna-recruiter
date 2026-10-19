@@ -1082,6 +1082,70 @@
  * times when it appears, then the dot rests. Three, not forever: a list of
  * cards can carry many dots, and a field of endless pulses reads as noise.
  * Put it on a ring layered behind the solid dot (see JobMetricPill). */
+/* attention-ring — a strip of brand light (gold → green → sky) runs around a
+   card's edge twice and fades out, once (no loop: a looping ring reads as
+   "loading"). Put it on an empty `<span aria-hidden>` as the card's last
+   child; the card needs `relative`. The span fills the card and takes its
+   radius; its ::after is the 2px strip (a masked conic), and the span's own
+   filter is the glow, so the glow follows the rounded edge (a filter on the
+   strip itself would be cut by its mask). Reduced motion: no travel, no
+   glow, a still gradient edge that fades the same way. */
+@property --attention-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+/* Two tracks so the easing spans the whole run: the light travels on one
+   smooth ease-in-out curve (slow start, glide, long settle), and fades in and
+   out on its own. Keyframe stops on one track would re-ease each segment and
+   make the light lurch. */
+@keyframes attention-ring-travel {
+  from { --attention-angle: 0deg; }
+  to   { --attention-angle: 720deg; }
+}
+
+@keyframes attention-ring-fade {
+  0%   { opacity: 0; }
+  18%  { opacity: 1; }
+  70%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@utility attention-ring {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  filter:
+    drop-shadow(0 0 3px color-mix(in srgb, var(--color-apna-green-400) 90%, transparent))
+    drop-shadow(0 0 10px color-mix(in srgb, var(--color-apna-green-500) 60%, transparent))
+    drop-shadow(0 0 18px color-mix(in srgb, var(--color-apna-sky-500) 45%, transparent));
+  opacity: 0;
+  animation: attention-ring-fade 3.6s ease-in-out 400ms 1 both;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 2px;
+    background: conic-gradient(from var(--attention-angle), var(--attention-ring-stops));
+    mask: linear-gradient(black 0 0) content-box, linear-gradient(black 0 0);
+    mask-composite: exclude;
+    animation: attention-ring-travel 3.6s cubic-bezier(0.65, 0, 0.25, 1) 400ms 1 both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    filter: none;
+
+    &::after {
+      background: var(--attention-ring-still);
+    }
+  }
+}
+
 @keyframes unread-ping {
   75%, 100% { scale: 2.4; opacity: 0; }
 }

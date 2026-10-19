@@ -29,6 +29,7 @@ import { Button, Check, Play } from "@apna/design-system"
 import { AI_CALLING_ADDON } from "@/content/job-plans"
 import { AiCallingExplainer, AiSparkle } from "@/components/apnahire/ai-calling-explainer"
 import { inr } from "@/lib/format"
+import { useAttentionRing } from "@/components/apnahire/use-attention-ring"
 
 export interface AiAddonOffer {
   /** Rupee price when no AI calling credit is available. */
@@ -47,9 +48,12 @@ export function AiCallingAddonCard({
 }) {
   const [explainerOpen, setExplainerOpen] = React.useState(false)
   const useCredit = offer.creditsAvailable > 0
+  const ring = useAttentionRing("ai-calling")
 
   return (
     <section data-slot="ai-calling-addon" data-product="ai-calling" className="bg-card p-4 shadow-card">
+      {/* The ring sits on a wrapper: the card clips its corners, which would clip the glow. */}
+      <div className="relative rounded-card-nested">
       <div className="overflow-hidden rounded-card-nested border border-border">
         <div className="flex flex-col gap-3 bg-gradient-product-ai-calling p-4">
           {/* The headline gives: it wraps to two or three lines while
@@ -97,6 +101,8 @@ export function AiCallingAddonCard({
             Add AI calling agent
           </Button>
         </div>
+      </div>
+      {ring && <span aria-hidden className="attention-ring" />}
       </div>
 
       <AiCallingExplainer
