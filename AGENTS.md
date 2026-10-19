@@ -576,6 +576,43 @@ every line may break; never let the width of a string decide it.**
 
 ---
 
+## Prices, offers and validity — plan cards and upsells
+
+These hold on every plan card (`PricingCard`, the Unlimited cards, Database
+cards) and every upsell tile (`OfferChoice`), both checkouts, light and dark
+(user calls, 2026-10-19/20).
+
+1. **One green line under a price, never two.** The per-unit note ("That's
+   just ₹1,799 /month", "₹585 /credit") is green only when it stands alone.
+2. **The claimed 10% offer comes first.** With the exit offer applied, the
+   order under the price is: "10% extra off applied" (`ExtraOffLine`, green),
+   then the per-unit note, now gray (`text-muted-foreground`). Never the
+   note above the offer line.
+3. **The % OFF pill is smoked glass, not green.** `Badge variant="discount"`
+   sits on `--surface-glass-dark` (the job credits panel's fill) with green
+   text. Change it through `--checkout-discount-bg`, never per card.
+4. **Validity always carries the clock.** "Valid for N days" (or "1 active
+   job slot for N days") is shown with the `ClockFading` icon, everywhere:
+   in `OfferChoice` pass `validDays` / `term`, never a plain `note`.
+5. **Which upsell tiles show validity.** Self-checkout: both tiles (both are
+   packs the recruiter is choosing between). Express checkout: only the
+   bundle on offer; the stay tile is the credit this one job needs and has
+   no validity of its own. Every pack quote carries its `validDays`.
+6. **A rule line closes onto content, never onto nothing.** The separator
+   under an upsell tile's price only shows when that tile has details below
+   it (validity, database credits, city). Without them it turns transparent
+   (it keeps its space so the rows stay level with the partner tile).
+7. **Order-summary add-ons announce themselves once.** As the order summary
+   opens, an add-on card (Database in self-checkout, AI calling in express)
+   runs the `attention-ring`: a gold → green → sky strip with a glow, two
+   eased laps over 3.6s, then it fades. Once per add-on per session
+   (`useAttentionRing`), never looping; reduced motion gets a still edge.
+   Render it as `<span aria-hidden className="attention-ring" />` inside a
+   `relative` card that doesn't clip (wrap a card that has
+   `overflow-hidden`).
+
+---
+
 ## Tax disclaimer — one wording, one component
 
 Under any price, the tax note reads exactly **"\*GST applicable"** and is

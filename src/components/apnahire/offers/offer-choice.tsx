@@ -101,6 +101,11 @@ function OptionTile({
   const strike = option.mrp != null && option.mrp > option.price ? option.mrp : undefined
   const ribbon = option.badge && !isPct(option.badge) ? option.badge : undefined
   const term = termOf(option)
+  // The rule under the price splits what it costs from what you get. A tile
+  // with nothing under it (express checkout's 1-credit stay tile) has no
+  // rule: a line closing onto empty space. The border stays (transparent)
+  // so the rows still sit level with the partner tile.
+  const hasDetails = !!term || !!option.planFacts
 
   const cell: Record<RowKey, React.ReactNode> = {
     title: <p className="text-sm font-semibold text-foreground">{option.title}</p>,
@@ -109,7 +114,12 @@ function OptionTile({
     // by a rule that splits what it costs from what you get. The rows are
     // shared, so the rule sits level in both tiles.
     price: (
-      <div className="flex h-full flex-col gap-1.5 border-b border-border pb-2.5">
+      <div
+        className={cn(
+          "flex h-full flex-col gap-1.5 border-b pb-2.5",
+          hasDetails ? "border-border" : "border-transparent"
+        )}
+      >
         {/* Phones: the struck price + % tag take the second line in every
             tile. From sm: one line, always. */}
         <p className="flex flex-wrap items-baseline gap-x-1.5 gap-y-1 sm:flex-nowrap">
