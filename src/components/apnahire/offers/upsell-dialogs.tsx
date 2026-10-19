@@ -182,6 +182,8 @@ export function AnnualUpgradeDialog({ from, ...props }: UpsellCallbacks & { from
       open={props.open}
       onOpenChange={(next) => !next && props.onClose()}
       tone="premium"
+      // A size up: "Continue with quarterly plan" needs the width on desktop.
+      size="lg"
       illustration="wallet"
       tag={
         <>
@@ -199,9 +201,9 @@ export function AnnualUpgradeDialog({ from, ...props }: UpsellCallbacks & { from
           mrp: props.extraOff ? from.price : undefined,
           unit,
           extraOff: props.extraOff,
-          // "Continue with monthly plan" wrapped; the tile title already
-          // says which plan.
-          ctaLabel: "Continue",
+          // Desktop names the plan; phones shorten to "Continue".
+          ctaLabel: `Continue with ${from.label.toLowerCase()}`,
+          ctaShortLabel: "Continue",
           onSelect: props.onStay,
         }}
         upgrade={{
