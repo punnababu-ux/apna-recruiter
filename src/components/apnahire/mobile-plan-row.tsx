@@ -247,6 +247,10 @@ export interface MobileUnlimitedCardProps {
   features: Array<[React.ReactNode, React.ReactNode]>
   note?: React.ReactNode
   cta: React.ReactNode
+  /** Makes the whole card tappable (the same action as the CTA). A tap on
+   *  the CTA itself is left to it, so the action never fires twice; the CTA
+   *  stays the keyboard / screen-reader route. */
+  onSelect?: () => void
   /** On the white card, e.g. the offer shimmer. */
   cardClassName?: string
   className?: string
@@ -262,6 +266,7 @@ export function MobileUnlimitedCard({
   features,
   note,
   cta,
+  onSelect,
   cardClassName,
   className,
 }: MobileUnlimitedCardProps) {
@@ -270,8 +275,16 @@ export function MobileUnlimitedCard({
     // width; the top keeps room above and below the logo. The logo sits
     // 16px in from the frame's edge.
     <div
+      onClick={
+        onSelect
+          ? (e) => {
+              if (!(e.target as HTMLElement).closest("button")) onSelect()
+            }
+          : undefined
+      }
       className={cn(
         "flex flex-col gap-3 rounded-card bg-gradient-checkout-unlimited px-2.5 pt-5 pb-2.5 text-surface-inverted-fg",
+        onSelect && "ink press-subtle relative cursor-pointer transition-interactive",
         className
       )}
     >

@@ -441,6 +441,7 @@ function MobileSubscriptionCard({ onSelect, blockedLabel }: { onSelect: () => vo
   const discountPct = strike && strike > price ? Math.round((1 - price / strike) * 100) : null
   return (
     <MobileUnlimitedCard
+      onSelect={blockedLabel ? undefined : onSelect}
       key={shimmerKey}
       className="sm:hidden"
       cardClassName={cn(shimmerKey > 0 && "animate-shimmer-once")}

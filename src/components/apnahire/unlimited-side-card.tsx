@@ -68,6 +68,7 @@ export function UnlimitedSideCard({
       {/* ── Mobile (< md): the shared phone card, the same one express
           checkout uses, so the two checkouts read alike. ── */}
       <MobileUnlimitedCard
+        onSelect={onBuyNow}
         className={cn("md:hidden", className)}
         // Same card, same structure as express checkout's Monthly plan: name
         // and price with its unit on top, the reposts promise as subtitle,
