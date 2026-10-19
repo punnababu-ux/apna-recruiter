@@ -66,6 +66,9 @@ export interface OfferDialogProps {
   /** "sm" the compact exit nudge, "md" the two-tile upsells, "lg" the slot
    *  upgrade's list of jobs (672px). */
   size?: "sm" | "md" | "lg"
+  /** The 672px width of "lg" without its smaller header type — for a
+   *  two-tile upsell whose CTAs need the room (the annual upgrade). */
+  wide?: boolean
   children: React.ReactNode
 }
 
@@ -80,6 +83,7 @@ export function OfferDialog({
   priceDrop,
   headerFooter,
   size = "md",
+  wide = false,
   children,
 }: OfferDialogProps) {
   const isMobile = useIsMobile()
@@ -177,7 +181,7 @@ export function OfferDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className={cn("gap-0 overflow-hidden rounded-2xl bg-transparent p-0 shadow-dialog ring-0 data-open:slide-in-from-bottom-16 data-closed:slide-out-to-bottom-16 data-open:zoom-in-100 data-closed:zoom-out-100 duration-sheet ease-carousel", size === "sm" ? "sm:max-w-md" : size === "lg" ? "sm:max-w-2xl" : "sm:max-w-xl")}
+        className={cn("gap-0 overflow-hidden rounded-2xl bg-transparent p-0 shadow-dialog ring-0 data-open:slide-in-from-bottom-16 data-closed:slide-out-to-bottom-16 data-open:zoom-in-100 data-closed:zoom-out-100 duration-sheet ease-carousel", size === "sm" ? "sm:max-w-md" : size === "lg" || wide ? "sm:max-w-2xl" : "sm:max-w-xl")}
       >
         {body}
       </DialogContent>

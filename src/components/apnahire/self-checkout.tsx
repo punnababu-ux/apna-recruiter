@@ -759,7 +759,13 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
 
       <AnnualUpgradeDialog
         open={upsell === "annual"}
-        from={{ label: "Monthly plan", price: SUBSCRIPTION_PLANS.monthly.price, months: 1 }}
+        from={{
+          label: "Monthly plan",
+          price: SUBSCRIPTION_PLANS.monthly.price,
+          months: 1,
+          dbCredits: SUBSCRIPTION_PLANS.monthly.dbCredits,
+          dbWorth: SUBSCRIPTION_PLANS.monthly.dbWorth,
+        }}
         extraOff={offer.claimed}
         onClose={() => setUpsell(null)}
         onStay={() => {

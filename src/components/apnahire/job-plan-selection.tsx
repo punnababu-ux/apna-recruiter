@@ -436,7 +436,13 @@ export function JobPlanSelection() {
 
       <AnnualUpgradeDialog
         open={upsell?.kind === "annual"}
-        from={{ label: "Monthly plan", price: MONTHLY_SUBSCRIPTION_PLAN.price, months: 1 }}
+        from={{
+          label: "Monthly plan",
+          price: MONTHLY_SUBSCRIPTION_PLAN.price,
+          months: 1,
+          dbCredits: MONTHLY_SUBSCRIPTION_PLAN.dbCreditsPerMonth,
+          dbWorth: MONTHLY_SUBSCRIPTION_PLAN.dbCreditsWorth,
+        }}
         extraOff={offer.claimed}
         onClose={() => setUpsell(null)}
         onStay={() => openCheckout(monthlyLine())}

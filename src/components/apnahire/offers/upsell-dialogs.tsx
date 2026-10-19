@@ -163,6 +163,9 @@ export interface SubscriptionQuote {
   price: number
   /** Billing period in months (1 monthly, 3 quarterly). */
   months: number
+  /** Its database credits and their value, listed like the annual tile's. */
+  dbCredits?: number
+  dbWorth?: number
 }
 
 export function annualQuote(extraOff = false) {
@@ -182,8 +185,9 @@ export function AnnualUpgradeDialog({ from, ...props }: UpsellCallbacks & { from
       open={props.open}
       onOpenChange={(next) => !next && props.onClose()}
       tone="premium"
-      // A size up: "Continue with quarterly plan" needs the width on desktop.
-      size="lg"
+      // Wider: "Continue with quarterly plan" needs the room on desktop
+      // (same header type as the other upsells).
+      wide
       illustration="wallet"
       tag={
         <>
@@ -201,6 +205,11 @@ export function AnnualUpgradeDialog({ from, ...props }: UpsellCallbacks & { from
           mrp: props.extraOff ? from.price : undefined,
           unit,
           extraOff: props.extraOff,
+          // The same details as the annual tile, so they compare line for line.
+          planFacts:
+            from.dbCredits != null && from.dbWorth != null
+              ? { dbCredits: from.dbCredits, dbWorth: from.dbWorth, singleCity: true }
+              : undefined,
           // Desktop names the plan; phones shorten to "Continue".
           ctaLabel: `Continue with ${from.label.toLowerCase()}`,
           ctaShortLabel: "Continue",
