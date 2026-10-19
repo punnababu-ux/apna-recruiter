@@ -50,148 +50,174 @@ export interface OfferOption {
 }
 
 
+/* One-to-one comparison, the rule: both tiles share one row grid (CSS
+ * subgrid), so each kind of line — the price group, the validity, the
+ * note, the database credits, the city, the CTA — sits on the SAME line in
+ * both tiles and the eye reads straight across, whatever either tile holds.
+ * A row only exists when one of the tiles uses it; a tile without it keeps
+ * the row empty so its partner's line stays level. */
+type RowKey = "title" | "price" | "term" | "note" | "facts" | "city" | "cta"
+const ROW_ORDER: RowKey[] = ["title", "price", "term", "note", "facts", "city", "cta"]
+const ROW_SPAN: Record<number, string> = {
+  3: "row-span-3",
+  4: "row-span-4",
+  5: "row-span-5",
+  6: "row-span-6",
+  7: "row-span-7",
+}
+
+const isPct = (badge?: string) => !!badge && /%\s*OFF$/i.test(badge)
+const pctOf = (o: OfferOption) =>
+  o.mrp != null && o.mrp > o.price ? `${Math.round((1 - o.price / o.mrp) * 100)}% OFF` : isPct(o.badge) ? o.badge : undefined
+const termOf = (o: OfferOption) => o.term ?? (o.validDays != null ? `Valid for ${o.validDays}\u00A0days` : undefined)
+
+function rowUsed(o: OfferOption, key: RowKey) {
+  switch (key) {
+    case "term":
+      return !!termOf(o)
+    case "note":
+      return !!o.note
+    case "facts":
+      return !!o.planFacts
+    case "city":
+      return !!o.planFacts?.singleCity
+    default:
+      return true
+  }
+}
+
 function OptionTile({
   option,
   kind,
+  rows,
   reserveRibbon,
 }: {
   option: OfferOption
   kind: "stay" | "upgrade"
+  rows: RowKey[]
   /** Either tile in the pair has a corner ribbon: keep the band on both. */
   reserveRibbon: boolean
 }) {
   const upgrade = kind === "upgrade"
+  const pct = pctOf(option)
+  const strike = option.mrp != null && option.mrp > option.price ? option.mrp : undefined
+  const ribbon = option.badge && !isPct(option.badge) ? option.badge : undefined
+  const term = termOf(option)
+
+  const cell: Record<RowKey, React.ReactNode> = {
+    title: <p className="text-sm font-semibold text-foreground">{option.title}</p>,
+    // The price group: amount + unit, struck price, % tag and the 10% extra
+    // off, together.
+    price: (
+      <div className="flex flex-col gap-1.5">
+        <p className="flex flex-wrap items-baseline gap-x-1.5 gap-y-1">
+          {/* The price and its unit never split ("₹2,499 /month"). */}
+          <span className="inline-flex items-baseline gap-1 whitespace-nowrap">
+            <span className="text-xl font-semibold text-foreground sm:text-2xl">{inr(option.price)}</span>
+            {option.unit && <span className="text-sm text-muted-foreground">{option.unit}</span>}
+          </span>
+          {(strike || pct) && (
+            <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+              {strike && <span className="text-sm text-muted-foreground line-through">{inr(strike)}</span>}
+              {pct && (
+                <Badge variant="discount" size="sm">
+                  {pct}
+                </Badge>
+              )}
+            </span>
+          )}
+        </p>
+        {option.extraOff && (
+          <span className="flex items-center gap-1.5 text-xs text-success">
+            <BadgePercent className="size-4 shrink-0 animate-wiggle" aria-hidden />
+            <span className="animate-text-shimmer whitespace-nowrap sm:hidden">{EXTRA_OFF.appliedShort}</span>
+            <span className="animate-text-shimmer hidden sm:inline">{EXTRA_OFF.applied}</span>
+          </span>
+        )}
+      </div>
+    ),
+    term: term ? (
+      <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+        <ClockFading className="size-4 shrink-0" aria-hidden />
+        <span>{term}</span>
+      </span>
+    ) : null,
+    note: option.note ? (
+      <p className={cn("text-xs italic", upgrade ? "text-checkout-primary" : "text-muted-foreground")}>{option.note}</p>
+    ) : null,
+    facts: option.planFacts ? (
+      <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+        <Database className="size-4 shrink-0" aria-hidden />
+        <span>
+          {option.planFacts.dbCredits.toLocaleString("en-IN")} database credits worth{"\u00A0"}₹
+          {option.planFacts.dbWorth.toLocaleString("en-IN")}
+        </span>
+      </span>
+    ) : null,
+    // A caveat, not a feature: no icon, italic.
+    city: option.planFacts?.singleCity ? (
+      <span className="text-xs text-muted-foreground italic">Valid in a single city</span>
+    ) : null,
+    cta: (
+      <Button
+        type="button"
+        variant={upgrade ? "checkout" : "outline"}
+        className="mt-2 h-10 w-full self-end whitespace-nowrap"
+        onClick={option.onSelect}
+      >
+        {option.ctaShortLabel ? (
+          <>
+            <span className="sm:hidden">{option.ctaShortLabel}</span>
+            <span className="hidden sm:inline">{option.ctaLabel}</span>
+          </>
+        ) : (
+          option.ctaLabel
+        )}
+      </Button>
+    ),
+  }
+
   return (
     <div
       className={cn(
-        "relative flex min-w-0 flex-col gap-4 overflow-hidden rounded-xl border p-3.5 sm:p-4",
-        // The corner ribbon gets its own band, so the title starts below it
-        // rather than squeezing in beside it. The band is reserved on BOTH
-        // tiles when either has a ribbon, so titles and prices line up
-        // across the pair (the monthly plan has none; annual does).
+        "relative grid min-w-0 grid-rows-subgrid gap-y-2.5 overflow-hidden rounded-xl border p-3.5 sm:p-4",
+        ROW_SPAN[rows.length],
+        // The ribbon's band is reserved on BOTH tiles when either has one,
+        // so the rows start level.
         reserveRibbon && "pt-8 sm:pt-9",
         upgrade ? "border-checkout-primary bg-accent sm:col-span-5" : "border-border bg-card sm:col-span-4"
       )}
     >
-      {/* The upgrade's ribbon takes the checkout green, same as its CTA
-          (--primary brightens in dark; the plan surface's green doesn't). */}
-      {option.badge && (
+      {ribbon && (
         <Badge
           variant={upgrade ? "default" : "discount"}
           size="ribbon"
           className={cn("absolute top-0 right-0", upgrade && "bg-cta-primary text-checkout-primary-foreground")}
         >
-          {option.badge}
+          {ribbon}
         </Badge>
       )}
-
-      <div className="flex flex-col gap-2">
-        <p className="text-sm font-semibold text-foreground">{option.title}</p>
-        {/* One line from sm (price, unit, struck price) so the two tiles
-            compare like for like; phone sheets may wrap. */}
-        <p className="flex flex-wrap items-baseline gap-x-1.5 sm:flex-nowrap sm:whitespace-nowrap">
-          {/* The price and its unit never split ("₹2,499 /month"). The
-              struck price ALWAYS takes the second line on phones, in every
-              tile, so the tiles match whatever the text widths; one line
-              from sm. */}
-          <span className="inline-flex items-baseline gap-1 whitespace-nowrap">
-            <span className="text-xl font-semibold text-foreground sm:text-2xl">{inr(option.price)}</span>
-            {option.unit && <span className="text-sm text-muted-foreground">{option.unit}</span>}
-          </span>
-          {option.mrp != null && option.mrp > option.price && (
-            <span className="w-full text-sm whitespace-nowrap text-muted-foreground line-through sm:w-auto">
-              {inr(option.mrp)}
-            </span>
-          )}
-        </p>
-        {option.term && (
-          <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <ClockFading className="size-4 shrink-0" aria-hidden />
-            {option.term}
-          </span>
-        )}
-        {option.note && (
-          <p className={cn("text-xs italic", upgrade ? "text-checkout-primary" : "text-muted-foreground")}>
-            {option.note}
-          </p>
-        )}
-      </div>
-
-      {/* Details + CTA are one bottom-pinned group, so the CTAs line up
-          across both tiles and so does the last detail line ("10% extra
-          off applied"), whether or not a tile also has a validity line. */}
-      <div className="mt-auto flex flex-col gap-4">
-        {(option.validDays != null || option.extraOff || option.planFacts) && (
-          <div className="flex flex-col gap-2.5 text-xs">
-            {option.planFacts && (
-              <>
-                <span className="flex items-center gap-1.5 text-muted-foreground">
-                  <Database className="size-4 shrink-0" aria-hidden />
-                  <span>
-                    {option.planFacts.dbCredits.toLocaleString("en-IN")} database credits worth{"\u00A0"}₹
-                    {option.planFacts.dbWorth.toLocaleString("en-IN")}
-                  </span>
-                </span>
-                {/* A caveat, not a feature: no icon, italic. */}
-                {option.planFacts.singleCity && <span className="text-muted-foreground italic">Valid in a single city</span>}
-                {/* Last, so it sits level with the other tile's "Valid for
-                    N days" (both groups are bottom-pinned). */}
-                {option.planFacts.slotDays != null && (
-                  <span className="flex items-center gap-1.5 text-muted-foreground">
-                    <ClockFading className="size-4 shrink-0" aria-hidden />
-                    <span>
-                      1 active job slot for {option.planFacts.slotDays}
-                      {"\u00A0"}days
-                    </span>
-                  </span>
-                )}
-              </>
-            )}
-            {option.validDays != null && (
-              <span className="flex items-center gap-1.5 text-muted-foreground">
-                <ClockFading className="size-4 shrink-0" aria-hidden />
-                Valid for {option.validDays}{"\u00A0"}days
-              </span>
-            )}
-            {option.extraOff && (
-              <span className="flex items-center gap-1.5 text-success">
-                <BadgePercent className="size-4 shrink-0 animate-wiggle" aria-hidden />
-                <span className="animate-text-shimmer whitespace-nowrap sm:hidden">{EXTRA_OFF.appliedShort}</span>
-                <span className="animate-text-shimmer hidden sm:inline">{EXTRA_OFF.applied}</span>
-              </span>
-            )}
-          </div>
-        )}
-
-        <Button
-          type="button"
-          variant={upgrade ? "checkout" : "outline"}
-          className="h-10 w-full whitespace-nowrap"
-          onClick={option.onSelect}
-        >
-          {option.ctaShortLabel ? (
-            <>
-              <span className="sm:hidden">{option.ctaShortLabel}</span>
-              <span className="hidden sm:inline">{option.ctaLabel}</span>
-            </>
-          ) : (
-            option.ctaLabel
-          )}
-        </Button>
-      </div>
+      {rows.map((key) => (
+        // Every row renders in every tile — empty when this tile has nothing
+        // for it — so the subgrid keeps both tiles' lines level.
+        <div key={key} className={cn("min-w-0", key === "cta" && "flex items-end")}>
+          {cell[key]}
+        </div>
+      ))}
     </div>
   )
 }
 
 export function OfferChoice({ stay, upgrade }: { stay: OfferOption; upgrade: OfferOption }) {
-  const reserveRibbon = Boolean(stay.badge || upgrade.badge)
+  const isRibbon = (o: OfferOption) => !!o.badge && !isPct(o.badge)
+  const reserveRibbon = isRibbon(stay) || isRibbon(upgrade)
+  const rows = ROW_ORDER.filter((key) => rowUsed(stay, key) || rowUsed(upgrade, key))
   return (
-    // 4:5 from sm: the offer tile stays wider, but the stay tile is wide
-    // enough to keep "₹2,249 /month ₹2,499" on one line, so the two price
-    // rows read side by side.
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-9">
-      <OptionTile option={stay} kind="stay" reserveRibbon={reserveRibbon} />
-      <OptionTile option={upgrade} kind="upgrade" reserveRibbon={reserveRibbon} />
+    // 4:5 from sm: the offer tile stays wider. Both tiles span the same rows
+    // of this grid (subgrid), so their lines compare one to one.
+    <div className="grid grid-cols-2 gap-x-3 sm:grid-cols-9">
+      <OptionTile option={stay} kind="stay" rows={rows} reserveRibbon={reserveRibbon} />
+      <OptionTile option={upgrade} kind="upgrade" rows={rows} reserveRibbon={reserveRibbon} />
     </div>
   )
 }
