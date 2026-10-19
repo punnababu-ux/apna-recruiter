@@ -104,8 +104,8 @@ function OptionTile({
 
   const cell: Record<RowKey, React.ReactNode> = {
     title: <p className="text-sm font-semibold text-foreground">{option.title}</p>,
-    // The price group: amount + unit, struck price, % tag, the price note
-    // ("That's just ₹750 /month") and the 10% extra off, together — closed
+    // The price group: amount + unit, struck price, % tag, the 10% extra
+    // off, then the price note ("That's just ₹750 /month"), together — closed
     // by a rule that splits what it costs from what you get. The rows are
     // shared, so the rule sits level in both tiles.
     price: (
@@ -129,17 +129,17 @@ function OptionTile({
             </span>
           )}
         </p>
-        {option.note && (
-          <p className={cn("text-xs italic", upgrade ? "text-checkout-primary" : "text-muted-foreground")}>
-            {option.note}
-          </p>
-        )}
         {option.extraOff && (
           <span className="flex items-center gap-1.5 text-xs text-success">
             <BadgePercent className="size-4 shrink-0 animate-wiggle" aria-hidden />
             <span className="animate-text-shimmer whitespace-nowrap sm:hidden">{EXTRA_OFF.appliedShort}</span>
             <span className="animate-text-shimmer hidden sm:inline">{EXTRA_OFF.applied}</span>
           </span>
+        )}
+        {option.note && (
+          <p className={cn("text-xs italic", upgrade ? "text-checkout-primary" : "text-muted-foreground")}>
+            {option.note}
+          </p>
         )}
       </div>
     ),
