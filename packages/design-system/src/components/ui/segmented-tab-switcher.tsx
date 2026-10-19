@@ -290,7 +290,10 @@ export function SegmentedTabSwitcher<V extends string = string>({
                   "flex shrink-0 items-center gap-1.5 press relative rounded-full border h-8 px-3.5 text-sm font-medium whitespace-nowrap transition-option [&_svg]:size-5",
                   active
                     ? cn("border-transparent font-semibold", mobileActiveClassName ?? activeClassName)
-                    : cn("border-transparent bg-muted hover:bg-muted", inactiveClassName, trackClassName),
+                    : cn("border-transparent bg-muted hover:bg-muted", inactiveClassName,
+                        // The track's tint only: the glass edge would outline
+                        // every unselected chip.
+                        trackClassName?.replace("surface-glass-dark", "")),
                   accent && "text-product-accent"
                 )}
               >
