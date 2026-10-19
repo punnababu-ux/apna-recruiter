@@ -192,7 +192,9 @@ export function JobCreditBundles({
           <Button
             type="button"
             variant="link"
-            className="shrink-0"
+            // Sky 500 (--checkout-info), the Recommended ribbon's blue, so the
+            // two read as one colour on the panel (user call, 2026-10-19).
+            className="shrink-0 text-checkout-info"
             onClick={onBuySingleCredit}
             trailingIcon={<ArrowRight aria-hidden />}
           >
