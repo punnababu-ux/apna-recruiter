@@ -236,10 +236,10 @@ export function JobCreditBundles({
             mrp={inr(bundle.mrp)}
             badge={<Badge variant="discount">{view.discountPct}% OFF</Badge>}
             priceSuffix={
-              // The claimed offer's line sits under the per-credit price.
+              // The claimed offer's line comes first, the per-credit price under it.
               <span className="flex flex-col gap-1">
-                <span>₹{view.pricePerCredit}{"\u00A0"}/credit</span>
                 {extraOff && <ExtraOffLine />}
+                <span>₹{view.pricePerCredit}{"\u00A0"}/credit</span>
               </span>
             }
             cta={

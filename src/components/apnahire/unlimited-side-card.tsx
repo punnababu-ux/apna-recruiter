@@ -156,17 +156,19 @@ export function UnlimitedSideCard({
             badge={pct ? <Badge variant="discount">{pct}% OFF</Badge> : undefined}
             priceSuffix={
               <span className="flex flex-col gap-1">
+                {extraOff && <ExtraOffLine />}
                 {/* Monthly already shows /month on the price, but the line is
                     kept (empty) so it stays level with the job cards'
                     "₹650 /credit" beside it, offer applied or not. */}
                 {monthly ? (
                   <span aria-hidden>{"\u00A0"}</span>
                 ) : (
-                  <span className="text-checkout-primary">
+                  // Green only on its own; once the offer line is above it,
+                  // it steps back to gray so only one line is green.
+                  <span className={extraOff ? undefined : "text-checkout-primary"}>
                     That&apos;s just {inr(monthlyPrice)}{"\u00A0"}/month
                   </span>
                 )}
-                {extraOff && <ExtraOffLine />}
               </span>
             }
             cta={

@@ -174,16 +174,22 @@ function PlanCard({
           {/* The note line is reserved in every card whether or not it has
               one, so the dividers, feature lists and CTAs sit on the same
               baseline across the row. Without this, Monthly's divider
-              rides ~16px higher. The claimed offer's line goes under it,
+              rides ~16px higher. The claimed offer's line goes above it,
               in all cards. */}
+          {extraOff && <ExtraOffLine />}
           <p
             data-compare="price-suffix"
-            className={cn("min-h-4 text-xs italic leading-4 text-checkout-primary", !note && "invisible")}
+            className={cn(
+              "min-h-4 text-xs italic leading-4",
+              // Green only on its own; under the offer line it steps back to
+              // gray, as on the job credit cards, so only one line is green.
+              extraOff ? "text-muted-foreground" : "text-checkout-primary",
+              !note && "invisible",
+            )}
             aria-hidden={!note}
           >
             {note ?? "\u00A0"}
           </p>
-          {extraOff && <ExtraOffLine />}
         </div>
 
         <hr className="w-full border-border" />
