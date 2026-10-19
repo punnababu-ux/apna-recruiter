@@ -28,7 +28,7 @@ export const CLIENT_LOGOS: ClientLogo[] = [
   { name: "Tech Mahindra", src: "/logos/tech-mahindra.svg", width: 131 },
   { name: "Bajaj Allianz", src: "/logos/bajaj-allianz.png", width: 92 },
   { name: "Flipkart", src: "/logos/flipkart.svg", width: 137 },
-  { name: "BigBasket", src: "/logos/bigbasket.png", width: 120 },
+  { name: "BigBasket", src: "/logos/bigbasket.png", width: 89 }, // Wikimedia Commons (the old export was cropped)
   { name: "HDFC Bank", src: "/logos/hdfc-bank.svg", width: 208 },
   { name: "Swiggy", src: "/logos/swiggy.svg", width: 121 },
   { name: "Uber", src: "/logos/uber.svg", width: 104 },
