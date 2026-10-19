@@ -420,10 +420,11 @@ h2 em, h1 em { font-style: italic; }
 /* The homepage hero gradient behind the type card, as on the site: the
    title glow's green, sky and gold in apna's lightest steps, a touch of violet. */
 .type-demo { background-image:
-    radial-gradient(circle at 6% 8%,   rgba(157, 226, 201, 0.55) 0%, rgba(198, 239, 224, 0.30) 25%, transparent 45%),
+    radial-gradient(circle at 6% 8%,   rgba(157, 226, 201, 0.35) 0%, rgba(198, 239, 224, 0.18) 25%, transparent 45%),
     radial-gradient(circle at 92% 22%, rgba(189, 221, 245, 1) 0%, rgba(217, 235, 249, 0.70) 38%, transparent 65%),
-    radial-gradient(circle at 45% 100%, rgba(254, 243, 199, 0.70) 0%, rgba(254, 243, 199, 0.25) 30%, transparent 55%),
-    radial-gradient(circle at 8% 90%, rgba(208, 215, 231, 1) 0%, rgba(240, 236, 241, 0.50) 30%, transparent 55%),
+    radial-gradient(ellipse 45% 30% at 42% 0%, rgba(253, 230, 138, 0.70) 0%, rgba(254, 243, 199, 0.35) 45%, transparent 100%),
+    radial-gradient(ellipse 40% 35% at 0% 28%, rgba(189, 176, 195, 0.70) 0%, rgba(223, 214, 226, 0.45) 45%, transparent 100%),
+    radial-gradient(circle at 8% 90%, rgba(223, 214, 226, 1) 0%, rgba(223, 214, 226, 0.60) 30%, transparent 58%),
     linear-gradient(135deg, #FFFFFF 0%, #EEF6FC 55%, #FFFFFF 100%); }
 [data-mode="dark"] .type-demo { background-image:
     radial-gradient(circle at 8% 15%, rgba(255, 255, 255, 0.10) 0%, transparent 45%),
@@ -520,16 +521,17 @@ h2 em, h1 em { font-style: italic; }
 /* The homepage hero, reproduced from its tokens (--gradient-checkout-hero,
    --ambient-blob-1..4, AmbientBackdrop's seven blobs and wandering light). */
 .living {
-  --blob-1: rgba(157, 226, 201, 0.50); --blob-2: rgba(208, 215, 231, 1);
-  --blob-3: rgba(254, 243, 199, 0.80); --blob-4: rgba(189, 221, 245, 1);
+  --blob-1: rgba(189, 221, 245, 1); --blob-2: rgba(189, 176, 195, 0.70);
+  --blob-3: rgba(157, 226, 201, 0.30); --blob-4: rgba(253, 230, 138, 0.85);
   --glow: rgba(255, 255, 255, 0.85);
   position: relative; width: min(860px, 100%); aspect-ratio: 16 / 8; border-radius: 28px; overflow: hidden; display: grid; place-items: center;
   container-type: size;
   background-image:
-    radial-gradient(circle at 6% 8%,   rgba(157, 226, 201, 0.55) 0%, rgba(198, 239, 224, 0.30) 25%, transparent 45%),
+    radial-gradient(circle at 6% 8%,   rgba(157, 226, 201, 0.35) 0%, rgba(198, 239, 224, 0.18) 25%, transparent 45%),
     radial-gradient(circle at 92% 22%, rgba(189, 221, 245, 1) 0%, rgba(217, 235, 249, 0.70) 38%, transparent 65%),
-    radial-gradient(circle at 45% 100%, rgba(254, 243, 199, 0.70) 0%, rgba(254, 243, 199, 0.25) 30%, transparent 55%),
-    radial-gradient(circle at 8% 90%, rgba(208, 215, 231, 1) 0%, rgba(240, 236, 241, 0.50) 30%, transparent 55%),
+    radial-gradient(ellipse 45% 30% at 42% 0%, rgba(253, 230, 138, 0.70) 0%, rgba(254, 243, 199, 0.35) 45%, transparent 100%),
+    radial-gradient(ellipse 40% 35% at 0% 28%, rgba(189, 176, 195, 0.70) 0%, rgba(223, 214, 226, 0.45) 45%, transparent 100%),
+    radial-gradient(circle at 8% 90%, rgba(223, 214, 226, 1) 0%, rgba(223, 214, 226, 0.60) 30%, transparent 58%),
     linear-gradient(135deg, #FFFFFF 0%, #EEF6FC 55%, #FFFFFF 100%);
   background-size: cover; background-position: center;
 }

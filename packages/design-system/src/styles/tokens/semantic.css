@@ -424,10 +424,11 @@
    * palette and stays quiet under the green actions and the product colours.
    * The previous mesh is kept as `?mother=classic`. */
   --gradient-checkout-hero:
-    radial-gradient(circle at 6% 8%,   color-mix(in srgb, var(--color-apna-green-200) 55%, transparent) 0%, color-mix(in srgb, var(--color-apna-green-100) 30%, transparent) 25%, transparent 45%),
+    radial-gradient(circle at 6% 8%,   color-mix(in srgb, var(--color-apna-green-200) 35%, transparent) 0%, color-mix(in srgb, var(--color-apna-green-100) 18%, transparent) 25%, transparent 45%),
     radial-gradient(circle at 92% 22%, var(--color-apna-sky-200) 0%, color-mix(in srgb, var(--color-apna-sky-100) 70%, transparent) 38%, transparent 65%),
-    radial-gradient(circle at 45% 100%, color-mix(in srgb, var(--color-apna-gold-100) 70%, transparent) 0%, color-mix(in srgb, var(--color-apna-gold-100) 25%, transparent) 30%, transparent 55%),
-    radial-gradient(circle at 8% 90%, color-mix(in srgb, var(--color-apna-plum-200) 55%, var(--color-apna-sky-200)) 0%, color-mix(in srgb, var(--color-apna-plum-100) 50%, transparent) 30%, transparent 55%),
+    radial-gradient(ellipse 45% 30% at 42% 0%, color-mix(in srgb, var(--color-apna-gold-200) 70%, transparent) 0%, color-mix(in srgb, var(--color-apna-gold-100) 35%, transparent) 45%, transparent 100%),
+    radial-gradient(ellipse 40% 35% at 0% 28%, color-mix(in srgb, var(--color-apna-plum-300) 70%, transparent) 0%, color-mix(in srgb, var(--color-apna-plum-200) 45%, transparent) 45%, transparent 100%),
+    radial-gradient(circle at 8% 90%, var(--color-apna-plum-200) 0%, color-mix(in srgb, var(--color-apna-plum-200) 60%, transparent) 30%, transparent 58%),
     linear-gradient(135deg, var(--color-gray-0) 0%, var(--color-apna-sky-50) 55%, var(--color-gray-0) 100%);
   /* Product canvases — the page background of a product page, header to
    * footer: the homepage canvas (--gradient-checkout-hero, "the mother
@@ -472,10 +473,13 @@
    * left, periwinkle bottom-left, sky top-right), so the motion re-mixes the
    * gradient rather than adding a colour. Alphas keep it a whisper: text
    * contrast on the hero is unchanged. */
-  --ambient-blob-1: color-mix(in srgb, var(--color-apna-green-200) 50%, transparent);
-  --ambient-blob-2: color-mix(in srgb, var(--color-apna-plum-200) 55%, var(--color-apna-sky-200));
-  --ambient-blob-3: color-mix(in srgb, var(--color-apna-gold-100) 80%, transparent);
-  --ambient-blob-4: var(--color-apna-sky-200);
+  /* Blobs 1/7 (left) sky, 2/5 (upper left) plum, 3 (low) green, 4/6
+   * (right) gold — plum and gold drift on opposite sides, never into each
+   * other. Plum softened (70%). */
+  --ambient-blob-1: var(--color-apna-sky-200);
+  --ambient-blob-2: color-mix(in srgb, var(--color-apna-plum-300) 70%, transparent);
+  --ambient-blob-3: color-mix(in srgb, var(--color-apna-green-200) 30%, transparent);
+  --ambient-blob-4: color-mix(in srgb, var(--color-apna-gold-200) 85%, transparent);
   --ambient-glow:   color-mix(in srgb, var(--color-gray-0) 85%, transparent);
   --ambient-grain-opacity: 0.06;
   --surface-checkout-hero-fg:       var(--color-gray-900);
