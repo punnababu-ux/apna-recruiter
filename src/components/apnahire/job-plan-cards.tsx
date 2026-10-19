@@ -39,8 +39,7 @@ import {
   WhatsApp,
   X,
   type IconComponent,
-  Alert,
-  AlertDescription,
+  AlertBanner,
   Info,
 } from "@apna/design-system"
 import { SINGLE_CREDIT } from "@/components/apnahire/job-credit-bundles"
@@ -501,12 +500,16 @@ function BlockedSubscription({
       </div>
       {shown && (
         <div role="status" className="absolute inset-x-3 bottom-3 animate-in fade-in-0 slide-in-from-bottom-2">
-          {/* The solid default surface: the info tint is translucent and
-              muddles with the card's text underneath. */}
-          <Alert className="shadow-elevated">
-            <Info className="text-info" aria-hidden />
-            <AlertDescription>{blocked.message}</AlertDescription>
-          </Alert>
+          {/* The system's information banner, solid (blue, white text), so
+              it can't be missed over the dimmed card. */}
+          <AlertBanner
+            variant="info"
+            appearance="primary"
+            borderless
+            icon={<Info />}
+            title={blocked.message}
+            className="shadow-elevated"
+          />
         </div>
       )}
     </div>
