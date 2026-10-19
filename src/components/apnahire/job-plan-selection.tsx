@@ -49,6 +49,7 @@ import {
   type SubscriptionPaymentMethod,
 } from "@/components/apnahire/checkout-drawer"
 import { PaymentModal } from "@/components/apnahire/payment-modal"
+import { TrustedByStrip } from "@/components/marketing/proof-bands"
 import { GstNote } from "@/components/apnahire/gst-note"
 import { PaymentSuccess } from "@/components/apnahire/payment-success"
 import { setActiveSubscription } from "@/hooks/use-active-subscription"
@@ -407,6 +408,7 @@ export function JobPlanSelection() {
             />
           )}
           <GstNote />
+          <TrustedByStrip />
         </div>
       </div>
 

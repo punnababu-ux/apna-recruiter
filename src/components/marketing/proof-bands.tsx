@@ -41,6 +41,17 @@ export function TrustedByBand() {
   )
 }
 
+/** The trusted-by logos, compact, for product flows (express checkout's plan
+ *  step): a gray caption and the same gliding logo row, no band or heading. */
+export function TrustedByStrip() {
+  return (
+    <div data-slot="trusted-by-strip" className="flex flex-col items-center gap-4 pt-6">
+      <p className="text-overline text-muted-foreground">Trusted by top hiring partners</p>
+      <LogoWall items={CLIENT_LOGO_ITEMS} muted marquee />
+    </div>
+  )
+}
+
 export function WhyHireBand({
   stats = HOME_PROOF.why.stats,
   tone,
