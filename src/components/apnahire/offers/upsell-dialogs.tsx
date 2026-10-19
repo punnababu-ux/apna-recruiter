@@ -212,6 +212,7 @@ export function AnnualUpgradeDialog({ from, ...props }: UpsellCallbacks & { from
           mrp: props.extraOff ? ANNUAL_PLAN.price : undefined,
           unit: "/year",
           badge: `${ANNUAL_PLAN.monthsFree} MONTHS FREE`,
+          planFacts: { dbCredits: ANNUAL_PLAN.dbCredits, dbWorth: ANNUAL_PLAN.dbCreditsWorth, singleCity: true },
           note: `That's just ${inr(annual.perMonth)}\u00A0/month`,
           extraOff: props.extraOff,
           ctaLabel: `Get yearly plan for ${inr(annual.price)}`,
@@ -239,6 +240,8 @@ export interface PlanQuote {
   /** Billing period in months (1 monthly, 3 quarterly). */
   months: number
   dbCredits: number
+  /** What those credits are worth (₹). */
+  dbWorth: number
 }
 
 /** Buying a small credit bundle: offer the subscription that hires
@@ -290,9 +293,8 @@ export function CreditsToPlanDialog({
           mrp: props.extraOff ? plan.price : undefined,
           unit: monthly ? "/month" : "/quarter",
           badge: "UNLIMITED POSTS",
-          note: monthly
-            ? `1 active job slot · ${plan.dbCredits} database credits`
-            : `That's just ${inr(Math.floor(planPrice / plan.months))} /month`,
+          note: monthly ? "1 active job slot for 30 days" : `That's just ${inr(Math.floor(planPrice / plan.months))}\u00A0/month`,
+          planFacts: { dbCredits: plan.dbCredits, dbWorth: plan.dbWorth, singleCity: true },
           extraOff: props.extraOff,
           ctaLabel: `Get ${name} for ${inr(planPrice)}`,
           ctaShortLabel: `Get ${name}`,

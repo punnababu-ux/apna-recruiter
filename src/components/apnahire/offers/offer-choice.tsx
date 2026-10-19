@@ -17,7 +17,7 @@
  */
 
 import * as React from "react"
-import { Badge, BadgePercent, Button, ClockFading } from "@apna/design-system"
+import { Badge, BadgePercent, Button, ClockFading, Database, MapPin } from "@apna/design-system"
 import { EXTRA_OFF } from "@/content/offers"
 import { cn } from "@/lib/utils"
 import { inr } from "@/lib/format"
@@ -32,6 +32,9 @@ export interface OfferOption {
   /** One italic line: "That's just ₹1,099 /job", "Billed monthly". */
   note?: React.ReactNode
   validDays?: number
+  /** A subscription's terms, above the CTA: the database credits it brings
+   *  (with their value) and its one city. */
+  planFacts?: { dbCredits: number; dbWorth: number; singleCity?: boolean }
   /** Corner ribbon, e.g. "27% OFF". */
   badge?: string
   /** Show the "10% extra off applied" line. */
@@ -109,8 +112,25 @@ function OptionTile({
           across both tiles and so does the last detail line ("10% extra
           off applied"), whether or not a tile also has a validity line. */}
       <div className="mt-auto flex flex-col gap-4">
-        {(option.validDays != null || option.extraOff) && (
+        {(option.validDays != null || option.extraOff || option.planFacts) && (
           <div className="flex flex-col gap-2.5 text-xs">
+            {option.planFacts && (
+              <>
+                <span className="flex items-center gap-1.5 text-foreground">
+                  <Database className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+                  <span>
+                    <strong className="font-semibold">{option.planFacts.dbCredits.toLocaleString("en-IN")} database credits</strong>
+                    {" "}worth{"\u00A0"}₹{option.planFacts.dbWorth.toLocaleString("en-IN")}
+                  </span>
+                </span>
+                {option.planFacts.singleCity && (
+                  <span className="flex items-center gap-1.5 text-muted-foreground">
+                    <MapPin className="size-4 shrink-0" aria-hidden />
+                    Valid in a single city
+                  </span>
+                )}
+              </>
+            )}
             {option.validDays != null && (
               <span className="flex items-center gap-1.5 text-muted-foreground">
                 <ClockFading className="size-4 shrink-0" aria-hidden />

@@ -286,6 +286,9 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   // 2026-10-19), as CreditsToPlanDialog.
   const [upsell, setUpsell] = React.useState<"pack" | "annual" | "plan" | null>(null)
   const isMobile = useIsMobile()
+  // Upsells only for a signed-in recruiter on the Plans page (user call,
+  // 2026-10-19); signed out (/pricing), every Buy goes straight on.
+  const upsellsOn = !isLoggedOut
   const [planUpsell, setPlanUpsell] = React.useState<{ bundle: Bundle; plan: "monthly" | "quarterly" } | null>(null)
   const [exitPrompt, setExitPrompt] = React.useState<{ proceed: () => void } | null>(null)
 
@@ -347,12 +350,15 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   const handleSelectBundle = (bundle: Parameters<typeof handleBuyBundle>[0]) => {
     const plan = isMobile ? PLAN_FOR_BUNDLE[bundle.credits] : undefined
     const full = BUNDLES.find((b) => b.credits === bundle.credits)
-    if (bundle.credits === BIGGEST_BUNDLE) setUpsell("pack")
+    if (!upsellsOn) handleBuyBundle(bundle)
+    else if (bundle.credits === BIGGEST_BUNDLE) setUpsell("pack")
     else if (plan && full) {
       setPlanUpsell({ bundle: full, plan })
       setUpsell("plan")
     } else handleBuyBundle(bundle)
   }
+  // The monthly plan: the annual upgrade first, when upsells are on.
+  const buyMonthly = () => (upsellsOn ? setUpsell("annual") : handleBuyUnlimitedMonthly())
   const buyPack22 = () =>
     openOrder({
       id: `job-${UPSELL_PACK_22.credits}`,
@@ -394,7 +400,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
 
   const handleStickyCtaClick = () => {
     if (activeTab === "unlimited") {
-      if (subscriptionPlan === "monthly") setUpsell("annual")
+      if (subscriptionPlan === "monthly") buyMonthly()
       else if (subscriptionPlan === "annual") handleBuyUnlimitedAnnual()
       else handleBuyUnlimitedQuarterly()
     } else if (activeTab === "enterprise") {
@@ -590,7 +596,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                       extraOff={offer.claimed}
                       className="flex-1"
                       {...MONTHLY_SIDE_CARD}
-                      onBuyNow={() => setUpsell("annual")}
+                      onBuyNow={buyMonthly}
                     />
                     <p className="hidden text-xs text-checkout-hero-fg-muted md:block">
                       Note: This plan is valid in a single city.
@@ -620,7 +626,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                   </div>
 
                   {/* 2. apna Unlimited Inset Card */}
-                  <UnlimitedSideCard {...MONTHLY_SIDE_CARD} extraOff={offer.claimed} onBuyNow={() => setUpsell("annual")} />
+                  <UnlimitedSideCard {...MONTHLY_SIDE_CARD} extraOff={offer.claimed} onBuyNow={buyMonthly} />
                 </div>
 
                 {/* Both auth states — the updated Jobs frame draws this card
@@ -656,7 +662,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                 extraOff={offer.claimed}
                 selectedPlan={subscriptionPlan}
                 onSelectPlan={setSubscriptionPlan}
-                onBuyMonthly={() => setUpsell("annual")}
+                onBuyMonthly={buyMonthly}
                 onBuyQuarterly={handleBuyUnlimitedQuarterly}
                 onBuyAnnual={handleBuyUnlimitedAnnual}
               />
@@ -734,6 +740,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                 price: SUBSCRIPTION_PLANS[planUpsell.plan].price,
                 months: SUBSCRIPTION_PLANS[planUpsell.plan].months,
                 dbCredits: SUBSCRIPTION_PLANS[planUpsell.plan].dbCredits,
+                dbWorth: SUBSCRIPTION_PLANS[planUpsell.plan].dbWorth,
               }
             : null
         }
