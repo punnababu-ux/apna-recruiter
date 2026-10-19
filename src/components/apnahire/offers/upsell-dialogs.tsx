@@ -222,3 +222,83 @@ export function AnnualUpgradeDialog({ from, ...props }: UpsellCallbacks & { from
     </OfferDialog>
   )
 }
+
+/* ── Credits → subscription (self-checkout) ──────────────────────────── */
+
+export interface CreditBundleQuote {
+  credits: number
+  price: number
+  mrp?: number
+  validDays?: number
+}
+
+export interface PlanQuote {
+  /** "Monthly plan", "Quarterly plan". */
+  label: string
+  price: number
+  /** Billing period in months (1 monthly, 3 quarterly). */
+  months: number
+  dbCredits: number
+}
+
+/** Buying a small credit bundle: offer the subscription that hires
+ *  without counting credits — 3 credits → monthly, 6 → quarterly (user
+ *  call, 2026-10-19). Per-job prices don't compare (a plan is unlimited
+ *  reposts on one active slot), so the header names the plan, not a
+ *  price drop. */
+export function CreditsToPlanDialog({
+  bundle,
+  plan,
+  ...props
+}: UpsellCallbacks & { bundle: CreditBundleQuote | null; plan: PlanQuote | null }) {
+  if (!bundle || !plan) return null
+  const off = (n: number) => (props.extraOff ? withExtraOff(n) : n)
+  const bundlePrice = off(bundle.price)
+  const planPrice = off(plan.price)
+  const monthly = plan.months === 1
+  const name = plan.label.toLowerCase()
+
+  return (
+    <OfferDialog
+      open={props.open}
+      onOpenChange={(next) => !next && props.onClose()}
+      tone="premium"
+      illustration="briefcase"
+      tag={
+        <>
+          <BadgePercent className="size-4" aria-hidden />
+          Special upgrade offer
+        </>
+      }
+      eyebrow="Hiring for more roles? Stop counting credits"
+      headline={`Unlimited job posts for ${plan.months * 30} days`}
+    >
+      <OfferChoice
+        stay={{
+          title: `${bundle.credits} Job credits`,
+          price: bundlePrice,
+          mrp: bundle.mrp,
+          validDays: bundle.validDays,
+          extraOff: props.extraOff,
+          ctaLabel: `Continue with ${bundle.credits} credits`,
+          ctaShortLabel: "Continue",
+          onSelect: props.onStay,
+        }}
+        upgrade={{
+          title: plan.label,
+          price: planPrice,
+          mrp: props.extraOff ? plan.price : undefined,
+          unit: monthly ? "/month" : "/quarter",
+          badge: "UNLIMITED POSTS",
+          note: monthly
+            ? `1 active job slot · ${plan.dbCredits} database credits`
+            : `That's just ${inr(Math.floor(planPrice / plan.months))} /month`,
+          extraOff: props.extraOff,
+          ctaLabel: `Get ${name} for ${inr(planPrice)}`,
+          ctaShortLabel: `Get ${name}`,
+          onSelect: props.onTake,
+        }}
+      />
+    </OfferDialog>
+  )
+}

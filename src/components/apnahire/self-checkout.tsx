@@ -62,7 +62,11 @@ import {
 import { FaqBand, TrustedByBand, WhyHireBand } from "@/components/marketing/proof-bands"
 import { PRICING_STATS } from "@/content/home"
 import { UnlimitedSideCard } from "@/components/apnahire/unlimited-side-card"
-import { AnnualUpgradeDialog, CreditPackOfferDialog } from "@/components/apnahire/offers/upsell-dialogs"
+import {
+  AnnualUpgradeDialog,
+  CreditPackOfferDialog,
+  CreditsToPlanDialog,
+} from "@/components/apnahire/offers/upsell-dialogs"
 import { CheckoutTopBar } from "@/components/apnahire/checkout-top-bar"
 import { HOME } from "@/lib/apnahire/nav"
 import { useSession } from "@/hooks/use-session"
@@ -277,7 +281,10 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   // Upsells (user call, 2026-10-19), the express checkout's pop-ups: the
   // 13-credit bundle offers 22 credits for ₹9,999; the monthly subscription
   // offers the annual plan. Every other Buy goes straight to the summary.
-  const [upsell, setUpsell] = React.useState<"pack" | "annual" | null>(null)
+  // 3 credits → the monthly plan, 6 → the quarterly plan (user call,
+  // 2026-10-19), as CreditsToPlanDialog.
+  const [upsell, setUpsell] = React.useState<"pack" | "annual" | "plan" | null>(null)
+  const [planUpsell, setPlanUpsell] = React.useState<{ bundle: Bundle; plan: "monthly" | "quarterly" } | null>(null)
   const [exitPrompt, setExitPrompt] = React.useState<{ proceed: () => void } | null>(null)
 
   // Leaving (the top bar's back button, closing the order summary) goes
@@ -331,9 +338,15 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
 
   // A job bundle's Buy: the biggest bundle (13) offers the 22-credit pack.
   const BIGGEST_BUNDLE = 13
+  const PLAN_FOR_BUNDLE: Record<number, "monthly" | "quarterly"> = { 3: "monthly", 6: "quarterly" }
   const handleSelectBundle = (bundle: Parameters<typeof handleBuyBundle>[0]) => {
+    const plan = PLAN_FOR_BUNDLE[bundle.credits]
+    const full = BUNDLES.find((b) => b.credits === bundle.credits)
     if (bundle.credits === BIGGEST_BUNDLE) setUpsell("pack")
-    else handleBuyBundle(bundle)
+    else if (plan && full) {
+      setPlanUpsell({ bundle: full, plan })
+      setUpsell("plan")
+    } else handleBuyBundle(bundle)
   }
   const buyPack22 = () =>
     openOrder({
@@ -703,6 +716,32 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
         onTake={() => {
           setUpsell(null)
           buyPack22()
+        }}
+      />
+
+      <CreditsToPlanDialog
+        open={upsell === "plan"}
+        bundle={planUpsell?.bundle ?? null}
+        plan={
+          planUpsell
+            ? {
+                label: `${SUBSCRIPTION_PLANS[planUpsell.plan].title} plan`,
+                price: SUBSCRIPTION_PLANS[planUpsell.plan].price,
+                months: SUBSCRIPTION_PLANS[planUpsell.plan].months,
+                dbCredits: SUBSCRIPTION_PLANS[planUpsell.plan].dbCredits,
+              }
+            : null
+        }
+        extraOff={offer.claimed}
+        onClose={() => setUpsell(null)}
+        onStay={() => {
+          setUpsell(null)
+          if (planUpsell) handleBuyBundle(planUpsell.bundle)
+        }}
+        onTake={() => {
+          setUpsell(null)
+          if (planUpsell?.plan === "monthly") handleBuyUnlimitedMonthly()
+          else handleBuyUnlimitedQuarterly()
         }}
       />
 
