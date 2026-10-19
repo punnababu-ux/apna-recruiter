@@ -879,7 +879,7 @@ function CompactPlanTabs({
             {tab.compactLogo ? (
               <>
                 <span aria-hidden className="flex translate-y-px items-center">
-                  {tab.compactLogo}
+                  {typeof tab.compactLogo === "function" ? tab.compactLogo(tab.value === value) : tab.compactLogo}
                 </span>
                 <span className="sr-only">{PRICING_TAB_SHORT_LABELS[tab.value]}</span>
               </>

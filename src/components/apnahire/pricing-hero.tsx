@@ -35,10 +35,12 @@ export type PricingTab = "jobs" | "database" | "unlimited" | "enterprise"
 /** Icons carry no size class — every consumer (the hero switcher, the two
  *  compact scrolled bars) sets its own glyph size, and Figma uses a
  *  different one in each. */
-/** The apna Unlimited wordmark for the pricing tabs: the deeper gold on
- *  light tracks, the standard (brighter) gold in dark mode, where the deep
- *  one would be dim. */
-function UnlimitedWordmark({ className }: { className?: string }) {
+/** The apna Unlimited wordmark for the pricing tabs. Selected: the gold
+ *  gradient — the deep one on light tracks, the brighter one in dark mode.
+ *  Not selected: neutral, the same colour as the other unselected tabs
+ *  (currentColor). */
+function UnlimitedWordmark({ className, active }: { className?: string; active: boolean }) {
+  if (!active) return <LogoApnaUnlimited variant="theme" className={className} />
   return (
     <>
       <LogoApnaUnlimited variant="gradient-deep" className={cn(className, "dark:hidden!")} />
@@ -49,7 +51,7 @@ function UnlimitedWordmark({ className }: { className?: string }) {
 
 /* ── apna Unlimited wordmark in the tabs: a preview switch ────────────
  * On (default): the gold wordmark in every pricing tab bar. Off: the ∞ icon
- * + "Apna Unlimited" in the standard tab colours, like the other tabs. Set from the page's settings gear; kept in
+ * + "Unlimited" in the standard tab colours, like the other tabs. Set from the page's settings gear; kept in
  * localStorage, and every tab bar on the page follows a change at once. */
 const WORDMARK_KEY = "apnahire:pricing-tab-wordmark"
 const WORDMARK_EVENT = "apnahire:pricing-tab-wordmark"
@@ -91,7 +93,7 @@ export function pricingTabs(wordmark: boolean): SegmentedTabItem<PricingTab>[] {
   // Off: a plain tab like the others — icon + "apna Unlimited" in the
   // standard tab colours (no gold accent).
   return PRICING_TABS.map((tab) =>
-    wordmark ? tab : { ...tab, logo: undefined, compactLogo: undefined, accent: undefined }
+    wordmark ? tab : { ...tab, logo: undefined, compactLogo: undefined }
   )
 }
 
@@ -104,18 +106,17 @@ export const PRICING_TABS: SegmentedTabItem<PricingTab>[] = [
   },
   {
     value: "unlimited",
-    // Capital "Apna" on this tab label (user call, 2026-10-19).
-    label: "Apna Unlimited",
-    description: "Unlimited hiring for 3 months",
+    // "Unlimited" next to the ∞ icon (user call, 2026-10-19); the wordmark
+    // setting shows the logo instead, and this stays its accessible name.
+    label: "Unlimited",
+    description: "Free job reposts and swapping",
     icon: <InfinityIcon className="shrink-0" aria-hidden />,
-    // apna Unlimited's gold, selected or not (user call, 2026-10-19).
-    accent: "unlimited",
     // The wordmark in the big desktop tab; chips and the sticky bar keep the
     // gold icon + label.
     // "!": the switcher sizes every svg in a tab to a square.
-    logo: <UnlimitedWordmark className="h-4.5! w-auto!" />,
+    logo: (active: boolean) => <UnlimitedWordmark active={active} className="h-4.5! w-auto!" />,
     // Phone chips and the sticky bar: 14px, the chips' text size.
-    compactLogo: <UnlimitedWordmark className="h-3.5! w-auto!" />,
+    compactLogo: (active: boolean) => <UnlimitedWordmark active={active} className="h-3.5! w-auto!" />,
   },
   {
     value: "database",
@@ -143,7 +144,7 @@ export const PRICING_TABS: SegmentedTabItem<PricingTab>[] = [
 export const PRICING_TAB_SHORT_LABELS: Record<PricingTab, string> = {
   jobs: "Jobs",
   database: "Database",
-  unlimited: "Apna Unlimited",
+  unlimited: "Unlimited",
   enterprise: "Enterprise plans",
 }
 

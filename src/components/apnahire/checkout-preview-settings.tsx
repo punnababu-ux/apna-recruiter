@@ -38,7 +38,7 @@ export function CheckoutPreviewSettings({
           Wordmark
         </PrototypeOption>
         <PrototypeOption active={!wordmark} onClick={() => setWordmark(false)}>
-          Icon + &ldquo;Apna Unlimited&rdquo;
+          Icon + &ldquo;Unlimited&rdquo;
         </PrototypeOption>
       </PrototypeSection>
       <ExitOfferControls offer={offer} />

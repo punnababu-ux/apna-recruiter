@@ -55,10 +55,11 @@ export interface SegmentedTabItem<V extends string = string> {
   /** A product wordmark shown in the desktop row in place of the icon and
    *  label (the label stays for screen readers). Phone chips keep icon +
    *  label: a wordmark is too small to read at chip size. */
-  logo?: React.ReactNode
+  logo?: React.ReactNode | ((active: boolean) => React.ReactNode)
   /** The wordmark at chip size, for the phone chips (and any compact tab
-   *  bar). Falls back to icon + label. */
-  compactLogo?: React.ReactNode
+   *  bar). Falls back to icon + label. Either may be a function of whether
+   *  the option is selected (a brand colour only when selected). */
+  compactLogo?: React.ReactNode | ((active: boolean) => React.ReactNode)
 }
 
 export interface SegmentedTabSwitcherProps<V extends string = string> {
@@ -208,7 +209,7 @@ export function SegmentedTabSwitcher<V extends string = string>({
                         than the other tabs' labels and left a bigger gap to
                         its description. */}
                     <span aria-hidden className="flex h-7 translate-y-0.5 items-center">
-                      {logo}
+                      {typeof logo === "function" ? logo(active) : logo}
                     </span>
                     <span className="sr-only">{label}</span>
                   </>
@@ -296,7 +297,7 @@ export function SegmentedTabSwitcher<V extends string = string>({
                     {/* 1px down onto the chip text's baseline (the "p"
                         descends below it). */}
                     <span aria-hidden className="flex translate-y-px items-center">
-                      {compactLogo}
+                      {typeof compactLogo === "function" ? compactLogo(active) : compactLogo}
                     </span>
                     <span className="sr-only">{shortLabel ?? label}</span>
                   </>

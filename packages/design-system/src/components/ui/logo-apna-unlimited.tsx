@@ -13,8 +13,8 @@
  *     (600 → 400) since the Unlimited frame went lighter (plum 400): gold-600
  *     fell to 3.2:1 there; gold-500 keeps 4.8:1, as before. Also for always-dark surfaces, where the
  *     brand gold treatment reads better than flat white.
- *   - "gradient-deep" — the same gold gradient two steps darker
- *     (apna-gold-700 → apna-gold-500), for LIGHT surfaces, where gold-400
+ *   - "gradient-deep" — the gold gradient darker
+ *     (apna-gold-800 → apna-gold-600), for LIGHT surfaces, where gold-400
  *     washes out (the pricing tab row on its pale track).
  *   - "theme"   — `fill="currentColor"`, for a surface whose background
  *     ITSELF flips with the app theme (e.g. the page body, which sits on
@@ -64,8 +64,8 @@ export function LogoApnaUnlimited({
       {(variant === "gradient" || variant === "gradient-deep") && (
         <defs>
           <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-            <stop style={/* token-lint-ignore: SVG gradient stops take no className; value is a token var */ { stopColor: variant === "gradient-deep" ? "var(--color-apna-gold-700)" : "var(--color-apna-gold-500)" }} />
-            <stop offset="1" style={/* token-lint-ignore: SVG gradient stops take no className; value is a token var */ { stopColor: variant === "gradient-deep" ? "var(--color-apna-gold-500)" : "var(--color-apna-gold-300)" }} />
+            <stop style={/* token-lint-ignore: SVG gradient stops take no className; value is a token var */ { stopColor: variant === "gradient-deep" ? "var(--color-apna-gold-800)" : "var(--color-apna-gold-500)" }} />
+            <stop offset="1" style={/* token-lint-ignore: SVG gradient stops take no className; value is a token var */ { stopColor: variant === "gradient-deep" ? "var(--color-apna-gold-600)" : "var(--color-apna-gold-300)" }} />
           </linearGradient>
         </defs>
       )}

@@ -449,6 +449,30 @@ To change how round the cards feel, retune `--radius-card` in
 
 ---
 
+## Copy is sentence case
+
+Every heading, label, button, tab, chip, badge and line of UI copy is
+**sentence case: capitalise only the first letter** (and proper nouns).
+
+| ✅ | ❌ |
+|---|---|
+| Need a custom solution? | Need A Custom Solution? |
+| Contact sales · Buy now · Proceed to pay | Contact Sales · Buy Now · Proceed To Pay |
+| Apna unlimited | Apna Unlimited |
+
+- **The brand in a sentence:** "Apna unlimited" — capital A, the rest
+  lower case. The **wordmark** (the logo) is artwork and keeps its own
+  lettering; this is about text.
+- **Exceptions (always capitalised):** people's and companies' names
+  (Tata 1mg, Shadowfox), places (Bengaluru, India), and acronyms / brand
+  names of others (AI, GST, ATS, OTP, WhatsApp, LinkedIn). Add to this list
+  as cases come up — never by quietly title-casing a label.
+- Badges written in capitals by design (`RECOMMENDED`, `10% OFF`) are a
+  style (`text-overline` / uppercase), not copy: write the copy in sentence
+  case and let the style uppercase it.
+
+---
+
 ## Text that grows — layouts decide where lines break, not copy
 
 Copy changes: a price gains a digit, a plan gets a longer name, the font
