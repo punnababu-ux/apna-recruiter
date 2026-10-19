@@ -30,7 +30,8 @@ import { GstNote } from "@/components/apnahire/gst-note"
 
 import {
   PricingHero,
-  PRICING_TABS,
+  pricingTabs,
+  useUnlimitedWordmark,
   PRICING_TAB_SHORT_LABELS,
   type PricingTab,
 } from "@/components/apnahire/pricing-hero"
@@ -837,11 +838,12 @@ function DockedPlanTabs({
   value: PricingTab
   onValueChange: (tab: PricingTab) => void
 }) {
+  const [wordmark] = useUnlimitedWordmark()
   return (
     <>
       <div className="w-full min-w-0 md:hidden">
         <SegmentedTabSwitcher
-          items={PRICING_TABS.map((tab) => ({ ...tab, shortLabel: PRICING_TAB_SHORT_LABELS[tab.value] }))}
+          items={pricingTabs(wordmark).map((tab) => ({ ...tab, shortLabel: PRICING_TAB_SHORT_LABELS[tab.value] }))}
           value={value}
           onValueChange={onValueChange}
           appearance="checkout"
@@ -863,10 +865,11 @@ function CompactPlanTabs({
   onValueChange: (tab: PricingTab) => void
   className?: string
 }) {
+  const [wordmark] = useUnlimitedWordmark()
   return (
     <Tabs value={value} onValueChange={(v) => onValueChange(v as PricingTab)} className={className}>
       <TabsList variant="checkout">
-        {PRICING_TABS.map((tab) => (
+        {pricingTabs(wordmark).map((tab) => (
           <TabsTrigger
             key={tab.value}
             value={tab.value}
