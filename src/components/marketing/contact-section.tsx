@@ -162,7 +162,7 @@ export function ContactPopup({ open, onOpenChange }: { open: boolean; onOpenChan
           {/* The sheet is capped below the viewport and can't clip (its close
               bubble sits outside it), so the form scrolls in its own wrapper,
               rounded to the sheet's top corners. */}
-          <SheetContent side="bottom" className="gap-0 rounded-t-3xl border-t-0 p-0 pb-safe">
+          <SheetContent side="bottom" className="gap-0 rounded-t-3xl data-[side=bottom]:border-t-0 p-0 pb-safe">
             <div className="min-h-0 overflow-y-auto overscroll-contain rounded-t-3xl p-5">
               <ContactForm key={round} Title={SheetTitle} Description={SheetDescription} />
             </div>

@@ -163,7 +163,7 @@ export function OfferDialog({
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent
           side="bottom"
-          className="gap-0 rounded-t-2xl border-t-0 bg-transparent p-0"
+          className="gap-0 rounded-t-2xl data-[side=bottom]:border-t-0 bg-transparent p-0"
         >
           {/* The sheet is capped below the viewport (so its close bubble
               stays on screen) and can't clip; the content scrolls in here

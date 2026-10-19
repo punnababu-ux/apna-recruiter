@@ -49,7 +49,7 @@ export function CouponExpiredDialog({ open, onClose }: { open: boolean; onClose:
   if (isMobile) {
     return (
       <Sheet open={open} onOpenChange={(next) => !next && onClose()}>
-        <SheetContent side="bottom" className="gap-0 rounded-t-2xl border-t-0 p-0 pb-safe">
+        <SheetContent side="bottom" className="gap-0 rounded-t-2xl data-[side=bottom]:border-t-0 p-0 pb-safe">
           {body}
         </SheetContent>
       </Sheet>
