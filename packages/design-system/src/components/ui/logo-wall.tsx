@@ -35,6 +35,9 @@ export interface LogoWallProps extends React.ComponentProps<"div"> {
   itemHeight?: "sm" | "md"
   /** Grayscale at rest, full colour on hover — for a quieter wall. */
   muted?: boolean
+  /** Glide the logos left in an endless loop (pauses on hover, edges fade).
+   *  Reduced motion: the plain scrollable row. */
+  marquee?: boolean
 }
 
 const ITEM_HEIGHT = {
@@ -46,9 +49,51 @@ function LogoWall({
   items,
   itemHeight = "md",
   muted = false,
+  marquee = false,
   className,
   ...props
 }: LogoWallProps) {
+  const renderItems = (copy: number) =>
+    items.map((item) => (
+      <div
+        key={`${copy}-${item.name}`}
+        aria-hidden={copy > 0 || undefined}
+        className={cn(
+          ITEM_HEIGHT[itemHeight],
+          "flex shrink-0 items-center [&_img]:h-full [&_img]:w-auto [&_img]:object-contain [&_svg]:h-full [&_svg]:w-auto",
+          // Spacing as padding, not gap, so both copies are the same width
+          // and the loop's half-way point is exact.
+          marquee && "pr-14",
+          // The second copy only exists for the loop.
+          copy > 0 && "motion-reduce:hidden",
+          // Dark: a light silhouette (brand-logo in index.css).
+          "brand-logo",
+          muted && "opacity-60 grayscale transition-interactive hover:opacity-100 hover:grayscale-0"
+        )}
+      >
+        {item.logo}
+      </div>
+    ))
+
+  if (marquee) {
+    return (
+      <div
+        data-slot="logo-wall"
+        data-marquee
+        className={cn(
+          "no-scrollbar w-full overflow-hidden mask-x-from-90% mask-x-to-100% motion-reduce:overflow-x-auto",
+          className
+        )}
+        {...props}
+      >
+        <div className="flex w-max items-center animate-marquee">
+          {renderItems(0)}
+          {renderItems(1)}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div
       data-slot="logo-wall"

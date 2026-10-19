@@ -855,6 +855,25 @@
   }
 }
 
+/* A logo strip gliding left forever (LogoWall `marquee`). The track holds
+ * the logos twice, so sliding it by half lands the second copy exactly where
+ * the first began: a seamless loop. Slow enough to read every logo; it
+ * pauses while hovered. Reduced motion: no glide, the strip scrolls by hand. */
+@keyframes marquee {
+  from { translate: 0 0; }
+  to   { translate: -50% 0; }
+}
+
+@utility animate-marquee {
+  animation: marquee 50s linear infinite;
+
+  &:hover { animation-play-state: paused; }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
 /* ----------------------------------------------------------------------------
  * Ambient backdrop — AmbientBackdrop's layers (homepage hero).
  *

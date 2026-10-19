@@ -34,4 +34,8 @@ export const CLIENT_LOGOS: ClientLogo[] = [
   { name: "Uber", src: "/logos/uber.svg", width: 104 },
   { name: "Urban Company", src: "/logos/urban-company.png", width: 128 },
   { name: "Zomato", src: "/logos/zomato.svg", width: 168 },
+  // From employer.apna.co's "Trusted by" strip (2026-10-19).
+  { name: "Tata 1mg", src: "/logos/tata-1mg.png", width: 159 },
+  { name: "Nizams", src: "/logos/nizams.png", width: 108 },
+  { name: "Shadowfox", src: "/logos/shadowfox.png", width: 95 },
 ]
