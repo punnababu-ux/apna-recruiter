@@ -183,6 +183,7 @@ function OptionTile({
 
   return (
     <div
+      data-compare-card
       className={cn(
         "relative grid min-w-0 grid-rows-subgrid gap-y-2.5 overflow-hidden rounded-xl border p-3.5 sm:p-4",
         ROW_SPAN[rows.length],
@@ -204,7 +205,7 @@ function OptionTile({
       {rows.map((key) => (
         // Every row renders in every tile — empty when this tile has nothing
         // for it — so the subgrid keeps both tiles' lines level.
-        <div key={key} className={cn("min-w-0", key === "cta" && "flex items-end")}>
+        <div key={key} data-compare={key} className={cn("min-w-0", key === "cta" && "flex items-end")}>
           {cell[key]}
         </div>
       ))}

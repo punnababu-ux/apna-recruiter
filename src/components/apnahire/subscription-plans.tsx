@@ -146,6 +146,7 @@ function PlanCard({
     // clip the lift's hit strip; the ribbon clips its own corner.
     <div
       onClick={onBuy}
+      data-compare-card
       className="card-hover-lift ink press-subtle relative flex flex-1 cursor-pointer flex-col justify-between gap-5 rounded-card border border-border bg-plan-card px-4 pb-5 pt-8"
     >
       {recommended && (
@@ -161,8 +162,8 @@ function PlanCard({
         <div className="flex flex-col gap-2">
           <p className="text-base font-semibold text-foreground">{title}</p>
           {/* Price, unit and struck price never split; the % OFF badge sits
-              at the row's end. */}
-          <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-1">
+              right after them, never flung to the row's far end. */}
+          <div data-compare="price" className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
             <p className="flex items-baseline gap-1.5 whitespace-nowrap">
               <span className="text-2xl font-semibold text-foreground">{inr(price)}</span>
               <span className="text-xs font-regular text-muted-foreground">{priceSuffix}</span>
@@ -176,6 +177,7 @@ function PlanCard({
               rides ~16px higher. The claimed offer's line goes under it,
               in all cards. */}
           <p
+            data-compare="price-suffix"
             className={cn("min-h-4 text-xs italic leading-4 text-checkout-primary", !note && "invisible")}
             aria-hidden={!note}
           >
@@ -225,6 +227,7 @@ function PlanCard({
       </div>
 
       <Button
+        data-compare="cta"
         type="button"
         variant={recommended ? "checkout" : "outline"}
         className="h-10 w-full font-semibold"

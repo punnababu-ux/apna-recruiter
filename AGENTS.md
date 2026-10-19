@@ -489,7 +489,19 @@ every line may break; never let the width of a string decide it.**
    both, so the eye reads straight across. A tile without that line keeps
    the row empty; never let one tile's extra line push the rest out of
    step. The price group is one unit: amount + unit, struck price, % tag
-   and any extra-off line, together.
+   and any extra-off line, together — the % tag sits right after the struck
+   price, never pushed to the far edge.
+   **🛑 This is unbreakable: across every card in a row, the prices sit on
+   one line, their notes on one line, the buttons on one line.** It holds
+   for plan cards (`PricingCard`, the Subscription tab, the Unlimited card)
+   and upsell tiles (`OfferChoice`), offer applied or not, at every width.
+   Reserve an empty line where one card has nothing ("₹650 /credit" beside
+   a monthly plan) rather than let the rows drift. It is checked, not
+   eyeballed: comparable surfaces carry `data-compare-card` and
+   `data-compare="price" | "price-suffix" | "cta" | …`, and
+   `scripts/check-alignment.js` (run it in the page) reports any card whose
+   line isn't level. Run it at desktop and phone widths, with and without
+   the 10% offer, before showing a change to these surfaces.
 7. **Mixed sizes align on the baseline.** Price rows that mix a large
    amount with a small unit or struck price use `items-baseline`, not
    `items-center`.

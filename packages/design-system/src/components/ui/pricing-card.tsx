@@ -168,7 +168,9 @@ export function PricingCard({
       {/* 6px gaps, not 8: in a 248px card (Jobs tab at xl, beside the
           Unlimited card) "₹6,389 ₹8,999 29% OFF" missed one line by 1px in
           Inter. The badge still wraps if a price outgrows the card. */}
-      <div className="flex flex-wrap items-center justify-between gap-x-1.5 gap-y-1">
+      {/* Packed left: the % tag sits right after the struck price, never
+          flung to the card's far edge. */}
+      <div data-compare="price" className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
         {/* Baseline, not centre: the small struck price then sits on the
             same line as the price's own suffix ("/month"), not floating at
             the big figure's mid-height. */}
@@ -193,7 +195,7 @@ export function PricingCard({
         {badge && <div className="shrink-0">{badge}</div>}
       </div>
       {priceSuffix && (
-        <p className={cn("text-xs italic leading-6", fgMuted)}>{priceSuffix}</p>
+        <p data-compare="price-suffix" className={cn("text-xs italic leading-6", fgMuted)}>{priceSuffix}</p>
       )}
     </div>
   )
@@ -216,6 +218,7 @@ export function PricingCard({
     return (
       <div
         data-slot="pricing-card"
+        data-compare-card
         data-layout="price-first"
         data-surface={surface}
         className={rootClassName}
@@ -229,7 +232,7 @@ export function PricingCard({
           {priceBlock}
         </div>
 
-        <div>{cta}</div>
+        <div data-compare="cta">{cta}</div>
 
         <hr className={rule} />
 
@@ -247,6 +250,7 @@ export function PricingCard({
   return (
     <div
       data-slot="pricing-card"
+        data-compare-card
       data-emphasis={emphasis}
       data-surface={surface}
       className={rootClassName}
@@ -284,7 +288,7 @@ export function PricingCard({
         {priceBlock}
       </div>
 
-      <div>{cta}</div>
+      <div data-compare="cta">{cta}</div>
     </div>
   )
 }
