@@ -76,10 +76,10 @@ const BUNDLES: Bundle[] = [
 
 /** Single job-credit purchase — reached via "I need a single job credit". */
 /** Self-checkout's upsell from the 13-credit bundle (user call,
- *  2026-10-19): 22 job credits for ₹9,999. Not a card on the page — only
- *  offered in the pop-up. PROVISIONAL: validity and list price to follow
- *  from the collateral; until then neither is shown. */
-export const UPSELL_PACK_22 = { credits: 22, price: 9999 } as const
+ *  2026-10-19): 22 job credits for ₹9,999, struck ₹15,378. Not a card on the
+ *  page — only offered in the pop-up. Validity still to come from the
+ *  collateral; until then none is shown. */
+export const UPSELL_PACK_22 = { credits: 22, price: 9999, mrp: 15378 } as const
 
 export const SINGLE_CREDIT: Bundle = {
   id: "3", // reuses the BundleId type; not rendered as a card

@@ -340,6 +340,9 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
       id: `job-${UPSELL_PACK_22.credits}`,
       label: `${UPSELL_PACK_22.credits} Job credits`,
       price: UPSELL_PACK_22.price,
+      mrp: UPSELL_PACK_22.mrp,
+      discountLabel: `Job plan discount (${Math.round((1 - UPSELL_PACK_22.price / UPSELL_PACK_22.mrp) * 100)}% OFF)`,
+      discountAmount: UPSELL_PACK_22.mrp - UPSELL_PACK_22.price,
     })
 
   const handleBuyDatabaseBundle = (bundle: {
