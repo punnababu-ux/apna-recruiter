@@ -152,6 +152,8 @@ export function OfferDialog({
           <div className="flex flex-col gap-4 border-t border-surface-inverted-fg/15 pt-4">{headerFooter}</div>
         )}
       </div>
+      {/* The frame is transparent (no white hairline peeking above the
+          header at its edge and corners); the body paints its own white. */}
       <div className="bg-card p-4 sm:p-6">{children}</div>
     </>
   )
@@ -161,12 +163,12 @@ export function OfferDialog({
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent
           side="bottom"
-          className="gap-0 rounded-t-2xl border-t-0 p-0 pb-safe"
+          className="gap-0 rounded-t-2xl border-t-0 bg-transparent p-0"
         >
           {/* The sheet is capped below the viewport (so its close bubble
               stays on screen) and can't clip; the content scrolls in here
               instead when a short phone or a long job list needs it. */}
-          <div className="min-h-0 overflow-y-auto overscroll-contain rounded-t-2xl">{body}</div>
+          <div className="min-h-0 overflow-y-auto overscroll-contain rounded-t-2xl bg-card pb-safe">{body}</div>
         </SheetContent>
       </Sheet>
     )
@@ -175,7 +177,7 @@ export function OfferDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className={cn("gap-0 overflow-hidden rounded-2xl p-0 shadow-dialog data-open:slide-in-from-bottom-16 data-closed:slide-out-to-bottom-16 data-open:zoom-in-100 data-closed:zoom-out-100 duration-sheet ease-carousel", size === "sm" ? "sm:max-w-md" : size === "lg" ? "sm:max-w-2xl" : "sm:max-w-xl")}
+        className={cn("gap-0 overflow-hidden rounded-2xl bg-transparent p-0 shadow-dialog ring-0 data-open:slide-in-from-bottom-16 data-closed:slide-out-to-bottom-16 data-open:zoom-in-100 data-closed:zoom-out-100 duration-sheet ease-carousel", size === "sm" ? "sm:max-w-md" : size === "lg" ? "sm:max-w-2xl" : "sm:max-w-xl")}
       >
         {body}
       </DialogContent>
