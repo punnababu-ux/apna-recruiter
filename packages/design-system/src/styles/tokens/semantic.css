@@ -417,19 +417,18 @@
    * light-mode value, not fixed across themes. Pair with
    * --surface-checkout-hero-fg / -fg-muted, which ARE fixed dark-on-light
    * text roles, since both hero backdrops keep light-toned text. */
-  /* The mother gradient (live 2026-10-19, Punna's call): the classic
-   * mesh's geometry — warm top-left, cool violet down the left, sky
-   * top-right, white bottom-right — with every hue an apna brand step at its
-   * lightest (plum 100 + sky, sky 100/200, a faint gold 100), so the canvas
-   * whispers the brand palette and stays quiet under the green actions and
-   * the product colours. The previous mesh is kept as `?mother=classic`. */
+  /* The mother gradient (live 2026-10-19, Punna's call): the redrawn
+   * deck's title glow in apna's lightest brand steps — green top-left, sky
+   * on the right, a soft gold rising from the bottom, a touch of violet
+   * (plum + sky) bottom-left — over white, so the canvas whispers the brand
+   * palette and stays quiet under the green actions and the product colours.
+   * The previous mesh is kept as `?mother=classic`. */
   --gradient-checkout-hero:
-    radial-gradient(circle at 8% 12%,  color-mix(in srgb, var(--color-apna-gold-100) 25%, transparent) 0%, color-mix(in srgb, var(--color-apna-gold-100) 8%, transparent) 28%, transparent 55%),
-    radial-gradient(circle at 10% 42%, color-mix(in srgb, var(--color-apna-plum-200) 55%, var(--color-apna-sky-200)) 0%, color-mix(in srgb, var(--color-apna-plum-100) 60%, transparent) 30%, transparent 58%),
-    radial-gradient(circle at 12% 82%, color-mix(in srgb, var(--color-apna-sky-200) 95%, transparent) 0%, color-mix(in srgb, var(--color-apna-plum-100) 50%, transparent) 32%, transparent 60%),
-    radial-gradient(circle at 85% 15%, var(--color-apna-sky-200) 0%, color-mix(in srgb, var(--color-apna-sky-100) 70%, transparent) 40%, transparent 65%),
-    radial-gradient(circle at 92% 88%, var(--color-gray-0) 0%, color-mix(in srgb, var(--color-gray-0) 80%, transparent) 45%, transparent 70%),
-    linear-gradient(135deg, var(--color-gray-0) 0%, var(--color-apna-sky-100) 55%, var(--color-apna-plum-100) 100%);
+    radial-gradient(circle at 6% 8%,   color-mix(in srgb, var(--color-apna-green-200) 55%, transparent) 0%, color-mix(in srgb, var(--color-apna-green-100) 30%, transparent) 25%, transparent 45%),
+    radial-gradient(circle at 92% 22%, var(--color-apna-sky-200) 0%, color-mix(in srgb, var(--color-apna-sky-100) 70%, transparent) 38%, transparent 65%),
+    radial-gradient(circle at 45% 100%, color-mix(in srgb, var(--color-apna-gold-100) 70%, transparent) 0%, color-mix(in srgb, var(--color-apna-gold-100) 25%, transparent) 30%, transparent 55%),
+    radial-gradient(circle at 8% 90%, color-mix(in srgb, var(--color-apna-plum-200) 55%, var(--color-apna-sky-200)) 0%, color-mix(in srgb, var(--color-apna-plum-100) 50%, transparent) 30%, transparent 55%),
+    linear-gradient(135deg, var(--color-gray-0) 0%, var(--color-apna-sky-50) 55%, var(--color-gray-0) 100%);
   /* Product canvases — the page background of a product page, header to
    * footer: the homepage canvas (--gradient-checkout-hero, "the mother
    * gradient": the same mesh, white wash and corner geometry) re-tinted in
@@ -473,10 +472,10 @@
    * left, periwinkle bottom-left, sky top-right), so the motion re-mixes the
    * gradient rather than adding a colour. Alphas keep it a whisper: text
    * contrast on the hero is unchanged. */
-  --ambient-blob-1: color-mix(in srgb, var(--color-apna-plum-100) 90%, transparent);
+  --ambient-blob-1: color-mix(in srgb, var(--color-apna-green-200) 50%, transparent);
   --ambient-blob-2: color-mix(in srgb, var(--color-apna-plum-200) 55%, var(--color-apna-sky-200));
-  --ambient-blob-3: var(--color-apna-sky-200);
-  --ambient-blob-4: color-mix(in srgb, var(--color-apna-sky-200) 80%, transparent);
+  --ambient-blob-3: color-mix(in srgb, var(--color-apna-gold-100) 80%, transparent);
+  --ambient-blob-4: var(--color-apna-sky-200);
   --ambient-glow:   color-mix(in srgb, var(--color-gray-0) 85%, transparent);
   --ambient-grain-opacity: 0.06;
   --surface-checkout-hero-fg:       var(--color-gray-900);
