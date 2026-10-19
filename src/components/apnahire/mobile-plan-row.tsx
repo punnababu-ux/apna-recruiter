@@ -117,7 +117,7 @@ export function MobilePlanRow({
           selected
             // The selection green is the CTA green (green-700 on dark).
             ? "border-2 border-cta-primary ring-1 ring-cta-primary/20"
-            : "border border-border hover:border-border/80",
+            : "border-2 border-transparent",
           className
         )}
       >

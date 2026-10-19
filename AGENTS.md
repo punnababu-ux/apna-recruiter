@@ -351,8 +351,8 @@ pricing card — job credits, apna Unlimited / Subscription, Database,
 Enterprise, both checkouts — is a solid white `bg-plan-card` card with a
 transparent border (`border-transparent`, so sizes don't shift), sitting in
 the frosted dark glass panel (`surface-glass-dark`). No grey outline, never
-frosted glass. The exception is a *selectable* row on phones, whose border
-is the selection state (grey → green).
+frosted glass. On a *selectable* card (phone rows) only the selected one
+has a border — green; unselected cards stay borderless.
 
 ---
 
