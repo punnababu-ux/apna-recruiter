@@ -554,7 +554,10 @@
    * shadowed, self-referential-looking pair. It now points straight at the
    * ramp and the orphan primitive is gone. */
   --checkout-discount-fg:        var(--color-apna-green-700);
-  --checkout-discount-bg:        var(--color-gray-200);
+  /* Translucent green, like dark mode's: it takes on whatever it sits on —
+   * a soft green pill on white, a deeper mint on the offer's mint tile —
+   * where a solid grey clashed with green surfaces (user call, 2026-10-19). */
+  --checkout-discount-bg:        color-mix(in srgb, var(--color-apna-green-600) 14%, transparent);
   /* Testimonial avatar — the design's brighter "CoreGreen" (#2BB792), not
    * the checkout CTA green; apna-green-400 (#3EBA8D) is the existing ramp
    * step that lands on it. Quote/name ink just uses --foreground. */
