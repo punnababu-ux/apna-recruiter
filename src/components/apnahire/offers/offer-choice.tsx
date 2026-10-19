@@ -110,14 +110,16 @@ function OptionTile({
     // shared, so the rule sits level in both tiles.
     price: (
       <div className="flex h-full flex-col gap-1.5 border-b border-border pb-2.5">
-        <p className="flex flex-wrap items-baseline gap-x-1.5 gap-y-1">
+        {/* Phones: the struck price + % tag take the second line in every
+            tile. From sm: one line, always. */}
+        <p className="flex flex-wrap items-baseline gap-x-1.5 gap-y-1 sm:flex-nowrap">
           {/* The price and its unit never split ("₹2,499 /month"). */}
           <span className="inline-flex items-baseline gap-1 whitespace-nowrap">
             <span className="text-xl font-semibold text-foreground sm:text-2xl">{inr(option.price)}</span>
             {option.unit && <span className="text-sm text-muted-foreground">{option.unit}</span>}
           </span>
           {(strike || pct) && (
-            <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+            <span className="inline-flex w-full items-center gap-1.5 whitespace-nowrap sm:w-auto">
               {strike && <span className="text-sm text-muted-foreground line-through">{inr(strike)}</span>}
               {pct && (
                 <Badge variant="discount" size="sm">
@@ -187,7 +189,7 @@ function OptionTile({
         // The ribbon's band is reserved on BOTH tiles when either has one,
         // so the rows start level.
         reserveRibbon && "pt-8 sm:pt-9",
-        upgrade ? "border-checkout-primary bg-accent sm:col-span-5" : "border-border bg-card sm:col-span-4"
+        upgrade ? "border-checkout-primary bg-accent" : "border-border bg-card"
       )}
     >
       {ribbon && (
@@ -215,9 +217,11 @@ export function OfferChoice({ stay, upgrade }: { stay: OfferOption; upgrade: Off
   const reserveRibbon = isRibbon(stay) || isRibbon(upgrade)
   const rows = ROW_ORDER.filter((key) => rowUsed(stay, key) || rowUsed(upgrade, key))
   return (
-    // 4:5 from sm: the offer tile stays wider. Both tiles span the same rows
-    // of this grid (subgrid), so their lines compare one to one.
-    <div className="grid grid-cols-2 gap-x-3 sm:grid-cols-9">
+    // Equal widths: at 4:5 the stay tile was the narrower and its price line
+    // ("₹2,249 /month ₹2,499 10% OFF") wrapped while the other's fit. Both
+    // tiles span the same rows of this grid (subgrid), so their lines
+    // compare one to one.
+    <div className="grid grid-cols-2 gap-x-3">
       <OptionTile option={stay} kind="stay" rows={rows} reserveRibbon={reserveRibbon} />
       <OptionTile option={upgrade} kind="upgrade" rows={rows} reserveRibbon={reserveRibbon} />
     </div>
