@@ -121,6 +121,7 @@ export const MAIN_NAV: NavGroup[] = [
           { label: "apna Database", href: productHref("Hyperlocal Database") },
           { label: "AI Calling Agent", href: productHref("AI Calling Agent") },
           { label: "apna Unlimited", href: productHref("apna Unlimited") },
+          { label: "apna Enterprise", href: "/enterprise" },
         ],
       },
       {
