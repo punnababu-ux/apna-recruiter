@@ -42,12 +42,15 @@ export function TrustedByBand() {
 }
 
 /** The trusted-by logos, compact, for product flows (express checkout's plan
- *  step): a gray caption and the same gliding logo row, no band or heading. */
+ *  step): a gray caption and a still logo row (no glide: it's a checkout,
+ *  not a showcase), no band or heading. */
 export function TrustedByStrip() {
   return (
     <div data-slot="trusted-by-strip" className="flex flex-col items-center gap-4 pt-6">
       <p className="text-overline text-muted-foreground">Trusted by top hiring partners</p>
-      <LogoWall items={CLIENT_LOGO_ITEMS} muted marquee />
+      {/* Still, so a fixed set: the seven that fit one desktop row (phones
+          swipe it). */}
+      <LogoWall items={CLIENT_LOGO_ITEMS.slice(0, 7)} muted />
     </div>
   )
 }
