@@ -200,7 +200,11 @@ export function SegmentedTabSwitcher<V extends string = string>({
               >
                 {logo ? (
                   <>
-                    <span aria-hidden className="flex h-7 items-center">
+                    {/* 2px down: a wordmark's baseline sits above its box
+                        centre (its "p" descends), so centred it rode higher
+                        than the other tabs' labels and left a bigger gap to
+                        its description. */}
+                    <span aria-hidden className="flex h-7 translate-y-0.5 items-center">
                       {logo}
                     </span>
                     <span className="sr-only">{label}</span>
