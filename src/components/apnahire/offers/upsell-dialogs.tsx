@@ -286,7 +286,8 @@ export function CreditsToPlanDialog({
           title: `${bundle.credits} Job credits`,
           price: bundlePrice,
           mrp: bundle.mrp,
-          validDays: bundle.validDays,
+          // Under the amount, level with the plan's slot line.
+          note: bundle.validDays != null ? `Valid for ${bundle.validDays}\u00A0days` : undefined,
           extraOff: props.extraOff,
           ctaLabel: `Continue with ${bundle.credits} credits`,
           ctaShortLabel: "Continue",
@@ -298,11 +299,11 @@ export function CreditsToPlanDialog({
           mrp: props.extraOff ? plan.price : undefined,
           unit: monthly ? "/month" : "/quarter",
           badge: "UNLIMITED POSTS",
-          // Compares row for row with the credits tile: its "Valid for N
-          // days" sits level with the plan's slot line; the city limit goes
-          // under the price.
-          note: "Valid in a single city",
-          planFacts: { dbCredits: plan.dbCredits, dbWorth: plan.dbWorth, slotDays: plan.months * 30 },
+          // Compares row for row with the credits tile: under each amount,
+          // its time limit ("Valid for N days" / "1 active job slot for N
+          // days"); the city limit closes the plan's details, bottom right.
+          note: `1 active job slot for ${plan.months * 30}\u00A0days`,
+          planFacts: { dbCredits: plan.dbCredits, dbWorth: plan.dbWorth, singleCity: true },
           extraOff: props.extraOff,
           ctaLabel: `Get ${name} for ${inr(planPrice)}`,
           ctaShortLabel: `Get ${name}`,
