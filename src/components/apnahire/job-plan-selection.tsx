@@ -79,7 +79,7 @@ import {
   type CreditBalance,
   type JobPlanTier,
 } from "@/content/job-plans"
-import { num } from "@/lib/format"
+import { inr, num } from "@/lib/format"
 
 export type JobPlanLayout = "tiered" | "subscription"
 
@@ -172,7 +172,12 @@ export function JobPlanSelection() {
     setCheckoutItem({
       id: `slot_upgrade_${total}`,
       label: `${slots.plan} · ${total} job slots`,
-      sublabel: `(${total} active job slots + ${SLOT_UPGRADE.dbCredits} Database credits + Valid for ${SLOT_UPGRADE.validDays} days)`,
+      // Database credits are worth ₹10 each across the plans (200 → ₹2,000).
+      points: [
+        `${total} Active job slots for ${SLOT_UPGRADE.validDays} days`,
+        `${SLOT_UPGRADE.dbCredits} database credits worth ${inr(SLOT_UPGRADE.dbCredits * 10)}`,
+        "Valid in a single city",
+      ],
       price: SLOT_UPGRADE.price,
       mrp: SLOT_UPGRADE.mrp,
       renewAfterDays: SLOT_UPGRADE.validDays,
@@ -279,8 +284,12 @@ export function JobPlanSelection() {
     const plan = MONTHLY_SUBSCRIPTION_PLAN
     return {
       id: "unlimited_monthly",
-      label: "Monthly plan",
-      sublabel: `1 active job slot + ${plan.dbCreditsPerMonth} Database credits + Valid for ${plan.jobSlotMonths * 30} days`,
+      label: "Unlimited monthly plan",
+      points: [
+        `1 Active job slot for ${plan.jobSlotMonths} month${plan.jobSlotMonths === 1 ? "" : "s"}`,
+        `${plan.dbCreditsPerMonth} database credits worth ${inr(plan.dbCreditsWorth)}`,
+        "Valid in a single city",
+      ],
       price: plan.price,
       renewAfterDays: plan.jobSlotMonths * 30,
     }
@@ -288,8 +297,12 @@ export function JobPlanSelection() {
 
   const annualLine = (): CartLine => ({
     id: "unlimited_annual",
-    label: "Annual plan",
-    sublabel: `1 active job slot + ${num(ANNUAL_PLAN.dbCredits)} Database credits + Valid for ${ANNUAL_PLAN.slotDays} days`,
+    label: "Unlimited annual plan",
+    points: [
+      `1 Active job slot for ${ANNUAL_PLAN.months} months`,
+      `${num(ANNUAL_PLAN.dbCredits)} database credits worth ${inr(ANNUAL_PLAN.dbCreditsWorth)}`,
+      "Valid in a single city",
+    ],
     price: ANNUAL_PLAN.price,
     renewAfterDays: 365,
   })

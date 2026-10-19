@@ -282,8 +282,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   // Upsells (user call, 2026-10-19), the express checkout's pop-ups: the
   // 13-credit bundle offers 22 credits for ₹9,999; the monthly subscription
   // offers the annual plan. Every other Buy goes straight to the summary.
-  // 3 credits → the monthly plan, 6 → the quarterly plan (user call,
-  // 2026-10-19), as CreditsToPlanDialog.
+  // 3 credits → the monthly plan (phones), as CreditsToPlanDialog.
   const [upsell, setUpsell] = React.useState<"pack" | "annual" | "plan" | null>(null)
   const isMobile = useIsMobile()
   // Upsells only for a signed-in recruiter on the Plans page (user call,
@@ -346,7 +345,9 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   // Phones only (user call, 2026-10-19): there the Unlimited card sits
   // below the bundles, out of the first view; on desktop it's right beside
   // them, so the 3/6-credit buys go straight to the summary.
-  const PLAN_FOR_BUNDLE: Record<number, "monthly" | "quarterly"> = { 3: "monthly", 6: "quarterly" }
+  // 3 credits → monthly only; the 6-credit upsell was dropped (user call,
+  // 2026-10-19).
+  const PLAN_FOR_BUNDLE: Record<number, "monthly" | "quarterly"> = { 3: "monthly" }
   const handleSelectBundle = (bundle: Parameters<typeof handleBuyBundle>[0]) => {
     const plan = isMobile ? PLAN_FOR_BUNDLE[bundle.credits] : undefined
     const full = BUNDLES.find((b) => b.credits === bundle.credits)
@@ -419,8 +420,8 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   const handleBuyUnlimitedQuarterly = () => {
     openOrder({
       id: "unlimited_quarterly_1",
-      label: "Quarterly plan",
-      sublabel: "(1 active job slot + 600 Database credits + Valid for 90 days)",
+      label: "Unlimited quarterly plan",
+      points: ["1 Active job slot for 3 months", "600 database credits worth ₹6,000", "Valid in a single city"],
       price: 5999,
       renewAfterDays: 90,
     })
@@ -429,8 +430,12 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   const handleBuyUnlimitedAnnual = () => {
     openOrder({
       id: "unlimited_annual_1",
-      label: "Annual plan",
-      sublabel: `(1 active job slot + ${num(ANNUAL_PLAN.dbCredits)} Database credits + Valid for ${ANNUAL_PLAN.slotDays} days)`,
+      label: "Unlimited annual plan",
+      points: [
+        `1 Active job slot for ${ANNUAL_PLAN.months} months`,
+        `${num(ANNUAL_PLAN.dbCredits)} database credits worth ${inr(ANNUAL_PLAN.dbCreditsWorth)}`,
+        "Valid in a single city",
+      ],
       price: ANNUAL_PLAN.price,
       mrp: ANNUAL_PLAN.mrp,
       renewAfterDays: ANNUAL_PLAN.slotDays,
@@ -440,8 +445,8 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   const handleBuyUnlimitedMonthly = () => {
     openOrder({
       id: "unlimited_monthly_1",
-      label: "Monthly plan",
-      sublabel: "(1 active job slot + 200 Database credits + Valid for 30 days)",
+      label: "Unlimited monthly plan",
+      points: ["1 Active job slot for 1 month", "200 database credits worth ₹2,000", "Valid in a single city"],
       price: 2499,
       renewAfterDays: 30,
     })

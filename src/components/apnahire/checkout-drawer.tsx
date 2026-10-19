@@ -81,6 +81,10 @@ export interface CartLine {
   id: string
   label: string
   sublabel?: string
+  /** What the item includes, as a checked list under its title (a
+   *  subscription: its slots and months, database credits and worth, the
+   *  single city). Shown instead of `sublabel`. */
+  points?: string[]
   /** Selling price — what actually gets charged and summed into the total. */
   price: number
   /** List price. Rendered struck-through immediately before `price` when it
@@ -336,9 +340,19 @@ function CartLineRow({ line, onRemove }: { line: CartLine; onRemove?: () => void
           </span>
         </div>
       </div>
-      {(line.sublabel || onRemove) && (
+      {line.points?.length ? (
+        <ul className="flex flex-col gap-2">
+          {line.points.map((point) => (
+            <li key={point} className="flex items-center gap-2 text-sm text-foreground">
+              <Check className="size-4 shrink-0 text-foreground" aria-hidden />
+              {point}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      {((line.sublabel && !line.points?.length) || onRemove) && (
         <div className="flex items-start justify-between gap-3">
-          <p className="text-xs text-muted-foreground">{line.sublabel}</p>
+          <p className="text-xs text-muted-foreground">{line.points?.length ? null : line.sublabel}</p>
           {onRemove && (
             <Button type="button" variant="link-inline" size="sm" className="shrink-0 text-foreground" onClick={onRemove}>
               Remove
