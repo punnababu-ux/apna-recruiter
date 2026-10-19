@@ -425,8 +425,8 @@ Never add `shadow-card` / `shadow-elevated` to a resting card to make it
   one exception: stacking cards (`StackCard`) take the four hiring-suite
   gradients in turn by position (sky, green, plum, gold), so a deck reads
   as one set, on every page. And By the numbers' stats card wears the
-  green suite gradient (apna's brand green), so it doesn't repeat the
-  hero. Otherwise never one product's colour alone on a company page.
+  sky suite gradient (blue; user call, 2026-10-19), so it doesn't repeat
+  the hero. Otherwise never one product's colour alone on a company page.
 - **Section rhythm (every page but product pages).** The hero sits on the
   gradient; the bands under it alternate white (`Section tone="card"`) and
   gradient, never two of the same in a row. A stats/facts card tucked under

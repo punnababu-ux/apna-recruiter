@@ -25,7 +25,7 @@ export default function NumbersPage() {
             title={ABOUT_NUMBERS.sectionTitle}
             description={ABOUT_NUMBERS.recruiters.blurb}
           />
-          <StatGrid stats={ABOUT_NUMBERS.recruiters.stats} size="lg" tone="green" />
+          <StatGrid stats={ABOUT_NUMBERS.recruiters.stats} size="lg" tone="sky" />
         </div>
       </Section>
     </>
