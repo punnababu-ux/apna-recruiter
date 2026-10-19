@@ -208,7 +208,7 @@ export function AnnualUpgradeDialog({ from, ...props }: UpsellCallbacks & { from
           // The same details as the annual tile, so they compare line for line.
           planFacts:
             from.dbCredits != null && from.dbWorth != null
-              ? { dbCredits: from.dbCredits, dbWorth: from.dbWorth, singleCity: true }
+              ? { dbCredits: from.dbCredits, dbWorth: from.dbWorth }
               : undefined,
           // Desktop names the plan; phones shorten to "Continue".
           ctaLabel: `Continue with ${from.label.toLowerCase()}`,
@@ -221,7 +221,9 @@ export function AnnualUpgradeDialog({ from, ...props }: UpsellCallbacks & { from
           mrp: props.extraOff ? ANNUAL_PLAN.price : undefined,
           unit: "/year",
           badge: `${ANNUAL_PLAN.monthsFree} MONTHS FREE`,
-          planFacts: { dbCredits: ANNUAL_PLAN.dbCredits, dbWorth: ANNUAL_PLAN.dbCreditsWorth, singleCity: true },
+          // No "Valid in a single city" here: they've seen it on the plan
+          // already, and the order summary repeats it.
+          planFacts: { dbCredits: ANNUAL_PLAN.dbCredits, dbWorth: ANNUAL_PLAN.dbCreditsWorth },
           note: `That's just ${inr(annual.perMonth)}\u00A0/month`,
           extraOff: props.extraOff,
           ctaLabel: `Get yearly plan for ${inr(annual.price)}`,
