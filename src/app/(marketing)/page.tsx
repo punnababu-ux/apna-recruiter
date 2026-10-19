@@ -44,8 +44,13 @@ import {
   HOME_SUITE,
 } from "@/content/home"
 import { PRODUCT_LINKS } from "@/content/nav"
+import { PRESS } from "@/content/press"
 
 
+
+// The homepage's three stories, as the Newsroom lists them (content/press.ts):
+// the article's own headline and date, not a summary of it.
+const HOME_PRESS_ARTICLES = HOME_PRESS.items.flatMap((item) => PRESS.items.filter((a) => a.url === item.href))
 
 type ProductName = (typeof HOME_SUITE.items)[number]["name"]
 
@@ -250,25 +255,41 @@ export default function HomePage() {
         <div className="flex flex-col gap-10">
           <SectionHeading level={2} align="center" title={HOME_PRESS.title} />
 
+          {/* Article cards, as in the Newsroom: the outlet and date, the
+              article's own headline, the way to read it. */}
           <div className="grid gap-6 sm:grid-cols-3">
-            {HOME_PRESS.items.map((item) => (
-              <Link key={item.outlet} href={item.href} target="_blank" rel="noreferrer noopener">
-                {/* A headline, not a quote: the outlet up top (the newspaper
-                    mark), the headline as a headline, then the way to it. */}
+            {HOME_PRESS_ARTICLES.map((article) => (
+              <a key={article.url} href={article.url} target="_blank" rel="noreferrer noopener" className="group">
                 <Card padding="lg" interactive className="flex h-full flex-col gap-4">
-                  <span className="flex items-center gap-2 text-overline text-muted-foreground">
-                    <Newspaper className="size-4 shrink-0 text-primary" aria-hidden />
-                    {item.outlet}
+                  <span className="flex items-center justify-between gap-3 text-overline text-muted-foreground tabular-nums">
+                    <span className="flex min-w-0 items-center gap-2">
+                      <Newspaper className="size-4 shrink-0 text-primary" aria-hidden />
+                      <span className="truncate">{article.source}</span>
+                    </span>
+                    <span className="shrink-0 whitespace-nowrap">{article.date}</span>
                   </span>
-                  <p className="text-h5 text-pretty text-foreground">{item.headline}</p>
+                  <h3 className="text-h5 text-pretty text-foreground">{article.title}</h3>
                   <span className="mt-auto flex items-center gap-1 text-sm font-semibold text-foreground">
                     Read the story
-                    <ArrowUpRight className="size-4" aria-hidden />
+                    <ArrowUpRight
+                      className="size-4 transition-interactive group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                      aria-hidden
+                    />
                   </span>
                 </Card>
-              </Link>
+              </a>
             ))}
           </div>
+          <Button
+            variant="outline"
+            size="lg"
+            className="self-center"
+            nativeButton={false}
+            render={<Link href="/newsroom" />}
+            trailingIcon={<ArrowRight aria-hidden />}
+          >
+            All press coverage
+          </Button>
         </div>
       </Section>
       <FaqBand />
