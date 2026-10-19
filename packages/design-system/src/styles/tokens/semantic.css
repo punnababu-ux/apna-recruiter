@@ -618,6 +618,9 @@
      the homepage login card, the nav pill). Almost white, the gradient
      still showing through; paired with a blur. */
   --surface-glass: color-mix(in srgb, var(--card) 80%, transparent);
+  /* A sheer glass (40%): a panel that only hints at itself over a
+   * coloured canvas — the product page's illustration tile. */
+  --surface-glass-faint: color-mix(in srgb, var(--card) 40%, transparent);
   /* The green button fill (Button default). Same as --primary on light;
      on dark it is green-500, the same as --primary there, which stays
      bright for green text, links and icons. */
@@ -698,6 +701,9 @@
   --logo-hire:         var(--cta-primary); /* "Recruiter": the CTA green, as on light */
   --surface-plan-card: var(--muted);
   --surface-glass: color-mix(in srgb, var(--card) 80%, transparent);
+  /* A sheer glass (40%): a panel that only hints at itself over a
+   * coloured canvas — the product page's illustration tile. */
+  --surface-glass-faint: color-mix(in srgb, var(--card) 40%, transparent);
   --cta-primary:       var(--color-apna-green-500);
   --cta-primary-hover: var(--color-apna-green-600);
   --ribbon-fill: color-mix(in srgb, var(--info) 20%, var(--surface-plan-card));

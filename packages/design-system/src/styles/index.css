@@ -129,6 +129,7 @@
   --color-cta-primary-hover:           var(--cta-primary-hover);
   --color-plan-card:                   var(--surface-plan-card);
   --color-surface-glass:               var(--surface-glass);
+  --color-surface-glass-faint:         var(--surface-glass-faint);
   --color-checkout-info:               var(--checkout-info);
   --color-checkout-info-foreground:    var(--checkout-info-foreground);
   --color-night-sky-fg:       var(--night-sky-fg);
