@@ -46,7 +46,7 @@ export function TrustedByBand() {
  *  not a showcase), no band or heading. */
 export function TrustedByStrip() {
   return (
-    <div data-slot="trusted-by-strip" className="flex flex-col items-center gap-4 pt-6">
+    <div data-slot="trusted-by-strip" className="flex flex-col gap-4 pt-6">
       <p className="text-overline text-muted-foreground">Trusted by top hiring partners</p>
       {/* Still, so a fixed set: the seven that fit one desktop row (phones
           swipe it). */}
