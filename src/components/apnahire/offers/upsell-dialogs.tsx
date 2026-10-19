@@ -274,7 +274,12 @@ export function CreditsToPlanDialog({
         </>
       }
       eyebrow="Hiring for more roles? Stop counting credits"
-      headline={`Unlimited job posts for ${plan.months * 30} days`}
+      // "Unlimited" in the gold the header uses for its highlights (prices).
+      headline={
+        <>
+          <span className="text-highlight">Unlimited</span> job posts for {plan.months * 30} days
+        </>
+      }
     >
       <OfferChoice
         stay={{
