@@ -356,6 +356,21 @@ has a border — green; unselected cards stay borderless.
 
 ---
 
+**Clickable cards — the whole card is the target, and it lifts** (user call,
+2026-10-19). A card that leads somewhere or picks something is clickable as a
+whole, not just through its button: the card takes the click and the CTA
+inside just bubbles to it. Every such card answers hover with the plan
+cards' lift (`card-hover-lift`: 2px up onto `shadow-elevated`) plus the ink
+and press. A card that isn't a target as a whole (several separate actions
+inside) never lifts. It's built in, so there's nothing to remember:
+
+- `Card` / `PricingCard` with `onClick` lift, ink and press by themselves.
+- A `Card` that is a link's direct child (`<a href><Card/></a>`) lifts by CSS.
+- A frame that takes the click for a card inside it (the Unlimited cards):
+  mark the frame `data-card-lift-group` and pass `interactive` to the card.
+- A hand-rolled clickable card: `card-hover-lift ink press-subtle
+  cursor-pointer` (ContactSalesCard). Better: make it a `Card`.
+
 **Card shadows — resting cards are flat** (user call, 2026-10-19). No card
 carries a shadow at rest: plan and pricing cards, testimonials, stats, the
 login cards, a band's standout card, the contact band. Cards separate from

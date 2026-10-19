@@ -43,9 +43,12 @@ const cardVariants = cva(
         md: "p-6",
         lg: "p-8",
       },
-      /** Adds the system-wide hover lift. Use when the whole card is a link, or
-       *  for a selectable/plan card in a set where its siblings lift too
-       *  (PricingCard and the checkout plan cards all do). */
+      /** The system-wide hover lift (card-hover-lift). RULE: a card that is a
+       *  click target as a whole lifts, and only such a card. It's automatic:
+       *  a Card with `onClick` turns it on (plus the ink, the press and the
+       *  pointer), and a Card that is the direct child of a link lifts by CSS
+       *  (styles/index.css). Pass it by hand only for a card whose click is
+       *  handled by a frame around it. */
       interactive: {
         true: "card-hover-lift",
         false: "",
@@ -54,7 +57,6 @@ const cardVariants = cva(
     defaultVariants: {
       tone: "default",
       padding: "md",
-      interactive: false,
     },
   }
 )
@@ -64,11 +66,16 @@ export interface CardProps
     VariantProps<typeof cardVariants> {}
 
 function Card({ className, tone, padding, interactive, ...props }: CardProps) {
+  const clickable = !!props.onClick
   return (
     <div
       data-slot="card"
       data-tone={tone ?? "default"}
-      className={cn(cardVariants({ tone, padding, interactive }), className)}
+      className={cn(
+        cardVariants({ tone, padding, interactive: interactive ?? clickable }),
+        clickable && "ink press-subtle cursor-pointer",
+        className
+      )}
       {...props}
     />
   )

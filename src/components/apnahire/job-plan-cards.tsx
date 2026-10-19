@@ -650,6 +650,8 @@ function MonthlySubscriptionCard({
 
       <PricingCard
         key={shimmerKey}
+        // The frame around it takes the click.
+        interactive={!blockedLabel}
         layout="price-first"
         surface="inset"
         className={cn("flex-1 border-transparent", shimmerKey > 0 && "animate-shimmer-once")}

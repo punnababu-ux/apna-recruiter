@@ -184,9 +184,9 @@ export function EnterprisePricingTable({
           <Card
             key={tier.name}
             padding="sm"
-            // Same hover lift as the Jobs / Database / Subscription plan
-            // cards (PricingCard, SubscriptionPlans use card-hover-lift).
-            interactive
+            // The whole card is the click target (its button just bubbles
+            // to it), so it lifts like every plan card (Card's onClick).
+            onClick={() => onContactSales?.(tier.name)}
             className="gap-5 border-transparent bg-plan-card"
           >
             <div className="flex flex-col gap-2">
@@ -228,7 +228,6 @@ export function EnterprisePricingTable({
                 type="button"
                 variant="outline"
                 className="h-10 w-full px-6"
-                onClick={() => onContactSales?.(tier.name)}
               >
                 Contact sales
               </Button>

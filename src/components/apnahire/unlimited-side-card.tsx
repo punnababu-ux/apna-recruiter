@@ -127,6 +127,8 @@ export function UnlimitedSideCard({
           </div>
 
           <PricingCard
+            // The frame around it takes the click.
+            interactive
             surface="inset"
             className="flex-1 border-transparent"
             title="Unlimited job posts"

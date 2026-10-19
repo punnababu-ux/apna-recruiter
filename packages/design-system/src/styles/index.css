@@ -1246,7 +1246,8 @@
   transition-timing-function: var(--ease-out-ui);
 
   &:hover,
-  :where([data-card-lift-group]:hover) & {
+  :where([data-card-lift-group]:hover) &,
+  :where(a[href]:hover) > & {
     translate: 0 -2px;
     box-shadow: var(--shadow-elevated);
   }
@@ -1267,6 +1268,12 @@
       translate: none;
     }
   }
+}
+
+/* A Card that is a link's direct child is a click target as a whole, so it
+   lifts with no prop to remember (AGENTS.md: "Clickable cards"). */
+a[href] > [data-slot="card"] {
+  @apply card-hover-lift ink press-subtle;
 }
 
 /* ============================================================================

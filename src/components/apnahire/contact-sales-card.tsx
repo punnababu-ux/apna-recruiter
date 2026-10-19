@@ -7,8 +7,8 @@
  * Every tab that draws it draws it identically (Jobs 1971:8766, Database
  * 899:1344, Subscription, Enterprise), so the measurements live here: 20px
  * padding, a 12px gap between the title and its line of copy, and a 40px
- * outline CTA. No hover lift — the card is a container for the button, not
- * itself a target.
+ * outline CTA. The whole card is the click target (the button bubbles to
+ * it), so it lifts like the plan cards above it.
  */
 
 import * as React from "react"
@@ -24,8 +24,9 @@ export function ContactSalesCard({ onContactSales, className }: ContactSalesCard
   return (
     <div
       data-slot="contact-sales-card"
+      onClick={onContactSales}
       className={cn(
-        "flex flex-col items-start justify-between gap-4 rounded-card border border-plan-card-line bg-plan-card p-5 sm:flex-row sm:items-center",
+        "card-hover-lift ink press-subtle cursor-pointer flex flex-col items-start justify-between gap-4 rounded-card border border-plan-card-line bg-plan-card p-5 sm:flex-row sm:items-center",
         className
       )}
     >
@@ -39,7 +40,6 @@ export function ContactSalesCard({ onContactSales, className }: ContactSalesCard
         type="button"
         variant="outline"
         className="h-10 shrink-0 px-6 font-semibold"
-        onClick={onContactSales}
       >
         Contact sales
       </Button>
