@@ -91,6 +91,13 @@ type Upsell =
   | null
 
 /** The pack the "short on credits" upsell offers (the board's 6 credits). */
+/** Why the subscription is off for a work-from-home job: the CTA's short
+ *  label, and the line a tap on the card shows. */
+const SUBSCRIPTION_WFH_BLOCK = {
+  label: "Not for work-from-home jobs",
+  message: "apna Unlimited is for on-site jobs. Post this work-from-home job with a one-time plan.",
+}
+
 const CREDIT_UPSELL_PACK = BUNDLES.find((b) => b.credits === 6) ?? BUNDLES[0]
 
 function randomOrderId() {
@@ -105,6 +112,17 @@ function readDraftTitle(): string {
     return (raw && (JSON.parse(raw) as { draft?: { title?: string } }).draft?.title) || "Your job"
   } catch {
     return "Your job"
+  }
+}
+
+/** Whether the job being posted is work from home (the draft's location
+ *  type), which rules out the subscription. */
+function readDraftIsWfh(): boolean {
+  try {
+    const raw = window.localStorage.getItem(JOB_DRAFT_STORAGE_KEY)
+    return !!raw && (JSON.parse(raw) as { draft?: { locationType?: string } }).draft?.locationType === "home"
+  } catch {
+    return false
   }
 }
 
@@ -170,6 +188,13 @@ export function JobPlanSelection() {
   // shows it only when that order needs a payment (a partial-credit top-up,
   // a paid plan), never when credits cover it.
   const holdsCredits = hasAnyCredits(creditBalance)
+  // A work-from-home job can't be posted on the subscription (user call,
+  // 2026-10-19): the job's work type comes from the posting draft; the
+  // review switcher can override it.
+  const [wfh, setWfh] = React.useState(false)
+  React.useEffect(() => {
+    if (readDraftIsWfh()) setWfh(true)
+  }, [])
   // The order as it stands when the summary closes: a paid job line, or the
   // AI calling agent added with no AI calling credit to cover it (a covered
   // classic job + a paid AI agent is a paying order).
@@ -363,6 +388,7 @@ export function JobPlanSelection() {
               creditBalance={creditBalance}
               onSelectTier={handleSelectTier}
               onSelectSubscription={handleSelectSubscription}
+              subscriptionBlocked={wfh ? SUBSCRIPTION_WFH_BLOCK : undefined}
               extraOff={offer.claimed}
               shimmerKey={shimmerKey}
             />
@@ -455,6 +481,7 @@ export function JobPlanSelection() {
         creditBalance={creditBalance}
         onCreditBalanceChange={setCreditBalance}
         offer={{ claimed: offer.claimed, onExpireSoon: offer.expireSoon, onReset: offer.reset }}
+        wfh={{ value: wfh, onChange: setWfh }}
       />
     </div>
   )

@@ -41,6 +41,8 @@ export interface JobPlanPreviewSwitcherProps {
   onCreditBalanceChange: (balance: CreditBalance) => void
   /** 10% exit-offer demo controls. Omit to hide the section. */
   offer?: { claimed: boolean; onExpireSoon: () => void; onReset: () => void }
+  /** The job's work type, normally read from the draft; overridable here. */
+  wfh?: { value: boolean; onChange: (wfh: boolean) => void }
 }
 
 export function JobPlanPreviewSwitcher({
@@ -49,6 +51,7 @@ export function JobPlanPreviewSwitcher({
   creditBalance,
   onCreditBalanceChange,
   offer,
+  wfh,
 }: JobPlanPreviewSwitcherProps) {
   return (
     <PrototypeSettings label="Preview job-plan state">
@@ -70,6 +73,16 @@ export function JobPlanPreviewSwitcher({
           </PrototypeOption>
         ))}
       </PrototypeSection>
+      {wfh && (
+        <PrototypeSection title="Job">
+          <PrototypeOption active={!wfh.value} onClick={() => wfh.onChange(false)}>
+            On-site / field job
+          </PrototypeOption>
+          <PrototypeOption active={wfh.value} onClick={() => wfh.onChange(true)}>
+            Work-from-home job (no subscription)
+          </PrototypeOption>
+        </PrototypeSection>
+      )}
       <JobSlotsControls />
       {offer && <ExitOfferControls offer={offer} />}
     </PrototypeSettings>

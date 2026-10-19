@@ -39,6 +39,9 @@ import {
   WhatsApp,
   X,
   type IconComponent,
+  Alert,
+  AlertDescription,
+  Info,
 } from "@apna/design-system"
 import { SINGLE_CREDIT } from "@/components/apnahire/job-credit-bundles"
 import { ExtraOffLine } from "@/components/apnahire/offers/extra-off-line"
@@ -276,6 +279,10 @@ export interface JobPlanSelectProps {
   extraOff?: boolean
   /** Bump to play the one-time shimmer across the cards. */
   shimmerKey?: number
+  /** Why the subscription can't be bought for this job (a work-from-home
+   *  job): the card stays visible but dimmed, its CTA disabled with the
+   *  reason, and a tap explains it. */
+  subscriptionBlocked?: { label: string; message: string }
 }
 
 /** Self-checkout's card-group frame (`JobCreditBundles`): translucent
@@ -424,7 +431,7 @@ function MobileJobPlanRadioGroup({
 }
 
 /** Distinct mobile card for Apna Unlimited subscription offering in Express Checkout */
-function MobileSubscriptionCard({ onSelect }: { onSelect: () => void }) {
+function MobileSubscriptionCard({ onSelect, blockedLabel }: { onSelect: () => void; blockedLabel?: string }) {
   const plan = MONTHLY_SUBSCRIPTION_PLAN
   const { extraOff, shimmerKey } = React.useContext(PlanOfferContext)
   const price = extraOff ? withExtraOff(plan.price) : plan.price
@@ -457,11 +464,52 @@ function MobileSubscriptionCard({ onSelect }: { onSelect: () => void }) {
           size="sm"
           className="h-8 shrink-0 rounded-full px-3.5 text-xs font-semibold"
           onClick={onSelect}
+          disabled={!!blockedLabel}
         >
-          Get Unlimited
+          {blockedLabel ?? "Get Unlimited"}
         </Button>
       }
     />
+  )
+}
+
+/** The subscription card when it can't be bought for this job: dimmed and
+ *  inert, and a tap anywhere on it shows why, over the card at full
+ *  strength, fading after a few seconds. On the card rather than a toast:
+ *  the reason belongs next to what it explains (AGENTS.md: no toast for what
+ *  the screen can show). Without `blocked` it renders the card untouched. */
+function BlockedSubscription({
+  blocked,
+  className,
+  children,
+}: {
+  blocked?: { label: string; message: string }
+  className?: string
+  children: React.ReactNode
+}) {
+  const [shown, setShown] = React.useState(false)
+  React.useEffect(() => {
+    if (!shown) return
+    const t = window.setTimeout(() => setShown(false), 4000)
+    return () => window.clearTimeout(t)
+  }, [shown])
+  if (!blocked) return <div className={className}>{children}</div>
+  return (
+    <div className={cn("relative", className)} onClick={() => setShown(true)}>
+      <div aria-disabled className="flex flex-1 flex-col opacity-55 grayscale-25">
+        {children}
+      </div>
+      {shown && (
+        <div role="status" className="absolute inset-x-3 bottom-3 animate-in fade-in-0 slide-in-from-bottom-2">
+          {/* The solid default surface: the info tint is translucent and
+              muddles with the card's text underneath. */}
+          <Alert className="shadow-elevated">
+            <Info className="text-info" aria-hidden />
+            <AlertDescription>{blocked.message}</AlertDescription>
+          </Alert>
+        </div>
+      )}
+    </div>
   )
 }
 
@@ -504,6 +552,7 @@ export function SubscriptionJobPlans({
   onSelectSubscription,
   extraOff = false,
   shimmerKey = 0,
+  subscriptionBlocked,
 }: JobPlanSelectProps) {
   const tiers = SUBSCRIPTION_PLAN_ORDER.map((id) => offerTier(JOB_PLAN_TIERS[id], extraOff))
   const onSelectTier = (tier: JobPlanTier) => selectCatalogueTier(JOB_PLAN_TIERS[tier.id])
@@ -516,7 +565,9 @@ export function SubscriptionJobPlans({
           onSelectTier={onSelectTier}
           recommendedId={RECOMMENDED_TIER.subscription}
         />
-        <MobileSubscriptionCard onSelect={onSelectSubscription} />
+        <BlockedSubscription blocked={subscriptionBlocked}>
+          <MobileSubscriptionCard onSelect={onSelectSubscription} blockedLabel={subscriptionBlocked?.label} />
+        </BlockedSubscription>
       </div>
 
       <div className="hidden sm:flex sm:flex-col sm:gap-4 xl:flex-row">
@@ -536,13 +587,14 @@ export function SubscriptionJobPlans({
           </PlanFrame>
         </div>
 
-        <div className="flex w-full flex-col xl:w-82">
+        <BlockedSubscription blocked={subscriptionBlocked} className="flex w-full flex-col xl:w-82">
           <MonthlySubscriptionCard
             className="flex-1"
             reservePriceSuffix={hasAnyCredits(creditBalance)}
             onSelect={onSelectSubscription}
+            blockedLabel={subscriptionBlocked?.label}
           />
-        </div>
+        </BlockedSubscription>
       </div>
     </PlanOfferContext.Provider>
   )
@@ -551,9 +603,12 @@ export function SubscriptionJobPlans({
 function MonthlySubscriptionCard({
   onSelect,
   reservePriceSuffix,
+  blockedLabel,
   className,
 }: {
   onSelect: () => void
+  /** Set when the plan can't be bought for this job: the CTA says why. */
+  blockedLabel?: string
   /** True when the tier cards beside it show a credit status line under
    *  their price — this card reserves an empty line of the same height so
    *  its CTA stays level with theirs. */
@@ -575,10 +630,11 @@ function MonthlySubscriptionCard({
     // lifts the card inside (card-hover-lift rule) — same as self-checkout's
     // UnlimitedSideCard.
     <div
-      data-card-lift-group
-      onClick={onSelect}
+      data-card-lift-group={blockedLabel ? undefined : true}
+      onClick={blockedLabel ? undefined : onSelect}
       className={cn(
-        "flex cursor-pointer flex-col gap-5 rounded-card bg-gradient-checkout-unlimited p-4",
+        "flex flex-col gap-5 rounded-card bg-gradient-checkout-unlimited p-4",
+        !blockedLabel && "cursor-pointer",
         className
       )}
     >
@@ -610,8 +666,8 @@ function MonthlySubscriptionCard({
           ) : undefined
         }
         cta={
-          <Button type="button" variant="checkout-inset" className="h-10 w-full font-semibold">
-            Get apna unlimited
+          <Button type="button" variant="checkout-inset" className="h-10 w-full font-semibold" disabled={!!blockedLabel}>
+            {blockedLabel ?? "Get apna unlimited"}
           </Button>
         }
         meta={[
