@@ -291,7 +291,7 @@
   --font-display: var(--font-heading);
   --font-mono:    var(--font-family-mono);
 
-  /* Editorial voice — the marketing pages' serif (Playfair Display) for
+  /* Editorial voice — the marketing pages' serif (Source Serif 4) for
    * hero headlines, big section titles and pull quotes. Paired with Inter,
    * which keeps everything else: body, labels, cards, UI. Read through the
    * text-editorial-* presets, not `font-editorial` on ad-hoc type.
@@ -304,7 +304,7 @@
 
   /* Quote voice — pull quotes and testimonials: the editorial serif, the
    * same face as the marketing headlines (one serif in the system, not a
-   * browser-default Georgia beside a Playfair). */
+   * browser-default Georgia beside a Source Serif). */
   --font-quote:   var(--font-family-editorial);
   /* The one serif exception in the product: testimonial quotes keep it
    * everywhere (the plans step in checkout included). */

@@ -281,8 +281,8 @@
   --font-family-mono:  var(--font-geist-mono, "Geist Mono"),
                        ui-monospace, SFMono-Regular, Menlo,
                        Monaco, Consolas, monospace;
-  /* Playfair Display, served by next/font as `--font-editorial-face`. */
-  --font-family-editorial: var(--font-editorial-face, "Playfair Display"),
+  /* Source Serif 4, served by next/font as `--font-editorial-face`. */
+  --font-family-editorial: var(--font-editorial-face, "Source Serif 4"),
                            Georgia, "Times New Roman", serif;
   --font-family-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist_Mono, Inter, Playfair_Display } from "next/font/google";
+import { Geist_Mono, Inter, Source_Serif_4 } from "next/font/google";
 
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { InkProvider } from "@/components/ui/ink-provider";
@@ -19,14 +19,16 @@ const inter = Inter({
   display: "swap",
 });
 
-// Playfair Display · the editorial serif (2026-10-17): hero headlines,
-// section titles and pull quotes on the marketing pages, never UI. Read
-// through `--font-family-editorial` (primitives.css). Variable, with italic
-// for the one accented word a headline may carry.
-const playfair = Playfair_Display({
+// Source Serif 4 · the editorial serif (2026-10-19, replacing Playfair
+// Display): hero headlines, section titles and pull quotes on the marketing
+// pages, never UI. Read through `--font-family-editorial` (primitives.css).
+// Variable (weight + optical size, so display sizes get the display cut),
+// with italic for the one accented word a headline may carry.
+const editorialSerif = Source_Serif_4({
   variable: "--font-editorial-face",
   subsets: ["latin"],
   style: ["normal", "italic"],
+  axes: ["opsz"],
   display: "swap",
 });
 
@@ -78,7 +80,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${playfair.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${editorialSerif.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full">

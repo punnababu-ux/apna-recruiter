@@ -36,7 +36,7 @@ new session needs to pick up where the last one stopped.
 
 - **Hero:** `HeroChip` (icon that matches the label), never an eyebrow; no
   stats repeated in heroes. Section eyebrows are gray.
-- **Serif:** Playfair Display only for hero h1, section h2, quotes —
+- **Serif:** Source Serif 4 only for hero h1, section h2, quotes —
   automatic via `data-voice="editorial"` + `SectionHeading`. Numbers are
   Inter. `lint:tokens` blocks the serif outside marketing folders.
 - **Colour:** each product owns a gradient (Smart Jobs sky, AI Calling

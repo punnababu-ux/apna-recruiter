@@ -384,7 +384,7 @@
   letter-spacing:  var(--letter-spacing-tighter);
 }
 
-/* Editorial presets — Playfair Display, the marketing pages' serif voice
+/* Editorial presets — Source Serif 4, the marketing pages' serif voice
  * (hero headlines, section titles, pull quotes). Semibold, not extrabold:
  * a high-contrast serif carries the weight by itself. `em` inside goes
  * italic, for the one accented word a headline may have.

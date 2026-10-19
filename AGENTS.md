@@ -356,7 +356,7 @@ To change how round the cards feel, retune `--radius-card` in
   with an icon). `PageHero` and the product hero draw it for you.
 - **Eyebrows below the hero are gray** (`text-overline
   text-muted-foreground`), never green.
-- **Serif — where and only where.** Playfair Display (the editorial voice)
+- **Serif — where and only where.** Source Serif 4 (the editorial voice)
   is used for exactly three things on marketing pages, the homepage
   included:
   1. **The page headline (h1)** in every hero.

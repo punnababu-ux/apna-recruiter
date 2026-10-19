@@ -203,7 +203,7 @@ export default function TypographyPage() {
               Editorial Serif — Where and Only Where
             </h2>
             <p className="text-2xs text-muted-foreground">
-              Playfair Display, the brand&apos;s voice. <code>--font-editorial</code> resolves to the serif only inside{" "}
+              Source Serif 4, the brand&apos;s voice. <code>--font-editorial</code> resolves to the serif only inside{" "}
               <code>[data-voice=&quot;editorial&quot;]</code> (the marketing layout); everywhere else it is Inter.
             </p>
           </div>
