@@ -51,13 +51,13 @@ export interface OfferOption {
 
 
 /* One-to-one comparison, the rule: both tiles share one row grid (CSS
- * subgrid), so each kind of line — the price group, the validity, the
- * note, the database credits, the city, the CTA — sits on the SAME line in
+ * subgrid), so each kind of line — the price group (with its note), the
+ * validity, the database credits, the city, the CTA — sits on the SAME line in
  * both tiles and the eye reads straight across, whatever either tile holds.
  * A row only exists when one of the tiles uses it; a tile without it keeps
  * the row empty so its partner's line stays level. */
-type RowKey = "title" | "price" | "term" | "note" | "facts" | "city" | "cta"
-const ROW_ORDER: RowKey[] = ["title", "price", "term", "note", "facts", "city", "cta"]
+type RowKey = "title" | "price" | "term" | "facts" | "city" | "cta"
+const ROW_ORDER: RowKey[] = ["title", "price", "term", "facts", "city", "cta"]
 const ROW_SPAN: Record<number, string> = {
   3: "row-span-3",
   4: "row-span-4",
@@ -75,8 +75,6 @@ function rowUsed(o: OfferOption, key: RowKey) {
   switch (key) {
     case "term":
       return !!termOf(o)
-    case "note":
-      return !!o.note
     case "facts":
       return !!o.planFacts
     case "city":
@@ -106,10 +104,12 @@ function OptionTile({
 
   const cell: Record<RowKey, React.ReactNode> = {
     title: <p className="text-sm font-semibold text-foreground">{option.title}</p>,
-    // The price group: amount + unit, struck price, % tag and the 10% extra
-    // off, together.
+    // The price group: amount + unit, struck price, % tag, the price note
+    // ("That's just ₹750 /month") and the 10% extra off, together — closed
+    // by a rule that splits what it costs from what you get. The rows are
+    // shared, so the rule sits level in both tiles.
     price: (
-      <div className="flex flex-col gap-1.5">
+      <div className="flex h-full flex-col gap-1.5 border-b border-border pb-2.5">
         <p className="flex flex-wrap items-baseline gap-x-1.5 gap-y-1">
           {/* The price and its unit never split ("₹2,499 /month"). */}
           <span className="inline-flex items-baseline gap-1 whitespace-nowrap">
@@ -127,6 +127,11 @@ function OptionTile({
             </span>
           )}
         </p>
+        {option.note && (
+          <p className={cn("text-xs italic", upgrade ? "text-checkout-primary" : "text-muted-foreground")}>
+            {option.note}
+          </p>
+        )}
         {option.extraOff && (
           <span className="flex items-center gap-1.5 text-xs text-success">
             <BadgePercent className="size-4 shrink-0 animate-wiggle" aria-hidden />
@@ -141,9 +146,6 @@ function OptionTile({
         <ClockFading className="size-4 shrink-0" aria-hidden />
         <span>{term}</span>
       </span>
-    ) : null,
-    note: option.note ? (
-      <p className={cn("text-xs italic", upgrade ? "text-checkout-primary" : "text-muted-foreground")}>{option.note}</p>
     ) : null,
     facts: option.planFacts ? (
       <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
