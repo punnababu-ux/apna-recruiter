@@ -1,7 +1,7 @@
 "use client"
 
 /**
- * MotherPreview — PREVIEW ONLY. `?mother=classic` on a marketing URL shows the previous
+ * MotherPreview — PREVIEW ONLY. `?mother=brand` on a marketing URL shows the saved brand-colour
  * mother gradient (semantic.css, :root[data-mother]) without
  * changing the live page.
  */
