@@ -85,9 +85,11 @@ export function UnlimitedSideCard({
         ]}
         note="Valid in a single city"
         cta={
+          // Dark companion CTA on phones (user call, 2026-10-19): the
+          // sticky green Buy bar stays the screen's one primary.
           <Button
             type="button"
-            variant="checkout-inset"
+            variant="emphasis"
             size="sm"
             className="h-8 shrink-0 rounded-full px-3.5 text-xs font-semibold"
             onClick={onBuyNow}
