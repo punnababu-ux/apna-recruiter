@@ -164,10 +164,14 @@ export function JobPlanSelection() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Leaving — back, Save & exit, or closing the order summary — goes through
-  // the exit nudge first, until the offer is claimed or turned down.
-  const attemptExit = (proceed: () => void) => {
-    if (offer.nudgeAvailable) setExitPrompt({ proceed })
+  // The exit discount is only for someone about to pay (user call,
+  // 2026-10-19). Leaving the page (back, Save & exit) with even one credit
+  // never shows it — they can post without paying. Closing the order summary
+  // shows it only when that order needs a payment (a partial-credit top-up,
+  // a paid plan), never when credits cover it.
+  const holdsCredits = hasAnyCredits(creditBalance)
+  const attemptExit = (proceed: () => void, paymentRequired = !holdsCredits) => {
+    if (offer.nudgeAvailable && paymentRequired) setExitPrompt({ proceed })
     else proceed()
   }
 
@@ -339,7 +343,9 @@ export function JobPlanSelection() {
           <h1 className="text-h6 text-checkout-hero-fg whitespace-nowrap sm:text-2xl">
             Choose a job basis your hiring needs
           </h1>
-          {layout === "tiered" ? (
+          {/* With even one credit, no subscription: credits and a subscription
+              don't mix (user call, 2026-10-19), so it's the one-time tiers. */}
+          {layout === "tiered" || holdsCredits ? (
             <TieredJobPlans
               creditBalance={creditBalance}
               onSelectTier={handleSelectTier}
@@ -361,7 +367,9 @@ export function JobPlanSelection() {
 
       <CheckoutDrawer
         open={drawerOpen}
-        onOpenChange={(next) => (next ? setDrawerOpen(true) : attemptExit(() => setDrawerOpen(false)))}
+        onOpenChange={(next) =>
+          next ? setDrawerOpen(true) : attemptExit(() => setDrawerOpen(false), (checkoutItem?.price ?? 0) > 0)
+        }
         item={checkoutItem}
         onProceedToPay={handleProceedToPay}
         aiAddon={{ price: AI_CALLING_ADDON.price, creditsAvailable: creditBalance["ai-calling"] }}
