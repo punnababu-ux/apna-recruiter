@@ -458,9 +458,11 @@ function MobileSubscriptionCard({ onSelect, blockedLabel }: { onSelect: () => vo
       ]}
       note={plan.note}
       cta={
+        // Dark companion CTA, as in self-checkout: the green "Continue" /
+        // pay CTA stays the screen's one primary.
         <Button
           type="button"
-          variant="checkout-inset"
+          variant="emphasis"
           size="sm"
           className="h-8 shrink-0 rounded-full px-3.5 text-xs font-semibold"
           onClick={onSelect}
