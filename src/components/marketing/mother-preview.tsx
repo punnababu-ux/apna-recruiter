@@ -1,8 +1,8 @@
 "use client"
 
 /**
- * MotherPreview — PREVIEW ONLY. `?mother=<name>` on a marketing URL previews
- * an alternative mother gradient (semantic.css, :root[data-mother]) without
+ * MotherPreview — PREVIEW ONLY. `?mother=classic` on a marketing URL shows the previous
+ * mother gradient (semantic.css, :root[data-mother]) without
  * changing the live page.
  */
 
