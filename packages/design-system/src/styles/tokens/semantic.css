@@ -997,7 +997,10 @@
 /* A company band that speaks in apna's own green (not a product's): the
  * accents — stat bars, quote marks — take the brand green. */
 [data-accent="brand"] {
-  --product-accent:   var(--color-apna-green-600);
+  /* A step darker than the product greens: these sit on grey (muted) cards
+   * on a white band, where green-600 on green-50 washed out. */
+  --product-accent:   var(--color-apna-green-700);
+  --product-tint:     var(--color-apna-green-100);
 }
 [data-product="smart-jobs"] {
   --product-accent:   var(--color-apna-green-600);
@@ -1018,6 +1021,10 @@
   --product-accent:   var(--color-apna-gold-700);
   --product-tint:     var(--color-apna-gold-50);
   --product-gradient: var(--gradient-product-unlimited);
+}
+.dark [data-accent="brand"] {
+  --product-accent: var(--color-apna-green-300);
+  --product-tint:   color-mix(in srgb, var(--color-apna-green-900) 35%, transparent);
 }
 .dark [data-product="smart-jobs"] {
   --product-accent: var(--color-apna-green-300);

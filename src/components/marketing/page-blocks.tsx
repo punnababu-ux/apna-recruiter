@@ -36,6 +36,7 @@ import {
   ScrollStackItem,
   Section,
   SectionHeading,
+  type IconComponent,
 } from "@apna/design-system"
 import { HeroBackdrop } from "@/components/marketing/hero-backdrop"
 import type { Person } from "@/content/company"
@@ -127,18 +128,28 @@ export function PageHero({
 export function Stat({
   value,
   label,
+  icon: Icon,
   size = "default",
   className,
 }: {
   value: string
   label: string
+  /** What the number counts, as an icon in a tinted disc in place of the
+   *  accent bar (the proof band's stats). */
+  icon?: IconComponent
   size?: "sm" | "default" | "lg" | "facts"
   className?: string
 }) {
   const facts = size === "facts"
   return (
     <div className={cn("flex flex-col gap-2", className)}>
-      {!facts && <span aria-hidden className="h-1 w-8 rounded-full bg-product-accent" />}
+      {Icon ? (
+        <span aria-hidden className="flex size-10 items-center justify-center rounded-full bg-product-tint text-product-accent">
+          <Icon className="size-5" />
+        </span>
+      ) : (
+        !facts && <span aria-hidden className="h-1 w-8 rounded-full bg-product-accent" />
+      )}
       <dt className={cn("text-pretty", facts ? "text-overline text-muted-foreground" : "order-3 text-sm text-muted-foreground")}>
         {label}
       </dt>
@@ -172,7 +183,7 @@ export function StatGrid({
   tone,
   className,
 }: {
-  stats: readonly { value: string; label: string }[]
+  stats: readonly { value: string; label: string; icon?: IconComponent }[]
   /** "lg" for a page that is about its numbers (By the numbers) — bigger
    *  numbers on a lifted, gradient card; "facts"
    *  for short text values (a case study's client / industry / …): label
@@ -215,6 +226,7 @@ export function StatGrid({
             key={stat.label}
             value={stat.value}
             label={stat.label}
+            icon={stat.icon}
             size={size}
             className={cn("p-5 sm:p-6 lg:p-8", size === "lg" && "lg:p-10")}
           />

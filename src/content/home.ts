@@ -22,6 +22,8 @@
  * that. Each section's content sourcing is noted where it's declared below.
  */
 
+import { Building2, Clock, LayoutGrid, MapPin, UserPlus, Users } from "@apna/design-system"
+
 export interface Stat {
   value: string
   label: string
@@ -244,10 +246,10 @@ export const HOME_PRESS = {
 /** Pricing's numbers in "Why hire from apna?": the platform's scale, in the
  *  hero's format (user call, 2026-10-19). */
 export const PRICING_STATS = [
-  { value: "6 Cr+", label: "Candidates use apna" },
-  { value: "2 L+", label: "New candidates every month" },
-  { value: "7 L+", label: "Employers already at apna" },
-  { value: "7,200+", label: "Towns & cities covered" },
+  { value: "6 Cr+", label: "Candidates use apna", icon: Users },
+  { value: "2 L+", label: "New candidates every month", icon: UserPlus },
+  { value: "7 L+", label: "Employers already at apna", icon: Building2 },
+  { value: "7,200+", label: "Towns & cities covered", icon: MapPin },
 ] as const
 
 export const HOME_PROOF = {
@@ -256,9 +258,9 @@ export const HOME_PROOF = {
     description:
       "From startups to SMEs to established enterprises, apna revolutionizes the way businesses find high-quality talent quickly & effortlessly.",
     stats: [
-      { value: "2 L+", label: "New candidates join apna every month" },
-      { value: "160+", label: "Job categories to publish your job" },
-      { value: "60%", label: "of businesses get qualified candidates within 24 hrs" },
+      { value: "2 L+", label: "New candidates join apna every month", icon: UserPlus },
+      { value: "160+", label: "Job categories to publish your job", icon: LayoutGrid },
+      { value: "60%", label: "of businesses get qualified candidates within 24 hrs", icon: Clock },
     ],
   },
   testimonials: {
