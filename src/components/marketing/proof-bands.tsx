@@ -47,7 +47,8 @@ export function TrustedByBand() {
 export function TrustedByStrip() {
   return (
     <div data-slot="trusted-by-strip" className="flex flex-col gap-4 pt-6">
-      <p className="text-overline text-muted-foreground">Trusted by top hiring partners</p>
+      {/* The homepage's figure (HOME stats: 7 L+ businesses & enterprises). */}
+      <p className="text-sm text-muted-foreground">Trusted by 7 lakh+ businesses and enterprises for hiring</p>
       {/* Still, so a fixed set: the seven that fit one desktop row (phones
           swipe it). */}
       <LogoWall items={CLIENT_LOGO_ITEMS.slice(0, 7)} muted />
