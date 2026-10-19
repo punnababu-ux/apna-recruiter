@@ -83,6 +83,7 @@ import { CheckoutPreviewSettings } from "@/components/apnahire/checkout-preview-
 import { ExitOfferDialog } from "@/components/apnahire/offers/exit-offer-dialog"
 import { useExtraOff } from "@/components/apnahire/offers/use-extra-off"
 import { ANNUAL_PLAN, EXTRA_OFF, withExtraOff } from "@/content/offers"
+import { useIsMobile } from "@/hooks/use-mobile"
 import { inr, num } from "@/lib/format"
 
 /** The Jobs tab's apna Unlimited card sells the monthly plan (user call,
@@ -284,6 +285,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   // 3 credits → the monthly plan, 6 → the quarterly plan (user call,
   // 2026-10-19), as CreditsToPlanDialog.
   const [upsell, setUpsell] = React.useState<"pack" | "annual" | "plan" | null>(null)
+  const isMobile = useIsMobile()
   const [planUpsell, setPlanUpsell] = React.useState<{ bundle: Bundle; plan: "monthly" | "quarterly" } | null>(null)
   const [exitPrompt, setExitPrompt] = React.useState<{ proceed: () => void } | null>(null)
 
@@ -338,9 +340,12 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
 
   // A job bundle's Buy: the biggest bundle (13) offers the 22-credit pack.
   const BIGGEST_BUNDLE = 13
+  // Phones only (user call, 2026-10-19): there the Unlimited card sits
+  // below the bundles, out of the first view; on desktop it's right beside
+  // them, so the 3/6-credit buys go straight to the summary.
   const PLAN_FOR_BUNDLE: Record<number, "monthly" | "quarterly"> = { 3: "monthly", 6: "quarterly" }
   const handleSelectBundle = (bundle: Parameters<typeof handleBuyBundle>[0]) => {
-    const plan = PLAN_FOR_BUNDLE[bundle.credits]
+    const plan = isMobile ? PLAN_FOR_BUNDLE[bundle.credits] : undefined
     const full = BUNDLES.find((b) => b.credits === bundle.credits)
     if (bundle.credits === BIGGEST_BUNDLE) setUpsell("pack")
     else if (plan && full) {
