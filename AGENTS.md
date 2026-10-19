@@ -500,7 +500,8 @@ every line may break; never let the width of a string decide it.**
    eyeballed: comparable surfaces carry `data-compare-card` and
    `data-compare="price" | "price-suffix" | "cta" | …`, and
    `scripts/check-alignment.js` (run it in the page) reports any card whose
-   line isn't level. Run it at desktop and phone widths, with and without
+   line isn't level. Run it at desktop widths (phones are exempt: the
+   cards stack there), with and without
    the 10% offer, before showing a change to these surfaces.
 7. **Mixed sizes align on the baseline.** Price rows that mix a large
    amount with a small unit or struck price use `items-baseline`, not
