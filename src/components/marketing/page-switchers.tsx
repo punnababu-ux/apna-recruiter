@@ -53,7 +53,7 @@ export function PressList() {
           <Card
             padding="lg"
             interactive
-            className="surface-feature gap-4 sm:p-10"
+            className="gap-4 bg-gradient-illustration-sky sm:p-10"
           >
             <span className="text-overline text-muted-foreground tabular-nums">
               {lead.source} · {lead.date}
