@@ -1042,3 +1042,24 @@
 [data-slot="marketing-canvas"]:has([data-product-canvas="ai-calling"]) { background-image: var(--gradient-canvas-ai-calling); }
 [data-slot="marketing-canvas"]:has([data-product-canvas="database"])   { background-image: var(--gradient-canvas-database); }
 [data-slot="marketing-canvas"]:has([data-product-canvas="unlimited"])  { background-image: var(--gradient-canvas-unlimited); }
+
+/* SAVED ALTERNATIVE (2026-10-19, Punna: "this actually looks great") —
+ * `?mother=brand-mesh` on any marketing URL, set by MotherPreview. Not live:
+ * the mesh above stays the default until the switch is made. Cool and airy:
+ * violet-grey left (plum 100 + sky), sky right, a faint gold top-left. The mother gradient's own geometry (warm top-left, pink left,
+ * periwinkle bottom-left, sky top-right, white bottom-right) with each hue
+ * swapped for its nearest apna brand step; no mesh JPEG (its colours can't
+ * be re-tinted). */
+:root[data-mother="brand-mesh"] {
+  --gradient-checkout-hero:
+    radial-gradient(circle at 8% 12%,  color-mix(in srgb, var(--color-apna-gold-100) 30%, transparent) 0%, color-mix(in srgb, var(--color-apna-gold-100) 12%, transparent) 28%, transparent 55%),
+    radial-gradient(circle at 10% 42%, color-mix(in srgb, color-mix(in srgb, var(--color-apna-plum-100) 60%, var(--color-apna-sky-100)) 90%, transparent) 0%, color-mix(in srgb, var(--color-apna-plum-100) 40%, transparent) 30%, transparent 58%),
+    radial-gradient(circle at 12% 82%, color-mix(in srgb, var(--color-apna-sky-200) 70%, transparent) 0%, color-mix(in srgb, var(--color-apna-plum-100) 50%, transparent) 32%, transparent 60%),
+    radial-gradient(circle at 85% 15%, color-mix(in srgb, var(--color-apna-sky-200) 75%, transparent) 0%, color-mix(in srgb, var(--color-apna-sky-100) 50%, transparent) 40%, transparent 65%),
+    radial-gradient(circle at 92% 88%, var(--color-gray-0) 0%, color-mix(in srgb, var(--color-gray-0) 80%, transparent) 45%, transparent 70%),
+    linear-gradient(135deg, var(--color-gray-0) 0%, var(--color-apna-sky-100) 55%, var(--color-apna-plum-100) 100%);
+  --ambient-blob-1: color-mix(in srgb, var(--color-apna-gold-100) 35%, transparent);
+  --ambient-blob-2: color-mix(in srgb, color-mix(in srgb, var(--color-apna-plum-100) 60%, var(--color-apna-sky-200)) 90%, transparent);
+  --ambient-blob-3: color-mix(in srgb, var(--color-apna-sky-200) 75%, transparent);
+  --ambient-blob-4: color-mix(in srgb, var(--color-apna-sky-100) 90%, transparent);
+}

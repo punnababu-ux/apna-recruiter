@@ -16,6 +16,7 @@
 
 import { ContactSection } from "@/components/marketing/contact-section"
 import { HeaderSlotProvider } from "@/components/marketing/header-slot"
+import { MotherPreview } from "@/components/marketing/mother-preview"
 import { SiteFooter } from "@/components/marketing/site-footer"
 import { SiteHeader } from "@/components/marketing/site-header"
 
@@ -32,6 +33,7 @@ export default function MarketingLayout({
       {/* The canvas: the homepage's mesh gradient, or a product page's own
           re-tint of it (semantic.css, [data-slot=marketing-canvas]). */}
       <div data-slot="marketing-canvas" data-voice="editorial" className="flex min-h-dvh flex-col bg-cover bg-top bg-no-repeat">
+        <MotherPreview />
         <SiteHeader />
         <main className="flex-1">{children}</main>
         {/* The one contact band, the same on every marketing page, sitting
