@@ -174,7 +174,7 @@ const STAT_COLUMNS: Record<number, string> = {
   2: "sm:grid-cols-2",
   3: "sm:grid-cols-3",
   4: "sm:grid-cols-4",
-  5: "sm:grid-cols-3 sm:[&>*:nth-child(n+4)]:border-t lg:grid-cols-5 lg:[&>*]:border-t-0",
+  5: "sm:grid-cols-3 sm:[&>*:nth-child(n+4)]:border-t sm:[&>*:nth-child(3)]:border-r-0 lg:grid-cols-5 lg:[&>*]:border-t-0 lg:[&>*:nth-child(3)]:border-r",
 }
 
 export function StatGrid({
@@ -214,7 +214,7 @@ export function StatGrid({
           // The card sets its own columns from the count, so every page lays
           // the same number of stats out the same way: up to four in one row,
           // five in one row from lg (rows of three below), more in rows of three.
-          STAT_COLUMNS[stats.length] ?? "sm:grid-cols-3 sm:[&>*:nth-child(n+4)]:border-t",
+          STAT_COLUMNS[stats.length] ?? "sm:grid-cols-3 sm:[&>*:nth-child(n+4)]:border-t sm:[&>*:nth-child(3n)]:border-r-0",
           "max-sm:[&>*:nth-child(odd)]:border-r max-sm:[&>*:nth-child(n+3)]:border-t [&>*]:border-border",
           // An odd last stat on phones takes the full row (no empty cell).
           "max-sm:[&>*:last-child:nth-child(odd)]:col-span-2 max-sm:[&>*:last-child:nth-child(odd)]:border-r-0",
