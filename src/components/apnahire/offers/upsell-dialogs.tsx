@@ -247,8 +247,8 @@ export interface PlanQuote {
 /** Buying a small credit bundle: offer the subscription that hires
  *  without counting credits — 3 credits → monthly, 6 → quarterly (user
  *  call, 2026-10-19). Per-job prices don't compare (a plan is unlimited
- *  reposts on one active slot), so the header names the plan, not a
- *  price drop. */
+ *  reposts on one active slot), so the header's drop is in job posts:
+ *  "6 job posts → Unlimited job posts". */
 export function CreditsToPlanDialog({
   bundle,
   plan,
@@ -273,13 +273,10 @@ export function CreditsToPlanDialog({
           Special upgrade offer
         </>
       }
-      eyebrow="Hiring for more roles? Stop counting credits"
-      // "Unlimited" in the gold the header uses for its highlights (prices).
-      headline={
-        <>
-          <span className="text-highlight">Unlimited</span> job posts for {plan.months * 30} days
-        </>
-      }
+      // The annual upgrade's header, in job posts instead of price: the
+      // bundle's count struck, then Unlimited in the highlight gold.
+      eyebrow="Pay less when you upgrade to Unlimited plan"
+      priceDrop={{ from: String(bundle.credits), to: "Unlimited", unit: "job posts" }}
     >
       <OfferChoice
         stay={{
