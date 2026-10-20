@@ -40,6 +40,7 @@ One-page index: what Punna means → where it lives. Rules are in `AGENTS.md`
 | tokens / colours / gradients | — | `packages/design-system/src/styles/tokens/{primitives,semantic}.css`, utilities in `styles/index.css` |
 | primitives (Button, PricingCard, Sheet…) | — | `packages/design-system/src/components/ui/<name>.tsx`, export in `index.ts` |
 | pricing chart (all plans, gaps) | — | `docs/PRICING.md` — keep in sync with price edits |
+| to-do / backlog | — | `docs/TODO.md` — add items as Punna names them |
 | alignment check | — | `scripts/check-alignment.js` (run in page, desktop width) |
 
 ## Content & copy
@@ -50,4 +51,4 @@ interview-coach-ai-05.lovable.app (lounge), employer.apna.co (product). Never in
 marketing ≫ home > apnahire ≈ design-system > offers, pricing, checkout, express.
 Latest: express checkout "trusted by" logo row under plans.
 
-## Pending / parked → `docs/AI-HANDOFF.md` "Pending" + memory `project_parked_items.md`.
+## Pending / parked → `docs/TODO.md` (backlog), `docs/AI-HANDOFF.md` "Pending" + memory `project_parked_items.md`.
