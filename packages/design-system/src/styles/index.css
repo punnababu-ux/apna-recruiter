@@ -1766,3 +1766,51 @@ a[href] > [data-slot="card"] {
 @utility hall-exhibit {
   width: min(40rem, 56dvh, 70vw);
 }
+
+/* ── The story, through glass (About, preview) ───────────────────────────
+ * story-stage   the gradient stage's height: as tall as the screen allows
+ * story-fade    a chapter's things arriving and leaving: opacity, blur and
+ *               a short travel, on the enter timing
+ * story-marker  the chapter marker behind the glass: the watermark's face
+ *               (Inter — numbers are data), large and stronger, so the
+ *               glass has something to blur */
+@utility story-stage {
+  height: min(36rem, 64dvh);
+}
+@utility story-fade {
+  transition: opacity var(--duration-enter) var(--ease-out-ui),
+              filter var(--duration-enter) var(--ease-out-ui),
+              translate var(--duration-enter) var(--ease-out-ui);
+  @media (prefers-reduced-motion: reduce) { transition: none; }
+}
+@utility story-marker {
+  font-family:     var(--font-heading);
+  /* Sized to the card's open side (about half the band), so the widest
+   * marker ("Today", "400M") still fits whole: phones by screen width,
+   * desktop capped. */
+  font-size:       clamp(4.5rem, 20vw, 7rem);
+  line-height:     0.85;
+  font-weight:     var(--font-weight-bold);
+  letter-spacing:  var(--letter-spacing-tighter);
+  font-variant-numeric: tabular-nums;
+  white-space:     nowrap;
+  color:           color-mix(in srgb, var(--foreground) 16%, transparent);
+  @media (width >= 64rem) { font-size: clamp(7rem, 10vw, 11rem); }
+}
+
+/* A word's letters rolling into place (the story markers' "apna", "Today"):
+ * each letter in a clipping slot, rising from below as you scroll. The slot leaves room
+ * for descenders (the p in apna) without moving the line. */
+@utility story-roll-slot {
+  display: inline-block;
+  overflow: hidden;
+  padding-bottom: 0.18em;
+  margin-bottom: -0.18em;
+  vertical-align: bottom;
+}
+/* Its rise is set by the scroll (inline translate); this only smooths it. */
+@utility story-roll-char {
+  display: inline-block;
+  transition: translate 120ms linear;
+  @media (prefers-reduced-motion: reduce) { transition: none; }
+}

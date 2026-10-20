@@ -4,8 +4,9 @@
  *   Hero       the chip ("Founded in 2019"), the serif headline, the intro
  *              and the founding story — no numbers
  *              (the founding story sits in the hero, under the intro)
- *   Story      the four beats as the homepage's stacking cards, each in
- *              one of the hiring-suite gradients, its year a large watermark
+ *   Story      the four beats through glass (StoryGlass): each chapter a
+ *              card in its suite gradient, stacking as you scroll, its
+ *              marker rolling in with the scroll
  *   Mission    its own full-width band in the mother gradient, no card
  *   Recruiters the offers as a ProgressAccordion that walks itself, the
  *              picture beside it following the open one (FeatureShowcase)
@@ -17,12 +18,12 @@
 import type { Metadata } from "next"
 import {
   Flag,
-  ScrollStack,
   Section,
   SectionHeading,
 } from "@apna/design-system"
 import { FeatureShowcase } from "@/components/marketing/feature-showcase"
-import { PageHero, StackCard, StatementBand, deckPosition, withAccent } from "@/components/marketing/page-blocks"
+import { StoryGlass } from "@/components/marketing/story-glass"
+import { PageHero, StatementBand, withAccent } from "@/components/marketing/page-blocks"
 import { ABOUT_OVERVIEW } from "@/content/company"
 
 export const metadata: Metadata = ABOUT_OVERVIEW.meta
@@ -42,31 +43,19 @@ export default function AboutPage() {
         description={`${intro} ${body}`}
       />
 
-      {/* How we got here: the homepage's stacking cards, one beat each, on
-          a white band. */}
-      <Section tone="card" size="md">
-        <div className="flex flex-col gap-10">
+      {/* How we got here: the story through glass over the suite
+          gradients, the chapters stacking as you scroll (StoryGlass). */}
+      <StoryGlass
+        heading={
           <SectionHeading
             level={2}
             align="center"
             eyebrow={<span className="text-overline text-muted-foreground">{storyEyebrow}</span>}
             title={storyTitle}
           />
-          <ScrollStack>
-            {story.map((beat, i) => (
-              <StackCard
-                key={beat.marker}
-                index={i}
-                watermark={beat.marker}
-                overline={`${beat.marker} · ${deckPosition(i, story.length)}`}
-                title={beat.title}
-              >
-                <p className="max-w-2xl text-lg leading-relaxed text-pretty text-foreground sm:text-xl">{beat.description}</p>
-              </StackCard>
-            ))}
-          </ScrollStack>
-        </div>
-      </Section>
+        }
+        beats={story}
+      />
 
       {/* Our mission: its own band — full width, in the homepage's own
           gradient (the mother gradient; no product colour on About), the
