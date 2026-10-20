@@ -7,7 +7,7 @@
  * full size, its glow behind it; the ones ahead and behind recede — smaller,
  * dimmer, pushed back into the dark.
  *
- *   HallLights  keeps the dark theme on the marketing canvas while mounted
+ *   HallLights  keeps the dark theme on <body> while mounted
  *               and takes it off on leaving (the page's inline script puts
  *               it on before first paint)
  *   HallWalk    the walk. From md it's a pinned corridor driven by scroll;
@@ -24,10 +24,17 @@ import { cn } from "@/lib/utils"
 
 export function HallLights() {
   useEffect(() => {
-    const canvas = document.querySelector<HTMLElement>("[data-slot=marketing-canvas]")
-    if (!canvas || canvas.classList.contains("dark")) return
-    canvas.classList.add("dark")
-    return () => canvas.classList.remove("dark")
+    // <body>, not the canvas: pop-ups (search results, menus) render in
+    // portals outside the canvas and must be dark too. Not <html>: the
+    // theme provider owns its class and resets it.
+    const root = document.body
+    if (root.classList.contains("dark") && !root.hasAttribute("data-hall-dark")) return
+    root.classList.add("dark")
+    root.setAttribute("data-hall-dark", "")
+    return () => {
+      root.classList.remove("dark")
+      root.removeAttribute("data-hall-dark")
+    }
   }, [])
   return null
 }

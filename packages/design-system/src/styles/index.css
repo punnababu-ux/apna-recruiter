@@ -1735,7 +1735,7 @@ a[href] > [data-slot="card"] {
  *   hall-pool   the pool on the headline, coming up as the wash dims */
 @utility hall-wash {
   pointer-events: none;
-  background: radial-gradient(ellipse 90% 70% at 50% 0%, var(--hall-light-soft) 0%, transparent 70%);
+  background: radial-gradient(ellipse 80% 60% at 50% 30%, var(--hall-light-soft) 0%, transparent 70%);
   animation: hall-wash 1.8s var(--ease-standard) 0.2s both;
   @media (prefers-reduced-motion: reduce) { animation: none; opacity: 0.35; }
 }

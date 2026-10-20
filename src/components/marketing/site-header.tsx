@@ -268,7 +268,9 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
                 // menu or search is open.
                 openPanel || mobileOpen || searchOpen
                   ? "border-border bg-card shadow-popover"
-                  : "border-card/60 bg-surface-glass shadow-card"
+                  : // On dark the card-tinted edge vanishes into the page, and the
+                  // pill reads as a docked bar: give it the hairline instead.
+                  "border-card/60 bg-surface-glass shadow-card dark:border-border"
               )
         )}
       >

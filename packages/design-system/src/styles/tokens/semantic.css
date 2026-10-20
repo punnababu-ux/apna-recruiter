@@ -1142,8 +1142,8 @@
   --hall-plinth-top: var(--color-apna-plum-800);
   --hall-plinth:     var(--color-apna-plum-900);
   --hall-depth:      var(--color-apna-plum-950);
-  --gradient-hall:
-    radial-gradient(ellipse 60% 45% at 50% 0%, color-mix(in srgb, var(--color-apna-plum-700) 55%, transparent) 0%, transparent 70%),
-    linear-gradient(180deg, var(--color-apna-plum-900) 0%, var(--color-apna-plum-950) 100%);
+  /* Even at the top: a lighter band there sat behind the header and read
+   * as a docked bar. The hero brings its own light (hall-wash). */
+  --gradient-hall: linear-gradient(180deg, var(--color-apna-plum-950) 0%, var(--color-apna-plum-900) 50%, var(--color-apna-plum-950) 100%);
 }
 [data-slot="marketing-canvas"]:has([data-hall]) { --canvas-image: var(--gradient-hall); }

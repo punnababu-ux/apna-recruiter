@@ -21,7 +21,7 @@ import { AWARDS } from "@/content/company"
 
 export const metadata: Metadata = AWARDS.meta
 
-const LIGHTS_DOWN = `document.querySelector("[data-slot=marketing-canvas]")?.classList.add("dark")`
+const LIGHTS_DOWN = `(function(r){if(!r.classList.contains("dark")){r.classList.add("dark");r.setAttribute("data-hall-dark","")}})(document.body)`
 
 export default function AwardsPage() {
   const { eyebrow, title, titleAccent, description, shelf, items } = AWARDS
