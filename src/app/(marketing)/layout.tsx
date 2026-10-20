@@ -32,7 +32,9 @@ export default function MarketingLayout({
     <HeaderSlotProvider>
       {/* The canvas: the homepage's mesh gradient, or a product page's own
           re-tint of it (semantic.css, [data-slot=marketing-canvas]). */}
-      <div data-slot="marketing-canvas" data-voice="editorial" className="flex min-h-dvh flex-col">
+      {/* suppressHydrationWarning: the awards hall darkens this element
+          before hydration (HallLights), on purpose. */}
+      <div data-slot="marketing-canvas" data-voice="editorial" className="flex min-h-dvh flex-col" suppressHydrationWarning>
         <MotherPreview />
         <SiteHeader />
         <main className="flex-1">{children}</main>

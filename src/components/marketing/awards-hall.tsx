@@ -7,7 +7,9 @@
  * full size, its glow behind it; the ones ahead and behind recede — smaller,
  * dimmer, pushed back into the dark.
  *
- *   HallLights  forces the dark theme on the marketing canvas while mounted
+ *   HallLights  keeps the dark theme on the marketing canvas while mounted
+ *               and takes it off on leaving (the page's inline script puts
+ *               it on before first paint)
  *   HallWalk    the walk. From md it's a pinned corridor driven by scroll;
  *               on phones a swipe carousel, every award lit
  *   Exhibit     one award: `model` (GLB, turning) wins over `video` (a
