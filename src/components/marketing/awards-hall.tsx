@@ -7,7 +7,6 @@
  * full size, its glow behind it; the ones ahead and behind recede — smaller,
  * dimmer, pushed back into the dark.
  *
- *   HallLights  keeps the dark theme on <body> while mounted
  *               and takes it off on leaving (the page's inline script puts
  *               it on before first paint)
  *   HallWalk    the walk. From md it's a pinned corridor driven by scroll;
@@ -20,23 +19,6 @@ import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 import { Badge } from "@apna/design-system"
 import { cn } from "@/lib/utils"
-
-export function HallLights() {
-  useEffect(() => {
-    // <body>, not the canvas: pop-ups (search results, menus) render in
-    // portals outside the canvas and must be dark too. Not <html>: the
-    // theme provider owns its class and resets it.
-    const root = document.body
-    if (root.classList.contains("dark") && !root.hasAttribute("data-hall-dark")) return
-    root.classList.add("dark")
-    root.setAttribute("data-hall-dark", "")
-    return () => {
-      root.classList.remove("dark")
-      root.removeAttribute("data-hall-dark")
-    }
-  }, [])
-  return null
-}
 
 export type HallAward = {
   image: string

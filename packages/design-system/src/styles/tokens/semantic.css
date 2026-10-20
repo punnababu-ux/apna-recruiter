@@ -710,7 +710,10 @@
 /* ============================================================================
  * Dark theme — only the mapping changes, primitives are untouched.
  * ========================================================================== */
-.dark {
+/* The awards hall (a page holding [data-hall]) is dark in both themes:
+ * pure CSS, so it's dark from the first paint, on a fresh load or an
+ * in-site navigation, pop-ups included (they render inside <body>). */
+.dark, body:has([data-hall]) {
   --logo-hire:         var(--cta-primary); /* "Recruiter": the CTA green, as on light */
   --surface-plan-card: var(--muted);
   --surface-glass: color-mix(in srgb, var(--card) 80%, transparent);

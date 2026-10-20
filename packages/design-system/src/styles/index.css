@@ -22,7 +22,8 @@
 @import "./tokens/primitives.css";
 @import "./tokens/semantic.css";
 
-@custom-variant dark (&:is(.dark *));
+/* dark: also inside the awards hall (body:has([data-hall]), see semantic.css). */
+@custom-variant dark (&:is(.dark *, body:has([data-hall]) *));
 
 /* ----------------------------------------------------------------------------
  * @theme inline — exposes semantic tokens to Tailwind's utility generator.

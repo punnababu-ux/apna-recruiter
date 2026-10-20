@@ -83,9 +83,7 @@ export default function RootLayout({
       className={`${inter.variable} ${editorialSerif.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      {/* suppressHydrationWarning: the awards hall puts .dark on <body>
-          before hydration (the theme provider owns <html>'s class). */}
-      <body className="min-h-full" suppressHydrationWarning>
+      <body className="min-h-full">
         <ThemeProvider>
           <TooltipProvider>{children}</TooltipProvider>
           <Toaster />

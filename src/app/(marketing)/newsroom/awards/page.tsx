@@ -2,7 +2,8 @@
  * /newsroom/awards — the hall. Copy and pictures: content/company.ts AWARDS.
  *
  * The one dark marketing page (user call, 2026-10-20): walking in should
- * feel like entering an auditorium where the awards are on display.
+ * feel like entering an auditorium where the awards are on display. Dark by
+ * CSS alone: [data-hall] below switches the dark tokens on (semantic.css).
  *
  *   Hero     the stage wash: house lights dim on arrival, a pool of
  *            light settles on the headline
@@ -15,22 +16,17 @@
 import type { Metadata } from "next"
 import Image from "next/image"
 import { Award, Section, SectionHeading } from "@apna/design-system"
-import { HallLights, HallWalk } from "@/components/marketing/awards-hall"
+import { HallWalk } from "@/components/marketing/awards-hall"
 import { HeroChip, withAccent } from "@/components/marketing/page-blocks"
 import { AWARDS } from "@/content/company"
 
 export const metadata: Metadata = AWARDS.meta
 
-const LIGHTS_DOWN = `(function(r){if(!r.classList.contains("dark")){r.classList.add("dark");r.setAttribute("data-hall-dark","")}})(document.body)`
 
 export default function AwardsPage() {
   const { eyebrow, title, titleAccent, description, shelf, items } = AWARDS
   return (
     <div data-hall className="relative text-foreground">
-      {/* Lights down before first paint: runs while the HTML parses, so a
-          visitor in light mode never sees the light page flash first. */}
-      <script dangerouslySetInnerHTML={{ __html: LIGHTS_DOWN }} />
-      <HallLights />
 
       <div className="relative">
         <div aria-hidden className="hall-wash absolute inset-x-0 top-0 h-full" />

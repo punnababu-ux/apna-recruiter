@@ -31,7 +31,7 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
       {
         name: "HallWalk",
         file: "marketing/awards-hall.tsx",
-        what: "The awards page as an auditorium: a dark hall and a pinned gallery walk; the award in the centre is lit (spotlight, glow), the rest recede. Phones get a swipe carousel. HallLights turns the page dark.",
+        what: "The awards page as an auditorium: a dark hall and a pinned gallery walk; the award in the centre is lit (spotlight, glow), the rest recede. Phones get a swipe carousel. The page is dark by CSS alone ([data-hall] switches the dark tokens on).",
         live: "/newsroom/awards",
         where: "/newsroom/awards only",
         rules: ["The one dark marketing page (user call, 2026-10-20). Don't use the hall's lights on other pages.", "An award can take a `video` (360° loop); it plays only while the award is in the centre. Keep files under ~5 MB."],
