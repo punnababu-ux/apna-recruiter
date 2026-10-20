@@ -417,25 +417,23 @@
    * light-mode value, not fixed across themes. Pair with
    * --surface-checkout-hero-fg / -fg-muted, which ARE fixed dark-on-light
    * text roles, since both hero backdrops keep light-toned text. */
-  /* The mother gradient (restored 2026-10-19, Punna's call): the source
-   * reference's mesh JPEG with peach / pink / periwinkle / sky accents. The
-   * brand-colour version is kept as `?mother=brand` (block at the end). */
+  /* The mother gradient (switched to the brand colours 2026-10-20, Punna's
+   * call): apna's lightest steps — a faint green top-left, sky right, gold
+   * along the top, plum down the left — over white. The mesh version it
+   * replaced is kept as `?mother=mesh` (block at the end of this file). */
   --gradient-checkout-hero:
-    linear-gradient(color-mix(in srgb, var(--color-gray-0) 52%, transparent), color-mix(in srgb, var(--color-gray-0) 52%, transparent)),
-    url("/bg-ambient-mesh.jpg"),
-    radial-gradient(circle at 8% 12%,  color-mix(in srgb, var(--color-atmosphere-cream) 75%, transparent) 0%, color-mix(in srgb, var(--color-atmosphere-blush) 50%, transparent) 28%, transparent 55%),
-    radial-gradient(circle at 10% 42%, color-mix(in srgb, var(--color-atmosphere-rose) 55%, transparent) 0%, color-mix(in srgb, var(--color-atmosphere-lilac) 45%, transparent) 30%, transparent 58%),
-    radial-gradient(circle at 12% 82%, color-mix(in srgb, var(--color-atmosphere-iris) 60%, transparent) 0%, color-mix(in srgb, var(--color-atmosphere-ice) 45%, transparent) 32%, transparent 60%),
-    radial-gradient(circle at 85% 15%, color-mix(in srgb, var(--color-atmosphere-frost) 70%, transparent) 0%, color-mix(in srgb, var(--color-atmosphere-haze) 50%, transparent) 40%, transparent 65%),
-    radial-gradient(circle at 92% 88%, var(--color-gray-0)    0%, color-mix(in srgb, var(--color-atmosphere-cloud) 80%, transparent) 45%, transparent 70%),
-    linear-gradient(135deg, var(--color-gray-0) 0%, var(--color-atmosphere-cloud) 40%, var(--color-atmosphere-fog) 80%, var(--color-atmosphere-slate) 100%);
+    radial-gradient(circle at 6% 8%,   color-mix(in srgb, var(--color-apna-green-200) 35%, transparent) 0%, color-mix(in srgb, var(--color-apna-green-100) 18%, transparent) 25%, transparent 45%),
+    radial-gradient(circle at 92% 22%, var(--color-apna-sky-200) 0%, color-mix(in srgb, var(--color-apna-sky-100) 70%, transparent) 38%, transparent 65%),
+    radial-gradient(ellipse 45% 30% at 42% 0%, color-mix(in srgb, var(--color-apna-gold-200) 70%, transparent) 0%, color-mix(in srgb, var(--color-apna-gold-100) 35%, transparent) 45%, transparent 100%),
+    radial-gradient(ellipse 40% 35% at 0% 28%, color-mix(in srgb, var(--color-apna-plum-300) 70%, transparent) 0%, color-mix(in srgb, var(--color-apna-plum-200) 45%, transparent) 45%, transparent 100%),
+    radial-gradient(circle at 8% 90%, var(--color-apna-plum-200) 0%, color-mix(in srgb, var(--color-apna-plum-200) 60%, transparent) 30%, transparent 58%),
+    linear-gradient(135deg, var(--color-gray-0) 0%, var(--color-apna-sky-50) 55%, var(--color-gray-0) 100%);
   /* Product canvases — the page background of a product page, header to
-   * footer: the homepage canvas (--gradient-checkout-hero, "the mother
-   * gradient": the same mesh, white wash and corner geometry) re-tinted in
-   * the product's hue: the product's washes lie OVER the mother's mesh (the
-   * mesh JPEG is opaque, so anything under it never shows), and the mesh's
-   * own peach, pink and sky still show between them — so every product page
-   * is visibly from the same family.
+   * footer: the product's washes laid over the mother gradient itself
+   * (var(--gradient-checkout-hero) as the base), so a product page is the
+   * homepage re-tinted in the product's hue, and follows whichever mother is
+   * live (including a `?mother=` preview) — every product page visibly from
+   * the same family.
    * Switched by the marketing shell when the page holds a
    * [data-product-canvas] (see the rule at the end of this file). */
   --gradient-canvas-smart-jobs:
@@ -443,40 +441,36 @@
     radial-gradient(ellipse 60% 35% at 95% 45%, color-mix(in srgb, var(--color-apna-green-100) 60%, transparent) 0%, transparent 70%),
     radial-gradient(ellipse 70% 40% at 15% 95%, color-mix(in srgb, var(--color-apna-green-100) 65%, transparent) 0%, transparent 70%),
     linear-gradient(180deg, color-mix(in srgb, var(--color-apna-green-100) 55%, transparent) 0%, color-mix(in srgb, var(--color-apna-green-50) 45%, transparent) 50%, color-mix(in srgb, var(--color-apna-green-100) 55%, transparent) 100%),
-    linear-gradient(color-mix(in srgb, var(--color-gray-0) 25%, transparent), color-mix(in srgb, var(--color-gray-0) 25%, transparent)),
-    url("/bg-ambient-mesh.jpg");
+    var(--gradient-checkout-hero);
   --gradient-canvas-ai-calling:
     radial-gradient(ellipse 70% 40% at 10% 0%,  color-mix(in srgb, var(--color-apna-sky-200) 75%, transparent) 0%, color-mix(in srgb, var(--color-apna-sky-100) 45%, transparent) 45%, transparent 75%),
     radial-gradient(ellipse 60% 35% at 95% 45%, color-mix(in srgb, var(--color-apna-sky-100) 60%, transparent) 0%, transparent 70%),
     radial-gradient(ellipse 70% 40% at 15% 95%, color-mix(in srgb, var(--color-apna-sky-100) 65%, transparent) 0%, transparent 70%),
     linear-gradient(180deg, color-mix(in srgb, var(--color-apna-sky-100) 55%, transparent) 0%, color-mix(in srgb, var(--color-apna-sky-50) 45%, transparent) 50%, color-mix(in srgb, var(--color-apna-sky-100) 55%, transparent) 100%),
-    linear-gradient(color-mix(in srgb, var(--color-gray-0) 25%, transparent), color-mix(in srgb, var(--color-gray-0) 25%, transparent)),
-    url("/bg-ambient-mesh.jpg");
+    var(--gradient-checkout-hero);
   --gradient-canvas-database:
     radial-gradient(ellipse 70% 40% at 10% 0%,  color-mix(in srgb, var(--color-apna-plum-200) 75%, transparent) 0%, color-mix(in srgb, var(--color-apna-plum-100) 45%, transparent) 45%, transparent 75%),
     radial-gradient(ellipse 60% 35% at 95% 45%, color-mix(in srgb, var(--color-apna-plum-100) 60%, transparent) 0%, transparent 70%),
     radial-gradient(ellipse 70% 40% at 15% 95%, color-mix(in srgb, var(--color-apna-plum-100) 65%, transparent) 0%, transparent 70%),
     linear-gradient(180deg, color-mix(in srgb, var(--color-apna-plum-100) 55%, transparent) 0%, color-mix(in srgb, var(--color-apna-plum-50) 45%, transparent) 50%, color-mix(in srgb, var(--color-apna-plum-100) 55%, transparent) 100%),
-    linear-gradient(color-mix(in srgb, var(--color-gray-0) 25%, transparent), color-mix(in srgb, var(--color-gray-0) 25%, transparent)),
-    url("/bg-ambient-mesh.jpg");
+    var(--gradient-checkout-hero);
   --gradient-canvas-unlimited:
     radial-gradient(ellipse 70% 40% at 10% 0%,  color-mix(in srgb, var(--color-apna-gold-200) 75%, transparent) 0%, color-mix(in srgb, var(--color-apna-gold-100) 45%, transparent) 45%, transparent 75%),
     radial-gradient(ellipse 60% 35% at 95% 45%, color-mix(in srgb, var(--color-apna-gold-100) 60%, transparent) 0%, transparent 70%),
     radial-gradient(ellipse 70% 40% at 15% 95%, color-mix(in srgb, var(--color-apna-gold-100) 65%, transparent) 0%, transparent 70%),
     linear-gradient(180deg, color-mix(in srgb, var(--color-apna-gold-100) 55%, transparent) 0%, color-mix(in srgb, var(--color-apna-gold-50) 45%, transparent) 50%, color-mix(in srgb, var(--color-apna-gold-100) 55%, transparent) 100%),
-    linear-gradient(color-mix(in srgb, var(--color-gray-0) 25%, transparent), color-mix(in srgb, var(--color-gray-0) 25%, transparent)),
-    url("/bg-ambient-mesh.jpg");
+    var(--gradient-checkout-hero);
   /* Ambient backdrop (AmbientBackdrop) — the slow-moving blobs, cursor glow
    * and grain laid over this canvas on the homepage hero. The blob hues are
-   * the mesh's own, sampled from /bg-ambient-mesh.jpg (peach top-left, pink
-   * left, periwinkle bottom-left, sky top-right), so the motion re-mixes the
-   * gradient rather than adding a colour. Alphas keep it a whisper: text
-   * contrast on the hero is unchanged. */
-  /* The hero's blobs: the mesh's own hues. */
-  --ambient-blob-1: var(--color-atmosphere-peach);
-  --ambient-blob-2: color-mix(in srgb, var(--color-atmosphere-pink) 95%, transparent);
-  --ambient-blob-3: color-mix(in srgb, var(--color-atmosphere-periwinkle) 75%, transparent);
-  --ambient-blob-4: color-mix(in srgb, var(--color-atmosphere-mist) 90%, transparent);
+   * the mother's own (brand colours), so the motion re-mixes the gradient
+   * rather than adding a colour. Alphas keep it a whisper: text contrast on
+   * the hero is unchanged. Blobs 1/7 (left) sky, 2/5 (upper left) plum,
+   * 3 (low) green, 4/6 (right) gold — plum and gold drift on opposite sides,
+   * never into each other. Plum softened (70%). */
+  --ambient-blob-1: var(--color-apna-sky-200);
+  --ambient-blob-2: color-mix(in srgb, var(--color-apna-plum-300) 70%, transparent);
+  --ambient-blob-3: color-mix(in srgb, var(--color-apna-green-200) 30%, transparent);
+  --ambient-blob-4: color-mix(in srgb, var(--color-apna-gold-200) 85%, transparent);
   --ambient-glow:   color-mix(in srgb, var(--color-gray-0) 85%, transparent);
   --ambient-grain-opacity: 0.06;
   --surface-checkout-hero-fg:       var(--color-gray-900);
@@ -1105,27 +1099,27 @@
 [data-slot="marketing-canvas"]:has([data-product-canvas="unlimited"])  { --canvas-image: var(--gradient-canvas-unlimited); }
 
 
-/* BRAND (kept ready, 2026-10-19) — the brand-colour mother gradient that was
- * live: apna's lightest steps — a faint green top-left, sky right, gold along
- * the top, plum down the left — over white, hero blobs to match (plum and
- * gold on opposite sides). `?mother=brand` on any marketing URL shows it
- * (MotherPreview); to switch back, move these values into :root above.
- * Light mode only. */
-:root[data-mother="brand"]:not(.dark) {
+/* MESH (kept ready, 2026-10-20) — the mother gradient live until then: the
+ * source reference's mesh JPEG with peach / pink / periwinkle / sky accents,
+ * under a white wash, hero blobs in the mesh's own hues. `?mother=mesh` on
+ * any marketing URL shows it (MotherPreview) — product pages included, as
+ * their canvases sit on the mother. To switch back, move these values into
+ * :root above. Light mode only. */
+:root[data-mother="mesh"]:not(.dark) {
   --gradient-checkout-hero:
-    radial-gradient(circle at 6% 8%,   color-mix(in srgb, var(--color-apna-green-200) 35%, transparent) 0%, color-mix(in srgb, var(--color-apna-green-100) 18%, transparent) 25%, transparent 45%),
-    radial-gradient(circle at 92% 22%, var(--color-apna-sky-200) 0%, color-mix(in srgb, var(--color-apna-sky-100) 70%, transparent) 38%, transparent 65%),
-    radial-gradient(ellipse 45% 30% at 42% 0%, color-mix(in srgb, var(--color-apna-gold-200) 70%, transparent) 0%, color-mix(in srgb, var(--color-apna-gold-100) 35%, transparent) 45%, transparent 100%),
-    radial-gradient(ellipse 40% 35% at 0% 28%, color-mix(in srgb, var(--color-apna-plum-300) 70%, transparent) 0%, color-mix(in srgb, var(--color-apna-plum-200) 45%, transparent) 45%, transparent 100%),
-    radial-gradient(circle at 8% 90%, var(--color-apna-plum-200) 0%, color-mix(in srgb, var(--color-apna-plum-200) 60%, transparent) 30%, transparent 58%),
-    linear-gradient(135deg, var(--color-gray-0) 0%, var(--color-apna-sky-50) 55%, var(--color-gray-0) 100%);
-  /* Blobs 1/7 (left) sky, 2/5 (upper left) plum, 3 (low) green, 4/6
-   * (right) gold — plum and gold drift on opposite sides, never into each
-   * other. Plum softened (70%). */
-  --ambient-blob-1: var(--color-apna-sky-200);
-  --ambient-blob-2: color-mix(in srgb, var(--color-apna-plum-300) 70%, transparent);
-  --ambient-blob-3: color-mix(in srgb, var(--color-apna-green-200) 30%, transparent);
-  --ambient-blob-4: color-mix(in srgb, var(--color-apna-gold-200) 85%, transparent);
+    linear-gradient(color-mix(in srgb, var(--color-gray-0) 52%, transparent), color-mix(in srgb, var(--color-gray-0) 52%, transparent)),
+    url("/bg-ambient-mesh.jpg"),
+    radial-gradient(circle at 8% 12%,  color-mix(in srgb, var(--color-atmosphere-cream) 75%, transparent) 0%, color-mix(in srgb, var(--color-atmosphere-blush) 50%, transparent) 28%, transparent 55%),
+    radial-gradient(circle at 10% 42%, color-mix(in srgb, var(--color-atmosphere-rose) 55%, transparent) 0%, color-mix(in srgb, var(--color-atmosphere-lilac) 45%, transparent) 30%, transparent 58%),
+    radial-gradient(circle at 12% 82%, color-mix(in srgb, var(--color-atmosphere-iris) 60%, transparent) 0%, color-mix(in srgb, var(--color-atmosphere-ice) 45%, transparent) 32%, transparent 60%),
+    radial-gradient(circle at 85% 15%, color-mix(in srgb, var(--color-atmosphere-frost) 70%, transparent) 0%, color-mix(in srgb, var(--color-atmosphere-haze) 50%, transparent) 40%, transparent 65%),
+    radial-gradient(circle at 92% 88%, var(--color-gray-0)    0%, color-mix(in srgb, var(--color-atmosphere-cloud) 80%, transparent) 45%, transparent 70%),
+    linear-gradient(135deg, var(--color-gray-0) 0%, var(--color-atmosphere-cloud) 40%, var(--color-atmosphere-fog) 80%, var(--color-atmosphere-slate) 100%);
+  /* The hero's blobs: the mesh's own hues. */
+  --ambient-blob-1: var(--color-atmosphere-peach);
+  --ambient-blob-2: color-mix(in srgb, var(--color-atmosphere-pink) 95%, transparent);
+  --ambient-blob-3: color-mix(in srgb, var(--color-atmosphere-periwinkle) 75%, transparent);
+  --ambient-blob-4: color-mix(in srgb, var(--color-atmosphere-mist) 90%, transparent);
 }
 
 

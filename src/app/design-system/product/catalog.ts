@@ -94,7 +94,7 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
       {
         name: "MotherPreview",
         file: "marketing/mother-preview.tsx",
-        what: "Preview-only: ?mother=brand shows the brand-colour mother gradient.",
+        what: "Preview-only: ?mother=mesh shows the saved mesh mother gradient (live until 2026-10-20).",
         where: "Marketing layout, behind a URL flag",
         rules: ["Preview only. Never on by default; remove before production."],
       },
