@@ -34,7 +34,7 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
         what: "The awards page as an auditorium: a dark hall and a pinned gallery walk; the award in the centre is lit (spotlight, glow), the rest recede. Phones get a swipe carousel. HallLights turns the page dark.",
         live: "/newsroom/awards",
         where: "/newsroom/awards only",
-        rules: ["The one dark marketing page (user call, 2026-10-20). Don't use the hall's lights on other pages.", "An award takes `model` (GLB) or `video` (360° loop); either plays only while it's in the centre. Keep files under ~5 MB."],
+        rules: ["The one dark marketing page (user call, 2026-10-20). Don't use the hall's lights on other pages.", "An award can take a `video` (360° loop); it plays only while the award is in the centre. Keep files under ~5 MB."],
       },
       {
         name: "StoryGlass",
@@ -43,13 +43,6 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
         live: "/about",
         where: "/about, the story section",
         rules: ["Never hold the scroll for it: a pinned stage was tried and felt unresponsive.", "Every card in the deck is one height (measured): a shorter card lets the one beneath show.", "The marker fits the card's open side whole; never let it run under the glass."],
-      },
-      {
-        name: "AwardModel",
-        file: "marketing/award-model.tsx",
-        what: "A GLB award in <model-viewer>: turns slowly, drag to spin, no zoom or pan.",
-        where: "HallWalk, for an award with `model`",
-        rules: ["GLB only (convert OBJ/FBX first)."],
       },
       {
         name: "SiteHeader",

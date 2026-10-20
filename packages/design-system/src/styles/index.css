@@ -1718,16 +1718,6 @@ a[href] > [data-slot="card"] {
   @media (prefers-reduced-motion: reduce) { opacity: 1; transform: none; transition: none; }
 }
 
-/* The award floats: a slow rise and fall, as if held by the light. */
-@utility hall-float {
-  animation: hall-float 6s var(--ease-standard) infinite alternate;
-  @media (prefers-reduced-motion: reduce) { animation: none; }
-}
-@keyframes hall-float {
-  from { transform: translateY(0); }
-  to   { transform: translateY(-12px); }
-}
-
 /* The hero's stage wash: on arrival the house lights are up (a wide warm
  * wash from the top edge), then they dim and a soft pool settles on the
  * headline — the room going dark before the show. Two layers:

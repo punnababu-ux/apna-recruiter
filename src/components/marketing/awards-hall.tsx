@@ -12,14 +12,13 @@
  *               it on before first paint)
  *   HallWalk    the walk. From md it's a pinned corridor driven by scroll;
  *               on phones a swipe carousel, every award lit
- *   Exhibit     one award: `model` (GLB, turning) wins over `video` (a
- *               seamless 360° turn, plays only while lit) over the picture
+ *   Exhibit     one award: `video` (a seamless 360° turn, plays only while
+ *               lit), else the picture
  */
 
 import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 import { Badge } from "@apna/design-system"
-import { AwardModel } from "@/components/marketing/award-model"
 import { cn } from "@/lib/utils"
 
 export function HallLights() {
@@ -42,8 +41,6 @@ export function HallLights() {
 export type HallAward = {
   image: string
   video?: string
-  /** A GLB: the award in real 3D, turning, draggable. Wins over video. */
-  model?: string
   by: string
   title: string
   year: string
@@ -163,9 +160,7 @@ function Exhibit({ award, lit }: { award: HallAward; lit: boolean }) {
     else v.pause()
   }, [lit])
 
-  const media = award.model ? (
-    <AwardModel src={award.model} alt={award.title} />
-  ) : award.video ? (
+  const media = award.video ? (
     <video
       ref={videoRef}
       src={award.video}
@@ -197,7 +192,7 @@ function Exhibit({ award, lit }: { award: HallAward; lit: boolean }) {
         <div className="hall-exhibit relative">
           <div aria-hidden className="hall-spotlight absolute -inset-x-24 -top-64 -bottom-8" />
           <div aria-hidden className="hall-halo absolute -inset-1/4 md:-inset-1/2" />
-          <div className={cn("hall-dim relative aspect-square", award.model && "hall-float")}>{media}</div>
+          <div className="hall-dim relative aspect-square">{media}</div>
         </div>
         <div className="hall-dim flex max-w-md flex-col items-center gap-3 text-center">
           <div className="flex items-center gap-3">
