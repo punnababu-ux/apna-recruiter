@@ -368,6 +368,15 @@ function BillRow({ label, children }: { label: React.ReactNode; children: React.
   )
 }
 
+/** The Database add-on's attention ring. It starts when the card itself
+ *  appears (like the AI calling card), not when the summary opens: an order
+ *  that shows no Database card (a subscription, Database credits) must not
+ *  use up the session's one ring. */
+function DatabaseAddonRing() {
+  const on = useAttentionRing("database")
+  return on ? <span aria-hidden className="attention-ring" /> : null
+}
+
 export function CheckoutDrawer({
   open,
   onOpenChange,
@@ -388,7 +397,6 @@ export function CheckoutDrawer({
   const extraDeadline = extraOffer?.deadline
   const extraRemaining = useCountdown(extraDeadline ?? null)
   const [aiAdded, setAiAdded] = React.useState(false)
-  const dbRing = useAttentionRing("database", open)
   const [packValue, setPackValue] = React.useState(DEFAULT_PACK)
   const [addonCredits, setAddonCredits] = React.useState<number | null>(null)
   const [couponInput, setCouponInput] = React.useState("")
@@ -598,7 +606,7 @@ export function CheckoutDrawer({
               {/* The Database add-on wears the Database gradient (one gradient
                   per product, light in light mode, dark in dark). */}
               <div data-product="database" className="relative flex flex-col gap-4 rounded-card-nested border border-border bg-gradient-product-database p-4">
-                {dbRing && <span aria-hidden className="attention-ring" />}
+                <DatabaseAddonRing />
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex flex-col gap-3">
                     <p className="text-sm font-semibold text-foreground">

@@ -18,7 +18,6 @@ import {
 } from "@/components/apnahire/offers/upsell-dialogs"
 import { ExitOfferDialog } from "@/components/apnahire/offers/exit-offer-dialog"
 import { CouponExpiredDialog } from "@/components/apnahire/offers/coupon-expired-dialog"
-import { AiCallingExplainer } from "@/components/apnahire/ai-calling-explainer"
 import { SlotsFullDialog } from "@/components/apnahire/slots/slots-full-dialog"
 import { PaymentModal } from "@/components/apnahire/payment-modal"
 import { CheckoutDrawer } from "@/components/apnahire/checkout-drawer"
@@ -38,7 +37,6 @@ type PopupId =
   | "credits-to-plan"
   | "exit"
   | "coupon-expired"
-  | "ai-calling"
   | "slots-full"
   | "payment"
   | "order-summary"
@@ -193,15 +191,6 @@ export default function PopUpsPage() {
       </ShowcaseEntry>
 
       <ShowcaseEntry
-        title="How AI calling works"
-        component="AiCallingExplainer"
-        where="Express checkout › order summary › AI calling add-on › How it works"
-        actions={openBtn("ai-calling")}
-      >
-        <RuleList rules={["Explains, then offers the add-on with its price. Never open it unprompted."]} />
-      </ShowcaseEntry>
-
-      <ShowcaseEntry
         title="All job slots are in use"
         component="SlotsFullDialog"
         where="Subscriber posts a job with every slot taken (job posting, last step)"
@@ -269,12 +258,6 @@ export default function PopUpsPage() {
       />
       <ExitOfferDialog open={is("exit")} onClaim={close} onDecline={close} onDismiss={close} />
       <CouponExpiredDialog open={is("coupon-expired")} onClose={close} />
-      <AiCallingExplainer
-        open={is("ai-calling")}
-        onOpenChange={toggle("ai-calling")}
-        ctaLabel="Add AI calling · ₹1,699"
-        onCta={close}
-      />
       <SlotsFullDialog
         open={is("slots-full")}
         onOpenChange={toggle("slots-full")}

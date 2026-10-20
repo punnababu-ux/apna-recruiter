@@ -86,12 +86,13 @@ export type ReusableSidebarProps = {
   activeWorkspaceId: string
   onWorkspaceChange: (w: SidebarWorkspace) => void
   navItems: SidebarNavItem[]
-  /** One promoted destination at the very bottom, under the alert banner
-   *  (e.g. "View plans"): a dark nav row with a chevron. */
+  /** A row after the footer items, above the alert banner (e.g. Plans). `promoted`: the gold-on-plum row with a coin and
+   *  chevron; `plain` (default `promoted`): an ordinary nav row. */
   bottomCta?: {
     label: string
     icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
     href: string
+    appearance?: "promoted" | "plain"
   }
   alertBanner?: SidebarAlertBanner
   footerItems?: {
@@ -397,9 +398,13 @@ export function ReusableSidebar({
 
         {/* Bottom Section */}
         <div className="mt-auto flex flex-col">
+          {/* Order (user call, 2026-10-20): footer items (Support), the
+              bottom link (Plans), then the alert banner in the corner. The
+              corner holds what needs attention most: the alert when there
+              is one; without it, the caller can promote the bottom link. */}
           {/* Footer items */}
           {footerItems && footerItems.length > 0 && (
-            <div className="px-3 pb-2 pt-2 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:px-3">
+            <div className="px-3 pt-2 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:px-3">
               <SidebarMenu>
                 {footerItems.map((item) => (
                   <SidebarMenuItem key={item.label}>
@@ -417,6 +422,47 @@ export function ReusableSidebar({
             </div>
           )}
 
+          {/* Bottom link — after the banner and footer items, the last thing
+              in the sidebar. Plain: an ordinary nav row. Promoted:
+              A destination, not an action: shaped like a nav row (left-aligned,
+              chevron = "goes to another page"), in the plans look shared with
+              the bottom bar's raised Plans tile and the `premium` Button: the
+              gold-on-plum gradient and a gold Coin. It stands out from the
+              plain nav items without competing with the page's green CTA. Collapsed: an icon tile the size and inset
+              of the nav buttons above (40px, 12px in), so its icon sits on
+              the same centre line; a 32px tile 8px in sat 8px to the left. */}
+          {bottomCta && bottomCta.appearance === "plain" && (
+            <div className="px-3 pb-3 pt-1 group-data-[collapsible=icon]:pb-2">
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    render={<Link href={bottomCta.href} />}
+                    tooltip={bottomCta.label}
+                    isActive={pathname.startsWith(bottomCta.href)}
+                    onClick={() => setOpenMobile(false)}
+                  >
+                    <bottomCta.icon />
+                    <span>{bottomCta.label}</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </div>
+          )}
+          {bottomCta && bottomCta.appearance !== "plain" && (
+            <div className="px-3 pb-3 pt-1 group-data-[collapsible=icon]:pb-2">
+              <Link
+                href={bottomCta.href}
+                aria-label={isCollapsed ? bottomCta.label : undefined}
+                title={isCollapsed ? bottomCta.label : undefined}
+                onClick={() => setOpenMobile(false)}
+                className="ink press-subtle relative flex h-10 w-full items-center gap-2.5 rounded-lg bg-gradient-offer-premium px-2 text-sm font-medium text-surface-inverted-fg outline-none transition-interactive hover:brightness-110 focus-visible:ring-3 focus-visible:ring-ring/50 group-data-[collapsible=icon]:size-10 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0"
+              >
+                <Coin icon={bottomCta.icon} />
+                <span className="truncate group-data-[collapsible=icon]:hidden">{bottomCta.label}</span>
+                <ChevronRight className="ml-auto size-4 shrink-0 group-data-[collapsible=icon]:hidden" aria-hidden />
+              </Link>
+            </div>
+          )}
           {/* Alert Banner composed directly from AlertBanner design system
               primitive. Collapsed, the banner is an icon tile; hovering (or
               focusing / tapping) it opens the full banner beside it, CTA and
@@ -448,7 +494,7 @@ export function ReusableSidebar({
               />
             )
             return (
-              <div className="p-3 group-data-[collapsible=icon]:p-2 pt-0 group-data-[collapsible=icon]:pt-0">
+              <div className="px-3 pb-3 group-data-[collapsible=icon]:px-2 group-data-[collapsible=icon]:pb-2">
                 {isCollapsed ? (
                   <Popover>
                     <PopoverTrigger
@@ -474,29 +520,6 @@ export function ReusableSidebar({
             )
           })()}
 
-          {/* Bottom link — under the banner, the last thing in the sidebar.
-              A destination, not an action: shaped like a nav row (left-aligned,
-              chevron = "goes to another page"), in the plans look shared with
-              the bottom bar's raised Plans tile and the `premium` Button: the
-              gold-on-plum gradient and a gold Coin. It stands out from the
-              plain nav items without competing with the page's green CTA. Collapsed: an icon tile the size and inset
-              of the nav buttons above (40px, 12px in), so its icon sits on
-              the same centre line; a 32px tile 8px in sat 8px to the left. */}
-          {bottomCta && (
-            <div className="px-3 pb-3 group-data-[collapsible=icon]:pb-2">
-              <Link
-                href={bottomCta.href}
-                aria-label={isCollapsed ? bottomCta.label : undefined}
-                title={isCollapsed ? bottomCta.label : undefined}
-                onClick={() => setOpenMobile(false)}
-                className="ink press-subtle relative flex h-10 w-full items-center gap-2.5 rounded-lg bg-gradient-offer-premium px-2 text-sm font-medium text-surface-inverted-fg outline-none transition-interactive hover:brightness-110 focus-visible:ring-3 focus-visible:ring-ring/50 group-data-[collapsible=icon]:size-10 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0"
-              >
-                <Coin icon={bottomCta.icon} />
-                <span className="truncate group-data-[collapsible=icon]:hidden">{bottomCta.label}</span>
-                <ChevronRight className="ml-auto size-4 shrink-0 group-data-[collapsible=icon]:hidden" aria-hidden />
-              </Link>
-            </div>
-          )}
         </div>
       </SidebarContent>
     </Sidebar>

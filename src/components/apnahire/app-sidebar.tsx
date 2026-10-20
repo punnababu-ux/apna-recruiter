@@ -103,9 +103,8 @@ export function ApnaHireSidebar({
   // Shared with the phone More card: dismissing here clears it there.
   const account = useAccountAlert()
   const hasPlan = hasActiveSubscription ?? subscribed
-  // The same rule as the phone bar (usePlansIngress): gold "View plans"
-  // only while credits are running out; a plain item like Database after a
-  // credit purchase; with a subscription, "Manage plans" beside Support.
+  // The same rule as the phone bar (usePlansIngress).
+  const alertShown = Boolean(showAlert && account.alert)
   const ingress = usePlansIngress()
   const plans = hasActiveSubscription === undefined ? ingress : hasPlan ? "quiet" : ingress
   const [internalId, setInternalId] = React.useState(WORKSPACES[0].id)
@@ -129,13 +128,9 @@ export function ApnaHireSidebar({
       workspaces={WORKSPACES}
       activeWorkspaceId={activeWorkspaceId}
       onWorkspaceChange={handleWorkspaceChange}
-      navItems={
-        plans === "item"
-          ? [...NAV, { href: "/apnahire/credits", label: "Plans", icon: IndianRupee }]
-          : NAV
-      }
+      navItems={NAV}
       alertBanner={
-        showAlert && account.alert
+        alertShown && account.alert
           ? {
               id: `ah-alert-${alertVariant}-${alertAppearance}`,
               title: alertTitle,
@@ -147,9 +142,17 @@ export function ApnaHireSidebar({
             }
           : undefined
       }
-      bottomCta={plans === "promote" ? { label: "View plans", icon: IndianRupee, href: "/apnahire/credits" } : undefined}
+      // The corner holds what needs attention most (user call, 2026-10-20):
+      // the alert banner when there is one, with Plans a plain row above it;
+      // with no alert and credits running low, a gold "View plans" there.
+      // "Manage plans" with a subscription.
+      bottomCta={{
+        label: plans === "quiet" ? "Manage plans" : plans === "promote" && !alertShown ? "View plans" : "Plans",
+        icon: IndianRupee,
+        href: "/apnahire/credits",
+        appearance: plans === "promote" && !alertShown ? "promoted" : "plain",
+      }}
       footerItems={[
-        ...(plans === "quiet" ? [{ href: "/apnahire/credits", label: "Manage plans", icon: IndianRupee }] : []),
         {
           href: "/apnahire/support",
           label: "Support",

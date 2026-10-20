@@ -1132,6 +1132,9 @@
     border-radius: inherit;
     padding: 2px;
     background: conic-gradient(from var(--attention-angle), var(--attention-ring-stops));
+    /* Safari (iOS) needs the prefixed mask, or the strip doesn't render. */
+    -webkit-mask: linear-gradient(black 0 0) content-box, linear-gradient(black 0 0);
+    -webkit-mask-composite: xor;
     mask: linear-gradient(black 0 0) content-box, linear-gradient(black 0 0);
     mask-composite: exclude;
     animation: attention-ring-travel 3.6s cubic-bezier(0.65, 0, 0.25, 1) 400ms 1 both;
@@ -1143,6 +1146,26 @@
     &::after {
       background: var(--attention-ring-still);
     }
+  }
+}
+
+/* flip-in — a control turns over into its next state, like a split-flap
+   board: it swings in from edge-on (rotateX -90°) and lands with a slight
+   overshoot. For a one-time change of meaning (the top bar's credits button
+   becoming "Top up credits"), never for routine state. Reduced motion: it
+   simply appears. */
+@keyframes flip-in {
+  0%   { transform: perspective(400px) rotateX(-90deg); opacity: 0; }
+  60%  { transform: perspective(400px) rotateX(12deg); opacity: 1; }
+  100% { transform: perspective(400px) rotateX(0deg); opacity: 1; }
+}
+
+@utility animate-flip-in {
+  transform-origin: 50% 50%;
+  animation: flip-in 520ms var(--ease-select) 1 both;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
   }
 }
 
@@ -1467,6 +1490,10 @@ a[href] > [data-slot="card"] {
 
 @utility bg-gradient-ai-subtle {
   background-image: var(--gradient-ai-subtle);
+}
+
+@utility bg-gradient-ai-demo-strong {
+  background-image: var(--gradient-ai-demo-strong);
 }
 
 @utility bg-gradient-ai-demo {

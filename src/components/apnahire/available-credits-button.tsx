@@ -20,6 +20,15 @@
  * product shell's top bar turns it on: on self-checkout and express
  * checkout's plan step the recruiter is already looking at plans, so the
  * panel there is the balance alone.
+ *
+ * Running low (user call, 2026-10-20; desktop, product top bar only — the
+ * same `plansCta` surfaces): when usePlansIngress says "promote" (1 job
+ * credit or fewer, no subscription), the button turns into "Top up credits".
+ * The first time in a session it gets there in steps: "Available credits"
+ * as usual, one lap of the attention ring, then it flips over (flip-in) into
+ * the gold plans button, which goes straight to the plans page. Later in the
+ * session it's simply "Top up credits". Hovering it shows what's left. The
+ * plans pages themselves (self-checkout, the plan step) never flip.
  */
 
 import * as React from "react"
@@ -37,12 +46,16 @@ import {
   PopoverTrigger,
   Sheet,
   SheetContent,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
   SheetTitle,
   SheetTrigger,
   UserSearch,
   Wallet,
 } from "@apna/design-system"
 import { useIsMobile } from "@/hooks/use-mobile"
+import { useJobCredits, usePlansIngress } from "@/hooks/use-plans-ingress"
 import { num } from "@/lib/format"
 
 export interface CreditsBalance {
@@ -117,6 +130,92 @@ function CreditRows({ balance }: { balance: CreditsBalance }) {
   )
 }
 
+/** How long "Available credits" holds while the ring runs its lap, before
+ *  it flips (the ring: 400ms delay + 3.6s). */
+const FLIP_AFTER_MS = 3900
+
+const PLAYED_KEY = "top-up-credits:played"
+
+/** Replays the ring-and-flip on the next top bar (the preview settings'
+ *  "Low credits" uses it, so the moment can be seen again). */
+export function replayTopUpCredits() {
+  try {
+    sessionStorage.removeItem(PLAYED_KEY)
+  } catch {
+    // Storage blocked: it plays anyway.
+  }
+}
+
+/** The running-low button: rings, then flips into "Top up credits". */
+function TopUpCreditsButton() {
+  const credits = useJobCredits()
+  // "ring" → the usual button with the attention ring; "flip" → flipping
+  // into Top up; "done" → Top up, still. Starts at "ring" so the first
+  // paint is never the end state; a later page in the session (already
+  // played) goes straight to "done".
+  const [phase, setPhase] = React.useState<"ring" | "flip" | "done">("ring")
+
+  React.useEffect(() => {
+    let played = false
+    try {
+      played = sessionStorage.getItem(PLAYED_KEY) === "1"
+    } catch {
+      // Storage blocked: play it.
+    }
+    if (played) {
+      setPhase("done")
+      return
+    }
+    // Marked as played only when it flips, not when it starts: an effect
+    // that runs twice (React's dev check) or a page left mid-ring would
+    // otherwise skip the moment the recruiter never saw.
+    const t = window.setTimeout(() => {
+      try {
+        sessionStorage.setItem(PLAYED_KEY, "1")
+      } catch {
+        // Not remembered: it plays again next page.
+      }
+      setPhase("flip")
+    }, FLIP_AFTER_MS)
+    return () => window.clearTimeout(t)
+  }, [])
+
+  if (phase === "ring") {
+    return (
+      <span className="relative inline-flex rounded-full">
+        <Button type="button" variant="outline" size="sm" aria-label="Available credits">
+          <Wallet className="size-4" aria-hidden />
+          Available credits
+        </Button>
+        <span aria-hidden className="attention-ring" />
+      </span>
+    )
+  }
+
+  const firstTime = phase === "flip"
+  return (
+    <Tooltip>
+      <TooltipTrigger
+        render={
+          <Button
+            variant="premium"
+            size="sm"
+            nativeButton={false}
+            className={firstTime ? "animate-flip-in" : undefined}
+            render={<Link href="/apnahire/credits" />}
+          />
+        }
+      >
+        <Coin icon={IndianRupee} size="sm" />
+        Top up credits
+      </TooltipTrigger>
+      <TooltipContent>
+        {credits === 1 ? "1 job credit left" : `${num(credits)} job credits left`}
+      </TooltipContent>
+    </Tooltip>
+  )
+}
+
 export function AvailableCreditsButton({
   balance,
   plansCta = false,
@@ -126,6 +225,7 @@ export function AvailableCreditsButton({
   plansCta?: boolean
 }) {
   const isMobile = useIsMobile()
+  const plans = usePlansIngress()
   const full: CreditsBalance = { job: 0, database: 0, aiCalling: 0, ...balance }
 
   // 16px (the panel's gap) above it, clear of the last row.
@@ -145,6 +245,9 @@ export function AvailableCreditsButton({
       <span className="hidden sm:inline">Available credits</span>
     </Button>
   )
+
+  // Running low, on desktop, in the app's top bar: "Top up credits".
+  if (plansCta && !isMobile && plans === "promote") return <TopUpCreditsButton />
 
   if (isMobile) {
     return (

@@ -19,6 +19,7 @@
 import { useUnlimitedWordmark } from "@/components/apnahire/pricing-hero"
 import { setActiveSubscription } from "@/hooks/use-active-subscription"
 import { setJobCredits, usePlansIngress } from "@/hooks/use-plans-ingress"
+import { replayTopUpCredits } from "@/components/apnahire/available-credits-button"
 import {
   ExitOfferControls,
   PrototypeOption,
@@ -51,7 +52,11 @@ export function CheckoutPreviewSettings({
         </PrototypeOption>
       </PrototypeSection>
       <PrototypeSection title="Plans in the app's nav">
-        <PrototypeOption active={plans === "promote"} onClick={() => setPlans(0, false)}>
+        <PrototypeOption active={plans === "promote"} onClick={() => {
+            setPlans(0, false)
+            // Show the top bar's ring-and-flip again on the next app page.
+            replayTopUpCredits()
+          }}>
           Low credits · highlighted
         </PrototypeOption>
         <PrototypeOption active={plans === "item"} onClick={() => setPlans(13, false)}>

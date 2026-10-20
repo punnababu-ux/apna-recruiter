@@ -5,7 +5,9 @@
  * 2026-10-20). One rule for the phone bottom bar and the desktop sidebar:
  *
  *   "promote"  credits running out (1 job credit or fewer), no subscription:
- *              the gold Plans tile inside the bar / the gold "View plans" button.
+ *              the gold Plans tile inside the phone bar; on desktop the top
+ *              bar's credits button flips into "Top up credits" (the
+ *              sidebar's Plans row stays plain: one loud invitation).
  *   "item"     just bought credits (more than 1 left): a plain item, like
  *              Database.
  *   "quiet"    has a subscription: they've bought the plan, so it sits where

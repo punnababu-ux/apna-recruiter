@@ -314,12 +314,11 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
         rules: ["SheetPanel frame. One add-on card per checkout."],
       },
       {
-        name: "AiCallingAddonCard / AiCallingExplainer",
+        name: "AiCallingAddonCard",
         file: "apnahire/ai-calling-addon-card.tsx",
-        what: "AI calling add-on in the express order summary, and its \"How it works\" pop-up.",
-        live: "/design-system/product/pop-ups",
+        what: "AI calling add-on in the express order summary: headline, one line on what it does, two proof tiles, the demo call (ai-demo-call.tsx), price and Add.",
         where: "Express checkout order summary",
-        rules: ["Wears the AI calling (sky) gradient. Runs the attention ring once per session."],
+        rules: ["Everything on the card, no pop-up: a recruiter decides without opening anything.", "Wears the AI calling (sky) gradient; the demo strip is the same sky, deeper. Runs the attention ring once per session.", "Add is emphasis (dark): Proceed to pay is the one green CTA."],
       },
       {
         name: "PaymentModal / PaymentSuccess",
@@ -358,7 +357,7 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
         file: "apnahire/available-credits-button.tsx",
         what: "\"Available credits\" action in every top bar.",
         where: "Product shell, checkout, job posting",
-        rules: ["Icon-only circle on phones, labelled from sm."],
+        rules: ["Icon-only circle on phones, labelled from sm.", "Desktop app top bar, credits low (usePlansIngress \"promote\"): first visit in a session it rings once (attention-ring), then flips (animate-flip-in) into the gold \"Top up credits\" button to the plans page; later it's simply \"Top up credits\". Never on the plans pages."],
       },
     ],
   },
@@ -450,7 +449,7 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
         what: "Desktop sidebar navigation.",
         live: "/apnahire/jobs",
         where: "Product layout",
-        rules: ["Plans follows usePlansIngress: gold \"View plans\" only at 1 job credit or fewer; a plain \"Plans\" item after a credit purchase; \"Manage plans\" beside Support with a subscription."],
+        rules: ["Bottom order: Support, Plans, then the alert banner in the corner.", "The corner holds what needs attention most: the alert when there is one (Plans a plain row above it); with no alert and credits low, a gold \"View plans\"; otherwise a plain Plans (\"Manage plans\" with a subscription)."],
       },
       {
         name: "ApnaHireBottomNav",

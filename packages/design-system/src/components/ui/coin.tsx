@@ -17,7 +17,7 @@ export function Coin({
   className,
 }: {
   icon: React.ComponentType<{ className?: string }>
-  size?: "md" | "lg"
+  size?: "sm" | "md" | "lg"
   className?: string
 }) {
   return (
@@ -26,11 +26,11 @@ export function Coin({
       aria-hidden
       className={cn(
         "flex shrink-0 items-center justify-center rounded-full bg-highlight text-highlight-foreground",
-        size === "lg" ? "size-7" : "size-6",
+        size === "lg" ? "size-7" : size === "sm" ? "size-5" : "size-6",
         className
       )}
     >
-      <Icon className={size === "lg" ? "size-4" : "size-3.5"} />
+      <Icon className={size === "lg" ? "size-4" : size === "sm" ? "size-3" : "size-3.5"} />
     </span>
   )
 }
