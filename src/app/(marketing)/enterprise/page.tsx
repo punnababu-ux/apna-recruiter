@@ -17,7 +17,6 @@
 
 import type { Metadata } from "next"
 import Image from "next/image"
-import Link from "next/link"
 import {
   ArrowRight,
   ArrowUpRight,
@@ -31,7 +30,7 @@ import {
 import { FaqSection } from "@/components/apnahire/faq-section"
 import { PageHero, withAccent } from "@/components/marketing/page-blocks"
 import { ValueArt, type ValueName } from "@/components/marketing/value-art"
-import { CONTACT_ANCHOR } from "@/content/contact"
+import { ContactButton } from "@/components/marketing/contact-section"
 import { ENTERPRISE } from "@/content/enterprise"
 import { TestimonialGrid } from "@/components/apnahire/testimonial-grid"
 import { CLIENT_LOGOS } from "@/content/logos"
@@ -76,14 +75,12 @@ export default function EnterprisePage() {
         title={withAccent(hero.title, hero.titleAccent)}
         description={hero.description}
         actions={
-          <Button
+          <ContactButton
             size="lg"
-            nativeButton={false}
-            render={<Link href={`#${CONTACT_ANCHOR}`} />}
             trailingIcon={<ArrowRight aria-hidden />}
           >
             {hero.cta}
-          </Button>
+          </ContactButton>
         }
       />
 

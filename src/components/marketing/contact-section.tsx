@@ -22,7 +22,7 @@ import Link from "next/link"
 import {
   Button,
   Card,
-  CheckCircle2,
+  Check,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -140,8 +140,20 @@ export function ContactSection({
 /** The contact form pop-up, on its own, for any button that should open it
  *  (the contact band's "Contact us", the homepage Enterprise card's "Contact
  *  sales"): a bottom sheet on phones, a centred dialog from md. Every
- *  opening starts a fresh form. */
-export function ContactPopup({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
+ *  opening starts a fresh form.
+ *
+ *  `signedIn`: a logged-in recruiter is already known (user call,
+ *  2026-10-20), so there's no form to fill — the pop-up opens straight on
+ *  the confirmation ("Our team will reach out to you at the earliest"). */
+export function ContactPopup({
+  open,
+  onOpenChange,
+  signedIn = false,
+}: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  signedIn?: boolean
+}) {
   const isMobile = useIsMobile()
   // A new key per opening, so a reopened pop-up starts with a fresh form
   // (not the last one's values or its thank-you state).
@@ -164,14 +176,22 @@ export function ContactPopup({ open, onOpenChange }: { open: boolean; onOpenChan
               rounded to the sheet's top corners. */}
           <SheetContent side="bottom" className="gap-0 rounded-t-3xl data-[side=bottom]:border-t-0 p-0 pb-safe">
             <div className="min-h-0 overflow-y-auto overscroll-contain rounded-t-3xl p-5">
-              <ContactForm key={round} Title={SheetTitle} Description={SheetDescription} />
+              {signedIn ? (
+                <ContactThanks Title={SheetTitle} Description={SheetDescription} {...CONTACT.signedIn} onDone={() => setOpen(false)} />
+              ) : (
+                <ContactForm key={round} Title={SheetTitle} Description={SheetDescription} onDone={() => setOpen(false)} />
+              )}
             </div>
           </SheetContent>
         </Sheet>
       ) : (
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogContent className="gap-6 rounded-3xl p-6 sm:max-w-xl sm:p-8">
-            <ContactForm key={round} Title={DialogTitle} Description={DialogDescription} />
+            {signedIn ? (
+              <ContactThanks Title={DialogTitle} Description={DialogDescription} {...CONTACT.signedIn} onDone={() => setOpen(false)} />
+            ) : (
+              <ContactForm key={round} Title={DialogTitle} Description={DialogDescription} onDone={() => setOpen(false)} />
+            )}
           </DialogContent>
         </Dialog>
       )}
@@ -195,12 +215,46 @@ export function ContactButton(props: React.ComponentProps<typeof Button>) {
  *  is hosting the form (each wires its own accessible name). */
 type PartProps = { className?: string; children?: React.ReactNode }
 
-function ContactForm({
+/** The confirmation: after the form is sent, or straight away for a
+ *  signed-in recruiter. Centred: a green check disc, the line, and one
+ *  "Okay, got it" that closes the pop-up. */
+function ContactThanks({
   Title,
   Description,
+  title,
+  body,
+  onDone,
 }: {
   Title: React.ComponentType<PartProps>
   Description: React.ComponentType<PartProps>
+  title: string
+  body: string
+  onDone: () => void
+}) {
+  return (
+    <div role="status" className="flex flex-col items-center gap-6 py-2 text-center">
+      <span className="flex size-16 items-center justify-center rounded-full bg-primary text-primary-foreground">
+        <Check className="size-8" strokeWidth={3} aria-hidden />
+      </span>
+      <div className="flex flex-col gap-3">
+        <Title className="text-h4 text-balance text-foreground">{title}</Title>
+        <Description className="text-base text-pretty text-muted-foreground">{body}</Description>
+      </div>
+      <Button size="lg" className="w-full sm:w-auto sm:min-w-48" onClick={onDone}>
+        {CONTACT.done}
+      </Button>
+    </div>
+  )
+}
+
+function ContactForm({
+  Title,
+  Description,
+  onDone,
+}: {
+  Title: React.ComponentType<PartProps>
+  Description: React.ComponentType<PartProps>
+  onDone: () => void
 }) {
   const [values, setValues] = React.useState<Values>(EMPTY)
   const [errors, setErrors] = React.useState<Errors>({})
@@ -219,15 +273,7 @@ function ContactForm({
     if (Object.keys(found).length === 0) setSent(true)
   }
 
-  if (sent) {
-    return (
-      <div role="status" className="flex flex-col items-start gap-3 py-4">
-        <CheckCircle2 className="size-10 text-primary" aria-hidden />
-        <Title className="text-h5 text-foreground">{CONTACT.success.title}</Title>
-        <Description className="text-base text-muted-foreground">{CONTACT.success.body}</Description>
-      </div>
-    )
-  }
+  if (sent) return <ContactThanks Title={Title} Description={Description} {...CONTACT.success} onDone={onDone} />
 
   return (
     <form noValidate onSubmit={submit} className="flex flex-col gap-6">

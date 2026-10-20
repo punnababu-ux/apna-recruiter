@@ -302,7 +302,12 @@ that is a defect even when each looks fine alone. The shared ones:
   `SheetPanelHeader` for the title row (20px semibold heading title,
   optional action, close). Never a bare `SheetContent side="right"`, never
   a hand-sized panel title.
-- **Plans** (bottom bar tile, sidebar link, "View plans" CTAs): the plans
+- **Plans** (bottom bar tile, sidebar link, "View plans" CTAs): how loud
+  it is follows `usePlansIngress` (user call, 2026-10-20). Promoted (gold
+  tile inside the bar, never protruding / gold sidebar button) only when credits run low (1 job credit or
+  fewer, no subscription); a plain item like Database right after a credit
+  purchase; with a subscription, "Manage plans" sits with Support. When
+  promoted, the plans
   look only — `variant="premium"` Button or BottomNav `featured`, with a
   gold `Coin` carrying the ₹. Not green, not the dark emphasis.
 - **Segmented controls** (Tabs default / inverted, ChipTabs,
@@ -652,6 +657,11 @@ Trigger: you need a UI pattern that doesn't exist yet.
    at `src/app/design-system/showcase/` is legacy — new work goes on the
    category page, which is what the docs sidebar links to.)
 5. `npm run check` must pass.
+
+A **product** component (`src/components/apnahire|marketing|auth|onlyrounds`)
+skips steps 2–4: add an entry to `src/app/design-system/product/catalog.ts`
+(what, where, rules), and if it's a pop-up, a live demo on
+`/design-system/product/pop-ups`.
 
 ---
 

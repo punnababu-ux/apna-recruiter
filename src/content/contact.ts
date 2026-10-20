@@ -39,4 +39,11 @@ export const CONTACT = {
     title: "Thanks — we've got it.",
     body: "A dedicated talent executive will get back to you shortly.",
   },
+  // Logged in (self-checkout's Contact sales): we already know who they
+  // are, so no form — just this.
+  signedIn: {
+    title: "Thank you for showing interest",
+    body: "Someone from our sales team will connect with you shortly to help you with your requirements.",
+  },
+  done: "Okay, got it",
 } as const

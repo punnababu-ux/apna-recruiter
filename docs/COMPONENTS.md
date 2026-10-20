@@ -123,6 +123,20 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 
 ---
 
+## 9. Product components (website and apps)
+
+Everything built on top of the design system, with where it's used and its
+rules, lives in the docs site under **Product**:
+
+| Page | What |
+|---|---|
+| `/design-system/product/components` | Catalog of every product component (data: `src/app/design-system/product/catalog.ts`) |
+| `/design-system/product/pop-ups` | Every pop-up, live with sample data, and when each appears |
+| `/design-system/product/surfaces` | White and dark glass, plan cards, marketing surfaces, and where each goes |
+
+A new product component gets a catalog entry in the same change; a new
+pop-up also gets a live demo on the Pop-ups page.
+
 ## Conventions every component follows
 
 - `"use client"` at the top only when necessary.

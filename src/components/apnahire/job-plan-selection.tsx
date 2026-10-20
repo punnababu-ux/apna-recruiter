@@ -53,6 +53,7 @@ import { TrustedByStrip } from "@/components/marketing/proof-bands"
 import { GstNote } from "@/components/apnahire/gst-note"
 import { PaymentSuccess } from "@/components/apnahire/payment-success"
 import { setActiveSubscription } from "@/hooks/use-active-subscription"
+import { addPurchasedJobCredits } from "@/hooks/use-plans-ingress"
 import { JobPlanPreviewSwitcher } from "@/components/apnahire/job-plan-preview-switcher"
 import { BUNDLES } from "@/components/apnahire/job-credit-bundles"
 import { ExitOfferDialog } from "@/components/apnahire/offers/exit-offer-dialog"
@@ -333,6 +334,8 @@ export function JobPlanSelection() {
     setPaymentOpen(false)
     // A subscription bought here makes the sidebar's plan CTA "Manage plans".
     if (checkoutItem?.renewAfterDays) setActiveSubscription(true)
+    // Credits bought: the shell stops promoting plans (usePlansIngress).
+    else if (checkoutItem) addPurchasedJobCredits(checkoutItem.label)
     const title = readDraftTitle()
     setPostedTitle(title)
     // A slot upgrade: the new slot is taken by the job just posted.

@@ -39,7 +39,10 @@ export function useDraftPersistence<T>(
       const draft = { ...(empty as object), ...(JSON.parse(raw) as Partial<T>) } as T
       setForm(draft)
       setLastSavedJson(JSON.stringify(draft))
+      // A fixed id: the mount effect runs twice in dev (StrictMode) and again
+      // when the page is revisited, but the toast should show once.
       toast.info("Loaded your saved draft", {
+        id: `draft-loaded:${key}`,
         description: "Pick up where you left off.",
       })
     } catch {

@@ -122,18 +122,24 @@ function buildDummyRefine(current: JobPostDraft, instruction: string): Partial<J
 // ── Handler ────────────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
+  let prompt = ""
+  let instruction = ""
+  let current: JobPostDraft | undefined
+  let refining = false
+  // The local parser's answer — used whenever the live AI can't give one.
+  const fallback = () => (refining ? buildDummyRefine(current!, instruction) : buildDummyDraft(prompt))
   try {
     const body = await req.json()
-    const prompt: string = body?.prompt ?? ""
-    const instruction: string = body?.instruction ?? ""
-    const current: JobPostDraft | undefined = body?.current
-    const refining = Boolean(current && instruction.trim())
+    prompt = body?.prompt ?? ""
+    instruction = body?.instruction ?? ""
+    current = body?.current
+    refining = Boolean(current && instruction.trim())
 
     if (!refining && !prompt.trim()) return NextResponse.json({})
 
     if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
       console.log("[draft-job] dummy mode — set GOOGLE_GENERATIVE_AI_API_KEY to use live AI")
-      return NextResponse.json(refining ? buildDummyRefine(current!, instruction) : buildDummyDraft(prompt))
+      return NextResponse.json(fallback())
     }
 
     const { output } = await generateText({
@@ -146,11 +152,18 @@ export async function POST(req: NextRequest) {
     const cleaned = Object.fromEntries(
       Object.entries(output ?? {}).filter(([, v]) => v !== undefined && v !== ""),
     )
-    return NextResponse.json(cleaned)
+    // An empty answer from the AI would leave every field blank: fill from
+    // the local parser instead.
+    return NextResponse.json(Object.keys(cleaned).length ? cleaned : fallback())
   } catch (err) {
     console.error("[draft-job]", err)
-    // Empty result lets the flow continue — the review screen asks for
-    // whatever is still missing.
-    return NextResponse.json({}, { status: 200 })
+    // The AI failed (rate limit, timeout, bad output). Don't hand back an
+    // empty draft — that's the "auto-fill didn't happen" bug — fill from
+    // the local parser; the review screen asks for whatever is still missing.
+    try {
+      return NextResponse.json(prompt.trim() || refining ? fallback() : {})
+    } catch {
+      return NextResponse.json({})
+    }
   }
 }

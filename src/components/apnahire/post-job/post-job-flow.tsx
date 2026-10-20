@@ -61,7 +61,7 @@ import {
 import { EMPTY_JOB_DRAFT, locationLabel, mergeDraft, normalizeDraft } from "@/lib/apnahire/job-draft"
 import { toast } from "sonner"
 import { SlotsFullDialog } from "@/components/apnahire/slots/slots-full-dialog"
-import { JobSlotsControls, PrototypeSettings } from "@/components/apnahire/prototype-settings"
+import { JobSlotsControls, PrototypeSettings, openPrototypeSettings } from "@/components/apnahire/prototype-settings"
 import { freeSlots, setJobSlots, todayLabel, useJobSlots } from "@/hooks/use-job-slots"
 import { cn } from "@/lib/utils"
 import type { JobPostDraft } from "@/types/apnahire-job"
@@ -473,7 +473,9 @@ export function PostJobFlow() {
             {state.screen !== "describe" && (
               <aside className="hidden lg:block">
                 <div className="sticky top-36 flex flex-col gap-3">
-                  <p className="text-center text-xs font-medium text-muted-foreground">Candidate view</p>
+                  {/* Prototype only: a silent click opens the hidden preview settings
+                      (PrototypeSettings). Remove before production. */}
+                  <p onClick={openPrototypeSettings} className="text-center text-xs font-medium text-muted-foreground">Candidate view</p>
                   <CandidateJobPreview draft={state.draft} flashKey={flashKey} focus={def.preview} />
                 </div>
               </aside>

@@ -17,6 +17,8 @@
  */
 
 import { useUnlimitedWordmark } from "@/components/apnahire/pricing-hero"
+import { setActiveSubscription } from "@/hooks/use-active-subscription"
+import { setJobCredits, usePlansIngress } from "@/hooks/use-plans-ingress"
 import {
   ExitOfferControls,
   PrototypeOption,
@@ -30,6 +32,13 @@ export function CheckoutPreviewSettings({
   offer: { claimed: boolean; onExpireSoon: () => void; onReset: () => void }
 }) {
   const [wordmark, setWordmark] = useUnlimitedWordmark()
+  const plans = usePlansIngress()
+  // How the app's nav shows Plans (usePlansIngress): set the account state
+  // behind each look, then open the app to see it.
+  const setPlans = (credits: number, subscribed: boolean) => {
+    setJobCredits(credits)
+    setActiveSubscription(subscribed)
+  }
   return (
     <PrototypeSettings label="Preview settings">
       {/* Every pricing tab bar: desktop row, sticky bars, phone chips. */}
@@ -39,6 +48,17 @@ export function CheckoutPreviewSettings({
         </PrototypeOption>
         <PrototypeOption active={!wordmark} onClick={() => setWordmark(false)}>
           Icon + &ldquo;Unlimited&rdquo;
+        </PrototypeOption>
+      </PrototypeSection>
+      <PrototypeSection title="Plans in the app's nav">
+        <PrototypeOption active={plans === "promote"} onClick={() => setPlans(0, false)}>
+          Low credits · highlighted
+        </PrototypeOption>
+        <PrototypeOption active={plans === "item"} onClick={() => setPlans(13, false)}>
+          Just bought credits · plain
+        </PrototypeOption>
+        <PrototypeOption active={plans === "quiet"} onClick={() => setPlans(13, true)}>
+          Subscribed · beside Support
         </PrototypeOption>
       </PrototypeSection>
       <ExitOfferControls offer={offer} />

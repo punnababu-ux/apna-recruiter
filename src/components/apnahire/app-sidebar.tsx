@@ -13,6 +13,7 @@ import {
 } from "@apna/design-system"
 import { Badge } from "@apna/design-system"
 import { useActiveSubscription } from "@/hooks/use-active-subscription"
+import { usePlansIngress } from "@/hooks/use-plans-ingress"
 import { ACCOUNT_ALERT, useAccountAlert } from "@/hooks/apnahire/use-account-alert"
 
 const WORKSPACES: SidebarWorkspace[] = [
@@ -102,6 +103,11 @@ export function ApnaHireSidebar({
   // Shared with the phone More card: dismissing here clears it there.
   const account = useAccountAlert()
   const hasPlan = hasActiveSubscription ?? subscribed
+  // The same rule as the phone bar (usePlansIngress): gold "View plans"
+  // only while credits are running out; a plain item like Database after a
+  // credit purchase; with a subscription, "Manage plans" beside Support.
+  const ingress = usePlansIngress()
+  const plans = hasActiveSubscription === undefined ? ingress : hasPlan ? "quiet" : ingress
   const [internalId, setInternalId] = React.useState(WORKSPACES[0].id)
   const activeWorkspaceId = controlledId ?? internalId
   const handleWorkspaceChange = (w: SidebarWorkspace) => {
@@ -123,7 +129,11 @@ export function ApnaHireSidebar({
       workspaces={WORKSPACES}
       activeWorkspaceId={activeWorkspaceId}
       onWorkspaceChange={handleWorkspaceChange}
-      navItems={NAV}
+      navItems={
+        plans === "item"
+          ? [...NAV, { href: "/apnahire/credits", label: "Plans", icon: IndianRupee }]
+          : NAV
+      }
       alertBanner={
         showAlert && account.alert
           ? {
@@ -137,14 +147,9 @@ export function ApnaHireSidebar({
             }
           : undefined
       }
-      // Under the banner: plans, always one tap away. With an active
-      // subscription it manages that plan instead of selling one.
-      bottomCta={
-        hasPlan
-          ? { label: "Manage plans", icon: IndianRupee, href: "/apnahire/credits" }
-          : { label: "View plans", icon: IndianRupee, href: "/apnahire/credits" }
-      }
+      bottomCta={plans === "promote" ? { label: "View plans", icon: IndianRupee, href: "/apnahire/credits" } : undefined}
       footerItems={[
+        ...(plans === "quiet" ? [{ href: "/apnahire/credits", label: "Manage plans", icon: IndianRupee }] : []),
         {
           href: "/apnahire/support",
           label: "Support",

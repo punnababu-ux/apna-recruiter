@@ -5,9 +5,10 @@
  *
  *   Jobs · Database · ( Plans ) · Notifications · More
  *
- * Plans is the raised centre tile (BottomNav `featured`): the one promoted
- * destination, so recruiters always see where to buy (with a subscription
- * it manages the plan instead, as in the sidebar). Notifications carries
+ * Plans follows usePlansIngress (user call, 2026-10-20): the highlighted centre
+ * tile (BottomNav `featured`, inside the bar) only while credits are running out; a plain
+ * tab like Database right after a credit purchase; and with a subscription
+ * it leaves the bar for the More card, as "Manage plans" beside Support. Notifications carries
  * the unread count and opens the notification centre page.
  *
  * A section with sub-pages (Database, Invite centre) opens its first page;
@@ -52,6 +53,7 @@ import {
 import { useNotifications } from "@/hooks/apnahire/use-notifications"
 import { useAccountAlert } from "@/hooks/apnahire/use-account-alert"
 import { hidesBottomNav } from "@/lib/apnahire/nav"
+import { usePlansIngress } from "@/hooks/use-plans-ingress"
 
 /** The bar's room at the end of the page: its 64px plus the home-indicator
  *  inset; nothing on full-screen pages, where there is no bar. */
@@ -66,6 +68,7 @@ export function ApnaHireBottomNav() {
   const [menuOpen, setMenuOpen] = React.useState(false)
   const { unreadCount } = useNotifications()
   const account = useAccountAlert()
+  const plans = usePlansIngress()
 
   /** True if the current route starts with the given prefix. */
   const isActive = (prefix: string) => pathname.startsWith(prefix)
@@ -81,6 +84,7 @@ export function ApnaHireBottomNav() {
     { href: "/apnahire/reports", label: "Reports", icon: BarChart2 },
     { href: "/apnahire/campus-ai", label: "Campus AI", icon: Trophy, dot: true },
     { href: "/apnahire/usage", label: "Credits & usage", icon: CreditCard },
+    ...(plans === "quiet" ? [{ href: "/apnahire/credits", label: "Manage plans", icon: IndianRupee }] : []),
     { href: "/apnahire/support", label: "Support", icon: HelpCircle },
     { href: "/apnahire/settings", label: "Settings", icon: Settings },
   ].map((item) => ({
@@ -102,12 +106,17 @@ export function ApnaHireBottomNav() {
       icon: Database,
       active: tabActive("/apnahire/database"),
     },
-    {
-      href: "/apnahire/credits",
-      label: "Plans",
-      icon: IndianRupee,
-      featured: true,
-    },
+    ...(plans === "quiet"
+      ? []
+      : [
+          {
+            href: "/apnahire/credits",
+            label: "Plans",
+            icon: IndianRupee,
+            featured: plans === "promote",
+            active: plans === "item" && tabActive("/apnahire/credits"),
+          },
+        ]),
     {
       href: "/apnahire/notifications",
       label: "Notifications",
@@ -147,7 +156,6 @@ export function ApnaHireBottomNav() {
         onOpenChange={setMenuOpen}
         items={menuItems}
         label="More"
-        clearFeatured
         header={
           account.alert ? (
             // The sidebar's alert, same component and look.

@@ -30,8 +30,9 @@
  *     { label: "More", icon: MoreHorizontal, onClick: () => setOpen(true) },
  *   ]} />
  *
- * `featured` raises one item (the middle one) into a tile above the bar —
- * a promoted destination, not a tab (First Club's "Finds").
+ * `featured` highlights one item (the middle one) as a promoted
+ * destination: a gold-on-plum tile inside the bar, the bar's own height,
+ * never rising out of it (user call, 2026-10-20).
  */
 
 import * as React from "react"
@@ -120,18 +121,19 @@ export function BottomNav({ items, className }: BottomNavProps) {
           "ink relative flex flex-1 flex-col items-center justify-center gap-1 py-2 touch-manipulation"
 
         if (item.featured && item.href) {
-          // Raised above the bar (-mt-5), ringed in the bar's colour so it
-          // reads as lifted off it; the coin carries the icon.
+          // Inside the bar, never above it: the offer colours on a tile
+          // that fills the slot's height (minus a small inset), with the
+          // gold coin as the icon. The colour does the highlighting.
           return (
             <Link
               key={i}
               href={item.href}
               aria-current={item.active ? "page" : undefined}
-              className="relative flex flex-1 flex-col items-center justify-start touch-manipulation outline-none"
+              className="relative flex flex-1 items-stretch justify-center px-1 py-1.5 touch-manipulation outline-none"
             >
-              <span className="ink press relative -mt-5 flex h-16 w-16 flex-col items-center justify-center gap-1 rounded-2xl bg-gradient-offer-premium text-surface-inverted-fg shadow-elevated ring-4 ring-card transition-interactive">
-                <Coin icon={Icon} size="lg" />
-                <span className="text-xs leading-none font-semibold">{item.label}</span>
+              <span className="ink press relative flex w-full max-w-20 flex-col items-center justify-center gap-1 rounded-2xl bg-gradient-offer-premium text-surface-inverted-fg transition-interactive">
+                <Coin icon={Icon} />
+                <span className="text-2xs leading-none font-semibold">{item.label}</span>
               </span>
             </Link>
           )
@@ -181,14 +183,12 @@ export interface BottomNavMenuProps {
   items: BottomNavMenuItem[]
   /** Accessible name of the card. */
   label?: string
-  /** The bar has a `featured` (raised) item: sit high enough to clear it. */
-  clearFeatured?: boolean
   /** Above the tiles, full width — e.g. the account alert the desktop shows
    *  in its sidebar, read first when the card opens. */
   header?: React.ReactNode
 }
 
-export function BottomNavMenu({ open, onOpenChange, items, label = "More", clearFeatured, header }: BottomNavMenuProps) {
+export function BottomNavMenu({ open, onOpenChange, items, label = "More", header }: BottomNavMenuProps) {
   const firstRef = React.useRef<HTMLAnchorElement>(null)
 
   React.useEffect(() => {
@@ -222,7 +222,7 @@ export function BottomNavMenu({ open, onOpenChange, items, label = "More", clear
           className={cn(
             "pointer-events-auto mx-2 grid grid-cols-4 gap-x-2 gap-y-5 rounded-2xl bg-card px-3 py-5 shadow-elevated animate-in fade-in slide-in-from-bottom-4 duration-200",
             // 8px above the bar; 28px above a raised item's 20px rise.
-            clearFeatured ? "mb-7" : "mb-2"
+            "mb-2"
           )}
         >
           {header && <div className="col-span-4">{header}</div>}

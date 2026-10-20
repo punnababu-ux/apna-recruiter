@@ -20,3 +20,6 @@ ship, and keep one line per item. Open price questions live in
 - [ ] Once locked, it can't be changed in the product; unlocking only through customer support (or special cases, TBD)
 - [ ] Before locking: dashboard → available credits / balance shows "City not set", with a way to set it
 - [ ] Carry the locked city through every flow that reads it: job posting location, balance view, plan cards ("Valid in a single city"), upgrades
+
+## Before production
+- [ ] Remove the hidden prototype-settings ingresses: the silent clicks on "*GST applicable" (`GstNote`, both checkouts) and the post-job "Candidate view" caption, plus `PrototypeSettings` itself (grep `openPrototypeSettings`). Current builds are not production.

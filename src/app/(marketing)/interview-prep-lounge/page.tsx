@@ -23,7 +23,6 @@
 import type { ComponentType } from "react"
 import type { Metadata } from "next"
 import Image from "next/image"
-import Link from "next/link"
 import {
   ArrowDown,
   ArrowRight,
@@ -54,7 +53,7 @@ import { MomentCarousel } from "@/components/marketing/moment-carousel"
 import { ILLUSTRATION_TONE } from "@/components/marketing/product-illustrations"
 import { ValueArt } from "@/components/marketing/value-art"
 import { HeroChip, StackCard, StatGrid, StatementBand, deckPosition, withAccent } from "@/components/marketing/page-blocks"
-import { CONTACT_ANCHOR } from "@/content/contact"
+import { ContactButton } from "@/components/marketing/contact-section"
 import { LOUNGE } from "@/content/interview-lounge"
 import { cn } from "@/lib/utils"
 
@@ -119,14 +118,12 @@ export default function InterviewPrepLoungePage() {
                 title={withAccent(hero.title, hero.titleAccent)}
                 description={hero.description}
               />
-              <Button
+              <ContactButton
                 size="lg"
-                nativeButton={false}
-                render={<Link href={`#${CONTACT_ANCHOR}`} />}
                 trailingIcon={<ArrowRight aria-hidden />}
               >
                 {hero.cta}
-              </Button>
+              </ContactButton>
             </div>
             <MomentCarousel moments={hero.moments} label="Lounge demo recordings" />
           </div>

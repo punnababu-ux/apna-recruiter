@@ -113,7 +113,9 @@ export function parseSalary(text: string): { min?: number; max?: number } {
 
 export function parseTitle(text: string): string | undefined {
   const cleaned = text
-    .replace(/^(hi|hello)[,!\s]*/i, "")
+    // A greeting must be a whole word: "hiring…" isn't "hi" + "ring…".
+    .replace(/^(hi|hello)\b[,!\s]*/i, "")
+    .replace(/^(we\s+are\s+|we're\s+|i\s+am\s+|i'm\s+)?(hiring|recruiting)(\s+for)?\s+/i, "")
     .replace(/^(i\s+)?(want|need|am looking|looking|would like)\s+(to\s+)?(hire|for)?\s*/i, "")
     .replace(/^hire\s+/i, "")
     .replace(/^(a|an|\d+)\s+/i, "")

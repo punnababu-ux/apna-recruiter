@@ -51,6 +51,8 @@ import {
   type DbBundle,
 } from "@/components/apnahire/database-credit-bundles"
 import { ContactSalesCard } from "@/components/apnahire/contact-sales-card"
+import { JobTypesDialog } from "@/components/apnahire/job-plan-cards"
+import { ContactPopup } from "@/components/marketing/contact-section"
 import {
   SUBSCRIPTION_PLANS,
   SubscriptionPlans,
@@ -79,6 +81,7 @@ import {
 import { PaymentModal } from "@/components/apnahire/payment-modal"
 import { PaymentSuccess } from "@/components/apnahire/payment-success"
 import { setActiveSubscription } from "@/hooks/use-active-subscription"
+import { addPurchasedJobCredits } from "@/hooks/use-plans-ingress"
 import { useHeaderSlot } from "@/components/marketing/header-slot"
 import { CheckoutPreviewSettings } from "@/components/apnahire/checkout-preview-settings"
 import { ExitOfferDialog } from "@/components/apnahire/offers/exit-offer-dialog"
@@ -207,6 +210,11 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   // Annual: the recommended plan, selected first on phones.
   const [subscriptionPlan, setSubscriptionPlan] = React.useState<SubscriptionPlanId>("annual")
   const [enterpriseTier, setEnterpriseTier] = React.useState(DEFAULT_ENTERPRISE_TIER)
+  // Every Contact sales on the page: logged out, the contact form; logged
+  // in, straight to the "our team will reach out" confirmation.
+  const [contactOpen, setContactOpen] = React.useState(false)
+  const contactSales = () => setContactOpen(true)
+  const [jobTypesOpen, setJobTypesOpen] = React.useState(false)
 
   // Sticky header — starts transparent over the gradient hero, turns solid
   // once the page scrolls; the compact tab switcher fades in once the
@@ -406,8 +414,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
       else if (subscriptionPlan === "annual") handleBuyUnlimitedAnnual()
       else handleBuyUnlimitedQuarterly()
     } else if (activeTab === "enterprise") {
-      // Figma defines no destination for "Contact sales" (the desktop
-      // cards' buttons are inert too).
+      contactSales()
     } else if (selectedPackage.kind === "job") {
       handleSelectBundle(selectedPackage.bundle)
     } else {
@@ -479,6 +486,8 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
     setPaymentOpen(false)
     // A subscription bought here makes the sidebar's plan CTA "Manage plans".
     if (checkoutItem?.renewAfterDays) setActiveSubscription(true)
+    // Credits bought: the shell stops promoting plans (usePlansIngress).
+    else if (checkoutItem) addPurchasedJobCredits(checkoutItem.label)
     // The 10% offer is single-use.
     offer.expire()
     setOrder({
@@ -591,7 +600,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                     <p className="text-xs text-checkout-hero-fg">
                       1 job credit = 1 classic job ・ 2 credits = 1 premium job ・ 4
                       credits = 1 super premium job.{" "}
-                      <Button type="button" variant="link-inline" size="sm" className="font-semibold">
+                      <Button type="button" variant="link-inline" size="sm" className="font-semibold" onClick={() => setJobTypesOpen(true)}>
                         Need more info?
                       </Button>
                     </p>
@@ -625,7 +634,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                     <p className="text-xs text-checkout-hero-fg">
                       1 job credit = 1 classic job ・ 2 credits = 1 premium job ・ 4
                       credits = 1 super premium job.{" "}
-                      <Button type="button" variant="link-inline" size="sm" className="font-semibold">
+                      <Button type="button" variant="link-inline" size="sm" className="font-semibold" onClick={() => setJobTypesOpen(true)}>
                         Need more info?
                       </Button>
                     </p>
@@ -637,7 +646,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
 
                 {/* Both auth states — the updated Jobs frame draws this card
                     on the logged-in page too. */}
-                <ContactSalesCard />
+                <ContactSalesCard onContactSales={contactSales} />
               </div>
 
               <GstNote />
@@ -658,7 +667,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
               </div>
 
               <div className="flex flex-col gap-3">
-                <ContactSalesCard />
+                <ContactSalesCard onContactSales={contactSales} />
                 <GstNote />
               </div>
             </div>
@@ -675,13 +684,13 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
               {/* Phones: GST under the Contact sales card, as on the Database
                   tab. Desktop keeps it beside the single-city note above. */}
               <div className="flex flex-col gap-3">
-                <ContactSalesCard />
+                <ContactSalesCard onContactSales={contactSales} />
                 <GstNote className="md:hidden" />
               </div>
             </div>
           ) : (
             <div className="mx-auto flex max-w-6xl flex-col gap-4">
-              <EnterprisePricingTable selectedTier={enterpriseTier} onSelectTier={setEnterpriseTier} />
+              <EnterprisePricingTable onContactSales={contactSales} selectedTier={enterpriseTier} onSelectTier={setEnterpriseTier} />
             </div>
           )}
         </div>
@@ -786,6 +795,9 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
           handleBuyUnlimitedAnnual()
         }}
       />
+
+      <JobTypesDialog open={jobTypesOpen} onOpenChange={setJobTypesOpen} extraOff={offer.claimed} />
+      <ContactPopup open={contactOpen} onOpenChange={setContactOpen} signedIn={!isLoggedOut} />
 
       <ExitOfferDialog
         open={exitPrompt !== null}

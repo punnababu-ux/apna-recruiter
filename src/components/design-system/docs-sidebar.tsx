@@ -56,6 +56,14 @@ const DOCS_NAV: NavGroup[] = [
       { href: "/design-system/showcase", label: "Kitchen Sink", icon: Shapes },
     ],
   },
+  {
+    title: "Product",
+    items: [
+      { href: "/design-system/product/components", label: "Component catalog", icon: Layout },
+      { href: "/design-system/product/pop-ups", label: "Pop-ups", icon: MessageSquare },
+      { href: "/design-system/product/surfaces", label: "Surfaces & glass", icon: Palette },
+    ],
+  },
 ]
 
 export function DocsSidebar() {

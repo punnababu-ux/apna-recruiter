@@ -116,9 +116,8 @@ const TIERS: Tier[] = [
 
 interface EnterprisePricingTableProps {
   /**
-   * Fired by every card's CTA with that card's tier name. Figma defines no
-   * destination for "Contact sales", so `self-checkout.tsx` does not pass this
-   * yet and the buttons are inert by design — see the spec's Gaps.
+   * Fired by every card's CTA with that card's tier name — self-checkout
+   * opens the contact pop-up (form when logged out, confirmation when in).
    */
   onContactSales?: (tierName: string) => void
   /** Phones: the selected radio row (Starter by default). The page's sticky

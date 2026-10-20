@@ -14,25 +14,40 @@
  *     <ExitOfferControls offer={offer} />
  *   </PrototypeSettings>
  *
+ * Hidden (user call, 2026-10-20): no gear on screen, so reviewers and
+ * users see the page as it ships. The pop-up still opens, from a silent
+ * click on "*GST applicable" (GstNote, both checkouts) or the post-job
+ * phone frame's "Candidate view" caption, at the same bottom-left spot.
+ * Not for production: before a production release, remove these hidden
+ * ingresses (grep `openPrototypeSettings`) along with this component.
+ *
  * Composition only: Popover and Button from the design system.
  */
 
 import * as React from "react"
 import Link from "next/link"
-import { Button, Popover, PopoverContent, PopoverTrigger, Settings } from "@apna/design-system"
+import { Button, Popover, PopoverContent, PopoverTrigger } from "@apna/design-system"
 import { SLOT_PRESETS, setJobSlots, slotPresetOf, useJobSlots, type SlotPreset } from "@/hooks/use-job-slots"
 
+const OPEN_EVENT = "apna:prototype-settings"
+
+/** Opens the page's prototype settings, if it has any. */
+export const openPrototypeSettings = () => window.dispatchEvent(new Event(OPEN_EVENT))
+
 export function PrototypeSettings({ label, children }: { label: string; children: React.ReactNode }) {
+  const [open, setOpen] = React.useState(false)
+  React.useEffect(() => {
+    const show = () => setOpen(true)
+    window.addEventListener(OPEN_EVENT, show)
+    return () => window.removeEventListener(OPEN_EVENT, show)
+  }, [])
+
   return (
     <div className="fixed bottom-6 left-6 z-overlay print:hidden">
-      <Popover>
-        <PopoverTrigger
-          render={
-            <Button variant="outline" size="icon-lg" className="rounded-full shadow-popover" aria-label={label}>
-              <Settings className="size-5" aria-hidden />
-            </Button>
-          }
-        />
+      <Popover open={open} onOpenChange={setOpen}>
+        {/* An invisible anchor where the gear was, so the pop-up opens in
+            the same place. */}
+        <PopoverTrigger nativeButton={false} render={<span aria-hidden className="block size-0" />} />
         <PopoverContent side="top" align="start" aria-label={label} className="flex w-64 flex-col gap-2 divide-y divide-border p-3">
           {children}
         </PopoverContent>

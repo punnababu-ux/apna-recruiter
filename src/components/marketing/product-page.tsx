@@ -43,7 +43,7 @@ import {
 } from "@apna/design-system"
 import { HeroChip, StatGrid, withAccent } from "@/components/marketing/page-blocks"
 import { PRODUCT_ICON, PRODUCT_KEY, ProductIllustration } from "@/components/marketing/product-illustrations"
-import { CONTACT_ANCHOR } from "@/content/contact"
+import { ContactButton } from "@/components/marketing/contact-section"
 import type { ProductIconName, ProductPageContent } from "@/content/products"
 
 const ICONS: Record<ProductIconName, ComponentType<{ className?: string; "aria-hidden"?: boolean }>> = {
@@ -100,9 +100,9 @@ export function ProductPage({ content }: { content: ProductPageContent }) {
                 >
                   {cta.label}
                 </Button>
-                <Button size="lg" variant="outline" nativeButton={false} render={<Link href={`#${CONTACT_ANCHOR}`} />}>
+                <ContactButton size="lg" variant="outline">
                   Contact sales
-                </Button>
+                </ContactButton>
               </div>
             </div>
             {/* On a panel (without one the snippets read as hanging in space,

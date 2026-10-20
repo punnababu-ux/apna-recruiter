@@ -28,6 +28,10 @@ import {
   Check,
   ClockFading,
   Database,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
   Flame,
   SignalLevel,
   LogoApnaUnlimited,
@@ -711,5 +715,91 @@ function MonthlySubscriptionCard({
         }
       />
     </div>
+  )
+}
+
+/* ─────────────────────── job types explainer ─────────────────────── */
+
+/** One tier, read-only: the plan card structure (price-first, same
+ *  feature rows and database line as the posting page's cards), with the
+ *  credits it takes beside the title and the per-credit price under the
+ *  price. No CTA: credits are spent at posting time. */
+function JobTypeInfoCard({ tier }: { tier: JobPlanTier }) {
+  const { extraOff } = React.useContext(PlanOfferContext)
+  const shown = offerTier(tier, extraOff)
+  const discountPct = shown.mrp ? Math.round((1 - shown.price / shown.mrp) * 100) : null
+  const perCredit = Math.floor(shown.price / tier.credit.count)
+
+  return (
+    <PricingCard
+      layout="price-first"
+      // Muted fill: a white plan card would vanish on the white dialog.
+      className="flex-1 border-transparent bg-muted"
+      title={
+        <span className="flex items-center justify-between gap-3">
+          {tier.title}
+          <Badge variant="outline" className="shrink-0 bg-card">
+            {tier.credit.count} job credit{tier.credit.count === 1 ? "" : "s"}
+          </Badge>
+        </span>
+      }
+      price={inr(shown.price)}
+      mrp={shown.mrp ? inr(shown.mrp) : undefined}
+      badge={discountPct ? <Badge variant="discount">{discountPct}% OFF</Badge> : undefined}
+      priceSuffix={<span className="whitespace-nowrap">{inr(perCredit)} /credit</span>}
+      cta={null}
+      meta={[
+        <>
+          <ClockFading aria-hidden /> Job active for {tier.jobActiveDays} days
+        </>,
+        <FeatureGroup
+          key="visibility"
+          lead={
+            <>
+              <SignalLevel level={tier.visibilityLevel} className="text-checkout-primary" /> {tier.visibilityLabel}
+            </>
+          }
+        >
+          {tier.features.map((f) => (
+            <SubPoint key={f.label} icon={featureIcon(f.label, f.enabled)} muted={!f.enabled}>
+              {f.label}
+            </SubPoint>
+          ))}
+        </FeatureGroup>,
+      ]}
+      footer={dbCreditsLine(tier.dbCredits)}
+    />
+  )
+}
+
+/** "Need more info?" on the Jobs tab: what each job type gets, what it
+ *  costs and how many credits it takes. Prices come from JOB_PLAN_TIERS. */
+export function JobTypesDialog({
+  open,
+  onOpenChange,
+  extraOff = false,
+}: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  extraOff?: boolean
+}) {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="gap-6 rounded-3xl p-5 sm:max-w-5xl sm:p-8">
+        <div className="flex flex-col gap-2 text-left">
+          <DialogTitle className="text-h4 text-foreground">What each job type gets you</DialogTitle>
+          <DialogDescription className="text-base text-muted-foreground">
+            Credits are spent when you post. You can decide the job type later, at posting time.
+          </DialogDescription>
+        </div>
+        <PlanOfferContext.Provider value={{ extraOff, shimmerKey: 0 }}>
+          <div className="grid gap-4 md:grid-cols-3">
+            {TIERED_PLAN_ORDER.map((id) => (
+              <JobTypeInfoCard key={id} tier={JOB_PLAN_TIERS[id]} />
+            ))}
+          </div>
+        </PlanOfferContext.Provider>
+      </DialogContent>
+    </Dialog>
   )
 }

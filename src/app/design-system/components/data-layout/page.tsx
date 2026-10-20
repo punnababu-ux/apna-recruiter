@@ -106,9 +106,13 @@ export default function DataLayoutComponentsPage() {
           </div>
         </div>
 
-        <div className="p-4 sm:p-6 bg-background">
-          <div className="max-w-xs w-full">
+        {/* As the checkout draws it: the gradient, the dark glass panel
+            (surface-glass-dark), and a solid borderless plan card in it.
+            See Product › Surfaces for the rules. */}
+        <div className="bg-gradient-checkout-hero p-4 sm:p-6">
+          <div className="surface-glass-dark w-full max-w-sm rounded-card p-4">
             <PricingCard
+              className="border-transparent bg-plan-card"
               emphasis={titleLed ? "title" : "price"}
               ribbon={
                 <Badge variant="ribbon" size="ribbon">
