@@ -7,7 +7,7 @@
  *   Header  AI sparkle · title, then one line on what the agent does
  *   Proof   two tiles: "30%" higher call pickup · ready to interview
  *   Demo    a violet → mint card with a demo call player, Hindi / English
- *   CTA     the add-on's own action ("Add AI calling · ₹1,600"), full width
+ *   CTA     the add-on's own action ("Add AI calling · ₹1,699"), full width
  *
  * A centred dialog from md, a bottom sheet below it (the OfferDialog
  * pattern), same content in both. The close control is the system
@@ -60,7 +60,7 @@ export function AiCallingExplainer({
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
-  /** e.g. "Add AI calling · ₹1,600". */
+  /** e.g. "Add AI calling · ₹1,699". */
   ctaLabel: string
   onCta: () => void
 }) {

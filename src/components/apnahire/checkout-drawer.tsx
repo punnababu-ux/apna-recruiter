@@ -110,16 +110,9 @@ export interface CartLine {
 /**
  * A database-credit pack offered in the upsell.
  *
- * Only the 100-credit pack is priced in Figma (`1236:20936`/`20937`/`20938`) —
- * `50` and `200` appear there as bare chip labels with no price, MRP, discount
- * or validity. Those two are priced here at the 100 pack's own ₹10/credit
- * rate, a decision taken by the design owner (2026-09-27) rather than read off
- * the board, so that all three chips are selectable. It keeps the discount
- * uniform: 80/580, 160/1160 and 320/2320 all round to 14%.
- *
- * Note this flat rate is deliberately NOT the volume tiering used by the
- * Database-credits tab, where the per-credit price falls as the bundle grows
- * (₹11.5 → ₹9.6 → ₹7.9). Revisit if these packs ever need to match it.
+ * Database credits are worth ₹10 each (product, 2026-10-20); bigger packs
+ * get a volume discount: 50 at list, 100 at 10% off, 200 at 20% off. The
+ * tier percentages are placeholders until product sets them.
  */
 export interface DatabasePack {
   credits: number
@@ -130,9 +123,9 @@ export interface DatabasePack {
 }
 
 const DATABASE_PACKS: DatabasePack[] = [
-  { credits: 50, validDays: 90, price: 500, mrp: 580, discountPct: 14 },
-  { credits: 100, validDays: 90, price: 1000, mrp: 1160, discountPct: 14 },
-  { credits: 200, validDays: 90, price: 2000, mrp: 2320, discountPct: 14 },
+  { credits: 50, validDays: 90, price: 500, mrp: 500, discountPct: 0 },
+  { credits: 100, validDays: 90, price: 900, mrp: 1000, discountPct: 10 },
+  { credits: 200, validDays: 90, price: 1600, mrp: 2000, discountPct: 20 },
 ]
 
 /** Figma puts the check on the 100 chip in all 13 chip instances. */
@@ -629,7 +622,7 @@ export function CheckoutDrawer({
                           {inr(selectedPack.price)}
                         </span>
                       </div>
-                      {selectedPack.discountPct != null && (
+                      {selectedPack.discountPct > 0 && (
                         <Badge variant="discount">{selectedPack.discountPct}% OFF</Badge>
                       )}
                     </div>

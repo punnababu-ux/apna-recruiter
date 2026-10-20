@@ -12,7 +12,7 @@
  *
  * The price block has two states, depending on the recruiter's AI calling
  * balance:
- *   no credit   ₹1,600 / "for this job"         (paid add-on)
+ *   no credit   ₹1,699 / "for this job"         (paid add-on)
  *   ≥1 credit   "1 AI calling credit" / "Available" (spends the credit)
  * Either way the CTA reads "Add AI calling agent". The parent decides what
  * the resulting cart line costs.

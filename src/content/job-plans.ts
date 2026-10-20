@@ -152,7 +152,7 @@ export const MONTHLY_SUBSCRIPTION_PLAN: {
  *  rather than as its own plan. One AI calling credit covers one job; with
  *  none in the balance it's bought at `price` for this job. */
 export const AI_CALLING_ADDON = {
-  price: 1600,
+  price: 1699,
   headline: "Save your time – use AI calling to interview candidates",
   benefits: ["30% higher call pickup", "Ready to interview candidates", "Hindi & English calling"],
   /** The "How it works" pop-up (Figma 3025:52757). */

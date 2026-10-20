@@ -53,14 +53,18 @@ Extra job slot (= upgrade to the next jobs-active row): proration logic to come 
 ## 6. AI calling agent · `content/job-plans.ts`, `apnahire/checkout-drawer.tsx`
 | Item | Price | MRP | Valid |
 |---|---|---|---|
-| AI calling add-on for one job | 1,600 | ❓ | — |
+| AI calling add-on for one job | 1,699 ✅ | — | — |
+
+Sold only as a single add-on (no packs).
 
 ### 6b. Database add-on packs (order summary) · `checkout-drawer.tsx`
 | Credits | Price | MRP | Valid |
 |---|---|---|---|
-| 50 | 500 | 580 | 90 d |
-| 100 | 1,000 | 1,160 | 90 d |
-| 200 | 2,000 | 2,320 | 90 d |
+| 50 | 500 | — | 90 d |
+| 100 | 900 | 1,000 (10% off) | 90 d |
+| 200 | 1,600 | 2,000 (20% off) | 90 d |
+
+₹10 per credit ✅; volume discount tiers ⚠️ placeholder.
 
 ## 7. Enterprise (annual) · `apnahire/enterprise-pricing-table.tsx`
 | Plan | Price | Job credits | DB unlocks |
@@ -70,6 +74,8 @@ Extra job slot (= upgrade to the next jobs-active row): proration logic to come 
 | Scale | 5,00,000 | 450 | 5,000 |
 | Expansion | 8,75,000 | 800 | (see file) |
 
+✅ Confirmed accurate.
+
 ## 8. Discounts
 - Exit offer: 10% extra off, 24 h, stacks on plan price ✅
 - Coupon STAY20: demo only, not a real offer
@@ -77,10 +83,8 @@ Extra job slot (= upgrade to the next jobs-active row): proration logic to come 
 ## ❓ Still open
 1. **Super premium job MRP** (single post).
 2. **Premium MRP** — confirm 1,699.
-3. **DB-credit "worth"** for each subscription row (prototype assumes ₹10 per credit).
+3. **Database volume discount %** (10% / 20% are placeholders).
 4. **MRPs** for the other subscription rows (only Annual 1-job has one).
 5. **"Buy 3" per-job prices** (549 / 1,099 / 2,199 are DEMO).
-6. **AI calling add-on**: confirm ₹1,600 per job, any MRP.
-7. **Extra slot proration** — Punna to provide.
-8. **Enterprise** — confirm figures; annual? GST inclusive?
-9. **Job & database bundle MRPs** — confirmed by product or design-only?
+6. **Extra slot proration** — Punna to provide.
+7. **Job & database bundle MRPs** — confirmed by product or design-only?
