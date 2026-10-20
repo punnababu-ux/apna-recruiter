@@ -237,7 +237,19 @@ export const ABOUT_LEADERSHIP = {
   ] satisfies Person[],
   investors: {
     title: "Backed by the investors who backed India's internet.",
-    names: ["Lightspeed", "Peak XV Partners", "Tiger Global", "GSV Ventures", "Insight Partners", "Owl Ventures"],
+    /** Official logos (public/logos/investors), from Wikimedia Commons or
+     *  each firm's own site: their own colours on light; on dark, the same
+     *  with the dark lettering turned white (GSV ships that version itself).
+     *  `size` evens out visual weight — a long wordmark sits lower than a
+     *  compact mark. */
+    firms: [
+      { name: "Lightspeed", logo: "lightspeed.svg", dark: "lightspeed-dark.svg", size: "md" },
+      { name: "Peak XV Partners", logo: "peak-xv.svg", dark: "peak-xv-dark.svg", size: "md" },
+      { name: "Tiger Global", logo: "tiger-global.png", dark: "tiger-global-dark.png", size: "sm" },
+      { name: "GSV Ventures", logo: "gsv.svg", dark: "gsv-dark.svg", size: "md" },
+      { name: "Insight Partners", logo: "insight-partners.svg", dark: "insight-partners-dark.svg", size: "xl" },
+      { name: "Owl Ventures", logo: "owl-ventures.svg", dark: "owl-ventures-dark.svg", size: "md" },
+    ],
   },
 } as const
 

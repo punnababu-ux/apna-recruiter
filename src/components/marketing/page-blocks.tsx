@@ -342,9 +342,9 @@ export function StatementBand({
 
 /**
  * PersonCard — a leader. Two shapes:
- *   "row"   (Leadership) a large portrait beside their own words in the
- *           serif quote voice, name, role, LinkedIn; `reverse` flips the
- *           sides so a list alternates
+ *   "row"   (Leadership) one card: the portrait filling one side; on the
+ *           other their own words in the serif quote voice, then name, role
+ *           and LinkedIn as the attribution; `reverse` alternates the sides
  *   "card"  (Management) portrait on top, name, role, a short bio, LinkedIn
  */
 export function PersonCard({
@@ -369,29 +369,38 @@ export function PersonCard({
   )
 
   if (shape === "row") {
+    // One card per leader: the portrait fills one side edge to edge, the
+    // words sit inside the same card — never text floating in open space
+    // beside a framed photo. The Management cards' surface, so the two
+    // pages read as one set.
     return (
-      <article className="grid items-center gap-8 md:grid-cols-12 lg:gap-16">
-        <Image
-          src={person.photo}
-          alt={person.name}
-          width={560}
-          height={700}
-          className={cn(
-            "aspect-4/5 w-full max-w-xs justify-self-center rounded-card object-cover md:col-span-4 md:max-w-none",
-            reverse && "md:order-last"
-          )}
-        />
-        <div className="flex flex-col gap-6 md:col-span-8">
-          {/* Same order and type as the card: who, then the bio (a bio, not
-              a quote — never set it in quote marks). */}
-          <div className="flex flex-col gap-0.5">
-            <h3 className="text-h5 text-foreground">{person.name}</h3>
-            <p className="text-overline text-muted-foreground">{person.role}</p>
+      <Card padding="none" className="surface-frosted overflow-hidden">
+        <article className="grid md:grid-cols-12">
+          <Image
+            src={person.photo}
+            alt={person.name}
+            width={560}
+            height={700}
+            className={cn(
+              "aspect-4/5 h-full w-full object-cover md:col-span-5 lg:col-span-4",
+              reverse && "md:order-last"
+            )}
+          />
+          <div className="flex flex-col justify-center gap-8 p-6 sm:p-10 md:col-span-7 lg:col-span-8 lg:p-14">
+            {/* Their own words, in the serif quote voice (people speaking is
+                what the serif is for), then who said it — like a
+                testimonial. No quote marks: the serif already says it. */}
+            <p className="max-w-3xl text-quote text-pretty text-foreground lg:text-quote-md">{person.bio}</p>
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-1">
+                <h3 className="text-h5 text-foreground">{person.name}</h3>
+                <p className="text-overline text-muted-foreground">{person.role}</p>
+              </div>
+              {linkedIn}
+            </div>
           </div>
-          <p className="text-base text-pretty text-muted-foreground sm:text-lg">{person.bio}</p>
-          {linkedIn}
-        </div>
-      </article>
+        </article>
+      </Card>
     )
   }
 
