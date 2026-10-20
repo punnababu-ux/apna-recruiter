@@ -740,6 +740,50 @@ without also adding its new components, is a reject.
 
 ---
 
+## Choice and emphasis — Hick's law and the Von Restorff effect
+
+Two laws behind the "one primary CTA" rule. Use them when you decide how
+many actions a screen shows and which one stands out.
+
+**Hick's law.** The more options someone sees at once, the longer they take
+to choose. Decision time grows roughly with the logarithm of the number of
+choices (W. E. Hick, 1952). It also shows up as hesitation: when two buttons
+look equally important, the user has to stop and work out which one is
+theirs.
+
+**Von Restorff effect (isolation effect).** People notice and remember the
+one item that looks different from everything around it (Hedwig von
+Restorff, 1933). A design can use this on purpose: make one thing stand out
+and keep the rest quiet.
+
+**Together:** keep competing choices few (Hick), and make the one that
+matters the one that stands out (Von Restorff).
+
+Worked example: the express order summary with the AI calling add-on.
+- ❌ Two loud buttons, "Add AI calling agent" in a purple gradient and
+  "Proceed to pay" in green. The eye has two places to land, and the
+  gradient is the most distinctive thing on the page, so it takes the
+  attention meant for paying.
+- ✅ Green "Proceed to pay" is the one standout; the add-on is the quiet
+  dark `emphasis` companion. The choice takes almost no thought: pay, or
+  optionally add.
+
+How to apply:
+1. Count the actions competing for the same moment. If more than one looks
+   primary, demote, group or hide the rest (`emphasis`, `outline`, `ghost`,
+   a menu, a later step).
+2. Give a screen exactly one isolated element: the primary action. A
+   unique colour, gradient, glow or animation on anything else (an upsell,
+   an add-on, a badge) steals that isolation. Add-ons announce themselves
+   once (`attention-ring`) and then go quiet.
+3. In reviews, ask "where does the eye land first?" If the answer isn't
+   the thing we want done, the emphasis is wrong.
+
+Caveat: Hick's law was measured on simple reaction tasks. In interface
+design it guides the direction, not exact numbers.
+
+---
+
 ## Simplicity Operating Prompt
 
 *Distilled from John Maeda, "The Laws of Simplicity" (MIT Press).*
