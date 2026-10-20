@@ -87,8 +87,8 @@ export const SINGLE_CREDIT: Bundle = {
   subcopy: "Buy exactly what you need",
   validDays: 30,
   price: 699,
-  mrp: 999,
-  discountPct: 30,
+  mrp: 899,
+  discountPct: 22,
   pricePerCredit: 699,
 }
 

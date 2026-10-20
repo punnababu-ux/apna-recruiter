@@ -66,15 +66,15 @@ export const JOB_BUNDLE_OFFERS: Record<JobPlanTierId, { jobs: number; pricePerJo
  *  the plan express checkout's monthly purchase is upsold to. ₹9,999 a year
  *  against an MRP of ₹15,999 (product, 2026-10-15); 8 of 12 months free
  *  against the ₹2,499 monthly price. Unlimited job postings, 1 active job
- *  slot for 365 days, 2,000 database credits worth ₹20,000. */
+ *  slot for 365 days, 1,000 database credits worth ₹10,000. */
 export const ANNUAL_PLAN = {
   price: 9999,
   mrp: 15999,
   months: 12,
   monthsFree: 8,
   slotDays: 365,
-  dbCredits: 2000,
-  dbCreditsWorth: 20000,
+  dbCredits: 1000,
+  dbCreditsWorth: 10000,
 } as const
 
 /** Adding a job slot when every slot is in use (Figma 3308:148419): the
