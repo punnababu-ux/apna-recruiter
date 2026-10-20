@@ -1128,3 +1128,22 @@
   --ambient-blob-4: color-mix(in srgb, var(--color-apna-gold-200) 85%, transparent);
 }
 
+
+
+/* THE HALL (2026-10-20) — the awards page is an auditorium: house lights
+ * down, each award on a lit plinth. The one marketing page that is dark in
+ * both themes (user call); the page marks itself [data-hall] and the canvas
+ * swaps to the hall's near-black plum. Warm gold light, never coloured. */
+[data-slot="marketing-canvas"] {
+  --hall-light:      color-mix(in srgb, var(--color-apna-gold-100) 55%, transparent);
+  --hall-light-soft: color-mix(in srgb, var(--color-apna-gold-200) 20%, transparent);
+  --hall-beam:       color-mix(in srgb, var(--color-apna-gold-100) 42%, transparent);
+  --hall-rim:        var(--color-apna-gold-300);
+  --hall-plinth-top: var(--color-apna-plum-800);
+  --hall-plinth:     var(--color-apna-plum-900);
+  --hall-depth:      var(--color-apna-plum-950);
+  --gradient-hall:
+    radial-gradient(ellipse 60% 45% at 50% 0%, color-mix(in srgb, var(--color-apna-plum-700) 55%, transparent) 0%, transparent 70%),
+    linear-gradient(180deg, var(--color-apna-plum-900) 0%, var(--color-apna-plum-950) 100%);
+}
+[data-slot="marketing-canvas"]:has([data-hall]) { --canvas-image: var(--gradient-hall); }

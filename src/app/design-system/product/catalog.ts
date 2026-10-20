@@ -29,6 +29,21 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
     description: "The frame every public page shares. Pages never draw their own header, footer or contact band.",
     entries: [
       {
+        name: "HallWalk",
+        file: "marketing/awards-hall.tsx",
+        what: "The awards page as an auditorium: a dark hall and a pinned gallery walk; the award in the centre is lit (spotlight, glow), the rest recede. Phones get a swipe carousel. HallLights turns the page dark.",
+        live: "/newsroom/awards",
+        where: "/newsroom/awards only",
+        rules: ["The one dark marketing page (user call, 2026-10-20). Don't use the hall's lights on other pages.", "An award takes `model` (GLB) or `video` (360° loop); either plays only while it's in the centre. Keep files under ~5 MB."],
+      },
+      {
+        name: "AwardModel",
+        file: "marketing/award-model.tsx",
+        what: "A GLB award in <model-viewer>: turns slowly, drag to spin, no zoom or pan.",
+        where: "HallWalk, for an award with `model`",
+        rules: ["GLB only (convert OBJ/FBX first)."],
+      },
+      {
         name: "SiteHeader",
         file: "marketing/site-header.tsx",
         what: "Public header: nav pill, mega menus, search, Login / Sign up.",
