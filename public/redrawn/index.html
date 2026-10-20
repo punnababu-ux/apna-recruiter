@@ -518,6 +518,19 @@ h2 em, h1 em { font-style: italic; }
 .clay img { transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(var(--tz, 0px)); cursor: grab; }
 .clay img.tilting { transition: transform 120ms linear; }
 @media (max-width: 720px) { .clay { grid-template-columns: repeat(3, 1fr); } }
+/* Why clay: three short reasons under the set. */
+.clay-why { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 3vw, 48px); width: 100%; text-align: left; }
+.clay-why li { display: flex; flex-direction: column; gap: 6px; padding-top: 14px; border-top: 1px solid var(--ink-faint); }
+.clay-why strong { font-family: var(--font-display); font-weight: 700; font-size: clamp(22px, 2.2vw, 30px); line-height: 1.1; color: var(--ink); }
+.clay-why span { color: var(--ink-dim); font-size: clamp(14px, 1.25vw, 17px); line-height: 1.5; text-wrap: pretty; }
+.clay-dots { display: flex; gap: 6px; margin-top: 4px; }
+.clay-dots b { width: 14px; height: 14px; border-radius: 50%; }
+.clay-dots .d-green { background: var(--green); } .clay-dots .d-sky { background: var(--sky); }
+.clay-dots .d-gold { background: var(--gold); } .clay-dots .d-plum { background: var(--plum); }
+@media (max-width: 720px) { .clay-why { grid-template-columns: 1fr; } }
+/* The answer to "do glass and clay go together?": one line, the serif's voice. */
+.clay-room { margin: 0; font-family: var(--font-display); font-size: clamp(18px, 1.8vw, 24px); line-height: 1.35; color: var(--ink-dim); text-wrap: balance; }
+.clay-room em { color: var(--ink); }
 
 /* ── 7. Motion ───────────────────────────────────────── */
 /* The homepage hero, reproduced from its tokens (--gradient-checkout-hero,
@@ -816,11 +829,17 @@ h2 em, h1 em { font-style: italic; }
         <img src="img/ownership.png" alt="Clay key: ownership">
         <img src="img/student.png" alt="Clay graduation cap: students">
         <img src="img/practise.png" alt="Clay speech bubbles and microphone: practise">
-        <img src="img/database-search.png" alt="Clay magnifier over a database: search">
-        <img src="img/walk-ins.png" alt="Clay calendar with footprints: walk-ins">
-        <img src="img/playbook.png" alt="Clay book: the Gen Z Talent Playbook">
+        <img src="img/empathy.png" alt="Clay hands shaking, a heart between them: empathy">
+        <img src="img/track.png" alt="Clay bar chart with a magnifier: track progress">
+        <img src="img/mission.png" alt="Clay bridge from a house to a briefcase: the mission">
       </div>
-      <p class="lede rise">Hand-made 3D clay objects in the logo's colours. Twenty-five so far, across culture, campus and Enterprise.</p>
+      <ul class="clay-why rise">
+        <li><strong>Human.</strong><span>Hand-pressed and a little imperfect, as if someone made it. Right for a platform about people&rsquo;s livelihoods.</span></li>
+        <li><strong>Ours.</strong><span>Made only in the logo&rsquo;s four colours, so every object is unmistakably apna.</span><i class="clay-dots" aria-hidden="true"><b class="d-green"></b><b class="d-sky"></b><b class="d-gold"></b><b class="d-plum"></b></i></li>
+        <li><strong>Simple.</strong><span>One object, one idea, no words. It reads at a glance, in any language, from Bengaluru to Bareilly.</span></li>
+      </ul>
+      <p class="clay-room rise"><em>Glass is the room. Clay is what&rsquo;s on display.</em> Two real materials, each with one job.</p>
+      <p class="caption rise">Twenty-six so far, across culture, campus and Enterprise, all from one recipe.</p>
     </div>
   </section>
 
