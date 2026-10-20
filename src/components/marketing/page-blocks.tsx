@@ -307,11 +307,15 @@ export const deckPosition = (i: number, total: number) =>
   `${String(i + 1).padStart(2, "0")} / ${String(total).padStart(2, "0")}`
 
 export function StatementBand({
+  art,
   eyebrow,
   title,
   description,
   actions,
 }: {
+  /** A 3D clay picture above the statement (ValueArt), so a band that is
+   *  only words has one warm thing to look at. */
+  art?: ReactNode
   eyebrow?: string
   title: ReactNode
   description?: ReactNode
@@ -322,6 +326,7 @@ export function StatementBand({
   return (
     <Section size="lg">
       <div className="flex flex-col items-center gap-8">
+        {art}
         <SectionHeading
           level={2}
           align="center"

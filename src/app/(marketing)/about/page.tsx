@@ -23,6 +23,7 @@ import {
 } from "@apna/design-system"
 import { FeatureShowcase } from "@/components/marketing/feature-showcase"
 import { StoryGlass } from "@/components/marketing/story-glass"
+import { ValueArt } from "@/components/marketing/value-art"
 import { PageHero, StatementBand, withAccent } from "@/components/marketing/page-blocks"
 import { ABOUT_OVERVIEW } from "@/content/company"
 
@@ -59,8 +60,14 @@ export default function AboutPage() {
 
       {/* Our mission: its own band — full width, in the homepage's own
           gradient (the mother gradient; no product colour on About), the
-          eyebrow, title and line straight on it. No card. */}
-      <StatementBand eyebrow="Our mission" title={mission.title} description={mission.description} />
+          clay bridge above it, the eyebrow, title and line straight on it.
+          No card. */}
+      <StatementBand
+        art={<ValueArt name="mission" size="lg" />}
+        eyebrow="Our mission"
+        title={mission.title}
+        description={mission.description}
+      />
 
       {/* Built for recruiters: the offers walk themselves (each opens, its
           loader fills, the next opens) and the picture follows. */}

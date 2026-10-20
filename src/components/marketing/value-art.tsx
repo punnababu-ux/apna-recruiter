@@ -12,6 +12,7 @@ import Image from "next/image"
 import { cn } from "@/lib/utils"
 import {
   Award,
+  Flag,
   BarChart2,
   Building2,
   CalendarCheck,
@@ -64,6 +65,8 @@ export type ValueName =
   | "smart-inbound"
   | "database-search"
   | "walk-ins"
+  // About: the mission band
+  | "mission"
 
 const ICON: Record<ValueName, ComponentType<{ className?: string; "aria-hidden"?: boolean }>> = {
   ownership: KeyRound,
@@ -91,6 +94,7 @@ const ICON: Record<ValueName, ComponentType<{ className?: string; "aria-hidden"?
   "smart-inbound": UserPlus,
   "database-search": Search,
   "walk-ins": CalendarCheck,
+  mission: Flag,
 }
 
 /** Values whose clay image is in public/images/company/values. */
@@ -122,6 +126,7 @@ const READY = new Set<ValueName>([
   "smart-inbound",
   "database-search",
   "walk-ins",
+  "mission",
 ])
 
 /** sm: a picture at the top of a grid card (Enterprise's features). */

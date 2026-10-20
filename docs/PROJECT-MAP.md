@@ -19,7 +19,7 @@ One-page index: what Punna means → where it lives. Rules are in `AGENTS.md`
 | company pages | `/about/*`, `/careers`, `/newsroom/*`, `/customer-stories/*`, `/enterprise` | `marketing/page-blocks.tsx`, `content/company.ts`, `press.ts`, `enterprise.ts` |
 | lounge | `/interview-prep-lounge` | `marketing/moment-carousel.tsx`, `content/interview-lounge.ts` |
 | header / footer / contact band | marketing layout | `marketing/site-header.tsx`, `site-footer.tsx`, `contact-section.tsx`, `(marketing)/layout.tsx` |
-| clay pictures / 3D assets | — | `marketing/value-art.tsx` (`READY`), `public/images/company/values/`, `scripts/clay-cutout.py` |
+| clay pictures / 3D assets | /design-system/foundations/clay | **style + prompt: `docs/CLAY-ILLUSTRATIONS.md`, `src/content/clay-style.ts`**; `marketing/value-art.tsx` (`READY`), `public/images/company/values/`, `scripts/clay-cutout.py` |
 | login / OTP / enterprise login | `/login`, `/login/otp`, `/login/enterprise` | `components/auth/*`, `content/auth.ts` |
 | self-checkout / buy credits / plans page | `/apnahire/credits` | `apnahire/self-checkout.tsx`, `job-credit-bundles.tsx`, `database-credit-bundles.tsx`, `subscription-plans.tsx`, `unlimited-side-card.tsx`, `contact-sales-card.tsx` |
 | express checkout / plans step (in job post) | `/apnahire/jobs/new/plans` | `apnahire/job-plan-selection.tsx`, `job-plan-cards.tsx`, `mobile-plan-row.tsx`, `content/job-plans.ts` |

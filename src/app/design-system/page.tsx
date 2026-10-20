@@ -1,6 +1,6 @@
 import * as React from "react"
 import Link from "next/link"
-import { Palette, Type, Maximize2, Sparkles, Zap, CheckSquare, Eye, Navigation, MessageSquare, Bell, TableIcon, ArrowRight, ShieldCheck, Layout } from "@apna/design-system"
+import { Palette, Type, Maximize2, Sparkles, ImageIcon, Zap, CheckSquare, Eye, Navigation, MessageSquare, Bell, TableIcon, ArrowRight, ShieldCheck, Layout } from "@apna/design-system"
 
 import { ApnaLogo, Badge, Button } from "@apna/design-system"
 
@@ -72,6 +72,7 @@ export default function DesignSystemOverviewPage() {
     { title: "Typography", href: "/design-system/foundations/typography", icon: Type, desc: "Type scale & heading roles" },
     { title: "Spacing Scale", href: "/design-system/foundations/spacing", icon: Maximize2, desc: "T-shirt & context steps" },
     { title: "Radius & Motion", href: "/design-system/foundations/radius", icon: Sparkles, desc: "Durations & corner radiuses" },
+    { title: "3D Clay Illustrations", href: "/design-system/foundations/clay", icon: ImageIcon, desc: "The set, rules & generation prompt" },
   ]
 
   return (
