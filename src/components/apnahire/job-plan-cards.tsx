@@ -33,7 +33,7 @@ import {
   DialogDescription,
   DialogTitle,
   Flame,
-  SignalLevel,
+  VisibilityTicks,
   LogoApnaUnlimited,
   MapPin,
   PricingCard,
@@ -82,11 +82,11 @@ function offerTier(tier: JobPlanTier, extraOff: boolean): JobPlanTier {
 }
 
 /** Visibility at a glance on the mobile plan rows: the tier's label next to
- *  a three-bar signal meter (1 / 2 / 3 bars lit). */
+ *  its ticks (one, two, two in a circle). */
 function VisibilityLine({ tier }: { tier: JobPlanTier }) {
   return (
     <span className="flex items-center gap-1.5 text-xs font-medium text-foreground">
-      <SignalLevel level={tier.visibilityLevel} className="size-3.5 shrink-0 text-checkout-primary" />
+      <VisibilityTicks level={tier.visibilityLevel} className="size-3.5 shrink-0 text-checkout-primary" />
       {tier.visibilityLabel}
     </span>
   )
@@ -256,7 +256,7 @@ function JobPlanGridCard({ tier, recommended, creditBalance, onSelect }: JobPlan
               <>
                 {/* The phone rows' meter, not a check: it shows how much
                     visibility, which a tick can't. */}
-                <SignalLevel level={tier.visibilityLevel} className="text-checkout-primary" /> {tier.visibilityLabel}
+                <VisibilityTicks level={tier.visibilityLevel} className="text-checkout-primary" /> {tier.visibilityLabel}
               </>
             }
           >
@@ -757,7 +757,7 @@ function JobTypeInfoCard({ tier }: { tier: JobPlanTier }) {
           key="visibility"
           lead={
             <>
-              <SignalLevel level={tier.visibilityLevel} className="text-checkout-primary" /> {tier.visibilityLabel}
+              <VisibilityTicks level={tier.visibilityLevel} className="text-checkout-primary" /> {tier.visibilityLabel}
             </>
           }
         >
