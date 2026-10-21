@@ -22,7 +22,6 @@ import Link from "next/link"
 import {
   Button,
   Card,
-  Check,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -45,6 +44,7 @@ import {
 } from "@apna/design-system"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
+import { ValueArt } from "@/components/marketing/value-art"
 import { CONTACT, CONTACT_ANCHOR } from "@/content/contact"
 import { LEGAL_LINKS } from "@/content/footer"
 
@@ -233,14 +233,14 @@ function ContactThanks({
 }) {
   return (
     <div role="status" className="flex flex-col items-center gap-6 py-2 text-center">
-      <span className="flex size-16 items-center justify-center rounded-full bg-primary text-primary-foreground">
-        <Check className="size-8" strokeWidth={3} aria-hidden />
-      </span>
+      {/* The success moment, in clay (one of the product's emotional
+          beats, where clay is allowed — see docs/CLAY-ILLUSTRATIONS.md). */}
+      <ValueArt name="success" size="sm" />
       <div className="flex flex-col gap-3">
         <Title className="text-h4 text-balance text-foreground">{title}</Title>
         <Description className="text-base text-pretty text-muted-foreground">{body}</Description>
       </div>
-      <Button size="lg" className="w-full sm:w-auto sm:min-w-48" onClick={onDone}>
+      <Button size="lg" className="w-full" onClick={onDone}>
         {CONTACT.done}
       </Button>
     </div>
@@ -277,9 +277,14 @@ function ContactForm({
 
   return (
     <form noValidate onSubmit={submit} className="flex flex-col gap-6">
-      <div className="flex flex-col gap-1 text-left">
-        <Title className="text-h5 text-foreground">{CONTACT.formTitle}</Title>
-        <Description className="text-sm text-muted-foreground">{CONTACT.steps[1]}</Description>
+      {/* A small clay picture beside the title: the warm, human voice of
+          the marketing pages, at the one moment someone reaches out. */}
+      <div className="flex items-center gap-4 text-left">
+        <ValueArt name="contact" size="xs" />
+        <div className="flex flex-col gap-1">
+          <Title className="text-h5 text-foreground">{CONTACT.formTitle}</Title>
+          <Description className="text-sm text-muted-foreground">{CONTACT.steps[1]}</Description>
+        </div>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <TextField id="contact-name" label={CONTACT.fields.name} autoComplete="name"
@@ -321,7 +326,7 @@ function ContactForm({
       </div>
 
       <div className="flex flex-col gap-4">
-        <Button type="submit" size="lg" className="w-full sm:w-fit sm:min-w-40">
+        <Button type="submit" size="lg" className="w-full">
           {CONTACT.submit}
         </Button>
         <p className="text-xs text-muted-foreground">

@@ -44,10 +44,15 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
 
+/** The header's picture: one 3D clay object per offer (the clay set,
+ *  public/images/company/values; prompts in content/clay-style.ts). */
 const ILLUSTRATIONS = {
-  wallet: "/illustrations/offer-wallet.png",
-  party: "/illustrations/offer-party-popper.png",
-  briefcase: "/illustrations/offer-briefcase.png",
+  "three-jobs": "/images/company/values/three-jobs.png",
+  "credit-pack": "/images/company/values/credit-pack.png",
+  annual: "/images/company/values/annual.png",
+  unlimited: "/images/company/values/unlimited.png",
+  "exit-offer": "/images/company/values/exit-offer.png",
+  "slots-full": "/images/company/values/slots-full.png",
 } as const
 
 export interface OfferDialogProps {
@@ -120,7 +125,15 @@ export function OfferDialog({
             {tag}
           </Badge>
         )}
-        <Image src={ILLUSTRATIONS[illustration]} alt="" width={56} height={56} className="size-14" />
+        <Image
+          src={ILLUSTRATIONS[illustration]}
+          alt=""
+          width={56}
+          height={56}
+          // Clay PNGs are served as-is (a re-encode smears their cut edge).
+          unoptimized
+          className="size-14 object-contain"
+        />
         <Title
           className={cn(
             // "lg" (the slot upgrade) carries the most below it, so its

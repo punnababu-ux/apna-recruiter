@@ -57,7 +57,7 @@ export function SlotsFullDialog({
       open={open}
       onOpenChange={onOpenChange}
       tone="premium"
-      illustration="briefcase"
+      illustration="slots-full"
       size="lg"
       tag={
         <>

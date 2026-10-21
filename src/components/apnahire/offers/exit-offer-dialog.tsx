@@ -40,7 +40,7 @@ export function ExitOfferDialog({
     <OfferDialog
       open={open}
       onOpenChange={(next) => !next && onDismiss()}
-      illustration="party"
+      illustration="exit-offer"
       eyebrow={EXTRA_OFF.eyebrow}
       headline={EXTRA_OFF.headline}
       size="sm"

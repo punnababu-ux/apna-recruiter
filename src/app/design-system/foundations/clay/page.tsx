@@ -13,6 +13,7 @@ import {
   CLAY_EXAMPLES,
   CLAY_OPENING,
   CLAY_STYLE,
+  CLAY_SURFACES,
   CLAY_SUBJECT_TEMPLATE,
   CLAY_TEXT_EXCEPTION,
   clayPrompt,
@@ -22,8 +23,9 @@ const DIR = "images/company/values"
 
 const USE = [
   "One clay object stands for one idea: a value, a feature, a step. It sits on a card's open side or above a short statement.",
-  "On a gradient or a frosted card. Never inside the product's working screens (dashboards, checkout, forms): they're for marketing and company pages.",
-  "One object per card, never a scene with several. Sizes: lg on stack cards, md in bands, sm at the top of a grid card (ValueArt).",
+  "On a gradient or a frosted card, on marketing and company pages. Inside the product only at its emotional beats: an empty state (nothing here yet, no results, coming soon) and a success moment (thank you, done). Never on data screens, forms or checkout.",
+  "Pop-ups: one object each, in the offer header, beside the title, or on top of a centred confirmation. Never in Payment or Order summary.",
+  "One object per card, never a scene with several. Sizes: lg on stack cards, md in bands, sm in a grid card, an empty state or a success pop-up, xs beside a heading (ValueArt).",
   "Always transparent PNG, 640×640, served as-is (unoptimized): re-encoding smears the cut edge.",
 ]
 
@@ -35,6 +37,7 @@ const DONT = [
 ]
 
 const STEPS = [
+  "Check where it will sit (the surface table above) and pick the main colour for it.",
   "Write the subject: one object, one or two details that carry the meaning, then each part's colour (the template below).",
   "Prompt = the opening line + the subject + the style block, word for word (or copy a full example and swap its subject). Generate 3–4 and pick the cleanest silhouette (it must read at ~200px).",
   "Put the picks in the clay Figma file (R5vLmJRvUuzgHNOr1abmHA) and ask Claude to bring them in.",
@@ -87,6 +90,35 @@ export default function ClayPage() {
           <ul className="flex list-disc flex-col gap-2 pl-5 text-sm text-foreground">
             {DONT.map((r) => <li key={r}>{r}</li>)}
           </ul>
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <div className="flex flex-col gap-1 border-b border-border/60 pb-2">
+          <h2 className="font-heading text-lg font-semibold text-foreground">Colour for the surface</h2>
+          <p className="text-sm text-muted-foreground">
+            Choose the object&rsquo;s main colour for what sits behind it, before you write the subject.
+          </p>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead className="text-muted-foreground">
+              <tr>
+                <th className="py-2 pr-4 font-medium">Surface</th>
+                <th className="py-2 pr-4 font-medium">Lead with</th>
+                <th className="py-2 font-medium">Avoid</th>
+              </tr>
+            </thead>
+            <tbody className="text-foreground">
+              {CLAY_SURFACES.map((row) => (
+                <tr key={row.surface} className="border-t border-border/60">
+                  <td className="py-2 pr-4">{row.surface}</td>
+                  <td className="py-2 pr-4">{row.lead}</td>
+                  <td className="py-2">{row.avoid}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </section>
 

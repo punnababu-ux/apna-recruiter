@@ -12,6 +12,9 @@ import Image from "next/image"
 import { cn } from "@/lib/utils"
 import {
   Award,
+  Clock,
+  Briefcase,
+  CheckCircle2,
   Flag,
   BarChart2,
   Building2,
@@ -67,6 +70,16 @@ export type ValueName =
   | "walk-ins"
   // About: the mission band
   | "mission"
+  // The contact pop-up, beside "Get in touch with us"
+  | "contact"
+  // The product's emotional beats (the only clay inside the product):
+  // a success moment, an empty search, a page still to come
+  | "success"
+  | "no-results"
+  | "coming-soon"
+  // Pop-ups: one object beside the title
+  | "job-types"
+  | "expired"
 
 const ICON: Record<ValueName, ComponentType<{ className?: string; "aria-hidden"?: boolean }>> = {
   ownership: KeyRound,
@@ -95,6 +108,12 @@ const ICON: Record<ValueName, ComponentType<{ className?: string; "aria-hidden"?
   "database-search": Search,
   "walk-ins": CalendarCheck,
   mission: Flag,
+  contact: MessagesSquare,
+  success: CheckCircle2,
+  "no-results": Search,
+  "coming-soon": Rocket,
+  "job-types": Briefcase,
+  expired: Clock,
 }
 
 /** Values whose clay image is in public/images/company/values. */
@@ -127,10 +146,17 @@ const READY = new Set<ValueName>([
   "database-search",
   "walk-ins",
   "mission",
+  "contact",
+  "success",
+  "coming-soon",
+  "no-results",
+  "job-types",
+  "expired",
 ])
 
-/** sm: a picture at the top of a grid card (Enterprise's features). */
-export function ValueArt({ name, size = "lg" }: { name: ValueName; size?: "sm" | "md" | "lg" }) {
+/** sm: a picture at the top of a grid card (Enterprise's features).
+ *  xs: beside a heading (the contact pop-up's title). */
+export function ValueArt({ name, size = "lg" }: { name: ValueName; size?: "xs" | "sm" | "md" | "lg" }) {
   if (READY.has(name)) {
     return (
       <Image
@@ -143,7 +169,7 @@ export function ValueArt({ name, size = "lg" }: { name: ValueName; size?: "sm" |
         unoptimized
         className={cn(
           "object-contain",
-          size === "sm" ? "size-32" : size === "md" ? "size-48 sm:size-56" : "size-56 md:size-72 lg:size-80"
+          size === "xs" ? "size-16 shrink-0" : size === "sm" ? "size-32" : size === "md" ? "size-48 sm:size-56" : "size-56 md:size-72 lg:size-80"
         )}
       />
     )
@@ -153,11 +179,11 @@ export function ValueArt({ name, size = "lg" }: { name: ValueName; size?: "sm" |
     <span
       className={cn(
         "flex items-center justify-center rounded-full border border-card/60 bg-surface-glass shadow-card backdrop-blur-xl",
-        size === "sm" ? "size-20" : size === "md" ? "size-32" : "size-48 md:size-64"
+        size === "xs" ? "size-14 shrink-0" : size === "sm" ? "size-20" : size === "md" ? "size-32" : "size-48 md:size-64"
       )}
     >
       <Icon
-        className={cn("text-foreground", size === "sm" ? "size-8" : size === "md" ? "size-12" : "size-16 sm:size-20")}
+        className={cn("text-foreground", size === "xs" ? "size-6" : size === "sm" ? "size-8" : size === "md" ? "size-12" : "size-16 sm:size-20")}
         aria-hidden
       />
     </span>

@@ -26,6 +26,15 @@ A prompt is three parts, in this order:
    contact shadow), the palette, the grey background (`#E9E9EC`), square 1:1
    with the object filling ~70%, and **no text, no logos, no people**.
 
+**Colour for the surface** (decide before writing the subject): the main
+body must stand off what sits behind it.
+
+| Surface | Lead with | Avoid |
+|---|---|---|
+| White or light page | any palette colour | — |
+| Green offer header (upsells, exit offer) | off-white, warm yellow | sky blue; mint or green as the main body |
+| Plum premium header (annual, credits or plan, slots) | off-white, mint, sky blue | plum or yellow as the main body (the gold glow sits behind it) |
+
 **Palette:** apna brand green `#1F8268` and mint `#9DE2C9`, sky blue, warm
 yellow, warm off-white, a touch of deep plum `#4E3A52`. Nothing else.
 
@@ -52,8 +61,14 @@ the spelling on every render.
 ## Rules
 
 - One object per picture, one idea per object. Never a scene.
-- Marketing and company pages only, on a gradient or a frosted card. Not in
-  the product's working screens.
+- Marketing and company pages, on a gradient or a frosted card. Inside the
+  product only at its emotional beats: an **empty state** (nothing yet, no
+  results, coming soon) and a **success moment** (thank you, done) — one
+  object, small (`sm`). Never on data screens, forms or checkout.
+- **Pop-ups** get one clay object each: an offer pop-up's header picture
+  (OfferDialog, 56px), beside a title (`xs`, the contact and job-types
+  pop-ups), or on top of a centred confirmation (`sm`, thank you, offer
+  expired). Never in Payment or Order summary: numbers and details only.
 - Never: text or numbers on the object (the exception above aside — an early
   batch came back with file names engraved), glossy / metallic / gradient
   surfaces, colours outside the palette, people or hands, other 3D or flat

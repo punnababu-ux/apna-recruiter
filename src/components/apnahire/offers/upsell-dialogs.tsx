@@ -60,7 +60,7 @@ export function JobBundleOfferDialog({ tier, ...props }: UpsellCallbacks & { tie
     <OfferDialog
       open={props.open}
       onOpenChange={(next) => !next && props.onClose()}
-      illustration="wallet"
+      illustration="three-jobs"
       eyebrow={`Pay less when you buy ${bundle.jobs}`}
       priceDrop={{ from: inr(single), to: inr(bundle.perJob), unit: "/job" }}
     >
@@ -124,7 +124,7 @@ export function CreditPackOfferDialog({
     <OfferDialog
       open={props.open}
       onOpenChange={(next) => !next && props.onClose()}
-      illustration="wallet"
+      illustration="credit-pack"
       eyebrow={`Pay less when you buy ${credits(pack.credits)}`}
       priceDrop={{ from: inr(perNeed), to: inr(perPack), unit: "/credit" }}
     >
@@ -192,7 +192,7 @@ export function AnnualUpgradeDialog({ from, ...props }: UpsellCallbacks & { from
       // Wider: "Continue with quarterly plan" needs the room on desktop
       // (same header type as the other upsells).
       wide
-      illustration="wallet"
+      illustration="annual"
       tag={
         <>
           <BadgePercent className="size-4" aria-hidden />
@@ -283,7 +283,7 @@ export function CreditsToPlanDialog({
       open={props.open}
       onOpenChange={(next) => !next && props.onClose()}
       tone="premium"
-      illustration="briefcase"
+      illustration="unlimited"
       tag={
         <>
           <BadgePercent className="size-4" aria-hidden />

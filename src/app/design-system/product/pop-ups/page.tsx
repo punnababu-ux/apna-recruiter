@@ -73,6 +73,7 @@ export default function PopUpsPage() {
             "Don't stack pop-ups. Close one before opening the next (an upsell closes before the order summary opens).",
             "Never open a pop-up on page load. A pop-up answers something the user did (a click, trying to leave).",
             "A confirmation closes with one button (\"Okay, got it\"). It never leads somewhere new.",
+            "A pop-up's main button is full width, whether the content above it is centred (a confirmation) or left-aligned (a form): never left in one pop-up and centred in another.",
           ]}
         />
         <label className="flex items-center gap-2 text-sm text-muted-foreground">

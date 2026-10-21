@@ -22,11 +22,13 @@ import {
   EmptyContent,
   EmptyDescription,
   EmptyHeader,
+  EmptyMedia,
   EmptyTitle,
   Tabs,
   TabsList,
   TabsTrigger,
 } from "@apna/design-system"
+import { ValueArt } from "@/components/marketing/value-art"
 import { MobileChipRow } from "@/components/apnahire/mobile-chip-row"
 import { JobList, STATUS_LABELS, type ApnaJob, type ApnaJobStatus } from "@/components/apnahire/jobs/job-list"
 import { PageHeader } from "@/components/onlyrounds/page-header"
@@ -204,6 +206,9 @@ function JobsPageInner() {
     query || filterCount ? (
       <Empty className="rounded-lg border border-dashed border-border bg-card">
         <EmptyHeader>
+          <EmptyMedia>
+            <ValueArt name="no-results" size="sm" />
+          </EmptyMedia>
           <EmptyTitle>No jobs match</EmptyTitle>
           <EmptyDescription>
             {query && <>Nothing for &ldquo;{query}&rdquo;</>}

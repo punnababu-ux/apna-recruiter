@@ -54,6 +54,7 @@ import {
   MobilePlanRow,
   MobileUnlimitedCard,
 } from "@/components/apnahire/mobile-plan-row"
+import { ValueArt } from "@/components/marketing/value-art"
 import { cn } from "@/lib/utils"
 import { withExtraOff } from "@/content/offers"
 import {
@@ -786,11 +787,16 @@ export function JobTypesDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="gap-6 rounded-3xl p-5 sm:max-w-5xl sm:p-8">
-        <div className="flex flex-col gap-2 text-left">
-          <DialogTitle className="text-h4 text-foreground">What each job type gets you</DialogTitle>
-          <DialogDescription className="text-base text-muted-foreground">
-            Credits are spent when you post. You can decide the job type later, at posting time.
-          </DialogDescription>
+        {/* Clay beside the title: the pop-up header pattern (as the contact
+            pop-up). */}
+        <div className="flex items-center gap-4 text-left">
+          <ValueArt name="job-types" size="xs" />
+          <div className="flex flex-col gap-2">
+            <DialogTitle className="text-h4 text-foreground">What each job type gets you</DialogTitle>
+            <DialogDescription className="text-base text-muted-foreground">
+              Credits are spent when you post. You can decide the job type later, at posting time.
+            </DialogDescription>
+          </div>
         </div>
         <PlanOfferContext.Provider value={{ extraOff, shimmerKey: 0 }}>
           <div className="grid gap-4 md:grid-cols-3">

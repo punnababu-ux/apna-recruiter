@@ -5,7 +5,8 @@
  */
 
 import { PageHeader } from "@/components/onlyrounds/page-header"
-import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty"
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
+import { ValueArt } from "@/components/marketing/value-art"
 
 export function ProductStub({
   title,
@@ -20,6 +21,9 @@ export function ProductStub({
       <main className="flex flex-1 items-center justify-center px-6 py-6">
         <Empty className="max-w-md">
           <EmptyHeader>
+            <EmptyMedia>
+              <ValueArt name="coming-soon" size="sm" />
+            </EmptyMedia>
             <EmptyTitle>Coming soon</EmptyTitle>
             <EmptyDescription>{description}</EmptyDescription>
           </EmptyHeader>
