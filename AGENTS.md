@@ -304,7 +304,9 @@ that is a defect even when each looks fine alone. The shared ones:
   a hand-sized panel title.
 - **Plans** (bottom bar tile, sidebar link, "View plans" CTAs): how loud
   it is follows `usePlansIngress` (user call, 2026-10-20). Promoted (gold
-  tile inside the bar, never protruding / gold sidebar button) only when credits run low (1 job credit or
+  tile inside the phone bar, never protruding; on desktop the top bar's
+  gold "View plans" — the sidebar's Plans row is always plain, like
+  Support, 2026-10-21) only when credits run low (1 job credit or
   fewer, no subscription); a plain item like Database right after a credit
   purchase; with a subscription, "Manage plans" sits with Support. When
   promoted, the plans

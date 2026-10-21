@@ -373,7 +373,7 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
         file: "apnahire/available-credits-button.tsx",
         what: "\"Available credits\" action in every top bar.",
         where: "Product shell, checkout, job posting",
-        rules: ["Icon-only circle on phones, labelled from sm.", "Desktop app top bar, credits low (usePlansIngress \"promote\"): first visit in a session it rings once (attention-ring), then flips (animate-flip-in) into the gold \"Top up credits\" button to the plans page; later it's simply \"Top up credits\". Never on the plans pages."],
+        rules: ["Icon-only circle on phones, labelled from sm.", "Desktop app top bar, credits low (usePlansIngress \"promote\"): first visit in a session it rings once (attention-ring), then flips (animate-flip-in) into the gold \"View plans\" button to the plans page; later it's simply \"View plans\". Never on the plans pages."],
       },
     ],
   },

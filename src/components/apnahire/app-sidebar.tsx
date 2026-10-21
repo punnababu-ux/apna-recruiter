@@ -142,15 +142,15 @@ export function ApnaHireSidebar({
             }
           : undefined
       }
-      // The corner holds what needs attention most (user call, 2026-10-20):
-      // the alert banner when there is one, with Plans a plain row above it;
-      // with no alert and credits running low, a gold "View plans" there.
-      // "Manage plans" with a subscription.
+      // Plans is always a plain row, like Support (user call, 2026-10-21):
+      // the top bar's gold "View plans" is the one loud way to buy, so
+      // the sidebar never competes with it. "Manage plans" with a
+      // subscription.
       bottomCta={{
-        label: plans === "quiet" ? "Manage plans" : plans === "promote" && !alertShown ? "View plans" : "Plans",
+        label: plans === "quiet" ? "Manage plans" : "Plans",
         icon: IndianRupee,
         href: "/apnahire/credits",
-        appearance: plans === "promote" && !alertShown ? "promoted" : "plain",
+        appearance: "plain",
       }}
       footerItems={[
         {

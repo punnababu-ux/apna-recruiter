@@ -23,11 +23,11 @@
  *
  * Running low (user call, 2026-10-20; desktop, product top bar only — the
  * same `plansCta` surfaces): when usePlansIngress says "promote" (1 job
- * credit or fewer, no subscription), the button turns into "Top up credits".
+ * credit or fewer, no subscription), the button turns into "View plans".
  * The first time in a session it gets there in steps: "Available credits"
  * as usual, one lap of the attention ring, then it flips over (flip-in) into
  * the gold plans button, which goes straight to the plans page. Later in the
- * session it's simply "Top up credits". Hovering it shows what's left. The
+ * session it's simply "View plans". Hovering it shows what's left. The
  * plans pages themselves (self-checkout, the plan step) never flip.
  */
 
@@ -146,7 +146,7 @@ export function replayTopUpCredits() {
   }
 }
 
-/** The running-low button: rings, then flips into "Top up credits". */
+/** The running-low button: rings, then flips into "View plans". */
 function TopUpCreditsButton() {
   const credits = useJobCredits()
   // "ring" → the usual button with the attention ring; "flip" → flipping
@@ -207,7 +207,7 @@ function TopUpCreditsButton() {
         }
       >
         <Coin icon={IndianRupee} size="sm" />
-        Top up credits
+        View plans
       </TooltipTrigger>
       <TooltipContent>
         {credits === 1 ? "1 job credit left" : `${num(credits)} job credits left`}
@@ -246,7 +246,7 @@ export function AvailableCreditsButton({
     </Button>
   )
 
-  // Running low, on desktop, in the app's top bar: "Top up credits".
+  // Running low, on desktop, in the app's top bar: "View plans".
   if (plansCta && !isMobile && plans === "promote") return <TopUpCreditsButton />
 
   if (isMobile) {
