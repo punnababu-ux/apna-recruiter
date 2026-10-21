@@ -62,3 +62,6 @@ figma-*.js
 .agents/
 .claude/skills/
 skills-lock.json
+
+# graphify knowledge graph output
+graphify-out/
