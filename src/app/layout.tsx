@@ -3,6 +3,7 @@ import { Geist_Mono, Inter, Source_Serif_4 } from "next/font/google";
 
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { InkProvider } from "@/components/ui/ink-provider";
+import { CompareAlign } from "@/components/ui/compare-align";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
@@ -88,6 +89,7 @@ export default function RootLayout({
           <TooltipProvider>{children}</TooltipProvider>
           <Toaster />
           <InkProvider />
+          <CompareAlign />
         </ThemeProvider>
       </body>
     </html>

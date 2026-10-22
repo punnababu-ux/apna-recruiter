@@ -11,14 +11,15 @@
  *
  * Side by side at every size (the upgrade tile wider from sm, 4:5), CTAs
  * pinned to the tile bottoms so they line up. A CTA never wraps: from sm
- * it reads in full ("Continue with 13 credits", "Get 22 credits for
- * ₹9,999"); on phones, where a tile is ~160px wide, it shortens to
- * `ctaShortLabel` ("Continue", "Get 22 credits") — the price is right above.
+ * it reads in full ("Continue with 22 credits", "Get 47 credits for
+ * ₹19,999"); on phones, where a tile is ~160px wide, it shortens to
+ * `ctaShortLabel` ("Continue", "Get 47 credits") — the price is right above.
  */
 
 import * as React from "react"
 import { Badge, BadgePercent, Button, ClockFading, Database } from "@apna/design-system"
 import { EXTRA_OFF } from "@/content/offers"
+import { UpcomingPriceLine } from "@/components/apnahire/upcoming-price-line"
 import { cn } from "@/lib/utils"
 import { inr } from "@/lib/format"
 
@@ -35,13 +36,18 @@ export interface OfferOption {
   /** A time limit right under the price, plain with the clock icon
    *  ("Valid for 30 days", "1 active job slot for 30 days"). */
   term?: string
-  /** A subscription's terms, above the CTA: the database credits it brings
-   *  (with their value) and its one city. */
-  planFacts?: { dbCredits: number; dbWorth: number; singleCity?: boolean; slotDays?: number }
+  /** A subscription's grants and terms: its database credits
+   *  ("200 database credits worth ₹2,000", `dbCreditsLabel`) and its one
+   *  city. Every plan tile shows its database credits. */
+  planFacts?: { dbLine?: string; singleCity?: boolean }
   /** Corner ribbon, e.g. "27% OFF". */
   badge?: string
   /** Show the "10% extra off applied" line. */
   extraOff?: boolean
+  /** The price from Jan 1, 2027: "₹749 from Jan 1", the price group's last
+   *  line (UpcomingPriceLine: signed-in surfaces, before the date). The
+   *  plain Jan price, without the 10% offer, as on the plan cards. */
+  janPrice?: number
   /** The label from sm (desktop): in full, one line. */
   ctaLabel: string
   /** Phone label (< sm), where the tile is too narrow for `ctaLabel`. */
@@ -76,7 +82,7 @@ function rowUsed(o: OfferOption, key: RowKey) {
     case "term":
       return !!termOf(o)
     case "facts":
-      return !!o.planFacts
+      return !!o.planFacts?.dbLine
     case "city":
       return !!o.planFacts?.singleCity
     default:
@@ -105,7 +111,7 @@ function OptionTile({
   // with nothing under it (express checkout's 1-credit stay tile) has no
   // rule: a line closing onto empty space. The border stays (transparent)
   // so the rows still sit level with the partner tile.
-  const hasDetails = !!term || !!option.planFacts
+  const hasDetails = !!term || !!option.planFacts?.dbLine || !!option.planFacts?.singleCity
 
   const cell: Record<RowKey, React.ReactNode> = {
     title: <p className="text-sm font-semibold text-foreground">{option.title}</p>,
@@ -125,12 +131,12 @@ function OptionTile({
         <p className="flex flex-wrap items-baseline gap-x-1.5 gap-y-1 sm:flex-nowrap">
           {/* The price and its unit never split ("₹2,499 /month"). */}
           <span className="inline-flex items-baseline gap-1 whitespace-nowrap">
-            <span className="text-xl font-semibold text-foreground sm:text-2xl">{inr(option.price)}</span>
-            {option.unit && <span className="text-sm text-muted-foreground">{option.unit}</span>}
+            <span className="text-plan-price-compact text-foreground sm:text-plan-price">{inr(option.price)}</span>
+            {option.unit && <span className="text-plan-unit text-muted-foreground">{option.unit}</span>}
           </span>
           {(strike || pct) && (
             <span className="inline-flex w-full items-center gap-1.5 whitespace-nowrap sm:w-auto">
-              {strike && <span className="text-sm text-muted-foreground line-through">{inr(strike)}</span>}
+              {strike && <span className="text-plan-strike text-muted-foreground">{inr(strike)}</span>}
               {pct && (
                 <Badge variant="discount" size="sm">
                   {pct}
@@ -159,6 +165,11 @@ function OptionTile({
             {option.note}
           </p>
         )}
+        {/* Pinned to the group's bottom, so it sits level with the partner
+            tile's whatever lines stand above it. */}
+        {option.janPrice != null && (
+          <UpcomingPriceLine price={option.janPrice} className="mt-auto text-muted-foreground" />
+        )}
       </div>
     ),
     term: term ? (
@@ -167,13 +178,10 @@ function OptionTile({
         <span>{term}</span>
       </span>
     ) : null,
-    facts: option.planFacts ? (
+    facts: option.planFacts?.dbLine ? (
       <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
         <Database className="size-4 shrink-0" aria-hidden />
-        <span>
-          {option.planFacts.dbCredits.toLocaleString("en-IN")} database credits worth{"\u00A0"}₹
-          {option.planFacts.dbWorth.toLocaleString("en-IN")}
-        </span>
+        <span>{option.planFacts.dbLine}</span>
       </span>
     ) : null,
     // A caveat, not a feature: no icon, italic.

@@ -35,58 +35,11 @@ import { ExtraOffLine } from "@/components/apnahire/offers/extra-off-line"
 import { MobileDiscountRow, MobileMetaLine, MobilePlanRow } from "@/components/apnahire/mobile-plan-row"
 
 import { UserSearch } from "@apna/design-system"
-import { inr } from "@/lib/format"
+import { inr, num } from "@/lib/format"
+import { usePlans } from "@/hooks/apnahire/use-plans"
+import type { DbBundle, DbBundleId } from "@/content/credit-bundles"
 
-export type DbBundleId = "170" | "380" | "900"
-
-export interface DbBundle {
-  id: DbBundleId
-  credits: number
-  subcopy: string
-  validDays: number
-  price: number
-  mrp: number
-  discountPct: number
-  pricePerCredit: number
-  recommended?: boolean
-}
-
-/* Figures match the Figma Database tab exactly. The discount percentages are
- * floored and the per-credit prices rounded in Figma — they are literal text
- * nodes there, so never derive them. */
-const DB_BUNDLES: DbBundle[] = [
-  {
-    id: "170",
-    credits: 170,
-    subcopy: "Ideal for small teams",
-    validDays: 30,
-    price: 1949,
-    mrp: 3170,
-    discountPct: 38,
-    pricePerCredit: 11.5,
-  },
-  {
-    id: "380",
-    credits: 380,
-    subcopy: "Perfect for growing businesses",
-    validDays: 90,
-    price: 3649,
-    mrp: 6840,
-    discountPct: 46,
-    pricePerCredit: 9.6,
-    recommended: true,
-  },
-  {
-    id: "900",
-    credits: 900,
-    subcopy: "Best fit for larger hiring needs",
-    validDays: 180,
-    price: 7099,
-    mrp: 15750,
-    discountPct: 54,
-    pricePerCredit: 7.9,
-  },
-]
+export type { DbBundle, DbBundleId } from "@/content/credit-bundles"
 
 export interface DatabaseCreditBundlesProps {
   /** The claimed 10% exit offer: show it in every price. */
@@ -104,7 +57,10 @@ export function DatabaseCreditBundles({
   onSelectBundle,
   className,
 }: DatabaseCreditBundlesProps) {
-  const [internalSelectedId, setInternalSelectedId] = React.useState<DbBundleId>("380")
+  const { dbBundles } = usePlans()
+  const [internalSelectedId, setInternalSelectedId] = React.useState<DbBundleId>(
+    () => dbBundles.find((b) => b.recommended)?.id ?? dbBundles[0].id,
+  )
   const currentSelectedId = selectedBundleId ?? internalSelectedId
 
   const handleSelect = (bundle: DbBundle) => {
@@ -127,14 +83,14 @@ export function DatabaseCreditBundles({
         </div>
 
         <div className="flex flex-col gap-3">
-          {DB_BUNDLES.map((bundle) => {
+          {dbBundles.map((bundle) => {
             const isSelected = currentSelectedId === bundle.id
             // Display figures; selection and checkout keep the base bundle.
             const view = withExtraOffBundle(bundle, extraOff)
             return (
               <MobilePlanRow
                 key={bundle.id}
-                title={`${bundle.credits} Database credits`}
+                title={`${num(bundle.credits)} Database credits`}
                 selected={isSelected}
                 onSelect={() => handleSelect(bundle)}
                 recommended={bundle.recommended}
@@ -174,7 +130,7 @@ export function DatabaseCreditBundles({
         </div>
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-          {DB_BUNDLES.map((bundle) => {
+          {dbBundles.map((bundle) => {
           const view = withExtraOffBundle(bundle, extraOff)
           return (
             <PricingCard
@@ -191,7 +147,7 @@ export function DatabaseCreditBundles({
                   </Badge>
                 )
               }
-              title={`${bundle.credits} Database credits`}
+              title={`${num(bundle.credits)} Database credits`}
               subtitle={bundle.subcopy}
               meta={
                 <>
@@ -206,7 +162,9 @@ export function DatabaseCreditBundles({
               // The claimed offer's line comes first, the per-credit price under it.
               <span className="flex flex-col gap-1">
                 {extraOff && <ExtraOffLine />}
-                <span>₹{view.pricePerCredit}{"\u00A0"}/credit</span>
+                {/* Green only on its own; under the offer line it steps back to
+                    gray, as on the Unlimited card, so only one line is green. */}
+                <span className={extraOff ? undefined : "text-checkout-primary"}>₹{view.pricePerCredit}{"\u00A0"}/credit</span>
               </span>
             }
               cta={
@@ -226,5 +184,3 @@ export function DatabaseCreditBundles({
     </div>
   )
 }
-
-export { DB_BUNDLES }

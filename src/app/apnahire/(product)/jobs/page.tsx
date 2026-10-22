@@ -32,6 +32,7 @@ import { ValueArt } from "@/components/marketing/value-art"
 import { MobileChipRow } from "@/components/apnahire/mobile-chip-row"
 import { JobList, STATUS_LABELS, type ApnaJob, type ApnaJobStatus } from "@/components/apnahire/jobs/job-list"
 import { PageHeader } from "@/components/onlyrounds/page-header"
+import { PriceChangeBanner } from "@/components/apnahire/price-change-banner"
 import { COMPANY_NAME } from "@/lib/apnahire/job-draft"
 import { useFlushHeader } from "@/hooks/use-flush-header"
 import { cn } from "@/lib/utils"
@@ -234,6 +235,10 @@ function JobsPageInner() {
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 p-4 sm:gap-6 sm:p-6">
+      {/* The Jan 1, 2027 price change, on top of the page (gone on the
+          date). Phones: just under the search band, which is part of the
+          header there. */}
+      <PriceChangeBanner />
       <PageHeader
         variant="transparent"
         // Phones: no page title — the bottom bar already says Jobs.
@@ -254,8 +259,9 @@ function JobsPageInner() {
       />
 
       {/* Search first — it covers every state — then the tabs, whose
-          counts show where the matches are. */}
-      <div className="flex flex-col gap-3">
+          counts show where the matches are. Phones: first, above the
+          price-change banner, so it stays joined to the top bar. */}
+      <div className="flex flex-col gap-3 max-md:-order-1">
         {/* Phones: the search sits in a white band joined to the top bar
             (one header: logo row + search). The bar stays pinned; this band
             scrolls away with the list. */}

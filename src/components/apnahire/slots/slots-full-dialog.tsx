@@ -5,7 +5,7 @@
  * 3308:148652 phone). Shown when a subscriber posts a job with every slot
  * taken. Two ways on:
  *
- *   Header  add a slot: "Upgrade 3rd slot at ₹2,499 → ₹1,800 /slot", the
+ *   Header  add a slot: "Upgrade 3rd slot at ₹2,499 → ₹2,000 /slot", the
  *           plan with that slot (price, what's in it, prorated note) and
  *           "Upgrade now" → the order summary
  *   Body    or free one: "Expire a job to make the new job live", the live
@@ -25,9 +25,10 @@
 import * as React from "react"
 import { ArrowRight, Badge, BadgePercent, Button, Check, RadioCard, RadioCardGroup } from "@apna/design-system"
 import { OfferDialog } from "@/components/apnahire/offers/offer-dialog"
-import { SLOT_UPGRADE } from "@/content/offers"
+import { dbCreditsLabel, slotTermLabel } from "@/content/subscriptions"
 import { ordinal, type JobSlots } from "@/hooks/use-job-slots"
 import { useIsMobile } from "@/hooks/use-mobile"
+import { usePlans } from "@/hooks/apnahire/use-plans"
 import { inr } from "@/lib/format"
 
 const pad2 = (n: number) => String(n).padStart(2, "0")
@@ -46,8 +47,9 @@ export function SlotsFullDialog({
   onUpgrade: () => void
 }) {
   const [picked, setPicked] = React.useState(slots.jobs[0]?.id)
+  const { slotUpgrade } = usePlans()
   const nextSlot = slots.total + 1
-  const pct = Math.round((1 - SLOT_UPGRADE.price / SLOT_UPGRADE.mrp) * 100)
+  const pct = Math.round((1 - slotUpgrade.price / slotUpgrade.mrp) * 100)
   // Phones (the bottom sheet): the small CTA leaves the price, struck price
   // and % OFF room for one line.
   const isMobile = useIsMobile()
@@ -66,7 +68,7 @@ export function SlotsFullDialog({
         </>
       }
       eyebrow={`All job slots are in use. Upgrade to a ${ordinal(nextSlot)} slot`}
-      priceDrop={{ from: inr(SLOT_UPGRADE.perSlotMrp), to: inr(SLOT_UPGRADE.perSlot), unit: "/slot" }}
+      priceDrop={{ from: inr(slotUpgrade.perSlotMrp), to: inr(slotUpgrade.perSlot), unit: "/slot" }}
       headerFooter={
         // The CTA sits opposite the price, so the plan's lines below get the
         // full width and each stays on one line. Price, struck price and
@@ -75,8 +77,8 @@ export function SlotsFullDialog({
         <div className="flex flex-col gap-3">
           <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
             <p className="flex items-center gap-1.5 whitespace-nowrap">
-              <span className="text-xl font-semibold">{inr(SLOT_UPGRADE.price)}</span>
-              <span className="text-xs text-surface-inverted-fg/70 line-through">{inr(SLOT_UPGRADE.mrp)}</span>
+              <span className="text-xl font-semibold">{inr(slotUpgrade.price)}</span>
+              <span className="text-xs text-surface-inverted-fg/70 line-through">{inr(slotUpgrade.mrp)}</span>
               <Badge variant="on-dark" size="sm">
                 {pct}% OFF
               </Badge>
@@ -89,11 +91,11 @@ export function SlotsFullDialog({
             <ul className="flex flex-col gap-1.5 text-xs text-surface-inverted-fg/85 sm:flex-row sm:flex-wrap sm:gap-x-4">
               <li className="flex items-center gap-1.5">
                 <Check className="size-4 shrink-0 text-highlight" aria-hidden />
-                {nextSlot} Active job slots for {SLOT_UPGRADE.validDays} days
+                {slotTermLabel({ slots: nextSlot, slotDays: slotUpgrade.validDays })}
               </li>
               <li className="flex items-center gap-1.5">
                 <Check className="size-4 shrink-0 text-highlight" aria-hidden />
-                {SLOT_UPGRADE.dbCredits} database credits
+                {dbCreditsLabel(slotUpgrade.plan)}
               </li>
             </ul>
             <p className="text-xs text-surface-inverted-fg/60 italic">*Prorated discount applicable</p>

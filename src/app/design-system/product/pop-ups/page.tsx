@@ -21,9 +21,7 @@ import { CouponExpiredDialog } from "@/components/apnahire/offers/coupon-expired
 import { SlotsFullDialog } from "@/components/apnahire/slots/slots-full-dialog"
 import { PaymentModal } from "@/components/apnahire/payment-modal"
 import { CheckoutDrawer } from "@/components/apnahire/checkout-drawer"
-import { SINGLE_CREDIT, UPSELL_PACK_22 } from "@/components/apnahire/job-credit-bundles"
-import { SUBSCRIPTION_PLANS } from "@/components/apnahire/subscription-plans"
-import { JOB_PLAN_TIERS } from "@/content/job-plans"
+import { usePlans } from "@/hooks/apnahire/use-plans"
 import { SLOT_PRESETS } from "@/hooks/use-job-slots"
 import { RuleList, ShowcaseEntry, ShowcasePage } from "../showcase-blocks"
 
@@ -56,6 +54,8 @@ export default function PopUpsPage() {
     </Button>
   )
   const upsell = { onClose: close, onStay: close, onTake: close, extraOff }
+  // The pricing phase's plans, as in the checkouts.
+  const plans = usePlans()
 
   return (
     <ShowcasePage
@@ -120,7 +120,7 @@ export default function PopUpsPage() {
         <RuleList
           rules={[
             "Read-only: no buy button. Credits are spent at posting time.",
-            "Prices, credits and features come from JOB_PLAN_TIERS (content/job-plans.ts). Never type a price here.",
+            "Prices, credits and features come from usePlans() (content/plan-catalog.ts), which follows the pricing phase. Never type a price here.",
             "Built from PricingCard (price-first), the same card as the job-posting plans step.",
           ]}
         />
@@ -144,7 +144,7 @@ export default function PopUpsPage() {
       <ShowcaseEntry
         title="Upsell · Bigger credit pack"
         component="CreditPackOfferDialog"
-        where="Self-checkout (Buy 13 credits) · express checkout (short of credits)"
+        where="Self-checkout (Buy 22 credits) · express checkout (short of credits)"
         actions={openBtn("credit-pack")}
       >
         <RuleList rules={["Both tiles show validity with the clock in self-checkout. In express, only the pack does."]} />
@@ -156,7 +156,12 @@ export default function PopUpsPage() {
         where="Buying the monthly (or quarterly) apna Unlimited plan, either checkout"
         actions={openBtn("annual")}
       >
-        <RuleList rules={["Uses the premium offer gradient (gold on plum), not the product gradient."]} />
+        <RuleList
+          rules={[
+            "Uses the premium offer gradient (gold on plum), not the product gradient.",
+            "Both plan tiles show their database credits, level across the pair.",
+          ]}
+        />
       </ShowcaseEntry>
 
       <ShowcaseEntry
@@ -165,7 +170,7 @@ export default function PopUpsPage() {
         where="Self-checkout, when a credit bundle costs about as much as a plan"
         actions={openBtn("credits-to-plan")}
       >
-        <RuleList rules={["The plan tile lists its database credits and their value, like the annual tile."]} />
+        <RuleList rules={["The plan tile shows its database credits, then closes on its one city."]} />
       </ShowcaseEntry>
 
       <ShowcaseEntry
@@ -227,34 +232,22 @@ export default function PopUpsPage() {
       <ContactPopup open={is("contact")} onOpenChange={toggle("contact")} />
       <ContactPopup open={is("contact-signed-in")} onOpenChange={toggle("contact-signed-in")} signedIn />
       <JobTypesDialog open={is("job-types")} onOpenChange={toggle("job-types")} extraOff={extraOff} />
-      <JobBundleOfferDialog open={is("job-bundle")} tier={JOB_PLAN_TIERS.premium} {...upsell} />
+      <JobBundleOfferDialog open={is("job-bundle")} tier={plans.tiers.premium} {...upsell} />
       <CreditPackOfferDialog
         open={is("credit-pack")}
-        need={{ credits: 13, price: 7099, mrp: 8999, validDays: 180 }}
-        pack={UPSELL_PACK_22}
+        need={plans.bundles[plans.bundles.length - 1]}
+        pack={plans.upsellPack}
         {...upsell}
       />
       <AnnualUpgradeDialog
         open={is("annual")}
-        from={{
-          label: "Monthly plan",
-          price: SUBSCRIPTION_PLANS.monthly.price,
-          months: 1,
-          dbCredits: SUBSCRIPTION_PLANS.monthly.dbCredits,
-          dbWorth: SUBSCRIPTION_PLANS.monthly.dbWorth,
-        }}
+        from={plans.plan("monthly")}
         {...upsell}
       />
       <CreditsToPlanDialog
         open={is("credits-to-plan")}
-        bundle={{ credits: 6, price: 3649, mrp: 4194, validDays: 90 }}
-        plan={{
-          label: "Quarterly plan",
-          price: SUBSCRIPTION_PLANS.quarterly.price,
-          months: SUBSCRIPTION_PLANS.quarterly.months,
-          dbCredits: SUBSCRIPTION_PLANS.quarterly.dbCredits,
-          dbWorth: SUBSCRIPTION_PLANS.quarterly.dbWorth,
-        }}
+        bundle={plans.bundles[0]}
+        plan={plans.plan("monthly")}
         {...upsell}
       />
       <ExitOfferDialog open={is("exit")} onClaim={close} onDecline={close} onDismiss={close} />
@@ -269,8 +262,8 @@ export default function PopUpsPage() {
       <PaymentModal
         open={is("payment")}
         onOpenChange={toggle("payment")}
-        itemLabel={`${SINGLE_CREDIT.credits} job credit`}
-        amount={SINGLE_CREDIT.price}
+        itemLabel={`${plans.singleCredit.credits} job credit`}
+        amount={plans.singleCredit.price}
         onSuccess={close}
         onFailure={noop}
       />

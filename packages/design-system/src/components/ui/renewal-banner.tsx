@@ -62,7 +62,7 @@
  *     price="₹3,649"
  *     mrp="₹4,306"                                   // optional, line-through
  *     badge={<Badge variant="outline" className="border-transparent bg-foreground/15 text-foreground">22% OFF</Badge>}
- *     priceCaption="For 3 months · That's just ₹1,800 /month"  // optional, below the price row
+ *     priceCaption="Quarterly plan · That's just ₹1,800 /month"  // optional, below the price row
  *     ribbon={<Badge variant="outline" className="rounded-none rounded-bl-xl border-transparent bg-foreground/10 text-foreground"><Clock /> Offer ends in 4 days</Badge>}  // optional, pinned top-right
  *     cta={<Button variant="secondary" trailingIcon={<ArrowRight />}>Renew now</Button>}
  *     itemsLayout="stacked"                          // optional: one fact per line
@@ -71,7 +71,7 @@
  *
  * `itemsLayout="stacked"` puts each checklist fact on its own line (the
  * banner grows taller). Use it when an inline row would run into the
- * `ribbon` (e.g. "1 Active job slot for 3 months" + "600 database credits"
+ * `ribbon` (e.g. "1 active job slot for 90 days" + "600 database credits"
  * under an "Offer ends in 4 days" ribbon), rather than letting the second
  * fact wrap or crowd the ribbon.
  *
@@ -113,7 +113,7 @@ export interface RenewalBannerProps extends Omit<React.ComponentProps<typeof Ale
   price: React.ReactNode
   mrp?: React.ReactNode
   badge?: React.ReactNode
-  /** Small muted line below the price row — e.g. "For 3 months · That's just ₹1,800 /month". */
+  /** Small muted line below the price row — e.g. "Quarterly plan · That's just ₹1,800 /month". */
   priceCaption?: React.ReactNode
   cta: React.ReactNode
   /** Pinned to the card's top-right corner, overlapping the rounded edge —

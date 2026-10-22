@@ -16,6 +16,7 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 | Toggle           | `import { Toggle } from "@apna/design-system"`                         | On/off button. Use for formatting toolbars.      |
 | ToggleGroup      | `import { ToggleGroup, ToggleGroupItem } from "@apna/design-system"`   | Multiple toggles, single- or multi-select.       |
 | InkProvider      | `import { InkProvider } from "@apna/design-system"`                    | Mount once in the root layout. Feeds the press position to every `ink` surface (the live-surface ripple). Renders nothing. |
+| CompareAlign     | `import { CompareAlign } from "@apna/design-system"`                   | Mount once in the root layout. Keeps side-by-side `data-compare-card`s level: if one card's price row wraps, the whole row stacks its % tag; every `data-compare` line takes the row's tallest height. Renders nothing. |
 | CloseBubble      | `import { CloseBubble } from "@apna/design-system"`                    | The pop-up close control: 32px dark translucent disc, white X, outside the card 8px above its top-right corner. Rendered automatically by `DialogContent` and bottom `SheetContent`; you rarely use it directly. |
 | useSlidingIndicator | `import { useSlidingIndicator } from "@apna/design-system"`         | Hook for hand-built segmented controls: moves one `sliding-indicator` pill onto the option marked `data-indicator-active`, so selection slides instead of cross-fading. |
 

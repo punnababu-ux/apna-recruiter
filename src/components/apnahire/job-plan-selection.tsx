@@ -50,12 +50,14 @@ import {
 } from "@/components/apnahire/checkout-drawer"
 import { PaymentModal } from "@/components/apnahire/payment-modal"
 import { TrustedByStrip } from "@/components/marketing/proof-bands"
+import { UpcomingPricesProvider } from "@/components/apnahire/upcoming-price-line"
+import { PriceChangeBanner } from "@/components/apnahire/price-change-banner"
 import { GstNote } from "@/components/apnahire/gst-note"
 import { PaymentSuccess } from "@/components/apnahire/payment-success"
 import { setActiveSubscription } from "@/hooks/use-active-subscription"
 import { addPurchasedJobCredits } from "@/hooks/use-plans-ingress"
 import { JobPlanPreviewSwitcher } from "@/components/apnahire/job-plan-preview-switcher"
-import { BUNDLES } from "@/components/apnahire/job-credit-bundles"
+import { usePlans } from "@/hooks/apnahire/use-plans"
 import { ExitOfferDialog } from "@/components/apnahire/offers/exit-offer-dialog"
 import { useExtraOff } from "@/components/apnahire/offers/use-extra-off"
 import {
@@ -64,7 +66,14 @@ import {
   JobBundleOfferDialog,
   bundleQuote,
 } from "@/components/apnahire/offers/upsell-dialogs"
-import { ANNUAL_PLAN, EXTRA_OFF, SLOT_UPGRADE } from "@/content/offers"
+import { EXTRA_OFF } from "@/content/offers"
+import {
+  dbCreditsLabel,
+  planOrderLabel,
+  planOrderPoints,
+  slotTermLabel,
+  type SubscriptionPlan,
+} from "@/content/subscriptions"
 import { setJobSlots, todayLabel, useJobSlots } from "@/hooks/use-job-slots"
 import {
   TieredJobPlans,
@@ -75,13 +84,11 @@ import {
 } from "@/components/apnahire/job-plan-cards"
 import {
   AI_CALLING_ADDON,
-  MONTHLY_SUBSCRIPTION_PLAN,
   NO_CREDITS,
   creditLabel,
   type CreditBalance,
   type JobPlanTier,
 } from "@/content/job-plans"
-import { inr, num } from "@/lib/format"
 
 export type JobPlanLayout = "tiered" | "subscription"
 
@@ -92,15 +99,12 @@ type Upsell =
   | { kind: "annual" }
   | null
 
-/** The pack the "short on credits" upsell offers (the board's 6 credits). */
 /** Why the subscription is off for a work-from-home job: the CTA's short
  *  label, and the line a tap on the card shows. */
 const SUBSCRIPTION_WFH_BLOCK = {
   label: "Not for work-from-home jobs",
   message: "apna Unlimited is for on-site jobs. Post this work-from-home job with a one-time plan.",
 }
-
-const CREDIT_UPSELL_PACK = BUNDLES.find((b) => b.credits === 6) ?? BUNDLES[0]
 
 function randomOrderId() {
   return Math.random().toString(36).slice(2, 10).toUpperCase()
@@ -157,6 +161,11 @@ export function JobPlanSelection() {
   const [exitPrompt, setExitPrompt] = React.useState<{ proceed: () => void } | null>(null)
   const [shimmerKey, setShimmerKey] = React.useState(0)
 
+  // Every price here follows the pricing phase (preview settings).
+  const plans = usePlans()
+  /** The pack the "short on credits" upsell offers (the board's 6 credits). */
+  const creditUpsellPack = plans.bundles.find((b) => b.credits === 6) ?? plans.bundles[0]
+
   const openCheckout = (item: CartLine) => {
     setUpsell(null)
     setCheckoutItem(item)
@@ -174,15 +183,15 @@ export function JobPlanSelection() {
     setCheckoutItem({
       id: `slot_upgrade_${total}`,
       label: `${slots.plan} · ${total} job slots`,
-      // Database credits are worth ₹10 each across the plans (200 → ₹2,000).
+      // The plan with the extra slot, and that plan's database credits.
       points: [
-        `${total} Active job slots for ${SLOT_UPGRADE.validDays} days`,
-        `${SLOT_UPGRADE.dbCredits} database credits worth ${inr(SLOT_UPGRADE.dbCredits * 10)}`,
+        slotTermLabel({ slots: total, slotDays: plans.slotUpgrade.validDays }),
+        dbCreditsLabel(plans.slotUpgrade.plan),
         "Valid in a single city",
       ],
-      price: SLOT_UPGRADE.price,
-      mrp: SLOT_UPGRADE.mrp,
-      renewAfterDays: SLOT_UPGRADE.validDays,
+      price: plans.slotUpgrade.price,
+      mrp: plans.slotUpgrade.mrp,
+      renewAfterDays: plans.slotUpgrade.validDays,
     })
     setDrawerOpen(true)
     // Once, on arrival — not again when the slots change after paying.
@@ -234,7 +243,7 @@ export function JobPlanSelection() {
 
 
   const handleSelectTier = (tier: JobPlanTier) => {
-    const plan = creditPlan(tier, creditBalance)
+    const plan = creditPlan(tier, creditBalance, plans.singleCredit)
     // Covered: the job line costs nothing, but the summary still opens so the
     // AI calling add-on is offered. With no paid add-on it posts from there.
     if (plan.state === "covered") {
@@ -269,45 +278,31 @@ export function JobPlanSelection() {
   })
 
   const creditPackLine = (tier: JobPlanTier, plan: Extract<CreditPlan, { state: "partial" }>): CartLine => {
-    const left = plan.held + CREDIT_UPSELL_PACK.credits - tier.credit.count
+    const left = plan.held + creditUpsellPack.credits - tier.credit.count
     return {
       id: "credit-pack",
-      label: `${CREDIT_UPSELL_PACK.credits} Job credits`,
-      sublabel: `${plan.shortfall} for ${tier.title} · ${left} left for later, valid ${CREDIT_UPSELL_PACK.validDays} days`,
-      price: CREDIT_UPSELL_PACK.price,
-      mrp: CREDIT_UPSELL_PACK.mrp,
+      label: `${creditUpsellPack.credits} Job credits`,
+      sublabel: `${plan.shortfall} for ${tier.title} · ${left} left for later, valid ${creditUpsellPack.validDays} days`,
+      price: creditUpsellPack.price,
+      mrp: creditUpsellPack.mrp,
     }
   }
 
   // Monthly Unlimited: offer the annual plan first.
   const handleSelectSubscription = () => setUpsell({ kind: "annual" })
 
-  const monthlyLine = (): CartLine => {
-    const plan = MONTHLY_SUBSCRIPTION_PLAN
-    return {
-      id: "unlimited_monthly",
-      label: "Unlimited monthly plan",
-      points: [
-        `1 Active job slot for ${plan.jobSlotMonths} month${plan.jobSlotMonths === 1 ? "" : "s"}`,
-        `${plan.dbCreditsPerMonth} database credits worth ${inr(plan.dbCreditsWorth)}`,
-        "Valid in a single city",
-      ],
-      price: plan.price,
-      renewAfterDays: plan.jobSlotMonths * 30,
-    }
-  }
-
-  const annualLine = (): CartLine => ({
-    id: "unlimited_annual",
-    label: "Unlimited annual plan",
-    points: [
-      `1 Active job slot for ${ANNUAL_PLAN.months} months`,
-      `${num(ANNUAL_PLAN.dbCredits)} database credits worth ${inr(ANNUAL_PLAN.dbCreditsWorth)}`,
-      "Valid in a single city",
-    ],
-    price: ANNUAL_PLAN.price,
-    renewAfterDays: 365,
+  // The same label and points as self-checkout's plan lines (one
+  // vocabulary, `content/subscriptions.ts`), database credits included.
+  const planLine = (plan: SubscriptionPlan): CartLine => ({
+    id: `unlimited_${plan.id}`,
+    label: planOrderLabel(plan),
+    points: planOrderPoints(plan),
+    price: plan.price,
+    mrp: plan.mrp,
+    renewAfterDays: plan.slotDays,
   })
+  const monthlyLine = () => planLine(plans.plan("monthly"))
+  const annualLine = () => planLine(plans.annualPlan)
 
   const handleProceedToPay = (total: number, lines: CartLine[], method?: SubscriptionPaymentMethod) => {
     // Everything paid with credits (job and/or AI): post now, no payment.
@@ -388,28 +383,33 @@ export function JobPlanSelection() {
 
       <div className="flex-1 px-4 py-4 pb-28 sm:px-6 sm:py-6 sm:pb-12">
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-5">
-          <h1 className="text-h6 text-checkout-hero-fg whitespace-nowrap sm:text-2xl">
-            Choose a job basis your hiring needs
-          </h1>
-          {/* With even one credit, no subscription: credits and a subscription
-              don't mix (user call, 2026-10-19), so it's the one-time tiers. */}
-          {layout === "tiered" || holdsCredits ? (
-            <TieredJobPlans
-              creditBalance={creditBalance}
-              onSelectTier={handleSelectTier}
-              extraOff={offer.claimed}
-              shimmerKey={shimmerKey}
-            />
-          ) : (
-            <SubscriptionJobPlans
-              creditBalance={creditBalance}
-              onSelectTier={handleSelectTier}
-              onSelectSubscription={handleSelectSubscription}
-              subscriptionBlocked={wfh ? SUBSCRIPTION_WFH_BLOCK : undefined}
-              extraOff={offer.claimed}
-              shimmerKey={shimmerKey}
-            />
-          )}
+          {/* Posting a job means signed in, so the Jan 1 price change shows:
+              the banner on top, each card's Jan price (content/price-change.ts). */}
+          <UpcomingPricesProvider enabled>
+            <PriceChangeBanner placement="plans" />
+            <h1 className="text-h6 text-checkout-hero-fg whitespace-nowrap sm:text-2xl">
+              Choose a job basis your hiring needs
+            </h1>
+            {/* With even one credit, no subscription: credits and a subscription
+                don't mix (user call, 2026-10-19), so it's the one-time tiers. */}
+            {layout === "tiered" || holdsCredits ? (
+              <TieredJobPlans
+                creditBalance={creditBalance}
+                onSelectTier={handleSelectTier}
+                extraOff={offer.claimed}
+                shimmerKey={shimmerKey}
+              />
+            ) : (
+              <SubscriptionJobPlans
+                creditBalance={creditBalance}
+                onSelectTier={handleSelectTier}
+                onSelectSubscription={handleSelectSubscription}
+                subscriptionBlocked={wfh ? SUBSCRIPTION_WFH_BLOCK : undefined}
+                extraOff={offer.claimed}
+                shimmerKey={shimmerKey}
+              />
+            )}
+          </UpcomingPricesProvider>
           <GstNote />
           <TrustedByStrip />
         </div>
@@ -428,44 +428,47 @@ export function JobPlanSelection() {
         onAiAddedChange={setAiAdded}
       />
 
-      <JobBundleOfferDialog
-        open={upsell?.kind === "bundle"}
-        tier={upsell?.kind === "bundle" ? upsell.tier : null}
-        extraOff={offer.claimed}
-        onClose={() => setUpsell(null)}
-        onStay={() => upsell?.kind === "bundle" && openCheckout(singleJobLine(upsell.tier))}
-        onTake={() => upsell?.kind === "bundle" && openCheckout(bundleLine(upsell.tier))}
-      />
+      {/* The upsells quote Jan prices too (signed in, as the plans above);
+          the order summary never does. */}
+      <UpcomingPricesProvider enabled>
+        <JobBundleOfferDialog
+          open={upsell?.kind === "bundle"}
+          tier={upsell?.kind === "bundle" ? upsell.tier : null}
+          extraOff={offer.claimed}
+          onClose={() => setUpsell(null)}
+          onStay={() => upsell?.kind === "bundle" && openCheckout(singleJobLine(upsell.tier))}
+          onTake={() => upsell?.kind === "bundle" && openCheckout(bundleLine(upsell.tier))}
+        />
 
-      <CreditPackOfferDialog
-        open={upsell?.kind === "credits"}
-        need={
-          upsell?.kind === "credits"
-            ? { credits: upsell.plan.shortfall, price: upsell.plan.price, mrp: upsell.plan.mrp }
-            : null
-        }
-        needNote={upsell?.kind === "credits" ? `Needed to post ${upsell.tier.title.toLowerCase()}` : undefined}
-        pack={CREDIT_UPSELL_PACK}
-        extraOff={offer.claimed}
-        onClose={() => setUpsell(null)}
-        onStay={() => upsell?.kind === "credits" && openCheckout(topupLine(upsell.tier, upsell.plan))}
-        onTake={() => upsell?.kind === "credits" && openCheckout(creditPackLine(upsell.tier, upsell.plan))}
-      />
+        <CreditPackOfferDialog
+          open={upsell?.kind === "credits"}
+          need={
+            upsell?.kind === "credits"
+              ? {
+                  credits: upsell.plan.shortfall,
+                  price: upsell.plan.price,
+                  mrp: upsell.plan.mrp,
+                  janPrice: plans.singleCredit.janPrice && upsell.plan.shortfall * plans.singleCredit.janPrice,
+                }
+              : null
+          }
+          needNote={upsell?.kind === "credits" ? `Needed to post ${upsell.tier.title.toLowerCase()}` : undefined}
+          pack={creditUpsellPack}
+          extraOff={offer.claimed}
+          onClose={() => setUpsell(null)}
+          onStay={() => upsell?.kind === "credits" && openCheckout(topupLine(upsell.tier, upsell.plan))}
+          onTake={() => upsell?.kind === "credits" && openCheckout(creditPackLine(upsell.tier, upsell.plan))}
+        />
 
-      <AnnualUpgradeDialog
-        open={upsell?.kind === "annual"}
-        from={{
-          label: "Monthly plan",
-          price: MONTHLY_SUBSCRIPTION_PLAN.price,
-          months: 1,
-          dbCredits: MONTHLY_SUBSCRIPTION_PLAN.dbCreditsPerMonth,
-          dbWorth: MONTHLY_SUBSCRIPTION_PLAN.dbCreditsWorth,
-        }}
-        extraOff={offer.claimed}
-        onClose={() => setUpsell(null)}
-        onStay={() => openCheckout(monthlyLine())}
-        onTake={() => openCheckout(annualLine())}
-      />
+        <AnnualUpgradeDialog
+          open={upsell?.kind === "annual"}
+          from={plans.plan("monthly")}
+          extraOff={offer.claimed}
+          onClose={() => setUpsell(null)}
+          onStay={() => openCheckout(monthlyLine())}
+          onTake={() => openCheckout(annualLine())}
+        />
+      </UpcomingPricesProvider>
 
       <ExitOfferDialog
         open={exitPrompt !== null}

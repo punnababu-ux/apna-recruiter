@@ -3,8 +3,8 @@
 /**
  * JobCreditBundles — Jobs tab pricing cards.
  *
- * Three credit-bundle cards (3 / 6 / 13), each with its own "Buy now" CTA
- * that opens the checkout drawer directly with that bundle — matches the
+ * Three credit-bundle cards (the pricing phase's set, from usePlans), each
+ * with its own "Buy now" CTA that opens the checkout drawer directly with that bundle — matches the
  * self-checkout design's buy-per-card flow rather than a select-then-checkout
  * pattern.
  */
@@ -16,81 +16,12 @@ import { cn } from "@/lib/utils"
 import { withExtraOffBundle } from "@/content/offers"
 import { ExtraOffLine } from "@/components/apnahire/offers/extra-off-line"
 import { MobileDiscountRow, MobileMetaLine, MobilePlanRow } from "@/components/apnahire/mobile-plan-row"
+import { UpcomingPriceLine } from "@/components/apnahire/upcoming-price-line"
 import { inr } from "@/lib/format"
+import { usePlans } from "@/hooks/apnahire/use-plans"
+import type { Bundle, BundleId } from "@/content/credit-bundles"
 
-/* ─────────────────────────────────────── types ───────────────────────── */
-
-export type BundleId = "3" | "6" | "13"
-
-export interface Bundle {
-  id: BundleId
-  credits: number
-  subcopy: string
-  validDays: number
-  price: number
-  mrp: number
-  discountPct: number
-  pricePerCredit: number
-  recommended?: boolean
-}
-
-/* ─────────────────────────────────────── data ────────────────────────── */
-/* Figures match the finalized self-checkout Figma design exactly. Every
- * derived figure (pricePerCredit) is stored as the Figma literal rather
- * than computed: the design rounds 1949/3 = 649.67 to 650 but truncates
- * elsewhere, so arithmetic would drift from the drawing. */
-
-const BUNDLES: Bundle[] = [
-  {
-    id: "3",
-    credits: 3,
-    subcopy: "Ideal for small teams",
-    validDays: 30,
-    price: 1949,
-    mrp: 2499,
-    discountPct: 22,
-    pricePerCredit: 650,
-  },
-  {
-    id: "6",
-    credits: 6,
-    subcopy: "Perfect for growing businesses",
-    validDays: 90,
-    price: 3649,
-    mrp: 4194,
-    discountPct: 13,
-    pricePerCredit: 608,
-    recommended: true,
-  },
-  {
-    id: "13",
-    credits: 13,
-    subcopy: "Best fit for larger hiring needs",
-    validDays: 180,
-    price: 7099,
-    mrp: 8999,
-    discountPct: 21,
-    pricePerCredit: 546,
-  },
-]
-
-/** Single job-credit purchase — reached via "I need a single job credit". */
-/** Self-checkout's upsell from the 13-credit bundle (user call,
- *  2026-10-19): 22 job credits for ₹9,999, struck ₹15,378. Not a card on the
- *  page — only offered in the pop-up. Validity still to come from the
- *  collateral; until then none is shown. */
-export const UPSELL_PACK_22 = { credits: 22, price: 9999, mrp: 15378, validDays: 360 } as const
-
-export const SINGLE_CREDIT: Bundle = {
-  id: "3", // reuses the BundleId type; not rendered as a card
-  credits: 1,
-  subcopy: "Buy exactly what you need",
-  validDays: 30,
-  price: 699,
-  mrp: 899,
-  discountPct: 22,
-  pricePerCredit: 699,
-}
+export type { Bundle, BundleId } from "@/content/credit-bundles"
 
 /* ─────────────────────────────────────── component ──────────────────── */
 
@@ -112,7 +43,10 @@ export function JobCreditBundles({
   onSelectBundle,
   className,
 }: JobCreditBundlesProps) {
-  const [internalSelectedId, setInternalSelectedId] = React.useState<BundleId>("6")
+  const { bundles } = usePlans()
+  const [internalSelectedId, setInternalSelectedId] = React.useState<BundleId>(
+    () => bundles.find((b) => b.recommended)?.id ?? bundles[0].id,
+  )
   const currentSelectedId = selectedBundleId ?? internalSelectedId
 
   const handleSelect = (bundle: Bundle) => {
@@ -147,7 +81,7 @@ export function JobCreditBundles({
         </div>
 
         <div className="flex flex-col gap-3">
-          {BUNDLES.map((bundle) => {
+          {bundles.map((bundle) => {
             const isSelected = currentSelectedId === bundle.id
             // Display figures; selection and checkout keep the base bundle.
             const view = withExtraOffBundle(bundle, extraOff)
@@ -175,6 +109,7 @@ export function JobCreditBundles({
                 belowPrice={
                   <MobileDiscountRow pct={view.discountPct} note={extraOff ? "Incl. 10% extra" : undefined} />
                 }
+                upcoming={<UpcomingPriceLine price={bundle.janPrice} />}
               />
             )
           })}
@@ -209,7 +144,7 @@ export function JobCreditBundles({
         </div>
 
         <div className="grid flex-1 grid-cols-1 gap-4 lg:grid-cols-3">
-        {BUNDLES.map((bundle) => {
+        {bundles.map((bundle) => {
           const view = withExtraOffBundle(bundle, extraOff)
           return (
           <PricingCard
@@ -239,7 +174,10 @@ export function JobCreditBundles({
               // The claimed offer's line comes first, the per-credit price under it.
               <span className="flex flex-col gap-1">
                 {extraOff && <ExtraOffLine />}
-                <span>₹{view.pricePerCredit}{"\u00A0"}/credit</span>
+                {/* Green only on its own; under the offer line it steps back to
+                    gray, as on the Unlimited card, so only one line is green. */}
+                <span className={extraOff ? undefined : "text-checkout-primary"}>₹{view.pricePerCredit}{"\u00A0"}/credit</span>
+                <UpcomingPriceLine price={bundle.janPrice} />
               </span>
             }
             cta={
@@ -259,6 +197,3 @@ export function JobCreditBundles({
     </div>
   )
 }
-
-/* Export helpers so page.tsx can look up bundle data */
-export { BUNDLES }

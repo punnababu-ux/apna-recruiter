@@ -21,6 +21,9 @@
  *                       1 fits 360px phones. Below ~288px inside the card
  *                       (320px phones) it falls back to the stacked layout
  *                       rather than wrapping the name.
+ *                       `upcoming` ("₹749 from Jan 1", UpcomingPriceLine) is
+ *                       the price column's last line; inline, a third line
+ *                       under the radio side.
  *   MobileDiscountRow   "Incl. 10% extra" + the % OFF badge, under the price.
  *   MobileUnlimitedCard the apna Unlimited card: dark frame, logo, then a white
  *                       card with the same name | price header, a feature
@@ -59,6 +62,9 @@ export interface MobilePlanRowProps {
   /** Beside the discount ("Incl. 10% extra"): line 2 in the inline layout,
    *  under the discount in the stacked one. */
   priceNote?: React.ReactNode
+  /** The price's last line: `UpcomingPriceLine` (it renders nothing when
+   *  off, and the slot adds no space of its own). */
+  upcoming?: React.ReactNode
   className?: string
 }
 
@@ -75,6 +81,7 @@ export function MobilePlanRow({
   details,
   layout = "stacked",
   priceNote,
+  upcoming,
   className,
 }: MobilePlanRowProps) {
   const radio = (
@@ -83,15 +90,16 @@ export function MobilePlanRow({
   const priceBlock = (
     <div className="flex shrink-0 flex-col items-end gap-1 text-right">
       <div className="flex items-baseline justify-end gap-1.5 whitespace-nowrap">
-        {mrp && <span className="text-xs text-muted-foreground line-through">{mrp}</span>}
-        {/* The price leads the row (20px, over the 16px plan name);
+        {mrp && <span className="text-plan-strike text-muted-foreground">{mrp}</span>}
+        {/* The price leads the row (text-plan-price-compact, over text-plan-name);
             tabular figures keep the column steady. */}
-        <span className="text-xl font-bold tabular-nums text-foreground">{price}</span>
-        {/* Neutral: the price carries the line. */}
-        {unit && <span className="text-xs font-regular text-foreground">{unit}</span>}
+        <span className="text-plan-price-compact tabular-nums text-foreground">{price}</span>
+        {/* Muted like the struck price: only the price is dark. */}
+        {unit && <span className="text-plan-unit text-muted-foreground">{unit}</span>}
       </div>
       {belowPrice}
       {priceNote}
+      <Upcoming>{upcoming}</Upcoming>
     </div>
   )
   return (
@@ -128,13 +136,13 @@ export function MobilePlanRow({
             {/* Line 1: name · struck price + price · radio. The radio stays
                 on the name's line, as in the stacked rows. */}
             <div className="flex items-center gap-2">
-              <span className="min-w-0 flex-1 text-base font-semibold text-foreground">{title}</span>
+              <span className="min-w-0 flex-1 text-plan-name text-foreground">{title}</span>
               <span className="flex shrink-0 items-baseline gap-1.5 whitespace-nowrap">
-                {mrp && <span className="text-xs text-muted-foreground line-through">{mrp}</span>}
+                {mrp && <span className="text-plan-strike text-muted-foreground">{mrp}</span>}
                 {/* leading-tight: the 20px price's own 28px line set the gap
                     under the name line, not the 2px between the lines. */}
-                <span className="text-xl leading-tight font-bold tabular-nums text-foreground">{price}</span>
-                {unit && <span className="text-xs font-regular text-foreground">{unit}</span>}
+                <span className="text-plan-price-compact tabular-nums text-foreground">{price}</span>
+                {unit && <span className="text-plan-unit text-muted-foreground">{unit}</span>}
               </span>
               {radio}
             </div>
@@ -153,13 +161,15 @@ export function MobilePlanRow({
                 )}
               </div>
             )}
+            {/* Line 3, right-aligned under the discount. */}
+            <Upcoming className="[&>*]:self-end">{upcoming}</Upcoming>
           </div>
         )}
         <div className={cn("flex flex-col gap-3", layout === "inline" && "@2xs:hidden")}>
           {/* Header: the plan name paired with its radio (the standard
               radio-card reading). */}
           <div className="flex items-center justify-between gap-3">
-            <span className="text-base font-semibold text-foreground">{title}</span>
+            <span className="text-plan-name text-foreground">{title}</span>
             {radio}
           </div>
 
@@ -174,6 +184,13 @@ export function MobilePlanRow({
       </div>
     </div>
   )
+}
+
+/** Wraps the `upcoming` line without a box of its own (`contents`), so an
+ *  empty line leaves no gap; it only lends the muted colour. */
+function Upcoming({ className, children }: { className?: string; children: React.ReactNode }) {
+  if (!children) return null
+  return <span className={cn("contents text-muted-foreground", className)}>{children}</span>
 }
 
 /** The selected row's details: an icon list under a rule. Pass as
@@ -243,6 +260,8 @@ export interface MobileUnlimitedCardProps {
   /** "/month", beside the price. */
   unit?: React.ReactNode
   belowPrice?: React.ReactNode
+  /** Under `belowPrice`: `UpcomingPriceLine`. */
+  upcoming?: React.ReactNode
   /** Feature lines: `[icon, text]` pairs. */
   features: Array<[React.ReactNode, React.ReactNode]>
   note?: React.ReactNode
@@ -263,6 +282,7 @@ export function MobileUnlimitedCard({
   mrp,
   unit,
   belowPrice,
+  upcoming,
   features,
   note,
   cta,
@@ -302,17 +322,18 @@ export function MobileUnlimitedCard({
             row sit under them. */}
         <div className="flex items-start justify-between gap-3">
           <div className="flex min-w-0 flex-col gap-1.5">
-            <span className="text-base font-semibold text-foreground">{title}</span>
+            <span className="text-plan-name text-foreground">{title}</span>
             {subtitle && <span className="text-xs text-muted-foreground">{subtitle}</span>}
           </div>
           <div className="flex shrink-0 flex-col items-end gap-1 text-right">
             <span className="flex items-baseline gap-1.5 whitespace-nowrap">
-              {mrp && <span className="text-xs text-muted-foreground line-through">{mrp}</span>}
-              <span className="text-xl font-bold tabular-nums text-foreground">{price}</span>
-              {/* Neutral: the price carries the line. */}
-              {unit && <span className="text-xs font-regular text-foreground">{unit}</span>}
+              {mrp && <span className="text-plan-strike text-muted-foreground">{mrp}</span>}
+              <span className="text-plan-price-compact tabular-nums text-foreground">{price}</span>
+              {/* Muted like the struck price: only the price is dark. */}
+              {unit && <span className="text-plan-unit text-muted-foreground">{unit}</span>}
             </span>
             {belowPrice}
+            <Upcoming>{upcoming}</Upcoming>
           </div>
         </div>
 

@@ -366,6 +366,17 @@ For common blocks of text, use a preset — it bundles family + size + weight
 | `.text-body-sm`  | Secondary paragraph / compact UI copy  |
 | `.text-caption`  | Helper text, footnotes                 |
 | `.text-overline` | Eyebrow / kicker (uppercase, tracked)  |
+| `.text-plan-name` | Plan card name: "3 Job credits", "Monthly plan", "Starter" (16 / 20, semibold) |
+| `.text-plan-price` | Plan card price, desktop cards (24, semibold) |
+| `.text-plan-price-compact` | Plan price on phone rows and phone tiles (20, semibold) |
+| `.text-plan-unit` | "/month", "/year" beside a plan price (12, regular) |
+| `.text-plan-strike` | Struck list price beside a plan price (12, line-through) |
+
+The plan presets are the one type scale for every plan and pricing card
+(PricingCard, Subscription, Enterprise, phone rows, OfferChoice). The % OFF
+pill beside them is `Badge variant="discount"`, which is always the small
+10px size. No colour is baked in: pass `text-foreground` /
+`text-muted-foreground` for the surface.
 
 Prefer presets when the text fills a *role*. Reach for atomic utilities
 (`font-heading font-semibold text-2xl`) only when you genuinely need a

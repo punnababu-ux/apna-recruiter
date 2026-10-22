@@ -84,6 +84,7 @@
  *     subtitle="Perfect for growing businesses"
  *     meta={<><ClockFading /> Valid for 90 days</>}   // or an array of rows
  *     price="₹3,649"
+ *     unit="/month"                                    // optional, muted
  *     mrp="₹4,194"                                     // optional, line-through
  *     badge={<Badge variant="discount">13% OFF</Badge>}
  *     priceSuffix="₹608 /credit"
@@ -105,6 +106,9 @@ export interface PricingCardProps extends Omit<React.ComponentProps<"div">, "tit
    *  glyph slot; pass the icon as part of the row's content. */
   meta?: React.ReactNode | React.ReactNode[]
   price: React.ReactNode
+  /** "/month", "/quarter" right after the price. Muted like the struck
+   *  price: on every plan card only the price itself is dark. */
+  unit?: React.ReactNode
   mrp?: React.ReactNode
   badge?: React.ReactNode
   priceSuffix?: React.ReactNode
@@ -129,6 +133,7 @@ export function PricingCard({
   subtitle,
   meta,
   price,
+  unit,
   mrp,
   badge,
   priceSuffix,
@@ -166,9 +171,10 @@ export function PricingCard({
 
   const priceBlock = (
     <div className={cn("flex flex-col", titleLed ? "gap-1" : "gap-2")}>
-      {/* 6px gaps, not 8: in a 248px card (Jobs tab at xl, beside the
-          Unlimited card) "₹6,389 ₹8,999 29% OFF" missed one line by 1px in
-          Inter. The badge still wraps if a price outgrows the card. */}
+      {/* 6px gaps, not 8: keeps price, struck price and badge on one line
+          in more cards. When a price outgrows the card ("₹9,999 ₹15,378
+          35% OFF" in a 248px Jobs card), CompareAlign stacks the badge
+          under the price in EVERY card of the row, never just this one. */}
       {/* Packed left: the % tag sits right after the struck price, never
           flung to the card's far edge. */}
       <div data-compare="price" className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
@@ -178,19 +184,17 @@ export function PricingCard({
         <div className="flex items-baseline gap-1.5">
           <span
             className={cn(
-              "font-semibold",
-              // 24px — matches the price size on the Subscription and
-              // Enterprise cards (text-2xl / text-h3), so every plan
-              // price on the page reads at one size regardless of which
-              // component draws the card.
-              titleLed ? "text-base" : "text-2xl leading-tight",
+              // The plan type scale (styles/index.css): every plan price,
+              // whichever component draws the card, is text-plan-price.
+              titleLed ? "text-base font-semibold" : "text-plan-price",
               fg
             )}
           >
             {price}
           </span>
+          {unit && <span className={cn("text-plan-unit", fgMuted)}>{unit}</span>}
           {mrp && (
-            <span className={cn("text-sm line-through", fgMuted)}>{mrp}</span>
+            <span className={cn("text-plan-strike", fgMuted)}>{mrp}</span>
           )}
         </div>
         {badge && <div className="shrink-0">{badge}</div>}
@@ -228,7 +232,7 @@ export function PricingCard({
         {ribbon && <div className="absolute right-0 top-0 flex overflow-hidden rounded-tr-[inherit] rounded-bl-xl">{ribbon}</div>}
 
         <div className="flex flex-col gap-2">
-          <p className={cn("text-base font-semibold leading-5", fg)}>{title}</p>
+          <p className={cn("text-plan-name", fg)}>{title}</p>
           {subtitle && <p className={cn("text-xs", fgMuted)}>{subtitle}</p>}
           {priceBlock}
         </div>
@@ -269,8 +273,7 @@ export function PricingCard({
         <div className={cn("flex flex-col", titleLed ? "gap-3" : "gap-2")}>
           <p
             className={cn(
-              "font-semibold",
-              titleLed ? "text-xl leading-tight" : "text-base leading-5",
+              titleLed ? "text-xl leading-tight font-semibold" : "text-plan-name",
               fg
             )}
           >

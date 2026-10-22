@@ -3,10 +3,11 @@
 /**
  * SubscriptionPlans — Subscription (apna Unlimited) tab body.
  *
- * Monthly vs Quarterly comparison cards with feature checklists, plus a
- * 1/2/3-job-slot toggle above them (UI-only — Figma shows no content or
- * price recalculation for the 2- and 3-slot states, so this stays a
- * local, cosmetic toggle).
+ * Monthly, Quarterly and Annual comparison cards with feature checklists,
+ * plus a job-slot picker above them (1 / 3 / 5 on the new plans, 1 / 2 / 3
+ * today: usePlans().slotCounts). The picker drives every price
+ * (usePlans().plan); the caller owns it so the sticky CTA and checkout buy
+ * the same plan.
  *
  * Figma: 1971:8968. Card layout is 1971:9020 (Monthly) / 1971:9074
  * (Quarterly): header → divider → offerings, with the CTA pinned as the
@@ -30,45 +31,27 @@ import {
 } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 import { GstNote } from "@/components/apnahire/gst-note"
-import { ANNUAL_PLAN, withExtraOff } from "@/content/offers"
+import { withExtraOff } from "@/content/offers"
+import {
+  dbCreditsLabel,
+  planCtaLabel,
+  slotLabel,
+  type JobSlotCount,
+  type SubscriptionPlanId,
+} from "@/content/subscriptions"
 import { ExtraOffLine } from "@/components/apnahire/offers/extra-off-line"
+import { UpcomingPriceLine } from "@/components/apnahire/upcoming-price-line"
 import {
   MobileDiscountRow,
   MobilePlanDetails,
   MobilePlanRow,
 } from "@/components/apnahire/mobile-plan-row"
-import { inr, num } from "@/lib/format"
+import { inr } from "@/lib/format"
+import { usePlans } from "@/hooks/apnahire/use-plans"
 
-export type SubscriptionPlanId = "monthly" | "quarterly" | "annual"
+export type { JobSlotCount, SubscriptionPlanId }
 
-/** The Unlimited plans: one source for the cards, the phone rows and the
- *  self-checkout sticky CTA. `mrp` is a list price shown struck through. */
-export const SUBSCRIPTION_PLANS: Record<
-  SubscriptionPlanId,
-  {
-    title: string
-    price: number
-    mrp?: number
-    months: number
-    slotDays: number
-    dbCredits: number
-    dbWorth: number
-  }
-> = {
-  monthly: { title: "Monthly", price: 2499, months: 1, slotDays: 30, dbCredits: 200, dbWorth: 2000 },
-  quarterly: { title: "Quarterly", price: 5999, months: 3, slotDays: 90, dbCredits: 600, dbWorth: 6000 },
-  annual: {
-    title: "Annual",
-    price: ANNUAL_PLAN.price,
-    mrp: ANNUAL_PLAN.mrp,
-    months: ANNUAL_PLAN.months,
-    slotDays: ANNUAL_PLAN.slotDays,
-    dbCredits: ANNUAL_PLAN.dbCredits,
-    dbWorth: ANNUAL_PLAN.dbCreditsWorth,
-  },
-}
-
-const UNITS: Record<number, string> = { 1: "/month", 3: "/quarter", 12: "/year" }
+const PLAN_IDS: SubscriptionPlanId[] = ["monthly", "quarterly", "annual"]
 
 /** Price, struck price and % OFF for a plan: the list price (`mrp`) when it
  *  has one, else the undiscounted price once the 10% offer is claimed. */
@@ -80,19 +63,13 @@ function planPricing(plan: { price: number; mrp?: number }, extraOff?: boolean) 
 }
 
 
-type JobSlotCount = "1" | "2" | "3"
-
-/* The selected chip spells out what it is ("2 Active job slots"); the
-   others stay short ("1 Job", "3 Jobs"). Figma's chip reads "1 Active job
-   slow" (1971:9005), a typo; the card's slot line spells it "slot". */
-const SLOT_COUNTS: JobSlotCount[] = ["1", "2", "3"]
-const jobSlotOptions = (selected: JobSlotCount): ChipTabItem<JobSlotCount>[] =>
-  SLOT_COUNTS.map((n) => ({
-    value: n,
-    label:
-      n === selected
-        ? `${n} Active job slot${n === "1" ? "" : "s"}`
-        : `${n} Job${n === "1" ? "" : "s"}`,
+/* The selected chip spells out what it is ("3 active job slots"); the
+   others stay short ("1 Job", "5 Jobs"). Figma's chip reads "1 Active job
+   slow" (1971:9005), a typo; we spell it "slot", in sentence case. */
+const jobSlotOptions = (counts: JobSlotCount[], selected: JobSlotCount): ChipTabItem<string>[] =>
+  counts.map((n) => ({
+    value: String(n),
+    label: n === selected ? slotLabel(n) : `${n} Job${n === 1 ? "" : "s"}`,
   }))
 
 /* Sub-points under the job-slot line — the same three in both plans.
@@ -108,9 +85,11 @@ const UNLIMITED_POINTS = [
 interface PlanCardProps {
   title: string
   price: number
-  /** List price, struck through with its % OFF (Annual: ₹15,999). */
+  /** List price, struck through with its % OFF (1-slot annual: ₹29,988). */
   mrp?: number
   priceSuffix: string
+  /** Price from Jan 1, 2027: "₹6,599 from Jan 1" under the note. */
+  janPrice?: number
   /** Billing period in months: the per-month note is price / months. */
   months: number
   /** The claimed 10% exit offer: the price drops by it, the old price is
@@ -118,9 +97,11 @@ interface PlanCardProps {
   extraOff?: boolean
   ctaLabel: string
   recommended?: boolean
-  /** Days the plan's single active job slot stays open. */
+  /** Live jobs at a time, and the days each slot stays open. */
+  slots: JobSlotCount
   slotDays: number
-  dbLine: React.ReactNode
+  /** "200 database credits worth ₹2,000" (`dbCreditsLabel`). */
+  dbLine: string
   onBuy?: () => void
 }
 
@@ -129,10 +110,12 @@ function PlanCard({
   price: basePrice,
   mrp,
   priceSuffix,
+  janPrice,
   months,
   extraOff,
   ctaLabel,
   recommended,
+  slots,
   slotDays,
   dbLine,
   onBuy,
@@ -160,14 +143,14 @@ function PlanCard({
 
       <div className="flex w-full flex-col gap-4">
         <div className="flex flex-col gap-2">
-          <p className="text-base font-semibold text-foreground">{title}</p>
+          <p className="text-plan-name text-foreground">{title}</p>
           {/* Price, unit and struck price never split; the % OFF badge sits
               right after them, never flung to the row's far end. */}
           <div data-compare="price" className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
             <p className="flex items-baseline gap-1.5 whitespace-nowrap">
-              <span className="text-2xl font-semibold text-foreground">{inr(price)}</span>
-              <span className="text-xs font-regular text-muted-foreground">{priceSuffix}</span>
-              {strike && <span className="text-xs text-muted-foreground line-through">{inr(strike)}</span>}
+              <span className="text-plan-price text-foreground">{inr(price)}</span>
+              <span className="text-plan-unit text-muted-foreground">{priceSuffix}</span>
+              {strike && <span className="text-plan-strike text-muted-foreground">{inr(strike)}</span>}
             </p>
             {pct ? <Badge variant="discount">{pct}% OFF</Badge> : null}
           </div>
@@ -190,12 +173,13 @@ function PlanCard({
           >
             {note ?? "\u00A0"}
           </p>
+          <UpcomingPriceLine price={janPrice} className="text-muted-foreground" />
         </div>
 
         <hr className="w-full border-border" />
 
         {/* Offerings list. Each row is [icon][gap][one text run] — the
-            semibold lead-in ("1", "Unlimited", "worth ₹2,000") has to live
+            semibold lead-in ("1", "Unlimited") has to live
             *inside* that run, not beside it as a second flex child, or the
             row's gap opens up mid-sentence. Emphasis here is weight-only:
             every run is the same colour, so the lead-ins carry no colour of
@@ -208,7 +192,7 @@ function PlanCard({
             <span className="flex items-start gap-3 text-sm">
               <BriefcaseBusiness className="size-5 shrink-0" aria-hidden />
               <span>
-                <span className="font-semibold">1</span> Active job slot for {slotDays} days
+                <span className="font-semibold">{slots}</span> active job slot{slots === 1 ? "" : "s"} for {slotDays}{"\u00A0"}days
               </span>
             </span>
             {UNLIMITED_POINTS.map((point) => (
@@ -221,10 +205,12 @@ function PlanCard({
             ))}
           </div>
 
+          {/* The same icon and wording as the Jobs tab's Unlimited card. */}
           <span className="flex items-start gap-3 text-sm">
             <UserSearch className="size-5 shrink-0" aria-hidden />
             <span>{dbLine}</span>
           </span>
+
           <span className="flex items-start gap-3 text-sm">
             <WhatsApp className="size-5 shrink-0" aria-hidden />
             <span>WhatsApp outreach to matched candidates for more applications</span>
@@ -253,6 +239,10 @@ interface SubscriptionPlansProps {
   onSelectPlan?: (plan: SubscriptionPlanId) => void
   onBuyMonthly?: () => void
   onBuyQuarterly?: () => void
+  /** Active job slots the prices are for. Controlled by the caller, so its
+   *  sticky CTA and checkout buy the same plan; uncontrolled starts at 1. */
+  slots?: JobSlotCount
+  onSlotsChange?: (slots: JobSlotCount) => void
   className?: string
 }
 
@@ -264,9 +254,26 @@ export function SubscriptionPlans({
   onSelectPlan,
   onBuyMonthly,
   onBuyQuarterly,
+  slots: slotsProp,
+  onSlotsChange,
   className,
 }: SubscriptionPlansProps) {
-  const [jobSlots, setJobSlots] = React.useState<JobSlotCount>("1")
+  const { plan: planFor, slotCounts } = usePlans()
+  const [ownSlots, setOwnSlots] = React.useState<JobSlotCount>(1)
+  // A count the pricing phase doesn't sell (5 slots, switched to today's
+  // plans) falls back to 1 slot.
+  const wanted = slotsProp ?? ownSlots
+  const jobSlots = slotCounts.includes(wanted) ? wanted : slotCounts[0]
+  const setJobSlots = (value: string) => {
+    const n = Number(value) as JobSlotCount
+    setOwnSlots(n)
+    onSlotsChange?.(n)
+  }
+  const onBuy: Record<SubscriptionPlanId, (() => void) | undefined> = {
+    monthly: onBuyMonthly,
+    quarterly: onBuyQuarterly,
+    annual: onBuyAnnual,
+  }
 
   return (
     <div className={cn("flex flex-col gap-5", className)}>
@@ -296,13 +303,12 @@ export function SubscriptionPlans({
           </p>
         </div>
 
-        {/* Cosmetic switcher: Figma draws no 2-/3-slot content or prices
-            (1971:9002), so selection changes nothing below. */}
+        {/* Every price below is for the picked number of live jobs. */}
         <ChipTabs
           variant="solid"
           aria-label="Active job slots"
-          items={jobSlotOptions(jobSlots)}
-          value={jobSlots}
+          items={jobSlotOptions(slotCounts, jobSlots)}
+          value={String(jobSlots)}
           onValueChange={setJobSlots}
           className="w-full flex-nowrap gap-1 rounded-full surface-glass-dark p-0.5 sm:w-auto sm:shrink-0 sm:gap-2"
           // Content-sized, not equal thirds: the active label is the long
@@ -320,8 +326,8 @@ export function SubscriptionPlans({
             (Annual, the recommended plan, by default) reveals the plan details. The
             page's sticky CTA buys the selection. */}
         <div className="flex flex-col gap-3 md:hidden">
-          {(["monthly", "quarterly", "annual"] as const).map((id) => {
-            const plan = SUBSCRIPTION_PLANS[id]
+          {PLAN_IDS.map((id) => {
+            const plan = planFor(id, jobSlots)
             const { price, strike, pct } = planPricing(plan, extraOff)
             return (
               <MobilePlanRow
@@ -337,7 +343,7 @@ export function SubscriptionPlans({
                 meta={<span className="text-xs text-muted-foreground">Unlimited job reposts</span>}
                 mrp={strike ? inr(strike) : undefined}
                 price={inr(price)}
-                unit={UNITS[plan.months]}
+                unit={plan.unit}
                 belowPrice={pct ? <MobileDiscountRow pct={pct} /> : undefined}
                 priceNote={
                   extraOff ? (
@@ -347,18 +353,16 @@ export function SubscriptionPlans({
                     </span>
                   ) : undefined
                 }
+                upcoming={<UpcomingPriceLine price={plan.janPrice} />}
                 details={
                   // The Jobs tab's Unlimited card points: three short lines.
                   <MobilePlanDetails
                     items={[
                       [
                         <BriefcaseBusiness key="i" aria-hidden />,
-                        <><strong>1 active job slot</strong> for {plan.slotDays} days</>,
+                        <><strong>{slotLabel(plan.slots)}</strong> for {plan.slotDays}{"\u00A0"}days</>,
                       ],
-                      [
-                        <Database key="i" aria-hidden />,
-                        `${num(plan.dbCredits)} database credits worth ${inr(plan.dbWorth)}`,
-                      ],
+                      [<Database key="i" aria-hidden />, dbCreditsLabel(plan)],
                       [<WhatsApp key="i" aria-hidden />, "WhatsApp outreach to matched candidates"],
                     ]}
                   />
@@ -369,61 +373,27 @@ export function SubscriptionPlans({
         </div>
 
         <div className="hidden flex-col items-stretch gap-4 md:flex lg:flex-row">
-          <PlanCard
-            title="Monthly"
-            price={2499}
-            priceSuffix="/month"
-            months={1}
-            extraOff={extraOff}
-            ctaLabel="Buy monthly plan"
-            slotDays={30}
-            dbLine={
-              <>
-                Unlock 200 profiles on candidate database every month{" "}
-                <span className="font-semibold italic">worth ₹2,000</span>
-              </>
-            }
-            onBuy={onBuyMonthly}
-          />
-          <PlanCard
-            title="Quarterly"
-            price={5999}
-            priceSuffix="/quarter"
-            months={3}
-            extraOff={extraOff}
-            ctaLabel="Buy quarterly plan"
-            slotDays={90}
-            /* Figma (1971:9120) reads "600 profiles … every month", but 600
-               is the whole-quarter allowance: Monthly grants 200/month and
-               the Unlimited checkout line item (1236:22188) lists 600
-               Database credits for the 90-day plan. "every month" is
-               dropped here as a deliberate correction. */
-            dbLine={
-              <>
-                Unlock 600 profiles on candidate database{" "}
-                <span className="font-semibold italic">worth ₹6,000</span>
-              </>
-            }
-            onBuy={onBuyQuarterly}
-          />
-          <PlanCard
-            title="Annual"
-            price={ANNUAL_PLAN.price}
-            mrp={ANNUAL_PLAN.mrp}
-            priceSuffix="/year"
-            months={ANNUAL_PLAN.months}
-            extraOff={extraOff}
-            ctaLabel="Buy annual plan"
-            recommended
-            slotDays={ANNUAL_PLAN.slotDays}
-            dbLine={
-              <>
-                Unlock {num(ANNUAL_PLAN.dbCredits)} profiles on candidate database{" "}
-                <span className="font-semibold italic">worth {inr(ANNUAL_PLAN.dbCreditsWorth)}</span>
-              </>
-            }
-            onBuy={onBuyAnnual}
-          />
+          {PLAN_IDS.map((id) => {
+            const plan = planFor(id, jobSlots)
+            return (
+              <PlanCard
+                key={id}
+                title={plan.title}
+                price={plan.price}
+                mrp={plan.mrp}
+                priceSuffix={plan.unit}
+                janPrice={plan.janPrice}
+                months={plan.months}
+                extraOff={extraOff}
+                ctaLabel={planCtaLabel(plan)}
+                recommended={id === "annual"}
+                slots={plan.slots}
+                slotDays={plan.slotDays}
+                dbLine={dbCreditsLabel(plan)}
+                onBuy={onBuy[id]}
+              />
+            )
+          })}
         </div>
 
         <div className="flex flex-col items-start gap-1 text-xs text-checkout-hero-fg-muted sm:flex-row sm:items-center sm:justify-between sm:gap-4">

@@ -26,16 +26,16 @@ import { ExtraOffLine } from "@/components/apnahire/offers/extra-off-line"
 import { MobileDiscountRow } from "@/components/apnahire/mobile-plan-row"
 import { cn } from "@/lib/utils"
 import { MobileUnlimitedCard } from "@/components/apnahire/mobile-plan-row"
+import { UpcomingPriceLine } from "@/components/apnahire/upcoming-price-line"
 import { inr } from "@/lib/format"
+import { dbCreditsLabel, slotLabel, type SubscriptionPlan } from "@/content/subscriptions"
+import { usePlans } from "@/hooks/apnahire/use-plans"
 
 interface UnlimitedSideCardProps {
-  price?: number
-  /** The design's literal, NOT price/jobSlotMonths — 5999/3 = 1999.67, and
-   *  the drawing truncates it to 1,999 rather than rounding to 2,000. */
-  monthlyPrice?: number
-  jobSlotMonths?: number
-  dbCredits?: number
-  dbCreditsWorth?: number
+  /** The plan it sells (usePlans().plan(id)): price, name, unit, slot days
+   *  and database credits all come from it. Defaults to the pricing phase's
+   *  monthly plan, which the Jobs tab sells (user call, 2026-10-19). */
+  plan?: SubscriptionPlan
   /** The claimed 10% exit offer: the price drops by it, the old price is
    *  struck through with its % OFF, and the per-month figure follows. */
   extraOff?: boolean
@@ -44,24 +44,21 @@ interface UnlimitedSideCardProps {
 }
 
 export function UnlimitedSideCard({
-  price = 5999,
-  monthlyPrice = 1999,
-  jobSlotMonths = 3,
-  dbCredits = 600,
-  dbCreditsWorth = 6000,
+  plan: planProp,
   extraOff = false,
   onBuyNow,
   className,
 }: UnlimitedSideCardProps) {
-  const basePrice = price
-  price = extraOff ? withExtraOff(basePrice) : basePrice
+  const catalog = usePlans()
+  const plan = planProp ?? catalog.plan("monthly")
+  const basePrice = plan.price
+  const price = extraOff ? withExtraOff(basePrice) : basePrice
   // Truncated, as the design does for ₹5,999 / 3 = ₹1,999.
-  if (extraOff) monthlyPrice = Math.floor(price / jobSlotMonths)
+  const monthlyPrice = Math.floor(price / plan.months)
   const pct = extraOff ? Math.round((1 - price / basePrice) * 100) : null
-  // Works for any plan length: the Jobs tab sells the monthly plan (1), the
-  // card was first drawn for the quarterly one (3).
-  const monthly = jobSlotMonths === 1
-  const slotDays = jobSlotMonths * 30
+  // Works for any plan length: the Jobs tab sells the monthly plan, the
+  // card was first drawn for the quarterly one.
+  const monthly = plan.months === 1
   const strike = extraOff ? inr(basePrice) : undefined
   return (
     <>
@@ -73,15 +70,16 @@ export function UnlimitedSideCard({
         // Same card, same structure as express checkout's Monthly plan: name
         // and price with its unit on top, the reposts promise as subtitle,
         // three plan lines, then the note and CTA.
-        title={monthly ? "Monthly plan" : "Quarterly plan"}
+        title={plan.name}
         subtitle="Unlimited job reposts"
         mrp={strike}
         price={inr(price)}
-        unit={monthly ? "/month" : "/quarter"}
+        unit={plan.unit}
         belowPrice={<MobileDiscountRow pct={pct} note={extraOff ? "Incl. 10% extra" : undefined} />}
+        upcoming={<UpcomingPriceLine price={plan.janPrice} />}
         features={[
-          [<BriefcaseBusiness key="i" aria-hidden />, <><strong>1 active job slot</strong> for {slotDays} days</>],
-          [<Database key="i" aria-hidden />, `${dbCredits} database credits worth ${inr(dbCreditsWorth)}`],
+          [<BriefcaseBusiness key="i" aria-hidden />, <><strong>{slotLabel(plan.slots)}</strong> for {plan.slotDays}{"\u00A0"}days</>],
+          [<Database key="i" aria-hidden />, dbCreditsLabel(plan)],
           [<WhatsApp key="i" aria-hidden />, "WhatsApp outreach to matched candidates"],
         ]}
         note="Valid in a single city"
@@ -95,7 +93,7 @@ export function UnlimitedSideCard({
             className="h-8 shrink-0 rounded-full px-3.5 text-xs font-semibold"
             onClick={onBuyNow}
           >
-            Get Unlimited
+            Get apna unlimited
           </Button>
         }
       />
@@ -122,7 +120,7 @@ export function UnlimitedSideCard({
               <LogoApnaUnlimited variant="gradient" className="h-4 w-auto" />
             </div>
             <p className="text-sm text-surface-inverted-fg/80">
-              Unlimited hiring for {monthly ? "a month" : `${jobSlotMonths} months`}
+              Unlimited hiring for {plan.slotDays}{"\u00A0"}days
             </p>
           </div>
 
@@ -135,23 +133,16 @@ export function UnlimitedSideCard({
             subtitle="Free job reposts and swapping"
             meta={[
               <>
-                <ClockFading aria-hidden />1 Active job slot for {monthly ? `${slotDays} days` : `${jobSlotMonths} months`}
+                <ClockFading aria-hidden />
+                {slotLabel(plan.slots)} for {plan.slotDays}{"\u00A0"}days
               </>,
               <>
                 <UserSearch aria-hidden />
-                {dbCredits} database credits worth {inr(dbCreditsWorth)}
+                {dbCreditsLabel(plan)}
               </>,
             ]}
-            price={
-              monthly ? (
-                <>
-                  {inr(price)}
-                  <span className="text-sm font-regular">/month</span>
-                </>
-              ) : (
-                inr(price)
-              )
-            }
+            price={inr(price)}
+            unit={monthly ? plan.unit : undefined}
             mrp={strike}
             badge={pct ? <Badge variant="discount">{pct}% OFF</Badge> : undefined}
             priceSuffix={
@@ -169,6 +160,7 @@ export function UnlimitedSideCard({
                     That&apos;s just {inr(monthlyPrice)}{"\u00A0"}/month
                   </span>
                 )}
+                <UpcomingPriceLine price={plan.janPrice} />
               </span>
             }
             cta={

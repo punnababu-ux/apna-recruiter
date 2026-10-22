@@ -28,6 +28,8 @@ import * as React from "react"
 import Link from "next/link"
 import { Button, Popover, PopoverContent, PopoverTrigger } from "@apna/design-system"
 import { SLOT_PRESETS, setJobSlots, slotPresetOf, useJobSlots, type SlotPreset } from "@/hooks/use-job-slots"
+import { PRICING_PHASES } from "@/content/pricing-phase"
+import { setPricingPhase, usePricingPhase } from "@/hooks/use-pricing-phase"
 
 const OPEN_EVENT = "apna:prototype-settings"
 
@@ -107,6 +109,22 @@ export function ExitOfferControls({
         Expire in 5 seconds
       </PrototypeOption>
       <PrototypeOption onClick={offer.onReset}>Reset offer and exit nudge</PrototypeOption>
+    </PrototypeSection>
+  )
+}
+
+/** The pricing phase (content/pricing-phase.ts): today's plans, the new
+ *  plans, December with the Jan 1 notices, or from Jan 1. Reprices every
+ *  card and upsell; holds across pages, the jobs dashboard included. */
+export function PricingPhaseControls() {
+  const phase = usePricingPhase()
+  return (
+    <PrototypeSection title="Plans and prices">
+      {PRICING_PHASES.map((p) => (
+        <PrototypeOption key={p.value} active={phase === p.value} onClick={() => setPricingPhase(p.value)}>
+          {p.label}
+        </PrototypeOption>
+      ))}
     </PrototypeSection>
   )
 }

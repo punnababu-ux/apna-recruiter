@@ -22,6 +22,7 @@ import { setJobCredits, usePlansIngress } from "@/hooks/use-plans-ingress"
 import { replayTopUpCredits } from "@/components/apnahire/available-credits-button"
 import {
   ExitOfferControls,
+  PricingPhaseControls,
   PrototypeOption,
   PrototypeSection,
   PrototypeSettings,
@@ -66,6 +67,7 @@ export function CheckoutPreviewSettings({
           Subscribed · beside Support
         </PrototypeOption>
       </PrototypeSection>
+      <PricingPhaseControls />
       <ExitOfferControls offer={offer} />
     </PrototypeSettings>
   )

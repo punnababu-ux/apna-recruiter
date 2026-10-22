@@ -6,6 +6,7 @@
 // 1. Actions
 export * from "./components/ui/button"
 export * from "./components/ui/ink-provider"
+export * from "./components/ui/compare-align"
 export * from "./hooks/use-sliding-indicator"
 export * from "./components/ui/button-group"
 export * from "./components/ui/back-button"

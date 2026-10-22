@@ -7,21 +7,29 @@
  *                           (Figma 2472:20847)
  *   CreditPackOfferDialog   short on credits, or buying a credit pack:
  *                           "Pay less when you buy 6 job credits" (2494:43730)
- *   AnnualUpgradeDialog     monthly / quarterly Unlimited → 12 months,
+ *   AnnualUpgradeDialog     monthly / quarterly Unlimited → the annual plan,
  *                           "Special upgrade offer" (2565:20984)
  *
  * When the 10% exit offer has been claimed, every price drops by it and each
  * tile shows "10% extra off applied". That's the board's "with 10% off"
  * variants; the discounts stack.
+ *
+ * In December (the pricing phase), signed in, each tile with a Jan price shows it
+ * ("₹749 from Jan 1", `janPrice`): the bigger pack is how to lock today's
+ * price. Tiles without a Jan price (the "Buy 3" offer, the 47-credit pack)
+ * show none.
  */
 
 import * as React from "react"
 import { BadgePercent } from "@apna/design-system"
-import { ANNUAL_PLAN, JOB_BUNDLE_OFFERS, withExtraOff } from "@/content/offers"
+import { JOB_BUNDLE_OFFERS, withExtraOff } from "@/content/offers"
+import type { AnnualPlan } from "@/content/plan-catalog"
+import { usePlans } from "@/hooks/apnahire/use-plans"
 import type { JobPlanTier } from "@/content/job-plans"
 import { OfferChoice } from "@/components/apnahire/offers/offer-choice"
 import { OfferDialog } from "@/components/apnahire/offers/offer-dialog"
 import { inr } from "@/lib/format"
+import { dbCreditsLabel, slotTermLabel, type SubscriptionPlan } from "@/content/subscriptions"
 
 // Notes glue a value to its unit with a no-break space (\u00A0): on a
 // narrow tile "₹989 /job" may move to the next line, but never splits.
@@ -71,6 +79,7 @@ export function JobBundleOfferDialog({ tier, ...props }: UpsellCallbacks & { tie
           mrp: tier.mrp,
           badge: pctOff(single, tier.mrp),
           extraOff: props.extraOff,
+          janPrice: tier.janPrice,
           ctaLabel: "Continue with 1 job",
           ctaShortLabel: "Continue",
           onSelect: props.onStay,
@@ -99,6 +108,8 @@ export interface CreditQuote {
   price: number
   mrp?: number
   validDays?: number
+  /** The price from Jan 1, 2027, when it has one. */
+  janPrice?: number
 }
 
 export function CreditPackOfferDialog({
@@ -139,6 +150,7 @@ export function CreditPackOfferDialog({
           // job needs, so it has none — only the bundle on offer does.
           validDays: need.validDays,
           extraOff: props.extraOff,
+          janPrice: need.janPrice,
           ctaLabel: `Continue with ${need.credits} credit${need.credits === 1 ? "" : "s"}`,
           ctaShortLabel: "Continue",
           onSelect: props.onStay,
@@ -151,6 +163,7 @@ export function CreditPackOfferDialog({
           note: `That's just ${inr(perPack)}\u00A0/job\u00A0credit`,
           validDays: pack.validDays,
           extraOff: props.extraOff,
+          janPrice: pack.janPrice,
           ctaLabel: `Get ${pack.credits} credits for ${inr(packPrice)}`,
           ctaShortLabel: `Get ${pack.credits} credits`,
           onSelect: props.onTake,
@@ -162,27 +175,26 @@ export function CreditPackOfferDialog({
 
 /* ── Subscription: monthly / quarterly → annual ──────────────────────── */
 
-export interface SubscriptionQuote {
-  label: string
-  price: number
-  /** Billing period in months (1 monthly, 3 quarterly). */
-  months: number
-  /** Its database credits and their value, listed like the annual tile's. */
-  dbCredits?: number
-  dbWorth?: number
-}
+/** A plan as the upsell tiles quote it: usePlans().plan(id). Names,
+ *  units and lengths come from SUBSCRIPTION_TERMS, the one vocabulary. */
+export type SubscriptionQuote = Pick<
+  SubscriptionPlan,
+  "name" | "unit" | "price" | "months" | "slots" | "slotDays" | "dbCredits" | "dbCreditsWorth"
+> & { janPrice?: number }
 
-export function annualQuote(extraOff = false) {
-  const price = extraOff ? withExtraOff(ANNUAL_PLAN.price) : ANNUAL_PLAN.price
-  return { price, perMonth: Math.round(price / ANNUAL_PLAN.months) }
+function annualQuote(plan: AnnualPlan, extraOff = false) {
+  const price = extraOff ? withExtraOff(plan.price) : plan.price
+  return { price, perMonth: Math.round(price / plan.months) }
 }
 
 export function AnnualUpgradeDialog({ from, ...props }: UpsellCallbacks & { from: SubscriptionQuote | null }) {
+  // The pricing phase's annual plan (content/plan-catalog.ts).
+  const { annualPlan } = usePlans()
   if (!from) return null
   const off = (n: number) => (props.extraOff ? withExtraOff(n) : n)
   const fromPrice = off(from.price)
-  const annual = annualQuote(props.extraOff)
-  const unit = from.months === 1 ? "/month" : "/quarter"
+  const annual = annualQuote(annualPlan, props.extraOff)
+  const annualName = annualPlan.name.toLowerCase()
 
   return (
     <OfferDialog
@@ -199,41 +211,39 @@ export function AnnualUpgradeDialog({ from, ...props }: UpsellCallbacks & { from
           Special upgrade offer
         </>
       }
-      eyebrow={`Pay less when you upgrade to ${ANNUAL_PLAN.months}-months plan`}
+      eyebrow={`Pay less when you upgrade to the ${annualName}`}
       priceDrop={{ from: inr(Math.round(fromPrice / from.months)), to: inr(annual.perMonth), unit: "/month" }}
     >
       <OfferChoice
         stay={{
-          title: from.label,
+          title: from.name,
           price: fromPrice,
           mrp: props.extraOff ? from.price : undefined,
-          unit,
-          term: `1 active job slot for ${from.months * 30}\u00A0days`,
+          unit: from.unit,
+          term: slotTermLabel(from),
+          planFacts: { dbLine: dbCreditsLabel(from) },
           extraOff: props.extraOff,
-          // The same details as the annual tile, so they compare line for line.
-          planFacts:
-            from.dbCredits != null && from.dbWorth != null
-              ? { dbCredits: from.dbCredits, dbWorth: from.dbWorth }
-              : undefined,
+          janPrice: from.janPrice,
           // Desktop names the plan; phones shorten to "Continue".
-          ctaLabel: `Continue with ${from.label.toLowerCase()}`,
+          ctaLabel: `Continue with ${from.name.toLowerCase()}`,
           ctaShortLabel: "Continue",
           onSelect: props.onStay,
         }}
         upgrade={{
-          title: "Annual plan",
+          title: annualPlan.name,
           price: annual.price,
-          mrp: props.extraOff ? ANNUAL_PLAN.price : undefined,
-          unit: "/year",
-          term: `1 active job slot for ${ANNUAL_PLAN.slotDays}\u00A0days`,
-          badge: `${ANNUAL_PLAN.monthsFree} MONTHS FREE`,
+          mrp: props.extraOff ? annualPlan.price : undefined,
+          unit: annualPlan.unit,
+          term: slotTermLabel(annualPlan),
+          planFacts: { dbLine: dbCreditsLabel(annualPlan) },
+          badge: `${annualPlan.monthsFree} MONTHS FREE`,
           // No "Valid in a single city" here: they've seen it on the plan
           // already, and the order summary repeats it.
-          planFacts: { dbCredits: ANNUAL_PLAN.dbCredits, dbWorth: ANNUAL_PLAN.dbCreditsWorth },
           note: `That's just ${inr(annual.perMonth)}\u00A0/month`,
           extraOff: props.extraOff,
-          ctaLabel: `Get yearly plan for ${inr(annual.price)}`,
-          ctaShortLabel: "Get yearly plan",
+          janPrice: annualPlan.janPrice,
+          ctaLabel: `Get ${annualName} for ${inr(annual.price)}`,
+          ctaShortLabel: `Get ${annualName}`,
           onSelect: props.onTake,
         }}
       />
@@ -248,17 +258,7 @@ export interface CreditBundleQuote {
   price: number
   mrp?: number
   validDays?: number
-}
-
-export interface PlanQuote {
-  /** "Monthly plan", "Quarterly plan". */
-  label: string
-  price: number
-  /** Billing period in months (1 monthly, 3 quarterly). */
-  months: number
-  dbCredits: number
-  /** What those credits are worth (₹). */
-  dbWorth: number
+  janPrice?: number
 }
 
 /** Buying a small credit bundle: offer the subscription that hires
@@ -270,13 +270,12 @@ export function CreditsToPlanDialog({
   bundle,
   plan,
   ...props
-}: UpsellCallbacks & { bundle: CreditBundleQuote | null; plan: PlanQuote | null }) {
+}: UpsellCallbacks & { bundle: CreditBundleQuote | null; plan: SubscriptionQuote | null }) {
   if (!bundle || !plan) return null
   const off = (n: number) => (props.extraOff ? withExtraOff(n) : n)
   const bundlePrice = off(bundle.price)
   const planPrice = off(plan.price)
-  const monthly = plan.months === 1
-  const name = plan.label.toLowerCase()
+  const name = plan.name.toLowerCase()
 
   return (
     <OfferDialog
@@ -294,7 +293,7 @@ export function CreditsToPlanDialog({
       // "Unlimited" in the gold the header uses for its highlights (prices).
       headline={
         <>
-          <span className="text-highlight">Unlimited</span> job posts for {plan.months * 30} days
+          <span className="text-highlight">Unlimited</span> job posts for {plan.slotDays} days
         </>
       }
     >
@@ -306,22 +305,25 @@ export function CreditsToPlanDialog({
           // Under the amount, level with the plan's slot line.
           term: bundle.validDays != null ? `Valid for ${bundle.validDays}\u00A0days` : undefined,
           extraOff: props.extraOff,
+          janPrice: bundle.janPrice,
           ctaLabel: `Continue with ${bundle.credits} credits`,
           ctaShortLabel: "Continue",
           onSelect: props.onStay,
         }}
         upgrade={{
-          title: plan.label,
+          title: plan.name,
           price: planPrice,
           mrp: props.extraOff ? plan.price : undefined,
-          unit: monthly ? "/month" : "/quarter",
+          unit: plan.unit,
           badge: "UNLIMITED POSTS",
           // Compares row for row with the credits tile: under each amount,
           // its time limit ("Valid for N days" / "1 active job slot for N
-          // days"); the city limit closes the plan's details, bottom right.
-          term: `1 active job slot for ${plan.months * 30}\u00A0days`,
-          planFacts: { dbCredits: plan.dbCredits, dbWorth: plan.dbWorth, singleCity: true },
+          // days"); then what the plan grants (database credits) and the
+          // city limit, bottom right.
+          term: slotTermLabel(plan),
+          planFacts: { dbLine: dbCreditsLabel(plan), singleCity: true },
           extraOff: props.extraOff,
+          janPrice: plan.janPrice,
           ctaLabel: `Get ${name} for ${inr(planPrice)}`,
           ctaShortLabel: `Get ${name}`,
           onSelect: props.onTake,

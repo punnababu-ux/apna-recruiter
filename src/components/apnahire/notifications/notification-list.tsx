@@ -32,6 +32,7 @@ import {
   AlertTriangle,
   BriefcaseBusiness,
   Button,
+  TrendingUp,
   Check,
   DropdownMenu,
   DropdownMenuContent,
@@ -69,6 +70,7 @@ const KIND_ICON: Record<NotificationKind, IconComponent> = {
   action: AlertTriangle,
   expired: BriefcaseBusiness,
   credits: Database,
+  price: TrendingUp,
 }
 
 function NotificationRow({
@@ -120,6 +122,13 @@ function NotificationRow({
             <Button size="sm" variant="outline" nativeButton={false} render={<a href={`tel:${n.candidate.phone}`} />}>
               <Phone className="size-4" aria-hidden />
               Call
+            </Button>
+          </div>
+        )}
+        {n.action && (
+          <div className="flex pt-2">
+            <Button size="sm" variant="outline" nativeButton={false} render={<Link href={n.action.href} />}>
+              {n.action.label}
             </Button>
           </div>
         )}

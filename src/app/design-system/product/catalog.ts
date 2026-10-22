@@ -293,6 +293,14 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
         rules: ["One wording, one component. Never write your own tax line.", "Prototype: a silent click opens the preview settings. Remove before production."],
       },
       {
+        name: "UpcomingPriceLine",
+        file: "apnahire/upcoming-price-line.tsx",
+        what: "\"↗ ₹749 from Jan 1\" on every job and plan card and every upsell tile (OfferChoice `janPrice`) until the Jan 1, 2027 price change; PriceChangeBanner on top explains it.",
+        live: "/apnahire/credits",
+        where: "Both checkouts and their upsell pop-ups, signed in only (UpcomingPricesProvider enabled)",
+        rules: ["Never on the logged-out pricing page or in the order summary.", "Gray text with a warning-gold rising arrow (TrendingUp, the price-change icon on the banner and the notification too). Never green: the one green line under a price stays the per-unit note or the claimed offer.", "Upsell tiles: the price group's last line, pinned level across both tiles. A tile without a Jan price (the \"Buy 3\" offer, the 47-credit pack) shows none.", "Every card in a row carries it, so prices, notes and CTAs stay level. Not on Database, AI calling or Enterprise (unchanged).", "Only in the December pricing phase (preview settings → Plans and prices; usePricingPhase). Today, New plans and From Jan 1 show none."],
+      },
+      {
         name: "MobilePlanRow and friends",
         file: "apnahire/mobile-plan-row.tsx",
         what: "The one phone plan row both checkouts use.",
@@ -435,7 +443,7 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
         what: "What each job type gets you (Classic, Premium, Super premium).",
         live: "/design-system/product/pop-ups",
         where: "Self-checkout Jobs tab › Need more info?",
-        rules: ["Read-only. Data from JOB_PLAN_TIERS."],
+        rules: ["Read-only. Data from usePlans().tiers, so it follows the pricing phase."],
       },
       {
         name: "SlotsFullDialog",
@@ -482,6 +490,14 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
         live: "/apnahire/jobs",
         where: "/apnahire/jobs",
         rules: ["Same card as every jobs list (JobCardFrame)."],
+      },
+      {
+        name: "PriceChangeBanner",
+        file: "apnahire/price-change-banner.tsx",
+        what: "The Jan 1, 2027 price-change notice, the top of every page that announces it (content/price-change.ts).",
+        live: "/apnahire/jobs",
+        where: "Jobs dashboard (above the title), self-checkout and express checkout (above the title, placement=\"plans\"), until Jan 1, 2027",
+        rules: ["AlertBanner info, appearance primary (solid blue): it informs, it doesn't sell. No product colour, no green CTA.", "Dashboard: View plans, dismissible, returns once in the last 7 days. Checkouts: the line only, signed in only, every tab.", "Days left join the line in the last 3 weeks. Pairs with one bell notification (kind \"price\") with a See plans button."],
       },
       {
         name: "NotificationList / NotificationsButton",

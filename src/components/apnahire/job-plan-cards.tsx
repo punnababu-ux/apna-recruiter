@@ -40,14 +40,17 @@ import {
   StickyCtaBar,
   Sparkles,
   TrendingUp,
+  UserSearch,
   WhatsApp,
   X,
   type IconComponent,
   AlertBanner,
   Info,
 } from "@apna/design-system"
-import { SINGLE_CREDIT } from "@/components/apnahire/job-credit-bundles"
+import type { Bundle } from "@/content/credit-bundles"
+import { usePlans } from "@/hooks/apnahire/use-plans"
 import { ExtraOffLine } from "@/components/apnahire/offers/extra-off-line"
+import { UpcomingPriceLine, useUpcomingPrices } from "@/components/apnahire/upcoming-price-line"
 import {
   MobileDiscountRow,
   MobileMetaLine,
@@ -58,8 +61,7 @@ import { ValueArt } from "@/components/marketing/value-art"
 import { cn } from "@/lib/utils"
 import { withExtraOff } from "@/content/offers"
 import {
-  JOB_PLAN_TIERS,
-  MONTHLY_SUBSCRIPTION_PLAN,
+  MONTHLY_PLAN_PERKS,
   RECOMMENDED_TIER,
   SUBSCRIPTION_PLAN_ORDER,
   TIERED_PLAN_ORDER,
@@ -69,6 +71,7 @@ import {
   type JobPlanTierId,
 } from "@/content/job-plans"
 import { inr } from "@/lib/format"
+import { dbCreditsLabel, slotLabel } from "@/content/subscriptions"
 
 
 /** The claimed exit offer, as the plan lists see it: prices already carry
@@ -157,7 +160,11 @@ export type CreditPlan =
   | { state: "partial"; held: number; shortfall: number; price: number; mrp: number }
   | { state: "none" }
 
-export function creditPlan(tier: JobPlanTier, balance: CreditBalance): CreditPlan {
+export function creditPlan(
+  tier: JobPlanTier,
+  balance: CreditBalance,
+  singleCredit: Pick<Bundle, "price" | "mrp">,
+): CreditPlan {
   const held = balance[tier.credit.kind]
   if (held === 0) return { state: "none" }
   const shortfall = tier.credit.count - held
@@ -166,8 +173,8 @@ export function creditPlan(tier: JobPlanTier, balance: CreditBalance): CreditPla
     state: "partial",
     held,
     shortfall,
-    price: shortfall * SINGLE_CREDIT.price,
-    mrp: shortfall * SINGLE_CREDIT.mrp,
+    price: shortfall * singleCredit.price,
+    mrp: shortfall * singleCredit.mrp,
   }
 }
 
@@ -190,7 +197,9 @@ function JobPlanGridCard({ tier, recommended, creditBalance, onSelect }: JobPlan
   // status line + CTA say exactly what "posting" will cost.
   const creditMode = hasAnyCredits(creditBalance)
   const { extraOff, shimmerKey } = React.useContext(PlanOfferContext)
-  const plan = creditPlan(tier, creditBalance)
+  const upcoming = useUpcomingPrices()
+  const { singleCredit } = usePlans()
+  const plan = creditPlan(tier, creditBalance, singleCredit)
   const discountPct = tier.mrp ? Math.round((1 - tier.price / tier.mrp) * 100) : null
 
   const creditStatus =
@@ -230,11 +239,16 @@ function JobPlanGridCard({ tier, recommended, creditBalance, onSelect }: JobPlan
         mrp={!creditMode && tier.mrp ? inr(tier.mrp) : undefined}
         badge={!creditMode && discountPct ? <Badge variant="discount">{discountPct}% OFF</Badge> : undefined}
         // On every card in credit mode, none outside it — structural parity.
+        // Outside it: the claimed offer's line, then the Jan 1 price (credit
+        // mode speaks credits, so it has no ₹ line to add).
         priceSuffix={
           creditMode ? (
             <span className="not-italic">{creditStatus}</span>
-          ) : extraOff ? (
-            <ExtraOffLine />
+          ) : extraOff || upcoming ? (
+            <span className="flex flex-col gap-1">
+              {extraOff && <ExtraOffLine />}
+              <UpcomingPriceLine price={tier.janPrice} />
+            </span>
           ) : undefined
         }
         cta={
@@ -321,8 +335,9 @@ function MobileJobPlanRadioGroup({
   const creditMode = hasAnyCredits(creditBalance)
   const { extraOff, shimmerKey } = React.useContext(PlanOfferContext)
 
+  const { singleCredit } = usePlans()
   const selectedTier = tiers.find((t) => t.id === selectedKey) ?? tiers[0]
-  const plan = creditPlan(selectedTier, creditBalance)
+  const plan = creditPlan(selectedTier, creditBalance, singleCredit)
 
   let ctaText = ""
   if (plan.state === "covered") {
@@ -343,7 +358,7 @@ function MobileJobPlanRadioGroup({
             tier.mrp && tier.mrp > tier.price
               ? Math.round((1 - tier.price / tier.mrp) * 100)
               : null
-          const tierPlan = creditPlan(tier, creditBalance)
+          const tierPlan = creditPlan(tier, creditBalance, singleCredit)
           const creditStatus =
             tierPlan.state === "covered"
               ? "Covered by balance"
@@ -383,6 +398,7 @@ function MobileJobPlanRadioGroup({
                   <MobileDiscountRow pct={discountPct} note={extraOff ? "Incl. 10% extra" : undefined} />
                 )
               }
+              upcoming={creditMode ? undefined : <UpcomingPriceLine price={tier.janPrice} />}
               details={
                 // Explain on selection. With no feature points (Classic),
                 // the credits line is the only content: its divider is the
@@ -436,7 +452,7 @@ function MobileJobPlanRadioGroup({
 
 /** Distinct mobile card for Apna Unlimited subscription offering in Express Checkout */
 function MobileSubscriptionCard({ onSelect, blockedLabel }: { onSelect: () => void; blockedLabel?: string }) {
-  const plan = MONTHLY_SUBSCRIPTION_PLAN
+  const plan = { ...usePlans().plan("monthly"), ...MONTHLY_PLAN_PERKS }
   const { extraOff, shimmerKey } = React.useContext(PlanOfferContext)
   const price = extraOff ? withExtraOff(plan.price) : plan.price
   // Struck price + % OFF follow the same rules as the job rows: a plan list
@@ -450,15 +466,17 @@ function MobileSubscriptionCard({ onSelect, blockedLabel }: { onSelect: () => vo
       key={shimmerKey}
       className="sm:hidden"
       cardClassName={cn(shimmerKey > 0 && "animate-shimmer-once")}
-      title="Monthly plan"
+      title={plan.name}
       subtitle="Unlimited job reposts"
       mrp={strike ? inr(strike) : undefined}
       price={inr(price)}
-      unit="/month"
+      unit={plan.unit}
       belowPrice={<MobileDiscountRow pct={discountPct} note={extraOff ? "Incl. 10% extra" : undefined} />}
+      upcoming={<UpcomingPriceLine price={plan.janPrice} />}
       features={[
-        [<BriefcaseBusiness key="i" aria-hidden />, <><strong>1 active job slot</strong> for 30 days</>],
-        [<Database key="i" aria-hidden />, `${plan.dbCreditsPerMonth} database credits every month`],
+        // The same three lines as self-checkout's phone card.
+        [<BriefcaseBusiness key="i" aria-hidden />, <><strong>{slotLabel(plan.slots)}</strong> for {plan.slotDays}{"\u00A0"}days</>],
+        [<Database key="i" aria-hidden />, dbCreditsLabel(plan)],
         [<WhatsApp key="i" aria-hidden />, "WhatsApp outreach to matched candidates"],
       ]}
       note={plan.note}
@@ -473,7 +491,7 @@ function MobileSubscriptionCard({ onSelect, blockedLabel }: { onSelect: () => vo
           onClick={onSelect}
           disabled={!!blockedLabel}
         >
-          {blockedLabel ?? "Get Unlimited"}
+          {blockedLabel ?? "Get unlimited"}
         </Button>
       }
     />
@@ -531,8 +549,9 @@ export function TieredJobPlans({
   extraOff = false,
   shimmerKey = 0,
 }: Omit<JobPlanSelectProps, "onSelectSubscription">) {
-  const tiers = TIERED_PLAN_ORDER.map((id) => offerTier(JOB_PLAN_TIERS[id], extraOff))
-  const onSelectTier = (tier: JobPlanTier) => selectCatalogueTier(JOB_PLAN_TIERS[tier.id])
+  const catalogue = usePlans().tiers
+  const tiers = TIERED_PLAN_ORDER.map((id) => offerTier(catalogue[id], extraOff))
+  const onSelectTier = (tier: JobPlanTier) => selectCatalogueTier(catalogue[tier.id])
   return (
     <PlanOfferContext.Provider value={{ extraOff, shimmerKey }}>
       <MobileJobPlanRadioGroup
@@ -565,8 +584,9 @@ export function SubscriptionJobPlans({
   shimmerKey = 0,
   subscriptionBlocked,
 }: JobPlanSelectProps) {
-  const tiers = SUBSCRIPTION_PLAN_ORDER.map((id) => offerTier(JOB_PLAN_TIERS[id], extraOff))
-  const onSelectTier = (tier: JobPlanTier) => selectCatalogueTier(JOB_PLAN_TIERS[tier.id])
+  const catalogue = usePlans().tiers
+  const tiers = SUBSCRIPTION_PLAN_ORDER.map((id) => offerTier(catalogue[id], extraOff))
+  const onSelectTier = (tier: JobPlanTier) => selectCatalogueTier(catalogue[tier.id])
   return (
     <PlanOfferContext.Provider value={{ extraOff, shimmerKey }}>
       <div className="flex flex-col gap-4 sm:hidden">
@@ -626,11 +646,12 @@ function MonthlySubscriptionCard({
   reservePriceSuffix: boolean
   className?: string
 }) {
-  const plan = MONTHLY_SUBSCRIPTION_PLAN
+  const plan = { ...usePlans().plan("monthly"), ...MONTHLY_PLAN_PERKS }
   // The claimed 10% applies to Unlimited too: same discounted price, struck
   // list price and "10% extra off applied" line as the tier cards, in the
   // same priceSuffix slot so the lines sit level across the row.
   const { extraOff, shimmerKey } = React.useContext(PlanOfferContext)
+  const upcoming = useUpcomingPrices()
   const price = extraOff ? withExtraOff(plan.price) : plan.price
   // Same rule as the mobile card and the tier cards: whenever a struck price
   // shows, so does its % OFF badge.
@@ -662,18 +683,20 @@ function MonthlySubscriptionCard({
         layout="price-first"
         surface="inset"
         className={cn("flex-1 border-transparent", shimmerKey > 0 && "animate-shimmer-once")}
-        title="Monthly plan"
-        price={
-          <>
-            {inr(price)}
-            <span className="text-sm font-regular">/month</span>
-          </>
-        }
+        title={plan.name}
+        price={inr(price)}
+        unit={plan.unit}
         mrp={strike ? inr(strike) : undefined}
         badge={discountPct ? <Badge variant="discount">{discountPct}% OFF</Badge> : undefined}
+        // Its Jan 1 price stays a ₹ line even in credit mode, where it takes
+        // the reserved line level with the tier cards' one credit status
+        // line, unless the claimed offer's line already fills it.
         priceSuffix={
-          extraOff ? (
-            <ExtraOffLine />
+          extraOff || upcoming ? (
+            <span className="flex flex-col gap-1">
+              {extraOff && <ExtraOffLine />}
+              {!(extraOff && reservePriceSuffix) && <UpcomingPriceLine price={plan.janPrice} />}
+            </span>
           ) : reservePriceSuffix ? (
             <span aria-hidden>&nbsp;</span>
           ) : undefined
@@ -688,7 +711,7 @@ function MonthlySubscriptionCard({
             key="slot"
             lead={
               <>
-                <BriefcaseBusiness aria-hidden /> 1 Active job slot for {plan.jobSlotMonths * 30} days
+                <BriefcaseBusiness aria-hidden /> {slotLabel(plan.slots)} for {plan.slotDays}{"\u00A0"}days
               </>
             }
           >
@@ -698,11 +721,11 @@ function MonthlySubscriptionCard({
               </SubPoint>
             ))}
           </FeatureGroup>,
-          // A permanent part of the plan, unlike the one-time tiers'
-          // limited-time credits — so a regular feature row, not the footer.
+          // What the plan grants, as on self-checkout's Unlimited card and
+          // the Subscription tab: not the tier cards' "free · Limited offer"
+          // footer line, which is a temporary extra.
           <>
-            <Database aria-hidden /> {plan.dbCreditsPerMonth} database credits worth{" "}
-            {inr(plan.dbCreditsWorth)} every month
+            <UserSearch aria-hidden /> {dbCreditsLabel(plan)}
           </>,
           <>
             <WhatsApp aria-hidden /> WhatsApp outreach to matched candidates
@@ -774,7 +797,7 @@ function JobTypeInfoCard({ tier }: { tier: JobPlanTier }) {
 }
 
 /** "Need more info?" on the Jobs tab: what each job type gets, what it
- *  costs and how many credits it takes. Prices come from JOB_PLAN_TIERS. */
+ *  costs and how many credits it takes. Prices come from usePlans().tiers. */
 export function JobTypesDialog({
   open,
   onOpenChange,
@@ -784,6 +807,7 @@ export function JobTypesDialog({
   onOpenChange: (open: boolean) => void
   extraOff?: boolean
 }) {
+  const { tiers } = usePlans()
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="gap-6 rounded-3xl p-5 sm:max-w-5xl sm:p-8">
@@ -801,7 +825,7 @@ export function JobTypesDialog({
         <PlanOfferContext.Provider value={{ extraOff, shimmerKey: 0 }}>
           <div className="grid gap-4 md:grid-cols-3">
             {TIERED_PLAN_ORDER.map((id) => (
-              <JobTypeInfoCard key={id} tier={JOB_PLAN_TIERS[id]} />
+              <JobTypeInfoCard key={id} tier={tiers[id]} />
             ))}
           </div>
         </PlanOfferContext.Provider>

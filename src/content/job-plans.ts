@@ -6,12 +6,9 @@
  * differ in whether the 4th slot is "Premium + AI Calling Agent" (tiered) or
  * a monthly subscription card (subscription).
  *
- * SOURCING NOTE: prices and database-credit counts were read directly off
- * the board text and are exact. `mrp` (struck-through list price) was
- * reconstructed from the discount-badge percentage shown next to each price
- * (the badge text itself was legible; the struck-through mrp number was not,
- * at the resolution available) — re-confirm against the Figma file's actual
- * text layers before this ships. Per-tier feature rows (WhatsApp
+ * SOURCING NOTE: prices and struck-through `mrp`s follow the proposed online
+ * plans sheet (2026-10-22): each tier's mrp is its job credits × the ₹899
+ * Classic list price. Database-credit counts were read off the board. Per-tier feature rows (WhatsApp
  * notifications, "Urgently hiring" tag, top placements) are simplified to one
  * consistent set of toggles across both board layouts; the two boards draw
  * very slightly different muted/disabled states per tier that weren't worth
@@ -32,6 +29,8 @@ export interface JobPlanTier {
   price: number
   /** Struck-through list price — see sourcing note above. */
   mrp?: number
+  /** Price from Jan 1, 2027, while it is announced (content/price-change.ts). */
+  janPrice?: number
   jobActiveDays: number
   visibilityLabel: string
   /** 1 basic · 2 higher · 3 maximum — drives the compact signal meter on the
@@ -64,6 +63,7 @@ export const JOB_PLAN_TIERS: Record<JobPlanTierId, JobPlanTier> = {
     title: "Classic job",
     price: 699,
     mrp: 899,
+    janPrice: 749,
     jobActiveDays: 15,
     visibilityLabel: "Basic visibility",
     visibilityLevel: 1,
@@ -79,7 +79,8 @@ export const JOB_PLAN_TIERS: Record<JobPlanTierId, JobPlanTier> = {
     id: "premium",
     title: "Premium job",
     price: 1399,
-    mrp: 1699,
+    mrp: 1798,
+    janPrice: 1499,
     jobActiveDays: 15,
     visibilityLabel: "Higher visibility",
     visibilityLevel: 2,
@@ -95,6 +96,8 @@ export const JOB_PLAN_TIERS: Record<JobPlanTierId, JobPlanTier> = {
     id: "super-premium",
     title: "Super premium job",
     price: 2799,
+    mrp: 3596,
+    janPrice: 2999,
     jobActiveDays: 15,
     visibilityLabel: "Maximum visibility",
     visibilityLevel: 3,
@@ -106,6 +109,15 @@ export const JOB_PLAN_TIERS: Record<JobPlanTierId, JobPlanTier> = {
     dbCredits: 60,
     credit: { kind: "job", count: 4 },
   },
+}
+
+/** Today's tiers, before the plans sheet: Premium struck at ₹1,699,
+ *  Super premium with no struck price. The pricing phase picks the set
+ *  (content/plan-catalog.ts): read tiers through usePlans(). */
+export const TODAY_JOB_PLAN_TIERS: Record<JobPlanTierId, JobPlanTier> = {
+  classic: { ...JOB_PLAN_TIERS.classic, janPrice: undefined },
+  premium: { ...JOB_PLAN_TIERS.premium, mrp: 1699, janPrice: undefined },
+  "super-premium": { ...JOB_PLAN_TIERS["super-premium"], mrp: undefined, janPrice: undefined },
 }
 
 /** Tiered layout: three tiers (Classic, Premium, Super Premium), Premium recommended.
@@ -123,23 +135,10 @@ export const RECOMMENDED_TIER = {
   subscription: "premium",
 } as const satisfies Record<string, JobPlanTierId>
 
-/** The 4th card on the subscription layout — a distinct monthly apna Unlimited subscription, not a one-time job tier. */
-export const MONTHLY_SUBSCRIPTION_PLAN: {
-  price: number
-  /** Optional list price. Set it to run a discount on the monthly plan:
-   *  cards then show it struck through with a % OFF badge (and the claimed
-   *  10% stacks on top). Unset = no plan discount. */
-  mrp?: number
-  jobSlotMonths: number
-  dbCreditsPerMonth: number
-  dbCreditsWorth: number
-  features: string[]
-  note: string
-} = {
-  price: 2499,
-  jobSlotMonths: 1,
-  dbCreditsPerMonth: 200,
-  dbCreditsWorth: 2000,
+/** The 4th card on the subscription layout is the 1-slot monthly apna
+ *  Unlimited plan (usePlans().plan("monthly"): price, name, unit, slot days,
+ *  database credits), not a one-time job tier. These are its card's lines. */
+export const MONTHLY_PLAN_PERKS = {
   features: [
     "Unlimited job reposts",
     "Unlimited free reposts on job expiry",

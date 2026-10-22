@@ -574,6 +574,12 @@ every line may break; never let the width of a string decide it.**
    line isn't level. Run it at desktop widths (phones are exempt: the
    cards stack there), with and without
    the 10% offer, before showing a change to these surfaces.
+   **Bigger numbers wrap the whole row, never one card.** `CompareAlign`
+   (mounted once in the root layout) enforces this at runtime: if one
+   card's price row can't hold price, struck price and % tag on one line,
+   every card in that row puts the tag on its own line, and each marked
+   line takes the row's tallest height. The marks are all it needs, so a
+   new comparison surface gets it by carrying them.
 7. **Mixed sizes align on the baseline.** Price rows that mix a large
    amount with a small unit or struck price use `items-baseline`, not
    `items-center`.
@@ -598,19 +604,34 @@ cards) and every upsell tile (`OfferChoice`), both checkouts, light and dark
    note above the offer line.
 3. **The % OFF pill is smoked glass, not green.** `Badge variant="discount"`
    sits on `--surface-glass-dark` (the job credits panel's fill) with green
-   text. Change it through `--checkout-discount-bg`, never per card.
-4. **Validity always carries the clock.** "Valid for N days" (or "1 active
+   text. Change it through `--checkout-discount-bg`, never per card. It
+   has one size, the small one (10px), set in the Badge itself.
+4. **One type scale on every plan card** (user call, 2026-10-22). Plan
+   name `text-plan-name`, price `text-plan-price` (phone rows and tiles
+   `text-plan-price-compact`), unit and struck price `text-plan-unit` /
+   `text-plan-strike` (12px). Job credits, Database, Unlimited /
+   Subscription, Enterprise, both checkouts: never a size picked per card,
+   never `CardTitle` / `text-h3` for a plan.
+5. **Validity always carries the clock.** "Valid for N days" (or "1 active
    job slot for N days") is shown with the `ClockFading` icon, everywhere:
    in `OfferChoice` pass `validDays` / `term`, never a plain `note`.
-5. **Which upsell tiles show validity.** Self-checkout: both tiles (both are
+6. **Which upsell tiles show validity.** Self-checkout: both tiles (both are
    packs the recruiter is choosing between). Express checkout: only the
    bundle on offer; the stay tile is the credit this one job needs and has
    no validity of its own. Every pack quote carries its `validDays`.
-6. **A rule line closes onto content, never onto nothing.** The separator
+7. **A rule line closes onto content, never onto nothing.** The separator
    under an upsell tile's price only shows when that tile has details below
    it (validity, database credits, city). Without them it turns transparent
    (it keeps its space so the rows stay level with the partner tile).
-7. **Order-summary add-ons announce themselves once.** As the order summary
+8. **One vocabulary for subscription terms** (user call, 2026-10-22).
+   Plan names, units and lengths come from `SUBSCRIPTION_TERMS` in
+   `src/content/subscriptions.ts` (with `slotTermLabel`, `dbCreditsLabel`,
+   `planOrderLabel` / `planOrderPoints`): "Annual plan", "/year", "1 active
+   job slot for 365 days". A term's length is always in days; never
+   "yearly", "1 year", "12-months plan" or "3 months". Never type these
+   words by hand — and every surface that sells a plan shows its database
+   credits (cards, upsell tiles, slots-full pop-up, order summary).
+9. **Order-summary add-ons announce themselves once.** As the order summary
    opens, an add-on card (Database in self-checkout, AI calling in express)
    runs the `attention-ring`: a gold → green → sky strip with a glow, two
    eased laps over 3.6s, then it fades. Once per add-on per session

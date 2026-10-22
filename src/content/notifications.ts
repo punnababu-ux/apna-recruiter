@@ -4,7 +4,9 @@
  * reference screenshot (2026-10-16). Replace with the API when it exists.
  */
 
-export type NotificationKind = "application" | "ai" | "summary" | "action" | "expired" | "credits"
+import { PRICE_CHANGE } from "@/content/price-change"
+
+export type NotificationKind = "application" | "ai" | "summary" | "action" | "expired" | "credits" | "price"
 
 export interface RecruiterNotification {
   id: string
@@ -17,6 +19,8 @@ export interface RecruiterNotification {
   unread: boolean
   /** New applications carry quick actions. */
   candidate?: { name: string; phone: string }
+  /** One link, for a notice that leads somewhere ("See plans"). */
+  action?: { label: string; href: string }
 }
 
 export const NOTIFICATION_GROUPS: { id: RecruiterNotification["group"]; label: string }[] = [
@@ -25,7 +29,21 @@ export const NOTIFICATION_GROUPS: { id: RecruiterNotification["group"]; label: s
   { id: "week", label: "Earlier this week" },
 ]
 
+/** The Jan 1, 2027 price change: one notice, on top. Shown only in the
+ *  December pricing phase (useNotifications). */
+const PRICE_CHANGE_NOTIFICATION: RecruiterNotification = {
+  id: "price-change-2027",
+  kind: "price",
+  title: PRICE_CHANGE.notification.title,
+  body: PRICE_CHANGE.notification.body,
+  time: "1h ago",
+  group: "today",
+  unread: true,
+  action: { label: PRICE_CHANGE.notification.action, href: PRICE_CHANGE.plansHref },
+}
+
 export const MOCK_NOTIFICATIONS: RecruiterNotification[] = [
+  PRICE_CHANGE_NOTIFICATION,
   {
     id: "n1",
     kind: "application",

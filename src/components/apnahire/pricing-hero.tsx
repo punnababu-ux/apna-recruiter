@@ -158,6 +158,9 @@ interface PricingHeroProps {
   /** Logged-out only (/pricing): the marketing pages' hero heading — chip,
    *  serif headline, hook line — in place of the plain app title. */
   intro?: { eyebrow: string; title: string; titleAccent?: string; description: string }
+  /** Logged in only: a banner above the app title (the Jan 1, 2027 price
+   *  change, `PriceChangeBanner placement="plans"`). Ignored with `intro`. */
+  banner?: React.ReactNode
 }
 
 export function PricingHero({
@@ -166,6 +169,7 @@ export function PricingHero({
   className,
   tabsRef,
   intro,
+  banner,
 }: PricingHeroProps) {
   const [wordmark] = useUnlimitedWordmark()
   return (
@@ -189,7 +193,7 @@ export function PricingHero({
             Phones keep it to one line: 24px when the column has 320px (360px
             phones and up), 20px below that; the 36px preset from sm. Scoped
             to max-sm so the container steps never reach desktop. */}
-{intro ? (
+        {intro ? (
           <SectionHeading
             level={1}
             eyebrow={<HeroChip icon={<Tag aria-hidden />}>{intro.eyebrow}</HeroChip>}
@@ -197,9 +201,12 @@ export function PricingHero({
             description={intro.description}
           />
         ) : (
-          <h1 className="text-h1 font-semibold text-checkout-hero-fg max-sm:text-xl max-sm:@xs:text-2xl [[data-voice=editorial]_&]:font-editorial">
-            Everything you need to hire
-          </h1>
+          <>
+            {banner}
+            <h1 className="text-h1 font-semibold text-checkout-hero-fg max-sm:text-xl max-sm:@xs:text-2xl [[data-voice=editorial]_&]:font-editorial">
+              Everything you need to hire
+            </h1>
+          </>
         )}
 
         {/* Plain block wrapper (not `display: contents`) — needed so

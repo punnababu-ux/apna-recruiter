@@ -77,14 +77,15 @@ import { CountdownChip, useCountdown } from "@/components/apnahire/offers/countd
 import { CouponExpiredDialog } from "@/components/apnahire/offers/coupon-expired-dialog"
 import { EXTRA_OFF } from "@/content/offers"
 import { inr } from "@/lib/format"
+import { SUBSCRIPTION_TERMS } from "@/content/subscriptions"
 
 export interface CartLine {
   id: string
   label: string
   sublabel?: string
   /** What the item includes, as a checked list under its title (a
-   *  subscription: its slots and months, database credits and worth, the
-   *  single city). Shown instead of `sublabel`. */
+   *  subscription: `planOrderPoints` — its slots and days, its database
+   *  credits, the single city). Shown instead of `sublabel`. */
   points?: string[]
   /** Selling price — what actually gets charged and summed into the total. */
   price: number
@@ -226,12 +227,12 @@ function renewalDateFrom(days: number) {
   return renewalDateFormat.format(d)
 }
 
-/**
- * Figma only ever draws the Quarterly plan — "Monthly" appears nowhere on the
- * board — so the monthly suffix is derived rather than sourced.
- */
+/** The price unit of the plan that renews every `days` days, from the one
+ *  subscription vocabulary (SUBSCRIPTION_TERMS): "/month", "/quarter",
+ *  "/year". */
 function periodLabelFor(days: number) {
-  return days >= 365 ? "/year" : days >= 90 ? "/quarter" : "/month"
+  const terms = Object.values(SUBSCRIPTION_TERMS).sort((a, b) => b.slotDays - a.slotDays)
+  return (terms.find((t) => days >= t.slotDays) ?? SUBSCRIPTION_TERMS.monthly).unit
 }
 
 /**

@@ -176,10 +176,10 @@ export default function FeedbackComponentsPage() {
                   appearance === "primary" ? "text-highlight" : "text-foreground"
                 )}
               >
-                Upgrade to 12 months at the price of 4!
+                Upgrade to the annual plan at the price of 4 months!
               </span>
             }
-            cta={showCTA ? <Button variant="secondary" size="sm">Upgrade @ ₹9,999/yr</Button> : undefined}
+            cta={showCTA ? <Button variant="secondary" size="sm">Upgrade @ ₹9,999 /year</Button> : undefined}
           />
 
           <RenewalBanner
@@ -231,13 +231,13 @@ export default function FeedbackComponentsPage() {
             }
             itemsLayout={stackItems ? "stacked" : "inline"}
             surface={premiumSurface ? "premium" : "default"}
-            title="Unlimited hiring for 3 months."
+            title="Unlimited hiring for 90 days."
             subtitle="0 job credits left. Repost any job, any time."
-            items={[{ label: "1 Active job slot for 3 months" }, { label: "600 database credits" }]}
+            items={[{ label: "1 active job slot for 90 days" }, { label: "600 database credits" }]}
             price="₹5,400"
             mrp="₹5,999"
             badge={<DiscountBadge appearance="primary">10% OFF</DiscountBadge>}
-            priceCaption="For 3 months · That's just ₹1,800 /month"
+            priceCaption="Quarterly plan · That's just ₹1,800 /month"
             ribbon={<RibbonBadge appearance="primary"><Clock className="size-3.5" /> Offer ends in 4 days</RibbonBadge>}
             cta={<Button variant="secondary" trailingIcon={<ChevronRight />}>Buy now</Button>}
           />

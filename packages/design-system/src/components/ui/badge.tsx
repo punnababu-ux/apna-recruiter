@@ -62,6 +62,13 @@ const badgeVariants = cva(
         dot: "size-2.5 rounded-full p-0",
       },
     },
+    compoundVariants: [
+      /* The % OFF pill has one size everywhere (plan cards, upsell tiles,
+       * phone rows, the order summary): the small one, so it sits beside a
+       * price and its struck price without wrapping them (plan type scale,
+       * styles/index.css). */
+      { variant: "discount", size: "default", class: "h-4 px-1.5 py-0 text-2xs" },
+    ],
     defaultVariants: {
       variant: "default",
       size: "default",

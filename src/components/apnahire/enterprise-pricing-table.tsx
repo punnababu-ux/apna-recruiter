@@ -13,7 +13,7 @@
  * the feature matrix and became a meta line in each card header; "Key Account
  * Manager / Yes" became "Dedicated account manager".
  *
- * Pure composition, in the AGENTS.md sense: `Card` + `CardTitle` +
+ * Pure composition, in the AGENTS.md sense: `Card` +
  * `Separator` + `Button` over a single data array, with layout classes only.
  * No new primitive, variant or semantic token. The name is a misnomer now —
  * it renders a card grid, not a table — but the file and the export keep their
@@ -25,7 +25,7 @@
 
 import * as React from "react"
 import { Check, ClockFading } from "@apna/design-system"
-import { Button, Card, CardTitle, Separator } from "@apna/design-system"
+import { Button, Card, Separator } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 import { GstNote } from "@/components/apnahire/gst-note"
 import {
@@ -189,8 +189,10 @@ export function EnterprisePricingTable({
             className="gap-5 border-transparent bg-plan-card"
           >
             <div className="flex flex-col gap-2">
-              <CardTitle>{tier.name}</CardTitle>
-              <p className="text-h3 text-foreground">{tier.price}</p>
+              {/* The plan type scale, like every plan card: not CardTitle /
+                  text-h3, which set Enterprise apart from the others. */}
+              <p className="text-plan-name text-foreground">{tier.name}</p>
+              <p className="text-plan-price text-foreground">{tier.price}</p>
               <p className="flex items-start gap-2 text-sm text-muted-foreground">
                 <ClockFading className="size-5 shrink-0" aria-hidden />
                 {tier.validity}

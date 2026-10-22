@@ -532,6 +532,53 @@
   font-weight:  var(--font-weight-regular);
 }
 
+/* Plan cards — one type scale for every plan and pricing card (job credits,
+ * Database, Unlimited / Subscription, Enterprise, both checkouts, upsell
+ * tiles, phone rows), so "3 Job credits", "Monthly plan" and "Starter plan"
+ * read alike and every price is the same size and weight (user call,
+ * 2026-10-22). Three sizes only: the name, the price, and everything that
+ * sits beside the price (unit, struck price) at 12px; the % OFF pill is the
+ * Badge `discount`, 10px. No colour baked in: the cards sit on light and
+ * inset surfaces.
+ *   text-plan-name           16 / 20  semibold   "3 Job credits", "Annual"
+ *   text-plan-price          24       semibold   desktop cards
+ *   text-plan-price-compact  20       semibold   phone rows, phone tiles
+ *   text-plan-unit           12       regular    "/month", "/year"
+ *   text-plan-strike         12       regular    struck list price */
+@utility text-plan-name {
+  font-family:  var(--font-body);
+  font-size:    var(--text-base);
+  line-height:  calc(var(--spacing) * 5);
+  font-weight:  var(--font-weight-semibold);
+}
+
+@utility text-plan-price {
+  font-family:  var(--font-body);
+  font-size:    var(--text-2xl);
+  line-height:  var(--line-height-tight);
+  font-weight:  var(--font-weight-semibold);
+}
+
+@utility text-plan-price-compact {
+  font-family:  var(--font-body);
+  font-size:    var(--text-xl);
+  line-height:  var(--line-height-tight);
+  font-weight:  var(--font-weight-semibold);
+}
+
+@utility text-plan-unit {
+  font-family:  var(--font-body);
+  font-size:    var(--text-xs);
+  font-weight:  var(--font-weight-regular);
+}
+
+@utility text-plan-strike {
+  font-family:  var(--font-body);
+  font-size:    var(--text-xs);
+  font-weight:  var(--font-weight-regular);
+  text-decoration-line: line-through;
+}
+
 /* ============================================================================
  * Interaction utilities
  * ========================================================================== */
@@ -1297,6 +1344,19 @@
     background-color: var(--surface-glass);
     border-color: color-mix(in srgb, var(--card) 60%, transparent);
     backdrop-filter: blur(24px);
+  }
+}
+
+/* Comparison rows wrap together (CompareAlign). When one card's price row
+   can't hold price, struck price and % tag on one line, CompareAlign marks
+   every card in the row `data-compare-stack` and they all put the tag on
+   its own line under the price, packed left. A mix (one card stacked, its
+   siblings not) is what breaks the level rows. In the utilities layer so it
+   outranks the row's own flex-row. */
+@layer utilities {
+  [data-compare-stack] [data-compare="price"] {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 

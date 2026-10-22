@@ -9,6 +9,8 @@
 
 import * as React from "react"
 import { MOCK_NOTIFICATIONS, type RecruiterNotification } from "@/content/notifications"
+import { announcesNewPrices } from "@/content/pricing-phase"
+import { usePricingPhase } from "@/hooks/use-pricing-phase"
 
 let state: RecruiterNotification[] = MOCK_NOTIFICATIONS
 const listeners = new Set<() => void>()
@@ -24,7 +26,13 @@ function subscribe(listener: () => void) {
 }
 
 export function useNotifications() {
-  const notifications = React.useSyncExternalStore(subscribe, () => state, () => MOCK_NOTIFICATIONS)
+  const all = React.useSyncExternalStore(subscribe, () => state, () => MOCK_NOTIFICATIONS)
+  // The price-change notice: December pricing phase only (preview settings).
+  const announced = announcesNewPrices(usePricingPhase())
+  const notifications = React.useMemo(
+    () => (announced ? all : all.filter((n) => n.kind !== "price")),
+    [all, announced],
+  )
   return {
     notifications,
     unreadCount: notifications.filter((n) => n.unread).length,
