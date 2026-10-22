@@ -1659,9 +1659,12 @@ a[href] > [data-slot="card"] {
   color: transparent;
 }
 
+/* 12px (was 10px), on every page: eyebrows are read on budget phones in
+ * daylight by a mostly SMB audience; 10px uppercase was below comfortable
+ * reading size (user call, 2026-10-23). */
 @utility text-overline {
   font-family:     var(--font-body);
-  font-size:       var(--text-2xs);
+  font-size:       var(--text-xs);
   line-height:     var(--line-height-snug);
   font-weight:     var(--font-weight-semibold);
   letter-spacing:  var(--letter-spacing-wider);
