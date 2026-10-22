@@ -33,6 +33,11 @@
  * and every `emphasis` inside it renders white by itself. Same rule as
  * above: still one green primary per screen.
  *
+ * In dark mode (the whole page dark, not a dark section) `emphasis` is a
+ * raised solid gray (`--cta-emphasis`, gray-700) with a white label: solid,
+ * so it never reads as `outline` beside it, and not white, so it doesn't
+ * outshine the green primary (2026-10-23; it used to copy outline's look).
+ *
  * Links — two, and only two:
  *   `link`         a standalone action link: blue, semibold, underlined on
  *                  hover ("Buy 1 job credit →", "Show more", "Apply",
@@ -116,7 +121,7 @@ const buttonVariants = cva(
         // sales"), so every secondary action reads the same on dark. A dark
         // header surface (data-surface="dark") still gets the white inverted.
         emphasis:
-          "bg-cta-emphasis text-cta-emphasis-foreground hover:bg-cta-emphasis-hover active:bg-cta-emphasis-hover in-data-[surface=dark]:bg-cta-inverted in-data-[surface=dark]:text-cta-inverted-foreground in-data-[surface=dark]:hover:bg-cta-inverted-hover in-data-[surface=dark]:active:bg-cta-inverted-hover dark:not-in-data-[surface=dark]:border-input dark:not-in-data-[surface=dark]:bg-input/30 dark:not-in-data-[surface=dark]:text-foreground dark:not-in-data-[surface=dark]:hover:bg-input/50 dark:not-in-data-[surface=dark]:active:bg-input/50",
+          "bg-cta-emphasis text-cta-emphasis-foreground hover:bg-cta-emphasis-hover active:bg-cta-emphasis-hover in-data-[surface=dark]:bg-cta-inverted in-data-[surface=dark]:text-cta-inverted-foreground in-data-[surface=dark]:hover:bg-cta-inverted-hover in-data-[surface=dark]:active:bg-cta-inverted-hover",
       },
       size: {
         default:
