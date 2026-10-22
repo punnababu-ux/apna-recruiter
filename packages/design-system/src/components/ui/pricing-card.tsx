@@ -229,7 +229,7 @@ export function PricingCard({
         className={rootClassName}
         {...props}
       >
-        {ribbon && <div className="absolute right-0 top-0 flex overflow-hidden rounded-tr-[inherit] rounded-bl-xl">{ribbon}</div>}
+        {ribbon && <div className="absolute -right-px -top-px flex overflow-hidden rounded-tr-[inherit] rounded-bl-xl">{ribbon}</div>}
 
         <div className="flex flex-col gap-2">
           <p className={cn("text-plan-name", fg)}>{title}</p>
@@ -266,7 +266,10 @@ export function PricingCard({
         // as an inline formatting context around `ribbon`, which reserves
         // baseline/line-height space above the badge — a visible gap
         // between the card's top edge and the ribbon itself.
-        <div className="absolute right-0 top-0 flex overflow-hidden rounded-tr-[inherit] rounded-bl-xl">{ribbon}</div>
+        // `-top-px -right-px`: an absolute child starts inside the card's 1px
+        // border; pulling it out puts the ribbon on the outer corner, so no
+        // strip of card fill shows around it.
+        <div className="absolute -right-px -top-px flex overflow-hidden rounded-tr-[inherit] rounded-bl-xl">{ribbon}</div>
       )}
 
       <div className="flex flex-1 flex-col gap-5">

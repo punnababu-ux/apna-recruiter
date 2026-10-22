@@ -133,7 +133,7 @@ function PlanCard({
       className="card-hover-lift ink press-subtle relative flex flex-1 cursor-pointer flex-col justify-between gap-5 rounded-card border border-transparent bg-plan-card px-4 pb-5 pt-8"
     >
       {recommended && (
-        <div className="absolute right-0 top-0 flex overflow-hidden rounded-tr-[inherit] rounded-bl-xl">
+        <div className="absolute -right-px -top-px flex overflow-hidden rounded-tr-[inherit] rounded-bl-xl">
           <Badge variant="ribbon" size="ribbon">
             Recommended
             <Sparkles aria-hidden />
