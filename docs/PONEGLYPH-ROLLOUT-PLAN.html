@@ -1,0 +1,569 @@
+<title>Poneglyph Rollout Plan</title>
+<meta name="description" content="Current state of the Poneglyph design system and a phased plan to bring it into the Apna Recruiter Dashboard.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6FAF8;
+    --paper-raised:#FFFFFF;
+    --ink:#0E1512;
+    --ink-muted:#4B5D57;
+    --ink-faint:#7C8B85;
+    --border:#DCE6E1;
+    --border-strong:#C3D2CB;
+    --accent:#1F8268;
+    --accent-ink:#0F5A44;
+    --accent-soft:#E4F1EC;
+    --info:#004BA9;
+    --info-soft:#E5EEF9;
+    --gap:#A15A0A;
+    --gap-soft:#FBF0DF;
+    --gap-border:#E9CFA0;
+    --shadow: 0 1px 2px rgba(14,21,18,0.04), 0 8px 24px -12px rgba(14,21,18,0.10);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0C1412;
+      --paper-raised:#121D19;
+      --ink:#EAF3EF;
+      --ink-muted:#9FB6AE;
+      --ink-faint:#6E837C;
+      --border:#22322C;
+      --border-strong:#2C4038;
+      --accent:#39C79B;
+      --accent-ink:#8FE9CB;
+      --accent-soft:rgba(57,199,155,0.13);
+      --info:#79AEEE;
+      --info-soft:rgba(121,174,238,0.13);
+      --gap:#E3AC5B;
+      --gap-soft:rgba(227,172,91,0.12);
+      --gap-border:rgba(227,172,91,0.35);
+      --shadow: 0 1px 2px rgba(0,0,0,0.2), 0 10px 30px -14px rgba(0,0,0,0.55);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0C1412;
+    --paper-raised:#121D19;
+    --ink:#EAF3EF;
+    --ink-muted:#9FB6AE;
+    --ink-faint:#6E837C;
+    --border:#22322C;
+    --border-strong:#2C4038;
+    --accent:#39C79B;
+    --accent-ink:#8FE9CB;
+    --accent-soft:rgba(57,199,155,0.13);
+    --info:#79AEEE;
+    --info-soft:rgba(121,174,238,0.13);
+    --gap:#E3AC5B;
+    --gap-soft:rgba(227,172,91,0.12);
+    --gap-border:rgba(227,172,91,0.35);
+    --shadow: 0 1px 2px rgba(0,0,0,0.2), 0 10px 30px -14px rgba(0,0,0,0.55);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Figtree",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{
+    font-family:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
+  }
+  .wrap{
+    max-width:760px;
+    margin:0 auto;
+    padding:64px 24px 96px;
+  }
+  h1,h2,h3{ text-wrap:balance; margin:0; }
+  p{ margin:0; }
+
+  /* ---------- Header ---------- */
+  .eyebrow{
+    font-family:"JetBrains Mono",monospace;
+    font-size:12.5px;
+    letter-spacing:0.09em;
+    text-transform:uppercase;
+    color:var(--accent-ink);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:18px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:7px; height:7px;
+    border-radius:50%;
+    background:var(--accent);
+    flex:none;
+  }
+  h1.title{
+    font-size:clamp(32px,5vw,44px);
+    font-weight:800;
+    letter-spacing:-0.02em;
+    color:var(--ink);
+  }
+  .subtitle{
+    margin-top:14px;
+    font-size:17px;
+    color:var(--ink-muted);
+    max-width:56ch;
+  }
+  .meta-row{
+    margin-top:28px;
+    padding-top:20px;
+    border-top:1px solid var(--border);
+    display:flex;
+    flex-wrap:wrap;
+    gap:24px;
+    font-family:"JetBrains Mono",monospace;
+    font-size:12px;
+    color:var(--ink-faint);
+  }
+  .meta-row span b{
+    color:var(--ink-muted);
+    font-weight:600;
+  }
+
+  /* ---------- Sections ---------- */
+  section{ margin-top:64px; }
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+    margin-bottom:22px;
+  }
+  .section-num{
+    font-family:"JetBrains Mono",monospace;
+    font-size:13px;
+    color:var(--ink-faint);
+  }
+  h2.section-title{
+    font-size:22px;
+    font-weight:700;
+    letter-spacing:-0.01em;
+  }
+  .lede{
+    color:var(--ink-muted);
+    font-size:15.5px;
+    max-width:62ch;
+    margin-bottom:28px;
+  }
+
+  /* ---------- Spec strip ---------- */
+  .spec-strip{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    border:1px solid var(--border);
+    border-radius:10px;
+    overflow:hidden;
+    background:var(--paper-raised);
+  }
+  .spec{
+    padding:18px 16px;
+    border-right:1px solid var(--border);
+  }
+  .spec:last-child{ border-right:none; }
+  .spec-value{
+    font-family:"JetBrains Mono",monospace;
+    font-size:22px;
+    font-weight:700;
+    color:var(--accent-ink);
+    font-variant-numeric:tabular-nums;
+  }
+  .spec-label{
+    margin-top:4px;
+    font-size:12.5px;
+    color:var(--ink-muted);
+  }
+
+  /* ---------- Category list ---------- */
+  .cat-list{
+    margin-top:20px;
+    display:flex;
+    flex-direction:column;
+    border-top:1px solid var(--border);
+  }
+  .cat-row{
+    display:grid;
+    grid-template-columns:150px 1fr 40px;
+    gap:16px;
+    align-items:baseline;
+    padding:12px 0;
+    border-bottom:1px solid var(--border);
+  }
+  .cat-name{ font-size:14.5px; font-weight:600; }
+  .cat-items{ font-size:13.5px; color:var(--ink-muted); }
+  .cat-count{
+    font-family:"JetBrains Mono",monospace;
+    font-size:13px;
+    color:var(--ink-faint);
+    text-align:right;
+    font-variant-numeric:tabular-nums;
+  }
+
+  /* ---------- Proof line ---------- */
+  .proof{
+    margin-top:28px;
+    padding:18px 20px;
+    background:var(--accent-soft);
+    border:1px solid var(--border-strong);
+    border-radius:10px;
+    font-size:14.5px;
+    color:var(--ink);
+  }
+  .proof b{ color:var(--accent-ink); }
+  .proof .flow{
+    margin-top:10px;
+    font-family:"JetBrains Mono",monospace;
+    font-size:12.5px;
+    color:var(--ink-muted);
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:6px;
+  }
+  .proof .flow .arrow{ color:var(--ink-faint); }
+
+  /* ---------- Gap chips ---------- */
+  .gap-head{
+    margin-top:32px;
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--ink-muted);
+    margin-bottom:14px;
+  }
+  .gap-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  .gap-chip{
+    border:1px solid var(--gap-border);
+    background:var(--gap-soft);
+    border-radius:8px;
+    padding:10px 12px;
+  }
+  .gap-chip .name{
+    font-family:"JetBrains Mono",monospace;
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--gap);
+  }
+  .gap-chip .why{
+    margin-top:3px;
+    font-size:12.5px;
+    color:var(--ink-muted);
+    line-height:1.45;
+  }
+
+  /* ---------- Phase stepper ---------- */
+  .phases{
+    position:relative;
+    padding-left:34px;
+  }
+  .phases::before{
+    content:"";
+    position:absolute;
+    left:11px; top:6px; bottom:6px;
+    width:1px;
+    background:var(--border-strong);
+  }
+  .phase{
+    position:relative;
+    padding-bottom:36px;
+  }
+  .phase:last-child{ padding-bottom:0; }
+  .phase-num{
+    position:absolute;
+    left:-34px; top:2px;
+    width:23px; height:23px;
+    border-radius:50%;
+    background:var(--paper-raised);
+    border:1px solid var(--accent);
+    color:var(--accent-ink);
+    font-family:"JetBrains Mono",monospace;
+    font-size:11.5px;
+    font-weight:700;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .phase-card{
+    background:var(--paper-raised);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:22px 24px;
+    box-shadow:var(--shadow);
+  }
+  .phase-name{
+    font-size:17px;
+    font-weight:700;
+    letter-spacing:-0.005em;
+  }
+  .phase-tag{
+    font-family:"JetBrains Mono",monospace;
+    font-size:11px;
+    color:var(--ink-faint);
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    margin-top:2px;
+  }
+  .phase-scope{
+    margin-top:14px;
+    font-size:14px;
+    color:var(--ink-muted);
+    padding-left:18px;
+  }
+  .phase-scope li{ margin-top:6px; }
+  .phase-scope li::marker{ color:var(--ink-faint); }
+  .phase-new{
+    margin-top:14px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  .phase-new span{
+    font-family:"JetBrains Mono",monospace;
+    font-size:11.5px;
+    background:var(--info-soft);
+    color:var(--info);
+    border-radius:5px;
+    padding:3px 8px;
+  }
+  .phase-outcome{
+    margin-top:16px;
+    padding-top:14px;
+    border-top:1px dashed var(--border-strong);
+    font-size:13.5px;
+    color:var(--ink);
+  }
+  .phase-outcome b{
+    display:block;
+    font-family:"JetBrains Mono",monospace;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    color:var(--accent-ink);
+    margin-bottom:5px;
+    font-weight:700;
+  }
+
+  /* ---------- Outcomes table ---------- */
+  .outcomes{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13.5px;
+  }
+  .outcomes th{
+    text-align:left;
+    font-family:"JetBrains Mono",monospace;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    color:var(--ink-faint);
+    font-weight:600;
+    padding:0 12px 10px 0;
+    border-bottom:1px solid var(--border-strong);
+  }
+  .outcomes td{
+    padding:12px 12px 12px 0;
+    border-bottom:1px solid var(--border);
+    color:var(--ink-muted);
+    vertical-align:top;
+  }
+  .outcomes td:first-child, .outcomes th:first-child{
+    color:var(--ink);
+    font-weight:600;
+    white-space:nowrap;
+  }
+  .table-scroll{ overflow-x:auto; }
+
+  /* ---------- Footer ---------- */
+  footer{
+    margin-top:72px;
+    padding-top:20px;
+    border-top:1px solid var(--border);
+    font-size:12.5px;
+    color:var(--ink-faint);
+    font-family:"JetBrains Mono",monospace;
+  }
+
+  @media (max-width:560px){
+    .spec-strip{ grid-template-columns:repeat(2,1fr); }
+    .spec{ border-bottom:1px solid var(--border); }
+    .gap-grid{ grid-template-columns:1fr; }
+    .cat-row{ grid-template-columns:1fr; row-gap:4px; }
+    .cat-count{ text-align:left; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Design System Status &amp; Rollout Plan</div>
+    <h1 class="title">Poneglyph → Recruiter Dashboard</h1>
+    <p class="subtitle">Where the design system stands today, and the phase-by-phase plan for bringing it into the recruiter dashboard.</p>
+    <div class="meta-row">
+      <span><b>System</b> Poneglyph (@apna/design-system)</span>
+      <span><b>Status</b> standalone, pre-integration</span>
+      <span><b>Phases</b> 4</span>
+    </div>
+  </header>
+
+  <section>
+    <div class="section-head">
+      <span class="section-num">01</span>
+      <h2 class="section-title">Where Poneglyph stands today</h2>
+    </div>
+    <p class="lede">The system exists, is documented, and has been stress-tested end-to-end against a real commercial flow — but it currently lives on its own, outside the recruiter dashboard's codebase.</p>
+
+    <div class="spec-strip">
+      <div class="spec">
+        <div class="spec-value">44</div>
+        <div class="spec-label">components, 7 categories</div>
+      </div>
+      <div class="spec">
+        <div class="spec-value">2</div>
+        <div class="spec-label">token tiers — primitive → semantic</div>
+      </div>
+      <div class="spec">
+        <div class="spec-value">40</div>
+        <div class="spec-label">Lucide icons, shared by Figma &amp; code</div>
+      </div>
+      <div class="spec">
+        <div class="spec-value">1:1</div>
+        <div class="spec-label">Figma ↔ code component parity</div>
+      </div>
+    </div>
+
+    <div class="cat-list">
+      <div class="cat-row"><div class="cat-name">Actions</div><div class="cat-items">Button, ButtonGroup, BackButton, Toggle, ToggleGroup</div><div class="cat-count">5</div></div>
+      <div class="cat-row"><div class="cat-name">Form &amp; Inputs</div><div class="cat-items">Field, Label, Input, Textarea, Checkbox, RadioGroup, Switch, Select, Slider, SearchFilterBar</div><div class="cat-count">10</div></div>
+      <div class="cat-row"><div class="cat-name">Data Display</div><div class="cat-items">Avatar, Badge, MetricCard, Skeleton, Spinner, Separator, Empty</div><div class="cat-count">7</div></div>
+      <div class="cat-row"><div class="cat-name">Navigation</div><div class="cat-items">Tabs, ChipTabs, SegmentedTabSwitcher, Breadcrumb, Sidebar, ReusableSidebar, BottomNav</div><div class="cat-count">7</div></div>
+      <div class="cat-row"><div class="cat-name">Overlays &amp; Dialogs</div><div class="cat-items">Tooltip, Popover, DropdownMenu, Dialog, AlertDialog, Sheet</div><div class="cat-count">6</div></div>
+      <div class="cat-row"><div class="cat-name">Feedback &amp; Status</div><div class="cat-items">Alert, AlertBanner, Sonner (toast)</div><div class="cat-count">3</div></div>
+      <div class="cat-row"><div class="cat-name">Data &amp; Layout</div><div class="cat-items">Table, Accordion, JobCard, PricingCard, ApnaLogo, LogoApnaUnlimited</div><div class="cat-count">6</div></div>
+    </div>
+
+    <div class="proof">
+      <b>Proof of capability:</b> a full self-serve checkout was built end-to-end on Poneglyph components alone — nothing custom, nothing hand-styled.
+      <div class="flow">
+        <span>PricingHero</span><span class="arrow">→</span><span>JobCreditBundles</span><span class="arrow">→</span><span>PricingCard</span><span class="arrow">→</span><span>CheckoutDrawer</span><span class="arrow">→</span><span>PaymentModal</span>
+      </div>
+    </div>
+
+    <div class="gap-head">Known gaps — not yet built, verified absent</div>
+    <div class="gap-grid">
+      <div class="gap-chip"><div class="name">DateRangePicker</div><div class="why">Filtering applications / interviews by time window.</div></div>
+      <div class="gap-chip"><div class="name">FileDropzone</div><div class="why">Resume &amp; JD upload with progress and file-type validation.</div></div>
+      <div class="gap-chip"><div class="name">Virtualized Table</div><div class="why">Rendering 500+ candidate rows without DOM lag.</div></div>
+      <div class="gap-chip"><div class="name">MultiSelect / Combobox</div><div class="why">Filtering by several skills or cities at once.</div></div>
+      <div class="gap-chip"><div class="name">Stepper</div><div class="why">Multi-step job creation wizard needs one; none exists.</div></div>
+      <div class="gap-chip"><div class="name">Bulk-Action Bar</div><div class="why">Floating dock for batch actions on selected rows.</div></div>
+      <div class="gap-chip"><div class="name">LPA / ₹ Formatter</div><div class="why">Compensation as ₹8.5 LPA / ₹1.2 Cr, not $100k.</div></div>
+      <div class="gap-chip"><div class="name">Devanagari Fallback</div><div class="why">Regional-script job titles and profiles need font coverage.</div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Phased rollout into the dashboard</h2>
+    </div>
+    <p class="lede">Four phases, each shipping a complete, usable surface rather than a half-migrated one — later phases build on components the earlier ones introduced.</p>
+
+    <div class="phases">
+
+      <div class="phase">
+        <div class="phase-num">1</div>
+        <div class="phase-card">
+          <div class="phase-name">Foundations &amp; shell</div>
+          <div class="phase-tag">Scoped, non-breaking rollout</div>
+          <ul class="phase-scope">
+            <li>Token layer, type scale and fonts brought into the dashboard under a scoped layer — unmigrated pages keep running untouched.</li>
+            <li>Navigation chrome: <span class="mono">Sidebar</span> / <span class="mono">BottomNav</span> replace ad-hoc layout shells.</li>
+            <li>Core primitives (<span class="mono">Button</span>, <span class="mono">Badge</span>, <span class="mono">Input</span>, <span class="mono">Field</span>…) swapped in wherever raw elements currently stand in.</li>
+            <li>Playwright visual-regression tooling stood up from scratch — no such tooling exists yet — with a baseline captured across the top recruiter pages before anything else ships.</li>
+          </ul>
+          <div class="phase-new"><span>+LPA formatter</span><span>+Devanagari fallback</span><span>+Toast taxonomy</span><span>+Playwright visual regression</span></div>
+          <div class="phase-outcome"><b>Unlocks</b>Every screen the phase touches now shares one visual language, and because the rollout is scoped, no page outside that set can break as a side effect. From here on, two independent checks run on every pull request before it can merge: one catches a hardcoded color or spacing value the moment someone types it, the other renders the key pages and compares them pixel-by-pixel against a saved baseline — so a change that passes the first check but still shifts a layout or misaligns a component gets caught before it ships, not after a recruiter notices.</div>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-num">2</div>
+        <div class="phase-card">
+          <div class="phase-name">Jobs &amp; pipeline hub</div>
+          <div class="phase-tag">Highest-traffic recruiter surface</div>
+          <ul class="phase-scope">
+            <li>Job listing and management view rebuilt on <span class="mono">MetricCard</span>, <span class="mono">SearchFilterBar</span>, <span class="mono">Table</span>.</li>
+            <li>Job-creation flow restructured as a real multi-step wizard.</li>
+            <li>Candidate pipeline review gets an inspection drawer (<span class="mono">Sheet</span>) instead of full-page context switches.</li>
+          </ul>
+          <div class="phase-new"><span>+Stepper</span><span>+FileDropzone</span></div>
+          <div class="phase-outcome"><b>Unlocks</b>The single workflow recruiters spend most of their day in — posting and managing jobs — runs on validated, accessible components with consistent form structure and error handling.</div>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-num">3</div>
+        <div class="phase-card">
+          <div class="phase-name">Sourcing &amp; candidate database</div>
+          <div class="phase-tag">Dense, high-volume browsing</div>
+          <ul class="phase-scope">
+            <li>Candidate search and browse list rebuilt as a virtualized table.</li>
+            <li>Multi-skill / multi-city filtering consolidated into one combobox control.</li>
+            <li>Bulk selection surfaces a floating action bar for batch operations.</li>
+          </ul>
+          <div class="phase-new"><span>+Virtualized Table</span><span>+MultiSelect</span><span>+Bulk-Action Bar</span></div>
+          <div class="phase-outcome"><b>Unlocks</b>Lists of hundreds of candidates stay smooth to scroll and filter; batch actions on a selection become a first-class pattern instead of one-at-a-time clicks.</div>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-num">4</div>
+        <div class="phase-card">
+          <div class="phase-name">Remaining surfaces &amp; lock-in</div>
+          <div class="phase-tag">Full coverage, governance made permanent</div>
+          <ul class="phase-scope">
+            <li>Invite centre, reports, settings and support brought onto the same components.</li>
+            <li>Legacy stylesheets, duplicate components and unreferenced wrappers removed.</li>
+            <li>Token-linting and type-checking promoted from opt-in to a hard gate on every route, not just migrated ones.</li>
+          </ul>
+          <div class="phase-new"><span>no new components</span></div>
+          <div class="phase-outcome"><b>Unlocks</b>Full-dashboard consistency with nothing left running on old styling, and drift-prevention becomes structural rather than something a team has to remember to do.</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <span class="section-num">03</span>
+      <h2 class="section-title">What each phase unlocks</h2>
+    </div>
+    <p class="lede">Read together, not as isolated milestones — each phase's capability compounds on the last.</p>
+
+    <div class="table-scroll">
+      <table class="outcomes">
+        <thead>
+          <tr><th>Phase</th><th>Primary surface</th><th>New capability</th><th>Outcome</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1 · Foundations</td><td>Whole shell</td><td>Unified nav, type &amp; tokens, drift detection built</td><td>One visual language, no regressions — caught by lint + visual-diff CI</td></tr>
+          <tr><td>2 · Jobs &amp; pipeline</td><td>Job posting, pipeline review</td><td>Guided wizard, file upload</td><td>The busiest daily workflow gets structured, validated forms</td></tr>
+          <tr><td>3 · Sourcing</td><td>Candidate database</td><td>Virtualization, multi-filter, bulk actions</td><td>Dense lists stay fast; batch work becomes native</td></tr>
+          <tr><td>4 · Remaining &amp; lock-in</td><td>Everything else</td><td>CI-enforced governance</td><td>Full compliance, legacy code retired, drift prevented by default</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    poneglyph · design-system status &amp; rollout · working draft
+  </footer>
+
+</div>
