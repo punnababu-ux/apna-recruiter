@@ -185,18 +185,31 @@ export default function HomePage() {
                       </li>
                     ))}
                   </ul>
-                  {/* The card's one action, in the dark `emphasis` button: green
-                      stays with the hero's sign-up, the page's one primary. */}
-                  <Button
-                    variant="emphasis"
-                    size="lg"
-                    className="w-fit"
-                    nativeButton={false}
-                    render={<Link href={hrefFor(product.name)} />}
-                    trailingIcon={<ArrowRight aria-hidden />}
-                  >
-                    Learn more
-                  </Button>
+                  {/* The product's action leads, in the dark `emphasis` button
+                      (green stays with the hero's sign-up, the page's one
+                      primary); "Learn more" sits beside it, quieter. Phones
+                      stack them full width, action first. */}
+                  <div className="flex flex-col gap-3 sm:flex-row">
+                    <Button
+                      variant="emphasis"
+                      size="lg"
+                      className="w-full sm:w-fit"
+                      nativeButton={false}
+                      render={<Link href={product.action.href} />}
+                      trailingIcon={<ArrowRight aria-hidden />}
+                    >
+                      {product.action.label}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="w-full sm:w-fit"
+                      nativeButton={false}
+                      render={<Link href={hrefFor(product.name)} />}
+                    >
+                      Learn more
+                    </Button>
+                  </div>
                 </div>
                 {/* Phones: the illustration leads, the copy follows. */}
                 <ProductIllustration

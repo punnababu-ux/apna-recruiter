@@ -59,6 +59,7 @@ import {
   type StageId,
 } from "@/components/apnahire/post-job/wizard-screens"
 import { EMPTY_JOB_DRAFT, locationLabel, mergeDraft, normalizeDraft } from "@/lib/apnahire/job-draft"
+import { rememberPostIntent } from "@/lib/apnahire/post-intent"
 import { toast } from "sonner"
 import { SlotsFullDialog } from "@/components/apnahire/slots/slots-full-dialog"
 import { JobSlotsControls, PrototypeSettings, openPrototypeSettings } from "@/components/apnahire/prototype-settings"
@@ -209,6 +210,12 @@ export function PostJobFlow() {
   React.useEffect(() => {
     if (hydrated && state.screen !== "drafting") persistDraft(state)
   }, [hydrated, state, persistDraft])
+
+  // Arrived from "Post a job with AI calling" (?addon=ai-calling): the plan
+  // step opens the order summary with the AI calling agent added.
+  React.useEffect(() => {
+    rememberPostIntent(window.location.search)
+  }, [])
 
   // An id this version doesn't know (a draft saved by a newer build) falls
   // back to the first screen instead of crashing.

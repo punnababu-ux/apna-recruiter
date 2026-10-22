@@ -205,6 +205,9 @@ interface CheckoutDrawerProps {
    *  a credit-covered order becomes one that needs payment, which the caller
    *  needs to know (the exit offer shows only when paying). */
   onAiAddedChange?: (added: boolean) => void
+  /** Open with the AI calling agent already added (the recruiter came from
+   *  "Post a job with AI calling"). Still removable. */
+  aiAddedByDefault?: boolean
 }
 
 
@@ -387,6 +390,7 @@ export function CheckoutDrawer({
   extraOffer,
   onExtraOfferExpired,
   onAiAddedChange,
+  aiAddedByDefault = false,
 }: CheckoutDrawerProps) {
   // The back button / gesture closes the summary through its own close
   // path (so the exit offer still shows), rather than leaving the page.
@@ -415,7 +419,7 @@ export function CheckoutDrawer({
     if (open) {
       setPackValue(DEFAULT_PACK)
       setAddonCredits(null)
-      setAiAdded(false)
+      setAiAdded(!!aiAddon && aiAddedByDefault)
       setCouponInput("")
       setAppliedCoupon(null)
       setGstin("")
@@ -423,7 +427,10 @@ export function CheckoutDrawer({
       setExpanded(null)
       setPaymentMethod("upi-autopay")
     }
-  }, [open, item?.id])
+    // Reset on open / a new item only; `aiAddon` is rebuilt by callers on
+    // every render, so it isn't a dependency (it would undo a removal).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, item?.id, aiAddedByDefault])
 
   // On open, and when claimed while the summary is open (the exit nudge on
   // close): apply the offer's coupon.

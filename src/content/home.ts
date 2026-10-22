@@ -104,7 +104,12 @@ export interface ProductDetailRow {
   eyebrow: string
   heading: string
   features: ProductFeature[]
+  /** The card's action, beside "Learn more": what a convinced visitor does
+   *  next. Signed-in destinations go through login (`?next=`). */
+  action: { label: string; href: string }
 }
+
+const login = (next: string) => `/login?next=${encodeURIComponent(next)}`
 
 /**
  * Product suite — alternating detail rows, one per product, below the
@@ -138,6 +143,7 @@ export const HOME_PRODUCT_DETAILS: ProductDetailRow[] = [
   {
     name: "Smart Jobs",
     eyebrow: "Smart job posting",
+    action: { label: "Post a job", href: login("/apnahire/jobs/new") },
     heading: "Get applications from relevant, high-intent candidates",
     features: [
       {
@@ -154,6 +160,8 @@ export const HOME_PRODUCT_DETAILS: ProductDetailRow[] = [
   },
   {
     name: "AI Calling Agent",
+    // Posting opens the order summary with the AI calling agent added.
+    action: { label: "Post a job with AI calling", href: login("/apnahire/jobs/new?addon=ai-calling") },
     // AI calling is an add-on on any job (not a premium job type).
     eyebrow: "AI Calling Agent",
     heading: "AI Calling Agent interviews and shortlists candidates 24/7",
@@ -170,6 +178,7 @@ export const HOME_PRODUCT_DETAILS: ProductDetailRow[] = [
   },
   {
     name: "Hyperlocal Database",
+    action: { label: "Search candidates", href: login("/apnahire/database/search-candidates") },
     eyebrow: "apna Database",
     heading: "Quickly hire active jobseekers around your office.",
     features: [
@@ -186,6 +195,8 @@ export const HOME_PRODUCT_DETAILS: ProductDetailRow[] = [
   {
     name: "apna Unlimited",
     eyebrow: "apna Unlimited",
+    // Public plans page: no login until Buy.
+    action: { label: "See Unlimited plans", href: "/pricing?tab=unlimited" },
     heading: "Unlimited job posting flexibility, predictable hiring cost.",
     features: [
       {

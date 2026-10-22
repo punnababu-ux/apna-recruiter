@@ -52,6 +52,7 @@ import { PaymentModal } from "@/components/apnahire/payment-modal"
 import { TrustedByStrip } from "@/components/marketing/proof-bands"
 import { UpcomingPricesProvider } from "@/components/apnahire/upcoming-price-line"
 import { PriceChangeBanner } from "@/components/apnahire/price-change-banner"
+import { clearPostIntent, wantsAiCalling } from "@/lib/apnahire/post-intent"
 import { GstNote } from "@/components/apnahire/gst-note"
 import { PaymentSuccess } from "@/components/apnahire/payment-success"
 import { setActiveSubscription } from "@/hooks/use-active-subscription"
@@ -133,6 +134,7 @@ function readDraftIsWfh(): boolean {
 }
 
 function clearDraft() {
+  clearPostIntent()
   try {
     window.localStorage.removeItem(JOB_DRAFT_STORAGE_KEY)
   } catch {
@@ -215,6 +217,11 @@ export function JobPlanSelection() {
   // AI calling agent added with no AI calling credit to cover it (a covered
   // classic job + a paid AI agent is a paying order).
   const [aiAdded, setAiAdded] = React.useState(false)
+  // Came from "Post a job with AI calling": the summary opens with it added.
+  const [aiIntent, setAiIntent] = React.useState(false)
+  React.useEffect(() => {
+    if (wantsAiCalling()) setAiIntent(true)
+  }, [])
   const orderNeedsPayment =
     (checkoutItem?.price ?? 0) > 0 || (aiAdded && creditBalance["ai-calling"] < 1)
   const attemptExit = (proceed: () => void, paymentRequired = !holdsCredits) => {
@@ -426,6 +433,7 @@ export function JobPlanSelection() {
         extraOffer={offer.deadline ? { code: EXTRA_OFF.code, deadline: offer.deadline } : undefined}
         onExtraOfferExpired={offer.expire}
         onAiAddedChange={setAiAdded}
+        aiAddedByDefault={aiIntent}
       />
 
       {/* The upsells quote Jan prices too (signed in, as the plans above);
