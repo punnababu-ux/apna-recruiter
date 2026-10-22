@@ -219,6 +219,11 @@ Reject the PR if you see any of:
   the only CTA on a screen, at most one per section. Exception: in a
   step-by-step flow (WizardFooter) every step's CTA is `emphasis`, and green
   is kept for the one committing action (post / pay). See Button's JSDoc.
+  The header's "Login / Sign up" is `emphasis` on every page, with one
+  handoff (user call, 2026-10-23): on the homepage, once the hero card's
+  green "Login / Sign up" scrolls up behind the top bar, the header's turns
+  green in its place and goes back to dark when the hero's returns
+  (`useHeroCtaHidden`). Still one green on screen at a time.
 - A hand-picked white button on a dark surface. The companion inverts by
   itself: mark the dark area `data-surface="dark"` (OfferDialog's header
   does) and `emphasis` inside it renders white with a dark label. Dark gray

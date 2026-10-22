@@ -21,8 +21,12 @@ export const PHONE_LOGIN = {
   title: "Let’s get started",
   label: "Mobile number",
   placeholder: "Enter your mobile number",
-  /** "Continue" on the homepage card, "Send OTP" on the sign-in page. */
+  /** "Login / Sign up" on the homepage card (the header's label, so the
+   *  header button reads as this one moving up), "Send OTP" on the
+   *  sign-in page. */
   cta: "Send OTP",
+  /** Shown under the field when the CTA is pressed without 10 digits. */
+  invalid: "Enter your 10-digit mobile number",
   or: "OR",
   enterprise: "Click here for Enterprise login",
 }
@@ -38,4 +42,6 @@ export const ENTERPRISE_LOGIN = {
   mobile: "Continue with mobile",
 }
 
-export const LEGAL_LINE = "By clicking continue, you agree to the apna"
+// Under three different CTAs (Login / Sign up, Send OTP, Log in), so it
+// names none of them.
+export const LEGAL_LINE = "By continuing, you agree to the apna"

@@ -18,14 +18,19 @@
 
 import * as React from "react"
 import { useRouter } from "next/navigation"
-import { Building2, Button, Card, Field, FieldLabel, FieldSeparator, inputVariants } from "@apna/design-system"
+import { Building2, Button, Card, Field, FieldError, FieldLabel, FieldSeparator, inputVariants } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 import { PHONE_LOGIN } from "@/content/auth"
+import { HEADER_ACTIONS } from "@/content/nav"
+import { useTrackHeroCta } from "@/hooks/use-hero-cta-hidden"
 import { LegalLine } from "@/components/auth/auth-shell"
 
 export interface PhoneLoginFormProps {
-  /** "Continue" on the homepage, "Send OTP" on the login page. */
+  /** "Login / Sign up" on the homepage, "Send OTP" on the login page. */
   ctaLabel?: string
+  /** The homepage hero: while this CTA is scrolled away, the header's
+   *  "Login / Sign up" takes over the green (useHeroCtaHidden). */
+  handsOffToHeader?: boolean
   /** Where to go once signed in (passed through the login steps). */
   next?: string
   /** Prefill, e.g. when coming back from the OTP step to change the number. */
@@ -45,12 +50,20 @@ export function PhoneLoginForm({
   defaultPhone = "",
   onContinue,
   onEnterpriseLogin,
+  handsOffToHeader = false,
 }: PhoneLoginFormProps) {
+  const ctaRef = React.useRef<HTMLButtonElement>(null)
+  useTrackHeroCta(ctaRef, handsOffToHeader)
   const router = useRouter()
   const [phone, setPhone] = React.useState(defaultPhone)
   const continueTo = onContinue ?? ((p: string) => router.push(withNext("/login/otp", next, { phone: p })))
   const enterprise = onEnterpriseLogin ?? (() => router.push(withNext("/login/enterprise", next)))
   const isValid = phone.length === 10
+  // The CTA is never disabled: a disabled button can't say why. Pressing it
+  // without 10 digits says so under the field and returns the cursor there;
+  // typing clears it. Nothing shows before the first press.
+  const [error, setError] = React.useState<string | null>(null)
+  const inputRef = React.useRef<HTMLInputElement>(null)
 
   return (
     <>
@@ -58,9 +71,14 @@ export function PhoneLoginForm({
 
       <form
         className="flex flex-col gap-6"
+        noValidate
         onSubmit={(e) => {
           e.preventDefault()
           if (isValid) continueTo(phone)
+          else {
+            setError(PHONE_LOGIN.invalid)
+            inputRef.current?.focus()
+          }
         }}
       >
         <Field>
@@ -69,26 +87,37 @@ export function PhoneLoginForm({
               (inputVariants) on the wrapper, a bare input inside; the
               wrapper shows focus for it. */}
           <div
+            aria-invalid={!!error || undefined}
             className={cn(
               inputVariants({ inputSize: "lg" }),
-              "flex items-center gap-3 focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50"
+              "flex items-center gap-3 focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50",
+              // The error outranks the focus ring: the field stays red while
+              // the cursor is back in it.
+              error && "focus-within:border-destructive focus-within:ring-destructive/20"
             )}
           >
             <span className="shrink-0 text-foreground">+91</span>
             <input
+              ref={inputRef}
               id="login-phone"
+              aria-invalid={!!error || undefined}
+              aria-describedby={error ? "login-phone-error" : undefined}
               type="tel"
               inputMode="numeric"
               autoComplete="tel-national"
               placeholder={PHONE_LOGIN.placeholder}
               className="w-full min-w-0 border-0 bg-transparent p-0 text-base outline-none placeholder:text-muted-foreground md:text-sm"
               value={phone}
-              onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+              onChange={(e) => {
+                setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))
+                setError(null)
+              }}
             />
           </div>
+          {error && <FieldError id="login-phone-error">{error}</FieldError>}
         </Field>
 
-        <Button type="submit" size="lg" className="w-full" disabled={!isValid}>
+        <Button ref={ctaRef} type="submit" size="lg" className="w-full">
           {ctaLabel}
         </Button>
       </form>
@@ -111,7 +140,9 @@ export function PhoneLoginForm({
 export function HeroLeadCard({ className, ...props }: PhoneLoginFormProps & { className?: string }) {
   return (
     <Card padding="lg" className={cn("surface-frosted flex w-full max-w-md flex-col gap-6", className)}>
-      <PhoneLoginForm ctaLabel="Continue" {...props} />
+      {/* The header's label, so the header button reads as this one moving
+          up when it scrolls away. */}
+      <PhoneLoginForm ctaLabel={HEADER_ACTIONS.primary.label} handsOffToHeader {...props} />
       <LegalLine className="text-xs" />
     </Card>
   )

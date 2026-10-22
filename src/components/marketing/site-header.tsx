@@ -76,6 +76,7 @@ import {
   type NavSection,
 } from "@/content/nav"
 import { useScrolled } from "@/hooks/use-scrolled"
+import { useHeroCtaHidden } from "@/hooks/use-hero-cta-hidden"
 import { useHeaderSlotValue } from "@/components/marketing/header-slot"
 import { SiteSearch } from "@/components/marketing/site-search"
 
@@ -169,6 +170,7 @@ function MenuSection({
 
 export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
   const isScrolled = useScrolled()
+  const heroCtaHidden = useHeroCtaHidden()
   const isCurrent = useIsCurrent()
   const slot = useHeaderSlotValue()
   const [openPanel, setOpenPanel] = React.useState<string | null>(null)
@@ -386,12 +388,15 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
             )}
             {/* No "Contact us" here: support gets its own floating button
                 (user call, 2026-10-16). */}
-            {/* Login is the dark emphasis button on every page and size: each
-                page has its own one green action (the hero's sign-up, the
-                recommended plan's Buy now), and a returning user's way in
-                needn't compete with it. */}
+            {/* Login is the dark emphasis button: each page has its own one
+                green action (the hero's sign-up, the recommended plan's Buy
+                now), and a returning user's way in needn't compete with it.
+                The one exception (user call, 2026-10-23): on the homepage,
+                once the hero's "Login / Sign up" has scrolled up behind this
+                bar, this button takes over its green, and hands it back when
+                the hero's returns. One green login on screen at a time. */}
             <Button
-              variant="emphasis"
+              variant={heroCtaHidden ? "default" : "emphasis"}
               className="shrink-0 rounded-full font-semibold"
               render={<Link href={HEADER_ACTIONS.primary.href} />}
             >
