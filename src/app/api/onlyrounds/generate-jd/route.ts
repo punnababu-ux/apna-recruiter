@@ -23,6 +23,7 @@ import { google } from "@ai-sdk/google"
 import { generateText, Output } from "ai"
 import { NextRequest, NextResponse } from "next/server"
 
+import { geminiErrorMessage } from "@/lib/gemini-error"
 import { readJsonBody } from "@/lib/read-json-body"
 import { z } from "zod"
 
@@ -379,32 +380,7 @@ export async function POST(req: NextRequest) {
     }
     return NextResponse.json(output)
   } catch (err) {
-    // Map common Gemini failure modes to actionable user-facing messages.
-    const raw = String(
-      (err as { message?: unknown })?.message ?? err ?? "",
-    )
-    console.error("[generate-jd]", raw)
-
-    let error = "Couldn't reach the generator. Try again in a moment."
-    if (/prepayment|billing|depleted|credits/i.test(raw)) {
-      error =
-        "Your Gemini API prepayment credits are depleted. Please check billing or top up credits in Google AI Studio."
-    } else if (/rate.?limit|quota|RESOURCE_EXHAUSTED|429/i.test(raw)) {
-      error =
-        "Rate limit reached on Gemini's free tier (20 req/min). Wait ~30 seconds and try again."
-    } else if (
-      /NoObjectGenerated|schema|invalid.json|could not parse|validation/i.test(
-        raw,
-      )
-    ) {
-      error =
-        "The AI couldn't structure a response from that. Try simplifying your input or clearing one of the fields."
-    } else if (/timeout|deadline|ECONNRESET|ETIMEDOUT/i.test(raw)) {
-      error = "The AI request timed out. Try again in a moment."
-    } else if (/401|403|unauthorized|forbidden|api.?key/i.test(raw)) {
-      error =
-        "Gemini rejected the API key. Check GOOGLE_GENERATIVE_AI_API_KEY in .env.local."
-    }
+    const error = geminiErrorMessage("generate-jd", err, "Couldn't reach the generator. Try again in a moment.")
     return NextResponse.json({ jobDescription: "", error })
   }
 }

@@ -129,7 +129,8 @@ export async function POST(req: NextRequest) {
   let current: JobPostDraft | undefined
   let refining = false
   // The local parser's answer — used whenever the live AI can't give one.
-  const fallback = () => (refining ? buildDummyRefine(current!, instruction) : buildDummyDraft(prompt))
+  const fallback = () =>
+    refining && current ? buildDummyRefine(current, instruction) : buildDummyDraft(prompt)
   try {
     const { body, tooLarge } = await readJsonBody(req)
     if (tooLarge) return tooLarge
@@ -149,7 +150,7 @@ export async function POST(req: NextRequest) {
       model: google("gemini-2.5-flash"),
       output: Output.object({ schema: JobDraftSchema }),
       system: SYSTEM_PROMPT,
-      prompt: refining ? buildRefinePrompt(current!, instruction) : buildPrompt(prompt),
+      prompt: refining && current ? buildRefinePrompt(current, instruction) : buildPrompt(prompt),
     })
 
     const cleaned = Object.fromEntries(

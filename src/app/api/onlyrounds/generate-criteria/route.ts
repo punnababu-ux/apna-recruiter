@@ -23,6 +23,7 @@ import { google } from "@ai-sdk/google"
 import { generateText, Output } from "ai"
 import { NextRequest, NextResponse } from "next/server"
 
+import { geminiErrorMessage } from "@/lib/gemini-error"
 import { readJsonBody } from "@/lib/read-json-body"
 import { z } from "zod"
 
@@ -233,18 +234,7 @@ export async function POST(req: NextRequest) {
     }
     return NextResponse.json(capTotal(output))
   } catch (err) {
-    const raw = String((err as { message?: unknown })?.message ?? err ?? "")
-    console.error("[generate-criteria]", raw)
-    let error = "Couldn't generate criteria. Try again in a moment."
-    if (/prepayment|billing|depleted|credits/i.test(raw)) {
-      error =
-        "Your Gemini API prepayment credits are depleted. Please check billing or top up credits in Google AI Studio."
-    } else if (/rate.?limit|quota|RESOURCE_EXHAUSTED|429/i.test(raw)) {
-      error = "Rate limit reached on Gemini's free tier. Wait ~30s and retry."
-    } else if (/401|403|unauthorized|api.?key/i.test(raw)) {
-      error =
-        "Gemini rejected the API key. Check GOOGLE_GENERATIVE_AI_API_KEY in .env.local."
-    }
+    const error = geminiErrorMessage("generate-criteria", err, "Couldn't generate criteria. Try again in a moment.")
     return NextResponse.json(
       tasks.length > 0 ? { results: [], error } : { mustHave: [], goodToHave: [], redFlag: [], error },
     )
