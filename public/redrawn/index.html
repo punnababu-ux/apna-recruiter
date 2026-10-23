@@ -5,14 +5,14 @@
 <base href="/redrawn/">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="apna, redrawn: the new website, brand and Poneglyph design system.">
-<title>apna, Redrawn</title>
+<title>apna, redrawn</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- The design system's tokens (src/app/redrawn/tokens.css): brand colours,
      fonts, the mother gradient and the hero blobs follow the system. -->
 <link rel="stylesheet" href="/redrawn/tokens.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,500;1,8..60,700&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,700;1,8..60,700&display=swap">
 <style>
 /* Layout: a keynote stage. One idea per full-screen slide, dark plum
    ground, the brand's own colours as the only light on stage. */
@@ -38,8 +38,11 @@
   --plum: var(--color-apna-plum-400);         /* logo plum (the wordmark) */
   --plum-soft: var(--color-apna-plum-300);
   --paper: #FFFFFF;
-  --font-display: var(--font-family-editorial);
-  --font-body: var(--font-family-sans);
+  /* One typeface since 2026-10-23: Google Sans Flex. The serif is loaded
+     only for the type slide's "before". */
+  --font-display: "Google Sans Flex", var(--font-family-sans);
+  --font-body: "Google Sans Flex", var(--font-family-sans);
+  --font-old-serif: "Source Serif 4", Georgia, serif;
   --slide-pad: clamp(24px, 6vw, 96px);
 }
 :root[data-mode="dark"] {
@@ -87,13 +90,14 @@ body {
 .kicker { font-size: clamp(15px, 1.2vw, 18px); font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-dim); }
 h1, h2 { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.015em; text-wrap: balance; margin: 0; line-height: 1.04; }
 h1 { font-size: clamp(56px, 11vw, 168px); }
-/* The real wordmark in the title: its letters sized to the serif's lowercase
-   (x-height 7.46 of 11), sitting on the same baseline. */
+/* The real wordmark in the title, sized to the headline's lowercase and
+   sitting on the same baseline. */
 .title-wordmark { height: 0.8em; width: auto; vertical-align: -0.257em; color: currentColor; margin-right: -0.03em; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 h2 { font-size: clamp(40px, 6.6vw, 96px); }
-h2 em, h1 em { font-style: italic; }
+/* No italic accent: headlines are plain, like the site (2026-10-23). */
+em { font-style: normal; }
 .lede { font-size: clamp(18px, 1.9vw, 26px); line-height: 1.45; color: var(--ink-dim); max-width: 40ch; margin: 0; text-wrap: pretty; }
 .center .lede { margin-inline: auto; }
 
@@ -198,7 +202,7 @@ h2 em, h1 em { font-style: italic; }
 .page .bar .mini-mark { height: 11px; width: auto; display: block; }
 .page .cards { align-self: stretch; }
 .page .chip { align-self: flex-start; font-size: 9px; font-weight: 600; padding: 3px 8px; border-radius: 99px; background: #FFFFFF; border: 1px solid rgba(28, 21, 30, 0.12); }
-.page h3 em { font-style: italic; white-space: nowrap; }
+.page h3 em { white-space: nowrap; }
 .page h3 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(15px, 1.5vw, 19px); line-height: 1.15; text-wrap: balance; }
 .page .btn { align-self: flex-start; font-size: 9px; font-weight: 600; color: #FFFFFF; background: var(--green); padding: 5px 10px; border-radius: 99px; }
 .page .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: auto; }
@@ -435,7 +439,9 @@ h2 em, h1 em { font-style: italic; }
     linear-gradient(135deg, #120E13 0%, #1C151E 50%, #241B26 100%); }
 .type-eyebrow { margin: 0; align-self: flex-start; font-size: clamp(15px, 1.2vw, 18px); font-weight: 600; padding: 4px 10px; border-radius: 99px; border: 1px solid var(--ink-faint); color: var(--ink-dim); }
 .type-head { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(28px, 3.6vw, 48px); line-height: 1.05; letter-spacing: -0.015em; text-wrap: balance; color: var(--ink); transition: letter-spacing 500ms ease; }
-.type-demo.before .type-head { font-family: var(--font-body); font-weight: 700; letter-spacing: -0.03em; }
+.type-demo.before .type-head { font-family: var(--font-old-serif); letter-spacing: -0.01em; }
+.type-demo.before .type-head em { font-style: italic; }
+.type-demo:not(.before) .rx-b, .type-demo.before .rx-a { display: none; }
 .type-body { margin: 0; font-size: clamp(15px, 1.4vw, 18px); line-height: 1.5; color: var(--ink-dim); max-width: 56ch; }
 .type-stats { display: flex; flex-wrap: wrap; gap: 28px; padding-top: 8px; }
 .type-stats span { display: flex; flex-direction: column; gap: 2px; font-size: clamp(16px, 1.3vw, 19px); color: var(--ink-dim); }
@@ -444,7 +450,7 @@ h2 em, h1 em { font-style: italic; }
 @media (max-width: 640px) { .type-rules { grid-template-columns: 1fr; } }
 .type-rules > div { display: flex; flex-direction: column; gap: 4px; padding: 16px 20px; border-radius: 18px; border: 1px solid var(--ink-faint); text-align: left; }
 .type-rules strong { font-size: 22px; font-weight: 500; color: var(--ink); }
-.tr-serif { font-family: var(--font-display); } .tr-sans { font-family: var(--font-body); font-weight: 600 !important; }
+.tr-sans { font-family: var(--font-body); font-weight: 600 !important; }
 .type-rules span { font-size: 15px; line-height: 1.5; color: var(--ink-dim); }
 [aria-label="Typography"] .inner { gap: clamp(14px, 2.4vh, 28px); }
 .type-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
@@ -490,7 +496,7 @@ h2 em, h1 em { font-style: italic; }
 .clay-dots .d-green { background: var(--green); } .clay-dots .d-sky { background: var(--sky); }
 .clay-dots .d-gold { background: var(--gold); } .clay-dots .d-plum { background: var(--plum); }
 @media (max-width: 720px) { .clay-why { grid-template-columns: 1fr; } }
-/* The answer to "do glass and clay go together?": one line, the serif's voice. */
+/* The answer to "do glass and clay go together?": one line. */
 .clay-room { margin: 0; font-family: var(--font-display); font-size: clamp(18px, 1.8vw, 24px); line-height: 1.35; color: var(--ink-dim); text-wrap: balance; }
 .clay-room em { color: var(--ink); }
 
@@ -537,12 +543,6 @@ h2 em, h1 em { font-style: italic; }
 @keyframes pulse { from { opacity: 0.65; scale: 0.92; } to { opacity: 1; scale: 1.08; } }
 @media (prefers-reduced-motion: reduce) { .living .blobs i, .living .wander { animation: none; } }
 .living.flat .blobs { opacity: 0; }
-/* "AI-Native": the hero's moving brand green (--gradient-text-brand). */
-.living p em, .type-head em { font-style: italic; white-space: nowrap; padding-inline: 0.15em; margin-inline: -0.15em; background: linear-gradient(90deg, #186954 0%, #00A86B 35%, #3EBA8D 50%, #00A86B 65%, #186954 100%); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: text-sheen 4s linear infinite; }
-[data-mode="dark"] .living p em, [data-mode="dark"] .type-head em { background-image: linear-gradient(90deg, #00A86B 0%, #6CD3AE 35%, #9DE2C9 50%, #6CD3AE 65%, #00A86B 100%); }
-@keyframes text-sheen { to { background-position: -200% 0; } }
-.type-demo.before .type-head em { font-style: normal; animation: none; background: none; color: inherit; -webkit-background-clip: border-box; background-clip: border-box; }
-.living.flat p em { animation: none; background: none; color: inherit; -webkit-background-clip: border-box; background-clip: border-box; }
 .living p { position: relative; margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(26px, 4vw, 52px); color: #1C151E; text-align: center; line-height: 1.1; padding: 0 24px; }
 
 /* ── 8. System numbers ───────────────────────────────── */
@@ -559,14 +559,14 @@ h2 em, h1 em { font-style: italic; }
 .pg-copy .lede { max-width: 46ch; }
 .pg-laws { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; counter-reset: law; }
 .pg-laws li { counter-increment: law; display: grid; grid-template-columns: 2.2em minmax(0, 1fr); column-gap: 12px; row-gap: 4px; padding-block: 14px; border-top: 1px solid var(--ink-faint); }
-.pg-laws li::before { content: counter(law, upper-roman); grid-row: span 2; font-family: var(--font-display); font-style: italic; font-size: 22px; color: var(--green); }
+.pg-laws li::before { content: counter(law, upper-roman); grid-row: span 2; font-family: var(--font-display); font-weight: 600; font-size: 22px; color: var(--green); }
 .pg-laws strong { font-family: var(--font-display); font-weight: 700; font-size: clamp(20px, 2vw, 26px); line-height: 1.15; }
 .pg-laws span { color: var(--ink-dim); font-size: clamp(14px, 1.2vw, 16px); line-height: 1.5; }
 .pg-tablet { position: relative; justify-self: center; width: min(100%, 380px); border-radius: 28px; padding: 26px 24px; display: flex; flex-direction: column; justify-content: flex-end; gap: 12px; overflow: hidden; min-height: min(60vh, 460px);
   background: radial-gradient(80% 60% at 75% 0%, rgba(62, 186, 141, 0.28) 0%, transparent 60%), radial-gradient(70% 60% at 0% 100%, rgba(131, 189, 228, 0.22) 0%, transparent 60%), linear-gradient(160deg, #4E3A52 0%, #2E2231 60%, #241B26 100%);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 30px 60px -30px var(--shadow); }
 .pg-tablet::after { content: ""; position: absolute; inset: 0; opacity: 0.1; mix-blend-mode: overlay; background-size: 140px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); pointer-events: none; }
-.pg-mark { position: absolute; top: 2%; right: 8%; font-family: var(--font-display); font-style: italic; font-size: clamp(110px, 14vw, 180px); line-height: 1; color: transparent; -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.22); }
+.pg-mark { position: absolute; top: 2%; right: 8%; font-family: var(--font-display); font-weight: 700; font-size: clamp(110px, 14vw, 180px); line-height: 1; color: transparent; -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.22); }
 .pg-carved { position: relative; margin: 0 0 6px; font-family: var(--font-display); font-size: clamp(18px, 1.8vw, 22px); line-height: 1.2; color: #F8F6F9; max-width: 22ch; text-wrap: balance; }
 .pg-carved em { color: #9DE2C9; white-space: nowrap; }
 .pg-tok { position: relative; display: flex; align-items: center; gap: 8px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.1); font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: clamp(14px, 1.15vw, 16px); opacity: 0; translate: 0 8px; transition: opacity 600ms ease, translate 600ms cubic-bezier(0.22, 1, 0.36, 1); }
@@ -617,9 +617,10 @@ h2 em, h1 em { font-style: italic; }
 /* accent */
 .rx-head { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: clamp(22px, 2.6vw, 36px); line-height: 1.12; color: #1C151E; text-wrap: balance; }
 .rx-head.sm { font-size: clamp(16px, 1.6vw, 22px); color: #5E5161; }
-.rx-head em { font-style: normal; transition: color 600ms ease; display: inline-block; white-space: nowrap; }
-[data-after="1"] .rx-head em { font-style: italic; }
-[data-after="1"] .rx-head:first-child em { color: #1F8268; }
+.rx-head em { white-space: nowrap; }
+[data-after="0"] .rx-head { font-family: var(--font-old-serif); }
+[data-after="0"] .rx-head em { font-style: italic; }
+[data-after="0"] .rx-head .rx-a, [data-after="1"] .rx-head .rx-b { display: none; }
 /* one green: the real order summary, with the AI calling add-on */
 .rx-pane[data-rx="green"] { align-items: center; background: #F4F1F5; }
 .rx-order { width: min(88%, 340px); display: flex; flex-direction: column; gap: 10px; padding: 18px; border-radius: 18px; background: #fff; border: 1px solid rgba(28, 21, 30, 0.1); box-shadow: 0 10px 30px -18px rgba(46, 34, 48, 0.4); color: #1C151E; font-size: 13px; }
@@ -635,7 +636,7 @@ h2 em, h1 em { font-style: italic; }
 .rx-cta.primary { font-size: 14px; padding: 10px; }
 [data-after="1"] .rx-cta.second { background: #2A202C; }
 @media (max-width: 760px) { .rx { grid-template-columns: 1fr; } .rx-demo { aspect-ratio: 5 / 4; } }
-@media (prefers-reduced-motion: reduce) { .rx-mesh i { animation: none; } .rx-rule::before, .rx-nav, .rx-card, .rx-cta, .rx-head em { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .rx-mesh i { animation: none; } .rx-rule::before, .rx-nav, .rx-card, .rx-cta { transition: none; } }
 .rules { display: grid; gap: 0; width: 100%; }
 .rule { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 24px; padding-block: 22px; border-top: 1px solid var(--ink-faint); align-items: baseline; }
 .rule:last-child { border-bottom: 1px solid var(--ink-faint); }
@@ -736,8 +737,8 @@ h2 em, h1 em { font-style: italic; }
       <p class="kicker rise">Every product owns a colour</p>
       <h2 class="rise">Four products.<br>Four <em>moods.</em></h2>
       <div class="products rise" role="group" aria-label="Pick a product">
-        <button type="button" class="prod p-green" data-tint="green" aria-pressed="false"><small>Green</small><span class="dot" style="background:var(--green)"></span><strong>Smart Job Posting</strong></button>
-        <button type="button" class="prod p-sky" data-tint="sky" aria-pressed="false"><small>Sky</small><span class="dot" style="background:var(--sky)"></span><strong>AI Calling Agent</strong></button>
+        <button type="button" class="prod p-green" data-tint="green" aria-pressed="false"><small>Green</small><span class="dot" style="background:var(--green)"></span><strong>Smart job posting</strong></button>
+        <button type="button" class="prod p-sky" data-tint="sky" aria-pressed="false"><small>Sky</small><span class="dot" style="background:var(--sky)"></span><strong>AI calling agent</strong></button>
         <button type="button" class="prod p-plum" data-tint="plum" aria-pressed="false"><small>Plum</small><span class="dot" style="background:var(--plum)"></span><strong>apna Database</strong></button>
         <button type="button" class="prod p-gold" data-tint="gold" aria-pressed="false"><small>Gold</small><span class="dot" style="background:var(--gold)"></span><strong>apna Unlimited</strong></button>
       </div>
@@ -750,10 +751,10 @@ h2 em, h1 em { font-style: italic; }
       <p class="kicker rise">Header to footer</p>
       <h2 class="rise">Each page wears <em>its</em> colour.</h2>
       <div class="pages rise" id="pages" role="group" aria-label="Tap a page to bring it forward">
-        <div class="page c-green"><div class="bar"><svg class="mini-mark" viewBox="0 0 30 11" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.357 4.953C6.357 5.19567 6.38733 5.3755 6.448 5.4925C6.50867 5.6095 6.617 5.69833 6.773 5.759L6.253 7.41C5.785 7.37533 5.40367 7.2865 5.109 7.1435C4.81433 7.0005 4.57167 6.76867 4.381 6.448C3.93033 7.124 3.23267 7.462 2.288 7.462C1.60333 7.462 1.05084 7.25617 0.6305 6.8445C0.210165 6.43283 0 5.902 0 5.252C0 4.48066 0.285997 3.89134 0.858 3.484C1.43 3.07666 2.262 2.873 3.354 2.873H3.848V2.704C3.848 2.35733 3.77867 2.12333 3.64 2.002C3.50133 1.88067 3.237 1.82 2.847 1.82C2.639 1.82 2.3725 1.8525 2.0475 1.9175C1.7225 1.9825 1.391 2.07133 1.053 2.184L0.494 0.546C0.918669 0.372666 1.38016 0.238334 1.8785 0.143C2.37684 0.0476662 2.82967 0 3.237 0C4.32901 0 5.122 0.210165 5.616 0.6305C6.11 1.05084 6.357 1.69433 6.357 2.561V4.953ZM3.082 5.653C3.238 5.653 3.38316 5.614 3.5175 5.536C3.65183 5.458 3.76233 5.35833 3.849 5.237V4.21H3.576C3.212 4.21 2.94333 4.275 2.77 4.405C2.59666 4.535 2.51 4.73433 2.51 5.003C2.51 5.20233 2.562 5.3605 2.666 5.4775C2.77 5.5945 2.90866 5.653 3.082 5.653ZM13.8185 0.975C13.3808 0.324997 12.733 0 11.875 0C11.5283 0 11.1838 0.0736659 10.8415 0.221C10.4992 0.368334 10.1893 0.606665 9.912 0.936L9.808 0.26H7.52V10.153L10.094 9.893V6.773C10.51 7.23234 11.0473 7.462 11.706 7.462C12.252 7.462 12.7352 7.2995 13.1555 6.9745C13.5758 6.6495 13.9008 6.20317 14.1305 5.6355C14.3602 5.06783 14.475 4.42434 14.475 3.705C14.475 2.53499 14.2562 1.625 13.8185 0.975ZM10.857 5.633C11.507 5.633 11.832 5.00467 11.832 3.748C11.832 3.21933 11.7973 2.81634 11.728 2.539C11.6587 2.26167 11.5655 2.0775 11.4485 1.9865C11.3315 1.8955 11.182 1.85 11 1.85C10.636 1.85 10.3327 2.06666 10.09 2.5V5.152C10.2027 5.32533 10.3197 5.44883 10.441 5.5225C10.5623 5.59617 10.701 5.633 10.857 5.633ZM21.2085 0.546C20.8748 0.181998 20.4177 0 19.837 0C19.421 0 19.0462 0.0779992 18.7125 0.234C18.3788 0.390001 18.0517 0.636998 17.731 0.975L17.549 0.26H15.3V7.202H17.874V2.561C18.1687 2.10166 18.459 1.872 18.745 1.872C18.875 1.872 18.9725 1.91967 19.0375 2.015C19.1025 2.11033 19.135 2.288 19.135 2.548V7.202H21.709V2.08C21.709 1.42133 21.5422 0.910002 21.2085 0.546ZM28.747 4.953C28.747 5.19567 28.7773 5.3755 28.838 5.4925C28.8987 5.6095 29.007 5.69833 29.163 5.759L28.643 7.41C28.175 7.37533 27.7937 7.2865 27.499 7.1435C27.2043 7.0005 26.9617 6.76867 26.771 6.448C26.3203 7.124 25.6227 7.462 24.678 7.462C23.9933 7.462 23.4408 7.25617 23.0205 6.8445C22.6002 6.43283 22.39 5.902 22.39 5.252C22.39 4.48066 22.676 3.89134 23.248 3.484C23.82 3.07666 24.652 2.873 25.744 2.873H26.238V2.704C26.238 2.35733 26.1687 2.12333 26.03 2.002C25.8913 1.88067 25.627 1.82 25.237 1.82C25.029 1.82 24.7625 1.8525 24.4375 1.9175C24.1125 1.9825 23.781 2.07133 23.443 2.184L22.884 0.546C23.3087 0.372666 23.7702 0.238334 24.2685 0.143C24.7668 0.0476662 25.2197 0 25.627 0C26.719 0 27.512 0.210165 28.006 0.6305C28.5 1.05084 28.747 1.69433 28.747 2.561V4.953ZM25.9075 5.536C25.7732 5.614 25.628 5.653 25.472 5.653C25.2987 5.653 25.16 5.5945 25.056 5.4775C24.952 5.3605 24.9 5.20233 24.9 5.003C24.9 4.73433 24.9867 4.535 25.16 4.405C25.3333 4.275 25.602 4.21 25.966 4.21H26.239V5.237C26.1523 5.35833 26.0418 5.458 25.9075 5.536Z" fill="currentColor"/></svg></div><div class="hero"><span class="chip">Smart job posting</span><h3>Get applications from relevant, <em>high-intent</em> candidates</h3><span class="btn">Post a smart-AI job</span><div class="cards"><i></i><i></i><i></i><i></i></div></div></div>
-        <div class="page c-sky"><div class="bar"><svg class="mini-mark" viewBox="0 0 30 11" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.357 4.953C6.357 5.19567 6.38733 5.3755 6.448 5.4925C6.50867 5.6095 6.617 5.69833 6.773 5.759L6.253 7.41C5.785 7.37533 5.40367 7.2865 5.109 7.1435C4.81433 7.0005 4.57167 6.76867 4.381 6.448C3.93033 7.124 3.23267 7.462 2.288 7.462C1.60333 7.462 1.05084 7.25617 0.6305 6.8445C0.210165 6.43283 0 5.902 0 5.252C0 4.48066 0.285997 3.89134 0.858 3.484C1.43 3.07666 2.262 2.873 3.354 2.873H3.848V2.704C3.848 2.35733 3.77867 2.12333 3.64 2.002C3.50133 1.88067 3.237 1.82 2.847 1.82C2.639 1.82 2.3725 1.8525 2.0475 1.9175C1.7225 1.9825 1.391 2.07133 1.053 2.184L0.494 0.546C0.918669 0.372666 1.38016 0.238334 1.8785 0.143C2.37684 0.0476662 2.82967 0 3.237 0C4.32901 0 5.122 0.210165 5.616 0.6305C6.11 1.05084 6.357 1.69433 6.357 2.561V4.953ZM3.082 5.653C3.238 5.653 3.38316 5.614 3.5175 5.536C3.65183 5.458 3.76233 5.35833 3.849 5.237V4.21H3.576C3.212 4.21 2.94333 4.275 2.77 4.405C2.59666 4.535 2.51 4.73433 2.51 5.003C2.51 5.20233 2.562 5.3605 2.666 5.4775C2.77 5.5945 2.90866 5.653 3.082 5.653ZM13.8185 0.975C13.3808 0.324997 12.733 0 11.875 0C11.5283 0 11.1838 0.0736659 10.8415 0.221C10.4992 0.368334 10.1893 0.606665 9.912 0.936L9.808 0.26H7.52V10.153L10.094 9.893V6.773C10.51 7.23234 11.0473 7.462 11.706 7.462C12.252 7.462 12.7352 7.2995 13.1555 6.9745C13.5758 6.6495 13.9008 6.20317 14.1305 5.6355C14.3602 5.06783 14.475 4.42434 14.475 3.705C14.475 2.53499 14.2562 1.625 13.8185 0.975ZM10.857 5.633C11.507 5.633 11.832 5.00467 11.832 3.748C11.832 3.21933 11.7973 2.81634 11.728 2.539C11.6587 2.26167 11.5655 2.0775 11.4485 1.9865C11.3315 1.8955 11.182 1.85 11 1.85C10.636 1.85 10.3327 2.06666 10.09 2.5V5.152C10.2027 5.32533 10.3197 5.44883 10.441 5.5225C10.5623 5.59617 10.701 5.633 10.857 5.633ZM21.2085 0.546C20.8748 0.181998 20.4177 0 19.837 0C19.421 0 19.0462 0.0779992 18.7125 0.234C18.3788 0.390001 18.0517 0.636998 17.731 0.975L17.549 0.26H15.3V7.202H17.874V2.561C18.1687 2.10166 18.459 1.872 18.745 1.872C18.875 1.872 18.9725 1.91967 19.0375 2.015C19.1025 2.11033 19.135 2.288 19.135 2.548V7.202H21.709V2.08C21.709 1.42133 21.5422 0.910002 21.2085 0.546ZM28.747 4.953C28.747 5.19567 28.7773 5.3755 28.838 5.4925C28.8987 5.6095 29.007 5.69833 29.163 5.759L28.643 7.41C28.175 7.37533 27.7937 7.2865 27.499 7.1435C27.2043 7.0005 26.9617 6.76867 26.771 6.448C26.3203 7.124 25.6227 7.462 24.678 7.462C23.9933 7.462 23.4408 7.25617 23.0205 6.8445C22.6002 6.43283 22.39 5.902 22.39 5.252C22.39 4.48066 22.676 3.89134 23.248 3.484C23.82 3.07666 24.652 2.873 25.744 2.873H26.238V2.704C26.238 2.35733 26.1687 2.12333 26.03 2.002C25.8913 1.88067 25.627 1.82 25.237 1.82C25.029 1.82 24.7625 1.8525 24.4375 1.9175C24.1125 1.9825 23.781 2.07133 23.443 2.184L22.884 0.546C23.3087 0.372666 23.7702 0.238334 24.2685 0.143C24.7668 0.0476662 25.2197 0 25.627 0C26.719 0 27.512 0.210165 28.006 0.6305C28.5 1.05084 28.747 1.69433 28.747 2.561V4.953ZM25.9075 5.536C25.7732 5.614 25.628 5.653 25.472 5.653C25.2987 5.653 25.16 5.5945 25.056 5.4775C24.952 5.3605 24.9 5.20233 24.9 5.003C24.9 4.73433 24.9867 4.535 25.16 4.405C25.3333 4.275 25.602 4.21 25.966 4.21H26.239V5.237C26.1523 5.35833 26.0418 5.458 25.9075 5.536Z" fill="currentColor"/></svg></div><div class="hero"><span class="chip">AI Calling Agent</span><h3>AI Calling Agent interviews and <em>shortlists</em> candidates 24/7</h3><span class="btn">Post a job now</span><div class="cards"><i></i><i></i><i></i><i></i></div></div></div>
-        <div class="page c-plum"><div class="bar"><svg class="mini-mark" viewBox="0 0 30 11" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.357 4.953C6.357 5.19567 6.38733 5.3755 6.448 5.4925C6.50867 5.6095 6.617 5.69833 6.773 5.759L6.253 7.41C5.785 7.37533 5.40367 7.2865 5.109 7.1435C4.81433 7.0005 4.57167 6.76867 4.381 6.448C3.93033 7.124 3.23267 7.462 2.288 7.462C1.60333 7.462 1.05084 7.25617 0.6305 6.8445C0.210165 6.43283 0 5.902 0 5.252C0 4.48066 0.285997 3.89134 0.858 3.484C1.43 3.07666 2.262 2.873 3.354 2.873H3.848V2.704C3.848 2.35733 3.77867 2.12333 3.64 2.002C3.50133 1.88067 3.237 1.82 2.847 1.82C2.639 1.82 2.3725 1.8525 2.0475 1.9175C1.7225 1.9825 1.391 2.07133 1.053 2.184L0.494 0.546C0.918669 0.372666 1.38016 0.238334 1.8785 0.143C2.37684 0.0476662 2.82967 0 3.237 0C4.32901 0 5.122 0.210165 5.616 0.6305C6.11 1.05084 6.357 1.69433 6.357 2.561V4.953ZM3.082 5.653C3.238 5.653 3.38316 5.614 3.5175 5.536C3.65183 5.458 3.76233 5.35833 3.849 5.237V4.21H3.576C3.212 4.21 2.94333 4.275 2.77 4.405C2.59666 4.535 2.51 4.73433 2.51 5.003C2.51 5.20233 2.562 5.3605 2.666 5.4775C2.77 5.5945 2.90866 5.653 3.082 5.653ZM13.8185 0.975C13.3808 0.324997 12.733 0 11.875 0C11.5283 0 11.1838 0.0736659 10.8415 0.221C10.4992 0.368334 10.1893 0.606665 9.912 0.936L9.808 0.26H7.52V10.153L10.094 9.893V6.773C10.51 7.23234 11.0473 7.462 11.706 7.462C12.252 7.462 12.7352 7.2995 13.1555 6.9745C13.5758 6.6495 13.9008 6.20317 14.1305 5.6355C14.3602 5.06783 14.475 4.42434 14.475 3.705C14.475 2.53499 14.2562 1.625 13.8185 0.975ZM10.857 5.633C11.507 5.633 11.832 5.00467 11.832 3.748C11.832 3.21933 11.7973 2.81634 11.728 2.539C11.6587 2.26167 11.5655 2.0775 11.4485 1.9865C11.3315 1.8955 11.182 1.85 11 1.85C10.636 1.85 10.3327 2.06666 10.09 2.5V5.152C10.2027 5.32533 10.3197 5.44883 10.441 5.5225C10.5623 5.59617 10.701 5.633 10.857 5.633ZM21.2085 0.546C20.8748 0.181998 20.4177 0 19.837 0C19.421 0 19.0462 0.0779992 18.7125 0.234C18.3788 0.390001 18.0517 0.636998 17.731 0.975L17.549 0.26H15.3V7.202H17.874V2.561C18.1687 2.10166 18.459 1.872 18.745 1.872C18.875 1.872 18.9725 1.91967 19.0375 2.015C19.1025 2.11033 19.135 2.288 19.135 2.548V7.202H21.709V2.08C21.709 1.42133 21.5422 0.910002 21.2085 0.546ZM28.747 4.953C28.747 5.19567 28.7773 5.3755 28.838 5.4925C28.8987 5.6095 29.007 5.69833 29.163 5.759L28.643 7.41C28.175 7.37533 27.7937 7.2865 27.499 7.1435C27.2043 7.0005 26.9617 6.76867 26.771 6.448C26.3203 7.124 25.6227 7.462 24.678 7.462C23.9933 7.462 23.4408 7.25617 23.0205 6.8445C22.6002 6.43283 22.39 5.902 22.39 5.252C22.39 4.48066 22.676 3.89134 23.248 3.484C23.82 3.07666 24.652 2.873 25.744 2.873H26.238V2.704C26.238 2.35733 26.1687 2.12333 26.03 2.002C25.8913 1.88067 25.627 1.82 25.237 1.82C25.029 1.82 24.7625 1.8525 24.4375 1.9175C24.1125 1.9825 23.781 2.07133 23.443 2.184L22.884 0.546C23.3087 0.372666 23.7702 0.238334 24.2685 0.143C24.7668 0.0476662 25.2197 0 25.627 0C26.719 0 27.512 0.210165 28.006 0.6305C28.5 1.05084 28.747 1.69433 28.747 2.561V4.953ZM25.9075 5.536C25.7732 5.614 25.628 5.653 25.472 5.653C25.2987 5.653 25.16 5.5945 25.056 5.4775C24.952 5.3605 24.9 5.20233 24.9 5.003C24.9 4.73433 24.9867 4.535 25.16 4.405C25.3333 4.275 25.602 4.21 25.966 4.21H26.239V5.237C26.1523 5.35833 26.0418 5.458 25.9075 5.536Z" fill="currentColor"/></svg></div><div class="hero"><span class="chip">apna Database</span><h3>Quickly hire <em>active</em> jobseekers around your office.</h3><span class="btn">Search candidates</span><div class="cards"><i></i><i></i><i></i><i></i></div></div></div>
-        <div class="page c-gold"><div class="bar"><svg class="mini-mark" viewBox="0 0 30 11" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.357 4.953C6.357 5.19567 6.38733 5.3755 6.448 5.4925C6.50867 5.6095 6.617 5.69833 6.773 5.759L6.253 7.41C5.785 7.37533 5.40367 7.2865 5.109 7.1435C4.81433 7.0005 4.57167 6.76867 4.381 6.448C3.93033 7.124 3.23267 7.462 2.288 7.462C1.60333 7.462 1.05084 7.25617 0.6305 6.8445C0.210165 6.43283 0 5.902 0 5.252C0 4.48066 0.285997 3.89134 0.858 3.484C1.43 3.07666 2.262 2.873 3.354 2.873H3.848V2.704C3.848 2.35733 3.77867 2.12333 3.64 2.002C3.50133 1.88067 3.237 1.82 2.847 1.82C2.639 1.82 2.3725 1.8525 2.0475 1.9175C1.7225 1.9825 1.391 2.07133 1.053 2.184L0.494 0.546C0.918669 0.372666 1.38016 0.238334 1.8785 0.143C2.37684 0.0476662 2.82967 0 3.237 0C4.32901 0 5.122 0.210165 5.616 0.6305C6.11 1.05084 6.357 1.69433 6.357 2.561V4.953ZM3.082 5.653C3.238 5.653 3.38316 5.614 3.5175 5.536C3.65183 5.458 3.76233 5.35833 3.849 5.237V4.21H3.576C3.212 4.21 2.94333 4.275 2.77 4.405C2.59666 4.535 2.51 4.73433 2.51 5.003C2.51 5.20233 2.562 5.3605 2.666 5.4775C2.77 5.5945 2.90866 5.653 3.082 5.653ZM13.8185 0.975C13.3808 0.324997 12.733 0 11.875 0C11.5283 0 11.1838 0.0736659 10.8415 0.221C10.4992 0.368334 10.1893 0.606665 9.912 0.936L9.808 0.26H7.52V10.153L10.094 9.893V6.773C10.51 7.23234 11.0473 7.462 11.706 7.462C12.252 7.462 12.7352 7.2995 13.1555 6.9745C13.5758 6.6495 13.9008 6.20317 14.1305 5.6355C14.3602 5.06783 14.475 4.42434 14.475 3.705C14.475 2.53499 14.2562 1.625 13.8185 0.975ZM10.857 5.633C11.507 5.633 11.832 5.00467 11.832 3.748C11.832 3.21933 11.7973 2.81634 11.728 2.539C11.6587 2.26167 11.5655 2.0775 11.4485 1.9865C11.3315 1.8955 11.182 1.85 11 1.85C10.636 1.85 10.3327 2.06666 10.09 2.5V5.152C10.2027 5.32533 10.3197 5.44883 10.441 5.5225C10.5623 5.59617 10.701 5.633 10.857 5.633ZM21.2085 0.546C20.8748 0.181998 20.4177 0 19.837 0C19.421 0 19.0462 0.0779992 18.7125 0.234C18.3788 0.390001 18.0517 0.636998 17.731 0.975L17.549 0.26H15.3V7.202H17.874V2.561C18.1687 2.10166 18.459 1.872 18.745 1.872C18.875 1.872 18.9725 1.91967 19.0375 2.015C19.1025 2.11033 19.135 2.288 19.135 2.548V7.202H21.709V2.08C21.709 1.42133 21.5422 0.910002 21.2085 0.546ZM28.747 4.953C28.747 5.19567 28.7773 5.3755 28.838 5.4925C28.8987 5.6095 29.007 5.69833 29.163 5.759L28.643 7.41C28.175 7.37533 27.7937 7.2865 27.499 7.1435C27.2043 7.0005 26.9617 6.76867 26.771 6.448C26.3203 7.124 25.6227 7.462 24.678 7.462C23.9933 7.462 23.4408 7.25617 23.0205 6.8445C22.6002 6.43283 22.39 5.902 22.39 5.252C22.39 4.48066 22.676 3.89134 23.248 3.484C23.82 3.07666 24.652 2.873 25.744 2.873H26.238V2.704C26.238 2.35733 26.1687 2.12333 26.03 2.002C25.8913 1.88067 25.627 1.82 25.237 1.82C25.029 1.82 24.7625 1.8525 24.4375 1.9175C24.1125 1.9825 23.781 2.07133 23.443 2.184L22.884 0.546C23.3087 0.372666 23.7702 0.238334 24.2685 0.143C24.7668 0.0476662 25.2197 0 25.627 0C26.719 0 27.512 0.210165 28.006 0.6305C28.5 1.05084 28.747 1.69433 28.747 2.561V4.953ZM25.9075 5.536C25.7732 5.614 25.628 5.653 25.472 5.653C25.2987 5.653 25.16 5.5945 25.056 5.4775C24.952 5.3605 24.9 5.20233 24.9 5.003C24.9 4.73433 24.9867 4.535 25.16 4.405C25.3333 4.275 25.602 4.21 25.966 4.21H26.239V5.237C26.1523 5.35833 26.0418 5.458 25.9075 5.536Z" fill="currentColor"/></svg></div><div class="hero"><span class="chip">apna Unlimited</span><h3>Post <em>unlimited</em> jobs in one plan</h3><span class="btn">Subscribe now</span><div class="cards"><i></i><i></i><i></i><i></i></div></div></div>
+        <div class="page c-green"><div class="bar"><svg class="mini-mark" viewBox="0 0 30 11" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.357 4.953C6.357 5.19567 6.38733 5.3755 6.448 5.4925C6.50867 5.6095 6.617 5.69833 6.773 5.759L6.253 7.41C5.785 7.37533 5.40367 7.2865 5.109 7.1435C4.81433 7.0005 4.57167 6.76867 4.381 6.448C3.93033 7.124 3.23267 7.462 2.288 7.462C1.60333 7.462 1.05084 7.25617 0.6305 6.8445C0.210165 6.43283 0 5.902 0 5.252C0 4.48066 0.285997 3.89134 0.858 3.484C1.43 3.07666 2.262 2.873 3.354 2.873H3.848V2.704C3.848 2.35733 3.77867 2.12333 3.64 2.002C3.50133 1.88067 3.237 1.82 2.847 1.82C2.639 1.82 2.3725 1.8525 2.0475 1.9175C1.7225 1.9825 1.391 2.07133 1.053 2.184L0.494 0.546C0.918669 0.372666 1.38016 0.238334 1.8785 0.143C2.37684 0.0476662 2.82967 0 3.237 0C4.32901 0 5.122 0.210165 5.616 0.6305C6.11 1.05084 6.357 1.69433 6.357 2.561V4.953ZM3.082 5.653C3.238 5.653 3.38316 5.614 3.5175 5.536C3.65183 5.458 3.76233 5.35833 3.849 5.237V4.21H3.576C3.212 4.21 2.94333 4.275 2.77 4.405C2.59666 4.535 2.51 4.73433 2.51 5.003C2.51 5.20233 2.562 5.3605 2.666 5.4775C2.77 5.5945 2.90866 5.653 3.082 5.653ZM13.8185 0.975C13.3808 0.324997 12.733 0 11.875 0C11.5283 0 11.1838 0.0736659 10.8415 0.221C10.4992 0.368334 10.1893 0.606665 9.912 0.936L9.808 0.26H7.52V10.153L10.094 9.893V6.773C10.51 7.23234 11.0473 7.462 11.706 7.462C12.252 7.462 12.7352 7.2995 13.1555 6.9745C13.5758 6.6495 13.9008 6.20317 14.1305 5.6355C14.3602 5.06783 14.475 4.42434 14.475 3.705C14.475 2.53499 14.2562 1.625 13.8185 0.975ZM10.857 5.633C11.507 5.633 11.832 5.00467 11.832 3.748C11.832 3.21933 11.7973 2.81634 11.728 2.539C11.6587 2.26167 11.5655 2.0775 11.4485 1.9865C11.3315 1.8955 11.182 1.85 11 1.85C10.636 1.85 10.3327 2.06666 10.09 2.5V5.152C10.2027 5.32533 10.3197 5.44883 10.441 5.5225C10.5623 5.59617 10.701 5.633 10.857 5.633ZM21.2085 0.546C20.8748 0.181998 20.4177 0 19.837 0C19.421 0 19.0462 0.0779992 18.7125 0.234C18.3788 0.390001 18.0517 0.636998 17.731 0.975L17.549 0.26H15.3V7.202H17.874V2.561C18.1687 2.10166 18.459 1.872 18.745 1.872C18.875 1.872 18.9725 1.91967 19.0375 2.015C19.1025 2.11033 19.135 2.288 19.135 2.548V7.202H21.709V2.08C21.709 1.42133 21.5422 0.910002 21.2085 0.546ZM28.747 4.953C28.747 5.19567 28.7773 5.3755 28.838 5.4925C28.8987 5.6095 29.007 5.69833 29.163 5.759L28.643 7.41C28.175 7.37533 27.7937 7.2865 27.499 7.1435C27.2043 7.0005 26.9617 6.76867 26.771 6.448C26.3203 7.124 25.6227 7.462 24.678 7.462C23.9933 7.462 23.4408 7.25617 23.0205 6.8445C22.6002 6.43283 22.39 5.902 22.39 5.252C22.39 4.48066 22.676 3.89134 23.248 3.484C23.82 3.07666 24.652 2.873 25.744 2.873H26.238V2.704C26.238 2.35733 26.1687 2.12333 26.03 2.002C25.8913 1.88067 25.627 1.82 25.237 1.82C25.029 1.82 24.7625 1.8525 24.4375 1.9175C24.1125 1.9825 23.781 2.07133 23.443 2.184L22.884 0.546C23.3087 0.372666 23.7702 0.238334 24.2685 0.143C24.7668 0.0476662 25.2197 0 25.627 0C26.719 0 27.512 0.210165 28.006 0.6305C28.5 1.05084 28.747 1.69433 28.747 2.561V4.953ZM25.9075 5.536C25.7732 5.614 25.628 5.653 25.472 5.653C25.2987 5.653 25.16 5.5945 25.056 5.4775C24.952 5.3605 24.9 5.20233 24.9 5.003C24.9 4.73433 24.9867 4.535 25.16 4.405C25.3333 4.275 25.602 4.21 25.966 4.21H26.239V5.237C26.1523 5.35833 26.0418 5.458 25.9075 5.536Z" fill="currentColor"/></svg></div><div class="hero"><span class="chip">Smart job posting</span><h3>Get applications from relevant, high-intent candidates</h3><span class="btn">Post a smart-AI job</span><div class="cards"><i></i><i></i><i></i><i></i></div></div></div>
+        <div class="page c-sky"><div class="bar"><svg class="mini-mark" viewBox="0 0 30 11" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.357 4.953C6.357 5.19567 6.38733 5.3755 6.448 5.4925C6.50867 5.6095 6.617 5.69833 6.773 5.759L6.253 7.41C5.785 7.37533 5.40367 7.2865 5.109 7.1435C4.81433 7.0005 4.57167 6.76867 4.381 6.448C3.93033 7.124 3.23267 7.462 2.288 7.462C1.60333 7.462 1.05084 7.25617 0.6305 6.8445C0.210165 6.43283 0 5.902 0 5.252C0 4.48066 0.285997 3.89134 0.858 3.484C1.43 3.07666 2.262 2.873 3.354 2.873H3.848V2.704C3.848 2.35733 3.77867 2.12333 3.64 2.002C3.50133 1.88067 3.237 1.82 2.847 1.82C2.639 1.82 2.3725 1.8525 2.0475 1.9175C1.7225 1.9825 1.391 2.07133 1.053 2.184L0.494 0.546C0.918669 0.372666 1.38016 0.238334 1.8785 0.143C2.37684 0.0476662 2.82967 0 3.237 0C4.32901 0 5.122 0.210165 5.616 0.6305C6.11 1.05084 6.357 1.69433 6.357 2.561V4.953ZM3.082 5.653C3.238 5.653 3.38316 5.614 3.5175 5.536C3.65183 5.458 3.76233 5.35833 3.849 5.237V4.21H3.576C3.212 4.21 2.94333 4.275 2.77 4.405C2.59666 4.535 2.51 4.73433 2.51 5.003C2.51 5.20233 2.562 5.3605 2.666 5.4775C2.77 5.5945 2.90866 5.653 3.082 5.653ZM13.8185 0.975C13.3808 0.324997 12.733 0 11.875 0C11.5283 0 11.1838 0.0736659 10.8415 0.221C10.4992 0.368334 10.1893 0.606665 9.912 0.936L9.808 0.26H7.52V10.153L10.094 9.893V6.773C10.51 7.23234 11.0473 7.462 11.706 7.462C12.252 7.462 12.7352 7.2995 13.1555 6.9745C13.5758 6.6495 13.9008 6.20317 14.1305 5.6355C14.3602 5.06783 14.475 4.42434 14.475 3.705C14.475 2.53499 14.2562 1.625 13.8185 0.975ZM10.857 5.633C11.507 5.633 11.832 5.00467 11.832 3.748C11.832 3.21933 11.7973 2.81634 11.728 2.539C11.6587 2.26167 11.5655 2.0775 11.4485 1.9865C11.3315 1.8955 11.182 1.85 11 1.85C10.636 1.85 10.3327 2.06666 10.09 2.5V5.152C10.2027 5.32533 10.3197 5.44883 10.441 5.5225C10.5623 5.59617 10.701 5.633 10.857 5.633ZM21.2085 0.546C20.8748 0.181998 20.4177 0 19.837 0C19.421 0 19.0462 0.0779992 18.7125 0.234C18.3788 0.390001 18.0517 0.636998 17.731 0.975L17.549 0.26H15.3V7.202H17.874V2.561C18.1687 2.10166 18.459 1.872 18.745 1.872C18.875 1.872 18.9725 1.91967 19.0375 2.015C19.1025 2.11033 19.135 2.288 19.135 2.548V7.202H21.709V2.08C21.709 1.42133 21.5422 0.910002 21.2085 0.546ZM28.747 4.953C28.747 5.19567 28.7773 5.3755 28.838 5.4925C28.8987 5.6095 29.007 5.69833 29.163 5.759L28.643 7.41C28.175 7.37533 27.7937 7.2865 27.499 7.1435C27.2043 7.0005 26.9617 6.76867 26.771 6.448C26.3203 7.124 25.6227 7.462 24.678 7.462C23.9933 7.462 23.4408 7.25617 23.0205 6.8445C22.6002 6.43283 22.39 5.902 22.39 5.252C22.39 4.48066 22.676 3.89134 23.248 3.484C23.82 3.07666 24.652 2.873 25.744 2.873H26.238V2.704C26.238 2.35733 26.1687 2.12333 26.03 2.002C25.8913 1.88067 25.627 1.82 25.237 1.82C25.029 1.82 24.7625 1.8525 24.4375 1.9175C24.1125 1.9825 23.781 2.07133 23.443 2.184L22.884 0.546C23.3087 0.372666 23.7702 0.238334 24.2685 0.143C24.7668 0.0476662 25.2197 0 25.627 0C26.719 0 27.512 0.210165 28.006 0.6305C28.5 1.05084 28.747 1.69433 28.747 2.561V4.953ZM25.9075 5.536C25.7732 5.614 25.628 5.653 25.472 5.653C25.2987 5.653 25.16 5.5945 25.056 5.4775C24.952 5.3605 24.9 5.20233 24.9 5.003C24.9 4.73433 24.9867 4.535 25.16 4.405C25.3333 4.275 25.602 4.21 25.966 4.21H26.239V5.237C26.1523 5.35833 26.0418 5.458 25.9075 5.536Z" fill="currentColor"/></svg></div><div class="hero"><span class="chip">AI calling agent</span><h3>AI calling agent interviews and shortlists candidates 24/7</h3><span class="btn">Post a job now</span><div class="cards"><i></i><i></i><i></i><i></i></div></div></div>
+        <div class="page c-plum"><div class="bar"><svg class="mini-mark" viewBox="0 0 30 11" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.357 4.953C6.357 5.19567 6.38733 5.3755 6.448 5.4925C6.50867 5.6095 6.617 5.69833 6.773 5.759L6.253 7.41C5.785 7.37533 5.40367 7.2865 5.109 7.1435C4.81433 7.0005 4.57167 6.76867 4.381 6.448C3.93033 7.124 3.23267 7.462 2.288 7.462C1.60333 7.462 1.05084 7.25617 0.6305 6.8445C0.210165 6.43283 0 5.902 0 5.252C0 4.48066 0.285997 3.89134 0.858 3.484C1.43 3.07666 2.262 2.873 3.354 2.873H3.848V2.704C3.848 2.35733 3.77867 2.12333 3.64 2.002C3.50133 1.88067 3.237 1.82 2.847 1.82C2.639 1.82 2.3725 1.8525 2.0475 1.9175C1.7225 1.9825 1.391 2.07133 1.053 2.184L0.494 0.546C0.918669 0.372666 1.38016 0.238334 1.8785 0.143C2.37684 0.0476662 2.82967 0 3.237 0C4.32901 0 5.122 0.210165 5.616 0.6305C6.11 1.05084 6.357 1.69433 6.357 2.561V4.953ZM3.082 5.653C3.238 5.653 3.38316 5.614 3.5175 5.536C3.65183 5.458 3.76233 5.35833 3.849 5.237V4.21H3.576C3.212 4.21 2.94333 4.275 2.77 4.405C2.59666 4.535 2.51 4.73433 2.51 5.003C2.51 5.20233 2.562 5.3605 2.666 5.4775C2.77 5.5945 2.90866 5.653 3.082 5.653ZM13.8185 0.975C13.3808 0.324997 12.733 0 11.875 0C11.5283 0 11.1838 0.0736659 10.8415 0.221C10.4992 0.368334 10.1893 0.606665 9.912 0.936L9.808 0.26H7.52V10.153L10.094 9.893V6.773C10.51 7.23234 11.0473 7.462 11.706 7.462C12.252 7.462 12.7352 7.2995 13.1555 6.9745C13.5758 6.6495 13.9008 6.20317 14.1305 5.6355C14.3602 5.06783 14.475 4.42434 14.475 3.705C14.475 2.53499 14.2562 1.625 13.8185 0.975ZM10.857 5.633C11.507 5.633 11.832 5.00467 11.832 3.748C11.832 3.21933 11.7973 2.81634 11.728 2.539C11.6587 2.26167 11.5655 2.0775 11.4485 1.9865C11.3315 1.8955 11.182 1.85 11 1.85C10.636 1.85 10.3327 2.06666 10.09 2.5V5.152C10.2027 5.32533 10.3197 5.44883 10.441 5.5225C10.5623 5.59617 10.701 5.633 10.857 5.633ZM21.2085 0.546C20.8748 0.181998 20.4177 0 19.837 0C19.421 0 19.0462 0.0779992 18.7125 0.234C18.3788 0.390001 18.0517 0.636998 17.731 0.975L17.549 0.26H15.3V7.202H17.874V2.561C18.1687 2.10166 18.459 1.872 18.745 1.872C18.875 1.872 18.9725 1.91967 19.0375 2.015C19.1025 2.11033 19.135 2.288 19.135 2.548V7.202H21.709V2.08C21.709 1.42133 21.5422 0.910002 21.2085 0.546ZM28.747 4.953C28.747 5.19567 28.7773 5.3755 28.838 5.4925C28.8987 5.6095 29.007 5.69833 29.163 5.759L28.643 7.41C28.175 7.37533 27.7937 7.2865 27.499 7.1435C27.2043 7.0005 26.9617 6.76867 26.771 6.448C26.3203 7.124 25.6227 7.462 24.678 7.462C23.9933 7.462 23.4408 7.25617 23.0205 6.8445C22.6002 6.43283 22.39 5.902 22.39 5.252C22.39 4.48066 22.676 3.89134 23.248 3.484C23.82 3.07666 24.652 2.873 25.744 2.873H26.238V2.704C26.238 2.35733 26.1687 2.12333 26.03 2.002C25.8913 1.88067 25.627 1.82 25.237 1.82C25.029 1.82 24.7625 1.8525 24.4375 1.9175C24.1125 1.9825 23.781 2.07133 23.443 2.184L22.884 0.546C23.3087 0.372666 23.7702 0.238334 24.2685 0.143C24.7668 0.0476662 25.2197 0 25.627 0C26.719 0 27.512 0.210165 28.006 0.6305C28.5 1.05084 28.747 1.69433 28.747 2.561V4.953ZM25.9075 5.536C25.7732 5.614 25.628 5.653 25.472 5.653C25.2987 5.653 25.16 5.5945 25.056 5.4775C24.952 5.3605 24.9 5.20233 24.9 5.003C24.9 4.73433 24.9867 4.535 25.16 4.405C25.3333 4.275 25.602 4.21 25.966 4.21H26.239V5.237C26.1523 5.35833 26.0418 5.458 25.9075 5.536Z" fill="currentColor"/></svg></div><div class="hero"><span class="chip">apna Database</span><h3>Quickly hire active jobseekers around your office.</h3><span class="btn">Search candidates</span><div class="cards"><i></i><i></i><i></i><i></i></div></div></div>
+        <div class="page c-gold"><div class="bar"><svg class="mini-mark" viewBox="0 0 30 11" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.357 4.953C6.357 5.19567 6.38733 5.3755 6.448 5.4925C6.50867 5.6095 6.617 5.69833 6.773 5.759L6.253 7.41C5.785 7.37533 5.40367 7.2865 5.109 7.1435C4.81433 7.0005 4.57167 6.76867 4.381 6.448C3.93033 7.124 3.23267 7.462 2.288 7.462C1.60333 7.462 1.05084 7.25617 0.6305 6.8445C0.210165 6.43283 0 5.902 0 5.252C0 4.48066 0.285997 3.89134 0.858 3.484C1.43 3.07666 2.262 2.873 3.354 2.873H3.848V2.704C3.848 2.35733 3.77867 2.12333 3.64 2.002C3.50133 1.88067 3.237 1.82 2.847 1.82C2.639 1.82 2.3725 1.8525 2.0475 1.9175C1.7225 1.9825 1.391 2.07133 1.053 2.184L0.494 0.546C0.918669 0.372666 1.38016 0.238334 1.8785 0.143C2.37684 0.0476662 2.82967 0 3.237 0C4.32901 0 5.122 0.210165 5.616 0.6305C6.11 1.05084 6.357 1.69433 6.357 2.561V4.953ZM3.082 5.653C3.238 5.653 3.38316 5.614 3.5175 5.536C3.65183 5.458 3.76233 5.35833 3.849 5.237V4.21H3.576C3.212 4.21 2.94333 4.275 2.77 4.405C2.59666 4.535 2.51 4.73433 2.51 5.003C2.51 5.20233 2.562 5.3605 2.666 5.4775C2.77 5.5945 2.90866 5.653 3.082 5.653ZM13.8185 0.975C13.3808 0.324997 12.733 0 11.875 0C11.5283 0 11.1838 0.0736659 10.8415 0.221C10.4992 0.368334 10.1893 0.606665 9.912 0.936L9.808 0.26H7.52V10.153L10.094 9.893V6.773C10.51 7.23234 11.0473 7.462 11.706 7.462C12.252 7.462 12.7352 7.2995 13.1555 6.9745C13.5758 6.6495 13.9008 6.20317 14.1305 5.6355C14.3602 5.06783 14.475 4.42434 14.475 3.705C14.475 2.53499 14.2562 1.625 13.8185 0.975ZM10.857 5.633C11.507 5.633 11.832 5.00467 11.832 3.748C11.832 3.21933 11.7973 2.81634 11.728 2.539C11.6587 2.26167 11.5655 2.0775 11.4485 1.9865C11.3315 1.8955 11.182 1.85 11 1.85C10.636 1.85 10.3327 2.06666 10.09 2.5V5.152C10.2027 5.32533 10.3197 5.44883 10.441 5.5225C10.5623 5.59617 10.701 5.633 10.857 5.633ZM21.2085 0.546C20.8748 0.181998 20.4177 0 19.837 0C19.421 0 19.0462 0.0779992 18.7125 0.234C18.3788 0.390001 18.0517 0.636998 17.731 0.975L17.549 0.26H15.3V7.202H17.874V2.561C18.1687 2.10166 18.459 1.872 18.745 1.872C18.875 1.872 18.9725 1.91967 19.0375 2.015C19.1025 2.11033 19.135 2.288 19.135 2.548V7.202H21.709V2.08C21.709 1.42133 21.5422 0.910002 21.2085 0.546ZM28.747 4.953C28.747 5.19567 28.7773 5.3755 28.838 5.4925C28.8987 5.6095 29.007 5.69833 29.163 5.759L28.643 7.41C28.175 7.37533 27.7937 7.2865 27.499 7.1435C27.2043 7.0005 26.9617 6.76867 26.771 6.448C26.3203 7.124 25.6227 7.462 24.678 7.462C23.9933 7.462 23.4408 7.25617 23.0205 6.8445C22.6002 6.43283 22.39 5.902 22.39 5.252C22.39 4.48066 22.676 3.89134 23.248 3.484C23.82 3.07666 24.652 2.873 25.744 2.873H26.238V2.704C26.238 2.35733 26.1687 2.12333 26.03 2.002C25.8913 1.88067 25.627 1.82 25.237 1.82C25.029 1.82 24.7625 1.8525 24.4375 1.9175C24.1125 1.9825 23.781 2.07133 23.443 2.184L22.884 0.546C23.3087 0.372666 23.7702 0.238334 24.2685 0.143C24.7668 0.0476662 25.2197 0 25.627 0C26.719 0 27.512 0.210165 28.006 0.6305C28.5 1.05084 28.747 1.69433 28.747 2.561V4.953ZM25.9075 5.536C25.7732 5.614 25.628 5.653 25.472 5.653C25.2987 5.653 25.16 5.5945 25.056 5.4775C24.952 5.3605 24.9 5.20233 24.9 5.003C24.9 4.73433 24.9867 4.535 25.16 4.405C25.3333 4.275 25.602 4.21 25.966 4.21H26.239V5.237C26.1523 5.35833 26.0418 5.458 25.9075 5.536Z" fill="currentColor"/></svg></div><div class="hero"><span class="chip">apna Unlimited</span><h3>Post unlimited jobs in one plan</h3><span class="btn">Subscribe now</span><div class="cards"><i></i><i></i><i></i><i></i></div></div></div>
       </div>
       <p class="caption rise">The headlines are the live product pages. Green stays the one action button everywhere.</p>
     </div>
@@ -761,24 +762,24 @@ h2 em, h1 em { font-style: italic; }
 
   <section class="slide" aria-label="Typography">
     <div class="inner">
-      <p class="kicker rise">Type</p>
-      <h2 class="rise">A voice with <em>character.</em></h2>
+      <p class="kicker rise">Type · introducing Google Sans Flex</p>
+      <h2 class="rise">One typeface. One voice.</h2>
       <div class="type-demo rise" id="typedemo">
-        <p class="type-eyebrow">India's #1 Hiring Platform</p>
-        <p class="type-head">India's Largest <em>AI-Native</em> Early Talent Platform</p>
+        <p class="type-eyebrow">India's #1 hiring platform</p>
+        <p class="type-head"><span class="rx-b">India's Largest <em>AI-Native</em> Early Talent Platform</span><span class="rx-a">India's largest AI-native early talent platform</span></p>
         <p class="type-body">Streamlining end-to-end hiring process. Building Bharat's workforce in the AI economy.</p>
-        <div class="type-stats"><span><b>6 Cr+</b>Candidates</span><span><b>7 L+</b>Businesses &amp; Enterprises</span><span><b>7,200+</b>Towns &amp; Cities</span></div>
+        <div class="type-stats"><span><b>6 Cr+</b>Candidates</span><span><b>7 L+</b>Businesses &amp; enterprises</span><span><b>7,200+</b>Towns &amp; cities covered</span></div>
       </div>
       <div class="type-row rise">
         <div class="toggle" role="group" aria-label="Compare type">
-          <button type="button" id="type-before" aria-pressed="false">Before: one typeface</button>
-          <button type="button" id="type-after" aria-pressed="true">After: an editorial serif</button>
+          <button type="button" id="type-before" aria-pressed="false">Before: a serif and Inter</button>
+          <button type="button" id="type-after" aria-pressed="true">After: Google Sans Flex</button>
         </div>
-        <p class="type-product">The product itself is Inter only. The serif is the brand&rsquo;s voice, never the tool&rsquo;s; the one exception is a customer&rsquo;s quote.</p>
+        <p class="type-product">The website and the product now speak in one typeface. Weight and size carry the hierarchy, not a second font or an italic word.</p>
       </div>
       <div class="type-rules rise">
-        <div><strong class="tr-serif">Source Serif 4</strong><span>Hero headlines, section headings and quotes. Where the brand speaks.</span></div>
-        <div><strong class="tr-sans">Inter</strong><span>Everything you read, tap and compare: body, buttons, forms, and every number.</span></div>
+        <div><strong class="tr-sans">Headlines</strong><span>Bold and plain, in sentence case. 64px heroes on a desktop, 32px on a phone, from one token.</span></div>
+        <div><strong class="tr-sans">Everything else</strong><span>Body, buttons, forms, quotes and every number: the same family, so the website and the product read as one.</span></div>
       </div>
     </div>
   </section>
@@ -811,7 +812,7 @@ h2 em, h1 em { font-style: italic; }
       <h2 class="rise">A page that feels <em>alive.</em></h2>
       <div class="living rise" id="living">
         <div class="blobs" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><b class="wander"></b></div>
-        <p>India's Largest <em>AI-Native</em><br>Early Talent Platform</p>
+        <p>India's largest AI-native<br>early talent platform</p>
       </div>
       <div class="toggle rise" role="group" aria-label="Compare">
         <button type="button" id="flat-btn" aria-pressed="false">Before: flat</button>
@@ -830,7 +831,7 @@ h2 em, h1 em { font-style: italic; }
         <ol class="pg-laws rise">
           <li><strong>Written once, read everywhere</strong><span>Every colour, size and motion is a named token. Change it in one place and every screen follows.</span></li>
           <li><strong>Compose, never re-style</strong><span>Pages are built from existing parts. A new need becomes a new part first, so nothing is drawn twice.</span></li>
-          <li><strong>Subtract the obvious, add the meaningful</strong><span>After Maeda&rsquo;s laws of simplicity: one green action, one italic word per page, and the warmth kept in.</span></li>
+          <li><strong>Subtract the obvious, add the meaningful</strong><span>After Maeda&rsquo;s laws of simplicity: one green action, one typeface, and the warmth kept in.</span></li>
         </ol>
       </div>
       <div class="pg-tablet rise" aria-hidden="true">
@@ -854,7 +855,7 @@ h2 em, h1 em { font-style: italic; }
       <div class="facts rise">
         <div class="fact"><b data-count="41">41</b><span>components in 8 categories, from a button to a pricing card</span></div>
         <div class="fact"><b data-count="4">4</b><span>product colours, all from the logo</span></div>
-        <div class="fact"><b data-count="2">2</b><span>typefaces, one voice: a serif for the brand, Inter for the work</span></div>
+        <div class="fact"><b data-count="1">1</b><span>typeface, Google Sans Flex, for the website and the product</span></div>
         <div class="fact"><b data-count="1">1</b><span>green action per screen</span></div>
       </div>
       <p class="lede rise">Designers and engineers build from the same parts. A change made once shows up everywhere.</p>
@@ -897,7 +898,7 @@ h2 em, h1 em { font-style: italic; }
       <div class="rx rise">
         <div class="rx-list" role="tablist" aria-label="Rules">
           <button class="rx-rule" role="tab" aria-selected="true" data-rx="glass"><strong>Cards on a gradient are glass</strong><span>One rule, on for every marketing page at once. Nobody edited a page.</span></button>
-          <button class="rx-rule" role="tab" aria-selected="false" data-rx="accent"><strong>One italic word per page headline</strong><span>Every page&rsquo;s hero headline carries one; section titles stay plain. The voice holds, whoever writes the copy.</span></button>
+          <button class="rx-rule" role="tab" aria-selected="false" data-rx="accent"><strong>Sentence case, everywhere</strong><span>Headlines, buttons and labels capitalise only the first word. No italic accents; the voice holds, whoever writes the copy.</span></button>
           <button class="rx-rule" role="tab" aria-selected="false" data-rx="green"><strong>One green button per screen</strong><span>The add-on used to wear the same green as &ldquo;Proceed to pay&rdquo;. Now it&rsquo;s dark, so paying is the one clear next step.</span></button>
         </div>
         <div class="rx-stage">
@@ -912,9 +913,9 @@ h2 em, h1 em { font-style: italic; }
               <div class="rx-card"><b>Let&rsquo;s get started</b><span class="rx-field"></span><span class="rx-btn"></span></div>
             </div>
             <div class="rx-pane" data-rx="accent" hidden>
-              <p class="rx-head">India&rsquo;s Largest <em>AI-Native</em> Early Talent Platform</p>
-              <p class="rx-head sm">Get applications from relevant, <em>high-intent</em> candidates</p>
-              <p class="rx-head sm">Build what <em>millions</em> run on</p>
+              <p class="rx-head"><span class="rx-b">India&rsquo;s Largest <em>AI-Native</em> Early Talent Platform</span><span class="rx-a">India&rsquo;s largest AI-native early talent platform</span></p>
+              <p class="rx-head sm"><span class="rx-b">AI Calling Agent Interviews and <em>Shortlists</em> Candidates</span><span class="rx-a">AI calling agent interviews and shortlists candidates</span></p>
+              <p class="rx-head sm"><span class="rx-b">Top Hiring <em>Partners</em></span><span class="rx-a">Top hiring partners</span></p>
             </div>
             <div class="rx-pane" data-rx="green" hidden>
               <div class="rx-order">
@@ -960,7 +961,7 @@ h2 em, h1 em { font-style: italic; }
         <div class="play-cell">
           <div class="k-nav">
             <button type="button" class="k-nav-row" id="navgroup" aria-expanded="false" aria-controls="navsub"><span>Database</span><span class="k-chev" aria-hidden="true">⌄</span></button>
-            <div class="k-expand" id="navsub"><div><a>Search Candidates</a><a>Saved Searches</a><a>Unlocked Candidates</a></div></div>
+            <div class="k-expand" id="navsub"><div><a>Search candidates</a><a>Saved searches</a><a>Unlocked candidates</a></div></div>
           </div>
           <small>Panels glide open, never pop</small>
         </div>
@@ -975,9 +976,9 @@ h2 em, h1 em { font-style: italic; }
       <h2 class="rise">A whole new <em>front door.</em></h2>
       <div class="sitemap rise">
         <span>Home</span><span>Pricing</span><span>Enterprise</span>
-        <span class="prod-green">Smart Job Posting</span><span class="prod-sky">AI Calling Agent</span><span class="prod-plum">apna Database</span><span class="prod-gold">apna Unlimited</span>
+        <span class="prod-green">Smart job posting</span><span class="prod-sky">AI calling agent</span><span class="prod-plum">apna Database</span><span class="prod-gold">apna Unlimited</span>
         <span>About</span><span>Culture</span><span>Leadership</span><span>Management</span><span>By the numbers</span>
-        <span>Careers</span><span>Customer stories</span><span>Newsroom</span><span>Awards</span><span>AI Interview Prep Lounge</span><span>Login</span>
+        <span>Careers</span><span>Customer stories</span><span>Newsroom</span><span>Awards</span><span>AI interview prep lounge</span><span>Login</span>
       </div>
       <p class="lede rise">Eighteen pages, one brand, one system.</p>
     </div>
@@ -1416,7 +1417,7 @@ h2 em, h1 em { font-style: italic; }
   }
   lights.addEventListener("click", function () { swapShots(document.documentElement.dataset.mode === "dark"); });
 
-  // Type: one typeface vs the editorial serif.
+  // Type: before (a serif and Inter) vs after (Google Sans Flex).
   var typedemo = document.getElementById("typedemo"), tb = document.getElementById("type-before"), ta = document.getElementById("type-after");
   function setSerif(on) { typedemo.classList.toggle("before", !on); ta.setAttribute("aria-pressed", String(on)); tb.setAttribute("aria-pressed", String(!on)); }
   tb.addEventListener("click", function () { setSerif(false); });
