@@ -70,7 +70,7 @@
    * Roles — Muted (low-emphasis surface + text)
    * ------------------------------------------------------------------------ */
   --muted:             var(--color-gray-100);
-  --muted-foreground:  var(--color-gray-500);
+  --muted-foreground:  var(--color-gray-550); /* AA on --muted too, not only on white */
 
   /* --------------------------------------------------------------------------
    * Roles — Accent (hover / selection tint keyed to primary hue)

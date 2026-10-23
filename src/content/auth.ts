@@ -28,7 +28,7 @@ export const PHONE_LOGIN = {
   /** Shown under the field when the CTA is pressed without 10 digits. */
   invalid: "Enter your 10-digit mobile number",
   or: "OR",
-  enterprise: "Click here for Enterprise login",
+  enterprise: "Enterprise login",
 }
 
 export const ENTERPRISE_LOGIN = {

@@ -5,7 +5,7 @@
  * number, as on the live employer.apna.co (homepage card and /signin).
  *
  *   PhoneLoginForm   the form: title, mobile number (+91), the CTA, an "OR"
- *                    rule and "Click here for Enterprise login". The login
+ *                    rule and "Enterprise login". The login
  *                    page (/login) puts it in AuthShell with "Send OTP".
  *   HeroLeadCard     the homepage's card: the same form ("Continue") with the
  *                    legal line inside the card.

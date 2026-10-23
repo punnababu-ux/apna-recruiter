@@ -49,6 +49,7 @@
   --color-gray-300:  #D4D4D8;
   --color-gray-400:  #A1A1AA;
   --color-gray-500:  #71717A;
+  --color-gray-550:  #6B6B74;  /* muted text: 4.8:1 on gray-100, where gray-500 is 4.4 (under AA) */
   --color-gray-600:  #52525B;
   --color-gray-700:  #3F3F46;
   --color-gray-800:  #27272A;
@@ -328,9 +329,10 @@
    * which is exactly what a preset exists to remove. */
   --font-size-display-fluid: clamp(2rem, 1.15rem + 3.7vw, 3.75rem);
   /* The marketing hero headline only (text-editorial-display): the same 32px
-   * on a phone, 88px from ~1280 up (2026-10-23, a bigger hero). Quotes and
-   * product headlines keep the 60px display-fluid above. */
-  --font-size-display-hero-fluid: clamp(2rem, 0.55rem + 6.2vw, 5.5rem);
+   * on a phone, 64px from ~1280 up (2026-10-23 at 88px, 64px since
+   * 2026-10-24). Quotes and product headlines keep the 60px display-fluid
+   * above. */
+  --font-size-display-hero-fluid: clamp(2rem, 1.33rem + 3.33vw, 4rem);
 
   /* --------------------------------------------------------------------------
    * Typography · Line-height ramp (unitless, pairs with size ramp)

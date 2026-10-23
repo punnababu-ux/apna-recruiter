@@ -428,36 +428,23 @@ Never add `shadow-card` / `shadow-elevated` to a resting card to make it
   with an icon). `PageHero` and the product hero draw it for you.
 - **Eyebrows below the hero are gray** (`text-overline
   text-muted-foreground`), never green.
-- **Serif — where and only where.** Source Serif 4 (the editorial voice)
-  is used for exactly three things on marketing pages, the homepage
-  included:
-  1. **The page headline (h1)** in every hero.
-  2. **Section titles (h2)** — the one title that opens a section, the
-     closing contact band's title included.
-  3. **Quotes** — `text-quote` in a card (testimonials, press),
-     `text-quote-lg` for a page's featured quote (the founder's line).
-
-  **Every hero headline (h1) has exactly one italic accent** — one word
-  or one tight phrase ("AI-Native"), set with `withAccent` (the word lives
-  in the page's content as `titleAccent`). Section titles (h2) stay plain.
-  **Everything else is Inter:** h3 and below, card / list / accordion
-  titles, every number (stats, years, step numbers — numbers are data),
-  eyebrows, chips, body, buttons, nav, forms, footer, and anything in the
-  app. It's automatic: the marketing shell sets `data-voice="editorial"`
-  and `SectionHeading` switches levels 1–2 to the serif by itself — there
-  is no prop to set or forget. A hand-built h1/h2 uses
-  `text-editorial-display` / `-h1` / `-h2`. `npm run lint:tokens` refuses
-  the serif presets outside the marketing folders.
-- **🛑 No serif in the product. Ever.** The dashboard, checkout, job
-  posting, login, OnlyRounds and every workflow are Inter only, headlines
-  included. This is enforced twice: the token lint refuses the serif
-  presets outside marketing files, and `--font-editorial` itself resolves
-  to Inter everywhere except inside `[data-voice="editorial"]` (the
-  marketing layout). So a shared component that uses the serif on the
-  website (PricingHero, FaqSection, TrustBar) turns Inter by itself inside
-  the product. Never set `data-voice="editorial"` on a product surface.
-  **The one exception: testimonial quotes** (`text-quote*`) keep the serif
-  everywhere, the plans step in checkout included.
+- **One typeface: Google Sans Flex, everywhere** (user call, 2026-10-23).
+  Marketing pages, the homepage and the product all use it — headlines,
+  section titles, quotes, numbers, body, buttons, nav, forms, footer. There
+  is no serif and no italic accent: hero headlines (h1) are plain sentence
+  case. `--font-editorial` and `--font-quote` still exist but resolve to the
+  same sans, so `SectionHeading`'s levels 1–2, `text-editorial-*` and
+  `text-quote*` keep working without a second face.
+  - **Hero headline size:** `text-editorial-display`, read from
+    `--font-size-display-hero-fluid` — 32px on a phone, 64px from ~1280px
+    (2026-10-24). Every marketing hero uses it through `SectionHeading`
+    level 1; change the token, never one page.
+  - **`withAccent` / `titleAccent`** now only keep the accent phrase on one
+    line (`whitespace-nowrap`, e.g. "AI-native"); they add no italic or
+    colour. Don't reintroduce an accent style.
+  - **Never set a font family by hand** (`font-serif`, inline
+    `fontFamily`). `npm run lint:tokens` still refuses the editorial and
+    quote presets, and `font-serif`, outside the marketing folders.
 - **Each product owns one gradient** (`bg-gradient-product-*`): Smart Jobs
   green, AI Calling Agent sky, apna Database plum, apna Unlimited gold
   (swapped 2026-10-18: Jobs, the core product, wears the brand green). The
@@ -508,7 +495,7 @@ Never add `shadow-card` / `shadow-elevated` to a resting card to make it
 - **A card on a gradient is frosted glass** — `--surface-glass` (card at
   80%) plus a blur, everywhere: marketing cards, the homepage login card, the nav
   pill and docked header. It is automatic for a plain `Card` on a marketing
-  page (a CSS rule in the design system's `index.css`, like the serif);
+  page (a CSS rule in the design system's `index.css`);
   hand-rolled surfaces use `bg-surface-glass backdrop-blur-xl`. Never pick
   the fill by hand. Not glass: plan and pricing cards (`plan-card`), the
   small tiles inside product illustrations, buttons and chips.

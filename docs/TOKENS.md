@@ -153,7 +153,7 @@ at every step measured. Light mode is completely unaffected.
 | `--secondary`            | gray-100         | apna-plum-800    | medium-emphasis action            |
 | `--secondary-foreground` | gray-900         | gray-50          | text/icon on secondary            |
 | `--muted`                | gray-100         | apna-plum-800    | low-emphasis surface              |
-| `--muted-foreground`     | gray-500         | gray-400         | helper text                       |
+| `--muted-foreground`     | gray-550         | gray-400         | helper text (AA on white and on --muted) |
 | `--accent`               | gray-100         | apna-plum-800    | hover / selection                 |
 | `--accent-foreground`    | gray-900         | gray-50          | text on accent                    |
 

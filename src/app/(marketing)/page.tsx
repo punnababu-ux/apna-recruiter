@@ -92,7 +92,7 @@ export default function HomePage() {
                 }
                 title={
                   <>
-                    India&apos;s Largest <span className="whitespace-nowrap">AI-Native</span> Early Talent Platform
+                    India&apos;s largest <span className="whitespace-nowrap">AI-native</span> early talent platform
                   </>
                 }
                 description={
@@ -115,6 +115,7 @@ export default function HomePage() {
                     key={stat.label}
                     value={stat.value}
                     label={stat.label}
+                    shortLabel={stat.shortLabel}
                     size="sm"
                   />
                 ))}
@@ -130,9 +131,9 @@ export default function HomePage() {
 
       <TrustedByBand />
 
-      {/* The hiring suite on white: each card wears its product's gradient,
-          so the colour lives in the cards, not the band. */}
-      <Section tone="card" size="lg">
+      {/* The hiring suite on the gradient: white cards, each illustration
+          on its product's gradient. */}
+      <Section size="lg">
         <div className="flex flex-col gap-10">
           <SectionHeading
             level={2}
@@ -158,9 +159,16 @@ export default function HomePage() {
               <ScrollStackItem
                 key={product.name}
                 data-product={PRODUCT_KEY[product.name as ProductName]}
-                className="group grid gap-2 bg-gradient-product p-2 lg:grid-cols-2"
+                className="group relative grid cursor-pointer gap-2 p-2 lg:grid-cols-2"
               >
-                <div className="flex flex-col gap-8 p-6 sm:p-10 lg:p-16">
+                {/* The whole card opens the product's page (in place of a
+                    "Learn more" button); the action button stays on top. */}
+                <Link
+                  href={hrefFor(product.name)}
+                  aria-label={`Learn more about ${product.eyebrow}`}
+                  className="absolute inset-0 rounded-card focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+                />
+                <div className="pointer-events-none relative flex flex-col gap-8 p-6 sm:p-10 lg:p-16">
                   {/* apna Unlimited is a brand with its own wordmark — show the
                       "apna ∞ Unlimited" logo, not the eyebrow text. */}
                   {product.name === "apna Unlimited" ? (
@@ -188,45 +196,36 @@ export default function HomePage() {
                       </li>
                     ))}
                   </ul>
-                  {/* The product's action leads, in the dark `emphasis` button
-                      (green stays with the hero's sign-up, the page's one
-                      primary); "Learn more" sits beside it, quieter. Phones
-                      stack them full width, action first. */}
-                  <div className="flex flex-col gap-3 sm:flex-row">
-                    <Button
-                      variant="emphasis"
-                      size="lg"
-                      className="w-full sm:w-fit"
-                      nativeButton={false}
-                      render={<Link href={product.action.href} />}
-                      trailingIcon={<ArrowRight aria-hidden />}
-                    >
-                      {product.action.label}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      className="w-full sm:w-fit"
-                      nativeButton={false}
-                      render={<Link href={hrefFor(product.name)} />}
-                    >
-                      Learn more
-                    </Button>
-                  </div>
+                  {/* One action per card, in the dark `emphasis` button (green
+                      stays with the hero's sign-up, the page's one primary).
+                      Full width on phones. */}
+                  <Button
+                    variant="emphasis"
+                    size="lg"
+                    className="pointer-events-auto w-full sm:w-fit"
+                    nativeButton={false}
+                    render={<Link href={product.action.href} />}
+                    trailingIcon={<ArrowRight aria-hidden />}
+                  >
+                    {product.action.label}
+                  </Button>
                 </div>
-                {/* Phones: the illustration leads, the copy follows. On a
-                    sheer glass panel, as on the product pages' heroes: the
-                    card already wears the gradient. Nested corner. */}
+                {/* Phones: the illustration leads, the copy follows. It wears
+                    its product's gradient on the white card. */}
                 <ProductIllustration
                   product={product.name as ProductName}
                   size="lg"
-                  bare
-                  className="rounded-card-nested border border-card/60 bg-surface-glass-faint backdrop-blur-xl h-64 max-lg:order-first lg:h-full lg:min-h-112"
+                  className="pointer-events-none relative h-64 max-lg:order-first lg:h-full lg:min-h-112"
                 />
               </ScrollStackItem>
             ))}
-            <ScrollStackItem className="group grid gap-2 bg-gradient-checkout-hero p-2 lg:grid-cols-2">
-              <div className="flex flex-col gap-8 p-6 sm:p-10 lg:p-16">
+            <ScrollStackItem className="group relative grid cursor-pointer gap-2 p-2 lg:grid-cols-2">
+              <Link
+                href={HOME_ENTERPRISE.secondary.href}
+                aria-label={HOME_ENTERPRISE.secondary.label}
+                className="absolute inset-0 rounded-card focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+              />
+              <div className="pointer-events-none relative flex flex-col gap-8 p-6 sm:p-10 lg:p-16">
                 <span className="flex items-center gap-2 text-overline text-muted-foreground">
                   <Building2 className="size-4 shrink-0" aria-hidden />
                   {HOME_ENTERPRISE.eyebrow}
@@ -243,24 +242,13 @@ export default function HomePage() {
                     </li>
                   ))}
                 </ul>
-                <div className="flex flex-wrap gap-3">
-                  <ContactButton variant="emphasis" size="lg">
-                    {HOME_ENTERPRISE.primary.label}
-                  </ContactButton>
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    nativeButton={false}
-                    render={<Link href={HOME_ENTERPRISE.secondary.href} />}
-                    trailingIcon={<ArrowRight aria-hidden />}
-                  >
-                    {HOME_ENTERPRISE.secondary.label}
-                  </Button>
-                </div>
+                <ContactButton variant="emphasis" size="lg" className="pointer-events-auto w-full sm:w-fit">
+                  {HOME_ENTERPRISE.primary.label}
+                </ContactButton>
               </div>
               {/* The mother gradient: Enterprise is all of apna, tailored,
                   so it wears the brand's own gradient, not a fifth hue. */}
-              <EnterpriseIllustration bare className="rounded-card-nested border border-card/60 bg-surface-glass-faint backdrop-blur-xl h-64 max-lg:order-first lg:h-full lg:min-h-112" />
+              <EnterpriseIllustration className="pointer-events-none relative h-64 max-lg:order-first lg:h-full lg:min-h-112" />
             </ScrollStackItem>
           </ScrollStack>
 
@@ -268,9 +256,10 @@ export default function HomePage() {
       </Section>
 
 
-      {/* After the white suite, the proof on the gradient (its cards turn
-          frosted glass there by themselves), then the press, the FAQ. */}
-      <WhyHireBand />
+      {/* After the gradient suite, the proof on white (its cards turn the
+          muted grey there by themselves), then the press, the FAQ. */}
+      {/* No stat row: the hero already carries the numbers. */}
+      <WhyHireBand tone="card" stats={[]} />
       {/* In the press (gradient): after the proof, so white and gradient
           still alternate. */}
       <Section size="md">
@@ -281,7 +270,7 @@ export default function HomePage() {
               article's own headline, the way to read it. */}
           <div className="grid gap-6 sm:grid-cols-3">
             {HOME_PRESS_ARTICLES.map((article) => (
-              <a key={article.url} href={article.url} target="_blank" rel="noreferrer noopener" className="group">
+              <a key={article.url} href={article.url} target="_blank" rel="noreferrer noopener" className="group min-w-0">
                 <Card padding="lg" interactive className="flex h-full flex-col gap-4">
                   <span className="flex items-center justify-between gap-3 text-overline text-muted-foreground tabular-nums">
                     <span className="flex min-w-0 items-center gap-2">

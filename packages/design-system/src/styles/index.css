@@ -916,7 +916,11 @@
 @utility animate-marquee {
   animation: marquee 50s linear infinite;
 
-  &:hover { animation-play-state: paused; }
+  /* Mouse only: on touch a tap "hovers" and freezes the strip until the
+   * next tap elsewhere. */
+  @media (hover: hover) and (pointer: fine) {
+    &:hover { animation-play-state: paused; }
+  }
 
   @media (prefers-reduced-motion: reduce) {
     animation: none;
@@ -1251,7 +1255,7 @@
  * marketing page). The wrapper carries `data-settle`, set by SettleIn
  * (src/components/marketing/settle-in.tsx): "pending" hides its pieces just
  * below their spot, "in" lets each rise 32px and settle with the selection
- * spring, one after another (120ms apart). Pieces are cards, accordion
+ * spring, one after another (60ms apart). Pieces are cards, accordion
  * items and anything marked `data-settle-item` (the footer's columns).
  * Server HTML has no attribute, so nothing hides without JS; reduced motion
  * never hides anything. An animation, not a transition, so the pieces' own
@@ -1266,10 +1270,10 @@
     animation: settle-in var(--duration-slide) var(--ease-select) both;
   }
   /* The stagger: by the piece's place in its list or row. */
-  [data-settle="in"] :is(li:nth-child(1) [data-slot="card"], [data-slot="accordion-item"]:nth-child(1), [data-settle-item]:nth-child(1)) { animation-delay: 120ms; }
-  [data-settle="in"] :is(li:nth-child(2) [data-slot="card"], [data-slot="accordion-item"]:nth-child(2), [data-settle-item]:nth-child(2)) { animation-delay: 240ms; }
-  [data-settle="in"] :is(li:nth-child(3) [data-slot="card"], [data-slot="accordion-item"]:nth-child(3), [data-settle-item]:nth-child(3)) { animation-delay: 360ms; }
-  [data-settle="in"] :is(li:nth-child(n+4) [data-slot="card"], [data-slot="accordion-item"]:nth-child(n+4), [data-settle-item]:nth-child(n+4)) { animation-delay: 480ms; }
+  [data-settle="in"] :is(li:nth-child(1) [data-slot="card"], [data-slot="accordion-item"]:nth-child(1), [data-settle-item]:nth-child(1)) { animation-delay: 0ms; }
+  [data-settle="in"] :is(li:nth-child(2) [data-slot="card"], [data-slot="accordion-item"]:nth-child(2), [data-settle-item]:nth-child(2)) { animation-delay: 60ms; }
+  [data-settle="in"] :is(li:nth-child(3) [data-slot="card"], [data-slot="accordion-item"]:nth-child(3), [data-settle-item]:nth-child(3)) { animation-delay: 120ms; }
+  [data-settle="in"] :is(li:nth-child(n+4) [data-slot="card"], [data-slot="accordion-item"]:nth-child(n+4), [data-settle-item]:nth-child(n+4)) { animation-delay: 180ms; }
 }
 
 /* Bottom-fixed bars (BottomNav, sticky CTA docks) clear the home indicator
@@ -1434,24 +1438,26 @@
 
 @utility card-hover-lift {
   position: relative;
-  will-change: translate;
   transition-property: box-shadow, translate, scale;
   transition-duration: var(--duration-enter);
   transition-timing-function: var(--ease-out-ui);
 
-  &:hover,
-  :where([data-card-lift-group]:hover) &,
-  :where(a[href]:hover) > & {
-    translate: 0 -2px;
-    box-shadow: var(--shadow-elevated);
-  }
+  /* Mouse only: a tap on a phone would leave the card lifted. */
+  @media (hover: hover) and (pointer: fine) {
+    &:hover,
+    :where([data-card-lift-group]:hover) &,
+    :where(a[href]:hover) > & {
+      translate: 0 -2px;
+      box-shadow: var(--shadow-elevated);
+    }
 
-  &:hover:not(.animate-shimmer-once)::after {
-    content: "";
-    position: absolute;
-    inset-inline: 0;
-    top: 100%;
-    height: 2px;
+    &:hover:not(.animate-shimmer-once)::after {
+      content: "";
+      position: absolute;
+      inset-inline: 0;
+      top: 100%;
+      height: 2px;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

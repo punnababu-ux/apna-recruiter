@@ -64,7 +64,8 @@ export function WhyHireBand({
 }: {
   /** "card" for a white band where the page's rhythm needs one (home). */
   tone?: "card"
-  /** Pricing shows the platform's scale (PRICING_STATS) instead. */
+  /** Pricing shows the platform's scale (PRICING_STATS) instead; the
+   *  homepage passes none, since its hero already carries the numbers. */
   stats?: readonly { value: string; label: string }[]
 }) {
   return (
@@ -81,7 +82,7 @@ export function WhyHireBand({
         />
         {/* The numbers and the quotes rise into place as you arrive. */}
         <SettleIn className="flex flex-col gap-10">
-          <StatGrid stats={stats} />
+          {stats.length > 0 && <StatGrid stats={stats} />}
           <TestimonialGrid />
         </SettleIn>
       </div>

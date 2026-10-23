@@ -128,12 +128,16 @@ export function PageHero({
 export function Stat({
   value,
   label,
+  shortLabel,
   icon: Icon,
   size = "default",
   className,
 }: {
   value: string
   label: string
+  /** Phones show this instead, where the full label would wrap to three
+   *  lines in a 3-up strip. */
+  shortLabel?: string
   /** What the number counts, as an icon in a tinted disc in place of the
    *  accent bar (the proof band's stats). */
   icon?: IconComponent
@@ -151,7 +155,14 @@ export function Stat({
         !facts && <span aria-hidden className="h-1 w-8 rounded-full bg-product-accent" />
       )}
       <dt className={cn("text-pretty", facts ? "text-overline text-muted-foreground" : "order-3 text-sm text-muted-foreground")}>
-        {label}
+        {shortLabel ? (
+          <>
+            <span className="sm:hidden">{shortLabel}</span>
+            <span className="max-sm:hidden">{label}</span>
+          </>
+        ) : (
+          label
+        )}
       </dt>
       <dd
         className={cn(

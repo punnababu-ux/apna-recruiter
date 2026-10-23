@@ -300,21 +300,12 @@ export function TrustIllustration({ size = "default", className }: { size?: "def
 /** apna Enterprise's art in the same style —
  *  the company's hiring team (team management) over an ATS sync (ATS
  *  integrations), on the mother gradient. */
-export function EnterpriseIllustration({
-  bare = false,
-  className,
-}: {
-  /** No gradient of its own, for a surface that already wears it (the
-   *  homepage's Enterprise stacking card). */
-  bare?: boolean
-  className?: string
-}) {
+export function EnterpriseIllustration({ className }: { className?: string }) {
   return (
     <div
       aria-hidden
       className={cn(
-        "flex items-center justify-center overflow-hidden rounded-xl p-4",
-        !bare && "bg-gradient-checkout-hero",
+        "flex items-center justify-center overflow-hidden rounded-xl bg-gradient-checkout-hero p-4",
         className
       )}
     >

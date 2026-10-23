@@ -27,18 +27,20 @@ import { Building2, Clock, LayoutGrid, MapPin, UserPlus, Users } from "@apna/des
 export interface Stat {
   value: string
   label: string
+  /** A shorter label for phones' 3-up strip. */
+  shortLabel?: string
 }
 
 export const HOME_HERO = {
-  eyebrow: "India's #1 Hiring Platform",
+  eyebrow: "India's #1 hiring platform",
   /** The headline is JSX in the page — one word is colour-accented. */
   description: "Streamlining end-to-end hiring process",
   /** Closing line under the stats — a mission statement, not a CTA. */
-  tagline: "Building Bharat's workforce in the AI Economy.",
+  tagline: "Building Bharat's workforce in the AI economy.",
   stats: [
     { value: "6 Cr+", label: "Candidates" },
-    { value: "7 L+", label: "Businesses & Enterprises" },
-    { value: "7,200+", label: "Towns & Cities Covered" },
+    { value: "7 L+", label: "Businesses & enterprises", shortLabel: "Businesses" },
+    { value: "7,200+", label: "Towns & cities covered", shortLabel: "Towns & cities" },
   ] satisfies Stat[],
 }
 
@@ -65,7 +67,7 @@ export const HOME_ENTERPRISE = {
 
 export const HOME_TRUSTED_BY = {
   eyebrow: "Trusted by",
-  title: "Top Hiring Partners",
+  title: "Top hiring partners",
 }
 
 /**
@@ -147,12 +149,12 @@ export const HOME_PRODUCT_DETAILS: ProductDetailRow[] = [
     heading: "Get applications from relevant, high-intent candidates",
     features: [
       {
-        title: "Advanced Job Filters & Smart Matching",
+        title: "Advanced job filters & smart matching",
         description:
           "Use advanced filters and automated assessments to attract the most relevant candidates",
       },
       {
-        title: "Smart AI Lead Management",
+        title: "Smart AI lead management",
         description:
           "Boost recruiter productivity by automatically categorizing leads into matched and non-matched candidates",
       },
@@ -163,11 +165,11 @@ export const HOME_PRODUCT_DETAILS: ProductDetailRow[] = [
     // Posting opens the order summary with the AI calling agent added.
     action: { label: "Post a job with AI calling", href: login("/apnahire/jobs/new?addon=ai-calling") },
     // AI calling is an add-on on any job (not a premium job type).
-    eyebrow: "AI Calling Agent",
-    heading: "AI Calling Agent interviews and shortlists candidates 24/7",
+    eyebrow: "AI calling agent",
+    heading: "AI calling agent interviews and shortlists candidates 24/7",
     features: [
       {
-        title: "Inbound & Outbound AI Calling",
+        title: "Inbound & outbound AI calling",
         description: "AI interviews all job applicants 24/7 & shortlists only the best candidates",
       },
       {
@@ -183,11 +185,11 @@ export const HOME_PRODUCT_DETAILS: ProductDetailRow[] = [
     heading: "Quickly hire active jobseekers around your office.",
     features: [
       {
-        title: "AI Powered Search",
+        title: "AI-powered search",
         description: "Instantly turn your job descriptions into candidate searches using apnaAI",
       },
       {
-        title: "Area-based Search",
+        title: "Area-based search",
         description: "Effortlessly locate candidates within a 5km radius to optimize your hiring.",
       },
     ],
