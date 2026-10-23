@@ -3,7 +3,7 @@
 import * as React from "react"
 import {
   Bell,
-  MoreHorizontal, AlertBanner, RenewalBanner, Button, Badge, Switch, Label } from "@apna/design-system"
+  MoreHorizontal, AlertBanner, RenewalBanner, Meter, Button, Badge, Switch, Label } from "@apna/design-system"
 import { toast } from "sonner"
 import { AlertCircle, Info, CreditCard, ChevronRight, RefreshCw, Sparkles, InfinityIcon, ArrowUp, Clock } from "@apna/design-system"
 import { cn } from "@/lib/utils"
@@ -295,6 +295,22 @@ export default function FeedbackComponentsPage() {
           >
             Trigger Error Toast
           </Button>
+        </div>
+      </div>
+
+      {/* Meter */}
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="border-b border-border/60 bg-muted/30 p-4 sm:p-6">
+          <h2 className="text-base font-semibold text-foreground font-heading">Meter</h2>
+          <p className="text-sm text-muted-foreground mt-1 max-w-prose">
+            A quiet usage bar: slots in use, credits left, days left in a cycle. The caller decides when a reading is low.
+          </p>
+        </div>
+        <div className="flex flex-col gap-6 bg-background p-4 sm:p-6">
+          <Meter label="Days left in this cycle" size="lg" value={18} max={30} />
+          <Meter label="Job slots in use" value={1} max={2} />
+          <Meter label="Database credits left" value={40} max={500} tone="warning" />
+          <Meter label="Database credits left" value={0} max={500} tone="destructive" />
         </div>
       </div>
     </div>

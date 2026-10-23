@@ -70,7 +70,8 @@ import {
 } from "@/components/apnahire/checkout-drawer"
 import { PaymentModal } from "@/components/apnahire/payment-modal"
 import { PaymentSuccess } from "@/components/apnahire/payment-success"
-import { startSubscription } from "@/hooks/use-job-slots"
+import { startSubscription, upgradeSubscription } from "@/hooks/use-job-slots"
+import { usePlanChange, useChoosePlan } from "@/components/apnahire/plan-change"
 import { addPurchasedJobCredits } from "@/hooks/use-plans-ingress"
 import { useHeaderSlot } from "@/components/marketing/header-slot"
 import { CheckoutPreviewSettings } from "@/components/apnahire/checkout-preview-settings"
@@ -198,6 +199,19 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   // The Subscription tab's slot picker: every plan's price is for this many
   // live jobs.
   const [subscriptionSlots, setSubscriptionSlots] = React.useState<JobSlotCount>(1)
+  // A subscriber: the Unlimited cards mark their plan and say Upgrade /
+  // Downgrade, as on Manage plan (plan-change.tsx). The picker opens on
+  // their slot count, so their own card is in view.
+  const change = usePlanChange(subscriptionSlots)
+  const [seenSub, setSeenSub] = React.useState<number | null>(null)
+  const subTotal = change?.sub.total ?? null
+  if (subTotal !== seenSub) {
+    setSeenSub(subTotal)
+    if (subTotal && plans.slotCounts.includes(subTotal as JobSlotCount)) setSubscriptionSlots(subTotal as JobSlotCount)
+  }
+  // The plan an upgrade is buying: the order summary takes the unused days
+  // off it, and payment upgrades the subscription instead of starting one.
+  const [upgrade, setUpgrade] = React.useState<SubscriptionPlan | null>(null)
   // Another pricing phase sells other bundles and slot counts: start again
   // from its recommended bundle, and 1 slot if this count isn't sold.
   const [seenPlans, setSeenPlans] = React.useState(plans)
@@ -403,10 +417,17 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
 
   const shownPrice = (n: number) =>
     inr((offer.claimed ? withExtraOff(n) : n))
+  const stickyKind = change?.kindOf(subscriptionPlan)
   const stickyCtaLabel =
     activeTab === "enterprise"
       ? "Contact sales"
-      : activeTab === "unlimited"
+      : activeTab === "unlimited" && change
+        ? stickyKind === "same"
+          ? "Your current plan"
+          : stickyKind === "upgrade"
+            ? `Upgrade • ${shownPrice(plans.plan(subscriptionPlan, subscriptionSlots).price)}`
+            : change.ctaLabels[subscriptionPlan]
+        : activeTab === "unlimited"
         ? `Buy ${plans.plan(subscriptionPlan).name.toLowerCase()} • ${shownPrice(plans.plan(subscriptionPlan, subscriptionSlots).price)}`
         : selectedPackage.kind === "job"
           ? `Buy ${selectedPackage.bundle.credits} job credits • ${shownPrice(selectedPackage.bundle.price)}`
@@ -414,8 +435,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
 
   const handleStickyCtaClick = () => {
     if (activeTab === "unlimited") {
-      if (subscriptionPlan === "monthly") buyMonthly(subscriptionSlots)
-      else buyPlan(subscriptionPlan, subscriptionSlots)
+      onUnlimitedCard(subscriptionPlan)
     } else if (activeTab === "enterprise") {
       contactSales()
     } else if (selectedPackage.kind === "job") {
@@ -440,6 +460,13 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
       renewAfterDays: plan.slotDays,
     })
   }
+  const { choose: choosePlanChange, confirm: downgradeConfirm } = useChoosePlan(change, subscriptionSlots, (plan) => {
+    setUpgrade(plan)
+    buyPlan(plan.id, plan.slots as JobSlotCount)
+  })
+  // A card's CTA: a subscriber changes plan; anyone else buys.
+  const onUnlimitedCard = (id: SubscriptionPlanId) =>
+    change ? choosePlanChange(id) : id === "monthly" ? buyMonthly(subscriptionSlots) : buyPlan(id, subscriptionSlots)
   const handleBuyUnlimitedQuarterly = () => buyPlan("quarterly")
   const handleBuyUnlimitedAnnual = () => buyPlan("annual")
   const handleBuyUnlimitedMonthly = () => buyPlan("monthly")
@@ -469,9 +496,11 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   const handlePaymentSuccess = () => {
     setPaymentOpen(false)
     // A subscription bought here makes the sidebar's plan CTA "Manage plans".
-    if (checkoutItem?.renewAfterDays && boughtPlan.current) startSubscription(boughtPlan.current)
+    if (upgrade && change) upgradeSubscription(change.slots, upgrade, paymentAmount)
+    else if (checkoutItem?.renewAfterDays && boughtPlan.current) startSubscription(boughtPlan.current)
     // Credits bought: the shell stops promoting plans (usePlansIngress).
     else if (checkoutItem) addPurchasedJobCredits(checkoutItem.label)
+    setUpgrade(null)
     // The 10% offer is single-use.
     offer.expire()
     setOrder({
@@ -671,9 +700,14 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                   onSelectPlan={setSubscriptionPlan}
                   slots={subscriptionSlots}
                   onSlotsChange={setSubscriptionSlots}
-                  onBuyMonthly={() => buyMonthly(subscriptionSlots)}
-                  onBuyQuarterly={() => buyPlan("quarterly", subscriptionSlots)}
-                  onBuyAnnual={() => buyPlan("annual", subscriptionSlots)}
+                  current={change?.current}
+                  ctaLabels={change?.ctaLabels}
+                  ctaDisabled={change?.ctaDisabled}
+                  ctaHints={change?.ctaHints}
+                  recommendedPlan={change ? change.recommendedPlan : undefined}
+                  onBuyMonthly={() => onUnlimitedCard("monthly")}
+                  onBuyQuarterly={() => onUnlimitedCard("quarterly")}
+                  onBuyAnnual={() => onUnlimitedCard("annual")}
                 />
                 {/* Phones: GST under the Contact sales card, as on the Database
                     tab. Desktop keeps it beside the single-city note above. */}
@@ -708,15 +742,30 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
             (Enterprise: Contact sales). Prices carry the claimed offer, as the
             rows above do. */}
         <StickyCtaBar>
-          <Button type="button" variant="checkout" size="xl" onClick={handleStickyCtaClick}>
+          <Button
+            type="button"
+            // A subscriber on Unlimited: green only to buy an upgrade.
+            variant={activeTab === "unlimited" && change && stickyKind !== "upgrade" ? "outline" : "checkout"}
+            size="xl"
+            disabled={activeTab === "unlimited" && !!change && (stickyKind === "same" || change.ctaDisabled[subscriptionPlan])}
+            onClick={handleStickyCtaClick}
+          >
             {stickyCtaLabel}
           </Button>
         </StickyCtaBar>
 
         <CheckoutDrawer
           open={drawerOpen}
-          onOpenChange={(next) => (next ? setDrawerOpen(true) : attemptExit(() => setDrawerOpen(false)))}
+          onOpenChange={(next) =>
+            next
+              ? setDrawerOpen(true)
+              : attemptExit(() => {
+                  setDrawerOpen(false)
+                  setUpgrade(null)
+                })
+          }
           item={checkoutItem}
+          proration={upgrade && change ? { label: change.prorationLabel, amount: change.credit(upgrade) } : undefined}
           onProceedToPay={handleProceedToPay}
           extraOffer={offer.deadline ? { code: EXTRA_OFF.code, deadline: offer.deadline } : undefined}
           onExtraOfferExpired={offer.expire}
@@ -795,6 +844,8 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
             // countdown, and a bottom toast covered the pay button on phones.
           }}
         />
+
+        {downgradeConfirm}
 
         <PaymentModal
           open={paymentOpen}

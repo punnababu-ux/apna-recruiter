@@ -27,6 +27,9 @@ import {
   Sparkles,
   UserSearch,
   WhatsApp,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
   type ChipTabItem,
 } from "@apna/design-system"
 import { cn } from "@/lib/utils"
@@ -102,7 +105,13 @@ interface PlanCardProps {
   slotDays: number
   /** "200 database credits worth ₹2,000" (`dbCreditsLabel`). */
   dbLine: string
+  /** The CTA can't act (a downgrade already booked). */
+  ctaDisabled?: boolean
+  /** Why it can't, shown on hover. */
+  ctaHint?: React.ReactNode
   onBuy?: () => void
+  /** The subscriber's own plan (Manage plan): marked, not buyable. */
+  current?: boolean
 }
 
 function PlanCard({
@@ -119,6 +128,9 @@ function PlanCard({
   slotDays,
   dbLine,
   onBuy,
+  current,
+  ctaDisabled,
+  ctaHint,
 }: PlanCardProps) {
   const { price, strike, pct } = planPricing({ price: basePrice, mrp }, extraOff)
   // Truncated, like the design's ₹5,999 / 3 = ₹1,999.
@@ -128,11 +140,19 @@ function PlanCard({
     // PricingCards — the card-hover-lift rule. No `overflow-hidden`: it would
     // clip the lift's hit strip; the ribbon clips its own corner.
     <div
-      onClick={onBuy}
+      onClick={current || ctaDisabled ? undefined : onBuy}
       data-compare-card
-      className="card-hover-lift ink press-subtle relative flex flex-1 cursor-pointer flex-col justify-between gap-5 rounded-card border border-transparent bg-plan-card px-4 pb-5 pt-8"
+      className={cn(
+        "relative flex flex-1 flex-col justify-between gap-5 rounded-card border border-transparent bg-plan-card px-4 pb-5 pt-8",
+        !current && !ctaDisabled && "card-hover-lift ink press-subtle cursor-pointer",
+      )}
     >
-      {recommended && (
+      {current && (
+        <div className="absolute right-4 top-3">
+          <Badge variant="outline">Current plan</Badge>
+        </div>
+      )}
+      {recommended && !current && (
         <div className="absolute -right-px -top-px flex overflow-hidden rounded-tr-[inherit] rounded-bl-xl">
           <Badge variant="ribbon" size="ribbon">
             Recommended
@@ -218,14 +238,28 @@ function PlanCard({
         </div>
       </div>
 
-      <Button
-        data-compare="cta"
-        type="button"
-        variant={recommended ? "checkout" : "outline"}
-        className="h-10 w-full font-semibold"
-      >
-        {ctaLabel}
-      </Button>
+      {/* A blocked CTA says why on hover (a disabled button gets no
+          pointer events, so the tooltip hangs on a wrapper). */}
+      {ctaHint && !current ? (
+        <Tooltip>
+          <TooltipTrigger render={<span data-compare="cta" className="block w-full" />}>
+            <Button type="button" variant="outline" className="pointer-events-none h-10 w-full font-semibold" disabled>
+              {ctaLabel}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent className="max-w-64">{ctaHint}</TooltipContent>
+        </Tooltip>
+      ) : (
+        <Button
+          data-compare="cta"
+          type="button"
+          variant={recommended && !current && !ctaDisabled ? "checkout" : "outline"}
+          className="h-10 w-full font-semibold"
+          disabled={current || ctaDisabled}
+        >
+          {current ? "Your current plan" : ctaLabel}
+        </Button>
+      )}
     </div>
   )
 }
@@ -243,6 +277,20 @@ interface SubscriptionPlansProps {
    *  sticky CTA and checkout buy the same plan; uncontrolled starts at 1. */
   slots?: JobSlotCount
   onSlotsChange?: (slots: JobSlotCount) => void
+  /** Manage plan: the subscriber's plan, marked on its card (at its slot
+   *  count), and each card's CTA label in place of "Buy …". The current
+   *  card shows what the subscriber pays (`price`): never a sale, struck
+   *  price, % OFF or the 10% offer (rule: AGENTS.md, "Prices, offers").
+   */
+  current?: { plan: SubscriptionPlanId; slots: number; price?: number }
+  ctaLabels?: Partial<Record<SubscriptionPlanId, string>>
+  /** CTAs that can't act (a downgrade already booked). */
+  ctaDisabled?: Partial<Record<SubscriptionPlanId, boolean>>
+  /** Why a CTA is off (a pending downgrade or renewal), on hover. */
+  ctaHints?: Partial<Record<SubscriptionPlanId, React.ReactNode>>
+  /** The plan with the ribbon and the green CTA; null for none (Manage
+   *  plan, when the annual card would be a downgrade). */
+  recommendedPlan?: SubscriptionPlanId | null
   className?: string
 }
 
@@ -256,6 +304,11 @@ export function SubscriptionPlans({
   onBuyQuarterly,
   slots: slotsProp,
   onSlotsChange,
+  current,
+  ctaLabels,
+  ctaDisabled,
+  ctaHints,
+  recommendedPlan = "annual",
   className,
 }: SubscriptionPlansProps) {
   const { plan: planFor, slotCounts } = usePlans()
@@ -277,7 +330,7 @@ export function SubscriptionPlans({
 
   return (
     <div className={cn("flex flex-col gap-5", className)}>
-      <div className="flex flex-col items-start gap-4 sm:flex-row sm:justify-between">
+      <div className="flex flex-col items-start gap-4 sm:flex-row sm:flex-wrap sm:justify-between">
         <div className="flex flex-col gap-1">
           {/* "apna ∞ Unlimited" + "plans" read as one 20px headline, so the
               wordmark and the word share a baseline rather than a box centre.
@@ -328,32 +381,39 @@ export function SubscriptionPlans({
         <div className="flex flex-col gap-3 md:hidden">
           {PLAN_IDS.map((id) => {
             const plan = planFor(id, jobSlots)
-            const { price, strike, pct } = planPricing(plan, extraOff)
+            const isCurrent = current?.plan === id && current.slots === jobSlots
+            const { price, strike, pct } = isCurrent
+              ? { price: current.price ?? plan.price, strike: undefined, pct: null }
+              : planPricing(plan, extraOff)
             return (
               <MobilePlanRow
                 key={id}
                 title={plan.title}
                 selected={selectedPlan === id}
                 onSelect={() => onSelectPlan?.(id)}
-                recommended={id === "annual"}
+                recommended={id === recommendedPlan}
                 // The Jobs tab's Unlimited card structure, with the radio:
                 // name and price on one line, the reposts promise and the
                 // discount on the next (see MobilePlanRow's "inline").
                 layout="inline"
-                meta={<span className="text-xs text-muted-foreground">Unlimited job reposts</span>}
+                meta={
+                  <span className="text-xs text-muted-foreground">
+                    {isCurrent ? "Your current plan" : "Unlimited job reposts"}
+                  </span>
+                }
                 mrp={strike ? inr(strike) : undefined}
                 price={inr(price)}
                 unit={plan.unit}
                 belowPrice={pct ? <MobileDiscountRow pct={pct} /> : undefined}
                 priceNote={
-                  extraOff ? (
+                  extraOff && !isCurrent ? (
                     <span className="flex items-center gap-1 text-xs font-medium text-success">
                       <BadgePercent className="size-3.5 shrink-0 animate-wiggle" aria-hidden />
                       <span className="animate-text-shimmer">Incl. 10% extra</span>
                     </span>
                   ) : undefined
                 }
-                upcoming={<UpcomingPriceLine price={plan.janPrice} />}
+                upcoming={isCurrent ? undefined : <UpcomingPriceLine price={plan.janPrice} />}
                 details={
                   // The Jobs tab's Unlimited card points: three short lines.
                   <MobilePlanDetails
@@ -375,18 +435,23 @@ export function SubscriptionPlans({
         <div className="hidden flex-col items-stretch gap-4 md:flex lg:flex-row">
           {PLAN_IDS.map((id) => {
             const plan = planFor(id, jobSlots)
+            // The current plan: what they pay, no offer of any kind.
+            const isCurrent = current?.plan === id && current.slots === jobSlots
             return (
               <PlanCard
                 key={id}
                 title={plan.title}
-                price={plan.price}
-                mrp={plan.mrp}
+                price={isCurrent ? (current.price ?? plan.price) : plan.price}
+                mrp={isCurrent ? undefined : plan.mrp}
                 priceSuffix={plan.unit}
-                janPrice={plan.janPrice}
+                janPrice={isCurrent ? undefined : plan.janPrice}
                 months={plan.months}
-                extraOff={extraOff}
-                ctaLabel={planCtaLabel(plan)}
-                recommended={id === "annual"}
+                extraOff={extraOff && !isCurrent}
+                ctaLabel={ctaLabels?.[id] ?? planCtaLabel(plan)}
+                current={isCurrent}
+                recommended={id === recommendedPlan}
+                ctaDisabled={ctaDisabled?.[id]}
+                ctaHint={ctaHints?.[id]}
                 slots={plan.slots}
                 slotDays={plan.slotDays}
                 dbLine={dbCreditsLabel(plan)}

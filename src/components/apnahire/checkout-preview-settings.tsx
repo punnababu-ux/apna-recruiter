@@ -17,7 +17,8 @@
  */
 
 import { useUnlimitedWordmark } from "@/components/apnahire/pricing-hero"
-import { SLOT_PRESETS, setJobSlots } from "@/hooks/use-job-slots"
+import { sampleSubscription, setJobSlots } from "@/hooks/use-job-slots"
+import { usePlans } from "@/hooks/apnahire/use-plans"
 import { setJobCredits, usePlansIngress } from "@/hooks/use-plans-ingress"
 import { replayTopUpCredits } from "@/components/apnahire/available-credits-button"
 import {
@@ -35,12 +36,13 @@ export function CheckoutPreviewSettings({
 }) {
   const [wordmark, setWordmark] = useUnlimitedWordmark()
   const plans = usePlansIngress()
+  const catalog = usePlans()
   // How the app's nav shows Plans (usePlansIngress): set the account state
   // behind each look, then open the app to see it.
   const setPlans = (credits: number, subscribed: boolean) => {
     setJobCredits(credits)
     // A subscription is its slots (setJobSlots keeps the flag in step).
-    setJobSlots(subscribed ? SLOT_PRESETS.free.slots : null)
+    setJobSlots(sampleSubscription(subscribed ? "free" : "none", catalog.plan("monthly", catalog.slotCounts[1])))
   }
   return (
     <PrototypeSettings label="Preview settings">

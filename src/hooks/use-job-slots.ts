@@ -41,6 +41,8 @@ export type ScheduledChange = {
   slots: number
   price: number
   dbCredits: number
+  /** Why (the downgrade flow's answers). */
+  reasons?: string[]
 }
 
 export type Subscription = {
@@ -58,7 +60,17 @@ export type Subscription = {
   /** The one city the plan hires in. */
   city?: string
   scheduled?: ScheduledChange
+  /** How renewals are paid; UPI autopay when not set. */
+  payMethod?: "upi-autopay" | "card"
+  /** Cancelled: the plan runs to its renewal date, then ends. */
+  cancelled?: boolean
+  /** Why it was cancelled (the cancel flow's answers). */
+  cancelReasons?: string[]
+  /** Payments for the plan, newest first (invoices). */
+  payments?: PlanPayment[]
 }
+
+export type PlanPayment = { id: string; on: string; plan: string; amount: number }
 
 export type JobSlots = Subscription | null
 
@@ -90,6 +102,39 @@ export const SLOT_PRESETS = {
   full: { label: "Subscription · all 2 slots in use", slots: { ...MONTHLY_2, jobs: LIVE_JOBS } as JobSlots },
 } as const
 export type SlotPreset = keyof typeof SLOT_PRESETS
+
+const SAMPLE_JOBS: SlotJob[] = [
+  ...LIVE_JOBS,
+  { id: "telecaller-thane", title: "Telecaller", location: "Thane West, Mumbai", postedAt: "28 Sep 2026", applied: 19 },
+  { id: "store-manager-bandra", title: "Store Manager", location: "Bandra West, Mumbai", postedAt: "25 Sep 2026", applied: 4 },
+  { id: "accountant-dadar", title: "Accountant", location: "Dadar, Mumbai", postedAt: "21 Sep 2026", applied: 9 },
+]
+
+/** A preset as a plan the plans pages sell in the current pricing phase
+ *  (usePlans().plan), so Manage plan, "Plan details" and the plan cards
+ *  agree on its slots, price and database credits. 12 days into its cycle,
+ *  about two thirds of its database credits left. */
+export function sampleSubscription(preset: SlotPreset, plan: SubscriptionPlan): JobSlots {
+  if (preset === "none") return null
+  return {
+    plan: plan.name,
+    term: plan.id,
+    total: plan.slots,
+    startedOn: isoDay(-12),
+    paid: plan.price,
+    db: { left: Math.round((plan.dbCredits * 0.64) / 10) * 10, total: plan.dbCredits },
+    city: DEFAULT_HIRING_CITY,
+    jobs: SAMPLE_JOBS.slice(0, preset === "full" ? plan.slots : 1),
+  }
+}
+
+/** Which preset a subscription reads as: one live job, or every slot used. */
+export function samplePresetOf(slots: JobSlots): SlotPreset | null {
+  if (!slots) return "none"
+  if (slots.total > 1 && slots.jobs.length === 1) return "free"
+  if (slots.jobs.length === slots.total) return "full"
+  return null
+}
 
 let cachedRaw: string | null | undefined
 let cached: JobSlots = null
@@ -193,7 +238,19 @@ export function subscriptionOf(slots: Subscription) {
     renewsOn,
     daysLeft: Math.min(termDays, Math.max(0, daysBetween(isoDay(), renewsOn))),
     city: slots.city ?? DEFAULT_HIRING_CITY,
+    payMethod: slots.payMethod ?? "upi-autopay",
+    cancelled: slots.cancelled ?? false,
+    // State saved before payments were kept: this cycle's payment, as
+    // charged (with 18% GST, like the order summary).
+    payments: slots.payments ?? [
+      { id: `pay-${startedOn}`, on: startedOn, plan: slots.plan, amount: Math.round((slots.paid ?? 0) * 1.18) },
+    ],
   }
+}
+
+/** Undoes a cancellation before the renewal date: the plan renews again. */
+export function reactivateSubscription(sub: Subscription) {
+  setJobSlots({ ...sub, cancelled: false, cancelReasons: undefined })
 }
 export type SubscriptionDetails = ReturnType<typeof subscriptionOf>
 
@@ -234,13 +291,23 @@ export function startSubscription(plan: SubscriptionPlan, jobs: SlotJob[] = []) 
 
 /** An upgrade, paid: the new plan from today, with its own database
  *  credits. Live jobs keep their slots; a booked downgrade is dropped. */
-export function upgradeSubscription(sub: Subscription, plan: SubscriptionPlan) {
-  setJobSlots({ ...sub, ...planFields(plan), scheduled: undefined })
+export function upgradeSubscription(sub: Subscription, plan: SubscriptionPlan, amountPaid: number) {
+  const payments = subscriptionOf(sub).payments
+  setJobSlots({
+    ...sub,
+    ...planFields(plan),
+    scheduled: undefined,
+    cancelled: false,
+    payments: [{ id: `pay-${Date.now().toString(36)}`, on: isoDay(), plan: plan.name, amount: amountPaid }, ...payments],
+  })
 }
 
 /** Books a downgrade for the cycle's end. */
-export function scheduleDowngrade(sub: Subscription, plan: SubscriptionPlan) {
-  setJobSlots({ ...sub, scheduled: { term: plan.id, slots: plan.slots, price: plan.price, dbCredits: plan.dbCredits } })
+export function scheduleDowngrade(sub: Subscription, plan: SubscriptionPlan, reasons?: string[]) {
+  setJobSlots({
+    ...sub,
+    scheduled: { term: plan.id, slots: plan.slots, price: plan.price, dbCredits: plan.dbCredits, reasons },
+  })
 }
 
 export function cancelScheduledChange(sub: Subscription) {
@@ -265,4 +332,29 @@ export function renewSubscription(sub: Subscription) {
     db: { left: db, total: db },
     scheduled: undefined,
   })
+}
+
+/** Cancelled: the plan runs to its renewal date, then ends (nothing more
+ *  is charged; a booked downgrade is dropped). The reasons go with it. */
+export function cancelAtRenewal(sub: Subscription, reasons: string[]) {
+  setJobSlots({ ...sub, cancelled: true, scheduled: undefined, cancelReasons: reasons })
+}
+
+/** Days before renewal when the renewal is already under way (UPI autopay
+ *  sends its pre-debit notice): the plan can't be changed or cancelled
+ *  until it has renewed. */
+export const RENEWAL_LOCK_DAYS = 2
+
+/** What blocks changing or cancelling the plan right now: a booked
+ *  downgrade (keep the current plan first) or a renewal under way. */
+export function changeLockOf(sub: SubscriptionDetails): "downgrade" | "renewal" | null {
+  if (sub.scheduled) return "downgrade"
+  if (!sub.cancelled && sub.daysLeft <= RENEWAL_LOCK_DAYS) return "renewal"
+  return null
+}
+
+/** Prototype: the cycle moved on so the renewal is `daysLeft` away. */
+export function setDaysLeft(sub: Subscription, daysLeft: number) {
+  const term = sub.term ?? "monthly"
+  setJobSlots({ ...sub, startedOn: isoDay(daysLeft - SUBSCRIPTION_TERMS[term].slotDays) })
 }

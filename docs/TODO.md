@@ -21,5 +21,8 @@ ship, and keep one line per item. Open price questions live in
 - [ ] Before locking: dashboard → available credits / balance shows "City not set", with a way to set it
 - [ ] Carry the locked city through every flow that reads it: job posting location, balance view, plan cards ("Valid in a single city"), upgrades
 
+## Plan pop-up illustrations
+- [ ] Generate 8 clay objects for the plan pop-ups (feedback, plan-ending, plan-cancelled, change-locked, reactivate, downgrade, change-scheduled, upgrade) and swap out the stand-ins. Prompts: `docs/CLAY-ILLUSTRATIONS.md` → "To generate: plan pop-ups"
+
 ## Before production
 - [ ] Remove the hidden prototype-settings ingresses: the silent clicks on "*GST applicable" (`GstNote`, both checkouts) and the post-job "Candidate view" caption, plus `PrototypeSettings` itself (grep `openPrototypeSettings`). Current builds are not production.

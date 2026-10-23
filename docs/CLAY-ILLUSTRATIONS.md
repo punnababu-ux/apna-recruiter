@@ -74,6 +74,35 @@ the spelling on every render.
   surfaces, colours outside the palette, people or hands, other 3D or flat
   illustration styles on the same page.
 
+## To generate: plan pop-ups (parked 2026-10-23)
+
+The Manage plan / Plans page pop-ups (cancel, downgrade, upgrade,
+reactivate) use **stand-ins** borrowed from other moments. Each needs its
+own object. All sit on the white pop-up (any palette colour may lead).
+Header ones show at `xs` beside the title; the last steps at `sm` on top.
+
+A prompt = the opening line, the subject, then CLAY_STYLE unchanged:
+
+> A single 3D clay object, centred, three-quarter view from slightly above.
+> Subject: …
+> [CLAY_STYLE from `src/content/clay-style.ts`, word for word]
+
+| File | Pop-up | Stand-in now | Subject |
+|---|---|---|---|
+| `feedback` | Why are you cancelling? · Why are you downgrading? | `contact` (speech bubbles, drawn for "Get in touch") | a rounded clay clipboard with three short tick-box lines, the top box ticked, and a small speech bubble at its corner. Off-white clipboard, mint tick boxes, a warm yellow tick, a sky blue bubble. |
+| `plan-ending` | Cancel plan? (step 2) | `expired` (hourglass, drawn for the coupon-expired pop-up) | a rounded clay desk calendar with one date circled, and a small hourglass leaning against it. Off-white calendar pages, a mint binding, a warm yellow hourglass with deep plum caps. |
+| `plan-cancelled` | Plan cancelled (last step, on top, `sm`) | `expired` | a rounded clay desk calendar with a soft folded ribbon tied across its last page, calm, not sad. Off-white pages, a sky blue calendar base, a warm yellow ribbon, a deep plum ring binding. |
+| `change-locked` | Cancel plan? when blocked (downgrade booked or renewal under way) | `expired` | a rounded clay calendar with a small padlock resting on it. Off-white calendar, a mint padlock body, a warm yellow shackle, deep plum binding. |
+| `reactivate` | Reactivate your plan? | `expired` | a rounded clay calendar with a chunky circular arrow looping around it. Off-white calendar, a mint arrow, a warm yellow date badge, deep plum binding. |
+| `downgrade` | Continue downgrading? | `job-types` (briefcases, drawn for "What each job type gets you") | a short stack of two rounded clay job cards with a third card sliding off the side, and a small down arrow badge. Off-white cards, a sky blue card on top, a deep plum arrow badge. |
+| `change-scheduled` | Downgrade scheduled (last step, on top, `sm`) | `success` (the generic tick) | a rounded clay calendar with a big tick badge pinned to its corner. Off-white calendar, a mint tick badge with an off-white tick, warm yellow binding. |
+| `upgrade` | Upgrade plan? | `improve` (trend arrow, drawn for The Lounge) | a rounded clay stack of three job cards rising like steps, with a chunky up arrow above the top one. Mint, sky blue and off-white cards, a warm yellow arrow, deep plum accents. |
+
+Once generated: drop the PNGs in `public/images/company/values/`, add the
+names to `ValueName`, `ICON` and `READY` in
+`src/components/marketing/value-art.tsx`, then swap the `art` names in
+`cancel-plan-flow.tsx`, `plan-change.tsx` and `manage-plan.tsx`.
+
 ## Getting one into the product
 
 1. Generate 3–4 per subject; pick the cleanest silhouette (it must read at

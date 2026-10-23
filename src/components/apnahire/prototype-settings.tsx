@@ -27,7 +27,17 @@
 import * as React from "react"
 import Link from "next/link"
 import { Button, Popover, PopoverContent, PopoverTrigger } from "@apna/design-system"
-import { SLOT_PRESETS, renewSubscription, setJobSlots, slotPresetOf, useJobSlots, type SlotPreset } from "@/hooks/use-job-slots"
+import {
+  RENEWAL_LOCK_DAYS,
+  renewSubscription,
+  sampleSubscription,
+  samplePresetOf,
+  setDaysLeft,
+  setJobSlots,
+  useJobSlots,
+  type SlotPreset,
+} from "@/hooks/use-job-slots"
+import { usePlans } from "@/hooks/apnahire/use-plans"
 import { PRICING_PHASES } from "@/content/pricing-phase"
 import { setPricingPhase, usePricingPhase } from "@/hooks/use-pricing-phase"
 
@@ -129,17 +139,33 @@ export function PricingPhaseControls() {
   )
 }
 
-/** Subscription job slots: none (buy a plan) / a free slot / all in use. */
+/** Subscription: none (job credits) / a free slot / all in use. The
+ *  plan is the monthly one the plans pages sell at the second slot count
+ *  (2 today, 3 on the new plans), at its own price and database credits. */
 export function JobSlotsControls() {
   const slots = useJobSlots()
-  const current = slotPresetOf(slots)
+  const plans = usePlans()
+  const plan = plans.plan("monthly", plans.slotCounts[1])
+  const current = samplePresetOf(slots)
+  const options: [SlotPreset, string][] = [
+    ["none", "No subscription (job credits)"],
+    ["free", `Subscription · 1 of ${plan.slots} slots in use`],
+    ["full", `Subscription · all ${plan.slots} slots in use`],
+  ]
   return (
-    <PrototypeSection title="Job slots">
-      {(Object.keys(SLOT_PRESETS) as SlotPreset[]).map((key) => (
-        <PrototypeOption key={key} active={current === key} onClick={() => setJobSlots(SLOT_PRESETS[key].slots)}>
-          {SLOT_PRESETS[key].label}
+    <PrototypeSection title="Subscription">
+      {options.map(([key, label]) => (
+        <PrototypeOption key={key} active={current === key} onClick={() => setJobSlots(sampleSubscription(key, plan))}>
+          {label}
         </PrototypeOption>
       ))}
+      {/* The renewal under way (pre-debit notice): changes and cancelling
+          wait until it has renewed. */}
+      {slots && (
+        <PrototypeOption onClick={() => setDaysLeft(slots, RENEWAL_LOCK_DAYS)}>
+          Renewal in {RENEWAL_LOCK_DAYS} days · changes locked
+        </PrototypeOption>
+      )}
       {/* The cycle ends now: renews, as the booked downgrade if any. */}
       {slots && (
         <PrototypeOption onClick={() => renewSubscription(slots)}>

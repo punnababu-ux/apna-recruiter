@@ -10,7 +10,7 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 
 | Component        | Import                                                                 | tldr                                             |
 |------------------|------------------------------------------------------------------------|--------------------------------------------------|
-| Button           | `import { Button } from "@apna/design-system"`                         | Primary action surface. 11 variants — includes `checkout` / `checkout-inset` for the fixed-light self-checkout surface, `emphasis` (the companion push on a screen whose primary CTA is taken — dark gray on light, white inside a `data-surface="dark"` area), and the only two link styles: `link` (standalone blue action link) and `link-inline` (underlined, in the surrounding text colour). Sizes up to `xl` (48px) for the full-width CTA at the foot of a panel or sheet. One primary CTA per screen — see the rules in its JSDoc. |
+| Button           | `import { Button } from "@apna/design-system"`                         | Primary action surface. 12 variants — includes `destructive-solid` (the solid red last step of an irreversible flow: Cancel plan, Confirm downgrade; `destructive` stays the red tint for undoable actions), `checkout` / `checkout-inset` for the fixed-light self-checkout surface, `emphasis` (the companion push on a screen whose primary CTA is taken — dark gray on light, white inside a `data-surface="dark"` area), and the only two link styles: `link` (standalone blue action link) and `link-inline` (underlined, in the surrounding text colour). Sizes up to `xl` (48px) for the full-width CTA at the foot of a panel or sheet. One primary CTA per screen — see the rules in its JSDoc. |
 | ButtonGroup      | `import { ButtonGroup, ButtonGroupText } from "@apna/design-system"`   | Horizontally grouped buttons with shared border. |
 | BackButton       | `import { BackButton } from "@apna/design-system"`                     | Back navigation — the only back control in the product: a 32px outlined circle + ChevronLeft, no variants. First item in a header row, `gap-3` before the title/logo. See the rule in its JSDoc. |
 | Toggle           | `import { Toggle } from "@apna/design-system"`                         | On/off button. Use for formatting toolbars.      |
@@ -52,6 +52,7 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 | Skeleton         | `import { Skeleton } from "@apna/design-system"`                       | Loading placeholder shape.                       |
 | Spinner          | `import { Spinner } from "@apna/design-system"`                       | Indeterminate loading indicator.                 |
 | Separator        | `import { Separator } from "@apna/design-system"`                     | Horizontal or vertical divider.                  |
+| Meter            | `import { Meter } from "@apna/design-system"`                         | Usage bar (slots in use, credits left, days left). `size`: sm (6px) · lg (18px). `tone`: default · warning · destructive. |
 | Empty            | `import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent } from "@apna/design-system"` | Empty-state scaffold. |
 
 ## 4. Navigation

@@ -35,6 +35,7 @@ export * from "./components/ui/badge"
 export * from "./components/ui/skeleton"
 export * from "./components/ui/spinner"
 export * from "./components/ui/separator"
+export * from "./components/ui/meter"
 export * from "./components/ui/empty"
 export * from "./components/ui/metric-card"
 

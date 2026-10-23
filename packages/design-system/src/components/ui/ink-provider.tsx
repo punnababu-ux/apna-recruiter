@@ -17,6 +17,14 @@
  * `:active` (which drives both `ink` and `press`) when the page listens for
  * touches.
  *
+ * Haptics: a touch press on a live surface (`ink`, `press`, `press-subtle`)
+ * gives a short tick (`haptic()`, 10ms) where the browser supports the
+ * Vibration API: Chrome and most Android browsers. No permission or app is
+ * needed. iOS Safari has no vibration API, so iPhones get the visual press
+ * only. Mouse and pen presses never vibrate; neither do disabled controls.
+ * Android only vibrates after the page has had a first tap (the browser's
+ * user-activation rule), so the very first press of a visit is silent.
+ *
  * Usage (root layout):
  *   <InkProvider />
  *
@@ -26,12 +34,27 @@
 import * as React from "react"
 
 const INK_SELECTOR = ".ink"
+const PRESS_SELECTOR = ".ink, .press, .press-subtle"
+
+/** A short haptic tick, where supported (Android browsers). Safe to call
+ *  anywhere: a no-op without the Vibration API or user activation. */
+function haptic(ms = 10) {
+  try {
+    navigator.vibrate?.(ms)
+  } catch {
+    // Blocked (no user activation yet, or a policy): stay silent.
+  }
+}
 
 function InkProvider() {
   React.useEffect(() => {
     const onPointerDown = (event: PointerEvent) => {
       const target = event.target
       if (!(target instanceof Element)) return
+      if (event.pointerType === "touch") {
+        const pressed = target.closest<HTMLElement>(PRESS_SELECTOR)
+        if (pressed && !pressed.matches(":disabled, [aria-disabled=\"true\"], [data-disabled]")) haptic()
+      }
       const surface = target.closest<HTMLElement>(INK_SELECTOR)
       if (!surface) return
       const rect = surface.getBoundingClientRect()
@@ -64,4 +87,4 @@ function InkProvider() {
   return null
 }
 
-export { InkProvider }
+export { InkProvider, haptic }

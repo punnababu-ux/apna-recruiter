@@ -50,7 +50,7 @@ export {
   Trophy, Type, Underline, Unlock, Upload,
   User, User2, UserCheck, UserPlus, UserRound,
   UserSearch, Users, Venus, Video, VideoOff,
-  Voicemail, Wallet, Wand2, Wrench, X,
+  Voicemail, Wallet, Wand2, Wrench, X, ReceiptText,
   XCircle, XIcon, Zap,
   Tag as Sell,
 } from "lucide-react"

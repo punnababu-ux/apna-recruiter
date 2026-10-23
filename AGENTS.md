@@ -285,7 +285,11 @@ Rules:
    `sliding-indicator` element and let `useSlidingIndicator(value)` move it
    onto the option marked `data-indicator-active`.
 6. **`<InkProvider />` is mounted once in the root layout.** It tells the ink
-   where you pressed. Without it the ink grows from the centre.
+   where you pressed. Without it the ink grows from the centre. It also
+   gives a touch press on any `ink` / `press` surface a 10ms haptic tick
+   where the browser supports vibration (Android; iOS Safari has no API).
+   Don't add your own vibrate calls for presses; use `haptic()` only for
+   a moment that isn't a press.
 
 Pop-ups close the same way everywhere. `DialogContent` and bottom
 `SheetContent` render the **CloseBubble**: a 32px dark translucent disc
@@ -295,6 +299,22 @@ and don't put `overflow-hidden` on a bottom sheet, because it would clip
 the bubble. Round the inner corners instead. Side drawers (right and left
 sheets) are panels and keep their inside X. Pass `showCloseButton={false}`
 only for a forced choice.
+
+**Every pop-up has the same parts** (user call, 2026-10-23). A
+step pop-up (a question, a confirm, a "what changes"):
+1. **Header:** one clay object beside the title (`ValueArt` `xs`, see
+   docs/CLAY-ILLUSTRATIONS.md), the title, an optional one-line subtitle,
+   then a rule (`Separator`) above the content.
+2. **Body:** the content; lists and boxes sit under the rule, never
+   straight under the subtitle.
+3. **Footer:** a rule, then the buttons: side by side from `sm`, stacked
+   on phones with the primary on top. One solid button: green for a
+   purchase or "keep" (`default`), solid red (`destructive-solid`) for the
+   irreversible last step; the other is `outline`.
+4. **The last step** of a flow is a centred confirmation: clay on top
+   (`sm`), title, text, one CTA. Never a line icon.
+5. **Frame:** `PlanPopup` (dialog from md, bottom sheet on phones, the
+   CloseBubble). Plan flows build on it; other product pop-ups match it.
 
 **Same pattern, same component — check before you build.** If a new
 surface looks like one that exists (a side panel, a pop-up, a chip row, a
@@ -644,6 +664,14 @@ cards) and every upsell tile (`OfferChoice`), both checkouts, light and dark
    Render it as `<span aria-hidden className="attention-ring" />` inside a
    `relative` card that doesn't clip (wrap a card that has
    `overflow-hidden`).
+
+10. **A subscriber's current plan never shows an offer** (user call,
+   2026-10-23). Wherever their own plan is shown (Manage plan, "Plan
+   details", its card on the Plans page marked "Current plan"), the price
+   is what they pay (`paid`), with no struck price, % OFF, sale, 10%
+   offer line or new-price notice. They may have bought it for more; a
+   sale running today is not theirs. Offers stay on the other cards.
+   `SubscriptionPlans` does this through `current.price`.
 
 ---
 

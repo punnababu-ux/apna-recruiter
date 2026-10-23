@@ -2,7 +2,7 @@
  * Button — base interactive surface.
  *
  * API
- *   <Button variant="default|outline|secondary|ghost|destructive|success|link|link-inline|checkout|checkout-inset|emphasis"
+ *   <Button variant="default|outline|secondary|ghost|destructive|destructive-solid|success|link|link-inline|checkout|checkout-inset|emphasis"
  *           size="xs|sm|default|lg|xl|icon|icon-xs|icon-sm|icon-lg"
  *           leadingIcon={<Plus />}     // optional leading icon
  *           trailingIcon={<ArrowRight />} // optional trailing icon
@@ -23,6 +23,12 @@
  * second green button. `emphasis` is only ever a companion: never the only
  * CTA on a screen and never more than one per section; anything less
  * important than that is `outline`.
+ *
+ * RULE — an irreversible confirm is solid red. `destructive` (red tint) is
+ * for an action that can still be undone or that sits among others (a menu
+ * row, a "Remove"). The last step that ends or shrinks something — "Cancel
+ * plan", "Confirm downgrade" — is `destructive-solid`, the step's one solid
+ * button; the way back ("Keep current plan") is `outline` beside it.
  *
  * RULE — the companion inverts on dark surfaces. `emphasis` is dark gray on
  * a light surface and white (dark label) on a dark one, so it always
@@ -87,6 +93,8 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground border border-border/60 hover:bg-secondary/70 hover:border-border hover:shadow-control active:bg-secondary/90 aria-expanded:bg-secondary/80 dark:border-border/30 dark:hover:bg-secondary/80",
         ghost:
           "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
+        "destructive-solid":
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40",
         destructive:
           "bg-destructive/10 text-destructive border border-destructive/20 hover:bg-destructive/20 hover:border-destructive/40 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         success:

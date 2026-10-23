@@ -14,6 +14,13 @@ import { cn } from "@/lib/utils"
  * large, no border, no icon/trend chrome, brightens to `bg-card` on hover).
  * The two didn't share a component before because they don't share a class
  * string — they share only the idea of "one number, one label."
+ *
+ * `variant="usage"` is a plan's allowance on a card (Manage plan: job
+ * slots, database credits, hiring city): muted nested tile, icon on its
+ * own line, label under it, value, then a note (`trend`). Its four parts
+ * are direct children, so a row of them can share lines with
+ * `sm:row-span-4 sm:grid sm:grid-rows-subgrid` on each tile (the caller's
+ * grid sets the row template).
  */
 
 const metricCardVariants = cva("rounded-xl text-left transition-interactive", {
@@ -24,6 +31,7 @@ const metricCardVariants = cva("rounded-xl text-left transition-interactive", {
       metric: "border border-border/70 bg-card p-4 shadow-control",
       // Ported verbatim from trust-bar.tsx, where this was hand-rolled.
       stat: "card-hover-lift flex flex-col gap-2 bg-muted px-6 py-9 hover:bg-card",
+      usage: "flex flex-col gap-2 rounded-card-nested bg-muted p-4",
     },
   },
   defaultVariants: {
@@ -38,9 +46,11 @@ export interface MetricCardProps
   label: React.ReactNode
   /** Primary metric value display (e.g. "166", "88%", "$4.2k") */
   value: React.ReactNode
-  /** Optional icon displayed in top right. `variant="metric"` only. */
+  /** Optional icon: top right on `metric`, on its own line above the label
+   *  on `usage`. */
   icon?: React.ReactNode
-  /** Optional trend or secondary helper text. `variant="metric"` only. */
+  /** Optional trend or secondary helper text (`metric`); the note under the
+   *  value (`usage`). */
   trend?: React.ReactNode
   /** Optional variant for trend color ('success' | 'warning' | 'destructive' | 'neutral') */
   trendVariant?: "success" | "warning" | "destructive" | "neutral"
@@ -67,6 +77,21 @@ const MetricCard = React.forwardRef<HTMLDivElement, MetricCardProps>(
         >
           <p className="text-h3 font-heading font-semibold text-foreground">{value}</p>
           <p className="text-base text-foreground">{label}</p>
+        </div>
+      )
+    }
+
+    if (variant === "usage") {
+      return (
+        <div ref={ref} className={cn(metricCardVariants({ variant }), className)} {...props}>
+          <span className="flex flex-col items-start gap-2 text-sm text-muted-foreground [&>svg]:size-5">
+            {icon}
+            <span className="flex items-center gap-1.5">{label}</span>
+          </span>
+          {/* Spare height (a row stretched to its neighbour) opens here. */}
+          <span aria-hidden className="max-sm:hidden" />
+          <span className="text-xl font-semibold tabular-nums text-foreground">{value}</span>
+          {trend && <span className={cn("text-xs", trendVariantMap[trendVariant])}>{trend}</span>}
         </div>
       )
     }
