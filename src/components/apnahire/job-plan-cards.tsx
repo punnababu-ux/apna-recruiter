@@ -6,14 +6,14 @@
  * (tiered) and `2490:43116` (subscription)). See `src/content/job-plans.ts`
  * for the tier data and its sourcing note.
  *
- * Every card is a `PricingCard layout="price-first"`: title + price → CTA →
- * divider → features, with the free database credits as a quiet line at the
- * bottom. Feature lists follow the Subscription tab's plan cards: sub-points
+ * Every card is a `PricingCard layout="price-first"`: title + price →
+ * divider → features → the free database credits as a quiet line → CTA,
+ * last, as on every self-checkout plan card. Feature lists follow the Subscription tab's plan cards: sub-points
  * indented under their parent line, ✕ for anything not included. The
  * subscription layout mirrors self-checkout's Jobs tab: one-time tiers in a
  * `bg-checkout-track` frame, the monthly plan in an Unlimited-style dark
  * gradient side card, headers at the same min-height so both columns' cards
- * start (and their CTAs land) on one line.
+ * start on one line and their CTAs land on one line at the bottom.
  *
  * The AI Calling Agent tier's animated "AI Calling Agent in Action" demo
  * widget seen on the Figma board is deliberately NOT built here — deferred
@@ -116,7 +116,7 @@ const dbCreditsLine = (credits: number) => (
   <span className="flex items-center gap-2 text-foreground">
     <Database className="size-4 shrink-0 text-muted-foreground" aria-hidden />
     <span>
-      {credits} free database credits
+      {credits} free DB credits
       <span className="text-muted-foreground"> · Limited offer</span>
     </span>
   </span>
@@ -428,7 +428,7 @@ function MobileJobPlanRadioGroup({
                   >
                     <Database className="size-4 shrink-0 text-muted-foreground" aria-hidden />
                     <span>
-                      {tier.dbCredits} free database credits
+                      {tier.dbCredits} free DB credits
                       <span className="text-muted-foreground"> · Limited offer</span>
                     </span>
                   </li>

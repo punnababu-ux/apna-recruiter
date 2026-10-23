@@ -66,13 +66,14 @@
  * sibling eats part of the stretched wrapper height), making that one card
  * shorter than the others instead of matching them.
  *
- * `layout="price-first"` — reorders the card to (title + price row) → CTA →
- * divider → meta (feature list) → `footer`, for plan comparisons where the
- * decision (price + CTA) should sit at the top and the feature list below.
+ * `layout="price-first"` — reorders the card to (title + price row) →
+ * divider → meta (feature list) → `footer` → CTA, for plan comparisons where
+ * the price should lead and a long feature list follows. The CTA still
+ * closes the card, as on every plan card (user call, 2026-10-24).
  * Title and price share one tight group, as on the Subscription tab's plan
  * cards. Titles get no reserved height, so pick grid breakpoints at which
- * every title in the row fits one line, or that card's price and CTA drop
- * below its siblings'. `footer` is a quiet left-aligned line pinned to the
+ * every title in the row fits one line, or that card's price drops below
+ * its siblings'. `footer` is a quiet left-aligned line pinned to the
  * card's bottom edge behind a dashed rule (the meta list absorbs any spare
  * height above it) — for something that isn't a permanent part of the plan,
  * like a limited-time add-on.
@@ -117,7 +118,7 @@ export interface PricingCardProps extends Omit<React.ComponentProps<"div">, "tit
   emphasis?: "price" | "title"
   /** `"inset"` = fixed light card for nesting inside an always-dark surface. */
   surface?: "card" | "inset"
-  /** `"price-first"` = title → price → CTA → divider → meta → footer. */
+  /** `"price-first"` = title → price → divider → meta → footer → CTA. */
   layout?: "stacked" | "price-first"
   /** Bottom-pinned line under the meta list (price-first only). */
   footer?: React.ReactNode
@@ -237,8 +238,6 @@ export function PricingCard({
           {priceBlock}
         </div>
 
-        <div data-compare="cta">{cta}</div>
-
         <hr className={rule} />
 
         <div className="flex flex-1 flex-col">{metaBlock}</div>
@@ -248,6 +247,10 @@ export function PricingCard({
         {footer && (
           <div className={cn("flex border-t border-dashed pt-3 text-xs", rule, fgMuted)}>{footer}</div>
         )}
+
+        {/* Last, as on every plan card: you read what you get, then act. The
+            meta list's flex-1 pins it to the bottom, level across a row. */}
+        <div data-compare="cta">{cta}</div>
       </div>
     )
   }
