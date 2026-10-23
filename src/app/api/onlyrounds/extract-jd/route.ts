@@ -16,6 +16,8 @@
 import { google } from "@ai-sdk/google"
 import { generateText, Output } from "ai"
 import { NextRequest, NextResponse } from "next/server"
+
+import { readJsonBody } from "@/lib/read-json-body"
 import { z } from "zod"
 
 // ── Prompt ─────────────────────────────────────────────────────────────────
@@ -385,7 +387,8 @@ function buildDummyResponse(title: string, jd: string): ExtractionResult {
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json()
+    const { body, tooLarge } = await readJsonBody(req)
+    if (tooLarge) return tooLarge
     const jd: string = body?.jd ?? ""
     const title: string = body?.title ?? ""
 

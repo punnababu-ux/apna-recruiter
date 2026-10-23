@@ -16,6 +16,8 @@
 import { google } from "@ai-sdk/google"
 import { generateText, Output } from "ai"
 import { NextRequest, NextResponse } from "next/server"
+
+import { readJsonBody } from "@/lib/read-json-body"
 import { z } from "zod"
 
 import { CATEGORIES, INDUSTRIES } from "@/lib/apnahire/job-draft"
@@ -129,7 +131,8 @@ export async function POST(req: NextRequest) {
   // The local parser's answer — used whenever the live AI can't give one.
   const fallback = () => (refining ? buildDummyRefine(current!, instruction) : buildDummyDraft(prompt))
   try {
-    const body = await req.json()
+    const { body, tooLarge } = await readJsonBody(req)
+    if (tooLarge) return tooLarge
     prompt = body?.prompt ?? ""
     instruction = body?.instruction ?? ""
     current = body?.current

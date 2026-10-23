@@ -22,6 +22,8 @@
 import { google } from "@ai-sdk/google"
 import { generateText, Output } from "ai"
 import { NextRequest, NextResponse } from "next/server"
+
+import { readJsonBody } from "@/lib/read-json-body"
 import { z } from "zod"
 
 // ── Prompts ───────────────────────────────────────────────────────────────
@@ -340,7 +342,8 @@ function deriveDummyTitle(jd: string): string {
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json().catch(() => ({}))
+    const { body, tooLarge } = await readJsonBody(req)
+    if (tooLarge) return tooLarge
     const title: string = (body?.title ?? "").toString()
     const jd: string = (body?.jd ?? body?.seed ?? "").toString()
 

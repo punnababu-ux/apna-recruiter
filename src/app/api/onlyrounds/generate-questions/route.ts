@@ -15,6 +15,8 @@
 import { google } from "@ai-sdk/google"
 import { generateText, Output } from "ai"
 import { NextRequest, NextResponse } from "next/server"
+
+import { readJsonBody } from "@/lib/read-json-body"
 import { z } from "zod"
 
 export const SYSTEM_PROMPT =
@@ -189,7 +191,8 @@ function buildDummyQuestions(
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json().catch(() => ({}))
+    const { body, tooLarge } = await readJsonBody(req)
+    if (tooLarge) return tooLarge
     const jobTitle: string = (body?.jobTitle ?? "").toString()
     const jd: string = (body?.jd ?? "").toString()
     const sectionTitle: string = (body?.sectionTitle ?? "").toString()

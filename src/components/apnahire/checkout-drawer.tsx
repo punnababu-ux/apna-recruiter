@@ -77,6 +77,7 @@ import { CountdownChip, useCountdown } from "@/components/apnahire/offers/countd
 import { CouponExpiredDialog } from "@/components/apnahire/offers/coupon-expired-dialog"
 import { EXTRA_OFF } from "@/content/offers"
 import { inr } from "@/lib/format"
+import { computeBill, withGst } from "@/lib/apnahire/bill"
 import { SUBSCRIPTION_TERMS } from "@/content/subscriptions"
 
 export interface CartLine {
@@ -502,18 +503,11 @@ export function CheckoutDrawer({
     ...(aiLine ? [aiLine] : []),
   ]
 
-  // itemsNet = Σ price · itemsMrp = Σ (mrp ?? price)
-  const itemsNet = lines.reduce((sum, l) => sum + l.price, 0)
-  const itemsMrp = lines.reduce((sum, l) => sum + (l.mrp ?? l.price), 0)
-  const prorationCredit = proration ? Math.min(proration.amount, itemsNet) : 0
-  const coupon = appliedCoupon ? COUPONS[appliedCoupon] : null
-  const couponDiscount = coupon
-    ? Math.min(Math.round(((itemsNet - prorationCredit) * coupon.discountPct) / 100), coupon.maxDiscount)
-    : 0
-  // "Sub total" in the bill is the post-coupon taxable amount (Figma maths).
-  const subtotal = itemsNet - prorationCredit - couponDiscount
-  const gst = Math.round(subtotal * 0.18)
-  const total = subtotal + gst
+  const { itemsNet, itemsMrp, prorationCredit, couponDiscount, subtotal, gst, total } = computeBill(
+    lines,
+    proration?.amount ?? 0,
+    appliedCoupon ? COUPONS[appliedCoupon] : null,
+  )
 
   // Figma only ever draws the upsell over a job-credit primary item; the
   // Quarterly-plan frames on the same board carry no upsell block at all.
@@ -525,7 +519,7 @@ export function CheckoutDrawer({
   // The renewal charge does NOT follow the coupon: both frames print ₹7,079
   // even though the coupon frame's total is ₹6,725. It is the plan's own price
   // plus its own GST — i.e. the coupon is first-cycle only.
-  const renewalAmount = item.price + Math.round(item.price * 0.18)
+  const renewalAmount = withGst(item.price)
   const periodLabel = periodLabelFor(item.renewAfterDays ?? 0)
 
   const handleApplyCoupon = (code: string) => {

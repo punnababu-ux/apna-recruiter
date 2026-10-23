@@ -22,9 +22,12 @@
 import { google } from "@ai-sdk/google"
 import { generateText, Output } from "ai"
 import { NextRequest, NextResponse } from "next/server"
+
+import { readJsonBody } from "@/lib/read-json-body"
 import { z } from "zod"
 
 export const MAX_CRITERIA = 15
+const MAX_TASKS = 20
 
 export const SYSTEM_PROMPT =
   "You are an expert recruiter defining how an AI screener should evaluate " +
@@ -149,14 +152,16 @@ function capTotal(result: CriteriaResult): CriteriaResult {
 export async function POST(req: NextRequest) {
   let tasks: Array<{ id: string; title: string; type: string }> = []
   try {
-    const body = await req.json().catch(() => ({}))
+    const { body, tooLarge } = await readJsonBody(req)
+    if (tooLarge) return tooLarge
     const title: string = (body?.title ?? "").toString()
     const jd: string = (body?.jd ?? "").toString()
     const detailsSummary: string = (body?.detailsSummary ?? "").toString()
     const tasksSummary: string = (body?.tasksSummary ?? "").toString()
     const taskName: string = (body?.taskName ?? "").toString()
     const taskType: string = (body?.taskType ?? "").toString()
-    tasks = body?.tasks ?? []
+    // Each task is its own Gemini job: cap how many one request can ask for.
+    tasks = Array.isArray(body?.tasks) ? body.tasks.slice(0, MAX_TASKS) : []
 
     if (!jd.trim() && !title.trim()) {
       return NextResponse.json(
