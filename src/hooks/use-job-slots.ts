@@ -314,8 +314,8 @@ export function cancelScheduledChange(sub: Subscription) {
   setJobSlots({ ...sub, scheduled: undefined })
 }
 
-/** Prototype: the cycle ends now. The plan renews, as the booked downgrade
- *  if there is one; live jobs past its slots expire (the newest first). */
+/** Prototype: the cycle ends now. It renews, as the booked downgrade if
+ *  there is one (a cancelled plan ends instead: `endSubscription`); live jobs past its slots expire (the newest first). */
 export function renewSubscription(sub: Subscription) {
   const next = sub.scheduled
   const term = next?.term ?? sub.term ?? "monthly"
@@ -340,21 +340,14 @@ export function cancelAtRenewal(sub: Subscription, reasons: string[]) {
   setJobSlots({ ...sub, cancelled: true, scheduled: undefined, cancelReasons: reasons })
 }
 
-/** Days before renewal when the renewal is already under way (UPI autopay
- *  sends its pre-debit notice): the plan can't be changed or cancelled
- *  until it has renewed. */
-export const RENEWAL_LOCK_DAYS = 2
-
-/** What blocks changing or cancelling the plan right now: a booked
- *  downgrade (keep the current plan first) or a renewal under way. */
-export function changeLockOf(sub: SubscriptionDetails): "downgrade" | "renewal" | null {
+/** One change at a time (user call, 2026-10-23): a booked change blocks
+ *  every other until it is undone or happens. A downgrade waits for the
+ *  renewal date ("Keep current plan" drops it); a cancellation runs the plan
+ *  to its end ("Reactivate plan" undoes it). An upgrade is instant, so it
+ *  never books anything. */
+export type ChangeLock = "downgrade" | "cancel"
+export function changeLockOf(sub: SubscriptionDetails): ChangeLock | null {
   if (sub.scheduled) return "downgrade"
-  if (!sub.cancelled && sub.daysLeft <= RENEWAL_LOCK_DAYS) return "renewal"
+  if (sub.cancelled) return "cancel"
   return null
-}
-
-/** Prototype: the cycle moved on so the renewal is `daysLeft` away. */
-export function setDaysLeft(sub: Subscription, daysLeft: number) {
-  const term = sub.term ?? "monthly"
-  setJobSlots({ ...sub, startedOn: isoDay(daysLeft - SUBSCRIPTION_TERMS[term].slotDays) })
 }

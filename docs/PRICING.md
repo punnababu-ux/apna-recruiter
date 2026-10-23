@@ -113,7 +113,34 @@ them there, once (user call, 2026-10-22).
   ₹2,499; today 2 slots, ₹2,250 /slot against ₹2,499 (₹4,499, struck
   ₹4,998 ⚠️ derived); from Jan 1 3 slots, ₹2,200 /slot against ₹2,749.
 
+### When a plan ends (decided and built 2026-10-23 · `hooks/use-previous-plan.ts`, `components/apnahire/plan-ended.tsx`)
+  A plan ends when a cancelled plan reaches its end date, or a renewal
+  payment fails.
+  - **Nothing holds the customer back.** No grace period that blocks them:
+    the moment the plan ends they are on job credits and can buy credits,
+    or any plan, from self-checkout.
+  - **All live jobs expire** when the plan ends.
+  - **The hiring city is not kept.** Buying a plan again asks to lock a city
+    at the next job post, as a first purchase does.
+  - **Renew the previous plan from self-checkout** (for 30 days): a slim
+    "Your previous plan" card (name, slots, today's price, "Renew") above the plan tabs.
+    Today's price, not the old one: the price lock ended with the plan. A
+    plan no longer sold shows "View plans" instead.
+  - **"Plan ended" banner** (compact, dashboard and Manage plan) for about
+    a week: "Your Unlimited monthly plan ended on 10 Nov 2026" + Renew.
+    After that, the history lives in Credits & usage (`/apnahire/usage`,
+    still to build): the plans bought, when they ran.
+  - Later, not now: a plan audit for the customer (jobs posted, applies,
+    database unlocks over the plan's life).
+
 ### Changing a plan (`/apnahire/plan`, `hooks/use-job-slots.ts`)
+  **One change at a time** (user call, 2026-10-23): a booked change blocks
+  every other until it is undone or happens. A downgrade waits for the
+  renewal date ("Keep current plan" drops it); a cancellation runs the plan
+  to its end ("Reactivate plan" undoes it). While either is booked, every
+  plan card's CTA is off with a tooltip saying how to undo it, and "Cancel
+  plan" explains it is blocked. An upgrade is instant, so it books nothing.
+  No other lock (no renewal window).
 
 - **Upgrade** (a longer term and/or more slots, nothing less): instant.
   Credit = what was paid × days left ÷ term days (rounded, never more than

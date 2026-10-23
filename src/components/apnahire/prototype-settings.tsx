@@ -28,16 +28,17 @@ import * as React from "react"
 import Link from "next/link"
 import { Button, Popover, PopoverContent, PopoverTrigger } from "@apna/design-system"
 import {
-  RENEWAL_LOCK_DAYS,
   renewSubscription,
   sampleSubscription,
   samplePresetOf,
-  setDaysLeft,
   setJobSlots,
   useJobSlots,
   type SlotPreset,
 } from "@/hooks/use-job-slots"
 import { usePlans } from "@/hooks/apnahire/use-plans"
+import { endSubscription } from "@/hooks/use-previous-plan"
+import { planCatalog } from "@/content/plan-catalog"
+import type { JobSlotCount } from "@/content/subscriptions"
 import { PRICING_PHASES } from "@/content/pricing-phase"
 import { setPricingPhase, usePricingPhase } from "@/hooks/use-pricing-phase"
 
@@ -155,23 +156,33 @@ export function JobSlotsControls() {
   return (
     <PrototypeSection title="Subscription">
       {options.map(([key, label]) => (
-        <PrototypeOption key={key} active={current === key} onClick={() => setJobSlots(sampleSubscription(key, plan))}>
+        <PrototypeOption key={key} active={current === key && plans.slotCounts.includes(slots?.total as JobSlotCount)} onClick={() => setJobSlots(sampleSubscription(key, plan))}>
           {label}
         </PrototypeOption>
       ))}
-      {/* The renewal under way (pre-debit notice): changes and cancelling
-          wait until it has renewed. */}
-      {slots && (
-        <PrototypeOption onClick={() => setDaysLeft(slots, RENEWAL_LOCK_DAYS)}>
-          Renewal in {RENEWAL_LOCK_DAYS} days · changes locked
-        </PrototypeOption>
-      )}
-      {/* The cycle ends now: renews, as the booked downgrade if any. */}
-      {slots && (
-        <PrototypeOption onClick={() => renewSubscription(slots)}>
-          {slots.scheduled ? "Renew now · downgrade starts" : "Renew now"}
-        </PrototypeOption>
-      )}
+      {/* Bought before the 1 / 3 / 5 list: today's 2-slot monthly plan, still
+          renewing at its own price. */}
+      <PrototypeOption
+        active={!!slots && !plans.slotCounts.includes(slots.total as JobSlotCount)}
+        onClick={() => setJobSlots(sampleSubscription("free", planCatalog("today").plan("monthly", 2 as JobSlotCount)))}
+      >
+        Legacy 2-slot plan · no longer sold
+      </PrototypeOption>
+      {/* The cycle ends now: a cancelled plan ends; otherwise it renews (as
+          the booked downgrade if any), or its payment fails and it ends. */}
+      {slots &&
+        (slots.cancelled ? (
+          <PrototypeOption onClick={() => endSubscription(slots, "cancelled")}>Reach end date · plan ends</PrototypeOption>
+        ) : (
+          <>
+            <PrototypeOption onClick={() => renewSubscription(slots)}>
+              {slots.scheduled ? "Renew now · downgrade starts" : "Renew now"}
+            </PrototypeOption>
+            <PrototypeOption onClick={() => endSubscription(slots, "payment-failed")}>
+              Renewal payment fails · plan ends
+            </PrototypeOption>
+          </>
+        ))}
     </PrototypeSection>
   )
 }

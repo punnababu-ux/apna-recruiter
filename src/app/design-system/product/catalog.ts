@@ -396,6 +396,18 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
         ],
       },
       {
+        name: "PlanEnded",
+        file: "apnahire/plan-ended.tsx",
+        what: "After a plan ends (cancelled run-out or failed renewal payment): PlanEndedBanner (a week, dashboard), PreviousPlanCard (a month, self-checkout: renew at today's price) and PlanEndedState (Manage plan for that week).",
+        live: "/apnahire/plan",
+        where: "Jobs dashboard, self-checkout above the tabs, Manage plan",
+        rules: [
+          "Nothing is held back: the account is on job credits the moment the plan ends.",
+          "Renew charges today's price (the price lock ended with the plan); a plan no longer sold offers \"View plans\" instead.",
+          "Renew on the checkout card is the dark companion (emphasis), never a second green CTA.",
+        ],
+      },
+      {
         name: "CancelPlanFlow",
         file: "apnahire/cancel-plan-flow.tsx",
         what: "Cancelling an Unlimited plan in three steps: why (reasons, \"Other\" note), what is lost (this plan's benefits, active until the renewal date), cancelled (access until then).",

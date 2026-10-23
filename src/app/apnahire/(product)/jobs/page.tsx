@@ -32,6 +32,7 @@ import { ValueArt } from "@/components/marketing/value-art"
 import { MobileChipRow } from "@/components/apnahire/mobile-chip-row"
 import { JobList, STATUS_LABELS, type ApnaJob, type ApnaJobStatus } from "@/components/apnahire/jobs/job-list"
 import { PageHeader } from "@/components/onlyrounds/page-header"
+import { PlanEndedBanner } from "@/components/apnahire/plan-ended"
 import { PriceChangeBanner } from "@/components/apnahire/price-change-banner"
 import { COMPANY_NAME } from "@/lib/apnahire/job-draft"
 import { useFlushHeader } from "@/hooks/use-flush-header"
@@ -239,6 +240,8 @@ function JobsPageInner() {
           date). Phones: just under the search band, which is part of the
           header there. */}
       <PriceChangeBanner />
+      {/* A plan that just ended (a week): the way back. */}
+      <PlanEndedBanner />
       <PageHeader
         variant="transparent"
         // Phones: no page title — the bottom bar already says Jobs.

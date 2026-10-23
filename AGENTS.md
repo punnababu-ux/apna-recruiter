@@ -672,6 +672,11 @@ cards) and every upsell tile (`OfferChoice`), both checkouts, light and dark
    offer line or new-price notice. They may have bought it for more; a
    sale running today is not theirs. Offers stay on the other cards.
    `SubscriptionPlans` does this through `current.price`.
+   **Its price is fixed for life** (user call, 2026-10-23): a subscription
+   renews at what was bought until it is cancelled (or changed from the
+   back end), whatever the price list does — new prices, a plan no longer
+   sold (2 slots once the list is 1 / 3 / 5). Renewals charge `paid`, never
+   today's price, and no "new price" notice is shown for it.
 
 ---
 

@@ -17,7 +17,8 @@ import { cn } from "@/lib/utils"
  *
  * `variant="usage"` is a plan's allowance on a card (Manage plan: job
  * slots, database credits, hiring city): muted nested tile, icon on its
- * own line, label under it, value, then a note (`trend`). Its four parts
+ * own line with the label under it (beside it on phones, to keep the tile
+ * short), value, then a note (`trend`). Its four parts
  * are direct children, so a row of them can share lines with
  * `sm:row-span-4 sm:grid sm:grid-rows-subgrid` on each tile (the caller's
  * grid sets the row template).
@@ -84,7 +85,7 @@ const MetricCard = React.forwardRef<HTMLDivElement, MetricCardProps>(
     if (variant === "usage") {
       return (
         <div ref={ref} className={cn(metricCardVariants({ variant }), className)} {...props}>
-          <span className="flex flex-col items-start gap-2 text-sm text-muted-foreground [&>svg]:size-5">
+          <span className="flex items-center gap-2 text-sm text-muted-foreground sm:flex-col sm:items-start [&>svg]:size-5">
             {icon}
             <span className="flex items-center gap-1.5">{label}</span>
           </span>

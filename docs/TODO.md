@@ -21,6 +21,12 @@ ship, and keep one line per item. Open price questions live in
 - [ ] Before locking: dashboard → available credits / balance shows "City not set", with a way to set it
 - [ ] Carry the locked city through every flow that reads it: job posting location, balance view, plan cards ("Valid in a single city"), upgrades
 
+## When a plan ends
+- [x] Build the plan-ended state (rules: `docs/PRICING.md` → "When a plan ends"): back to credits with no lock, "Your previous plan" renew card in self-checkout, a week-long "Plan ended" banner
+- [ ] Wire plan end into the jobs list (mock jobs don't expire yet) and the city prompt at the next post (with "Subscription city lock" below)
+- [x] Renewal payment failed: the plan ends (no blocking grace period); say why in the banner
+- [ ] Credits & usage: past plans in history; later a per-plan audit (jobs posted, applies, unlocks)
+
 ## Plan pop-up illustrations
 - [ ] Generate 8 clay objects for the plan pop-ups (feedback, plan-ending, plan-cancelled, change-locked, reactivate, downgrade, change-scheduled, upgrade) and swap out the stand-ins. Prompts: `docs/CLAY-ILLUSTRATIONS.md` → "To generate: plan pop-ups"
 

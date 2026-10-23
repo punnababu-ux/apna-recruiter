@@ -172,11 +172,11 @@ function PlanRows({ slots }: { slots: Subscription }) {
       <div className="flex flex-col gap-1">
         <span className="flex flex-wrap items-center gap-2">
           <span className="text-base font-semibold text-foreground">{planOrderLabel({ name: sub.plan })}</span>
-          <Badge variant="success">Active</Badge>
+          {sub.cancelled ? <Badge variant="warning">Ending</Badge> : <Badge variant="success">Active</Badge>}
         </span>
         <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
           <CalendarClock className="size-4 shrink-0" aria-hidden />
-          Renews on {dayLabel(sub.renewsOn)}
+          {sub.cancelled ? "Cancelled · ends on" : "Renews on"} {dayLabel(sub.renewsOn)}
         </span>
       </div>
       <Rows
