@@ -25,7 +25,8 @@
  *                              bill row → payment
  *                   downgrade  "Downgrade on <date>": a confirm, nothing
  *                              to pay; booked for the renewal date
- *                 Hidden once cancelled (reactivate first).
+ *                 A booked change (downgrade or cancellation) turns every
+ *                 CTA off, with a tooltip saying how to undo it.
  *
  * Anything less than today's plan (a shorter term or fewer slots) is a
  * downgrade (changeKindOf). Rules and state: hooks/use-job-slots.ts.
@@ -35,7 +36,6 @@ import * as React from "react"
 import Link from "next/link"
 import { toast } from "sonner"
 import {
-  AlertBanner,
   Badge,
   Briefcase,
   Button,
@@ -48,6 +48,10 @@ import {
   EmptyHeader,
   EmptyTitle,
   Lock,
+  Info,
+  TooltipTrigger,
+  TooltipContent,
+  Tooltip,
   MoreVertical,
   XCircle,
   DropdownMenu,
@@ -70,9 +74,12 @@ import { SubscriptionPlans } from "@/components/apnahire/subscription-plans"
 import { NextPlanNotice, usePlanChange, useChoosePlan } from "@/components/apnahire/plan-change"
 import { PageHeader } from "@/components/onlyrounds/page-header"
 import { CancelPlanFlow } from "@/components/apnahire/cancel-plan-flow"
+import { PlanEndedState } from "@/components/apnahire/plan-ended"
+import { recentlyEnded, usePreviousPlan } from "@/hooks/use-previous-plan"
 import { PlanPopup, PopupFooter, PopupHeader } from "@/components/apnahire/plan-popup"
 import { JobSlotsControls, PricingPhaseControls, PrototypeSettings } from "@/components/apnahire/prototype-settings"
 import {
+  SUBSCRIPTION_TERMS,
   planOrderLabel,
   planOrderPoints,
   type JobSlotCount,
@@ -117,6 +124,9 @@ export function ManagePlan() {
 }
 
 function NoPlan() {
+  // A plan that ended this week: what happened and the way back first.
+  const prev = usePreviousPlan()
+  if (recentlyEnded(prev)) return <PlanEndedState />
   return (
     <Empty>
       <EmptyHeader>
@@ -141,6 +151,29 @@ function CardIcon({ icon: Icon }: { icon: React.ComponentType<{ className?: stri
     >
       <Icon className="size-5" />
     </span>
+  )
+}
+
+/** A plan no longer sold: a blue info badge whose tooltip (the plan cards'
+ *  dark one) says it still renews at its price. Hover, focus or tap opens
+ *  it, so it works on phones too. */
+function LegacyBadge({ sub }: { sub: SubscriptionDetails }) {
+  const [open, setOpen] = React.useState(false)
+  return (
+    <Tooltip open={open} onOpenChange={setOpen}>
+      <TooltipTrigger
+        closeOnClick={false}
+        render={<button type="button" className="rounded-full" onClick={() => setOpen(true)} />}
+      >
+        <Badge variant="info">
+          <Info aria-hidden />
+          No longer sold
+        </Badge>
+      </TooltipTrigger>
+      <TooltipContent className="max-w-64">
+        {`Your ${sub.total}-slot plan is no longer sold. It keeps renewing at ${inr(sub.paid ?? 0)}${SUBSCRIPTION_TERMS[sub.term].unit} until you change or cancel it.`}
+      </TooltipContent>
+    </Tooltip>
   )
 }
 
@@ -226,43 +259,41 @@ function PlanManager({ slots }: { slots: Subscription }) {
       {/* Change plan: the plans step's own cards, on its gradient, with this
           plan marked. Upgrades go to the order summary (prorated);
           downgrades are booked for the renewal date. */}
-      {!sub.cancelled && (
-        <section
-          aria-label="Change plan"
-          className="flex flex-col gap-4 rounded-card bg-gradient-checkout-hero p-4 sm:p-6"
-        >
-          <SubscriptionPlans
-            current={change.current}
-            ctaLabels={change.ctaLabels}
-            ctaDisabled={change.ctaDisabled}
-            ctaHints={change.ctaHints}
-            recommendedPlan={change.recommendedPlan}
-            slots={count}
-            onSlotsChange={setCount}
-            selectedPlan={picked}
-            onSelectPlan={setPicked}
-            onBuyMonthly={() => choose("monthly")}
-            onBuyQuarterly={() => choose("quarterly")}
-            onBuyAnnual={() => choose("annual")}
-          />
-          {/* Phones: the rows pick; this acts on the picked one. */}
-          <div className="flex flex-col gap-2 md:hidden">
-            <Button
-              size="lg"
-              variant={pickedKind === "upgrade" ? "default" : "outline"}
-              className="w-full"
-              disabled={pickedKind === "same" || change.ctaDisabled[picked]}
-              onClick={() => choose(picked)}
-            >
-              {pickedKind === "same" ? "Your current plan" : change.ctaLabels[picked]}
-            </Button>
-            {change.ctaHints[picked] && pickedKind !== "same" && (
-              <p className="text-center text-xs text-checkout-hero-fg-muted">{change.ctaHints[picked]}</p>
-            )}
-            <GstNote className="text-center text-checkout-hero-fg-muted" />
-          </div>
-        </section>
-      )}
+      <section
+        aria-label="Change plan"
+        className="flex flex-col gap-4 rounded-card bg-gradient-checkout-hero p-4 sm:p-6"
+      >
+        <SubscriptionPlans
+          current={change.current}
+          ctaLabels={change.ctaLabels}
+          ctaDisabled={change.ctaDisabled}
+          ctaHints={change.ctaHints}
+          recommendedPlan={change.recommendedPlan}
+          slots={count}
+          onSlotsChange={setCount}
+          selectedPlan={picked}
+          onSelectPlan={setPicked}
+          onBuyMonthly={() => choose("monthly")}
+          onBuyQuarterly={() => choose("quarterly")}
+          onBuyAnnual={() => choose("annual")}
+        />
+        {/* Phones: the rows pick; this acts on the picked one. */}
+        <div className="flex flex-col gap-2 md:hidden">
+          <Button
+            size="lg"
+            variant={pickedKind === "upgrade" ? "default" : "outline"}
+            className="w-full"
+            disabled={pickedKind === "same" || change.ctaDisabled[picked]}
+            onClick={() => choose(picked)}
+          >
+            {pickedKind === "same" ? "Your current plan" : change.ctaLabels[picked]}
+          </Button>
+          {change.ctaHints[picked] && pickedKind !== "same" && (
+            <p className="text-xs text-checkout-hero-fg-muted">{change.ctaHints[picked]}</p>
+          )}
+          <GstNote className="text-checkout-hero-fg-muted" />
+        </div>
+      </section>
 
       {confirm}
 
@@ -316,7 +347,14 @@ function CurrentPlan({
   const db = sub.db ?? { left: 0, total: 0 }
   const full = sub.jobs.length >= sub.total
   const lock = changeLockOf(sub)
+  const legacy = !usePlans().slotCounts.includes(sub.total as JobSlotCount)
   const [reactivating, setReactivating] = React.useState(false)
+  const badges = (
+    <>
+      {legacy && <LegacyBadge sub={sub} />}
+      {!sub.cancelled ? <Badge variant="success">Active</Badge> : <Badge variant="warning">Ending</Badge>}
+    </>
+  )
 
   return (
     <Card padding="none" className="flex-1 gap-6 p-4 sm:p-6">
@@ -327,12 +365,14 @@ function CurrentPlan({
             <div className="flex min-w-0 flex-col gap-1">
               <span className="text-overline text-muted-foreground">Current plan</span>
               <h2 className="text-plan-name text-foreground">{planOrderLabel({ name: sub.plan })}</h2>
+              {/* Phones: the badges go under the title; "⋯" keeps the corner. */}
+              <span className="flex flex-wrap gap-1 pt-1 sm:hidden">{badges}</span>
             </div>
           </div>
           {/* Its state, not its price (the price is Billing's), and the rare
               actions tucked behind "⋯": cancelling lives there, never a button. */}
           <div className="flex shrink-0 items-center gap-1">
-            {!sub.cancelled ? <Badge variant="success">Active</Badge> : <Badge variant="warning">Ending</Badge>}
+            <span className="hidden items-center gap-1 sm:flex">{badges}</span>
             {/* Already cancelled: nothing to cancel; "Reactivate plan" is below. */}
             {!sub.cancelled && (
               <DropdownMenu>
@@ -414,18 +454,6 @@ function CurrentPlan({
         />
       </div>
 
-      {/* What happens next, when it holds changes back: a booked downgrade
-          (with the way back) or a renewal under way. */}
-      {lock && (
-        <NextPlanNotice
-          sub={sub}
-          lock={lock}
-          action={lock === "downgrade" ? { label: "Keep current plan", onClick: () => cancelScheduledChange(slots) } : undefined}
-        />
-      )}
-
-      {/* Cancelled: the system's action banner, as the booked-downgrade
-          notice (its action link takes the banner's tone). */}
       <PlanPopup open={reactivating} onOpenChange={setReactivating}>
         <PopupHeader
           alone
@@ -454,17 +482,17 @@ function CurrentPlan({
           </Button>
         </PopupFooter>
       </PlanPopup>
-      {sub.cancelled && (
-        <AlertBanner
-          variant="warning"
-          icon={<CalendarClock aria-hidden />}
-          title={
-            <>
-              Your plan ends on <span className="whitespace-nowrap">{dayLabel(sub.renewsOn)}</span>. You cancelled it,
-              so it won&apos;t renew.
-            </>
+      {/* A booked change (downgrade or cancellation) holds the rest back:
+          what happens next, and the way back. */}
+      {lock && (
+        <NextPlanNotice
+          sub={sub}
+          lock={lock}
+          action={
+            lock === "downgrade"
+              ? { label: "Keep current plan", onClick: () => cancelScheduledChange(slots) }
+              : { label: "Reactivate plan", onClick: () => setReactivating(true) }
           }
-          action={{ label: "Reactivate plan", onClick: () => setReactivating(true) }}
         />
       )}
     </Card>

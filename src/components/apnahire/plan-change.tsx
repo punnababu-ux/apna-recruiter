@@ -36,7 +36,7 @@ import {
   AlertDescription,
   AlertTriangle,
   Button,
-  Info,
+  CalendarClock,
 } from "@apna/design-system"
 import {
   SUBSCRIPTION_TERMS,
@@ -56,6 +56,7 @@ import {
   scheduleDowngrade,
   subscriptionOf,
   useJobSlots,
+  type ChangeLock,
   type Subscription,
   type SubscriptionDetails,
 } from "@/hooks/use-job-slots"
@@ -92,6 +93,9 @@ export function usePlanChange(count: JobSlotCount) {
   const sub = subscriptionOf(slots)
   const listPrice = plans.plan(sub.term, sub.total as JobSlotCount).price
   const lock = changeLockOf(sub)
+  // A plan no longer on the price list (2 slots once the list is 1 / 3 / 5):
+  // it keeps renewing at its price; changing away from it is for good.
+  const legacy = !plans.slotCounts.includes(sub.total as JobSlotCount)
   const kindOf = (id: SubscriptionPlanId) => changeKindOf(sub, plans.plan(id, count))
   const isBooked = (id: SubscriptionPlanId) => sub.scheduled?.term === id && sub.scheduled.slots === count
   const each = <T,>(f: (id: SubscriptionPlanId) => T) =>
@@ -103,6 +107,7 @@ export function usePlanChange(count: JobSlotCount) {
     sub,
     listPrice,
     lock,
+    legacy,
     kindOf,
     isBooked,
     // Marked at what they pay, never today's sale price.
@@ -117,8 +122,8 @@ export function usePlanChange(count: JobSlotCount) {
         ? isBooked(id)
           ? `Downgrade scheduled. Your current plan stays active until ${date}; the new plan starts then.`
           : `A downgrade is scheduled for ${date}. Keep your current plan first to choose another.`
-        : lock === "renewal"
-          ? `Your plan renews on ${date}. You can change it after that.`
+        : lock === "cancel"
+          ? `Your plan is cancelled and ends on ${date}. Reactivate it first to change plans.`
           : null,
     ),
     // The ribbon and green CTA sell: never on a downgrade or a locked plan.
@@ -134,8 +139,8 @@ export type PlanChange = NonNullable<ReturnType<typeof usePlanChange>>
 const planWithSlots = (term: SubscriptionPlanId, slots: number) =>
   `${planOrderLabel(SUBSCRIPTION_TERMS[term])} (${slotLabel(slots)})`
 
-/** What happens next, when it blocks changes: a booked downgrade
- *  (warning) or a renewal under way (info). With `action` (the plan card's
+/** What happens next, when a booked change blocks the rest: a downgrade
+ *  or a cancellation (both warning). With `action` (the plan card's
  *  "Keep current plan") it is the system's action banner (AlertBanner);
  *  without, a plain Alert (inside a pop-up). */
 export function NextPlanNotice({
@@ -144,28 +149,41 @@ export function NextPlanNotice({
   action,
 }: {
   sub: SubscriptionDetails
-  lock: "downgrade" | "renewal"
+  lock: ChangeLock
   action?: { label: React.ReactNode; onClick: () => void }
 }) {
   const date = <span className="whitespace-nowrap">{dayLabel(sub.renewsOn)}</span>
-  const downgrade = lock === "downgrade" && sub.scheduled
-  const variant = downgrade ? "warning" : "info"
-  const Icon = downgrade ? AlertTriangle : Info
-  const text = downgrade ? (
-    <>
-      Your downgrade to the {planWithSlots(sub.scheduled!.term, sub.scheduled!.slots)} is scheduled on {date}.
-    </>
-  ) : (
-    <>
-      Your renewal of the {planWithSlots(sub.term, sub.total)} is scheduled on {date}.
-    </>
-  )
+  // Both are booked changes that hold the rest back: one warning banner.
+  const variant = "warning"
+  const Icon = lock === "cancel" ? CalendarClock : AlertTriangle
+  const text =
+    lock === "downgrade" && sub.scheduled ? (
+      <>
+        Your downgrade to the {planWithSlots(sub.scheduled.term, sub.scheduled.slots)} is scheduled on {date}.
+      </>
+    ) : (
+      <>Your plan is cancelled and ends on {date}. It won&apos;t renew.</>
+    )
   return action ? (
     <AlertBanner variant={variant} icon={<Icon aria-hidden />} title={text} action={action} />
   ) : (
     <Alert variant={variant}>
       <Icon aria-hidden />
       <AlertDescription>{text}</AlertDescription>
+    </Alert>
+  )
+}
+
+/** In the change pop-ups: leaving a plan no longer sold is for good. */
+function NoWayBack({ sub }: { sub: SubscriptionDetails }) {
+  const plans = usePlans()
+  if (plans.slotCounts.includes(sub.total as JobSlotCount)) return null
+  return (
+    <Alert variant="warning">
+      <AlertTriangle aria-hidden />
+      <AlertDescription>
+        {`Your ${sub.total}-slot plan is no longer sold. Once you change, you can’t switch back to it.`}
+      </AlertDescription>
     </Alert>
   )
 }
@@ -227,6 +245,7 @@ export function UpgradeConfirm({
               title={`Next billing cycle (${dayLabel(isoDay(plan.slotDays))})`}
               items={[{ text: <>Your plan renews at {priceUnit(plan.price, plan.unit)}</> }]}
             />
+            <NoWayBack sub={sub} />
           </PopupBody>
           <PopupFooter>
             <Button variant="outline" size="lg" className="flex-1" onClick={onClose}>
@@ -304,6 +323,7 @@ export function DowngradeFlow({
                 title={`Next billing cycle (${date})`}
                 items={[{ text: <>Your plan renews at {priceUnit(target.price, target.unit)}</> }]}
               />
+              <NoWayBack sub={sub} />
               {expiring > 0 && (
                 <Alert variant="warning">
                   <AlertDescription>
