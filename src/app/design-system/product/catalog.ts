@@ -589,9 +589,9 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
         rules: ["Drawer is a side panel: SheetPanel, inside X."],
       },
       {
-        name: "ScoreGauge / AttemptStatusBand / RoundSummaryStrip",
+        name: "AttemptStatusBand / RoundSummaryStrip",
         file: "onlyrounds/",
-        what: "Score ring, in-progress status row, round summary.",
+        what: "In-progress status row, round summary.",
         where: "Candidate card and drawer, job details",
         rules: ["Status tones come from Badge / Alert variants, never a local palette."],
       },

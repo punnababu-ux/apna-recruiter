@@ -5,53 +5,7 @@ import { IconComponent } from "@apna/design-system"
 
 import type { CandidateState } from "@/components/onlyrounds/candidate-card"
 import { Badge } from "@/components/ui/badge"
-import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
-
-// ── WizardField ───────────────────────────────────────────────────────────
-// Shared form-field wrapper used across all wizard steps.
-// Unifies the three previously-duplicated local Field helpers.
-
-export function WizardField({
-  label,
-  htmlFor,
-  hint,
-  error,
-  required,
-  optional,
-  children,
-}: {
-  label: string
-  htmlFor?: string
-  hint?: string
-  error?: string
-  required?: boolean
-  optional?: boolean
-  children: React.ReactNode
-}) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <Label
-        htmlFor={htmlFor}
-        className={cn("text-sm font-medium", error && "text-destructive")}
-      >
-        {label}
-        {required && <span className="ml-0.5 text-destructive">*</span>}
-        {optional && (
-          <span className="ml-1 text-xs font-normal text-muted-foreground">
-            (Optional)
-          </span>
-        )}
-      </Label>
-      {children}
-      {error ? (
-        <p className="text-xs text-destructive">{error}</p>
-      ) : hint ? (
-        <p className="text-xs text-muted-foreground">{hint}</p>
-      ) : null}
-    </div>
-  )
-}
 
 export function DisplayField({
   label,
