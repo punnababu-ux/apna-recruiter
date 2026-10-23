@@ -3,7 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Palette, Type, Maximize2, Sparkles, Shapes, ImageIcon, Zap, CheckSquare, Eye, Navigation, MessageSquare, Bell, TableIcon, Layout, BookOpen } from "@apna/design-system"
+import { Palette, Type, Maximize2, Sparkles, Shapes, ImageIcon, Zap, CheckSquare, Eye, Navigation, MessageSquare, Bell, TableIcon, Layout, BookOpen, Layers } from "@apna/design-system"
 
 import {
   Sidebar,
@@ -64,6 +64,10 @@ const DOCS_NAV: NavGroup[] = [
       { href: "/design-system/product/pop-ups", label: "Pop-ups", icon: MessageSquare },
       { href: "/design-system/product/surfaces", label: "Surfaces & glass", icon: Palette },
     ],
+  },
+  {
+    title: "Engineering",
+    items: [{ href: "/design-system/engineering/architecture", label: "Architecture", icon: Layers }],
   },
 ]
 
