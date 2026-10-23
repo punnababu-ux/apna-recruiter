@@ -29,17 +29,28 @@
  * the gold plans button, which goes straight to the plans page. Later in the
  * session it's simply "View plans". Hovering it shows what's left. The
  * plans pages themselves (self-checkout, the plan step) never flip.
+ *
+ * With a subscription (useJobSlots; user call, 2026-10-23) it is "Plan
+ * details" instead, everywhere: the plan and when it renews, then job slots
+ * in use of the total, database credits left of the total and the hiring
+ * city the plan is locked to, plus a downgrade booked for the cycle's end.
+ * Its CTA is "Manage plan" (→ /apnahire/plan: upgrades, downgrades), quiet
+ * outline — a subscriber is never sold to from the top bar.
  */
 
 import * as React from "react"
 import Link from "next/link"
 import {
+  Badge,
   Bot,
   Briefcase,
   Button,
+  CalendarClock,
   Coin,
   IndianRupee,
   Info,
+  Layers,
+  MapPin,
   Popover,
   PopoverContent,
   PopoverTitle,
@@ -54,6 +65,8 @@ import {
   UserSearch,
   Wallet,
 } from "@apna/design-system"
+import { planOrderLabel, slotLabel, SUBSCRIPTION_TERMS } from "@/content/subscriptions"
+import { dayLabel, subscriptionOf, useJobSlots, type Subscription } from "@/hooks/use-job-slots"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { useJobCredits, usePlansIngress } from "@/hooks/use-plans-ingress"
 import { num } from "@/lib/format"
@@ -109,16 +122,22 @@ function InfoTip({ label, children }: { label: string; children: string }) {
   )
 }
 
-function CreditRows({ balance }: { balance: CreditsBalance }) {
+type Row = {
+  key: string
+  icon: React.ComponentType<{ className?: string }>
+  value: React.ReactNode
+  label: string
+  info: string
+}
+
+function Rows({ rows }: { rows: Row[] }) {
   return (
     <ul className="flex flex-col">
-      {ROWS.map(({ key, icon: Icon, label, info }) => (
+      {rows.map(({ key, icon: Icon, value, label, info }) => (
         <li key={key} className="flex flex-col gap-1 border-t border-border py-4 last:pb-0">
           <span className="flex items-center gap-3">
             <Icon className="size-5 shrink-0 text-foreground" aria-hidden />
-            <span className="text-xl font-semibold tabular-nums text-foreground">
-              {num(balance[key])}
-            </span>
+            <span className="text-xl font-semibold tabular-nums text-foreground">{value}</span>
           </span>
           <span className="flex items-center gap-1.5 text-sm text-foreground">
             {label}
@@ -127,6 +146,71 @@ function CreditRows({ balance }: { balance: CreditsBalance }) {
         </li>
       ))}
     </ul>
+  )
+}
+
+function CreditRows({ balance }: { balance: CreditsBalance }) {
+  return <Rows rows={ROWS.map((row) => ({ ...row, value: num(balance[row.key]) }))} />
+}
+
+/** "1 / 2": what's used, then the total, quieter. */
+function OfTotal({ used, total }: { used: number; total: number }) {
+  return (
+    <>
+      {num(used)}
+      <span className="text-base font-medium text-muted-foreground"> / {num(total)}</span>
+    </>
+  )
+}
+
+/** The subscription: plan and renewal, then slots, database credits, city. */
+function PlanRows({ slots }: { slots: Subscription }) {
+  const sub = subscriptionOf(slots)
+  const next = sub.scheduled
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-1">
+        <span className="flex flex-wrap items-center gap-2">
+          <span className="text-base font-semibold text-foreground">{planOrderLabel({ name: sub.plan })}</span>
+          <Badge variant="success">Active</Badge>
+        </span>
+        <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          <CalendarClock className="size-4 shrink-0" aria-hidden />
+          Renews on {dayLabel(sub.renewsOn)}
+        </span>
+      </div>
+      <Rows
+        rows={[
+          {
+            key: "slots",
+            icon: Briefcase,
+            value: <OfTotal used={sub.jobs.length} total={sub.total} />,
+            label: "Job slots in use",
+            info: "A slot holds one live job at a time. Expire a job to free its slot for the next.",
+          },
+          {
+            key: "database",
+            icon: UserSearch,
+            value: <OfTotal used={sub.db?.left ?? 0} total={sub.db?.total ?? 0} />,
+            label: "Database credits left",
+            info: "Spent to unlock candidate profiles: 1 per profile, 2 to export one to Excel.",
+          },
+          {
+            key: "city",
+            icon: MapPin,
+            value: sub.city,
+            label: "Hiring city",
+            info: `Your plan hires in one city: its jobs and database searches stay in ${sub.city}.`,
+          },
+        ]}
+      />
+      {next && (
+        <p className="text-sm text-muted-foreground">
+          Changes to the {planOrderLabel(SUBSCRIPTION_TERMS[next.term])} with {slotLabel(next.slots)} on{" "}
+          <span className="whitespace-nowrap">{dayLabel(sub.renewsOn)}</span>.
+        </p>
+      )}
+    </div>
   )
 }
 
@@ -226,23 +310,31 @@ export function AvailableCreditsButton({
 }) {
   const isMobile = useIsMobile()
   const plans = usePlansIngress()
+  const slots = useJobSlots()
   const full: CreditsBalance = { job: 0, database: 0, aiCalling: 0, ...balance }
+  const title = slots ? "Plan details" : "Available credits"
+  const body = slots ? <PlanRows slots={slots} /> : <CreditRows balance={full} />
 
   // 16px (the panel's gap) above it, clear of the last row.
-  const cta = plansCta ? (
+  const cta = !plansCta ? null : slots ? (
+    <Button variant="outline" size="lg" className="w-full" nativeButton={false} render={<Link href="/apnahire/plan" />}>
+      Manage plan
+    </Button>
+  ) : (
     // The plans look (premium + Coin), as in the sidebar and the bottom bar.
     <Button variant="premium" size="lg" className="w-full" nativeButton={false} render={<Link href="/apnahire/credits" />}>
       <Coin icon={IndianRupee} />
       View plans
     </Button>
-  ) : null
+  )
 
+  const Icon = slots ? Layers : Wallet
   const trigger = (
     // Phones: an icon-only 32px circle (the desktop bell's size and shape);
-    // the label from sm. The accessible name stays "Available credits".
-    <Button type="button" variant="outline" size="sm" aria-label="Available credits" className="max-sm:size-8 max-sm:px-0">
-      <Wallet className="size-4" aria-hidden />
-      <span className="hidden sm:inline">Available credits</span>
+    // the label from sm. The accessible name stays the label.
+    <Button type="button" variant="outline" size="sm" aria-label={title} className="max-sm:size-8 max-sm:px-0">
+      <Icon className="size-4" aria-hidden />
+      <span className="hidden sm:inline">{title}</span>
     </Button>
   )
 
@@ -255,8 +347,8 @@ export function AvailableCreditsButton({
         <SheetTrigger render={trigger} />
         {/* The system CloseBubble sits outside the sheet; no overflow-hidden. */}
         <SheetContent side="bottom" className="gap-4 rounded-t-2xl border-t-0 p-5 pb-safe-5">
-          <SheetTitle className="text-lg font-semibold">Available credits</SheetTitle>
-          <CreditRows balance={full} />
+          <SheetTitle className="text-lg font-semibold">{title}</SheetTitle>
+          {body}
           {cta}
         </SheetContent>
       </Sheet>
@@ -267,8 +359,8 @@ export function AvailableCreditsButton({
     <Popover>
       <PopoverTrigger render={trigger} />
       <PopoverContent align="end" sideOffset={8} className="w-72 gap-4 rounded-2xl p-5">
-        <PopoverTitle className="text-lg font-semibold text-foreground">Available credits</PopoverTitle>
-        <CreditRows balance={full} />
+        <PopoverTitle className="text-lg font-semibold text-foreground">{title}</PopoverTitle>
+        {body}
         {cta}
       </PopoverContent>
     </Popover>

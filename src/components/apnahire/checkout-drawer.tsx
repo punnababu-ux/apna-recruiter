@@ -208,6 +208,10 @@ interface CheckoutDrawerProps {
   /** Open with the AI calling agent already added (the recruiter came from
    *  "Post a job with AI calling"). Still removable. */
   aiAddedByDefault?: boolean
+  /** A plan upgrade (ManagePlan): the unused days of the current plan come
+   *  off this first payment as a bill row. The renewal stays at the plan's
+   *  full price. */
+  proration?: { label: string; amount: number }
 }
 
 
@@ -391,6 +395,7 @@ export function CheckoutDrawer({
   onExtraOfferExpired,
   onAiAddedChange,
   aiAddedByDefault = false,
+  proration,
 }: CheckoutDrawerProps) {
   // The back button / gesture closes the summary through its own close
   // path (so the exit offer still shows), rather than leaving the page.
@@ -500,12 +505,13 @@ export function CheckoutDrawer({
   // itemsNet = Σ price · itemsMrp = Σ (mrp ?? price)
   const itemsNet = lines.reduce((sum, l) => sum + l.price, 0)
   const itemsMrp = lines.reduce((sum, l) => sum + (l.mrp ?? l.price), 0)
+  const prorationCredit = proration ? Math.min(proration.amount, itemsNet) : 0
   const coupon = appliedCoupon ? COUPONS[appliedCoupon] : null
   const couponDiscount = coupon
-    ? Math.min(Math.round((itemsNet * coupon.discountPct) / 100), coupon.maxDiscount)
+    ? Math.min(Math.round(((itemsNet - prorationCredit) * coupon.discountPct) / 100), coupon.maxDiscount)
     : 0
   // "Sub total" in the bill is the post-coupon taxable amount (Figma maths).
-  const subtotal = itemsNet - couponDiscount
+  const subtotal = itemsNet - prorationCredit - couponDiscount
   const gst = Math.round(subtotal * 0.18)
   const total = subtotal + gst
 
@@ -809,6 +815,12 @@ export function CheckoutDrawer({
                   </span>
                 </BillRow>
 
+                {proration && (
+                  <BillRow label={proration.label}>
+                    <span className="text-sm text-checkout-primary">-{inr(prorationCredit)}</span>
+                  </BillRow>
+                )}
+
                 {appliedCoupon && (
                   <BillRow label={`Coupon discount (${appliedCoupon})`}>
                     <span className="text-sm text-checkout-primary">-{inr(couponDiscount)}</span>
@@ -917,7 +929,9 @@ export function CheckoutDrawer({
                 className="w-full"
                 onClick={() => onProceedToPay(total, lines, paymentMethod)}
               >
-                {appliedCoupon
+                {proration
+                  ? `Pay ${inr(total)} & upgrade`
+                  : appliedCoupon
                   ? `Pay ${inr(total)} & subscribe`
                   : `Subscribe ${inr(total)} ${periodLabel}`}
               </Button>

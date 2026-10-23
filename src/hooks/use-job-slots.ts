@@ -8,12 +8,24 @@
  * with every slot in use, the "All job slots are in use" pop-up offers to
  * expire a live job or add a slot (SlotsFullDialog).
  *
+ * The rest of the subscription rides along: its term, the day this cycle
+ * started (renewal = start + the term's days), what was paid for it, the
+ * database credits left, the hiring city it is locked to, and a downgrade
+ * waiting for the cycle's end. How a plan changes (user call, 2026-10-23):
+ *
+ *   Upgrade    (a longer term or more slots, nothing less) is instant. The
+ *              unused part of this cycle's payment comes off the new plan's
+ *              price (prorationOf) and the new plan starts today.
+ *   Downgrade  (a shorter term or fewer slots) waits: it is scheduled for
+ *              the cycle's end, and the current plan runs until then.
+ *
  * Prototype: kept in localStorage and switched from the floating settings
  * panel (SLOT_PRESETS). In production this is the account's subscription.
  */
 
 import * as React from "react"
 import { setActiveSubscription } from "@/hooks/use-active-subscription"
+import { SUBSCRIPTION_TERMS, type SubscriptionPlan, type SubscriptionPlanId } from "@/content/subscriptions"
 
 export type SlotJob = {
   id: string
@@ -23,24 +35,59 @@ export type SlotJob = {
   applied: number
 }
 
-export type JobSlots = {
+/** A downgrade booked for the cycle's end: the plan it turns into. */
+export type ScheduledChange = {
+  term: SubscriptionPlanId
+  slots: number
+  price: number
+  dbCredits: number
+}
+
+export type Subscription = {
   plan: string
   total: number
   jobs: SlotJob[]
-} | null
+  /** Optional from here on: state saved before they existed reads as a
+   *  monthly plan started today (subscriptionOf). */
+  term?: SubscriptionPlanId
+  /** The day this cycle started, "2026-10-11". */
+  startedOn?: string
+  /** ₹ paid for this cycle, what an upgrade credits back. */
+  paid?: number
+  db?: { left: number; total: number }
+  /** The one city the plan hires in. */
+  city?: string
+  scheduled?: ScheduledChange
+}
+
+export type JobSlots = Subscription | null
 
 const STORAGE_KEY = "apnahire:job-slots"
 const EVENT = "apnahire:job-slots"
 
 const LIVE_JOBS: SlotJob[] = [
   { id: "delivery-andheri", title: "Delivery Executive", location: "Andheri East, Mumbai", postedAt: "8 Oct 2026", applied: 6 },
-  { id: "back-office-pune", title: "Back Office Executive", location: "Hinjewadi, Pune", postedAt: "2 Oct 2026", applied: 12 },
+  { id: "back-office-powai", title: "Back Office Executive", location: "Powai, Mumbai", postedAt: "2 Oct 2026", applied: 12 },
 ]
+
+/** Where a plan bought without a city on file hires (the prototype's). */
+export const DEFAULT_HIRING_CITY = "Mumbai"
+
+/** The presets' plan: today's 2-slot monthly plan, 12 days into its cycle. */
+const MONTHLY_2: Omit<Subscription, "jobs"> = {
+  plan: SUBSCRIPTION_TERMS.monthly.name,
+  term: "monthly",
+  total: 2,
+  startedOn: isoDay(-12),
+  paid: 4499,
+  db: { left: 320, total: 500 },
+  city: DEFAULT_HIRING_CITY,
+}
 
 export const SLOT_PRESETS = {
   none: { label: "No subscription", slots: null as JobSlots },
-  free: { label: "Subscription · 1 of 2 slots free", slots: { plan: "Monthly plan", total: 2, jobs: LIVE_JOBS.slice(0, 1) } as JobSlots },
-  full: { label: "Subscription · all 2 slots in use", slots: { plan: "Monthly plan", total: 2, jobs: LIVE_JOBS } as JobSlots },
+  free: { label: "Subscription · 1 of 2 slots free", slots: { ...MONTHLY_2, jobs: LIVE_JOBS.slice(0, 1) } as JobSlots },
+  full: { label: "Subscription · all 2 slots in use", slots: { ...MONTHLY_2, jobs: LIVE_JOBS } as JobSlots },
 } as const
 export type SlotPreset = keyof typeof SLOT_PRESETS
 
@@ -109,3 +156,113 @@ export const ordinal = (n: number) => {
 
 export const todayLabel = () =>
   new Date().toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
+
+/* ─────────────────────────────── Plan cycle ──────────────────────────── */
+
+// A declaration, not a const: SLOT_PRESETS calls isoDay at load, above here.
+function pad2(n: number) {
+  return String(n).padStart(2, "0")
+}
+
+/** A local day as "2026-10-23", `offset` days from today. */
+export function isoDay(offset = 0, from?: string) {
+  const d = from ? new Date(`${from}T00:00:00`) : new Date()
+  d.setHours(0, 0, 0, 0)
+  d.setDate(d.getDate() + offset)
+  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`
+}
+
+/** "21 Nov 2026". */
+export const dayLabel = (iso: string) =>
+  new Date(`${iso}T00:00:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
+
+const daysBetween = (from: string, to: string) =>
+  Math.round((new Date(`${to}T00:00:00`).getTime() - new Date(`${from}T00:00:00`).getTime()) / 86_400_000)
+
+/** The subscription with every field filled, and its cycle worked out. */
+export function subscriptionOf(slots: Subscription) {
+  const term = slots.term ?? "monthly"
+  const termDays = SUBSCRIPTION_TERMS[term].slotDays
+  const startedOn = slots.startedOn ?? isoDay()
+  const renewsOn = isoDay(termDays, startedOn)
+  return {
+    ...slots,
+    term,
+    termDays,
+    startedOn,
+    renewsOn,
+    daysLeft: Math.min(termDays, Math.max(0, daysBetween(isoDay(), renewsOn))),
+    city: slots.city ?? DEFAULT_HIRING_CITY,
+  }
+}
+export type SubscriptionDetails = ReturnType<typeof subscriptionOf>
+
+const TERM_ORDER: SubscriptionPlanId[] = ["monthly", "quarterly", "annual"]
+
+/** Moving to `plan`: the same plan, an upgrade (instant), or a downgrade
+ *  (at the cycle's end). Anything less — a shorter term or fewer slots,
+ *  even with more of the other — is a downgrade. */
+export function changeKindOf(sub: SubscriptionDetails, plan: Pick<SubscriptionPlan, "id" | "slots">) {
+  const term = TERM_ORDER.indexOf(plan.id) - TERM_ORDER.indexOf(sub.term)
+  const slots = plan.slots - sub.total
+  if (term === 0 && slots === 0) return "same" as const
+  return term >= 0 && slots >= 0 ? ("upgrade" as const) : ("downgrade" as const)
+}
+
+/** An upgrade's price: the unused part of this cycle's payment (paid × days
+ *  left ÷ the term's days) comes off the new plan. `listPrice` stands in
+ *  when nothing was recorded as paid. */
+export function prorationOf(sub: SubscriptionDetails, newPrice: number, listPrice: number) {
+  const paid = sub.paid ?? listPrice
+  const credit = Math.min(newPrice, Math.round((paid * sub.daysLeft) / sub.termDays))
+  return { credit, payToday: newPrice - credit }
+}
+
+const planFields = (plan: SubscriptionPlan) => ({
+  plan: plan.name,
+  term: plan.id,
+  total: plan.slots,
+  startedOn: isoDay(),
+  paid: plan.price,
+  db: { left: plan.dbCredits, total: plan.dbCredits },
+})
+
+/** A plan bought from the plans pages: its slots, empty, from today. */
+export function startSubscription(plan: SubscriptionPlan, jobs: SlotJob[] = []) {
+  setJobSlots({ ...planFields(plan), jobs, city: DEFAULT_HIRING_CITY })
+}
+
+/** An upgrade, paid: the new plan from today, with its own database
+ *  credits. Live jobs keep their slots; a booked downgrade is dropped. */
+export function upgradeSubscription(sub: Subscription, plan: SubscriptionPlan) {
+  setJobSlots({ ...sub, ...planFields(plan), scheduled: undefined })
+}
+
+/** Books a downgrade for the cycle's end. */
+export function scheduleDowngrade(sub: Subscription, plan: SubscriptionPlan) {
+  setJobSlots({ ...sub, scheduled: { term: plan.id, slots: plan.slots, price: plan.price, dbCredits: plan.dbCredits } })
+}
+
+export function cancelScheduledChange(sub: Subscription) {
+  setJobSlots({ ...sub, scheduled: undefined })
+}
+
+/** Prototype: the cycle ends now. The plan renews, as the booked downgrade
+ *  if there is one; live jobs past its slots expire (the newest first). */
+export function renewSubscription(sub: Subscription) {
+  const next = sub.scheduled
+  const term = next?.term ?? sub.term ?? "monthly"
+  const total = next?.slots ?? sub.total
+  const db = next?.dbCredits ?? sub.db?.total ?? 0
+  setJobSlots({
+    ...sub,
+    plan: SUBSCRIPTION_TERMS[term].name,
+    term,
+    total,
+    jobs: sub.jobs.slice(0, total),
+    startedOn: isoDay(),
+    paid: next?.price ?? sub.paid,
+    db: { left: db, total: db },
+    scheduled: undefined,
+  })
+}

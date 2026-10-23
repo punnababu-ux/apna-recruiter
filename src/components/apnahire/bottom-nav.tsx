@@ -84,7 +84,7 @@ export function ApnaHireBottomNav() {
     { href: "/apnahire/reports", label: "Reports", icon: BarChart2 },
     { href: "/apnahire/campus-ai", label: "Campus AI", icon: Trophy, dot: true },
     { href: "/apnahire/usage", label: "Credits & usage", icon: CreditCard },
-    ...(plans === "quiet" ? [{ href: "/apnahire/credits", label: "Manage plans", icon: IndianRupee }] : []),
+    ...(plans === "quiet" ? [{ href: "/apnahire/plan", label: "Manage plans", icon: IndianRupee }] : []),
     { href: "/apnahire/support", label: "Support", icon: HelpCircle },
     { href: "/apnahire/settings", label: "Settings", icon: Settings },
   ].map((item) => ({

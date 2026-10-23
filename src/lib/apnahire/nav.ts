@@ -26,6 +26,7 @@ export const FULL_SCREEN_PREFIXES = [
   "/apnahire/reports",
   "/apnahire/campus-ai",
   "/apnahire/usage",
+  "/apnahire/plan",
   "/apnahire/support",
   "/apnahire/settings",
   "/apnahire/profile",

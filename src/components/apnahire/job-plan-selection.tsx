@@ -55,7 +55,6 @@ import { PriceChangeBanner } from "@/components/apnahire/price-change-banner"
 import { clearPostIntent, wantsAiCalling } from "@/lib/apnahire/post-intent"
 import { GstNote } from "@/components/apnahire/gst-note"
 import { PaymentSuccess } from "@/components/apnahire/payment-success"
-import { setActiveSubscription } from "@/hooks/use-active-subscription"
 import { addPurchasedJobCredits } from "@/hooks/use-plans-ingress"
 import { JobPlanPreviewSwitcher } from "@/components/apnahire/job-plan-preview-switcher"
 import { usePlans } from "@/hooks/apnahire/use-plans"
@@ -74,8 +73,9 @@ import {
   planOrderPoints,
   slotTermLabel,
   type SubscriptionPlan,
+  type SubscriptionPlanId,
 } from "@/content/subscriptions"
-import { setJobSlots, todayLabel, useJobSlots } from "@/hooks/use-job-slots"
+import { setJobSlots, startSubscription, todayLabel, useJobSlots } from "@/hooks/use-job-slots"
 import {
   TieredJobPlans,
   SubscriptionJobPlans,
@@ -334,19 +334,20 @@ export function JobPlanSelection() {
   // job can never be left sitting at Select Plan.
   const handlePaymentSuccess = () => {
     setPaymentOpen(false)
-    // A subscription bought here makes the sidebar's plan CTA "Manage plans".
-    if (checkoutItem?.renewAfterDays) setActiveSubscription(true)
     // Credits bought: the shell stops promoting plans (usePlansIngress).
-    else if (checkoutItem) addPurchasedJobCredits(checkoutItem.label)
+    if (checkoutItem && !checkoutItem.renewAfterDays) addPurchasedJobCredits(checkoutItem.label)
     const title = readDraftTitle()
     setPostedTitle(title)
+    const posted = { id: `job-${Date.now().toString(36)}`, title, location: "", postedAt: todayLabel(), applied: 0 }
     // A slot upgrade: the new slot is taken by the job just posted.
     if (slotUpgrade && slots) {
-      setJobSlots({
-        ...slots,
-        total: slots.total + 1,
-        jobs: [...slots.jobs, { id: `job-${Date.now().toString(36)}`, title, location: "", postedAt: todayLabel(), applied: 0 }],
-      })
+      setJobSlots({ ...slots, total: slots.total + 1, jobs: [...slots.jobs, posted] })
+    } else if (checkoutItem?.id.startsWith("unlimited_")) {
+      // A subscription bought here starts with this job in its first slot
+      // (and makes the shell's plan CTA "Manage plans"). Its line id is
+      // `unlimited_<term>`.
+      const term = checkoutItem.id.split("_")[1] as SubscriptionPlanId
+      startSubscription(term === "annual" ? plans.annualPlan : plans.plan(term), [posted])
     }
     clearDraft()
     // The 10% offer is single-use.

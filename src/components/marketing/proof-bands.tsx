@@ -35,7 +35,8 @@ export function TrustedByBand() {
           eyebrow={<span className="text-overline text-muted-foreground">{HOME_TRUSTED_BY.eyebrow}</span>}
           title={HOME_TRUSTED_BY.title}
         />
-        <LogoWall items={CLIENT_LOGO_ITEMS} muted marquee />
+        {/* In full colour at rest, not muted until hover (user call, 2026-10-23). */}
+        <LogoWall items={CLIENT_LOGO_ITEMS} marquee />
       </div>
     </Section>
   )

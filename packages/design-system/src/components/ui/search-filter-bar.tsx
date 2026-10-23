@@ -43,7 +43,7 @@ export interface SearchFilterBarProps {
   onClearFilters?: () => void
   /** Phones (< md): Filters as a button "beside" the field, or "inside" it —
    *  a fully rounded field with a grey Filters pill inset 2px at its end,
-   *  which steps aside while you type (a clear ✕ takes its place). Search
+   *  which stays put while you type (a clear ✕ joins it). Search
    *  and filters always combine: a result must match both. */
   mobileFilters?: "beside" | "inside"
   /** With mobileFilters="inside", on a white surface (the search band that
@@ -124,32 +124,34 @@ export function SearchFilterBar({
           onBlur={() => setFocused(false)}
           className={cn(
             "bg-card pl-9",
-            // inside: a pill; room on the right for the Filters pill, or for
-            // the clear ✕ while typing
+            // inside: a pill; room on the right for the Filters pill, and for
+            // the clear ✕ beside it while typing
             // 44px on phones, so the inset pill keeps a full 40px tap target
             inside && "h-11 rounded-full",
             inside && fieldTone === "filled" && "border-transparent bg-muted",
-            inside && (focused ? (value ? "pr-11" : "pr-4") : "pr-32")
+            inside && (focused && value ? "pr-40" : "pr-32")
           )}
         />
-        {inside && focused && value && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            className="absolute top-1/2 right-1 -translate-y-1/2 rounded-full text-muted-foreground"
-            aria-label="Clear search"
-            // Keep the field focused while clearing.
-            onMouseDown={(e) => e.preventDefault()}
-            onClick={() => onChange("")}
-          >
-            <X />
-          </Button>
-        )}
-        {inside && !focused && (
+        {inside && (
           // The Filters pill: a visible 4px of field inside the 1px border on
-          // its right, top and bottom (5px from the outer edge).
-          <div className="absolute inset-y-1.25 right-1.25 flex">
+          // its right, top and bottom (5px from the outer edge). Always
+          // there, focused or not: hiding it while the field had focus left
+          // phones without filters until the keyboard closed.
+          <div className="absolute inset-y-1.25 right-1.25 flex items-center gap-1">
+            {focused && value && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                className="rounded-full text-muted-foreground"
+                aria-label="Clear search"
+                // Keep the field focused while clearing.
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => onChange("")}
+              >
+                <X />
+              </Button>
+            )}
             {React.cloneElement(pillTrigger, { onClick: openSheet })}
           </div>
         )}

@@ -149,7 +149,8 @@ export function ApnaHireSidebar({
       bottomCta={{
         label: plans === "quiet" ? "Manage plans" : "Plans",
         icon: IndianRupee,
-        href: "/apnahire/credits",
+        // A subscriber manages the plan they have (upgrade, downgrade).
+        href: plans === "quiet" ? "/apnahire/plan" : "/apnahire/credits",
         appearance: "plain",
       }}
       footerItems={[

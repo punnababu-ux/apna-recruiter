@@ -32,6 +32,7 @@ const SECTIONS: Record<string, { label: string; href: string }> = {
   usage:          { label: "Credits & Usage",href: "/apnahire/usage" },
   notifications:  { label: "Notifications",  href: "/apnahire/notifications" },
   credits:        { label: "Plans",          href: "/apnahire/credits" },
+  plan:           { label: "Manage plan",    href: "/apnahire/plan" },
   settings:       { label: "Settings",       href: "/apnahire/settings" },
   profile:        { label: "Profile",        href: "/apnahire/profile" },
   support:        { label: "Support",        href: "/apnahire/support" },

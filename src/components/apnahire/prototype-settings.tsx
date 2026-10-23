@@ -27,7 +27,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { Button, Popover, PopoverContent, PopoverTrigger } from "@apna/design-system"
-import { SLOT_PRESETS, setJobSlots, slotPresetOf, useJobSlots, type SlotPreset } from "@/hooks/use-job-slots"
+import { SLOT_PRESETS, renewSubscription, setJobSlots, slotPresetOf, useJobSlots, type SlotPreset } from "@/hooks/use-job-slots"
 import { PRICING_PHASES } from "@/content/pricing-phase"
 import { setPricingPhase, usePricingPhase } from "@/hooks/use-pricing-phase"
 
@@ -140,6 +140,12 @@ export function JobSlotsControls() {
           {SLOT_PRESETS[key].label}
         </PrototypeOption>
       ))}
+      {/* The cycle ends now: renews, as the booked downgrade if any. */}
+      {slots && (
+        <PrototypeOption onClick={() => renewSubscription(slots)}>
+          {slots.scheduled ? "Renew now · downgrade starts" : "Renew now"}
+        </PrototypeOption>
+      )}
     </PrototypeSection>
   )
 }

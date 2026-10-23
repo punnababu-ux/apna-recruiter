@@ -44,7 +44,7 @@ import { ContactSalesCard } from "@/components/apnahire/contact-sales-card"
 import { JobTypesDialog } from "@/components/apnahire/job-plan-cards"
 import { ContactPopup } from "@/components/marketing/contact-section"
 import { SubscriptionPlans, type SubscriptionPlanId } from "@/components/apnahire/subscription-plans"
-import { planOrderLabel, planOrderPoints, type JobSlotCount } from "@/content/subscriptions"
+import { planOrderLabel, planOrderPoints, type JobSlotCount, type SubscriptionPlan } from "@/content/subscriptions"
 import { usePlans } from "@/hooks/apnahire/use-plans"
 import {
   DEFAULT_ENTERPRISE_TIER,
@@ -70,7 +70,7 @@ import {
 } from "@/components/apnahire/checkout-drawer"
 import { PaymentModal } from "@/components/apnahire/payment-modal"
 import { PaymentSuccess } from "@/components/apnahire/payment-success"
-import { setActiveSubscription } from "@/hooks/use-active-subscription"
+import { startSubscription } from "@/hooks/use-job-slots"
 import { addPurchasedJobCredits } from "@/hooks/use-plans-ingress"
 import { useHeaderSlot } from "@/components/marketing/header-slot"
 import { CheckoutPreviewSettings } from "@/components/apnahire/checkout-preview-settings"
@@ -120,6 +120,8 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   // The pricing phase's plans (preview settings). The biggest bundle is the
   // one the upsell pack is offered against.
   const plans = usePlans()
+  // The subscription plan in the order, so paying for it starts it.
+  const boughtPlan = React.useRef<SubscriptionPlan | null>(null)
   const recommendedJob = plans.bundles.find((b) => b.recommended) ?? plans.bundles[0]
   const recommendedDb = plans.dbBundles.find((b) => b.recommended) ?? plans.dbBundles[0]
   const biggestBundle = plans.bundles[plans.bundles.length - 1]
@@ -428,6 +430,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   // the plan's database credits, as on its card.
   const buyPlan = (id: SubscriptionPlanId, slots: JobSlotCount = 1) => {
     const plan = plans.plan(id, slots)
+    boughtPlan.current = plan
     openOrder({
       id: `unlimited_${id}_${slots}`,
       label: planOrderLabel(plan),
@@ -466,7 +469,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   const handlePaymentSuccess = () => {
     setPaymentOpen(false)
     // A subscription bought here makes the sidebar's plan CTA "Manage plans".
-    if (checkoutItem?.renewAfterDays) setActiveSubscription(true)
+    if (checkoutItem?.renewAfterDays && boughtPlan.current) startSubscription(boughtPlan.current)
     // Credits bought: the shell stops promoting plans (usePlansIngress).
     else if (checkoutItem) addPurchasedJobCredits(checkoutItem.label)
     // The 10% offer is single-use.

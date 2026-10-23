@@ -112,7 +112,20 @@ them there, once (user call, 2026-10-22).
   (`usePlans().slotUpgrade`): new plans 3 slots, ₹2,000 /slot against
   ₹2,499; today 2 slots, ₹2,250 /slot against ₹2,499 (₹4,499, struck
   ₹4,998 ⚠️ derived); from Jan 1 3 slots, ₹2,200 /slot against ₹2,749.
-  Proration logic still to come.
+
+### Changing a plan (`/apnahire/plan`, `hooks/use-job-slots.ts`)
+
+- **Upgrade** (a longer term and/or more slots, nothing less): instant.
+  Credit = what was paid × days left ÷ term days (rounded, never more than
+  the new price); pay today = new price − credit. The new plan starts today
+  with its own database credits (⚠️ assumed: unused ones don't carry over);
+  live jobs stay live; a booked downgrade is dropped.
+- **Downgrade** (a shorter term or fewer slots, a mixed change included):
+  cyclic. Booked for the renewal date; the plan runs as it is until then and
+  can be called off ("Keep current plan"). At renewal, live jobs beyond the
+  new slot count expire, newest first.
+- Example: 2-slot monthly ₹4,499, 18 of 30 days left → credit ₹2,699;
+  3-slot monthly ₹5,999 → pay ₹3,300 today.
 
 ## 6. AI calling agent · `content/job-plans.ts`, `apnahire/checkout-drawer.tsx`
 | Item | Price | MRP | Valid |
