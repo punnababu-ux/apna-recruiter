@@ -28,6 +28,7 @@ const twMerge = extendTailwindMerge({
             "quote-lg",
             "watermark",
             "display-fluid",
+            "display-hero-fluid",
             "h1",
             "h2",
             "h3",

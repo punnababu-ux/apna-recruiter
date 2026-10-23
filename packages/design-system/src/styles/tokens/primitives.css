@@ -275,15 +275,15 @@
    * layout.tsx). That one hook means: change the font in layout.tsx and
    * the whole system re-themes — no edits needed here.
    * ------------------------------------------------------------------------ */
-  --font-family-sans:  var(--font-sans-face, "Inter"),
+  --font-family-sans:  var(--font-sans-face, "Google Sans Flex"),
                        ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
                        "Segoe UI", sans-serif;
   --font-family-mono:  var(--font-geist-mono, "Geist Mono"),
                        ui-monospace, SFMono-Regular, Menlo,
                        Monaco, Consolas, monospace;
-  /* Source Serif 4, served by next/font as `--font-editorial-face`. */
-  --font-family-editorial: var(--font-editorial-face, "Source Serif 4"),
-                           Georgia, "Times New Roman", serif;
+  /* The editorial voice is the sans too (2026-10-23, replacing Source
+   * Serif 4): marketing headlines and quotes set in Google Sans Flex. */
+  --font-family-editorial: var(--font-family-sans);
   --font-family-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 
   /* --------------------------------------------------------------------------
@@ -327,6 +327,10 @@
    * `text-4xl md:text-5xl lg:text-6xl` on every hero: three decisions per page,
    * which is exactly what a preset exists to remove. */
   --font-size-display-fluid: clamp(2rem, 1.15rem + 3.7vw, 3.75rem);
+  /* The marketing hero headline only (text-editorial-display): the same 32px
+   * on a phone, 88px from ~1280 up (2026-10-23, a bigger hero). Quotes and
+   * product headlines keep the 60px display-fluid above. */
+  --font-size-display-hero-fluid: clamp(2rem, 0.55rem + 6.2vw, 5.5rem);
 
   /* --------------------------------------------------------------------------
    * Typography · Line-height ramp (unitless, pairs with size ramp)

@@ -15,6 +15,7 @@
  */
 
 import { ContactSection } from "@/components/marketing/contact-section"
+import { SettleIn } from "@/components/marketing/settle-in"
 import { HeaderSlotProvider } from "@/components/marketing/header-slot"
 import { MotherPreview } from "@/components/marketing/mother-preview"
 import { SiteFooter } from "@/components/marketing/site-footer"
@@ -42,14 +43,16 @@ export default function MarketingLayout({
             with the footer on the canvas (every "Contact us" lands here). */}
         {/* Skipped on a page that brings its own closing card (ClosingBand). */}
         {/* The page's foot (contact band + footer) is one gradient band. */}
+        {/* The contact card and the footer's columns settle into place as
+            you reach them (SettleIn), each on its own cue. */}
         <div data-slot="marketing-foot">
-          <div className="[[data-slot=marketing-canvas]:has([data-closing-band])_&]:hidden">
+          <SettleIn className="[[data-slot=marketing-canvas]:has([data-closing-band])_&]:hidden">
             <ContactSection />
-          </div>
+          </SettleIn>
           <div className="px-4 sm:px-8 lg:px-12">
-            <div className="mx-auto max-w-band">
+            <SettleIn className="mx-auto max-w-band">
               <SiteFooter />
-            </div>
+            </SettleIn>
           </div>
         </div>
       </div>

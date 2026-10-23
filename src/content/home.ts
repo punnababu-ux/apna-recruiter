@@ -221,6 +221,17 @@ export const HOME_PRODUCT_DETAILS: ProductDetailRow[] = [
  * article's real URL, found via web search 2026-09-22 (not re-verified by
  * fetching the article body, since that's exactly what's blocked).
  */
+/** The trust panel's customer results (TrustBento, the `?hero=post-job`
+ *  preview): each customer's outcome in a few words, drawn from their own
+ *  quote in HOME_PROOF.testimonials (no new claims). */
+export const HOME_TRUST = {
+  results: [
+    { company: "Shadowfox", value: "75%", label: "of delivery hiring through apna" },
+    { company: "Nizams", value: "30–40", label: "candidates from one listing" },
+    { company: "Tata 1mg", value: "Every job family", label: "hired through apna, with the quickest turnaround" },
+  ],
+}
+
 export const HOME_PRESS = {
   title: "In the press",
   items: [
@@ -263,6 +274,36 @@ export const PRICING_STATS = [
 ] as const
 
 export const HOME_PROOF = {
+  /** "Why hire from apna?" as how apna works (the `?hero=post-job` preview):
+   *  what a recruiter gets, not who trusts us (the trust panel says that).
+   *  Each point restates a claim the site already makes (HOME_PRODUCT_DETAILS,
+   *  why.stats); no new numbers. */
+  how: {
+    title: "Why hire from apna?",
+    description: "Post a job once. apna finds, calls and shortlists the right people for you.",
+    points: [
+      {
+        art: "smart-inbound",
+        title: "Applications within 24 hours",
+        description: "Qualified candidates start applying within a day of posting.",
+      },
+      {
+        art: "power-features",
+        title: "Matched to your job",
+        description: "Smart filters and matching put relevant, high-intent candidates first.",
+      },
+      {
+        art: "dedicated-support",
+        title: "AI that calls and shortlists",
+        description: "Our AI calling agent interviews every applicant, 24/7, and keeps only the best.",
+      },
+      {
+        art: "database-search",
+        title: "Hire close to your business",
+        description: "Find candidates within 5 km, across 7,200+ towns and cities.",
+      },
+    ],
+  },
   why: {
     title: "Why hire from apna?",
     description:

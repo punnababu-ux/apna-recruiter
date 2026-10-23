@@ -208,6 +208,7 @@
   --text-5xl:  var(--text-5xl);
   --text-6xl:  var(--text-6xl);
   --text-display-fluid: var(--text-display-fluid);
+  --text-display-hero-fluid: var(--text-display-hero-fluid);
 
   /* Container widths → max-w-narrow | max-w-band | max-w-wide.
    * Tailwind's own --max-width-prose (65ch) covers reading measure. */
@@ -398,7 +399,7 @@
  * JSDoc); reach for these directly only for a hand-built h1/h2. */
 @utility text-editorial-display {
   font-family:     var(--font-editorial);
-  font-size:       var(--text-display-fluid);
+  font-size:       var(--text-display-hero-fluid);
   line-height:     var(--line-height-tight);
   font-weight:     var(--font-weight-bold);
   letter-spacing:  var(--letter-spacing-tight);
@@ -1243,6 +1244,32 @@
   @media (prefers-reduced-motion: reduce) {
     animation: none;
   }
+}
+
+/* Settle-in — a band's pieces rise into place as you scroll to it (the
+ * homepage's proof band and FAQ, the contact band and the footer on every
+ * marketing page). The wrapper carries `data-settle`, set by SettleIn
+ * (src/components/marketing/settle-in.tsx): "pending" hides its pieces just
+ * below their spot, "in" lets each rise 32px and settle with the selection
+ * spring, one after another (120ms apart). Pieces are cards, accordion
+ * items and anything marked `data-settle-item` (the footer's columns).
+ * Server HTML has no attribute, so nothing hides without JS; reduced motion
+ * never hides anything. An animation, not a transition, so the pieces' own
+ * hover transitions are untouched. */
+@keyframes settle-in {
+  from { opacity: 0; translate: 0 32px; scale: 0.97; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-settle="pending"] :is([data-slot="card"], [data-slot="accordion-item"], [data-settle-item]) { opacity: 0; }
+  [data-settle="in"] :is([data-slot="card"], [data-slot="accordion-item"], [data-settle-item]) {
+    animation: settle-in var(--duration-slide) var(--ease-select) both;
+  }
+  /* The stagger: by the piece's place in its list or row. */
+  [data-settle="in"] :is(li:nth-child(1) [data-slot="card"], [data-slot="accordion-item"]:nth-child(1), [data-settle-item]:nth-child(1)) { animation-delay: 120ms; }
+  [data-settle="in"] :is(li:nth-child(2) [data-slot="card"], [data-slot="accordion-item"]:nth-child(2), [data-settle-item]:nth-child(2)) { animation-delay: 240ms; }
+  [data-settle="in"] :is(li:nth-child(3) [data-slot="card"], [data-slot="accordion-item"]:nth-child(3), [data-settle-item]:nth-child(3)) { animation-delay: 360ms; }
+  [data-settle="in"] :is(li:nth-child(n+4) [data-slot="card"], [data-slot="accordion-item"]:nth-child(n+4), [data-settle-item]:nth-child(n+4)) { animation-delay: 480ms; }
 }
 
 /* Bottom-fixed bars (BottomNav, sticky CTA docks) clear the home indicator

@@ -44,16 +44,16 @@ import { CLIENT_LOGOS } from "@/content/logos"
 import { ILLUSTRATION_TONE, type IllustrationTone } from "@/components/marketing/product-illustrations"
 import { cn } from "@/lib/utils"
 
-/** Sets one word of a headline in italic (`em`, styled by the editorial
- *  presets): "…talent and *opportunity*." Every hero headline has one. The
- *  accent never breaks inside itself ("high-intent" stays whole). */
+/** Keeps a headline's key phrase whole ("high-intent" never breaks inside
+ *  itself). It used to set the word in italic; headlines are plain sans
+ *  now (2026-10-23), so it only holds the phrase together. */
 export function withAccent(text: string, word?: string): ReactNode {
   if (!word || !text.includes(word)) return text
   const [before, after] = text.split(word)
   return (
     <>
       {before}
-      <em className="whitespace-nowrap">{word}</em>
+      <span className="whitespace-nowrap">{word}</span>
       {after}
     </>
   )

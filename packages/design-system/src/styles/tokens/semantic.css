@@ -331,6 +331,7 @@
   --text-5xl:  var(--font-size-5xl);
   --text-6xl:  var(--font-size-6xl);
   --text-display-fluid: var(--font-size-display-fluid);
+  --text-display-hero-fluid: var(--font-size-display-hero-fluid);
 
   /* ==========================================================================
    * Spacing
