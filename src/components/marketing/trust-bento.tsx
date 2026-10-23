@@ -1,6 +1,6 @@
 /**
- * TrustBento — PREVIEW (`/?hero=post-job`, 2026-10-23). The homepage's trust
- * panel, after the Clay homepage's: one muted panel in its own white band,
+ * TrustBento — ALTERNATE (not on any page; kept 2026-10-24). A trust band
+ * for the homepage in place of TrustedByBand, after the Clay homepage's: one muted panel in its own white band,
  * a two-line sentence, then a gliding bento of white tiles three rows
  * high. Tiles mix the kinds of proof we have, so the row reads as evidence
  * rather than a logo strip:

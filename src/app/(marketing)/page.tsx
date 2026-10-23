@@ -13,7 +13,6 @@
  */
 
 import Link from "next/link"
-import { cn } from "@/lib/utils"
 import {
   ArrowRight,
   ArrowUpRight,
@@ -31,12 +30,10 @@ import {
   SectionHeading,
 } from "@apna/design-system"
 import { Stat } from "@/components/marketing/page-blocks"
-import { FaqBand, HowApnaWorksBand, TrustedByBand, WhyHireBand } from "@/components/marketing/proof-bands"
+import { FaqBand, TrustedByBand, WhyHireBand } from "@/components/marketing/proof-bands"
 import { ContactButton } from "@/components/marketing/contact-section"
 import { HeroBackdrop } from "@/components/marketing/hero-backdrop"
 import { HeroLeadCard } from "@/components/marketing/hero-lead-card"
-import { HeroPostJob } from "@/components/marketing/hero-post-job"
-import { TrustBento } from "@/components/marketing/trust-bento"
 import { EnterpriseIllustration, PRODUCT_ICON, PRODUCT_KEY, ProductIllustration } from "@/components/marketing/product-illustrations"
 import {
   HOME_ENTERPRISE,
@@ -68,51 +65,23 @@ function hrefFor(name: string) {
 const ENTERPRISE_STACK_FEATURES = ["Team management", "ATS Integrations"]
   .map((title) => ENTERPRISE.features.items.find((item) => item.title === title)!)
 
-export default async function HomePage({
-  searchParams,
-}: {
-  searchParams: Promise<{ hero?: string }>
-}) {
-  // PREVIEW (2026-10-23): `?hero=post-job` swaps the sign-up card for one
-  // "Post a job" button that goes to the login page, centres the hero, fills
-  // the first screen with it and pins the proof card (trusted-by + press) to
-  // its foot. The card hero stays the default.
-  const postJobHero = (await searchParams).hero === "post-job"
+export default function HomePage() {
   return (
     <>
       {/* The hero's living background sits behind the section (and the
           transparent header above it); the section paints over it. */}
-      {/* Preview: the hero fills the first screen on any device (pulled up
-          under the sticky header, 4.5rem). */}
-      <div className={cn("relative isolate", postJobHero && "-mt-18 flex min-h-svh flex-col pt-18")}>
+      <div className="relative isolate">
         <HeroBackdrop />
         {/* Phones: the sign-up form must sit in the first screen. Less
             space above, no badge, one line of subtext, a smaller headline
             (the display token's phone size), then the form, then the stats
             as a compact strip under it. The text column is `contents` below
             lg so its heading and stats can sit either side of the form. */}
-        <Section
-          size={postJobHero ? "none" : "lg"}
-          className={cn("relative", postJobHero ? "flex flex-1 flex-col justify-center py-6" : "max-md:pt-6 md:pb-48")}
-        >
-          {/* Preview: one centred column (no card beside it). */}
-          <div
-            className={cn(
-              "flex flex-col gap-8",
-              postJobHero
-                ? "items-center text-center"
-                : "items-start lg:flex-row lg:items-center lg:justify-between lg:gap-12"
-            )}
-          >
-            <div
-              className={cn(
-                "flex flex-col gap-10",
-                postJobHero ? "w-full items-center gap-8" : "max-w-2xl max-lg:contents"
-              )}
-            >
+        <Section size="lg" className="relative max-md:pt-6 md:pb-48">
+          <div className="flex flex-col items-start gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-12">
+            <div className="flex max-w-2xl flex-col gap-10 max-lg:contents">
               <SectionHeading
                 level={1}
-                align={postJobHero ? "center" : undefined}
                 eyebrow={
                   // Says what "India's Largest" says right under it; phones
                   // can't spare the row.
@@ -123,25 +92,11 @@ export default async function HomePage({
                 }
                 title={
                   <>
-                    {postJobHero ? (
-                      // Preview: two lines from sm, broken after "AI-Native";
-                      // phones let it wrap.
-                      <>
-                        <span className="sm:whitespace-nowrap">India&apos;s Largest AI-Native</span>
-                        <br className="max-sm:hidden" />{" "}
-                        <span className="sm:whitespace-nowrap">Early Talent Platform</span>
-                      </>
-                    ) : (
-                      <>
-                        India&apos;s Largest <span className="whitespace-nowrap">AI-Native</span> Early Talent Platform
-                      </>
-                    )}
+                    India&apos;s Largest <span className="whitespace-nowrap">AI-Native</span> Early Talent Platform
                   </>
                 }
                 description={
-                  // Preview: the subtitle a step up (20px, 24px from sm), to
-                  // hold its own under the 88px headline.
-                  <span className={cn(postJobHero && "text-xl sm:text-2xl")}>
+                  <span>
                     {HOME_HERO.description}
                     {/* The tagline is the second line from sm; on phones the
                         two ran together as one run-on sentence. */}
@@ -153,52 +108,27 @@ export default async function HomePage({
                 }
               />
 
-              {/* Phones: a compact 3-up strip under the form. The preview
-                  sets the numbers right under the subtitle, then its button. */}
-              <dl
-                className={cn(
-                  "grid w-full grid-cols-3 gap-4 sm:flex sm:flex-wrap sm:gap-x-12 sm:gap-y-6",
-                  postJobHero ? "sm:justify-center" : "max-lg:order-last"
-                )}
-              >
+              {/* Phones: a compact 3-up strip under the form. */}
+              <dl className="grid w-full grid-cols-3 gap-4 max-lg:order-last sm:flex sm:flex-wrap sm:gap-x-12 sm:gap-y-6">
                 {HOME_HERO.stats.map((stat) => (
                   <Stat
                     key={stat.label}
                     value={stat.value}
                     label={stat.label}
                     size="sm"
-                    // Centred column: the accent bar centres over its number.
-                    className={cn(postJobHero && "items-center")}
                   />
                 ))}
               </dl>
-
-              {postJobHero && <HeroPostJob href={HOME_PRODUCT_DETAILS[0].action.href} />}
             </div>
 
             {/* max-w-md is already set inside HeroLeadCard itself — shrink-0
                 just stops the flex row from compressing it on medium widths. */}
-            {!postJobHero && <HeroLeadCard className="w-full shrink-0" />}
+            <HeroLeadCard className="w-full shrink-0" />
           </div>
         </Section>
-
-        {/* Preview: the hero's gradient fades out to white at its foot, so
-            the gray trust panel below stands out on white. */}
-        {postJobHero && (
-          <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-64 bg-linear-to-b from-transparent to-card" />
-        )}
       </div>
 
-      {/* Preview: the trust panel (Clay's pattern) as its own white band:
-          customers' logos, results and numbers in one gliding bento.
-          Replaces the trusted-by band. */}
-      {postJobHero && (
-        <Section tone="card" size="none" className="pb-16">
-          <TrustBento />
-        </Section>
-      )}
-
-      {!postJobHero && <TrustedByBand />}
+      <TrustedByBand />
 
       {/* The hiring suite on white: each card wears its product's gradient,
           so the colour lives in the cards, not the band. */}
@@ -340,9 +270,7 @@ export default async function HomePage({
 
       {/* After the white suite, the proof on the gradient (its cards turn
           frosted glass there by themselves), then the press, the FAQ. */}
-      {/* Preview: the band says how apna works; the numbers are in the
-          trust panel. */}
-      {postJobHero ? <HowApnaWorksBand /> : <WhyHireBand />}
+      <WhyHireBand />
       {/* In the press (gradient): after the proof, so white and gradient
           still alternate. */}
       <Section size="md">

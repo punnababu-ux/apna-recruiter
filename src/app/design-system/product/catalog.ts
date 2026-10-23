@@ -137,6 +137,14 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
         rules: ["Drawn once here for every page that makes the case. Don't rebuild a logo wall or FAQ."],
       },
       {
+        name: "TrustBento (alternate)",
+        file: "marketing/trust-bento.tsx",
+        what: "A gliding bento of client logos, client results and our numbers. Not on any page.",
+        live: "/design-system/product/alternates",
+        where: "Alternate to TrustedByBand on the homepage",
+        rules: ["Swap it in for TrustedByBand, never beside it: one trust band per page."],
+      },
+      {
         name: "TestimonialCard / TestimonialGrid",
         file: "apnahire/testimonial-grid.tsx",
         what: "The one way a customer quote is drawn.",

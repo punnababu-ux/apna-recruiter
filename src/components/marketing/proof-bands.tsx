@@ -10,12 +10,11 @@
  * Copy: content/home.ts (HOME_TRUSTED_BY, HOME_PROOF).
  */
 
-import { Card, LogoWall, Section, SectionHeading } from "@apna/design-system"
+import { LogoWall, Section, SectionHeading } from "@apna/design-system"
 import { FaqSection } from "@/components/apnahire/faq-section"
 import { TestimonialGrid } from "@/components/apnahire/testimonial-grid"
 import { StatGrid } from "@/components/marketing/page-blocks"
 import { SettleIn } from "@/components/marketing/settle-in"
-import { ValueArt, type ValueName } from "@/components/marketing/value-art"
 import { HOME_PROOF, HOME_TRUSTED_BY } from "@/content/home"
 import { CLIENT_LOGOS } from "@/content/logos"
 
@@ -83,39 +82,6 @@ export function WhyHireBand({
         {/* The numbers and the quotes rise into place as you arrive. */}
         <SettleIn className="flex flex-col gap-10">
           <StatGrid stats={stats} />
-          <TestimonialGrid />
-        </SettleIn>
-      </div>
-    </Section>
-  )
-}
-
-/** PREVIEW (`/?hero=post-job`): "Why hire from apna?" as how apna works.
- *  Four points (a clay object, a title, a line), then the customers'
- *  quotes as the human voice. The numbers moved to the trust panel, so
- *  nothing here repeats it. */
-export function HowApnaWorksBand() {
-  return (
-    <Section size="md" data-accent="brand">
-      <div className="flex flex-col gap-10">
-        <SectionHeading
-          level={2}
-          align="center"
-          title={HOME_PROOF.how.title}
-          description={HOME_PROOF.how.description}
-        />
-        <SettleIn className="flex flex-col gap-10">
-          <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {HOME_PROOF.how.points.map((point) => (
-              <li key={point.title}>
-                <Card padding="lg" className="surface-frosted h-full items-center gap-4 text-center">
-                  <ValueArt name={point.art as ValueName} size="sm" />
-                  <h3 className="text-h6 text-foreground">{point.title}</h3>
-                  <p className="text-sm text-pretty text-muted-foreground">{point.description}</p>
-                </Card>
-              </li>
-            ))}
-          </ul>
           <TestimonialGrid />
         </SettleIn>
       </div>
