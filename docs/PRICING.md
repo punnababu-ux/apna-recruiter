@@ -61,31 +61,30 @@ Struck price = credits × 14.
 | 1,600 | 365 d | 9,999 | 22,400 | 55% | 6.25 |
 
 ## 5. Apna unlimited / subscription · `content/subscriptions.ts` (`SUBSCRIPTION_CHART`)
-Price / struck price. The Subscription tab's slot picker (1 / 3 / 5) drives
+Price / struck price. The Subscription tab's slot picker (1 / 2 / 3) drives
 every price. The sheet lists no database credits for plans; 1 and 3 slots
-keep the earlier product board chart (2026-10-20), 5 slots is calculated
-(user call, 2026-10-22). Worth ₹10 each. Shown wherever a plan is sold:
+keep the earlier product board chart (2026-10-20); 2 slots uses today's
+prices and credits (Jan +10%) until product confirms. No 5-slot plan
+(user call, 2026-10-27). Worth ₹10 each. Shown wherever a plan is sold:
 the Subscription tab, the Jobs tab Unlimited card, express checkout's
 Monthly plan card, both upsell pop-ups' plan tiles, the slots-full pop-up
 and the order summary (both checkouts).
 | Active job slots | Monthly (30 d) | Quarterly (90 d) | Annual (365 d) |
 |---|---|---|---|
 | 1 | 2,499 / — | 5,999 / 7,497 | 9,999 / 29,988 |
+| 2 ⚠️ | 4,499 / 4,998 | 9,999 / 14,994 | 22,999 / 59,976 |
 | 3 | 5,999 / 7,497 | 13,499 / 22,491 | 28,999 / 89,964 |
-| 5 | 7,999 / 12,495 | 19,999 / 37,485 | 44,999 / 1,49,940 |
 
-Per slot per month: 1 slot 2,499 / 2,000 / 833 · 3 slots 2,000 / 1,500 / 806 · 5 slots 1,600 / 1,333 / 750.
+Per slot per month: 1 slot 2,499 / 2,000 / 833 · 2 slots 2,250 / 1,667 / 958 · 3 slots 2,000 / 1,500 / 806.
 
 Database credits (each row's `dbCredits`):
 | Active job slots | Monthly | Quarterly | Annual |
 |---|---|---|---|
 | 1 | 200 ✅ | 600 ✅ | 1,000 ✅ |
+| 2 | 500 ⚠️ | 900 ⚠️ | 2,500 ⚠️ |
 | 3 | 800 ✅ | 1,200 ✅ | 4,000 ✅ |
-| 5 | 1,400 ⚠️ | 1,800 ⚠️ | 7,000 ⚠️ |
 
-⚠️ 5 slots is calculated, not decided: the 1 → 3 step carried on (+300 /
-+300 / +1,500 credits a slot; the old chart's 2-slot row fits the same
-step). Flagged in code as the row's `dbCreditsEstimated`.
+⚠️ 2 slots is a stand-in: today's prices and credits, Jan prices +10% (4,949 / 10,999 / 25,299). Replace once product confirms.
 
 ### Subscription language — one vocabulary (`SUBSCRIPTION_TERMS`)
 Every surface takes these words from `content/subscriptions.ts`; change

@@ -93,7 +93,7 @@ export function usePlanChange(count: JobSlotCount) {
   const sub = subscriptionOf(slots)
   const listPrice = plans.plan(sub.term, sub.total as JobSlotCount).price
   const lock = changeLockOf(sub)
-  // A plan no longer on the price list (2 slots once the list is 1 / 3 / 5):
+  // A plan no longer on the price list (none today; kept for when one is retired):
   // it keeps renewing at its price; changing away from it is for good.
   const legacy = !plans.slotCounts.includes(sub.total as JobSlotCount)
   const kindOf = (id: SubscriptionPlanId) => changeKindOf(sub, plans.plan(id, count))

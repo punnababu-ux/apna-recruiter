@@ -4,8 +4,7 @@
  * SubscriptionPlans — Subscription (apna Unlimited) tab body.
  *
  * Monthly, Quarterly and Annual comparison cards with feature checklists,
- * plus a job-slot picker above them (1 / 3 / 5 on the new plans, 1 / 2 / 3
- * today: usePlans().slotCounts). The picker drives every price
+ * plus a job-slot picker above them (1 / 2 / 3: usePlans().slotCounts). The picker drives every price
  * (usePlans().plan); the caller owns it so the sticky CTA and checkout buy
  * the same plan.
  *
@@ -313,8 +312,7 @@ export function SubscriptionPlans({
 }: SubscriptionPlansProps) {
   const { plan: planFor, slotCounts } = usePlans()
   const [ownSlots, setOwnSlots] = React.useState<JobSlotCount>(1)
-  // A count the pricing phase doesn't sell (5 slots, switched to today's
-  // plans) falls back to 1 slot.
+  // A count the pricing phase doesn't sell falls back to 1 slot.
   const wanted = slotsProp ?? ownSlots
   const jobSlots = slotCounts.includes(wanted) ? wanted : slotCounts[0]
   const setJobSlots = (value: string) => {

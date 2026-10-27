@@ -6,7 +6,7 @@
  *             credits, 170 / 380 / 900 database credits, 1 / 2 / 3 job
  *             slots, the 22-credit upsell pack.
  *   new       The proposed online plans sheet: 3 / 6 / 22 job credits,
- *             200 / 450 / 1,600 database credits, 1 / 3 / 5 job slots, the
+ *             200 / 450 / 1,600 database credits, 1 / 2 / 3 job slots, the
  *             47-credit upsell pack. No notices.
  *   december  The new plans, plus the Jan 1 notices (content/price-change.ts):
  *             the banner on the dashboard and both checkouts, the

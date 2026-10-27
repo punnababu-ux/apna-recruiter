@@ -18,9 +18,9 @@ export const DB_CREDIT_WORTH = 10
 
 export type SubscriptionPlanId = "monthly" | "quarterly" | "annual"
 
-/** Live jobs at a time. Today's plans sell 1 / 2 / 3, the new plans
- *  1 / 3 / 5 (content/plan-catalog.ts). */
-export type JobSlotCount = 1 | 2 | 3 | 5
+/** Live jobs at a time: 1 / 2 / 3 in every pricing phase (no 5-slot plan,
+ *  user call 2026-10-27). */
+export type JobSlotCount = 1 | 2 | 3
 
 /**
  * How a subscription term is said — the one vocabulary for every surface
@@ -67,14 +67,12 @@ export interface SubscriptionRow {
 export type SubscriptionChart = SubscriptionRow[]
 
 /**
- * The new plans (proposed online plans sheet, 2026-10-22). Struck price =
+ * The new plans (proposed online plans sheet, 2026-10-22), on the legacy
+ * 1 / 2 / 3 slots (user call, 2026-10-27: no 5-slot plan). Struck price =
  * slots × months × ₹2,499; the 1-slot monthly plan has none.
  *
- * Database credits: 1 and 3 slots are the product board's chart
- * (2026-10-20), which steps evenly per slot (its 2-slot row sits halfway).
- * 5 slots is ESTIMATED: the same step carried on, 1 → 3 → 5 (+300 / +300 /
- * +1,500 credits a slot). Replace it once product decides and drop
- * `dbCreditsEstimated`.
+ * The 2-slot row isn't on the sheet: today's prices and database credits,
+ * with Jan prices +10% like the other rows. Replace once product confirms.
  */
 export const SUBSCRIPTION_CHART: SubscriptionChart = [
   {
@@ -87,6 +85,15 @@ export const SUBSCRIPTION_CHART: SubscriptionChart = [
     dbCredits: { monthly: 200, quarterly: 600, annual: 1000 },
   },
   {
+    slots: 2,
+    prices: {
+      monthly: { price: 4499, mrp: 4998, janPrice: 4949 },
+      quarterly: { price: 9999, mrp: 14994, janPrice: 10999 },
+      annual: { price: 22999, mrp: 59976, janPrice: 25299 },
+    },
+    dbCredits: { monthly: 500, quarterly: 900, annual: 2500 },
+  },
+  {
     slots: 3,
     prices: {
       monthly: { price: 5999, mrp: 7497, janPrice: 6599 },
@@ -94,16 +101,6 @@ export const SUBSCRIPTION_CHART: SubscriptionChart = [
       annual: { price: 28999, mrp: 89964, janPrice: 31899 },
     },
     dbCredits: { monthly: 800, quarterly: 1200, annual: 4000 },
-  },
-  {
-    slots: 5,
-    prices: {
-      monthly: { price: 7999, mrp: 12495, janPrice: 8799 },
-      quarterly: { price: 19999, mrp: 37485, janPrice: 21999 },
-      annual: { price: 44999, mrp: 149940, janPrice: 49499 },
-    },
-    dbCredits: { monthly: 1400, quarterly: 1800, annual: 7000 },
-    dbCreditsEstimated: true,
   },
 ]
 
