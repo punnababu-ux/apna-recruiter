@@ -49,11 +49,12 @@ export function AiDemoCall() {
   }, [playing])
 
   return (
-    <div className="flex items-center gap-2 rounded-full border border-border bg-card p-1">
+    // Extra left padding balances the small play disc against the round end.
+    <div className="flex items-center gap-2 rounded-full border border-border bg-card py-1 pr-1 pl-2">
       <Button
         type="button"
         variant="info"
-        size="icon-sm"
+        size="icon-xs"
         className="shrink-0 rounded-full"
         aria-label={playing ? "Stop demo call" : "Play demo call"}
         onClick={() => setPlaying(!playing)}

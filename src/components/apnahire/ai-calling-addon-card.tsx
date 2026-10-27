@@ -28,7 +28,6 @@ import { Button, Check } from "@apna/design-system"
 import { AI_CALLING_ADDON } from "@/content/job-plans"
 import { AiDemoCall, AiSparkle } from "@/components/apnahire/ai-demo-call"
 import { inr } from "@/lib/format"
-import { useAttentionRing } from "@/components/apnahire/use-attention-ring"
 
 export interface AiAddonOffer {
   /** Rupee price when no AI calling credit is available. */
@@ -45,7 +44,6 @@ export function AiCallingAddonCard({
   onAdd: () => void
 }) {
   const useCredit = offer.creditsAvailable > 0
-  const ring = useAttentionRing("ai-calling")
 
   return (
     <section data-slot="ai-calling-addon" data-product="ai-calling" className="bg-card p-4 shadow-card">
@@ -82,13 +80,15 @@ export function AiCallingAddonCard({
               </div>
               {/* Dark gray, not green: "Proceed to pay" below is this screen's one
                   primary CTA (Button's one-primary rule). */}
-              <Button type="button" variant="emphasis" size="sm" onClick={onAdd}>
+              <Button type="button" variant="emphasis" className="min-w-20" onClick={onAdd}>
                 Add
               </Button>
             </div>
           </div>
         </div>
-        {ring && <span aria-hidden className="attention-ring" />}
+        {/* Every time the order summary opens (user call, 2026-10-27): the
+            drawer re-keys the card on each open, so the ring replays. */}
+        <span aria-hidden className="attention-ring" />
       </div>
     </section>
   )

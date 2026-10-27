@@ -682,9 +682,11 @@ export function CheckoutDrawer({
             </section>
           )}
 
-          {/* 2b — AI calling add-on (express checkout) */}
+          {/* 2b — AI calling add-on (express checkout). Re-keyed per open: the
+              panel stays mounted when closed, and the card's attention ring
+              should play on every open. */}
           {showAiAddon && aiAddon && (
-            <AiCallingAddonCard offer={aiAddon} onAdd={() => setAiAdded(true)} />
+            <AiCallingAddonCard key={String(open)} offer={aiAddon} onAdd={() => setAiAdded(true)} />
           )}
 
           {/* 3 — Coupon: trigger, expanded panel, or applied row. Nothing to

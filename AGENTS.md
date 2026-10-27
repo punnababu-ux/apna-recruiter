@@ -647,7 +647,8 @@ cards) and every upsell tile (`OfferChoice`), both checkouts, light and dark
    opens, an add-on card (Database in self-checkout, AI calling in express)
    runs the `attention-ring`: a gold → green → sky strip with a glow, two
    eased laps over 3.6s, then it fades. Once per add-on per session
-   (`useAttentionRing`), never looping; reduced motion gets a still edge.
+   (`useAttentionRing`), never looping — except AI calling in express
+   checkout, which plays on every open (user call, 2026-10-27); reduced motion gets a still edge.
    Render it as `<span aria-hidden className="attention-ring" />` inside a
    `relative` card that doesn't clip (wrap a card that has
    `overflow-hidden`).
