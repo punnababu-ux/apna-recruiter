@@ -12,7 +12,7 @@
 <!-- The design system's tokens (src/app/redrawn/tokens.css): brand colours,
      fonts, the mother gradient and the hero blobs follow the system. -->
 <link rel="stylesheet" href="/redrawn/tokens.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,700;1,8..60,700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700&family=Inter:wght@600;700&display=swap">
 <style>
 /* Layout: a keynote stage. One idea per full-screen slide, dark plum
    ground, the brand's own colours as the only light on stage. */
@@ -38,11 +38,11 @@
   --plum: var(--color-apna-plum-400);         /* logo plum (the wordmark) */
   --plum-soft: var(--color-apna-plum-300);
   --paper: #FFFFFF;
-  /* One typeface since 2026-10-23: Google Sans Flex. The serif is loaded
-     only for the type slide's "before". */
+  /* One typeface since 2026-10-23: Google Sans Flex. Inter, the live
+     site's old face, is loaded only for the "before" examples. */
   --font-display: "Google Sans Flex", var(--font-family-sans);
   --font-body: "Google Sans Flex", var(--font-family-sans);
-  --font-old-serif: "Source Serif 4", Georgia, serif;
+  --font-old: "Inter", var(--font-family-sans);
   --slide-pad: clamp(24px, 6vw, 96px);
 }
 :root[data-mode="dark"] {
@@ -313,6 +313,31 @@ em { font-style: normal; }
 @media (max-width: 760px) { .play { grid-template-columns: 1fr; } }
 .play-cell { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 36px 16px; border-radius: 22px; border: 1px solid var(--ink-faint); min-width: 0; }
 .play-cell small { font-size: clamp(16px, 1.3vw, 19px); color: var(--ink-dim); text-align: center; }
+
+/* ── Nudges ── the two moments the product asks for attention, once. */
+.nudges { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; }
+@media (max-width: 760px) { .nudges { grid-template-columns: 1fr; } }
+.nudge { display: flex; flex-direction: column; gap: 14px; padding: 24px; border-radius: 22px; border: 1px solid var(--ink-faint); text-align: left; min-width: 0; }
+.nudge strong { font-size: clamp(20px, 1.9vw, 26px); font-weight: 700; color: var(--ink); }
+.nudge p { margin: 0; font-size: clamp(15px, 1.2vw, 18px); line-height: 1.5; color: var(--ink-dim); }
+.nudge-stage { display: grid; place-items: center; min-height: 170px; border-radius: 16px; background: #F4F1F5; padding: 20px; color: #1C151E; margin-bottom: 4px; }
+.nb-bar { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border-radius: 14px; background: #fff; border: 1px solid rgba(28, 21, 30, 0.1); font-size: 15px; }
+.nb-bar b { font-weight: 700; }
+.nb-slot { position: relative; display: inline-flex; border-radius: 99px; }
+.nb-btn { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px; border-radius: 99px; font-size: 14px; font-weight: 600; white-space: nowrap; }
+.nb-btn.credits { background: #fff; border: 1px solid rgba(28, 21, 30, 0.16); color: #1C151E; }
+.nb-btn.plans { display: none; background-image: var(--gradient-offer-premium); color: var(--surface-inverted-fg); box-shadow: 0 1px 2px rgba(28, 21, 30, 0.2); }
+.nb-coin { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--highlight); color: var(--highlight-foreground); font-size: 12px; font-style: normal; font-weight: 700; }
+.nb-slot.flipped .credits { display: none; }
+.nb-slot.flipped .plans { display: inline-flex; animation: nb-flip 520ms cubic-bezier(0.34, 1.56, 0.64, 1) both; transform-origin: 50% 50%; }
+/* The product's flip-in: it swings in from edge-on and lands with a nudge. */
+@keyframes nb-flip { 0% { transform: perspective(400px) rotateX(-90deg); opacity: 0; } 60% { transform: perspective(400px) rotateX(12deg); opacity: 1; } 100% { transform: perspective(400px) rotateX(0deg); opacity: 1; } }
+.na-card { position: relative; width: min(100%, 320px); display: flex; flex-direction: column; gap: 4px; padding: 14px; border-radius: 14px; background: #fff; border: 1px solid rgba(28, 21, 30, 0.1); font-size: 13px; }
+.na-card b { font-size: 15px; }
+.na-card span { color: #5E5161; }
+.na-card .na-price { color: #1C151E; font-weight: 600; }
+.na-card .na-cta { align-self: flex-start; margin-top: 8px; padding: 6px 12px; border-radius: 99px; background: #2A202C; color: #fff; font-size: 12px; font-weight: 600; }
+@media (prefers-reduced-motion: reduce) { .nb-slot.flipped .plans { animation: none; } }
 .k-big { font: inherit; font-size: 17px; font-weight: 600; padding: 14px 28px; cursor: pointer; background: var(--green); color: #FFFFFF; position: relative; overflow: hidden; isolation: isolate; transition: transform 120ms ease; }
 .k-big:active { transform: scale(0.96); }
 .k-big:focus-visible { outline: 2px solid var(--sky); outline-offset: 3px; }
@@ -378,7 +403,7 @@ em { font-style: normal; }
 @media (prefers-reduced-motion: reduce) { .k-expand, .k-chev { transition: none; } }
 
 /* Segmented before/after switches (Before/After, Recruiter dashboard/Pricing,
-   one typeface/serif). */
+   Inter/Google Sans Flex). */
 .inner > .toggle { align-self: flex-start; }
 .toggle[hidden] { display: none; }
 .center > .toggle { align-self: center; }
@@ -439,8 +464,7 @@ em { font-style: normal; }
     linear-gradient(135deg, #120E13 0%, #1C151E 50%, #241B26 100%); }
 .type-eyebrow { margin: 0; align-self: flex-start; font-size: clamp(15px, 1.2vw, 18px); font-weight: 600; padding: 4px 10px; border-radius: 99px; border: 1px solid var(--ink-faint); color: var(--ink-dim); }
 .type-head { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(28px, 3.6vw, 48px); line-height: 1.05; letter-spacing: -0.015em; text-wrap: balance; color: var(--ink); transition: letter-spacing 500ms ease; }
-.type-demo.before .type-head { font-family: var(--font-old-serif); letter-spacing: -0.01em; }
-.type-demo.before .type-head em { font-style: italic; }
+.type-demo.before .type-head { font-family: var(--font-old); letter-spacing: -0.03em; }
 .type-demo:not(.before) .rx-b, .type-demo.before .rx-a { display: none; }
 .type-body { margin: 0; font-size: clamp(15px, 1.4vw, 18px); line-height: 1.5; color: var(--ink-dim); max-width: 56ch; }
 .type-stats { display: flex; flex-wrap: wrap; gap: 28px; padding-top: 8px; }
@@ -543,6 +567,11 @@ em { font-style: normal; }
 @keyframes pulse { from { opacity: 0.65; scale: 0.92; } to { opacity: 1; scale: 1.08; } }
 @media (prefers-reduced-motion: reduce) { .living .blobs i, .living .wander { animation: none; } }
 .living.flat .blobs { opacity: 0; }
+/* Before: the old live hero (employer.apna.co): flat dark plum, two still
+   circles a step lighter, white Inter, its own headline. */
+.living.flat { background: radial-gradient(circle 50cqw at -12% 62%, #3B2B3F 99.6%, transparent 100%), radial-gradient(circle 30cqw at 98% 112%, #3B2B3F 99.6%, transparent 100%), #2C2030; }
+.living.flat p { color: #FFFFFF; font-family: var(--font-old); letter-spacing: -0.02em; }
+.living:not(.flat) .lv-b, .living.flat .lv-a { display: none; }
 .living p { position: relative; margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(26px, 4vw, 52px); color: #1C151E; text-align: center; line-height: 1.1; padding: 0 24px; }
 
 /* ── 8. System numbers ───────────────────────────────── */
@@ -618,8 +647,8 @@ em { font-style: normal; }
 .rx-head { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: clamp(22px, 2.6vw, 36px); line-height: 1.12; color: #1C151E; text-wrap: balance; }
 .rx-head.sm { font-size: clamp(16px, 1.6vw, 22px); color: #5E5161; }
 .rx-head em { white-space: nowrap; }
-[data-after="0"] .rx-head { font-family: var(--font-old-serif); }
-[data-after="0"] .rx-head em { font-style: italic; }
+/* Before: the old Title Case, in Inter. */
+[data-after="0"] .rx-head { font-family: var(--font-old); }
 [data-after="0"] .rx-head .rx-a, [data-after="1"] .rx-head .rx-b { display: none; }
 /* one green: the real order summary, with the AI calling add-on */
 .rx-pane[data-rx="green"] { align-items: center; background: #F4F1F5; }
@@ -627,7 +656,20 @@ em { font-style: normal; }
 .rx-o-title { font-size: 15px; }
 .rx-o-row { display: flex; justify-content: space-between; gap: 12px; }
 .rx-o-row.total { padding-top: 10px; border-top: 1px dashed rgba(28, 21, 30, 0.16); font-weight: 600; font-size: 15px; }
-.rx-addon { display: flex; flex-direction: column; gap: 10px; padding: 12px; border-radius: 12px; background: #F0ECF1; }
+.rx-addon { position: relative; display: flex; flex-direction: column; gap: 10px; padding: 12px; border-radius: 12px; background: #F0ECF1; }
+/* The product's attention-ring (design system index.css), mirrored for the
+   Nudges slide: a strip of brand light runs twice round its card, then
+   fades. Colours come from the shared tokens. */
+@property --nudge-angle { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+@keyframes nudge-ring-travel { from { --nudge-angle: 0deg; } to { --nudge-angle: 720deg; } }
+@keyframes nudge-ring-fade { 0% { opacity: 0; } 18% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; } }
+.nudge-ring { position: absolute; inset: 0; z-index: 1; border-radius: inherit; pointer-events: none; opacity: 0;
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--color-apna-green-400) 90%, transparent)) drop-shadow(0 0 10px color-mix(in srgb, var(--color-apna-green-500) 60%, transparent)) drop-shadow(0 0 18px color-mix(in srgb, var(--color-apna-sky-500) 45%, transparent)); }
+.nudge-ring::after { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 2px; background: conic-gradient(from var(--nudge-angle), var(--attention-ring-stops));
+  -webkit-mask: linear-gradient(black 0 0) content-box, linear-gradient(black 0 0); -webkit-mask-composite: xor; mask: linear-gradient(black 0 0) content-box, linear-gradient(black 0 0); mask-composite: exclude; }
+.nudge-ring.run { animation: nudge-ring-fade 3.6s ease-in-out 400ms 1 both; }
+.nudge-ring.run::after { animation: nudge-ring-travel 3.6s cubic-bezier(0.65, 0, 0.25, 1) 400ms 1 both; }
+@media (prefers-reduced-motion: reduce) { .nudge-ring { filter: none; } .nudge-ring::after { background: var(--attention-ring-still); } }
 .rx-addon-copy { display: flex; flex-direction: column; gap: 2px; }
 .rx-addon-copy span { color: #5E5161; font-size: 12px; }
 .rx-addon-copy .rx-addon-price { color: #1C151E; font-weight: 600; }
@@ -772,7 +814,7 @@ em { font-style: normal; }
       </div>
       <div class="type-row rise">
         <div class="toggle" role="group" aria-label="Compare type">
-          <button type="button" id="type-before" aria-pressed="false">Before: a serif and Inter</button>
+          <button type="button" id="type-before" aria-pressed="false">Before: Inter</button>
           <button type="button" id="type-after" aria-pressed="true">After: Google Sans Flex</button>
         </div>
         <p class="type-product">The website and the product now speak in one typeface. Weight and size carry the hierarchy, not a second font or an italic word.</p>
@@ -812,13 +854,13 @@ em { font-style: normal; }
       <h2 class="rise">A page that feels <em>alive.</em></h2>
       <div class="living rise" id="living">
         <div class="blobs" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><b class="wander"></b></div>
-        <p>India's largest AI-native<br>early talent platform</p>
+        <p><span class="lv-b">Hire top talent in 48<br>hours with apna.</span><span class="lv-a">India's largest AI-native<br>early talent platform</span></p>
       </div>
       <div class="toggle rise" role="group" aria-label="Compare">
         <button type="button" id="flat-btn" aria-pressed="false">Before: flat</button>
         <button type="button" id="alive-btn" aria-pressed="true">After: alive</button>
       </div>
-      <p class="caption rise">The homepage hero: colour drifts slowly behind the content, and cards move with weight, never a jump.</p>
+      <p class="caption rise">The homepage hero, before and after: a flat plum page with still circles becomes light that drifts slowly behind the content, and cards move with weight, never a jump.</p>
     </div>
   </section>
 
@@ -967,6 +1009,30 @@ em { font-style: normal; }
         </div>
       </div>
       <p class="lede rise">Every button, chip, panel and card in the product behaves like this: built in once, inherited everywhere, in light and dark.</p>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="Nudges">
+    <div class="inner center">
+      <p class="kicker rise">Nudges</p>
+      <h2 class="rise">Asks once, then lets go.</h2>
+      <div class="nudges rise">
+        <div class="nudge">
+          <div class="nudge-stage" aria-hidden="true">
+            <div class="nb-bar"><b>Jobs</b><span class="nb-slot" id="nb-slot"><span class="nb-btn credits">Available credits</span><span class="nb-btn plans"><i class="nb-coin">&#8377;</i>View plans</span><span class="nudge-ring" id="nb-ring"></span></span></div>
+          </div>
+          <strong>Running low on credits</strong>
+          <p>&ldquo;Available credits&rdquo; gets one ring of light, then flips over into View plans. Once a session, only when one job credit or fewer is left.</p>
+        </div>
+        <div class="nudge">
+          <div class="nudge-stage" aria-hidden="true">
+            <div class="na-card"><span class="nudge-ring" id="na-ring"></span><b>AI calling agent</b><span>Calls and shortlists every applicant, 24/7</span><span class="na-price">&#8377;1,600 for this job</span><span class="na-cta">Add AI calling agent</span></div>
+          </div>
+          <strong>A new add-on</strong>
+          <p>As the order summary opens, the add-on (AI calling, or Database in self-checkout) announces itself with light, then goes quiet. Once a session.</p>
+        </div>
+      </div>
+      <button type="button" class="switch rise" id="nudge-replay">Play again</button>
     </div>
   </section>
 
@@ -1417,11 +1483,11 @@ em { font-style: normal; }
   }
   lights.addEventListener("click", function () { swapShots(document.documentElement.dataset.mode === "dark"); });
 
-  // Type: before (a serif and Inter) vs after (Google Sans Flex).
+  // Type: before (Inter, the old live site) vs after (Google Sans Flex).
   var typedemo = document.getElementById("typedemo"), tb = document.getElementById("type-before"), ta = document.getElementById("type-after");
-  function setSerif(on) { typedemo.classList.toggle("before", !on); ta.setAttribute("aria-pressed", String(on)); tb.setAttribute("aria-pressed", String(!on)); }
-  tb.addEventListener("click", function () { setSerif(false); });
-  ta.addEventListener("click", function () { setSerif(true); });
+  function setNewType(on) { typedemo.classList.toggle("before", !on); ta.setAttribute("aria-pressed", String(on)); tb.setAttribute("aria-pressed", String(!on)); }
+  tb.addEventListener("click", function () { setNewType(false); });
+  ta.addEventListener("click", function () { setNewType(true); });
 
   // One token: pick a colour, every part on the screen follows.
   var tokenScreen = document.getElementById("token-screen");
@@ -1597,6 +1663,24 @@ em { font-style: normal; }
     }
     window.addEventListener("keydown", first, true);
     window.addEventListener("pointerdown", first, true);
+  })();
+  // Nudges: both moments play as the slide arrives, and on "Play again".
+  (function () {
+    var root = document.querySelector('[aria-label="Nudges"]');
+    if (!root) return;
+    var slot = document.getElementById("nb-slot"), flipT;
+    function play() {
+      clearTimeout(flipT);
+      slot.classList.remove("flipped");
+      // A fresh copy of each ring: its ::after animation then starts at 0.
+      root.querySelectorAll(".nudge-ring").forEach(function (r) { var n = r.cloneNode(false); n.classList.add("run"); r.replaceWith(n); });
+      // As in the product: the ring's lap (400ms delay + 3.6s), then the flip.
+      flipT = setTimeout(function () { slot.classList.add("flipped"); }, 3900);
+    }
+    document.getElementById("nudge-replay").addEventListener("click", play);
+    // Once per arrival: leaving the slide re-arms it.
+    var armed = true;
+    new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting && armed) { armed = false; play(); } else if (!e.isIntersecting) armed = true; }); }, { threshold: 0.6 }).observe(root);
   })();
 })();
 </script>
