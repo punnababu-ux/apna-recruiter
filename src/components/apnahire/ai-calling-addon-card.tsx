@@ -50,7 +50,7 @@ export function AiCallingAddonCard({
       {/* The ring sits on a wrapper: the card clips its corners, which would clip the glow. */}
       <div className="relative rounded-card-nested">
         <div className="overflow-hidden rounded-card-nested border border-border">
-          <div className="flex flex-col gap-2 bg-gradient-product-ai-calling p-4">
+          <div className="flex flex-col gap-2 bg-gradient-product-ai-calling px-3 py-4">
             <div className="flex items-start gap-2">
               <AiSparkle className="size-5 shrink-0" />
               <p className="text-sm font-semibold text-foreground">{AI_CALLING_ADDON.headline}</p>
@@ -65,12 +65,13 @@ export function AiCallingAddonCard({
             </ul>
           </div>
 
-          {/* Demo at the left; price and CTA grouped at the right. On a
-              phone the demo takes its own line above them. */}
-          <div className="flex flex-wrap items-center justify-between gap-3 bg-card p-4">
+          {/* One row at every width: demo left, price and CTA right. On a
+              phone the price moves into the button ("Add · ₹1,699"), so the
+              row fits from 320px. */}
+          <div className="flex items-center justify-between gap-2 bg-card px-3 py-4 sm:gap-3">
             <AiDemoCall />
-            <div className="ml-auto flex shrink-0 items-center gap-3">
-              <div className="flex flex-col items-end">
+            <div className="flex shrink-0 items-center gap-3">
+              <div className="hidden flex-col items-end sm:flex">
                 <span className="text-sm font-semibold whitespace-nowrap text-foreground">
                   {useCredit ? "1 AI calling credit" : inr(offer.price)}
                 </span>
@@ -80,8 +81,9 @@ export function AiCallingAddonCard({
               </div>
               {/* Dark gray, not green: "Proceed to pay" below is this screen's one
                   primary CTA (Button's one-primary rule). */}
-              <Button type="button" variant="emphasis" className="min-w-20" onClick={onAdd}>
-                Add
+              <Button type="button" variant="emphasis" className="px-3 sm:min-w-20 sm:px-4" onClick={onAdd}>
+                <span className="whitespace-nowrap sm:hidden">Add · {useCredit ? "1 credit" : inr(offer.price)}</span>
+                <span className="hidden sm:inline">Add</span>
               </Button>
             </div>
           </div>

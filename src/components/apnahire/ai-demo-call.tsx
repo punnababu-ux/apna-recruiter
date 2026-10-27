@@ -50,7 +50,7 @@ export function AiDemoCall() {
 
   return (
     // Extra left padding balances the small play disc against the round end.
-    <div className="flex items-center gap-2 rounded-full border border-border bg-card py-1 pr-1 pl-2">
+    <div className="flex min-w-0 items-center gap-1.5 rounded-full border border-border bg-card py-1 pr-1 pl-2 sm:gap-2">
       <Button
         type="button"
         variant="info"
@@ -63,10 +63,11 @@ export function AiDemoCall() {
       </Button>
       {/* "Listen to" small over "Demo" larger; a rule sets off the switch. */}
       <div className="flex flex-col whitespace-nowrap">
-        <span className="text-2xs leading-3 text-muted-foreground">{DEMO.eyebrow}</span>
+        {/* Phones drop "Listen to" so the row fits beside the CTA. */}
+        <span className="hidden text-2xs leading-3 text-muted-foreground sm:inline">{DEMO.eyebrow}</span>
         <span className="text-sm leading-4 font-semibold text-foreground">{DEMO.title}</span>
       </div>
-      <Separator orientation="vertical" className="mx-1 h-6 data-vertical:self-center" />
+      <Separator orientation="vertical" className="h-6 data-vertical:self-center sm:mx-1" />
       {/* Two letter chips; the chosen one takes the green tint. Not the dark
           solid pill: it would read as a second "Add" next to the CTA. */}
       <ChipTabs
