@@ -1202,6 +1202,52 @@
   }
 }
 
+/* loading-ring — attention-ring's strip of light, looping while the AI
+   works on what's inside the card (the job prompt as "Draft my job" runs).
+   Steady, no fade: here the loop is meant to read as "loading". Same markup:
+   an empty `<span aria-hidden>` last in a `relative` card. Reduced motion: a
+   still gradient edge. */
+@utility loading-ring {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  filter:
+    drop-shadow(0 0 3px color-mix(in srgb, var(--color-apna-green-400) 90%, transparent))
+    drop-shadow(0 0 10px color-mix(in srgb, var(--color-apna-green-500) 60%, transparent))
+    drop-shadow(0 0 18px color-mix(in srgb, var(--color-apna-sky-500) 45%, transparent));
+  animation: attention-ring-fade-in var(--duration-enter) var(--ease-out-ui) both;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 2px;
+    background: conic-gradient(from var(--attention-angle), var(--attention-ring-stops));
+    -webkit-mask: linear-gradient(black 0 0) content-box, linear-gradient(black 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(black 0 0) content-box, linear-gradient(black 0 0);
+    mask-composite: exclude;
+    animation: attention-ring-travel 3.2s linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    filter: none;
+
+    &::after {
+      background: var(--attention-ring-still);
+      animation: none;
+    }
+  }
+}
+
+@keyframes attention-ring-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 /* flip-in — a control turns over into its next state, like a split-flap
    board: it swings in from edge-on (rotateX -90°) and lands with a slight
    overshoot. For a one-time change of meaning (the top bar's credits button

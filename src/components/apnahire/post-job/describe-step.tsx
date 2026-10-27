@@ -13,6 +13,8 @@ import * as React from "react"
 import { Badge, Button, Check, Mic, Plus, PromptInput, WizardQuestion } from "@apna/design-system"
 import { promptSignals, type PromptSignals } from "@/lib/apnahire/prompt-parse"
 import { useSpeechRecognition } from "@/hooks/use-speech-recognition"
+import { DraftingState } from "@/components/apnahire/post-job/drafting-state"
+import type { JobPostDraft } from "@/types/apnahire-job"
 
 const EXAMPLES = [
   {
@@ -33,6 +35,9 @@ interface DescribeStepProps {
   prompt: string
   onPromptChange: (value: string) => void
   onSubmit: () => void
+  drafting: boolean
+  draftResult: Partial<JobPostDraft> | null
+  onDrafted: () => void
 }
 
 /** Staggered entrance — each block rises in a beat after the previous. */
@@ -91,7 +96,14 @@ function PromptCoverage({ prompt }: { prompt: string }) {
   )
 }
 
-export function DescribeStep({ prompt, onPromptChange, onSubmit }: DescribeStepProps) {
+export function DescribeStep({
+  prompt,
+  onPromptChange,
+  onSubmit,
+  drafting,
+  draftResult,
+  onDrafted,
+}: DescribeStepProps) {
   const speech = useSpeechRecognition()
   const baseRef = React.useRef("")
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
@@ -152,45 +164,53 @@ export function DescribeStep({ prompt, onPromptChange, onSubmit }: DescribeStepP
         <label htmlFor="job-prompt" className="text-sm font-medium text-foreground">
           About the job
         </label>
-        <PromptInput
-          id="job-prompt"
-          ref={inputRef}
-          size="lg"
-          hideSubmit
-          value={prompt}
-          onValueChange={onPromptChange}
-          onSubmit={() => {
-            speech.stop()
-            onSubmit()
-          }}
-          active={speech.listening}
-          placeholder={
-            speech.listening
-              ? "Listening…"
-              : "e.g. Telecaller in Koramangala, ₹15–20k, graduate, Hindi, 1 year experience"
-          }
-          footerStart={voiceControl}
-        />
-        <PromptCoverage prompt={prompt} />
+        {/* While drafting, the prompt is read-only and wears the loading ring;
+            the steps appear in a gray card under it instead of a new screen. */}
+        <div className="relative z-10 rounded-2xl">
+          <PromptInput
+            id="job-prompt"
+            ref={inputRef}
+            size="lg"
+            hideSubmit
+            value={prompt}
+            onValueChange={onPromptChange}
+            onSubmit={() => {
+              speech.stop()
+              onSubmit()
+            }}
+            active={speech.listening}
+            placeholder={
+              speech.listening
+                ? "Listening…"
+                : "e.g. Telecaller in Koramangala, ₹15–20k, graduate, Hindi, 1 year experience"
+            }
+            disabled={drafting}
+            footerStart={drafting ? <span /> : voiceControl}
+          />
+          {drafting && <span aria-hidden className="loading-ring" />}
+        </div>
+        {drafting ? <DraftingState result={draftResult} onComplete={onDrafted} /> : <PromptCoverage prompt={prompt} />}
         {speech.error && <p className="text-xs text-destructive">{speech.error}</p>}
       </div>
 
-      <div {...rise(2)} className={`${rise(2).className} flex flex-wrap items-center gap-2`}>
-        <span className="text-xs font-medium text-muted-foreground">Try:</span>
-        {EXAMPLES.map((ex) => (
-          <Button
-            key={ex.label}
-            type="button"
-            size="sm"
-            variant="outline"
-            className="rounded-full"
-            title={ex.text}
-            onClick={() => applyExample(ex.text)}
-          >
-            {ex.label}
-          </Button>
-        ))}
-      </div>
+      {!drafting && (
+        <div {...rise(2)} className={`${rise(2).className} flex flex-wrap items-center gap-2`}>
+          <span className="text-xs font-medium text-muted-foreground">Try:</span>
+          {EXAMPLES.map((ex) => (
+            <Button
+              key={ex.label}
+              type="button"
+              size="sm"
+              variant="outline"
+              className="rounded-full"
+              title={ex.text}
+              onClick={() => applyExample(ex.text)}
+            >
+              {ex.label}
+            </Button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

@@ -15,8 +15,15 @@ import {
   Field,
   FieldLabel,
   Input,
+  Backpack,
+  GraduationCap,
+  Hammer,
   NumberStepper,
+  OptionCard,
+  OptionCardGroup,
   Plus,
+  School,
+  ScrollText,
   Select,
   SelectContent,
   SelectItem,
@@ -25,6 +32,7 @@ import {
   Switch,
   Textarea,
   Toggle,
+  University,
   X,
   type ChipTabItem,
 } from "@apna/design-system"
@@ -55,7 +63,10 @@ export interface FieldEditorProps {
 }
 
 const items = <V extends string>(labels: Record<V, string>): ChipTabItem<V | "">[] =>
-  (Object.keys(labels) as V[]).map((value) => ({ value, label: labels[value] }))
+  (Object.keys(labels) as V[]).map((value) => ({
+    value,
+    label: labels[value],
+  }))
 
 export const toNumber = (v: string) => {
   const n = parseInt(v.replace(/[^\d]/g, ""), 10)
@@ -102,11 +113,20 @@ export function ChipMultiSelect({
   value,
   onChange,
   label,
+  emoji,
+  size = "sm",
+  display,
 }: {
   options: string[]
   value: string[]
   onChange: (next: string[]) => void
   label: string
+  /** An emoji before each option (perks), to find one at a glance. */
+  emoji?: Record<string, string>
+  /** "lg" where the chips are the whole screen (perks). */
+  size?: "sm" | "lg"
+  /** Shown text per option (e.g. a language in its own script). */
+  display?: Record<string, string>
 }) {
   // Values the AI or the recruiter added that aren't in the list still show.
   const all = Array.from(new Set([...options, ...value]))
@@ -115,12 +135,13 @@ export function ChipMultiSelect({
       {all.map((o) => (
         <Toggle
           key={o}
-          size="sm"
+          size={size}
           variant="outline"
           pressed={value.includes(o)}
           onPressedChange={() => onChange(value.includes(o) ? value.filter((v) => v !== o) : [...value, o])}
         >
-          {o}
+          {emoji?.[o] && <span aria-hidden>{emoji[o]}</span>}
+          {display?.[o] ? <span aria-label={o}>{display[o]}</span> : o}
         </Toggle>
       ))}
     </div>
@@ -204,36 +225,104 @@ export function JoiningFeeDetailsFields({ draft, update }: FieldEditorProps) {
 
 // ── Who can apply ──────────────────────────────────────────────────────────
 
-/** A requirement's label row: the label on the left, its "Must-have"
- *  switch on the right — on means only matching candidates can apply, off
- *  means it only ranks them. The switch sits on the same line as what it
- *  governs, so "Education · Must-have ●" reads as one statement. Disabled
- *  (and off) until there's something to require. */
-function RequirementHeader({
+/** A single choice as OptionCards, each with a line saying what it means.
+ *  The picked card can hold more under its answer — `details` (e.g. the
+ *  years of experience) and, with `mustHave`, its "Must-have" switch (on:
+ *  only matching candidates can apply; off: it only ranks them). Those
+ *  controls sit beside the card's button, not in it (no control inside a
+ *  control), so the frame moves to a wrapper around both. */
+function ChoiceCards<V extends string>({
   label,
+  labels,
+  help,
+  icons,
   value,
   onChange,
-  applicable,
+  mustHave,
+  details,
 }: {
   label: string
-  value: Strictness
-  onChange: (v: Strictness) => void
-  applicable: boolean
+  labels: Record<V, string>
+  help: Record<V, string>
+  icons?: Record<V, React.ReactNode>
+  value: V | ""
+  onChange: (v: V) => void
+  mustHave?: { value: Strictness; onChange: (v: Strictness) => void; applicable: boolean }
+  details?: Partial<Record<V, React.ReactNode>>
 }) {
   return (
-    <div className="flex items-center justify-between gap-3">
-      <FieldLabel>{label}</FieldLabel>
-      <label className="flex items-center gap-2 text-sm text-muted-foreground has-disabled:opacity-50">
-        Must-have
-        <Switch
-          checked={applicable && value === "must"}
-          disabled={!applicable}
-          onCheckedChange={(v) => onChange(v ? "must" : "preferred")}
-          aria-label={`${label} is a must-have`}
-        />
-      </label>
-    </div>
+    <OptionCardGroup aria-label={label}>
+      {(Object.keys(labels) as V[]).map((v) => {
+        const picked = value === v
+        const withSwitch = picked && mustHave?.applicable
+        const extra = picked ? details?.[v] : null
+        const on = withSwitch && mustHave.value === "must"
+        const card = (
+          <OptionCard
+            key={v}
+            icon={icons?.[v]}
+            title={labels[v]}
+            description={help[v]}
+            selected={picked}
+            onSelect={() => onChange(v)}
+            className={withSwitch || extra ? "rounded-none border-0 ring-0" : undefined}
+          />
+        )
+        if (!withSwitch && !extra) return card
+        return (
+          <div key={v} className="overflow-hidden rounded-xl border border-primary bg-accent ring-1 ring-primary">
+            {card}
+            <div className="flex flex-col gap-3 px-4 pb-4">
+              {extra && <div className="border-t border-primary/20 pt-3">{extra}</div>}
+              {withSwitch && (
+                <label className="flex items-center gap-3 border-t border-primary/20 pt-3">
+                  <span className="flex min-w-0 flex-1 flex-col">
+                    <span className="text-xs font-semibold text-accent-foreground">Must-have</span>
+                    <span className="text-xs text-accent-foreground/80">
+                      {on ? "Only matches can apply" : "All can apply; matches first"}
+                    </span>
+                  </span>
+                  <Switch
+                    checked={on}
+                    onCheckedChange={(c) => mustHave.onChange(c ? "must" : "preferred")}
+                    aria-label={`${label} is a must-have`}
+                  />
+                </label>
+              )}
+            </div>
+          </div>
+        )
+      })}
+    </OptionCardGroup>
   )
+}
+
+const EDUCATION_ICONS: Record<Education, React.ReactNode> = {
+  "10th": <Backpack />,
+  "12th": <School />,
+  diploma: <ScrollText />,
+  iti: <Hammer />,
+  graduate: <GraduationCap />,
+  post_graduate: <University />,
+}
+
+const EDUCATION_HELP: Record<Education, string> = {
+  "10th": "Anyone can apply",
+  "12th": "12th pass or higher",
+  diploma: "Diploma or higher",
+  iti: "ITI certificate or higher",
+  graduate: "Bachelor’s degree or higher",
+  post_graduate: "Master’s degree",
+}
+const ENGLISH_HELP: Record<EnglishLevel, string> = {
+  none: "Candidates don’t need to speak English",
+  basic: "Can understand and reply in simple sentences",
+  good: "Speaks fluently with customers and colleagues",
+}
+const EXPERIENCE_HELP: Record<ExperienceType, string> = {
+  any: "Freshers and experienced candidates can apply",
+  experienced: "Set the years of experience you need",
+  fresher: "Only candidates with no work experience",
 }
 
 const strictnessSetter =
@@ -242,78 +331,75 @@ const strictnessSetter =
 
 export function EducationField({ draft, update }: FieldEditorProps) {
   return (
-    <Field>
-      <RequirementHeader
-        label="Education"
-        value={draft.strictness.education}
-        onChange={strictnessSetter(draft, update, "education")}
-        applicable={!!draft.education}
-      />
-      <ChipTabs
-        variant="choice"
-        size="lg"
-        aria-label="Minimum education"
-        items={items<Education>(EDUCATION_LABELS)}
+    <div className="flex flex-col gap-4">
+      <ChoiceCards
+        label="Minimum education"
+        labels={EDUCATION_LABELS}
+        help={EDUCATION_HELP}
+        icons={EDUCATION_ICONS}
         value={draft.education}
-        onValueChange={(v) => update("education", v)}
+        onChange={(v) => update("education", v)}
+        mustHave={{
+          value: draft.strictness.education,
+          onChange: strictnessSetter(draft, update, "education"),
+          applicable: !!draft.education,
+        }}
       />
-    </Field>
+    </div>
   )
 }
 
 export function EnglishField({ draft, update }: FieldEditorProps) {
   return (
-    <Field>
-      <RequirementHeader
-        label="English"
-        value={draft.strictness.english}
-        onChange={strictnessSetter(draft, update, "english")}
-        applicable={!!draft.english && draft.english !== "none"}
-      />
-      <ChipTabs
-        variant="choice"
-        size="lg"
-        aria-label="English level"
-        items={items<EnglishLevel>(ENGLISH_LABELS)}
+    <div className="flex flex-col gap-4">
+      <ChoiceCards
+        label="English level"
+        labels={ENGLISH_LABELS}
+        help={ENGLISH_HELP}
         value={draft.english}
-        onValueChange={(v) => update("english", v)}
+        onChange={(v) => update("english", v)}
+        mustHave={{
+          value: draft.strictness.english,
+          onChange: strictnessSetter(draft, update, "english"),
+          applicable: !!draft.english && draft.english !== "none",
+        }}
       />
-    </Field>
+    </div>
   )
 }
 
 export function ExperienceField({ draft, update }: FieldEditorProps) {
   return (
-    <Field>
-      <RequirementHeader
+    <div className="flex flex-col gap-4">
+      <ChoiceCards
         label="Experience"
-        value={draft.strictness.experience}
-        onChange={strictnessSetter(draft, update, "experience")}
-        applicable={draft.experienceType === "experienced"}
-      />
-      <ChipTabs
-        variant="choice"
-        size="lg"
-        aria-label="Experience"
-        items={items<ExperienceType>(EXPERIENCE_LABELS)}
+        labels={EXPERIENCE_LABELS}
+        help={EXPERIENCE_HELP}
         value={draft.experienceType}
-        onValueChange={(v) => {
+        onChange={(v) => {
           update("experienceType", v)
           if (v === "experienced" && draft.minExperienceYears == null) update("minExperienceYears", 1)
         }}
+        mustHave={{
+          value: draft.strictness.experience,
+          onChange: strictnessSetter(draft, update, "experience"),
+          applicable: draft.experienceType === "experienced",
+        }}
+        details={{
+          experienced: (
+            <NumberStepper
+              label="At least"
+              name="minimum experience"
+              value={Math.max(1, Math.round(draft.minExperienceYears ?? 1))}
+              onValueChange={(n) => update("minExperienceYears", n)}
+              min={1}
+              max={30}
+              format={(n) => `${n} yr${n === 1 ? "" : "s"}`}
+            />
+          ),
+        }}
       />
-      {draft.experienceType === "experienced" && (
-        <NumberStepper
-          label="At least"
-          name="minimum experience"
-          value={Math.max(1, Math.round(draft.minExperienceYears ?? 1))}
-          onValueChange={(n) => update("minExperienceYears", n)}
-          min={1}
-          max={30}
-          format={(n) => `${n} yr${n === 1 ? "" : "s"}`}
-        />
-      )}
-    </Field>
+    </div>
   )
 }
 
@@ -326,20 +412,41 @@ export function WalkInDetailsFields({ draft, update }: FieldEditorProps) {
     <div className="flex flex-col gap-5">
       <Field>
         <FieldLabel htmlFor="walkin-address">Address</FieldLabel>
-        <Input id="walkin-address" value={w.address} onChange={(e) => set({ address: e.target.value })} placeholder="Building, street, area" />
+        <Input
+          id="walkin-address"
+          value={w.address}
+          onChange={(e) => set({ address: e.target.value })}
+          placeholder="Building, street, area"
+        />
       </Field>
       <div className="grid grid-cols-2 gap-4">
         <Field>
           <FieldLabel htmlFor="walkin-start">From date</FieldLabel>
-          <Input id="walkin-start" type="date" value={w.startDate} onChange={(e) => set({ startDate: e.target.value })} />
+          <Input
+            id="walkin-start"
+            type="date"
+            value={w.startDate}
+            onChange={(e) => set({ startDate: e.target.value })}
+          />
         </Field>
         <Field>
           <FieldLabel htmlFor="walkin-end">To date</FieldLabel>
-          <Input id="walkin-end" type="date" min={w.startDate || undefined} value={w.endDate} onChange={(e) => set({ endDate: e.target.value })} />
+          <Input
+            id="walkin-end"
+            type="date"
+            min={w.startDate || undefined}
+            value={w.endDate}
+            onChange={(e) => set({ endDate: e.target.value })}
+          />
         </Field>
         <Field>
           <FieldLabel htmlFor="walkin-from">From</FieldLabel>
-          <Input id="walkin-from" type="time" value={w.startTime} onChange={(e) => set({ startTime: e.target.value })} />
+          <Input
+            id="walkin-from"
+            type="time"
+            value={w.startTime}
+            onChange={(e) => set({ startTime: e.target.value })}
+          />
         </Field>
         <Field>
           <FieldLabel htmlFor="walkin-to">To</FieldLabel>
@@ -372,7 +479,13 @@ export function OtherRecruiterFields({ draft, update }: FieldEditorProps) {
       </Field>
       <Field>
         <FieldLabel htmlFor="rec-phone">WhatsApp number</FieldLabel>
-        <Input id="rec-phone" inputMode="tel" value={r.phone} onChange={(e) => set({ phone: e.target.value })} placeholder="+91" />
+        <Input
+          id="rec-phone"
+          inputMode="tel"
+          value={r.phone}
+          onChange={(e) => set({ phone: e.target.value })}
+          placeholder="+91"
+        />
       </Field>
       <Field>
         <FieldLabel htmlFor="rec-email">Email</FieldLabel>
@@ -455,7 +568,7 @@ export function ScreeningQuestionsField({ draft, update }: FieldEditorProps) {
                 type="button"
                 size="sm"
                 variant="outline"
-                className="rounded-full"
+                className="h-auto max-w-full rounded-full py-1.5 text-left whitespace-normal"
                 onClick={() => update("screeningQuestions", [...qs, newQuestion(s)])}
               >
                 <Plus className="size-3.5" aria-hidden /> {s}

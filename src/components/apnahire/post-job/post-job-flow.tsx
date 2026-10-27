@@ -5,15 +5,15 @@
  * plan page at /apnahire/jobs/new/plans). One decision per screen, in the
  * order of SCREENS (wizard-screens.tsx):
  *
- *   describe ──"Draft my job"──▶ drafting ──▶ title → … → review → plans
+ *   describe ──"Draft my job" (drafts in place)──▶ title → … → review → plans
  *       └──── "Fill it in myself" ────────▶ title
  *
  * The description is drafted once; every later screen arrives answered and
  * marked "From your description" until the recruiter changes it (aiFilled).
  * The question screens share one layout (WIZARD_LAYOUT): the question
  * column, and from `lg` the candidate preview beside it, scrolled to the part
- * being edited (phones see it on the review screen). Describe and drafting
- * have no preview (there's no job to show yet): one centred column
+ * being edited (phones see it on the review screen). Describe has no
+ * preview (there's no job to show yet): one centred column
  * (SOLO_LAYOUT), about as wide as the question column. The footer spans the
  * screen's content area: Back on its left edge, Next on its right.
  *
@@ -43,11 +43,16 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   Button,
+  ChevronDown,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
   WizardFooter,
+  WizardTypingProvider,
 } from "@apna/design-system"
 import { useDraftPersistence } from "@/hooks/onlyrounds/use-draft-persistence"
 import { CandidateJobPreview } from "@/components/apnahire/post-job/candidate-job-preview"
-import { DraftingState } from "@/components/apnahire/post-job/drafting-state"
 import { JobPostingChrome, type JobPostingStep } from "@/components/apnahire/post-job/job-posting-chrome"
 import type { UpdateDraft } from "@/components/apnahire/post-job/job-fields"
 import {
@@ -144,15 +149,12 @@ const RENAMED: Record<string, ScreenId> = {
   welcome: "describe",
   "intro-job": "title",
   company: "title",
-  workplace: "location",
   "job-basics": "job-type",
-  "pay-type": "pay",
-  salary: "pay",
-  perks: "pay",
-  "intro-candidates": "requirements",
-  "intro-setup": "interview-contact",
-  interview: "interview-contact",
-  contact: "interview-contact",
+  pay: "pay-type",
+  requirements: "education",
+  "intro-candidates": "education",
+  "intro-setup": "interview",
+  "interview-contact": "interview",
 }
 
 /** A saved draft from an older version of the flow (phase-based, or with
@@ -167,8 +169,6 @@ function normalizeFlow(raw: Partial<FlowState> & { phase?: string }): FlowState 
   return {
     ...EMPTY_FLOW,
     ...raw,
-    // "drafting" is never saved (see the auto-save effect), so a reload
-    // mid-draft resumes on the prompt, not a spinner that never ends.
     screen,
     draft: normalizeDraft(raw.draft),
     aiFilled: raw.aiFilled ?? [],
@@ -192,23 +192,27 @@ function stageProgress(screen: ScreenId): number[] {
 
 export function PostJobFlow() {
   const router = useRouter()
-  const { form: raw, setForm: setState, persistDraft, hydrated } = useDraftPersistence<FlowState>(
-    JOB_DRAFT_STORAGE_KEY,
-    EMPTY_FLOW,
-  )
+  const {
+    form: raw,
+    setForm: setState,
+    persistDraft,
+    hydrated,
+  } = useDraftPersistence<FlowState>(JOB_DRAFT_STORAGE_KEY, EMPTY_FLOW)
   const state = React.useMemo(() => normalizeFlow(raw), [raw])
 
   const [direction, setDirection] = React.useState<"forward" | "back">("forward")
   const [error, setError] = React.useState<string | null>(null)
   const [attempts, setAttempts] = React.useState(0)
   const [draftResult, setDraftResult] = React.useState<Partial<JobPostDraft> | null>(null)
+  /** "Draft my job" is running — on the Describe screen, not a screen of its own. */
+  const [drafting, setDrafting] = React.useState(false)
   const [refining, setRefining] = React.useState(false)
   const [writing, setWriting] = React.useState(false)
   const [flashKey, setFlashKey] = React.useState(0)
   const [confirmRedraft, setConfirmRedraft] = React.useState(false)
 
   React.useEffect(() => {
-    if (hydrated && state.screen !== "drafting") persistDraft(state)
+    if (hydrated) persistDraft(state)
   }, [hydrated, state, persistDraft])
 
   // Arrived from "Post a job with AI calling" (?addon=ai-calling): the plan
@@ -251,7 +255,8 @@ export function PostJobFlow() {
   const runDraft = async () => {
     setConfirmRedraft(false)
     setDraftResult(null)
-    goTo("drafting")
+    setError(null)
+    setDrafting(true)
     const result = await callDraftApi({ prompt: state.prompt.trim() }).catch(() => ({}))
     setDraftResult(result)
   }
@@ -272,11 +277,14 @@ export function PostJobFlow() {
     void runDraft()
   }
 
-  // The drafting screen calls this once it has finished revealing the result.
+  // DraftingState calls this once it has finished revealing the result.
   const finishDrafting = React.useCallback(() => {
     const result = draftResult ?? {}
     // A joining fee the AI heard about still needs the recruiter's own answer.
-    const draft = { ...mergeDraft(EMPTY_JOB_DRAFT, result), joiningFeeAnswered: false }
+    const draft = {
+      ...mergeDraft(EMPTY_JOB_DRAFT, result),
+      joiningFeeAnswered: false,
+    }
     setState((s) => ({
       ...s,
       screen: "title",
@@ -286,6 +294,7 @@ export function PostJobFlow() {
       returnTo: null,
       descriptionBasis: draft.description ? descriptionBasisOf(draft) : "",
     }))
+    setDrafting(false)
     setDirection("forward")
     window.scrollTo({ top: 0 })
   }, [draftResult, setState])
@@ -294,14 +303,21 @@ export function PostJobFlow() {
   const refine = async (instruction: string): Promise<boolean> => {
     setRefining(true)
     try {
-      const result = await callDraftApi({ current: state.draft, instruction }).catch(() => ({}))
+      const result = await callDraftApi({
+        current: state.draft,
+        instruction,
+      }).catch(() => ({}))
       const next = mergeDraft(state.draft, result)
       const changed = (Object.keys(next) as (keyof JobPostDraft)[]).filter(
         (k) => JSON.stringify(state.draft[k]) !== JSON.stringify(next[k]),
       )
       if (!changed.length) return false
       setFlashKey((n) => n + 1)
-      setState((s) => ({ ...s, draft: next, aiFilled: Array.from(new Set([...(s.aiFilled ?? []), ...changed])) }))
+      setState((s) => ({
+        ...s,
+        draft: next,
+        aiFilled: Array.from(new Set([...(s.aiFilled ?? []), ...changed])),
+      }))
       return true
     } finally {
       setRefining(false)
@@ -320,7 +336,17 @@ export function PostJobFlow() {
       setWriting(true)
       try {
         const d = draftRef.current
-        const summary = [d.title, d.category, d.industry, d.area, d.city, d.education, d.experienceType, ...d.languages, instruction]
+        const summary = [
+          d.title,
+          d.category,
+          d.industry,
+          d.area,
+          d.city,
+          d.education,
+          d.experienceType,
+          ...d.languages,
+          instruction,
+        ]
           .filter(Boolean)
           .join(", ")
         const result = await callDraftApi({ prompt: summary }).catch(() => ({}) as Partial<JobPostDraft>)
@@ -328,7 +354,10 @@ export function PostJobFlow() {
           setFlashKey((n) => n + 1)
           setState((s) => ({
             ...s,
-            draft: { ...normalizeDraft(s.draft), description: result.description! },
+            draft: {
+              ...normalizeDraft(s.draft),
+              description: result.description!,
+            },
             aiFilled: Array.from(new Set([...(s.aiFilled ?? []), "description" as const])),
             descriptionBasis: descriptionBasisOf(normalizeDraft(s.draft)),
           }))
@@ -354,7 +383,13 @@ export function PostJobFlow() {
       ...slots,
       jobs: [
         ...kept,
-        { id: `job-${Date.now().toString(36)}`, title, location: locationLabel(state.draft) ?? "", postedAt: todayLabel(), applied: 0 },
+        {
+          id: `job-${Date.now().toString(36)}`,
+          title,
+          location: locationLabel(state.draft) ?? "",
+          postedAt: todayLabel(),
+          applied: 0,
+        },
       ],
     })
     toast.success(`${title} is live`, {
@@ -372,7 +407,18 @@ export function PostJobFlow() {
   }
 
   const next = () => {
-    if (state.screen === "describe") return submitPrompt()
+    if (state.screen === "describe") return drafting ? undefined : submitPrompt()
+    // Safety net: an answer can go missing after its screen was passed (a
+    // later edit, a jump back). Review doesn't send you hunting — it opens
+    // the first unfinished screen with what's missing.
+    if (state.screen === "review") {
+      const unfinished = SCREENS.find((s) => s.id !== "review" && s.check?.(state.draft))
+      if (unfinished) {
+        goTo(unfinished.id, "back")
+        setError(unfinished.check!(state.draft))
+        return
+      }
+    }
     const problem = def.check?.(state.draft)
     if (problem) {
       setError(problem)
@@ -390,15 +436,16 @@ export function PostJobFlow() {
       router.push("/apnahire/jobs/new/plans")
       return
     }
-    const following = SCREENS.slice(screenIndex(state.screen) + 1).find((s) => s.id !== "drafting")
+    const following = SCREENS[screenIndex(state.screen) + 1]
     if (following) goTo(following.id)
   }
 
   const back = () => {
     if (state.returnTo) return goTo(state.returnTo, "back")
-    const previous = SCREENS.slice(0, screenIndex(state.screen))
-      .reverse()
-      .find((s) => s.id !== "drafting")
+    const previous = SCREENS[screenIndex(state.screen) - 1]
+    // The manual intro is only on the way in by hand; an AI draft's first
+    // question goes back to its description.
+    if (previous?.id === "manual-intro" && state.draftedPrompt) return goTo("describe", "back")
     if (previous) goTo(previous.id, "back")
   }
 
@@ -412,6 +459,9 @@ export function PostJobFlow() {
       setState((s) => ({ ...s, prompt }))
     },
     submitPrompt,
+    drafting,
+    draftResult,
+    finishDrafting,
     edit: (id) => goTo(id, "forward", state.screen),
     applyPatch,
     refine,
@@ -425,7 +475,15 @@ export function PostJobFlow() {
   }
 
   const stage = def.stage
+  /** Before the stages (describe, the manual intro): no job to preview yet,
+   *  so one centred column. */
+  const solo = stage === null
   const chromeStep: JobPostingStep = stage ?? "job"
+  /** Back to the start of a stage already reached (stepper, phone step menu). */
+  const jumpToStage = (to: StageId) => {
+    const first = SCREENS.find((s) => s.stage === to)
+    if (first && STAGES.indexOf(to) <= (stage ? STAGES.indexOf(stage) : -1)) goTo(first.id, "back")
+  }
   const firstOfStage = stage !== null && SCREENS.find((s) => s.stage === stage)?.id === state.screen
   // Subscribers' last step commits: "Post job", the flow's one green CTA.
   const postsNow = state.screen === "review" && !state.returnTo && !!slots
@@ -446,72 +504,108 @@ export function PostJobFlow() {
       <JobPostingChrome
         current={chromeStep}
         stepperClassName="max-sm:hidden"
-        onStepClick={(step) => {
-          if (step === "plan") return
-          const first = SCREENS.find((s) => s.stage === step)
-          if (first && STAGES.indexOf(step) <= (stage ? STAGES.indexOf(stage) : -1)) goTo(first.id, "back")
-        }}
+        onStepClick={(step) => step !== "plan" && jumpToStage(step)}
         onSaveExit={() => persistDraft(state)}
       />
 
       <main className="flex-1 px-4 py-8 sm:px-6 sm:py-10">
-        {state.screen === "drafting" ? (
-          <DraftingState prompt={state.prompt} result={draftResult} onComplete={finishDrafting} />
-        ) : (
-          <div className={state.screen === "describe" ? SOLO_WIDTH : WIZARD_LAYOUT}>
-            <div
-              key={state.screen}
-              className={cn(
-                "flex min-w-0 flex-col gap-6 animate-in fade-in duration-300 fill-mode-both",
-                direction === "forward" ? "slide-in-from-right-4" : "slide-in-from-left-4",
-              )}
-            >
-              {/* The chapter marker, on the first question of each stage — in
-                  place of a separate intro screen. */}
-              {firstOfStage && stage && (
-                <p className="text-xs font-semibold text-muted-foreground">
-                  Step {STAGES.indexOf(stage) + 1} of 3 · {STAGE_LABELS[stage]}
-                </p>
-              )}
-              <def.Render {...ctx} />
-            </div>
-            {/* From the first question on: on Describe there's no job yet,
-                only an empty card that squeezed the description box. */}
-            {state.screen !== "describe" && (
-              <aside className="hidden lg:block">
-                <div className="sticky top-36 flex flex-col gap-3">
-                  {/* Prototype only: a silent click opens the hidden preview settings
-                      (PrototypeSettings). Remove before production. */}
-                  <p onClick={openPrototypeSettings} className="text-center text-xs font-medium text-muted-foreground">Candidate view</p>
-                  <CandidateJobPreview draft={state.draft} flashKey={flashKey} focus={def.preview} />
-                </div>
-              </aside>
+        <div className={solo ? SOLO_WIDTH : WIZARD_LAYOUT}>
+          <div
+            key={state.screen}
+            className={cn(
+              "flex min-w-0 flex-col gap-6 animate-in fade-in duration-300 fill-mode-both",
+              direction === "forward" ? "slide-in-from-right-4" : "slide-in-from-left-4",
             )}
+          >
+            {/* The chapter marker, on the first question of each stage — in
+                  place of a separate intro screen. */}
+            {/* From sm the stepper shows progress: a quiet chapter marker on
+                  each stage's first question, in place of an intro screen. */}
+            {firstOfStage && stage && (
+              <p className="text-xs font-semibold text-muted-foreground max-sm:hidden">
+                Step {STAGES.indexOf(stage) + 1} of 3 · {STAGE_LABELS[stage]}
+              </p>
+            )}
+            {/* Filled in by hand (no AI draft): each question types itself in. */}
+            <WizardTypingProvider value={!state.draftedPrompt}>
+              <def.Render {...ctx} />
+            </WizardTypingProvider>
           </div>
-        )}
+          {/* From the first question on: on Describe there's no job yet,
+                only an empty card that squeezed the description box. */}
+          {!solo && (
+            <aside className="hidden lg:block">
+              <div className="sticky top-36 flex flex-col gap-3">
+                {/* Prototype only: a silent click opens the hidden preview settings
+                      (PrototypeSettings). Remove before production. */}
+                <p onClick={openPrototypeSettings} className="text-center text-xs font-medium text-muted-foreground">
+                  Candidate view
+                </p>
+                <CandidateJobPreview draft={state.draft} flashKey={flashKey} focus={def.preview} />
+              </div>
+            </aside>
+          )}
+        </div>
       </main>
 
-      {state.screen !== "drafting" && (
-        <WizardFooter
-          progress={stage ? stageProgress(state.screen) : undefined}
-          progressClassName="sm:hidden"
-          innerClassName={state.screen === "describe" ? SOLO_WIDTH : CONTENT_WIDTH}
-          onBack={back}
-          backLabel={state.returnTo ? "Cancel" : "Back"}
-          secondary={
-            state.screen === "describe" ? (
-              <Button type="button" variant="outline" size="lg" onClick={() => goTo("title")}>
-                Fill manually
-              </Button>
-            ) : undefined
-          }
-          nextLabel={nextLabel}
-          nextVariant={postsNow ? "default" : "emphasis"}
-          onNext={next}
-          error={error}
-          errorKey={attempts}
-        />
-      )}
+      <WizardFooter
+        progress={stage ? stageProgress(state.screen) : undefined}
+        progressClassName="sm:hidden"
+        innerClassName={solo ? SOLO_WIDTH : CONTENT_WIDTH}
+        onBack={back}
+        backLabel={state.returnTo ? "Cancel" : "Back"}
+        loading={drafting}
+        status={
+          stage ? (
+            // Phones: the step and its menu live in the bottom bar, by the
+            // thumb. From sm the header stepper shows the step instead.
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <button
+                    type="button"
+                    className="ink relative -ml-2 flex min-w-0 items-center gap-1 rounded-control px-2 py-1 text-left transition-interactive sm:invisible"
+                  >
+                    <span className="flex min-w-0 flex-col">
+                      <span className="text-xs text-muted-foreground">Step {STAGES.indexOf(stage) + 1} of 3</span>
+                      <span className="truncate text-sm font-semibold text-foreground">{STAGE_LABELS[stage]}</span>
+                    </span>
+                    <ChevronDown className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+                  </button>
+                }
+              />
+              <DropdownMenuContent align="start" side="top">
+                {STAGES.map((s, i) => (
+                  <DropdownMenuItem key={s} disabled={i > STAGES.indexOf(stage)} onClick={() => jumpToStage(s)}>
+                    Step {i + 1} · {STAGE_LABELS[s]}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : undefined
+        }
+        secondary={
+          state.screen === "describe" && !drafting ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              onClick={() => {
+                // By hand from here: back returns to the intro, titles type in.
+                setState((s) => ({ ...s, draftedPrompt: "" }))
+                goTo("manual-intro")
+              }}
+            >
+              Fill manually
+            </Button>
+          ) : undefined
+        }
+        nextLabel={nextLabel}
+        nextVariant={postsNow ? "default" : "emphasis"}
+        onNext={next}
+        error={error}
+        errorKey={attempts}
+      />
 
       {slots && slots.jobs.length > 0 && (
         <SlotsFullDialog

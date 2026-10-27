@@ -32,7 +32,7 @@ export interface LogoWallItem {
 export interface LogoWallProps extends React.ComponentProps<"div"> {
   items: LogoWallItem[]
   /** h-8 or h-9 — matches whatever height the caller rendered each logo at. */
-  itemHeight?: "sm" | "md"
+  itemHeight?: keyof typeof ITEM_HEIGHT
   /** Grayscale at rest, full colour on hover — for a quieter wall. */
   muted?: boolean
   /** Glide the logos left in an endless loop (pauses on hover, edges fade).
@@ -41,6 +41,8 @@ export interface LogoWallProps extends React.ComponentProps<"div"> {
 }
 
 const ITEM_HEIGHT = {
+  /** A supporting row inside a product page (express checkout): small on phones. */
+  compact: "h-6 sm:h-8",
   sm: "h-8",
   md: "h-9",
 } as const

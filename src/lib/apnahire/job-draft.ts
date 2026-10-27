@@ -145,6 +145,31 @@ export const CITIES = [
   "Lucknow",
 ]
 
+/** Well-known hiring areas per city: the location screen's "Popular in …"
+ *  list and its search. shortcut: a static sample, swap for a places API
+ *  before production. */
+export const POPULAR_AREAS: Record<string, string[]> = {
+  Bengaluru: [
+    "Koramangala 5th Block",
+    "HSR Layout Sector 2",
+    "Indiranagar 100 Feet Road",
+    "Whitefield Main Road",
+    "Electronic City Phase 1",
+    "Marathahalli",
+  ],
+  Mumbai: ["Andheri East", "Powai", "Bandra Kurla Complex", "Lower Parel", "Thane West", "Navi Mumbai Vashi"],
+  Delhi: ["Connaught Place", "Nehru Place", "Saket", "Laxmi Nagar", "Rohini Sector 7", "Okhla Phase 2"],
+  Gurugram: ["Cyber City", "Sohna Road", "Udyog Vihar Phase 4", "Golf Course Road"],
+  Noida: ["Sector 62", "Sector 18", "Sector 63", "Greater Noida West"],
+  Hyderabad: ["HITEC City", "Gachibowli", "Madhapur", "Banjara Hills", "Kukatpally"],
+  Pune: ["Hinjewadi Phase 1", "Kharadi", "Viman Nagar", "Baner", "Magarpatta"],
+  Chennai: ["T. Nagar", "OMR Thoraipakkam", "Guindy", "Velachery", "Anna Nagar"],
+  Kolkata: ["Salt Lake Sector V", "Park Street", "New Town", "Howrah"],
+  Ahmedabad: ["SG Highway", "Navrangpura", "Prahlad Nagar", "Maninagar"],
+  Jaipur: ["Malviya Nagar", "C-Scheme", "Vaishali Nagar", "Sitapura"],
+  Lucknow: ["Gomti Nagar", "Hazratganj", "Aliganj", "Indira Nagar"],
+}
+
 /** apna's job role taxonomy (subset). Locked after publishing. */
 export const CATEGORIES = [
   "Telesales",
@@ -216,7 +241,29 @@ export const LANGUAGES = [
   "Assamese",
 ]
 
-export const ASSETS = ["Bike / two-wheeler", "Driving licence", "Smartphone", "Laptop", "NISM certificate", "DRA certificate"]
+/** Each language in its own script, for display. Stored values stay English. */
+export const LANGUAGE_NATIVE: Record<string, string> = {
+  Hindi: "हिन्दी",
+  Kannada: "ಕನ್ನಡ",
+  Tamil: "தமிழ்",
+  Telugu: "తెలుగు",
+  Marathi: "मराठी",
+  Bengali: "বাংলা",
+  Gujarati: "ગુજરાતી",
+  Malayalam: "മലയാളം",
+  Punjabi: "ਪੰਜਾਬੀ",
+  Oriya: "ଓଡ଼ିଆ",
+  Assamese: "অসমীয়া",
+}
+
+export const ASSETS = [
+  "Bike / two-wheeler",
+  "Driving licence",
+  "Smartphone",
+  "Laptop",
+  "NISM certificate",
+  "DRA certificate",
+]
 
 export const DEGREES = ["B.Com", "B.Sc", "B.A", "BBA", "BCA", "B.Tech / B.E", "MBA", "M.Com"]
 
@@ -314,7 +361,8 @@ export function missingRequired(d: JobPostDraft): RequiredField[] {
   }
   if (d.contact === "other") {
     const r = d.otherRecruiter
-    if (!r.name.trim() || !PHONE_RE.test(r.phone.trim()) || !EMAIL_RE.test(r.email.trim())) missing.push("otherRecruiter")
+    if (!r.name.trim() || !PHONE_RE.test(r.phone.trim()) || !EMAIL_RE.test(r.email.trim()))
+      missing.push("otherRecruiter")
   }
   if (!d.description.trim()) missing.push("description")
   return missing
@@ -359,8 +407,8 @@ export function runJobChecks(d: JobPostDraft): JobCheck[] {
     checks.push({
       id: "unserved-city",
       severity: "block",
-      title: `apna isn't hiring in ${d.city} yet`,
-      detail: "Candidates won't see this job. Pick a city we serve before you pay.",
+      title: `Not hiring in ${d.city} yet`,
+      detail: "Pick another city.",
     })
   }
 
@@ -369,9 +417,9 @@ export function runJobChecks(d: JobPostDraft): JobCheck[] {
     checks.push({
       id: "category-mismatch",
       severity: "warn",
-      title: `"${title}" sounds like ${titleCategory}, but the category is ${d.category}`,
-      detail: "Category decides who your job is shown to, and can't be changed after posting.",
-      fix: { label: `Change category to ${titleCategory}`, patch: { category: titleCategory } },
+      title: `Role looks like ${titleCategory}`,
+      detail: "Can't change after posting.",
+      fix: { label: `Switch to ${titleCategory}`, patch: { category: titleCategory } },
     })
   }
 
@@ -379,8 +427,8 @@ export function runJobChecks(d: JobPostDraft): JobCheck[] {
     checks.push({
       id: "multi-role",
       severity: "warn",
-      title: "This title has more than one role",
-      detail: "Jobs with several roles in one title get mismatched candidates. Post one role per job.",
+      title: "One role per job",
+      detail: "Post each role separately.",
     })
   }
 
@@ -389,8 +437,8 @@ export function runJobChecks(d: JobPostDraft): JobCheck[] {
     checks.push({
       id: "generic-title",
       severity: "warn",
-      title: "Make the title more specific",
-      detail: "Specific titles like \"Real Estate Sales Executive\" reach far more relevant candidates than generic ones.",
+      title: "Make the title specific",
+      detail: "Specific titles reach better candidates.",
       fix: specific ? { label: `Use "${specific}"`, patch: { title: specific } } : undefined,
     })
   }

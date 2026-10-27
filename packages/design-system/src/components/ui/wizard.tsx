@@ -46,8 +46,50 @@ import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, CircleAlert } from "@/icons/icons"
 import { cn } from "@/lib/utils"
+import { haptic } from "@/components/ui/ink-provider"
 
 /* ── WizardQuestion ─────────────────────────────────────────────────── */
+
+/** Inside it, a WizardQuestion's string title types itself in, with a light
+ *  haptic tick per word (e.g. a flow filled in by hand, where each screen is
+ *  a fresh question). Off by default. */
+const WizardTypingContext = React.createContext(false)
+
+function WizardTypingProvider({ value, children }: { value: boolean; children: React.ReactNode }) {
+  return <WizardTypingContext.Provider value={value}>{children}</WizardTypingContext.Provider>
+}
+
+const TYPE_MS = 28
+
+/** The title typed out a character at a time. The full text holds the space
+ *  from the start (invisible), so nothing below moves while it types; screen
+ *  readers get the whole title at once. Reduced motion: shown whole. */
+function TypedTitle({ text }: { text: string }) {
+  const [shown, setShown] = React.useState(0)
+  React.useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return setShown(text.length)
+    setShown(0)
+    let i = 0
+    const t = window.setInterval(() => {
+      i += 1
+      setShown(i)
+      if (text[i - 1] === " " || i === text.length) haptic(6)
+      if (i >= text.length) window.clearInterval(t)
+    }, TYPE_MS)
+    return () => window.clearInterval(t)
+  }, [text])
+  return (
+    <span className="grid">
+      <span className="sr-only">{text}</span>
+      <span aria-hidden className="invisible col-start-1 row-start-1">
+        {text}
+      </span>
+      <span aria-hidden className="col-start-1 row-start-1">
+        {text.slice(0, shown)}
+      </span>
+    </span>
+  )
+}
 
 interface WizardQuestionProps extends Omit<React.ComponentProps<"div">, "title"> {
   /** Small line above the heading: a tag, "Step 1", a status. */
@@ -57,12 +99,15 @@ interface WizardQuestionProps extends Omit<React.ComponentProps<"div">, "title">
 }
 
 function WizardQuestion({ eyebrow, title, description, className, ...props }: WizardQuestionProps) {
+  const typing = React.useContext(WizardTypingContext)
   return (
     <div data-slot="wizard-question" className={cn("flex flex-col gap-2", className)} {...props}>
       {eyebrow && <div className="flex flex-wrap items-center gap-2">{eyebrow}</div>}
       {/* Calm by default: a 20px question over 14px help. The answers below
           are the focus, not the heading. */}
-      <h1 className="text-h4 text-balance text-foreground">{title}</h1>
+      <h1 className="text-h4 text-balance text-foreground">
+        {typing && typeof title === "string" ? <TypedTitle text={title} /> : title}
+      </h1>
       {description && <p className="text-body-sm text-pretty text-muted-foreground">{description}</p>}
     </div>
   )
@@ -138,6 +183,10 @@ interface WizardFooterProps extends React.ComponentProps<"div"> {
    *  screen. Use an `outline` Button, like Back: the left slot always has a
    *  visible edge, so it lines up with the content column like Next does. */
   secondary?: React.ReactNode
+  /** Left of the bar, e.g. "Step 1 of 3 / Job details" opening a step menu.
+   *  With it, Back turns into an icon button beside Next, so the two actions
+   *  sit together under the thumb. */
+  status?: React.ReactNode
   nextLabel: React.ReactNode
   onNext: () => void
   /** `emphasis` for every step; `default` only for the committing action. */
@@ -162,6 +211,7 @@ function WizardFooter({
   onBack,
   backLabel = "Back",
   secondary,
+  status,
   nextLabel,
   onNext,
   nextVariant = "emphasis",
@@ -194,6 +244,7 @@ function WizardFooter({
             )}
             <div className="flex items-center justify-between gap-3">
               {secondary ??
+                status ??
                 (onBack ? (
                   // A plain outline button, same height as the CTA — the
                   // system's secondary action, not a styled one-off.
@@ -203,6 +254,19 @@ function WizardFooter({
                 ) : (
                   <span />
                 ))}
+              <div className="flex shrink-0 items-center gap-2">
+              {status && !secondary && onBack && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon-lg"
+                  className="size-11 rounded-full"
+                  aria-label={typeof backLabel === "string" ? backLabel : "Back"}
+                  onClick={onBack}
+                >
+                  <ChevronLeft />
+                </Button>
+              )}
               <Button
                 // Re-keyed on each failed attempt so the nudge replays.
                 key={errorKey}
@@ -215,6 +279,7 @@ function WizardFooter({
               >
                 {nextLabel}
               </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -223,5 +288,5 @@ function WizardFooter({
   )
 }
 
-export { WizardQuestion, StepIntro, SegmentedProgress, WizardFooter }
+export { WizardQuestion, WizardTypingProvider, StepIntro, SegmentedProgress, WizardFooter }
 export type { WizardQuestionProps, StepIntroProps, SegmentedProgressProps, WizardFooterProps }

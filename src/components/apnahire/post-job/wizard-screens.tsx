@@ -7,11 +7,16 @@
  * a tap on Next. A screen the AI couldn't answer arrives empty, and Next
  * says what's missing instead of moving on.
  *
- *   describe → (drafting) →
- *   Job details:   title · job role · industry · job type · workplace & location ·
- *                  pay & perks · joining fee
- *   Who can apply: requirements · preferences · screening · description
- *   Hiring setup:  interview & contact · review → /apnahire/jobs/new/plans
+ *   describe →
+ *   Job details:   title · job role · industry · job type · workplace ·
+ *                  location · pay type · salary · perks · joining fee
+ *   Who can apply: education · English · experience · preferences ·
+ *                  screening · description
+ *   Hiring setup:  interview · contact · review → /apnahire/jobs/new/plans
+ *
+ * Phone first (as in the reference prototype): one question per screen,
+ * titled as a question, every single choice an OptionCard with a line of
+ * help, so nothing scrolls under the fixed footer.
  *
  * No screen exists only to be clicked through: no welcome, no stage intros,
  * no company question (it's a line on the title screen). The five fields
@@ -37,6 +42,7 @@ import {
   Button,
   Calculator,
   CalendarDays,
+  Check,
   ChefHat,
   ChipTabs,
   Clock,
@@ -49,9 +55,11 @@ import {
   Heart,
   Home,
   IndianRupee,
+  Info,
   Input,
   Laptop,
   Lock,
+  MapPin,
   Monitor,
   Moon,
   OptionCard,
@@ -62,6 +70,7 @@ import {
   PromptInput,
   RefreshCw,
   Route,
+  Search,
   Separator,
   ShieldCheck,
   RangeSlider,
@@ -72,6 +81,7 @@ import {
   Switch,
   Target,
   Textarea,
+  TrendingUp,
   Truck,
   Users,
   Wallet,
@@ -108,9 +118,11 @@ import {
   INDUSTRIES,
   JOB_TYPE_LABELS,
   LANGUAGES,
+  LANGUAGE_NATIVE,
   LOCATION_TYPE_LABELS,
   PAY_TYPE_LABELS,
   PERKS,
+  POPULAR_AREAS,
   categoryForTitle,
   companyName,
   experienceLabel,
@@ -127,19 +139,25 @@ export type StageId = "job" | "candidates" | "setup"
 
 export type ScreenId =
   | "describe"
-  | "drafting"
+  | "manual-intro"
   | "title"
   | "category"
   | "industry"
   | "job-type"
+  | "workplace"
   | "location"
-  | "pay"
+  | "pay-type"
+  | "salary"
+  | "perks"
   | "joining-fee"
-  | "requirements"
+  | "education"
+  | "english"
+  | "experience"
   | "preferences"
   | "screening"
   | "description"
-  | "interview-contact"
+  | "interview"
+  | "contact"
   | "review"
 
 export interface ScreenCtx {
@@ -150,6 +168,10 @@ export interface ScreenCtx {
   prompt: string
   setPrompt: (p: string) => void
   submitPrompt: () => void
+  /** "Draft my job" is running; DraftingState shows its progress. */
+  drafting: boolean
+  draftResult: Partial<JobPostDraft> | null
+  finishDrafting: () => void
   /** Open a screen, then come back to the current one (review's "Edit"). */
   edit: (id: ScreenId) => void
   applyPatch: (patch: Partial<JobPostDraft>) => void
@@ -163,7 +185,7 @@ export interface ScreenCtx {
 
 export interface ScreenDef {
   id: ScreenId
-  /** null = before the stages start (describe, drafting). */
+  /** null = before the stages start (describe). */
   stage: StageId | null
   /** Optional screens: Next reads "Skip" while they're empty. */
   isEmpty?: (d: JobPostDraft) => boolean
@@ -311,10 +333,66 @@ const TITLE_VARIANTS: Record<string, string[]> = {
   "Retail Sales": ["Retail Sales Executive", "Store Associate", "Sales Associate", "Cashier"],
 }
 
+/** The list with what's already picked (by the AI or earlier) moved to the
+ *  front, so it's in the first view, not below the fold. Fixed when the
+ *  screen opens: a tap never makes the list jump. Not for ordered scales
+ *  (education, English), where the order is the meaning. */
+function usePickedFirst(list: string[], picked: string | string[]) {
+  const [order] = React.useState(() => {
+    const p = (Array.isArray(picked) ? picked : [picked]).filter(Boolean)
+    return [...p.filter((x) => list.includes(x)), ...list.filter((x) => !p.includes(x))]
+  })
+  return order
+}
+
 // ── Before the stages ──────────────────────────────────────────────────────
 
 function Describe(ctx: ScreenCtx) {
-  return <DescribeStep prompt={ctx.prompt} onPromptChange={ctx.setPrompt} onSubmit={ctx.submitPrompt} />
+  return (
+    <DescribeStep
+      prompt={ctx.prompt}
+      onPromptChange={ctx.setPrompt}
+      onSubmit={ctx.submitPrompt}
+      drafting={ctx.drafting}
+      draftResult={ctx.draftResult}
+      onDrafted={ctx.finishDrafting}
+    />
+  )
+}
+
+/** What each stage asks, for the manual intro. */
+const STAGE_SUMMARY: Record<StageId, string> = {
+  job: "Title, role, location and pay",
+  candidates: "Must-haves and preferences",
+  setup: "Interview, contact, review",
+}
+
+/** "Fill manually" primes the recruiter before 18 questions: three stages,
+ *  one question at a time, a review before it goes live. Only on the way in
+ *  by hand; the AI draft skips it (its answers are already there). */
+function ManualIntro(ctx: ScreenCtx) {
+  return (
+    <>
+      <WizardQuestion
+        eyebrow={<span className="text-overline text-primary">Hiring for {companyName(ctx.draft)}</span>}
+        title="Post a job in three short steps"
+        description="One question at a time. Review before posting."
+      />
+      <ol className="flex flex-col">
+        {(Object.keys(STAGE_SUMMARY) as StageId[]).map((id, i) => (
+          <li key={id} className="flex items-start gap-4 border-t border-border py-4 first:border-t-0 first:pt-0">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-control bg-muted text-base font-semibold text-foreground">
+              {i + 1}
+            </span>
+            <span className="flex flex-col gap-1">
+              <span className="text-base font-semibold text-foreground">{STAGE_LABELS[id]}</span>
+              <span className="text-sm text-muted-foreground">{STAGE_SUMMARY[id]}</span>
+            </span>
+          </li>
+        ))}
+      </ol>
+    </>
+  )
 }
 
 // ── Job details ────────────────────────────────────────────────────────────
@@ -330,9 +408,10 @@ function Title(ctx: ScreenCtx) {
     <>
       <WizardQuestion
         eyebrow={<AiTag ctx={ctx} keys={["title"]} />}
-        title="Job title"
-        description="Use words candidates search for."
+        title="What’s the job title?"
+        description="Words candidates search for."
       />
+      <Checks ctx={ctx} ids={["multi-role", "generic-title"]} />
       <Input
         aria-label="Job title"
         inputSize="lg"
@@ -360,7 +439,6 @@ function Title(ctx: ScreenCtx) {
           </div>
         </div>
       )}
-      <Checks ctx={ctx} ids={["multi-role", "generic-title"]} />
       <LockNote>Only small edits after posting.</LockNote>
 
       {/* Who's hiring: almost always the recruiter's own company, so it's a
@@ -419,17 +497,19 @@ function Title(ctx: ScreenCtx) {
 function Category(ctx: ScreenCtx) {
   const { draft, update } = ctx
   const suggested = draft.title ? categoryForTitle(draft.title) : undefined
+  const categories = usePickedFirst(CATEGORIES, draft.category || suggested || "")
   return (
     <>
       <WizardQuestion
         eyebrow={<AiTag ctx={ctx} keys={["category"]} />}
-        title="Job role"
+        title="What’s the job role?"
         description="Decides who sees your job."
       />
+      <Checks ctx={ctx} ids={["category-mismatch"]} />
       {/* Above the tiles, so it's read before the choice — not below 13 of them. */}
       <LockNote>Can&apos;t be changed after posting.</LockNote>
       <OptionCardGroup aria-label="Job role" columns={2}>
-        {CATEGORIES.map((c) => (
+        {categories.map((c) => (
           <OptionCard
             key={c}
             layout="tile"
@@ -441,22 +521,22 @@ function Category(ctx: ScreenCtx) {
           />
         ))}
       </OptionCardGroup>
-      <Checks ctx={ctx} ids={["category-mismatch"]} />
     </>
   )
 }
 
 function Industry(ctx: ScreenCtx) {
   const { draft, update } = ctx
+  const industries = usePickedFirst(INDUSTRIES, draft.industry)
   return (
     <>
       <WizardQuestion
         eyebrow={<AiTag ctx={ctx} keys={["industry"]} />}
-        title="Industry"
-        description="The wrong industry means the wrong candidates."
+        title="Which industry is it in?"
+        description="Decides who sees your job."
       />
       <OptionCardGroup aria-label="Industry" columns={2}>
-        {INDUSTRIES.map((i) => (
+        {industries.map((i) => (
           <OptionCard
             key={i}
             layout="tile"
@@ -472,9 +552,9 @@ function Industry(ctx: ScreenCtx) {
 }
 
 const WORKPLACE_HELP: Record<keyof typeof LOCATION_TYPE_LABELS, [React.ReactNode, string]> = {
-  office: [<Building2 key="i" />, "At your office or store"],
+  office: [<Building2 key="i" />, "At your office or store every day"],
   home: [<Home key="i" />, "Fully remote"],
-  field: [<Route key="i" />, "Travels for work"],
+  field: [<Route key="i" />, "Mostly travelling, e.g. sales or delivery"],
 }
 
 /** The night-shift card's sky — kept to the middle of the card, clear of
@@ -503,19 +583,22 @@ const CLOUDS: { x: number; y: number; size: string; delay: number }[] = [
  *  the answer is felt, not just toggled. Off, it's an ordinary switch card.
  *  The sky is a layer that fades in, so the change reads as dusk falling. */
 function NightShiftCard({ checked, onCheckedChange }: { checked: boolean; onCheckedChange: (v: boolean) => void }) {
-  const place = (o: { x: number; y: number }) => ({ left: `${o.x}%`, top: `${o.y}%` })
+  const place = (o: { x: number; y: number }) => ({
+    left: `${o.x}%`,
+    top: `${o.y}%`,
+  })
   return (
     <label
       className={cn(
         "relative isolate flex items-center gap-3 overflow-hidden rounded-xl border p-4 transition-colors duration-500",
-        checked ? "border-night-sky-border text-night-sky-fg" : "border-border bg-card text-foreground"
+        checked ? "border-night-sky-border text-night-sky-fg" : "border-border bg-card text-foreground",
       )}
     >
       <span
         aria-hidden
         className={cn(
           "pointer-events-none absolute inset-0 -z-10 bg-gradient-night-sky transition-opacity duration-700",
-          checked ? "opacity-100" : "opacity-0"
+          checked ? "opacity-100" : "opacity-0",
         )}
       />
       {checked && (
@@ -523,15 +606,25 @@ function NightShiftCard({ checked, onCheckedChange }: { checked: boolean; onChec
           {CLOUDS.map((c) => (
             <span
               key={`c${c.x}`}
-              className={cn("absolute rounded-full bg-night-sky-cloud blur-md animate-in fade-in duration-1000", c.size)}
+              className={cn(
+                "absolute rounded-full bg-night-sky-cloud blur-md animate-in fade-in duration-1000",
+                c.size,
+              )}
               style={place(c)}
             >
               <span className="block size-full animate-drift" style={{ animationDelay: `${c.delay}ms` }} />
             </span>
           ))}
           {STARS.map((st) => (
-            <span key={`s${st.x}`} className={cn("absolute animate-in fade-in zoom-in-50 duration-700", st.size)} style={place(st)}>
-              <span className="block size-full rounded-full bg-night-sky-star animate-twinkle" style={{ animationDelay: `${st.delay}ms` }} />
+            <span
+              key={`s${st.x}`}
+              className={cn("absolute animate-in fade-in zoom-in-50 duration-700", st.size)}
+              style={place(st)}
+            >
+              <span
+                className="block size-full rounded-full bg-night-sky-star animate-twinkle"
+                style={{ animationDelay: `${st.delay}ms` }}
+              />
             </span>
           ))}
           {SPARKLES.map((sp) => (
@@ -548,12 +641,17 @@ function NightShiftCard({ checked, onCheckedChange }: { checked: boolean; onChec
         aria-hidden
         className={cn(
           "size-5 shrink-0 transition-transform duration-500",
-          checked && "-rotate-12 fill-current text-night-sky-star"
+          checked && "-rotate-12 fill-current text-night-sky-star",
         )}
       />
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
         <span className="text-sm font-semibold">Night shift</span>
-        <span className={cn("text-xs transition-colors duration-500", checked ? "text-night-sky-fg-muted" : "text-muted-foreground")}>
+        <span
+          className={cn(
+            "text-xs transition-colors duration-500",
+            checked ? "text-night-sky-fg-muted" : "text-muted-foreground",
+          )}
+        >
           Mostly after 9 PM
         </span>
       </span>
@@ -574,7 +672,7 @@ function JobType(ctx: ScreenCtx) {
   const { draft, update } = ctx
   return (
     <>
-      <WizardQuestion eyebrow={<AiTag ctx={ctx} keys={["jobType", "nightShift"]} />} title="Type of job" />
+      <WizardQuestion eyebrow={<AiTag ctx={ctx} keys={["jobType", "nightShift"]} />} title="What type of job is it?" />
       <OptionCardGroup aria-label="Job type">
         {(Object.keys(JOB_TYPE_LABELS) as JobType[]).map((t) => (
           <OptionCard
@@ -592,16 +690,11 @@ function JobType(ctx: ScreenCtx) {
   )
 }
 
-function Location(ctx: ScreenCtx) {
+function Workplace(ctx: ScreenCtx) {
   const { draft, update } = ctx
-  const home = draft.locationType === "home"
-  const field = draft.locationType === "field"
   return (
     <>
-      <WizardQuestion
-        eyebrow={<AiTag ctx={ctx} keys={["locationType", "city", "area"]} />}
-        title="Where will they work?"
-      />
+      <WizardQuestion eyebrow={<AiTag ctx={ctx} keys={["locationType"]} />} title="Where will they work?" />
       <OptionCardGroup aria-label="Workplace">
         {(Object.keys(LOCATION_TYPE_LABELS) as (keyof typeof LOCATION_TYPE_LABELS)[]).map((t) => (
           <OptionCard
@@ -614,41 +707,189 @@ function Location(ctx: ScreenCtx) {
           />
         ))}
       </OptionCardGroup>
-      {draft.locationType && (
-        <Group label={home ? "Hiring from" : field ? "Work area" : "Office location"}>
-          <Field>
-            <FieldLabel htmlFor="job-city">City</FieldLabel>
-            <ListSelect
-              id="job-city"
-              value={draft.city}
-              options={CITIES}
-              placeholder="Select city"
-              onChange={(v) => update("city", v)}
-            />
-          </Field>
-          {!home && (
-            <Field>
-              <FieldLabel htmlFor="job-area">{field ? "Base area" : "Area"}</FieldLabel>
-              <Input
-                id="job-area"
-                value={draft.area}
-                onChange={(e) => update("area", e.target.value)}
-                placeholder="e.g. Koramangala 5th Block"
-              />
-              <FieldDescription>Only the area is shown on the post.</FieldDescription>
-            </Field>
-          )}
-          {draft.locationType === "office" && draft.city && (
-            <SwitchRow
-              title="Accept candidates willing to relocate"
-              description="From anywhere in India"
-              checked={draft.relocation}
-              onCheckedChange={(v) => update("relocation", v)}
-            />
-          )}
-        </Group>
+    </>
+  )
+}
+
+/** Every known area as "Area, City", for the location search. */
+const ALL_AREAS = Object.entries(POPULAR_AREAS).flatMap(([city, areas]) => areas.map((area) => ({ area, city })))
+
+/** One row of the location list: an icon, the place, a tick when picked. */
+function PlaceRow({
+  icon,
+  label,
+  picked = false,
+  onPick,
+}: {
+  icon: React.ReactNode
+  label: string
+  picked?: boolean
+  onPick: () => void
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onPick}
+      aria-pressed={picked}
+      className={cn(
+        "ink relative flex w-full items-center gap-3 border-t border-border px-4 py-3.5 text-left text-sm transition-interactive first:border-t-0 [&_svg]:size-5 [&_svg]:shrink-0 [&_svg]:text-muted-foreground",
+        picked ? "bg-accent font-medium text-accent-foreground" : "text-foreground hover:bg-muted/50",
       )}
+    >
+      {icon}
+      <span className="min-w-0 flex-1 truncate">{label}</span>
+      {picked && <Check className="size-4 text-primary" aria-hidden />}
+    </button>
+  )
+}
+
+/** Office or field work: one search box for the area, with the city's
+ *  popular areas under it (the reference prototype's pattern) — a tap, not
+ *  a city dropdown plus a free-text field. Typing searches every city;
+ *  anything else typed is kept as the area in the current city. Remote work
+ *  only needs a city. */
+function Location(ctx: ScreenCtx) {
+  const { draft, update } = ctx
+  const home = draft.locationType === "home"
+  const field = draft.locationType === "field"
+  const [query, setQuery] = React.useState(draft.area)
+  // The last area picked from the list (or loaded): while the box shows it,
+  // the list stays on the city's popular areas instead of searching.
+  const [picked, setPicked] = React.useState(draft.area)
+  const q = query.trim().toLowerCase()
+  const searching = q.length > 0 && q !== picked.trim().toLowerCase()
+  const confirmed = !!picked && picked === draft.area && !!draft.city
+  const matches = searching
+    ? ALL_AREAS.filter((a) => `${a.area} ${a.city}`.toLowerCase().includes(q)).slice(0, 6)
+    : (POPULAR_AREAS[draft.city] ?? []).slice(0, 4).map((area) => ({ area, city: draft.city }))
+  // Typing a city ("hyde…") offers the city itself first: picking it
+  // switches the list to that city's popular areas.
+  const cityMatches = searching ? CITIES.filter((c) => c.toLowerCase().startsWith(q)).slice(0, 2) : []
+  const pickCity = (city: string) => {
+    update("city", city)
+    update("area", "")
+    setQuery("")
+    setPicked("")
+  }
+  const pick = (area: string, city: string) => {
+    update("area", area)
+    update("city", city)
+    setQuery(area)
+    setPicked(area)
+  }
+  return (
+    <>
+      <WizardQuestion
+        eyebrow={<AiTag ctx={ctx} keys={["city", "area"]} />}
+        title={home ? "Where can candidates apply from?" : field ? "Where’s the work area?" : "Where’s the office?"}
+        description={home ? "The city you hire from." : "Shown on the job post."}
+      />
       <Checks ctx={ctx} ids={["unserved-city"]} />
+      {home || !draft.city ? (
+        <Field>
+          <FieldLabel htmlFor="job-city">City</FieldLabel>
+          <ListSelect
+            id="job-city"
+            value={draft.city}
+            options={CITIES}
+            placeholder="Select city"
+            onChange={(v) => update("city", v)}
+          />
+        </Field>
+      ) : null}
+      {!home && (
+        <>
+          {/* Picked: one confirmed card; Change goes back to the search. */}
+          {confirmed ? (
+            <div className="flex items-start gap-3 rounded-card-nested border border-primary bg-card p-4 ring-1 ring-primary">
+              <MapPin className="mt-0.5 size-5 shrink-0 text-foreground" aria-hidden />
+              <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                <span className="text-base font-semibold text-foreground">{draft.area}</span>
+                <span className="text-sm text-muted-foreground">
+                  {draft.area}, {draft.city}
+                </span>
+              </span>
+              <button
+                type="button"
+                className="shrink-0 text-sm font-semibold text-primary underline-offset-4 hover:underline"
+                onClick={() => {
+                  setPicked("")
+                  setQuery("")
+                }}
+              >
+                Change
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="relative">
+                <Search
+                  className="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2 text-muted-foreground"
+                  aria-hidden
+                />
+                <Input
+                  aria-label={field ? "Base area" : "Office area"}
+                  className="pl-10"
+                  value={query}
+                  onChange={(e) => {
+                    setQuery(e.target.value)
+                    // Typed text counts as the area until a suggestion is picked.
+                    update("area", e.target.value)
+                  }}
+                  placeholder="Search area or city"
+                />
+              </div>
+              {matches.length + cityMatches.length > 0 && (
+                <div className="flex flex-col overflow-hidden rounded-card-nested border border-border">
+                  <div className="flex items-center justify-between gap-3 px-4 pt-3 pb-1">
+                    <span className="text-overline text-muted-foreground">
+                      {searching ? "Matching places" : `Popular in ${draft.city}`}
+                    </span>
+                    {!searching && (
+                      <button
+                        type="button"
+                        className="text-xs font-medium text-primary underline-offset-4 hover:underline"
+                        onClick={() => pickCity("")}
+                      >
+                        Change city
+                      </button>
+                    )}
+                  </div>
+                  {cityMatches.map((c) => (
+                    <PlaceRow
+                      key={c}
+                      icon={<Building2 aria-hidden />}
+                      label={`${c} · see areas`}
+                      onPick={() => pickCity(c)}
+                    />
+                  ))}
+                  {matches.map((m) => (
+                    <PlaceRow
+                      key={`${m.area}-${m.city}`}
+                      icon={<MapPin aria-hidden />}
+                      label={`${m.area}, ${m.city}`}
+                      picked={draft.area === m.area && draft.city === m.city}
+                      onPick={() => pick(m.area, m.city)}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+          <p className="flex items-start gap-3 rounded-card-nested bg-muted p-4 text-sm text-muted-foreground">
+            <Info className="mt-0.5 size-4 shrink-0" aria-hidden />
+            Only the area is shown.
+          </p>
+        </>
+      )}
+      {draft.locationType === "office" && draft.city && (
+        <SwitchRow
+          title="Accept candidates willing to relocate"
+          description="From anywhere in India"
+          checked={draft.relocation}
+          onCheckedChange={(v) => update("relocation", v)}
+        />
+      )}
     </>
   )
 }
@@ -667,7 +908,82 @@ function salaryError(d: JobPostDraft): string | null {
   return null
 }
 
-function Pay(ctx: ScreenCtx) {
+const PAY_TYPE_HELP: Record<PayType, [React.ReactNode, string]> = {
+  fixed: [<Wallet key="i" />, "Same salary every month"],
+  fixed_incentive: [<TrendingUp key="i" />, "Salary plus performance-based pay"],
+  incentive: [<Target key="i" />, "Pay depends entirely on performance"],
+}
+
+function PayType(ctx: ScreenCtx) {
+  const { draft, update } = ctx
+  return (
+    <>
+      <WizardQuestion
+        eyebrow={<AiTag ctx={ctx} keys={["payType"]} />}
+        title="How will you pay?"
+        description="Clear pay gets better applicants."
+      />
+      <OptionCardGroup aria-label="Pay type">
+        {(Object.keys(PAY_TYPE_LABELS) as PayType[]).map((t) => (
+          <OptionCard
+            key={t}
+            icon={PAY_TYPE_HELP[t][0]}
+            title={PAY_TYPE_LABELS[t]}
+            description={PAY_TYPE_HELP[t][1]}
+            selected={draft.payType === t}
+            onSelect={() => update("payType", t)}
+          />
+        ))}
+      </OptionCardGroup>
+    </>
+  )
+}
+
+/** "What candidates see": the monthly numbers the post will show, so the
+ *  recruiter sees the result of the inputs as they type. */
+function CandidatesSee({ draft }: { draft: JobPostDraft }) {
+  const fixed = draft.payType !== "incentive"
+  const incentive = draft.payType !== "fixed"
+  const range = (lo: number | null, hi: number | null) =>
+    lo == null && hi == null
+      ? "—"
+      : lo === hi || hi == null
+        ? inr(lo ?? 0)
+        : lo == null
+          ? inr(hi)
+          : `${inr(lo)} – ${inr(hi)}`
+  const inc = incentive ? (draft.incentive ?? 0) : 0
+  const lo = fixed ? draft.salaryMin : 0
+  const hi = fixed ? draft.salaryMax : 0
+  const potential =
+    (fixed && lo == null && hi == null) || (!fixed && !inc)
+      ? "—"
+      : range(lo == null ? null : lo + inc, hi == null ? null : hi + inc)
+  return (
+    <div className="flex flex-col gap-2 rounded-card-nested bg-muted p-4 text-sm">
+      <span className="text-overline text-muted-foreground">What candidates see</span>
+      {fixed && (
+        <div className="flex justify-between gap-3">
+          <span className="text-muted-foreground">Fixed salary / month</span>
+          <span className="shrink-0 whitespace-nowrap text-foreground">{range(draft.salaryMin, draft.salaryMax)}</span>
+        </div>
+      )}
+      {incentive && (
+        <div className="flex justify-between gap-3">
+          <span className="text-muted-foreground">Average incentive / month</span>
+          <span className="shrink-0 whitespace-nowrap text-foreground">{inr(inc)}</span>
+        </div>
+      )}
+      <Separator />
+      <div className="flex justify-between gap-3 font-semibold text-foreground">
+        <span>Earning potential / month</span>
+        <span className="shrink-0 whitespace-nowrap">{potential}</span>
+      </div>
+    </div>
+  )
+}
+
+function Salary(ctx: ScreenCtx) {
   const { draft, update } = ctx
   const fixed = draft.payType === "fixed" || draft.payType === "fixed_incentive"
   const incentive = draft.payType === "incentive" || draft.payType === "fixed_incentive"
@@ -677,16 +993,20 @@ function Pay(ctx: ScreenCtx) {
   return (
     <>
       <WizardQuestion
-        eyebrow={<AiTag ctx={ctx} keys={["payType", "salaryMin", "salaryMax", "incentive", "perks"]} />}
-        title="Salary"
-      />
-      <ChipTabs
-        variant="choice"
-        size="lg"
-        aria-label="Pay type"
-        items={(Object.keys(PAY_TYPE_LABELS) as PayType[]).map((t) => ({ value: t, label: PAY_TYPE_LABELS[t] }))}
-        value={draft.payType}
-        onValueChange={(v) => update("payType", v)}
+        eyebrow={<AiTag ctx={ctx} keys={["salaryMin", "salaryMax", "incentive"]} />}
+        title="What’s the monthly salary?"
+        description={
+          <>
+            Pay type: {draft.payType ? PAY_TYPE_LABELS[draft.payType] : "—"} ·{" "}
+            <button
+              type="button"
+              className="font-medium text-primary underline-offset-4 hover:underline"
+              onClick={() => ctx.edit("pay-type")}
+            >
+              Change
+            </button>
+          </>
+        }
       />
       {fixed && (
         <div className="flex flex-col gap-5">
@@ -740,7 +1060,7 @@ function Pay(ctx: ScreenCtx) {
       )}
       {incentive && (
         <Field>
-          <FieldLabel htmlFor="incentive">Avg. monthly incentive</FieldLabel>
+          <FieldLabel htmlFor="incentive">Average monthly incentive</FieldLabel>
           <Input
             id="incentive"
             inputMode="numeric"
@@ -750,14 +1070,55 @@ function Pay(ctx: ScreenCtx) {
           />
         </Field>
       )}
-      <Separator />
-      <Group label="Perks (optional)">
-        <ChipMultiSelect label="Perks" options={PERKS} value={draft.perks} onChange={(v) => update("perks", v)} />
-        <AddCustom
-          placeholder="Add another perk"
-          onAdd={(v) => update("perks", Array.from(new Set([...draft.perks, v])))}
-        />
-      </Group>
+      <CandidatesSee draft={draft} />
+    </>
+  )
+}
+
+/** An emoji per perk, so each is found at a glance (the prototype's pattern). */
+const PERK_EMOJI: Record<string, string> = {
+  "Flexible working hours": "🕒",
+  "Weekly payout": "💸",
+  "Overtime pay": "⏱️",
+  "Joining bonus": "🎉",
+  "Annual bonus": "🎁",
+  PF: "🏦",
+  "ESI (ESIC)": "🩺",
+  "Travel allowance": "🚌",
+  "Petrol allowance": "⛽",
+  "Mobile allowance": "📱",
+  "Internet allowance": "📶",
+  Laptop: "💻",
+  "Health insurance": "🏥",
+  "Food/Meals": "🍱",
+  Accommodation: "🏠",
+  "5 working days": "📅",
+  "One-way cab": "🚕",
+  "Two-way cab": "🚖",
+}
+
+function Perks(ctx: ScreenCtx) {
+  const { draft, update } = ctx
+  const perks = usePickedFirst(PERKS, draft.perks)
+  return (
+    <>
+      <WizardQuestion
+        eyebrow={<AiTag ctx={ctx} keys={["perks"]} />}
+        title="Any extra perks?"
+        description="Perks attract more applicants."
+      />
+      <ChipMultiSelect
+        label="Perks"
+        options={perks}
+        value={draft.perks}
+        onChange={(v) => update("perks", v)}
+        emoji={PERK_EMOJI}
+        size="lg"
+      />
+      <AddCustom
+        placeholder="Add another perk"
+        onAdd={(v) => update("perks", Array.from(new Set([...draft.perks, v])))}
+      />
     </>
   )
 }
@@ -771,7 +1132,7 @@ function JoiningFee(ctx: ScreenCtx) {
   }
   return (
     <>
-      <WizardQuestion title="Any joining fee?" description="Fees, deposits or kit charges the candidate pays." />
+      <WizardQuestion title="Do candidates pay any joining fee?" description="Fees, deposits or kit charges." />
       {/* Never pre-answered: a candidate-safety question needs a real answer. */}
       <OptionCardGroup aria-label="Joining fee">
         <OptionCard
@@ -803,20 +1164,40 @@ function JoiningFee(ctx: ScreenCtx) {
 
 // ── Who can apply ──────────────────────────────────────────────────────────
 
-function Requirements(ctx: ScreenCtx) {
-  const { draft, update } = ctx
+function Education(ctx: ScreenCtx) {
   return (
     <>
       <WizardQuestion
-        eyebrow={<AiTag ctx={ctx} keys={["education", "english", "experienceType", "minExperienceYears"]} />}
-        title="Requirements"
-        description="Must-have on: only matches can apply. Off: everyone can, matches first."
+        eyebrow={<AiTag ctx={ctx} keys={["education"]} />}
+        title="What’s the minimum education?"
+        description="This level or higher."
       />
-      <EducationField draft={draft} update={update} />
-      <Separator />
-      <EnglishField draft={draft} update={update} />
-      <Separator />
-      <ExperienceField draft={draft} update={update} />
+      <EducationField draft={ctx.draft} update={ctx.update} />
+    </>
+  )
+}
+
+function English(ctx: ScreenCtx) {
+  return (
+    <>
+      <WizardQuestion
+        eyebrow={<AiTag ctx={ctx} keys={["english"]} />}
+        title="How much English is needed?"
+        description="Ask only what the job needs."
+      />
+      <EnglishField draft={ctx.draft} update={ctx.update} />
+    </>
+  )
+}
+
+function Experience(ctx: ScreenCtx) {
+  return (
+    <>
+      <WizardQuestion
+        eyebrow={<AiTag ctx={ctx} keys={["experienceType", "minExperienceYears"]} />}
+        title="How much experience do they need?"
+      />
+      <ExperienceField draft={ctx.draft} update={ctx.update} />
     </>
   )
 }
@@ -849,8 +1230,8 @@ function Preferences(ctx: ScreenCtx) {
     <>
       <WizardQuestion
         eyebrow={<AiTag ctx={ctx} keys={["languages", "skills", "assets"]} />}
-        title="Preferences"
-        description="Optional. Matches show first; nobody is turned away."
+        title="Anyone you’d prefer?"
+        description="Optional. Matches show first."
       />
       <Accordion multiple defaultValue={open} className="flex flex-col gap-2">
         <AccordionItem value="languages" className="rounded-xl border border-border px-4">
@@ -859,6 +1240,7 @@ function Preferences(ctx: ScreenCtx) {
             <ChipMultiSelect
               label="Languages"
               options={LANGUAGES}
+              display={LANGUAGE_NATIVE}
               value={draft.languages}
               onChange={(v) => update("languages", v)}
             />
@@ -951,7 +1333,7 @@ function Preferences(ctx: ScreenCtx) {
 function Screening(ctx: ScreenCtx) {
   return (
     <>
-      <WizardQuestion title="Screening questions" description="Optional yes/no questions for applicants." />
+      <WizardQuestion title="Any questions for applicants?" description="Optional yes/no questions." />
       <ScreeningQuestionsField draft={ctx.draft} update={ctx.update} />
     </>
   )
@@ -982,7 +1364,7 @@ function Description(ctx: ScreenCtx) {
     <>
       <WizardQuestion
         eyebrow={<AiTag ctx={ctx} keys={["description"]} />}
-        title="Job description"
+        title="How does the description read?"
         description={n ? "Written from your answers. Edit freely." : "We can write it for you."}
       />
       {descriptionStale && !untouched && n > 0 && (
@@ -1041,66 +1423,78 @@ function Description(ctx: ScreenCtx) {
 
 // ── Hiring setup ───────────────────────────────────────────────────────────
 
-function InterviewContact(ctx: ScreenCtx) {
+function Interview(ctx: ScreenCtx) {
   const { draft, update } = ctx
   const w = draft.walkInDetails
   return (
     <>
-      <WizardQuestion eyebrow={<AiTag ctx={ctx} keys={["walkIn"]} />} title="Interview & contact" />
+      <WizardQuestion
+        eyebrow={<AiTag ctx={ctx} keys={["walkIn"]} />}
+        title="Is this a walk-in interview?"
+        description="Candidates visit at set times."
+      />
       <OptionCardGroup aria-label="Interview type">
         <OptionCard
           icon={<CalendarDays />}
-          title="I'll schedule interviews"
+          title="No, I’ll schedule interviews"
           description="You call shortlisted candidates"
           selected={!draft.walkIn}
           onSelect={() => update("walkIn", false)}
         />
         <OptionCard
           icon={<DoorOpen />}
-          title="Walk-in"
+          title="Yes, walk-in"
           description="Candidates drop in at set times"
           selected={draft.walkIn}
           onSelect={() => {
             update("walkIn", true)
             // The venue is usually the office.
             if (!w.address)
-              update("walkInDetails", { ...w, address: [draft.area, draft.city].filter(Boolean).join(", ") })
+              update("walkInDetails", {
+                ...w,
+                address: [draft.area, draft.city].filter(Boolean).join(", "),
+              })
             // "I'll contact them first" doesn't work for a walk-in.
             if (draft.contact === "none") update("contact", "self")
           }}
         />
       </OptionCardGroup>
       {draft.walkIn && <WalkInDetailsFields draft={draft} update={update} />}
+    </>
+  )
+}
 
-      <Separator />
-      <Group label="Can candidates call you?">
-        <OptionCardGroup aria-label="Candidate contact">
-          <OptionCard
-            icon={<Phone />}
-            title="Yes, me"
-            description={ACCOUNT_PHONE}
-            selected={draft.contact === "self"}
-            onSelect={() => update("contact", "self")}
-          />
-          <OptionCard
-            icon={<Users />}
-            title="Yes, a teammate"
-            description="Share their number"
-            selected={draft.contact === "other"}
-            onSelect={() => update("contact", "other")}
-          />
-          <OptionCard
-            icon={<Lock />}
-            title="No"
-            description={draft.walkIn ? "Not for walk-ins" : "You call them first"}
-            disabled={draft.walkIn}
-            selected={draft.contact === "none"}
-            onSelect={() => update("contact", "none")}
-          />
-        </OptionCardGroup>
-        {draft.contact === "other" && <OtherRecruiterFields draft={draft} update={update} />}
-        {draft.contact !== "none" && <WhoCanContactField draft={draft} update={update} />}
-      </Group>
+function Contact(ctx: ScreenCtx) {
+  const { draft, update } = ctx
+  return (
+    <>
+      <WizardQuestion title="Can candidates call you after applying?" description="Shown only after applying." />
+      <OptionCardGroup aria-label="Candidate contact">
+        <OptionCard
+          icon={<Phone />}
+          title="Yes, me"
+          description={ACCOUNT_PHONE}
+          selected={draft.contact === "self"}
+          onSelect={() => update("contact", "self")}
+        />
+        <OptionCard
+          icon={<Users />}
+          title="Yes, a teammate"
+          description="Share their number"
+          selected={draft.contact === "other"}
+          onSelect={() => update("contact", "other")}
+        />
+        <OptionCard
+          icon={<Lock />}
+          title="No"
+          description={draft.walkIn ? "Not for walk-ins" : "You call them first"}
+          disabled={draft.walkIn}
+          selected={draft.contact === "none"}
+          onSelect={() => update("contact", "none")}
+        />
+      </OptionCardGroup>
+      {draft.contact === "other" && <OtherRecruiterFields draft={draft} update={update} />}
+      {draft.contact !== "none" && <WhoCanContactField draft={draft} update={update} />}
     </>
   )
 }
@@ -1182,7 +1576,7 @@ function Review(ctx: ScreenCtx) {
         <ReviewSection title="Location" onEdit={() => ctx.edit("location")}>
           {locationLabel(draft) ?? "—"}
         </ReviewSection>
-        <ReviewSection title="Pay & perks" onEdit={() => ctx.edit("pay")}>
+        <ReviewSection title="Pay & perks" onEdit={() => ctx.edit("salary")}>
           {salaryLabel(draft) ? `${salaryLabel(draft)} / month` : "—"}
           {draft.perks.length > 0 && <> · {draft.perks.join(", ")}</>}
           <br />
@@ -1190,7 +1584,7 @@ function Review(ctx: ScreenCtx) {
             ? `Joining fee ${inr(draft.joiningFeeDetails.amount)}`
             : "No joining fee"}
         </ReviewSection>
-        <ReviewSection title="Who can apply" onEdit={() => ctx.edit("requirements")}>
+        <ReviewSection title="Who can apply" onEdit={() => ctx.edit("education")}>
           {reqs.join(" · ") || "—"}
         </ReviewSection>
         <ReviewSection title="Preferences" onEdit={() => ctx.edit("preferences")}>
@@ -1199,7 +1593,7 @@ function Review(ctx: ScreenCtx) {
         <ReviewSection title="Description" onEdit={() => ctx.edit("description")}>
           <span className="line-clamp-3 whitespace-pre-line">{draft.description || "—"}</span>
         </ReviewSection>
-        <ReviewSection title="Interview & contact" onEdit={() => ctx.edit("interview-contact")}>
+        <ReviewSection title="Interview & contact" onEdit={() => ctx.edit("interview")}>
           {draft.walkIn ? "Walk-in" : "Scheduled interviews"} ·{" "}
           {draft.contact === "self"
             ? "Candidates can call you"
@@ -1243,7 +1637,7 @@ const has = (s: string) => s.trim().length > 0
 
 export const SCREENS: ScreenDef[] = [
   { id: "describe", stage: null, cta: "Draft my job", Render: Describe },
-  { id: "drafting", stage: null, Render: () => null },
+  { id: "manual-intro", stage: null, cta: "Get started", Render: ManualIntro },
 
   {
     id: "title",
@@ -1279,25 +1673,36 @@ export const SCREENS: ScreenDef[] = [
     Render: JobType,
   },
   {
+    id: "workplace",
+    stage: "job",
+    preview: "top",
+    check: (d) => (!d.locationType ? "Choose a workplace" : null),
+    Render: Workplace,
+  },
+  {
     id: "location",
     stage: "job",
     preview: "top",
     check: (d) =>
-      !d.locationType
-        ? "Choose a workplace"
-        : !d.city
-          ? "Choose a city"
-          : d.locationType !== "home" && !has(d.area)
-            ? "Add the area"
-            : blockingCheck(d, ["unserved-city"]),
+      !d.city
+        ? "Choose a city"
+        : d.locationType !== "home" && !has(d.area)
+          ? "Add the area"
+          : blockingCheck(d, ["unserved-city"]),
     Render: Location,
   },
   {
-    id: "pay",
+    id: "pay-type",
+    stage: "job",
+    preview: "top",
+    check: (d) => (!d.payType ? "Choose a pay type" : null),
+    Render: PayType,
+  },
+  {
+    id: "salary",
     stage: "job",
     preview: "top",
     check: (d) => {
-      if (!d.payType) return "Choose a pay type"
       const err = salaryError(d)
       if (err) return err
       // Name whichever part is actually missing — with "Fixed + incentive",
@@ -1308,7 +1713,14 @@ export const SCREENS: ScreenDef[] = [
       if (needsIncentive && d.incentive == null) return "Add the average monthly incentive"
       return null
     },
-    Render: Pay,
+    Render: Salary,
+  },
+  {
+    id: "perks",
+    stage: "job",
+    preview: "top",
+    isEmpty: (d) => d.perks.length === 0,
+    Render: Perks,
   },
   {
     id: "joining-fee",
@@ -1324,17 +1736,25 @@ export const SCREENS: ScreenDef[] = [
   },
 
   {
-    id: "requirements",
+    id: "education",
     stage: "candidates",
     preview: "requirements",
-    check: (d) => {
-      const m = missingRequired(d)
-      if (m.includes("education")) return "Choose education"
-      if (m.includes("english")) return "Choose English level"
-      if (m.includes("experience")) return "Choose experience"
-      return null
-    },
-    Render: Requirements,
+    check: (d) => (missingRequired(d).includes("education") ? "Choose education" : null),
+    Render: Education,
+  },
+  {
+    id: "english",
+    stage: "candidates",
+    preview: "requirements",
+    check: (d) => (missingRequired(d).includes("english") ? "Choose English level" : null),
+    Render: English,
+  },
+  {
+    id: "experience",
+    stage: "candidates",
+    preview: "requirements",
+    check: (d) => (missingRequired(d).includes("experience") ? "Choose experience" : null),
+    Render: Experience,
   },
   {
     id: "preferences",
@@ -1364,20 +1784,23 @@ export const SCREENS: ScreenDef[] = [
   },
 
   {
-    id: "interview-contact",
+    id: "interview",
     stage: "setup",
     preview: "interview",
     check: (d) => {
-      const m = missingRequired(d)
-      if (m.includes("walkIn")) {
-        const w = d.walkInDetails
-        if (w.endDate && w.startDate && w.endDate < w.startDate) return "End date is before start date"
-        return "Add walk-in details"
-      }
-      if (m.includes("otherRecruiter")) return "Add your teammate's details"
-      return null
+      if (!missingRequired(d).includes("walkIn")) return null
+      const w = d.walkInDetails
+      if (w.endDate && w.startDate && w.endDate < w.startDate) return "End date is before start date"
+      return "Add walk-in details"
     },
-    Render: InterviewContact,
+    Render: Interview,
+  },
+  {
+    id: "contact",
+    stage: "setup",
+    preview: "interview",
+    check: (d) => (missingRequired(d).includes("otherRecruiter") ? "Add your teammate's details" : null),
+    Render: Contact,
   },
   {
     id: "review",
@@ -1397,19 +1820,25 @@ export const SCREENS: ScreenDef[] = [
 /** Short names for errors and the review's "finish X first". */
 export const SCREEN_NAMES: Record<ScreenId, string> = {
   describe: "Describe the job",
-  drafting: "Drafting",
+  "manual-intro": "Get started",
   title: "Job title",
   category: "Job role",
   industry: "Industry",
   "job-type": "Job type",
+  workplace: "Workplace",
   location: "Location",
-  pay: "Pay",
+  "pay-type": "Pay type",
+  salary: "Salary",
+  perks: "Perks",
   "joining-fee": "Joining fee",
-  requirements: "Who can apply",
+  education: "Education",
+  english: "English",
+  experience: "Experience",
   preferences: "Preferences",
   screening: "Screening questions",
   description: "Job description",
-  "interview-contact": "Interview & contact",
+  interview: "Interview",
+  contact: "Candidate contact",
   review: "Review",
 }
 

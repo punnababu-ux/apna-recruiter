@@ -52,6 +52,7 @@ export {
   UserSearch, Users, Venus, Video, VideoOff,
   Voicemail, Wallet, Wand2, Wrench, X, ReceiptText,
   XCircle, XIcon, Zap,
+  Backpack, Hammer, School, ScrollText, University,
   Tag as Sell,
 } from "lucide-react"
 

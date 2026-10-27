@@ -48,43 +48,78 @@ export function useSpeechRecognition({ lang = "en-IN" }: { lang?: string } = {})
   const [transcript, setTranscript] = React.useState("")
   const [error, setError] = React.useState<string | null>(null)
   const recRef = React.useRef<SpeechRecognitionLike | null>(null)
+  // Chrome ends a session after a few seconds of silence even with
+  // `continuous`; we restart until the user taps Stop. Each session's text is
+  // banked in `doneRef` so a restart never drops what was already said.
+  const wantRef = React.useRef(false)
+  const doneRef = React.useRef("")
+  const tokenRef = React.useRef(0)
 
   React.useEffect(() => {
     setSupported(getCtor() !== null)
-    return () => recRef.current?.abort()
+    return () => {
+      wantRef.current = false
+      recRef.current?.abort()
+    }
   }, [])
 
   const start = React.useCallback(() => {
     const Ctor = getCtor()
     if (!Ctor) return
     recRef.current?.abort()
-    const rec = new Ctor()
-    rec.lang = lang
-    rec.continuous = true
-    rec.interimResults = true
-    let finalText = ""
-    rec.onresult = (e) => {
-      let interim = ""
-      for (let i = e.resultIndex; i < e.results.length; i++) {
-        const r = e.results[i]
-        if (r.isFinal) finalText += r[0].transcript
-        else interim += r[0].transcript
-      }
-      setTranscript((finalText + interim).trim())
-    }
-    rec.onerror = (e) => {
-      setError(e.error === "not-allowed" ? "Microphone access is blocked for this site." : "Couldn't hear that. Try again.")
-      setListening(false)
-    }
-    rec.onend = () => setListening(false)
-    recRef.current = rec
+    wantRef.current = true
+    doneRef.current = ""
     setError(null)
     setTranscript("")
     setListening(true)
-    rec.start()
+
+    // Each start() gets a token; a session from an earlier start (its abort
+    // is async) must not restart or write text when it finally ends.
+    const token = ++tokenRef.current
+    const session = () => {
+      const rec = new Ctor()
+      rec.lang = lang
+      rec.continuous = true
+      rec.interimResults = true
+      let text = ""
+      rec.onresult = (e) => {
+        if (token !== tokenRef.current) return
+        // Rebuild from every result: Android Chrome resends each phrase
+        // growing ("hello", "hello there"), so a result that extends the one
+        // before replaces it instead of repeating it.
+        const parts: string[] = []
+        for (let i = 0; i < e.results.length; i++) {
+          const t = e.results[i][0].transcript.trim()
+          if (!t) continue
+          const prev = parts[parts.length - 1]
+          if (prev && t.toLowerCase().startsWith(prev.toLowerCase())) parts[parts.length - 1] = t
+          else parts.push(t)
+        }
+        text = parts.join(" ")
+        setTranscript([doneRef.current, text].filter(Boolean).join(" "))
+      }
+      rec.onerror = (e) => {
+        if (token !== tokenRef.current) return
+        // Silence and our own restarts aren't failures.
+        if (e.error === "no-speech" || e.error === "aborted") return
+        wantRef.current = false
+        setError(e.error === "not-allowed" ? "Microphone access is blocked for this site." : "Couldn't hear that. Try again.")
+        setListening(false)
+      }
+      rec.onend = () => {
+        if (token !== tokenRef.current) return
+        doneRef.current = [doneRef.current, text].filter(Boolean).join(" ")
+        if (wantRef.current) session()
+        else setListening(false)
+      }
+      recRef.current = rec
+      rec.start()
+    }
+    session()
   }, [lang])
 
   const stop = React.useCallback(() => {
+    wantRef.current = false
     recRef.current?.stop()
     setListening(false)
   }, [])

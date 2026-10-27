@@ -17,7 +17,8 @@
  * `:active` (which drives both `ink` and `press`) when the page listens for
  * touches.
  *
- * Haptics: a touch press on a live surface (`ink`, `press`, `press-subtle`)
+ * Haptics: a touch press on any control (a live surface — `ink`, `press`,
+ * `press-subtle` — or any button, link, field, switch, slider or option)
  * gives a short tick (`haptic()`, 10ms) where the browser supports the
  * Vibration API: Chrome and most Android browsers. No permission or app is
  * needed. iOS Safari has no vibration API, so iPhones get the visual press
@@ -34,7 +35,11 @@
 import * as React from "react"
 
 const INK_SELECTOR = ".ink"
-const PRESS_SELECTOR = ".ink, .press, .press-subtle"
+const PRESS_SELECTOR = [
+  ".ink, .press, .press-subtle",
+  "button, a[href], input, select, textarea, label, summary",
+  '[role="button"], [role="switch"], [role="slider"], [role="option"], [role="menuitem"], [role="checkbox"], [role="radio"], [role="tab"]',
+].join(", ")
 
 /** A short haptic tick, where supported (Android browsers). Safe to call
  *  anywhere: a no-op without the Vibration API or user activation. */

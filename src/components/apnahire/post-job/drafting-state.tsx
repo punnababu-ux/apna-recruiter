@@ -1,21 +1,19 @@
 "use client"
 
 /**
- * DraftingState — the wait between "Draft my job" and the review screen,
- * built to show work rather than hide it. The recruiter's own words stay on
- * screen; each stage ticks off with the values the AI actually pulled out
- * ("Koramangala, Bengaluru", "₹15,000 – ₹20,000"). Fields the AI couldn't
- * find are flagged as "you'll add this next", so the gaps on the review
- * screen aren't a surprise. No candidate preview here: the checklist already
- * shows the progress, and on phones the preview sat below the fold. It
- * appears from the first question screen.
+ * DraftingState — what "Draft my job" is doing, as one rolling line in a thin
+ * strip tucked under the prompt (which wears the loading ring meanwhile). One
+ * thing at a time — "Understanding the role…", then "Found: Telecaller ·
+ * Real Estate" — each line rolling up and out as the next rolls in, rather
+ * than a list to read. Fields the AI couldn't find say "you'll add this
+ * next", so the gaps on the next screens aren't a surprise.
  *
- * Pacing: stage 1 spins until the AI responds (that part is real), then the
- * remaining stages reveal at a fixed beat so each result is readable.
+ * Pacing: the first line holds until the AI responds (that part is real),
+ * then the rest roll at a fixed beat so each is readable.
  */
 
 import * as React from "react"
-import { Badge, Check, Sparkles, Spinner } from "@apna/design-system"
+import { Check, Sparkles } from "@apna/design-system"
 import {
   EDUCATION_LABELS,
   EMPTY_JOB_DRAFT,
@@ -52,7 +50,10 @@ const STAGES: Stage[] = [
   },
   {
     label: "Setting location & pay",
-    values: (d) => [found(locationLabel(d), "Location"), found(salaryLabel(d) && `${salaryLabel(d)} / month`, "Salary")],
+    values: (d) => [
+      found(locationLabel(d), "Location"),
+      found(salaryLabel(d) && `${salaryLabel(d)} / month`, "Salary"),
+    ],
   },
   {
     label: "Working out who can apply",
@@ -69,115 +70,70 @@ const STAGES: Stage[] = [
   },
 ]
 
-const FIRST_STAGE_MIN_MS = 700
-const STAGE_BEAT_MS = 650
+const FIRST_LINE_MIN_MS = 700
+const LINE_BEAT_MS = 750
 const HANDOFF_MS = 700
 
+/** "Doing X…", then what it found, per stage; then "Ready". */
+function linesFor(result: Patch): string[] {
+  const d = mergeDraft(EMPTY_JOB_DRAFT, result)
+  return [
+    ...STAGES.flatMap((stage) => {
+      const values = stage.values(d, result)
+      const got = values.filter((v) => !v.missing).map((v) => v.label)
+      const gaps = values.filter((v) => v.missing).map((v) => v.label)
+      return [
+        `${stage.label}…`,
+        ...(got.length ? [`Found: ${got.join(" · ")}`] : []),
+        ...(gaps.length ? [`Add next: ${gaps.join(", ")}`] : []),
+      ]
+    }),
+    "Ready, let’s check it",
+  ]
+}
+
 export function DraftingState({
-  prompt,
   result,
   onComplete,
 }: {
-  prompt: string
   /** The AI's answer, or null while it's still working. */
   result: Patch | null
   onComplete: () => void
 }) {
-  const [done, setDone] = React.useState(0)
+  const [at, setAt] = React.useState(0)
   const [minElapsed, setMinElapsed] = React.useState(false)
+  const lines = React.useMemo(() => (result ? linesFor(result) : [`${STAGES[0].label}…`]), [result])
 
   React.useEffect(() => {
-    const t = window.setTimeout(() => setMinElapsed(true), FIRST_STAGE_MIN_MS)
+    const t = window.setTimeout(() => setMinElapsed(true), FIRST_LINE_MIN_MS)
     return () => window.clearTimeout(t)
   }, [])
 
-  // Once the AI has answered, tick the stages off one beat at a time, then
-  // hand over to the review screen.
+  // Once the AI has answered, roll one line per beat, then hand over.
   React.useEffect(() => {
     if (!result || !minElapsed) return
-    if (done < STAGES.length) {
-      const t = window.setTimeout(() => setDone((n) => n + 1), done === 0 ? 0 : STAGE_BEAT_MS)
-      return () => window.clearTimeout(t)
-    }
-    const t = window.setTimeout(onComplete, HANDOFF_MS)
+    const last = at >= lines.length - 1
+    const t = window.setTimeout(last ? onComplete : () => setAt((n) => n + 1), last ? HANDOFF_MS : LINE_BEAT_MS)
     return () => window.clearTimeout(t)
-  }, [result, minElapsed, done, onComplete])
+  }, [result, minElapsed, at, lines.length, onComplete])
 
-  const full = mergeDraft(EMPTY_JOB_DRAFT, result ?? {})
-
+  const ready = result && at >= lines.length - 1
   return (
-    // Describe's centred column (SOLO_WIDTH in post-job-flow.tsx), so
-    // nothing moves when "Draft my job" hands over to this screen.
-    <div className="mx-auto w-full max-w-2xl" aria-live="polite">
-      <div className="flex min-w-0 flex-col gap-6">
-        {/* The recruiter's own words, quoted on the column's left edge like
-            everything else — not a right-aligned chat bubble. */}
-        <div className="flex flex-col gap-2 rounded-xl border border-border bg-muted px-4 py-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
-          <span className="text-xs font-medium text-muted-foreground">Your description</span>
-          <p className="text-sm text-foreground">{prompt}</p>
-        </div>
-
-        <div className="flex items-center gap-3 animate-in fade-in duration-500">
-          <span className="flex size-9 items-center justify-center rounded-xl bg-accent text-accent-foreground">
-            <Sparkles className={cn("size-5", done < STAGES.length && "animate-pulse")} aria-hidden />
-          </span>
-          <div className="flex flex-col">
-            <h1 className="text-h4 text-foreground">
-              {done < STAGES.length ? "Drafting…" : "Ready"}
-            </h1>
-            <p className="text-body-sm text-muted-foreground">
-              {done < STAGES.length ? "Reading your description." : "Let’s check it."}
-            </p>
-          </div>
-        </div>
-
-        <ol className="flex flex-col gap-4">
-          {STAGES.map((stage, i) => {
-            const isDone = i < done
-            const isActive = i === done
-            return (
-              <li
-                key={stage.label}
-                className="flex flex-col gap-2 animate-in fade-in slide-in-from-bottom-2 fill-mode-both duration-500"
-                style={{ animationDelay: `${150 + i * 90}ms` }}
-              >
-                <div className={cn("flex items-center gap-3 text-sm", isDone || isActive ? "text-foreground" : "text-muted-foreground")}>
-                  <span className="flex size-5 items-center justify-center">
-                    {isDone ? (
-                      <span className="flex size-5 items-center justify-center rounded-full bg-primary text-primary-foreground animate-in zoom-in-50 duration-300">
-                        <Check className="size-3" aria-hidden />
-                      </span>
-                    ) : isActive ? (
-                      <Spinner />
-                    ) : (
-                      <span aria-hidden className="size-4 rounded-full border border-border" />
-                    )}
-                  </span>
-                  <span className={cn(isDone && "font-medium")}>{stage.label}</span>
-                </div>
-                {isDone && (
-                  <div className="flex flex-wrap gap-1.5 pl-8">
-                    {stage.values(full, result ?? {}).map((v, j) => (
-                      <Badge
-                        key={v.label}
-                        variant={v.missing ? "outline" : "secondary"}
-                        className={cn(
-                          "animate-in fade-in zoom-in-95 fill-mode-both duration-300",
-                          v.missing && "border-dashed text-muted-foreground"
-                        )}
-                        style={{ animationDelay: `${j * 70}ms` }}
-                      >
-                        {v.missing ? `${v.label} · add next` : v.label}
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-              </li>
-            )
-          })}
-        </ol>
-      </div>
-
+    <div
+      aria-live="polite"
+      className="mx-3 -mt-4 flex h-12 items-center justify-center overflow-hidden rounded-b-card-nested bg-muted px-4 pt-2 animate-in fade-in slide-in-from-top-4 duration-300"
+    >
+      <p
+        key={at}
+        className="flex min-w-0 items-center gap-2 text-sm text-muted-foreground animate-in fade-in slide-in-from-bottom-3 duration-300"
+      >
+        {ready ? (
+          <Check className="size-4 shrink-0 text-primary" aria-hidden />
+        ) : (
+          <Sparkles className="size-4 shrink-0 animate-pulse text-primary" aria-hidden />
+        )}
+        <span className={cn("truncate", ready && "font-medium text-foreground")}>{lines[at]}</span>
+      </p>
     </div>
   )
 }

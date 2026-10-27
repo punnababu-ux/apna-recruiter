@@ -11,7 +11,10 @@ const toggleVariants = cva(
     variants: {
       variant: {
         default: "bg-transparent",
-        outline: "border border-input bg-transparent hover:bg-muted",
+        // Pressed reads like ChipTabs' choice / a picked OptionCard: green
+        // edge + accent fill, not a gray that's easy to miss.
+        outline:
+          "border border-input bg-transparent hover:bg-muted aria-pressed:border-primary aria-pressed:bg-accent aria-pressed:text-accent-foreground data-pressed:border-primary data-pressed:bg-accent data-pressed:text-accent-foreground",
       },
       size: {
         default:
