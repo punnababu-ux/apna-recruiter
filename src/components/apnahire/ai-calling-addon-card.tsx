@@ -5,29 +5,26 @@
  * summary. It takes the slot that the database-credit upsell holds in
  * self-checkout.
  *
- * Everything a recruiter needs to decide is on the card, with nothing to
- * open (user call, 2026-10-20 — it replaced a "How it works" pop-up):
+ * Layout (user call, 2026-10-27, replacing the proof tiles and full player):
  *
- *   AI wash   headline, the sparkle in its top-right corner · one line on
- *             what the agent does · two proof tiles (30% higher call
- *             pickup · ready to interview) · the demo call strip
- *             ("Demo call" · Hindi / English · player)
- *   Footer    price block at the far left · Add CTA at the far right
+ *   AI wash   sparkle + headline · a check row (pickup · ready to
+ *             interview · Hindi & English)
+ *   Footer    compact demo pill (play / stop · Hindi / English) at the
+ *             left · price + Add at the right
  *
  * The price block has two states, depending on the recruiter's AI calling
  * balance:
  *   no credit   ₹1,699 / "for this job"         (paid add-on)
  *   ≥1 credit   "1 AI calling credit" / "Available" (spends the credit)
- * Either way the CTA reads "Add AI calling agent". The parent decides what
+ * Either way the CTA reads "Add". The parent decides what
  * the resulting cart line costs.
  *
  * Composition only: Button from the design system, token gradients
- * (`bg-gradient-product-ai-calling`, the AI Calling Agent's own sky, as on
- * its product page; the demo strip's `bg-gradient-ai-demo-strong`). No
+ * (`bg-gradient-product-ai-calling`, the AI Calling Agent's own sky). No
  * palette of its own.
  */
 
-import { Button } from "@apna/design-system"
+import { Button, Check } from "@apna/design-system"
 import { AI_CALLING_ADDON } from "@/content/job-plans"
 import { AiDemoCall, AiSparkle } from "@/components/apnahire/ai-demo-call"
 import { inr } from "@/lib/format"
@@ -55,44 +52,40 @@ export function AiCallingAddonCard({
       {/* The ring sits on a wrapper: the card clips its corners, which would clip the glow. */}
       <div className="relative rounded-card-nested">
         <div className="overflow-hidden rounded-card-nested border border-border">
-          <div className="flex flex-col gap-4 bg-gradient-product-ai-calling p-4">
-            <div className="flex flex-col gap-1.5">
-              {/* Text starts at the card's edge; the sparkle sits in the
-                  top-right corner, so the lines read cleanly from the left. */}
-              <div className="flex items-start justify-between gap-3">
-                <p className="text-sm font-semibold text-foreground">{AI_CALLING_ADDON.headline}</p>
-                <AiSparkle className="size-5 shrink-0" />
-              </div>
-              <p className="text-xs text-pretty text-muted-foreground">{AI_CALLING_ADDON.cardLine}</p>
+          <div className="flex flex-col gap-2 bg-gradient-product-ai-calling p-4">
+            <div className="flex items-start gap-2">
+              <AiSparkle className="size-5 shrink-0" />
+              <p className="text-sm font-semibold text-foreground">{AI_CALLING_ADDON.headline}</p>
             </div>
-            {/* Proof at a glance: equal cells, the value over its label. */}
-            <ul className="grid grid-cols-2 gap-2">
-              {AI_CALLING_ADDON.proof.map((p) => (
-                <li key={p.label} className="flex flex-col gap-0.5 rounded-xl bg-surface-glass p-2.5">
-                  <span className="text-base leading-5 font-bold text-checkout-primary">{p.value}</span>
-                  <span className="text-2xs leading-4 text-muted-foreground">{p.label}</span>
+            <ul className="flex flex-wrap gap-x-4 gap-y-1">
+              {AI_CALLING_ADDON.points.map((p) => (
+                <li key={p} className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <Check className="size-3.5 shrink-0 text-checkout-primary" />
+                  {p}
                 </li>
               ))}
             </ul>
-            <AiDemoCall />
           </div>
 
-          {/* Price at the far left, the CTA opposite: one row on every
-              screen, so nothing wraps under anything else. */}
-          <div className="flex items-center justify-between gap-3 bg-card p-4">
-            <div className="flex min-w-0 flex-col">
-              <span className="text-sm font-semibold whitespace-nowrap text-foreground">
-                {useCredit ? "1 AI calling credit" : inr(offer.price)}
-              </span>
-              <span className="text-xs text-muted-foreground">
-                {useCredit ? "Available" : "for this job"}
-              </span>
+          {/* Demo at the left; price and CTA grouped at the right. On a
+              phone the demo takes its own line above them. */}
+          <div className="flex flex-wrap items-center justify-between gap-3 bg-card p-4">
+            <AiDemoCall />
+            <div className="ml-auto flex shrink-0 items-center gap-3">
+              <div className="flex flex-col items-end">
+                <span className="text-sm font-semibold whitespace-nowrap text-foreground">
+                  {useCredit ? "1 AI calling credit" : inr(offer.price)}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  {useCredit ? "Available" : "for this job"}
+                </span>
+              </div>
+              {/* Dark gray, not green: "Proceed to pay" below is this screen's one
+                  primary CTA (Button's one-primary rule). */}
+              <Button type="button" variant="emphasis" size="sm" onClick={onAdd}>
+                Add
+              </Button>
             </div>
-            {/* Dark gray, not green: "Proceed to pay" below is this screen's one
-                primary CTA (Button's one-primary rule). */}
-            <Button type="button" variant="emphasis" size="sm" className="shrink-0" onClick={onAdd}>
-              Add AI calling agent
-            </Button>
           </div>
         </div>
         {ring && <span aria-hidden className="attention-ring" />}

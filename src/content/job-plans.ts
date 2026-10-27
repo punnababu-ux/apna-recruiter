@@ -153,21 +153,16 @@ export const MONTHLY_PLAN_PERKS = {
 export const AI_CALLING_ADDON = {
   price: 1699,
   headline: "Save your time – use AI calling to interview candidates",
-  /** What the agent does, in one line, under the headline. */
-  cardLine: "AI calls every applicant, checks their interest and availability, and hands you the ones ready to interview.",
-  /** The proof row: a number where we have one. (Languages aren't a tile:
-   *  the demo call's Hindi / English chips already say it.) */
-  proof: [
-    { value: "30%", label: "higher call pickup" },
-    { value: "Ready", label: "to interview" },
-  ],
+  /** The check row under the headline: what the recruiter gets. */
+  points: ["30% higher call pickup", "Ready to interview candidates", "Hindi & English calling"],
   demo: {
-    title: "Demo call",
-    /** Recordings per language. No `src` yet: the player runs the
-     *  timeline silently until product supplies the demo calls. */
+    eyebrow: "Listen to",
+    title: "Demo",
+    /** Recordings per language. No `src` yet: play runs silently for
+     *  `durationSec` until product supplies the demo calls. */
     calls: [
-      { value: "hi", label: "Hindi", durationSec: 72, src: undefined as string | undefined },
-      { value: "en", label: "English", durationSec: 72, src: undefined as string | undefined },
+      { value: "hi", label: "Hindi", glyph: "अ", durationSec: 72, src: undefined as string | undefined },
+      { value: "en", label: "English", glyph: "En", durationSec: 72, src: undefined as string | undefined },
     ],
   },
 } as const

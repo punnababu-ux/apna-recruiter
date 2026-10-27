@@ -348,9 +348,9 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
       {
         name: "AiCallingAddonCard",
         file: "apnahire/ai-calling-addon-card.tsx",
-        what: "AI calling add-on in the express order summary: headline, one line on what it does, two proof tiles, the demo call (ai-demo-call.tsx), price and Add.",
+        what: "AI calling add-on in the express order summary: headline, a check row, then one footer row: the compact demo pill (play / stop + Hindi / English, ai-demo-call.tsx), price and Add.",
         where: "Express checkout order summary",
-        rules: ["Everything on the card, no pop-up: a recruiter decides without opening anything.", "Wears the AI calling (sky) gradient; the demo strip is the same sky, deeper. Runs the attention ring once per session.", "Add is emphasis (dark): Proceed to pay is the one green CTA."],
+        rules: ["Everything on the card, no pop-up: a recruiter decides without opening anything.", "Wears the AI calling (sky) gradient; Runs the attention ring once per session.", "Add is emphasis (dark): Proceed to pay is the one green CTA."],
       },
       {
         name: "PaymentModal / PaymentSuccess",

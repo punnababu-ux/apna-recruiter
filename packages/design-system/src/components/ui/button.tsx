@@ -2,7 +2,7 @@
  * Button — base interactive surface.
  *
  * API
- *   <Button variant="default|outline|secondary|ghost|destructive|destructive-solid|success|link|link-inline|checkout|checkout-inset|emphasis"
+ *   <Button variant="default|outline|secondary|ghost|destructive|destructive-solid|success|info|link|link-inline|checkout|checkout-inset|emphasis"
  *           size="xs|sm|default|lg|xl|icon|icon-xs|icon-sm|icon-lg"
  *           leadingIcon={<Plus />}     // optional leading icon
  *           trailingIcon={<ArrowRight />} // optional trailing icon
@@ -99,6 +99,9 @@ const buttonVariants = cva(
           "bg-destructive/10 text-destructive border border-destructive/20 hover:bg-destructive/20 hover:border-destructive/40 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         success:
           "bg-success/10 text-success border border-success/30 hover:bg-success/20 hover:border-success/50 focus-visible:border-success/50 focus-visible:ring-success/20 dark:bg-success/20 dark:hover:bg-success/30 dark:focus-visible:ring-success/40",
+        // Solid blue for an informational action (play a demo, learn how):
+        // it never competes with the green commit or the dark companion.
+        info: "bg-info text-info-foreground hover:bg-info/90 focus-visible:border-info/40 focus-visible:ring-info/20 dark:focus-visible:ring-info/40",
         // A text link has no surface to fill — no ink, no compression.
         link: "font-semibold text-info underline-offset-4 hover:underline before:hidden active:scale-100",
         "link-inline":
