@@ -343,6 +343,14 @@ that is a defect even when each looks fine alone. The shared ones:
 - **Phone chip rows**: `MobileChipRow` / `SectionChips`, the self-checkout
   styling.
 
+**Button pairs that stack on phones** (RCA, 2026-10-27): a pair laid out
+`flex-col sm:flex-row` gives each button `w-full sm:flex-1`, never bare
+`flex-1`. In a column, `flex-1` sets the height basis to 0 and the button
+collapsed to its text height on the payment confirmation. Button now pins
+`min-h` to every size so it can't recur, but write the pair correctly too.
+A size or spacing fix is only done once it's been looked at, at phone
+width: a type check passing proves nothing about layout.
+
 Mobile: bottom-fixed bars use `pb-safe` (no padding of their own) or
 `pb-safe-<n>` (in place of `pb-<n>`) to clear the home indicator. Inputs use
 `text-base md:text-sm` so iOS Safari doesn't zoom on focus.

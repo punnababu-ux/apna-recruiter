@@ -39,7 +39,6 @@
 
 import * as React from "react"
 import { useRouter } from "next/navigation"
-import { toast } from "sonner"
 import { AvailableCreditsButton } from "@/components/apnahire/available-credits-button"
 import { JobPostingChrome } from "@/components/apnahire/post-job/job-posting-chrome"
 import { JOB_DRAFT_STORAGE_KEY } from "@/components/apnahire/post-job/post-job-flow"
@@ -153,7 +152,7 @@ export function JobPlanSelection() {
   const [paymentOpen, setPaymentOpen] = React.useState(false)
   const [paymentAmount, setPaymentAmount] = React.useState(0)
   const [mandateMethod, setMandateMethod] = React.useState<SubscriptionPaymentMethod | null>(null)
-  const [order, setOrder] = React.useState<{ lines: CartLine[]; total: number; id: string } | null>(null)
+  const [order, setOrder] = React.useState<{ lines: CartLine[]; total: number; id: string; note?: string } | null>(null)
   const [cartLines, setCartLines] = React.useState<CartLine[]>([])
   const [postedTitle, setPostedTitle] = React.useState("Your job")
 
@@ -314,13 +313,12 @@ export function JobPlanSelection() {
   const handleProceedToPay = (total: number, lines: CartLine[], method?: SubscriptionPaymentMethod) => {
     // Everything paid with credits (job and/or AI): post now, no payment.
     if (total === 0) {
+      // The job-live screen, as after a payment, minus the payment details.
       const used = lines.map((l) => l.priceLabel && `${l.priceLabel} (${l.label})`).filter(Boolean)
-      toast.success(`${readDraftTitle()} is live`, {
-        description: used.length ? `Used ${used.join(" + ")} from your balance.` : undefined,
-      })
+      setPostedTitle(readDraftTitle())
       setDrawerOpen(false)
       clearDraft()
-      router.push("/apnahire/jobs")
+      setOrder({ lines, total: 0, id: "", note: used.length ? `Used ${used.join(" + ")}` : undefined })
       return
     }
     setCartLines(lines)
@@ -366,6 +364,7 @@ export function JobPlanSelection() {
         lines={order.lines}
         total={order.total}
         orderId={order.id}
+        note={order.note}
         postedJob={{ title: postedTitle, onViewJobs: () => router.push("/apnahire/jobs") }}
         onSearchCandidates={() => router.push("/apnahire/database/search-candidates")}
       />

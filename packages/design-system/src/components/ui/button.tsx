@@ -134,19 +134,21 @@ const buttonVariants = cva(
         emphasis:
           "bg-cta-emphasis text-cta-emphasis-foreground hover:bg-cta-emphasis-hover active:bg-cta-emphasis-hover in-data-[surface=dark]:bg-cta-inverted in-data-[surface=dark]:text-cta-inverted-foreground in-data-[surface=dark]:hover:bg-cta-inverted-hover in-data-[surface=dark]:active:bg-cta-inverted-hover",
       },
+      // Every size pins min-height to its height: a layout class on the
+      // button (flex-1 in a column stack) can't squash it to text height.
       size: {
         default:
-          "h-9 gap-1.5 px-3 text-sm font-semibold font-heading has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5",
-        xs: "h-6 gap-1 px-2 text-xs font-semibold font-heading in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
-        sm: "h-8 gap-1.5 px-2.5 text-xs font-semibold font-heading in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&_svg:not([class*='size-'])]:size-3.5",
-        lg: "h-10 gap-2 px-4 text-base font-medium font-heading has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3 [&_svg:not([class*='size-'])]:size-4.5",
-        xl: "h-12 gap-2 px-6 text-base font-semibold font-heading [&_svg:not([class*='size-'])]:size-5",
-        icon: "size-9",
+          "h-9 min-h-9 gap-1.5 px-3 text-sm font-semibold font-heading has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5",
+        xs: "h-6 min-h-6 gap-1 px-2 text-xs font-semibold font-heading in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
+        sm: "h-8 min-h-8 gap-1.5 px-2.5 text-xs font-semibold font-heading in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&_svg:not([class*='size-'])]:size-3.5",
+        lg: "h-10 min-h-10 gap-2 px-4 text-base font-medium font-heading has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3 [&_svg:not([class*='size-'])]:size-4.5",
+        xl: "h-12 min-h-12 gap-2 px-6 text-base font-semibold font-heading [&_svg:not([class*='size-'])]:size-5",
+        icon: "size-9 min-h-9",
         "icon-xs":
-          "size-6 in-data-[slot=button-group]:rounded-lg [&_svg:not([class*='size-'])]:size-3",
+          "size-6 min-h-6 in-data-[slot=button-group]:rounded-lg [&_svg:not([class*='size-'])]:size-3",
         "icon-sm":
-          "size-8 in-data-[slot=button-group]:rounded-lg",
-        "icon-lg": "size-10",
+          "size-8 min-h-8 in-data-[slot=button-group]:rounded-lg",
+        "icon-lg": "size-10 min-h-10",
       },
     },
     compoundVariants: [

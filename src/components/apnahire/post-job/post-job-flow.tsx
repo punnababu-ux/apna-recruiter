@@ -65,7 +65,7 @@ import {
 } from "@/components/apnahire/post-job/wizard-screens"
 import { EMPTY_JOB_DRAFT, locationLabel, mergeDraft, normalizeDraft } from "@/lib/apnahire/job-draft"
 import { rememberPostIntent } from "@/lib/apnahire/post-intent"
-import { toast } from "sonner"
+import { PaymentSuccess } from "@/components/apnahire/payment-success"
 import { SlotsFullDialog } from "@/components/apnahire/slots/slots-full-dialog"
 import { JobSlotsControls, PrototypeSettings, openPrototypeSettings } from "@/components/apnahire/prototype-settings"
 import { freeSlots, setJobSlots, todayLabel, useJobSlots } from "@/hooks/use-job-slots"
@@ -206,6 +206,8 @@ export function PostJobFlow() {
   const [draftResult, setDraftResult] = React.useState<Partial<JobPostDraft> | null>(null)
   /** "Draft my job" is running — on the Describe screen, not a screen of its own. */
   const [drafting, setDrafting] = React.useState(false)
+  /** Posted into a subscription slot: show the job-live screen. */
+  const [live, setLive] = React.useState<{ title: string; note: string } | null>(null)
   const [refining, setRefining] = React.useState(false)
   const [writing, setWriting] = React.useState(false)
   const [flashKey, setFlashKey] = React.useState(0)
@@ -392,13 +394,14 @@ export function PostJobFlow() {
         },
       ],
     })
-    toast.success(`${title} is live`, {
-      description: expired
-        ? `${expired.title} was expired to free its slot.`
-        : `Posted with your ${slots.plan.toLowerCase()} · ${kept.length + 1} of ${slots.total} job slots in use.`,
+    // The job-live screen, not a toast: nothing was paid, so no payment details.
+    setLive({
+      title,
+      note: expired
+        ? `${expired.title} expired to free its slot`
+        : `${kept.length + 1} of ${slots.total} job slots in use`,
     })
     setSlotsFullOpen(false)
-    router.push("/apnahire/jobs")
     try {
       window.localStorage.removeItem(JOB_DRAFT_STORAGE_KEY)
     } catch {
@@ -498,6 +501,19 @@ export function PostJobFlow() {
   // Wait for the saved draft before rendering, so a resumed flow doesn't
   // flash the first screen.
   if (!hydrated) return <div className="min-h-svh bg-background" />
+
+  if (live) {
+    return (
+      <PaymentSuccess
+        lines={[]}
+        total={0}
+        orderId=""
+        note={live.note}
+        postedJob={{ title: live.title, onViewJobs: () => router.push("/apnahire/jobs") }}
+        onSearchCandidates={() => router.push("/apnahire/database/search-candidates")}
+      />
+    )
+  }
 
   return (
     <div className="flex min-h-svh flex-col bg-background">
