@@ -260,7 +260,7 @@ function WizardFooter({
                   type="button"
                   variant="outline"
                   size="icon-lg"
-                  className="size-11 rounded-full"
+                  className="rounded-full"
                   aria-label={typeof backLabel === "string" ? backLabel : "Back"}
                   onClick={onBack}
                 >

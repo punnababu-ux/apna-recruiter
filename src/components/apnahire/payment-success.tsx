@@ -82,16 +82,17 @@ export function PaymentSuccess({
           </div>
         </div>
 
-        <div className="flex w-full flex-col gap-2 sm:flex-row">
-          <Button variant="outline" className="flex-1 font-semibold" onClick={onSearchCandidates}>
+        {/* One solid primary (the screen's only green); phones stack it on top. */}
+        <div className="flex w-full flex-col-reverse gap-3 sm:flex-row">
+          <Button variant="outline" size="lg" className="flex-1 font-semibold" onClick={onSearchCandidates}>
             Search candidates
           </Button>
           {postedJob ? (
-            <Button variant="success" className="flex-1 font-semibold" onClick={postedJob.onViewJobs}>
+            <Button size="lg" className="flex-1 font-semibold" onClick={postedJob.onViewJobs}>
               View my jobs
             </Button>
           ) : (
-            <Button variant="success" className="flex-1 font-semibold" onClick={onPostJob}>
+            <Button size="lg" className="flex-1 font-semibold" onClick={onPostJob}>
               Post a job now
             </Button>
           )}
