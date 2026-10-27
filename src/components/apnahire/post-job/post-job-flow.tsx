@@ -197,7 +197,10 @@ export function PostJobFlow() {
     setForm: setState,
     persistDraft,
     hydrated,
-  } = useDraftPersistence<FlowState>(JOB_DRAFT_STORAGE_KEY, EMPTY_FLOW)
+    pending,
+    resume,
+    discard,
+  } = useDraftPersistence<FlowState>(JOB_DRAFT_STORAGE_KEY, EMPTY_FLOW, { ask: true })
   const state = React.useMemo(() => normalizeFlow(raw), [raw])
 
   const [direction, setDirection] = React.useState<"forward" | "back">("forward")
@@ -214,8 +217,17 @@ export function PostJobFlow() {
   const [confirmRedraft, setConfirmRedraft] = React.useState(false)
 
   React.useEffect(() => {
-    if (hydrated) persistDraft(state)
-  }, [hydrated, state, persistDraft])
+    // Not while a saved draft waits for "continue or start new": the empty
+    // form would overwrite it.
+    if (hydrated && !pending) persistDraft(state)
+  }, [hydrated, pending, state, persistDraft])
+
+  // Coming back to finish (the plan step's links, a draft's "Finish
+  // posting"): ?resume=1 continues without asking.
+  React.useEffect(() => {
+    if (pending && new URLSearchParams(window.location.search).has("resume")) resume()
+  }, [pending, resume])
+  const askResume = !!pending && !(typeof window !== "undefined" && window.location.search.includes("resume"))
 
   // Arrived from "Post a job with AI calling" (?addon=ai-calling): the plan
   // step opens the order summary with the AI calling agent added.
@@ -640,6 +652,24 @@ export function PostJobFlow() {
       <PrototypeSettings label="Preview job posting state">
         <JobSlotsControls />
       </PrototypeSettings>
+
+      {/* A saved draft: continue it or start a new job. */}
+      <AlertDialog open={askResume}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Continue your draft?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {normalizeFlow(pending ?? EMPTY_FLOW).draft.title.trim() || "Untitled job"}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={discard}>Start new</AlertDialogCancel>
+            <AlertDialogAction variant="emphasis" onClick={resume}>
+              Continue draft
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <AlertDialog open={confirmRedraft} onOpenChange={setConfirmRedraft}>
         <AlertDialogContent>

@@ -9,10 +9,14 @@ import { toast } from "sonner"
  *
  * @param key    localStorage key
  * @param empty  Factory value used when no draft exists and as the clean baseline.
+ * @param ask    Don't load a saved draft by itself: hold it in `pending`
+ *               until the caller resumes or discards it (e.g. "Continue your
+ *               draft or start new?").
  */
 export function useDraftPersistence<T>(
   key: string,
   empty: T,
+  { ask = false }: { ask?: boolean } = {},
 ): {
   form: T
   setForm: React.Dispatch<React.SetStateAction<T>>
@@ -22,12 +26,17 @@ export function useDraftPersistence<T>(
   /** True once the saved draft (if any) has been read. Auto-save must wait
    *  for this, or it overwrites the saved draft with the empty baseline. */
   hydrated: boolean
+  /** With `ask`: a saved draft waiting for resume / discard. */
+  pending: T | null
+  resume: () => void
+  discard: () => void
 } {
   const [form, setForm] = React.useState<T>(empty)
   const [lastSavedJson, setLastSavedJson] = React.useState<string>(
     () => JSON.stringify(empty),
   )
   const [hydrated, setHydrated] = React.useState(false)
+  const [pending, setPending] = React.useState<T | null>(null)
 
   // Load draft once on the client.
   React.useEffect(() => {
@@ -37,6 +46,7 @@ export function useDraftPersistence<T>(
       const raw = window.localStorage.getItem(key)
       if (!raw) return
       const draft = { ...(empty as object), ...(JSON.parse(raw) as Partial<T>) } as T
+      if (ask) return setPending(draft)
       setForm(draft)
       setLastSavedJson(JSON.stringify(draft))
       // A fixed id: the mount effect runs twice in dev (StrictMode) and again
@@ -78,5 +88,17 @@ export function useDraftPersistence<T>(
     }
   }, [key])
 
-  return { form, setForm, isDirty, persistDraft, clearDraft, hydrated }
+  const resume = React.useCallback(() => {
+    if (!pending) return
+    setForm(pending)
+    setLastSavedJson(JSON.stringify(pending))
+    setPending(null)
+  }, [pending])
+
+  const discard = React.useCallback(() => {
+    clearDraft()
+    setPending(null)
+  }, [clearDraft])
+
+  return { form, setForm, isDirty, persistDraft, clearDraft, hydrated, pending, resume, discard }
 }

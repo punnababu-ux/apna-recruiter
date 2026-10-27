@@ -378,7 +378,7 @@ export function JobPlanSelection() {
     <div className="flex min-h-svh flex-col bg-gradient-checkout-hero">
       <JobPostingChrome
         current="plan"
-        onStepClick={(step) => step !== "plan" && router.push("/apnahire/jobs/new")}
+        onStepClick={(step) => step !== "plan" && router.push("/apnahire/jobs/new?resume=1")}
         // Zero-credit users haven't met the credit model yet.
         actions={
           hasAnyCredits(creditBalance) ? (

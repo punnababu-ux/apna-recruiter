@@ -112,7 +112,7 @@ function jobBanner(job: ApnaJob, go: (path: string) => void): React.ReactNode {
         title: draft ? "Finish posting to start receiving candidates." : "Repost to receive new candidates.",
       }
       const step = draft
-        ? { label: "Finish posting", onClick: () => go("/apnahire/jobs/new") }
+        ? { label: "Finish posting", onClick: () => go("/apnahire/jobs/new?resume=1") }
         : { label: "Repost now", onClick: () => toast.success("Job reposted") }
       return (
         <>
