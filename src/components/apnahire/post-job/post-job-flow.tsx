@@ -43,17 +43,16 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   Button,
-  ChevronDown,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
   WizardFooter,
   WizardTypingProvider,
 } from "@apna/design-system"
 import { useDraftPersistence } from "@/hooks/onlyrounds/use-draft-persistence"
 import { CandidateJobPreview } from "@/components/apnahire/post-job/candidate-job-preview"
-import { JobPostingChrome, type JobPostingStep } from "@/components/apnahire/post-job/job-posting-chrome"
+import {
+  JobPostingChrome,
+  JobPostingStepMenu,
+  type JobPostingStep,
+} from "@/components/apnahire/post-job/job-posting-chrome"
 import type { UpdateDraft } from "@/components/apnahire/post-job/job-fields"
 import {
   SCREENS,
@@ -227,6 +226,15 @@ export function PostJobFlow() {
   React.useEffect(() => {
     if (pending && new URLSearchParams(window.location.search).has("resume")) resume()
   }, [pending, resume])
+  // The plan page's step menu: &stage=… opens that step's first question.
+  const stageJumped = React.useRef(false)
+  React.useEffect(() => {
+    if (!hydrated || pending || stageJumped.current) return
+    stageJumped.current = true
+    const to = new URLSearchParams(window.location.search).get("stage")
+    const first = SCREENS.find((s) => s.stage === to)
+    if (first) setState((s) => ({ ...s, screen: first.id, returnTo: null }))
+  }, [hydrated, pending, setState])
   const askResume = !!pending && !(typeof window !== "undefined" && window.location.search.includes("resume"))
 
   // Arrived from "Post a job with AI calling" (?addon=ai-calling): the plan
@@ -587,29 +595,7 @@ export function PostJobFlow() {
           stage ? (
             // Phones: the step and its menu live in the bottom bar, by the
             // thumb. From sm the header stepper shows the step instead.
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                render={
-                  <button
-                    type="button"
-                    className="ink relative -ml-2 flex min-w-0 items-center gap-1 rounded-control px-2 py-1 text-left transition-interactive sm:invisible"
-                  >
-                    <span className="flex min-w-0 flex-col">
-                      <span className="text-xs text-muted-foreground">Step {STAGES.indexOf(stage) + 1} of 3</span>
-                      <span className="truncate text-sm font-semibold text-foreground">{STAGE_LABELS[stage]}</span>
-                    </span>
-                    <ChevronDown className="size-4 shrink-0 text-muted-foreground" aria-hidden />
-                  </button>
-                }
-              />
-              <DropdownMenuContent align="start" side="top">
-                {STAGES.map((s, i) => (
-                  <DropdownMenuItem key={s} disabled={i > STAGES.indexOf(stage)} onClick={() => jumpToStage(s)}>
-                    Step {i + 1} · {STAGE_LABELS[s]}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <JobPostingStepMenu current={stage} onJump={(s) => s !== "plan" && jumpToStage(s)} />
           ) : undefined
         }
         secondary={

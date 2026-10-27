@@ -367,7 +367,7 @@ const STAGE_SUMMARY: Record<StageId, string> = {
   setup: "Interview, contact, review",
 }
 
-/** "Fill manually" primes the recruiter before 18 questions: three stages,
+/** "Fill manually" primes the recruiter before 18 questions: four steps,
  *  one question at a time, a review before it goes live. Only on the way in
  *  by hand; the AI draft skips it (its answers are already there). */
 function ManualIntro(ctx: ScreenCtx) {
@@ -375,18 +375,21 @@ function ManualIntro(ctx: ScreenCtx) {
     <>
       <WizardQuestion
         eyebrow={<span className="text-overline text-primary">Hiring for {companyName(ctx.draft)}</span>}
-        title="Post a job in three short steps"
+        title="Post a job in four short steps"
         description="One question at a time. Review before posting."
       />
       <ol className="flex flex-col">
-        {(Object.keys(STAGE_SUMMARY) as StageId[]).map((id, i) => (
-          <li key={id} className="flex items-start gap-4 border-t border-border py-4 first:border-t-0 first:pt-0">
+        {[
+          ...(Object.keys(STAGE_SUMMARY) as StageId[]).map((id) => [STAGE_LABELS[id], STAGE_SUMMARY[id]]),
+          ["Select plan", "Pick a plan and post"],
+        ].map(([label, summary], i) => (
+          <li key={label} className="flex items-start gap-4 border-t border-border py-4 first:border-t-0 first:pt-0">
             <span className="flex size-10 shrink-0 items-center justify-center rounded-control bg-muted text-base font-semibold text-foreground">
               {i + 1}
             </span>
             <span className="flex flex-col gap-1">
-              <span className="text-base font-semibold text-foreground">{STAGE_LABELS[id]}</span>
-              <span className="text-sm text-muted-foreground">{STAGE_SUMMARY[id]}</span>
+              <span className="text-base font-semibold text-foreground">{label}</span>
+              <span className="text-sm text-muted-foreground">{summary}</span>
             </span>
           </li>
         ))}

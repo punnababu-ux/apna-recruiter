@@ -21,6 +21,8 @@
  */
 
 import * as React from "react"
+import { useRouter } from "next/navigation"
+import { JobPostingStepMenu } from "@/components/apnahire/post-job/job-posting-chrome"
 import {
   Badge,
   BriefcaseBusiness,
@@ -331,6 +333,7 @@ function MobileJobPlanRadioGroup({
   onSelectTier,
   recommendedId,
 }: MobileJobPlanRadioGroupProps) {
+  const router = useRouter()
   const [selectedKey, setSelectedKey] = React.useState<JobPlanTierId>(recommendedId)
   const creditMode = hasAnyCredits(creditBalance)
   const { extraOff, shimmerKey } = React.useContext(PlanOfferContext)
@@ -442,9 +445,22 @@ function MobileJobPlanRadioGroup({
       {/* Mobile Sticky Bottom CTA Dock for selected single job tier */}
       {/* sm:hidden: this page switches to the card grid at sm, not md. */}
       <StickyCtaBar className="sm:hidden">
-        <Button type="button" variant="checkout" size="xl" onClick={() => onSelectTier(selectedTier)}>
-          {ctaText}
-        </Button>
+        {/* Step on the left, as on every job posting step's bottom bar. */}
+        <div className="flex items-center gap-3">
+          <JobPostingStepMenu
+            current="plan"
+            onJump={(step) => router.push(`/apnahire/jobs/new?resume=1&stage=${step}`)}
+          />
+          <Button
+            type="button"
+            variant="checkout"
+            size="xl"
+            className="min-w-0 flex-1 rounded-full shadow-popover"
+            onClick={() => onSelectTier(selectedTier)}
+          >
+            <span className="truncate">{ctaText}</span>
+          </Button>
+        </div>
       </StickyCtaBar>
     </>
   )

@@ -10,7 +10,18 @@
 import * as React from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
-import { BackButton, Button, Save, Stepper, type Step } from "@apna/design-system"
+import {
+  BackButton,
+  Button,
+  ChevronDown,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  Save,
+  Stepper,
+  type Step,
+} from "@apna/design-system"
 import { cn } from "@/lib/utils"
 
 /** The wizard's three stages, then the plan page. */
@@ -96,5 +107,48 @@ export function JobPostingChrome({
         </div>
       </div>
     </div>
+  )
+}
+
+/**
+ * The phone's step indicator, in the bottom bar of every step (questions and
+ * the plan page): "Step 2 of 4 / Who can apply ⌄". Tapping opens the steps;
+ * earlier ones jump back, later ones are disabled. From sm the header
+ * stepper does this job, so it hides itself there.
+ */
+export function JobPostingStepMenu({
+  current,
+  onJump,
+}: {
+  current: JobPostingStep
+  onJump: (step: JobPostingStep) => void
+}) {
+  const at = STEPS.findIndex((s) => s.id === current)
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <button
+            type="button"
+            className="ink relative -ml-2 flex min-w-0 shrink-0 items-center gap-1 rounded-control px-2 py-1 text-left transition-interactive sm:hidden"
+          >
+            <span className="flex min-w-0 flex-col">
+              <span className="text-xs text-muted-foreground">
+                Step {at + 1} of {STEPS.length}
+              </span>
+              <span className="truncate text-sm font-semibold text-foreground">{STEPS[at].label}</span>
+            </span>
+            <ChevronDown className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+          </button>
+        }
+      />
+      <DropdownMenuContent align="start" side="top">
+        {STEPS.map((s, i) => (
+          <DropdownMenuItem key={s.id} disabled={i >= at} onClick={() => onJump(s.id)}>
+            Step {i + 1} · {s.label}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
