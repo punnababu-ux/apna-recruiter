@@ -77,6 +77,7 @@ import { addPurchasedJobCredits } from "@/hooks/use-plans-ingress"
 import { useHeaderSlot } from "@/components/marketing/header-slot"
 import { CheckoutPreviewSettings } from "@/components/apnahire/checkout-preview-settings"
 import { ExitOfferDialog } from "@/components/apnahire/offers/exit-offer-dialog"
+import { LeaveReasonsDialog } from "@/components/apnahire/offers/exit-stay-dialogs"
 import { useExtraOff } from "@/components/apnahire/offers/use-extra-off"
 import { EXTRA_OFF, withExtraOff } from "@/content/offers"
 import { useIsMobile } from "@/hooks/use-mobile"
@@ -314,6 +315,8 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   const upsellsOn = !isLoggedOut
   const [planUpsell, setPlanUpsell] = React.useState<{ bundle: Bundle; plan: "monthly" | "quarterly" } | null>(null)
   const [exitPrompt, setExitPrompt] = React.useState<{ proceed: () => void } | null>(null)
+  // A returning recruiter leaving the plans page is asked why instead.
+  const [reasonsPrompt, setReasonsPrompt] = React.useState<{ proceed: () => void } | null>(null)
 
   // Leaving (the top bar's back button, closing the order summary) goes
   // through the exit nudge first, until the offer is claimed or turned down.
@@ -554,7 +557,11 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
           <CheckoutTopBar
             title="Plans"
             // Home, like every other page's Back (lib/apnahire/nav).
-            onBack={() => attemptExit(() => router.push(HOME))}
+            onBack={() =>
+              offer.returning
+                ? setReasonsPrompt({ proceed: () => router.push(HOME) })
+                : attemptExit(() => router.push(HOME))
+            }
             backLabel="Back to jobs"
             showCenter={showCompactTabs}
             // Revealed from lg, not md: with the title and the full-size
@@ -836,6 +843,15 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
         <JobTypesDialog open={jobTypesOpen} onOpenChange={setJobTypesOpen} extraOff={offer.claimed} />
         <ContactPopup open={contactOpen} onOpenChange={setContactOpen} signedIn={!isLoggedOut} />
 
+        <LeaveReasonsDialog
+          open={reasonsPrompt !== null}
+          onStay={() => setReasonsPrompt(null)}
+          onLeave={() => {
+            reasonsPrompt?.proceed()
+            setReasonsPrompt(null)
+          }}
+        />
+
         <ExitOfferDialog
           open={exitPrompt !== null}
           onDismiss={() => setExitPrompt(null)}
@@ -870,7 +886,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
             deployed ones included, like express checkout's switcher. Remove
             once real offer rules are wired up. */}
         <CheckoutPreviewSettings
-          offer={{ claimed: offer.claimed, onExpireSoon: offer.expireSoon, onReset: offer.reset }}
+          offer={{ claimed: offer.claimed, returning: offer.returning, onReturningChange: offer.setReturning, onExpireSoon: offer.expireSoon, onReset: offer.reset }}
         />
       </div>
     </UpcomingPricesProvider>

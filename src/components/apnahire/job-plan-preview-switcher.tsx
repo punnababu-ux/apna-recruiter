@@ -40,7 +40,7 @@ export interface JobPlanPreviewSwitcherProps {
   creditBalance: CreditBalance
   onCreditBalanceChange: (balance: CreditBalance) => void
   /** 10% exit-offer demo controls. Omit to hide the section. */
-  offer?: { claimed: boolean; onExpireSoon: () => void; onReset: () => void }
+  offer?: { claimed: boolean; returning: boolean; onReturningChange: (v: boolean) => void; onExpireSoon: () => void; onReset: () => void }
   /** The job's work type, normally read from the draft; overridable here. */
   wfh?: { value: boolean; onChange: (wfh: boolean) => void }
 }

@@ -111,7 +111,7 @@ export function PrototypeOption({
 export function ExitOfferControls({
   offer,
 }: {
-  offer: { claimed: boolean; onExpireSoon: () => void; onReset: () => void }
+  offer: { claimed: boolean; returning: boolean; onReturningChange: (v: boolean) => void; onExpireSoon: () => void; onReset: () => void }
 }) {
   return (
     <PrototypeSection title={`10% exit offer · ${offer.claimed ? "claimed" : "not claimed"}`}>
@@ -119,6 +119,14 @@ export function ExitOfferControls({
         Expire in 5 seconds
       </PrototypeOption>
       <PrototypeOption onClick={offer.onReset}>Reset offer and exit nudge</PrototypeOption>
+      {/* A returning recruiter already had the 10% offer: the exit
+          pop-ups ask them to stay (or why they're leaving) instead. */}
+      <PrototypeOption active={!offer.returning} onClick={() => offer.onReturningChange(false)}>
+        New user · 10% offer on exit
+      </PrototypeOption>
+      <PrototypeOption active={offer.returning} onClick={() => offer.onReturningChange(true)}>
+        Returning user · stay / reasons on exit
+      </PrototypeOption>
     </PrototypeSection>
   )
 }

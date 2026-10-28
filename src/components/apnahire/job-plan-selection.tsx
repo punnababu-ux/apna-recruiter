@@ -59,6 +59,7 @@ import { addPurchasedJobCredits } from "@/hooks/use-plans-ingress"
 import { JobPlanPreviewSwitcher } from "@/components/apnahire/job-plan-preview-switcher"
 import { usePlans } from "@/hooks/apnahire/use-plans"
 import { ExitOfferDialog } from "@/components/apnahire/offers/exit-offer-dialog"
+import { StayDialog } from "@/components/apnahire/offers/exit-stay-dialogs"
 import { useExtraOff } from "@/components/apnahire/offers/use-extra-off"
 import {
   AnnualUpgradeDialog,
@@ -153,6 +154,8 @@ export function JobPlanSelection() {
   const offer = useExtraOff()
   const [upsell, setUpsell] = React.useState<Upsell>(null)
   const [exitPrompt, setExitPrompt] = React.useState<{ proceed: () => void } | null>(null)
+  // A returning recruiter is asked to stay instead (StayDialog).
+  const [stayPrompt, setStayPrompt] = React.useState<{ proceed: () => void; where: "plan" | "summary" } | null>(null)
   const [shimmerKey, setShimmerKey] = React.useState(0)
 
   // Every price here follows the pricing phase (preview settings).
@@ -221,8 +224,9 @@ export function JobPlanSelection() {
   }, [])
   const orderNeedsPayment =
     (checkoutItem?.price ?? 0) > 0 || (aiAdded && creditBalance["ai-calling"] < 1)
-  const attemptExit = (proceed: () => void, paymentRequired = !holdsCredits) => {
+  const attemptExit = (proceed: () => void, paymentRequired = !holdsCredits, where: "plan" | "summary" = "plan") => {
     if (offer.nudgeAvailable && paymentRequired) setExitPrompt({ proceed })
+    else if (offer.returning && paymentRequired) setStayPrompt({ proceed, where })
     else proceed()
   }
 
@@ -396,7 +400,7 @@ export function JobPlanSelection() {
             <AvailableCreditsButton balance={{ job: creditBalance.job, aiCalling: creditBalance["ai-calling"] }} />
           ) : undefined
         }
-        onExitAttempt={attemptExit}
+        onExitAttempt={(proceed) => attemptExit(proceed)}
       />
 
       {/* Phones: room under the last section for the fixed CTA bar and the
@@ -438,7 +442,7 @@ export function JobPlanSelection() {
       <CheckoutDrawer
         open={drawerOpen}
         onOpenChange={(next) =>
-          next ? setDrawerOpen(true) : attemptExit(() => setDrawerOpen(false), orderNeedsPayment)
+          next ? setDrawerOpen(true) : attemptExit(() => setDrawerOpen(false), orderNeedsPayment, "summary")
         }
         item={checkoutItem}
         onProceedToPay={handleProceedToPay}
@@ -491,6 +495,17 @@ export function JobPlanSelection() {
         />
       </UpcomingPricesProvider>
 
+      <StayDialog
+        open={stayPrompt !== null}
+        where={stayPrompt?.where ?? "plan"}
+        jobTitle={draftTitle()}
+        onStay={() => setStayPrompt(null)}
+        onLeave={() => {
+          stayPrompt?.proceed()
+          setStayPrompt(null)
+        }}
+      />
+
       <ExitOfferDialog
         open={exitPrompt !== null}
         onDismiss={() => setExitPrompt(null)}
@@ -540,7 +555,7 @@ export function JobPlanSelection() {
         onLayoutChange={setLayout}
         creditBalance={creditBalance}
         onCreditBalanceChange={setCreditBalance}
-        offer={{ claimed: offer.claimed, onExpireSoon: offer.expireSoon, onReset: offer.reset }}
+        offer={{ claimed: offer.claimed, returning: offer.returning, onReturningChange: offer.setReturning, onExpireSoon: offer.expireSoon, onReset: offer.reset }}
         wfh={{ value: wfh, onChange: setWfh }}
       />
     </div>

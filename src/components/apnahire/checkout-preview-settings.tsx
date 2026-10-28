@@ -33,7 +33,7 @@ import {
 export function CheckoutPreviewSettings({
   offer,
 }: {
-  offer: { claimed: boolean; onExpireSoon: () => void; onReset: () => void }
+  offer: { claimed: boolean; returning: boolean; onReturningChange: (v: boolean) => void; onExpireSoon: () => void; onReset: () => void }
 }) {
   const [wordmark, setWordmark] = useUnlimitedWordmark()
   const plans = usePlansIngress()
