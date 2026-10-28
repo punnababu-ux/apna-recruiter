@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import * as React from "react"
 import {
   Bell,
@@ -275,6 +276,7 @@ export default function FeedbackComponentsPage() {
           Without points and price, the right side is just the CTA.
         </p>
         <OfferBar
+          art={<Image src="/images/company/values/annual.png" alt="" width={48} height={48} unoptimized />}
           hook="Special upgrade offer"
           headline={<>Pay <OfferBarDrop from="₹2,499" to="₹833" unit="/month" /> on the annual plan</>}
           points={["1 active job slot for 365 days", "2,400 database credits"]}
@@ -284,12 +286,14 @@ export default function FeedbackComponentsPage() {
         />
         <OfferBar
           tone="fix"
+          art={<Image src="/images/company/values/access.png" alt="" width={48} height={48} unoptimized />}
           hook="Auto-pay is off"
           headline="Your plan ends in 9 days"
           cta={<Button variant="emphasis" trailingIcon={<ArrowRight />}>Turn on auto-pay</Button>}
         />
         <OfferBar
           tone="lapsed"
+          art={<Image src="/images/company/values/expired.png" alt="" width={48} height={48} unoptimized />}
           hook="Your plan ended 39 days ago"
           headline="Renew at the price you paid last time"
           points={["1 active job slot for 30 days", "200 database credits"]}
