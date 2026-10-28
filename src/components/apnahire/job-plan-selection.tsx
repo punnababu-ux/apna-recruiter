@@ -160,8 +160,12 @@ export function JobPlanSelection() {
   /** The pack the "short on credits" upsell offers (the board's 6 credits). */
   const creditUpsellPack = plans.bundles.find((b) => b.credits === 6) ?? plans.bundles[0]
 
-  const openCheckout = (item: CartLine) => {
+  // Took the upsell pop-up's offer: one upsell is enough, so the order
+  // summary skips the AI calling add-on.
+  const [tookUpsell, setTookUpsell] = React.useState(false)
+  const openCheckout = (item: CartLine, took = false) => {
     setUpsell(null)
+    setTookUpsell(took)
     setCheckoutItem(item)
     setDrawerOpen(true)
   }
@@ -174,6 +178,7 @@ export function JobPlanSelection() {
     if (!slots || new URLSearchParams(window.location.search).get("upgrade") !== "slot") return
     const total = slots.total + 1
     setSlotUpgrade(true)
+    setTookUpsell(false)
     setCheckoutItem({
       id: `slot_upgrade_${total}`,
       label: `${slots.plan} · ${total} job slots`,
@@ -223,7 +228,7 @@ export function JobPlanSelection() {
 
   const singleJobLine = (tier: JobPlanTier): CartLine => ({
     id: tier.id,
-    label: tier.title,
+    label: `${tier.title} × 1`,
     sublabel: `${tier.jobActiveDays} days · ${tier.dbCredits} database credits`,
     price: tier.price,
     mrp: tier.mrp,
@@ -247,6 +252,7 @@ export function JobPlanSelection() {
     // AI calling add-on is offered. With no paid add-on it posts from there.
     if (plan.state === "covered") {
       const count = tier.credit.count
+      setTookUpsell(false)
       setCheckoutItem({
         id: `${tier.id}-covered`,
         label: tier.title,
@@ -436,7 +442,7 @@ export function JobPlanSelection() {
         }
         item={checkoutItem}
         onProceedToPay={handleProceedToPay}
-        aiAddon={{ price: AI_CALLING_ADDON.price, creditsAvailable: creditBalance["ai-calling"] }}
+        aiAddon={tookUpsell ? undefined : { price: AI_CALLING_ADDON.price, creditsAvailable: creditBalance["ai-calling"] }}
         extraOffer={offer.deadline ? { code: EXTRA_OFF.code, deadline: offer.deadline } : undefined}
         onExtraOfferExpired={offer.expire}
         onAiAddedChange={setAiAdded}
@@ -452,7 +458,7 @@ export function JobPlanSelection() {
           extraOff={offer.claimed}
           onClose={() => setUpsell(null)}
           onStay={() => upsell?.kind === "bundle" && openCheckout(singleJobLine(upsell.tier))}
-          onTake={() => upsell?.kind === "bundle" && openCheckout(bundleLine(upsell.tier))}
+          onTake={() => upsell?.kind === "bundle" && openCheckout(bundleLine(upsell.tier), true)}
         />
 
         <CreditPackOfferDialog
@@ -472,7 +478,7 @@ export function JobPlanSelection() {
           extraOff={offer.claimed}
           onClose={() => setUpsell(null)}
           onStay={() => upsell?.kind === "credits" && openCheckout(topupLine(upsell.tier, upsell.plan))}
-          onTake={() => upsell?.kind === "credits" && openCheckout(creditPackLine(upsell.tier, upsell.plan))}
+          onTake={() => upsell?.kind === "credits" && openCheckout(creditPackLine(upsell.tier, upsell.plan), true)}
         />
 
         <AnnualUpgradeDialog
@@ -481,7 +487,7 @@ export function JobPlanSelection() {
           extraOff={offer.claimed}
           onClose={() => setUpsell(null)}
           onStay={() => openCheckout(monthlyLine())}
-          onTake={() => openCheckout(annualLine())}
+          onTake={() => openCheckout(annualLine(), true)}
         />
       </UpcomingPricesProvider>
 

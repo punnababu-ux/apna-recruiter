@@ -193,7 +193,6 @@ function OptionTile({
         type="button"
         variant={upgrade ? "checkout" : "outline"}
         className="mt-2 h-10 w-full self-end whitespace-nowrap"
-        onClick={option.onSelect}
       >
         {option.ctaShortLabel ? (
           <>
@@ -208,10 +207,13 @@ function OptionTile({
   }
 
   return (
+    // The whole tile is the target; the CTA's click bubbles to it. No lift:
+    // the tile clips its corner ribbon (overflow-hidden).
     <div
       data-compare-card
+      onClick={option.onSelect}
       className={cn(
-        "relative grid min-w-0 grid-rows-subgrid gap-y-2.5 overflow-hidden rounded-xl border p-3.5 sm:p-4",
+        "ink press-subtle relative grid min-w-0 cursor-pointer grid-rows-subgrid gap-y-2.5 overflow-hidden rounded-xl border p-3.5 transition-interactive sm:p-4",
         ROW_SPAN[rows.length],
         // The ribbon's band is reserved on BOTH tiles when either has one,
         // so the rows start level.
