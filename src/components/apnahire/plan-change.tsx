@@ -47,12 +47,11 @@ import {
   type SubscriptionPlanId,
 } from "@/content/subscriptions"
 import { usePlans } from "@/hooks/apnahire/use-plans"
+import { changeKindOf, prorationOf } from "@/lib/apnahire/bill"
 import {
-  changeKindOf,
   changeLockOf,
   dayLabel,
   isoDay,
-  prorationOf,
   scheduleDowngrade,
   subscriptionOf,
   useJobSlots,

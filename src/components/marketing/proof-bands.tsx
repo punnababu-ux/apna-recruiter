@@ -53,7 +53,7 @@ export function TrustedByStrip() {
       <p className="text-base font-semibold text-foreground">Trusted by 7 lakh+ businesses and enterprises for hiring</p>
       {/* Still, so a fixed set: the seven that fit one desktop row (phones
           swipe it). */}
-      <LogoWall items={CLIENT_LOGO_ITEMS.slice(0, 7)} itemHeight="compact" muted />
+      <LogoWall items={CLIENT_LOGO_ITEMS.slice(0, 7)} itemHeight="compact" muted align="start" />
     </div>
   )
 }

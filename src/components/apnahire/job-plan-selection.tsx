@@ -111,37 +111,19 @@ function randomOrderId() {
   return Math.random().toString(36).slice(2, 10).toUpperCase()
 }
 
-/** The job being posted, from the AI flow's saved draft. Read once on the
- *  client; cleared when the job goes live so "Create new job" starts fresh. */
-function readDraftTitle(): string {
+/** The job being posted, from the posting flow's saved draft: its title,
+ *  its city (a subscription bought here locks to it) and whether it is work
+ *  from home (which rules out the subscription). Empty when there is none.
+ *  Cleared when the job goes live, so "Create new job" starts fresh. */
+function readDraft(): { title?: string; city?: string; locationType?: string } {
   try {
     const raw = window.localStorage.getItem(JOB_DRAFT_STORAGE_KEY)
-    return (raw && (JSON.parse(raw) as { draft?: { title?: string } }).draft?.title) || "Your job"
+    return (raw && JSON.parse(raw)?.draft) || {}
   } catch {
-    return "Your job"
+    return {}
   }
 }
-
-/** The job's city, which a subscription bought here is locked to. */
-function readDraftCity(): string {
-  try {
-    const raw = window.localStorage.getItem(JOB_DRAFT_STORAGE_KEY)
-    return (raw && (JSON.parse(raw) as { draft?: { city?: string } }).draft?.city) || ""
-  } catch {
-    return ""
-  }
-}
-
-/** Whether the job being posted is work from home (the draft's location
- *  type), which rules out the subscription. */
-function readDraftIsWfh(): boolean {
-  try {
-    const raw = window.localStorage.getItem(JOB_DRAFT_STORAGE_KEY)
-    return !!raw && (JSON.parse(raw) as { draft?: { locationType?: string } }).draft?.locationType === "home"
-  } catch {
-    return false
-  }
-}
+const draftTitle = () => readDraft().title || "Your job"
 
 function clearDraft() {
   clearPostIntent()
@@ -221,7 +203,7 @@ export function JobPlanSelection() {
   // review switcher can override it.
   const [wfh, setWfh] = React.useState(false)
   React.useEffect(() => {
-    if (readDraftIsWfh()) setWfh(true)
+    if (readDraft().locationType === "home") setWfh(true)
   }, [])
   // The order as it stands when the summary closes: a paid job line, or the
   // AI calling agent added with no AI calling credit to cover it (a covered
@@ -324,7 +306,7 @@ export function JobPlanSelection() {
   // A new subscription locks to the job's city: confirmed before paying.
   const [cityLock, setCityLock] = React.useState<{ city: string; pay: () => void; open: boolean } | null>(null)
   const handleProceedToPay = (total: number, lines: CartLine[], method?: SubscriptionPaymentMethod) => {
-    const city = readDraftCity()
+    const city = readDraft().city ?? ""
     if (!slotUpgrade && city && checkoutItem?.id.startsWith("unlimited_")) {
       setCityLock({ city, pay: () => pay(total, lines, method), open: true })
       return
@@ -336,7 +318,7 @@ export function JobPlanSelection() {
     if (total === 0) {
       // The job-live screen, as after a payment, minus the payment details.
       const used = lines.map((l) => l.priceLabel && `${l.priceLabel} (${l.label})`).filter(Boolean)
-      setPostedTitle(readDraftTitle())
+      setPostedTitle(draftTitle())
       setDrawerOpen(false)
       clearDraft()
       setOrder({ lines, total: 0, id: "", note: used.length ? `Used ${used.join(" + ")}` : undefined })
@@ -355,7 +337,7 @@ export function JobPlanSelection() {
     setPaymentOpen(false)
     // Credits bought: the shell stops promoting plans (usePlansIngress).
     if (checkoutItem && !checkoutItem.renewAfterDays) addPurchasedJobCredits(checkoutItem.label)
-    const title = readDraftTitle()
+    const title = draftTitle()
     setPostedTitle(title)
     const posted = { id: `job-${Date.now().toString(36)}`, title, location: "", postedAt: todayLabel(), applied: 0 }
     // A slot upgrade: the new slot is taken by the job just posted.
@@ -366,7 +348,7 @@ export function JobPlanSelection() {
       // (and makes the shell's plan CTA "Manage plans"). Its line id is
       // `unlimited_<term>`.
       const term = checkoutItem.id.split("_")[1] as SubscriptionPlanId
-      startSubscription(term === "annual" ? plans.annualPlan : plans.plan(term), [posted], readDraftCity() || undefined)
+      startSubscription(term === "annual" ? plans.annualPlan : plans.plan(term), [posted], readDraft().city || undefined)
     }
     clearDraft()
     // The 10% offer is single-use.
