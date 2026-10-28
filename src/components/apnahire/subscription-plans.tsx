@@ -401,7 +401,7 @@ export function SubscriptionPlans({
                 }
                 mrp={strike ? inr(strike) : undefined}
                 price={inr(price)}
-                unit={plan.unit}
+                unit={plan.unitShort}
                 belowPrice={pct ? <MobileDiscountRow pct={pct} /> : undefined}
                 priceNote={
                   extraOff && !isCurrent ? (

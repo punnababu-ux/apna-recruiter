@@ -19,11 +19,11 @@
  */
 
 import * as React from "react"
-import { BriefcaseBusiness, ClockFading, Database, LogoApnaUnlimited, UserSearch, WhatsApp } from "@apna/design-system"
+import { BriefcaseBusiness, ClockFading, RefreshCw, Database, LogoApnaUnlimited, UserSearch, WhatsApp } from "@apna/design-system"
 import { Badge, Button, PricingCard } from "@apna/design-system"
 import { withExtraOff } from "@/content/offers"
 import { ExtraOffLine } from "@/components/apnahire/offers/extra-off-line"
-import { MobileDiscountRow } from "@/components/apnahire/mobile-plan-row"
+import { MobileDiscountRow, MobileMetaLine } from "@/components/apnahire/mobile-plan-row"
 import { cn } from "@/lib/utils"
 import { MobileUnlimitedCard } from "@/components/apnahire/mobile-plan-row"
 import { UpcomingPriceLine } from "@/components/apnahire/upcoming-price-line"
@@ -40,6 +40,9 @@ interface UnlimitedSideCardProps {
    *  struck through with its % OFF, and the per-month figure follows. */
   extraOff?: boolean
   onBuyNow?: () => void
+  /** Phones: a radio in the Jobs list instead of its own CTA; the sticky
+   *  bar buys it. Tapping selects it (onSelect). */
+  mobileSelect?: { selected: boolean; onSelect: () => void }
   className?: string
 }
 
@@ -47,6 +50,7 @@ export function UnlimitedSideCard({
   plan: planProp,
   extraOff = false,
   onBuyNow,
+  mobileSelect,
   className,
 }: UnlimitedSideCardProps) {
   const catalog = usePlans()
@@ -65,25 +69,36 @@ export function UnlimitedSideCard({
       {/* ── Mobile (< md): the shared phone card, the same one express
           checkout uses, so the two checkouts read alike. ── */}
       <MobileUnlimitedCard
-        onSelect={onBuyNow}
+        onSelect={mobileSelect?.onSelect ?? onBuyNow}
+        selected={mobileSelect?.selected}
         className={cn("md:hidden", className)}
         // Same card, same structure as express checkout's Monthly plan: name
         // and price with its unit on top, the reposts promise as subtitle,
         // three plan lines, then the note and CTA.
-        title={plan.name}
-        subtitle="Unlimited job reposts"
+        title="Unlimited job posts"
+        subtitle={
+        <MobileMetaLine icon={<ClockFading aria-hidden />}>Valid for {plan.slotDays} days</MobileMetaLine>
+      }
         mrp={strike}
         price={inr(price)}
-        unit={plan.unit}
+        unit={plan.unitShort}
         belowPrice={<MobileDiscountRow pct={pct} note={extraOff ? "Incl. 10% extra" : undefined} />}
         upcoming={<UpcomingPriceLine price={plan.janPrice} />}
+        meta={
+          <span className="flex items-center gap-1.5 text-xs font-medium text-foreground">
+            <BriefcaseBusiness className="size-3.5 shrink-0 text-checkout-primary" aria-hidden />
+            {slotLabel(plan.slots)}
+          </span>
+        }
         features={[
-          [<BriefcaseBusiness key="i" aria-hidden />, <><strong>{slotLabel(plan.slots)}</strong> for {plan.slotDays}{"\u00A0"}days</>],
+          // The slot shows above, as meta.
+          [<RefreshCw key="i" aria-hidden />, "Free job reposts and swapping"],
           [<Database key="i" aria-hidden />, dbCreditsLabel(plan)],
           [<WhatsApp key="i" aria-hidden />, "WhatsApp outreach to matched candidates"],
         ]}
         note="Valid in a single city"
         cta={
+          mobileSelect ? undefined :
           // Dark companion CTA on phones (user call, 2026-10-19): the
           // sticky green Buy bar stays the screen's one primary.
           <Button

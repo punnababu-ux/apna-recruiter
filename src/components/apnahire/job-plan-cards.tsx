@@ -26,8 +26,9 @@ import { JobPostingStepMenu } from "@/components/apnahire/post-job/job-posting-c
 import {
   Badge,
   BriefcaseBusiness,
-  Button,
+  RefreshCw,
   Check,
+  Button,
   ClockFading,
   Database,
   Dialog,
@@ -325,6 +326,8 @@ interface MobileJobPlanRadioGroupProps {
   creditBalance: CreditBalance
   onSelectTier: (tier: JobPlanTier) => void
   recommendedId: JobPlanTierId
+  /** apna Unlimited as the list's last radio: the sticky CTA buys it. */
+  subscription?: { onSelect: () => void; blocked?: { label: string; message: string } }
 }
 
 function MobileJobPlanRadioGroup({
@@ -332,18 +335,23 @@ function MobileJobPlanRadioGroup({
   creditBalance,
   onSelectTier,
   recommendedId,
+  subscription,
 }: MobileJobPlanRadioGroupProps) {
   const router = useRouter()
-  const [selectedKey, setSelectedKey] = React.useState<JobPlanTierId>(recommendedId)
+  const [selectedKey, setSelectedKey] = React.useState<JobPlanTierId | "unlimited">(recommendedId)
   const creditMode = hasAnyCredits(creditBalance)
   const { extraOff, shimmerKey } = React.useContext(PlanOfferContext)
 
-  const { singleCredit } = usePlans()
+  const { singleCredit, plan: subscriptionPlan } = usePlans()
   const selectedTier = tiers.find((t) => t.id === selectedKey) ?? tiers[0]
   const plan = creditPlan(selectedTier, creditBalance, singleCredit)
+  const unlimitedSelected = selectedKey === "unlimited" && !!subscription
 
   let ctaText = ""
-  if (plan.state === "covered") {
+  if (unlimitedSelected) {
+    const monthly = subscriptionPlan("monthly").price
+    ctaText = `Get apna unlimited • ${inr(extraOff ? withExtraOff(monthly) : monthly)}`
+  } else if (plan.state === "covered") {
     ctaText = `Post now (${creditLabel(selectedTier.credit)} used)`
   } else if (plan.state === "partial") {
     ctaText = `Buy ${plan.shortfall} credit${plan.shortfall === 1 ? "" : "s"} & post • ${inr(plan.price)}`
@@ -440,6 +448,15 @@ function MobileJobPlanRadioGroup({
             />
           )
         })}
+        {subscription && (
+          <BlockedSubscription blocked={subscription.blocked}>
+            <MobileSubscriptionCard
+              selected={unlimitedSelected}
+              onSelect={() => setSelectedKey("unlimited")}
+              blocked={!!subscription.blocked}
+            />
+          </BlockedSubscription>
+        )}
       </div>
 
       {/* Mobile Sticky Bottom CTA Dock for selected single job tier */}
@@ -456,7 +473,7 @@ function MobileJobPlanRadioGroup({
             variant="checkout"
             size="xl"
             className="min-w-0 flex-1 rounded-full shadow-popover"
-            onClick={() => onSelectTier(selectedTier)}
+            onClick={() => (unlimitedSelected ? subscription?.onSelect() : onSelectTier(selectedTier))}
           >
             <span className="truncate">{ctaText}</span>
           </Button>
@@ -466,8 +483,17 @@ function MobileJobPlanRadioGroup({
   )
 }
 
-/** Distinct mobile card for Apna Unlimited subscription offering in Express Checkout */
-function MobileSubscriptionCard({ onSelect, blockedLabel }: { onSelect: () => void; blockedLabel?: string }) {
+/** apna Unlimited as the phone plan list's last radio. Its features show
+ *  only while selected; the sticky CTA buys it. */
+function MobileSubscriptionCard({
+  selected,
+  onSelect,
+  blocked,
+}: {
+  selected: boolean
+  onSelect: () => void
+  blocked?: boolean
+}) {
   const plan = { ...usePlans().plan("monthly"), ...MONTHLY_PLAN_PERKS }
   const { extraOff, shimmerKey } = React.useContext(PlanOfferContext)
   const price = extraOff ? withExtraOff(plan.price) : plan.price
@@ -478,38 +504,33 @@ function MobileSubscriptionCard({ onSelect, blockedLabel }: { onSelect: () => vo
   const discountPct = strike && strike > price ? Math.round((1 - price / strike) * 100) : null
   return (
     <MobileUnlimitedCard
-      onSelect={blockedLabel ? undefined : onSelect}
+      selected={selected}
+      onSelect={blocked ? undefined : onSelect}
       key={shimmerKey}
       className="sm:hidden"
       cardClassName={cn(shimmerKey > 0 && "animate-shimmer-once")}
       title={plan.name}
-      subtitle="Unlimited job reposts"
+      subtitle={
+        <MobileMetaLine icon={<ClockFading aria-hidden />}>Valid for {plan.slotDays} days</MobileMetaLine>
+      }
       mrp={strike ? inr(strike) : undefined}
       price={inr(price)}
-      unit={plan.unit}
+      unit={plan.unitShort}
       belowPrice={<MobileDiscountRow pct={discountPct} note={extraOff ? "Incl. 10% extra" : undefined} />}
       upcoming={<UpcomingPriceLine price={plan.janPrice} />}
+meta={
+        <span className="flex items-center gap-1.5 text-xs font-medium text-foreground">
+          <BriefcaseBusiness className="size-3.5 shrink-0 text-checkout-primary" aria-hidden />
+          {slotLabel(plan.slots)}
+        </span>
+      }
       features={[
-        // The same three lines as self-checkout's phone card.
-        [<BriefcaseBusiness key="i" aria-hidden />, <><strong>{slotLabel(plan.slots)}</strong> for {plan.slotDays}{"\u00A0"}days</>],
+        // The slot sits above as meta; these show when selected.
+        [<RefreshCw key="i" aria-hidden />, "Free job reposts and swapping"],
         [<Database key="i" aria-hidden />, dbCreditsLabel(plan)],
         [<WhatsApp key="i" aria-hidden />, "WhatsApp outreach to matched candidates"],
       ]}
       note={plan.note}
-      cta={
-        // Dark companion CTA, as in self-checkout: the green "Continue" /
-        // pay CTA stays the screen's one primary.
-        <Button
-          type="button"
-          variant="emphasis"
-          size="sm"
-          className="h-8 shrink-0 rounded-full px-3.5 text-xs font-semibold"
-          onClick={onSelect}
-          disabled={!!blockedLabel}
-        >
-          {blockedLabel ?? "Get unlimited"}
-        </Button>
-      }
     />
   )
 }
@@ -611,10 +632,8 @@ export function SubscriptionJobPlans({
           creditBalance={creditBalance}
           onSelectTier={onSelectTier}
           recommendedId={RECOMMENDED_TIER.subscription}
+          subscription={{ onSelect: onSelectSubscription, blocked: subscriptionBlocked }}
         />
-        <BlockedSubscription blocked={subscriptionBlocked}>
-          <MobileSubscriptionCard onSelect={onSelectSubscription} blockedLabel={subscriptionBlocked?.label} />
-        </BlockedSubscription>
       </div>
 
       <div className="hidden sm:flex sm:flex-col sm:gap-4 xl:flex-row">

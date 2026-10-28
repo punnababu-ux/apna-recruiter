@@ -30,7 +30,7 @@ export interface JobCreditBundlesProps {
   extraOff?: boolean
   onBuyNow: (bundle: Bundle) => void
   onBuySingleCredit: () => void
-  selectedBundleId?: BundleId
+  selectedBundleId?: BundleId | null
   onSelectBundle?: (bundle: Bundle) => void
   className?: string
 }
@@ -47,7 +47,8 @@ export function JobCreditBundles({
   const [internalSelectedId, setInternalSelectedId] = React.useState<BundleId>(
     () => bundles.find((b) => b.recommended)?.id ?? bundles[0].id,
   )
-  const currentSelectedId = selectedBundleId ?? internalSelectedId
+  // null: something outside the list is selected (the Unlimited card).
+  const currentSelectedId = selectedBundleId === undefined ? internalSelectedId : selectedBundleId
 
   const handleSelect = (bundle: Bundle) => {
     setInternalSelectedId(bundle.id)

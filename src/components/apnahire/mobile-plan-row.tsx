@@ -27,7 +27,11 @@
  *   MobileDiscountRow   "Incl. 10% extra" + the % OFF badge, under the price.
  *   MobileUnlimitedCard the apna Unlimited card: dark frame, logo, then a white
  *                       card with the same name | price header, a feature
- *                       list and a note + CTA footer.
+ *                       list and a note + CTA footer. With `selected` it is
+ *                       a radio in the plan list instead: a radio after the
+ *                       price, no CTA (the sticky bar buys it), and the
+ *                       features and note show only while selected, like
+ *                       MobilePlanRow's `details`.
  *
  * Text growth (AGENTS.md): the price column never shrinks and its groups
  * never split; the left column wraps first.
@@ -265,7 +269,13 @@ export interface MobileUnlimitedCardProps {
   /** Feature lines: `[icon, text]` pairs. */
   features: Array<[React.ReactNode, React.ReactNode]>
   note?: React.ReactNode
-  cta: React.ReactNode
+  /** Omitted in radio mode (`selected` set). */
+  cta?: React.ReactNode
+  /** Radio mode: one choice in the phone plan list. */
+  selected?: boolean
+  /** Radio mode: lines under the subtitle, always shown (as MobilePlanRow's
+   *  `meta`), e.g. the job slot with its validity. */
+  meta?: React.ReactNode
   /** Makes the whole card tappable (the same action as the CTA). A tap on
    *  the CTA itself is left to it, so the action never fires twice; the CTA
    *  stays the keyboard / screen-reader route. */
@@ -286,10 +296,26 @@ export function MobileUnlimitedCard({
   features,
   note,
   cta,
+  selected,
+  meta,
   onSelect,
   cardClassName,
   className,
 }: MobileUnlimitedCardProps) {
+  const radioMode = selected !== undefined
+  const expanded = !radioMode || selected
+  const priceBlock = (
+    <div className="flex shrink-0 flex-col items-end gap-1 text-right">
+      <span className="flex items-baseline gap-1.5 whitespace-nowrap">
+        {mrp && <span className="text-plan-strike text-muted-foreground">{mrp}</span>}
+        <span className="text-plan-price-compact tabular-nums text-foreground">{price}</span>
+        {/* Muted like the struck price: only the price is dark. */}
+        {unit && <span className="text-plan-unit text-muted-foreground">{unit}</span>}
+      </span>
+      {belowPrice}
+      <Upcoming>{upcoming}</Upcoming>
+    </div>
+  )
   return (
     // Slim frame at the sides and bottom (2.5) so the white card gets the
     // width; the top keeps room above and below the logo. The logo sits
@@ -302,6 +328,17 @@ export function MobileUnlimitedCard({
             }
           : undefined
       }
+      {...(radioMode && {
+        role: "radio",
+        "aria-checked": selected,
+        tabIndex: onSelect ? 0 : -1,
+        onKeyDown: (e: React.KeyboardEvent) => {
+          if (onSelect && (e.key === "Enter" || e.key === " ")) {
+            e.preventDefault()
+            onSelect()
+          }
+        },
+      })}
       className={cn(
         "flex flex-col gap-3 rounded-card bg-gradient-checkout-unlimited px-2.5 pt-5 pb-2.5 text-surface-inverted-fg",
         onSelect && "ink press-subtle relative cursor-pointer transition-interactive",
@@ -315,28 +352,39 @@ export function MobileUnlimitedCard({
       <div
         className={cn(
           "relative flex flex-col gap-3 overflow-hidden rounded-card-nested bg-plan-card p-4 text-card-foreground shadow-card",
+          // Selected as in MobilePlanRow: the CTA green edge.
+          radioMode && (selected ? "border-2 border-cta-primary ring-1 ring-cta-primary/20" : "border-2 border-transparent"),
           cardClassName
         )}
       >
-        {/* Name and price share the top line; subtitle and the discount
-            row sit under them. */}
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex min-w-0 flex-col gap-1.5">
-            <span className="text-plan-name text-foreground">{title}</span>
-            {subtitle && <span className="text-xs text-muted-foreground">{subtitle}</span>}
+        {radioMode ? (
+          // As MobilePlanRow: name + radio on top, subtitle | price below.
+          <>
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-plan-name text-foreground">{title}</span>
+              <RadioMark checked={selected} size="lg" className="data-checked:border-cta-primary [&>span]:bg-cta-primary" />
+            </div>
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex min-w-0 flex-col gap-2">
+                <span className="text-xs text-muted-foreground">{subtitle}</span>
+                {meta}
+              </div>
+              {priceBlock}
+            </div>
+          </>
+        ) : (
+          // Name and price share the top line; subtitle and the discount
+          // row sit under them.
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex min-w-0 flex-col gap-1.5">
+              <span className="text-plan-name text-foreground">{title}</span>
+              {subtitle && <span className="text-xs text-muted-foreground">{subtitle}</span>}
+            </div>
+            {priceBlock}
           </div>
-          <div className="flex shrink-0 flex-col items-end gap-1 text-right">
-            <span className="flex items-baseline gap-1.5 whitespace-nowrap">
-              {mrp && <span className="text-plan-strike text-muted-foreground">{mrp}</span>}
-              <span className="text-plan-price-compact tabular-nums text-foreground">{price}</span>
-              {/* Muted like the struck price: only the price is dark. */}
-              {unit && <span className="text-plan-unit text-muted-foreground">{unit}</span>}
-            </span>
-            {belowPrice}
-            <Upcoming>{upcoming}</Upcoming>
-          </div>
-        </div>
+        )}
 
+        {expanded && (
         <div className="flex flex-col gap-2 border-t border-border/60 pt-3 text-xs text-muted-foreground">
           {features.map(([icon, text], i) => (
             <div key={i} className="flex items-center gap-2 [&_svg]:size-3.5 [&_svg]:shrink-0 [&_svg]:text-foreground">
@@ -345,11 +393,14 @@ export function MobileUnlimitedCard({
             </div>
           ))}
         </div>
+        )}
 
-        <div className="flex items-center justify-between gap-3 border-t border-border/60 pt-3">
-          {note && <span className="text-xs italic text-muted-foreground">{note}</span>}
-          {cta}
-        </div>
+        {expanded && (note || cta) && (
+          <div className="flex items-center justify-between gap-3 border-t border-border/60 pt-3">
+            {note && <span className="text-xs italic text-muted-foreground">{note}</span>}
+            {cta}
+          </div>
+        )}
       </div>
     </div>
   )

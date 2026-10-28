@@ -30,6 +30,7 @@ export type JobSlotCount = 1 | 2 | 3
  *   Plan name (tiles,       Monthly plan   Quarterly plan   Annual plan
  *     order summary, CTAs)
  *   Price unit              /month         /quarter         /year
+ *   Phone unit (unitShort)  /mo            /qtr             /yr
  *   Length / validity       30 days        90 days          365 days
  *
  * A term's length is always said in days ("for 365 days"); months are only
@@ -39,11 +40,11 @@ export type JobSlotCount = 1 | 2 | 3
  */
 export const SUBSCRIPTION_TERMS: Record<
   SubscriptionPlanId,
-  { title: string; name: string; unit: string; months: number; slotDays: number }
+  { title: string; name: string; unit: string; unitShort: string; months: number; slotDays: number }
 > = {
-  monthly: { title: "Monthly", name: "Monthly plan", unit: "/month", months: 1, slotDays: 30 },
-  quarterly: { title: "Quarterly", name: "Quarterly plan", unit: "/quarter", months: 3, slotDays: 90 },
-  annual: { title: "Annual", name: "Annual plan", unit: "/year", months: 12, slotDays: 365 },
+  monthly: { title: "Monthly", name: "Monthly plan", unit: "/month", unitShort: "/mo", months: 1, slotDays: 30 },
+  quarterly: { title: "Quarterly", name: "Quarterly plan", unit: "/quarter", unitShort: "/qtr", months: 3, slotDays: 90 },
+  annual: { title: "Annual", name: "Annual plan", unit: "/year", unitShort: "/yr", months: 12, slotDays: 365 },
 }
 
 /** A term's price. `mrp` is the struck list price; `janPrice` the price
@@ -142,6 +143,8 @@ export interface SubscriptionPlan {
   title: string
   name: string
   unit: string
+  /** Phones: "/mo", "/qtr", "/yr". */
+  unitShort: string
   slots: JobSlotCount
   price: number
   mrp?: number

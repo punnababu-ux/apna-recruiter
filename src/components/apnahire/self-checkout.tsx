@@ -92,6 +92,8 @@ function randomOrderId() {
 type SelectedPackage =
   | { kind: "job"; bundle: Bundle }
   | { kind: "db"; bundle: DbBundle }
+  // Phones' Jobs list: the apna Unlimited card (monthly plan).
+  | { kind: "unlimited" }
 
 /** A signed-out "Proceed to pay": what was being bought, kept across the
  *  login steps so the logged-in Plans page can reopen the same order. */
@@ -433,6 +435,8 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
             : change.ctaLabels[subscriptionPlan]
         : activeTab === "unlimited"
         ? `Buy ${plans.plan(subscriptionPlan).name.toLowerCase()} • ${shownPrice(plans.plan(subscriptionPlan, subscriptionSlots).price)}`
+        : selectedPackage.kind === "unlimited"
+          ? `Get apna unlimited • ${shownPrice(plans.plan("monthly").price)}`
         : selectedPackage.kind === "job"
           ? `Buy ${selectedPackage.bundle.credits} job credits • ${shownPrice(selectedPackage.bundle.price)}`
           : `Buy ${selectedPackage.bundle.credits.toLocaleString("en-IN")} database credits • ${shownPrice(selectedPackage.bundle.price)}`
@@ -442,6 +446,8 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
       onUnlimitedCard(subscriptionPlan)
     } else if (activeTab === "enterprise") {
       contactSales()
+    } else if (selectedPackage.kind === "unlimited") {
+      buyMonthly()
     } else if (selectedPackage.kind === "job") {
       handleSelectBundle(selectedPackage.bundle)
     } else {
@@ -664,7 +670,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                         extraOff={offer.claimed}
                         onBuyNow={handleSelectBundle}
                         onBuySingleCredit={handleBuySingleCredit}
-                        selectedBundleId={selectedPackage.kind === "job" ? selectedPackage.bundle.id : undefined}
+                        selectedBundleId={selectedPackage.kind === "job" ? selectedPackage.bundle.id : null}
                         onSelectBundle={(bundle) => setSelectedPackage({ kind: "job", bundle })}
                       />
                       <p className="text-xs text-checkout-hero-fg">
@@ -677,7 +683,13 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                     </div>
 
                     {/* 2. apna Unlimited Inset Card */}
-                    <UnlimitedSideCard extraOff={offer.claimed} onBuyNow={() => buyMonthly()} />
+                    <UnlimitedSideCard
+                      extraOff={offer.claimed}
+                      mobileSelect={{
+                        selected: selectedPackage.kind === "unlimited",
+                        onSelect: () => setSelectedPackage({ kind: "unlimited" }),
+                      }}
+                    />
                   </div>
 
                   {/* Both auth states — the updated Jobs frame draws this card

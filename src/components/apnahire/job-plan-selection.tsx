@@ -156,6 +156,7 @@ export function JobPlanSelection() {
   const [exitPrompt, setExitPrompt] = React.useState<{ proceed: () => void } | null>(null)
   // A returning recruiter is asked to stay instead (StayDialog).
   const [stayPrompt, setStayPrompt] = React.useState<{ proceed: () => void; where: "plan" | "summary" } | null>(null)
+  const summaryStayAsked = React.useRef(false)
   const [shimmerKey, setShimmerKey] = React.useState(0)
 
   // Every price here follows the pricing phase (preview settings).
@@ -226,8 +227,11 @@ export function JobPlanSelection() {
     (checkoutItem?.price ?? 0) > 0 || (aiAdded && creditBalance["ai-calling"] < 1)
   const attemptExit = (proceed: () => void, paymentRequired = !holdsCredits, where: "plan" | "summary" = "plan") => {
     if (offer.nudgeAvailable && paymentRequired) setExitPrompt({ proceed })
-    else if (offer.returning && paymentRequired) setStayPrompt({ proceed, where })
-    else proceed()
+    // Asked once at the order summary: leaving the plan page doesn't ask again.
+    else if (offer.returning && paymentRequired && !(where === "plan" && summaryStayAsked.current)) {
+      if (where === "summary") summaryStayAsked.current = true
+      setStayPrompt({ proceed, where })
+    } else proceed()
   }
 
   const singleJobLine = (tier: JobPlanTier): CartLine => ({
