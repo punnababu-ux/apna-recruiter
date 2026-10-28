@@ -60,7 +60,7 @@ export function PrototypeSettings({ label, children }: { label: string; children
         {/* An invisible anchor where the gear was, so the pop-up opens in
             the same place. */}
         <PopoverTrigger nativeButton={false} render={<span aria-hidden className="block size-0" />} />
-        <PopoverContent side="top" align="start" aria-label={label} className="flex w-64 flex-col gap-2 divide-y divide-border p-3">
+        <PopoverContent side="top" align="start" aria-label={label} className="flex max-h-(--available-height) w-64 flex-col gap-2 divide-y divide-border overflow-y-auto overscroll-contain p-3">
           {children}
         </PopoverContent>
       </Popover>
@@ -95,7 +95,8 @@ export function PrototypeOption({
     <Button
       variant={active ? "secondary" : "ghost"}
       size="sm"
-      className="justify-start text-sm font-medium"
+      // Long labels wrap inside the panel instead of running past it.
+      className="h-auto justify-start py-1.5 text-left text-sm font-medium whitespace-normal"
       aria-current={active ? "true" : undefined}
       disabled={disabled}
       onClick={onClick}
