@@ -12,6 +12,7 @@ import * as React from "react"
 import { CheckCircle2 } from "@apna/design-system"
 import { Button, Separator } from "@apna/design-system"
 import type { CartLine } from "@/components/apnahire/checkout-drawer"
+import { splitGst } from "@/lib/apnahire/bill"
 import { inr } from "@/lib/format"
 
 interface PaymentSuccessProps {
@@ -38,8 +39,12 @@ export function PaymentSuccess({
   note,
 }: PaymentSuccessProps) {
   const paid = total > 0
-  const subtotal = lines.reduce((sum, l) => sum + l.price, 0)
-  const gst = total - subtotal >= 0 ? total - subtotal : Math.round(subtotal * 0.18)
+  // The charged total is the truth: split it back into sub total + GST, and
+  // show whatever came off the line prices (coupon, upgrade credit) as its
+  // own row, so the receipt adds up.
+  const itemsTotal = lines.reduce((sum, l) => sum + l.price, 0)
+  const { subtotal, gst } = splitGst(total)
+  const discounts = itemsTotal - subtotal
 
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center bg-muted px-4 py-12">
@@ -74,6 +79,12 @@ export function PaymentSuccess({
               ))}
             </ul>
             <Separator className="my-3" />
+            {discounts > 0 && (
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Discounts</span>
+                <span className="font-medium text-success">−{inr(discounts)}</span>
+              </div>
+            )}
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Sub total</span>
               <span className="font-medium text-foreground">{inr(subtotal)}</span>

@@ -29,7 +29,7 @@
  *                 CTA off, with a tooltip saying how to undo it.
  *
  * Anything less than today's plan (a shorter term or fewer slots) is a
- * downgrade (changeKindOf). Rules and state: hooks/use-job-slots.ts.
+ * downgrade (changeKindOf, lib/apnahire/bill.ts). State: hooks/use-job-slots.ts.
  */
 
 import * as React from "react"
@@ -100,6 +100,7 @@ import {
   type SubscriptionDetails,
 } from "@/hooks/use-job-slots"
 import { inr, num } from "@/lib/format"
+import { withGst } from "@/lib/apnahire/bill"
 import { cn } from "@/lib/utils"
 
 /** From sm the three usage tiles share the usage grid's rows (subgrid), so
@@ -504,8 +505,8 @@ function CurrentPlan({
 
 function Billing({ sub, listPrice }: { sub: SubscriptionDetails; listPrice: number }) {
   const next = sub.scheduled
-  // What autopay takes: the plan price with GST (18%, as the order summary).
-  const nextPrice = Math.round((next?.price ?? sub.paid ?? listPrice) * 1.18)
+  // What autopay takes: the plan price with GST, as the order summary.
+  const nextPrice = withGst(next?.price ?? sub.paid ?? listPrice)
   const MethodIcon = sub.payMethod === "card" ? CreditCard : Smartphone
   const method = sub.payMethod === "card" ? "Card" : "UPI autopay"
 

@@ -38,6 +38,9 @@ export interface LogoWallProps extends React.ComponentProps<"div"> {
   /** Glide the logos left in an endless loop (pauses on hover, edges fade).
    *  Reduced motion: the plain scrollable row. */
   marquee?: boolean
+  /** The still row: centred (default), or from the start edge, under a
+   *  left-aligned heading (express checkout's "Trusted by"). */
+  align?: "center" | "start"
 }
 
 const ITEM_HEIGHT = {
@@ -52,6 +55,7 @@ function LogoWall({
   itemHeight = "md",
   muted = false,
   marquee = false,
+  align = "center",
   className,
   ...props
 }: LogoWallProps) {
@@ -105,7 +109,7 @@ function LogoWall({
       className={cn("no-scrollbar w-full overflow-x-auto", className)}
       {...props}
     >
-      <div className="mx-auto flex w-max items-center gap-14">
+      <div className={cn("flex w-max items-center gap-14", align === "center" && "mx-auto")}>
         {items.map((item) => (
           <div
             key={item.name}

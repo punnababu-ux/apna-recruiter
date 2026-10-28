@@ -25,6 +25,7 @@
 
 import * as React from "react"
 import { setActiveSubscription } from "@/hooks/use-active-subscription"
+import { withGst } from "@/lib/apnahire/bill"
 import { SUBSCRIPTION_TERMS, type SubscriptionPlan, type SubscriptionPlanId } from "@/content/subscriptions"
 
 export type SlotJob = {
@@ -241,9 +242,9 @@ export function subscriptionOf(slots: Subscription) {
     payMethod: slots.payMethod ?? "upi-autopay",
     cancelled: slots.cancelled ?? false,
     // State saved before payments were kept: this cycle's payment, as
-    // charged (with 18% GST, like the order summary).
+    // charged (with GST, like the order summary).
     payments: slots.payments ?? [
-      { id: `pay-${startedOn}`, on: startedOn, plan: slots.plan, amount: Math.round((slots.paid ?? 0) * 1.18) },
+      { id: `pay-${startedOn}`, on: startedOn, plan: slots.plan, amount: withGst(slots.paid ?? 0) },
     ],
   }
 }
@@ -253,27 +254,6 @@ export function reactivateSubscription(sub: Subscription) {
   setJobSlots({ ...sub, cancelled: false, cancelReasons: undefined })
 }
 export type SubscriptionDetails = ReturnType<typeof subscriptionOf>
-
-const TERM_ORDER: SubscriptionPlanId[] = ["monthly", "quarterly", "annual"]
-
-/** Moving to `plan`: the same plan, an upgrade (instant), or a downgrade
- *  (at the cycle's end). Anything less — a shorter term or fewer slots,
- *  even with more of the other — is a downgrade. */
-export function changeKindOf(sub: SubscriptionDetails, plan: Pick<SubscriptionPlan, "id" | "slots">) {
-  const term = TERM_ORDER.indexOf(plan.id) - TERM_ORDER.indexOf(sub.term)
-  const slots = plan.slots - sub.total
-  if (term === 0 && slots === 0) return "same" as const
-  return term >= 0 && slots >= 0 ? ("upgrade" as const) : ("downgrade" as const)
-}
-
-/** An upgrade's price: the unused part of this cycle's payment (paid × days
- *  left ÷ the term's days) comes off the new plan. `listPrice` stands in
- *  when nothing was recorded as paid. */
-export function prorationOf(sub: SubscriptionDetails, newPrice: number, listPrice: number) {
-  const paid = sub.paid ?? listPrice
-  const credit = Math.min(newPrice, Math.round((paid * sub.daysLeft) / sub.termDays))
-  return { credit, payToday: newPrice - credit }
-}
 
 const planFields = (plan: SubscriptionPlan) => ({
   plan: plan.name,
