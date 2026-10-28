@@ -244,6 +244,23 @@ function WizardFooter({
             )}
             <div className="flex items-center justify-between gap-3">
               {secondary ??
+                (status && onBack ? (
+                  // Phones: the status (a step menu) holds the left end and
+                  // Back is an icon by Next. From sm, Back is back at the left.
+                  <span className="flex min-w-0 items-center">
+                    {status}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="lg"
+                      leadingIcon={<ChevronLeft />}
+                      className="max-sm:hidden"
+                      onClick={onBack}
+                    >
+                      {backLabel}
+                    </Button>
+                  </span>
+                ) : null) ??
                 status ??
                 (onBack ? (
                   // A plain outline button, same height as the CTA — the
@@ -260,7 +277,7 @@ function WizardFooter({
                   type="button"
                   variant="outline"
                   size="icon-lg"
-                  className="rounded-full"
+                  className="rounded-full sm:hidden"
                   aria-label={typeof backLabel === "string" ? backLabel : "Back"}
                   onClick={onBack}
                 >

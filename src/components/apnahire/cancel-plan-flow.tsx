@@ -19,7 +19,7 @@
  *   renewal    the renewal is under way: cancel after it has renewed
  *
  * Cancelling never ends the plan early (`cancelAtRenewal`): it runs to
- * its renewal date and nothing more is paid; "Reactivate plan" undoes it
+ * its renewal date and nothing more is paid; "Renew plan" undoes it
  * until then. The reasons are kept with
  * the subscription (prototype; in production they go to the API).
  */
@@ -140,7 +140,7 @@ export function CancelPlanFlow({
           />
           <PopupBody>
             <ChangeList title="What you lose then" items={benefits.map((text) => ({ text, lost: true }))} />
-            <p className="text-sm text-muted-foreground">Nothing more is charged. You can reactivate any time before then.</p>
+            <p className="text-sm text-muted-foreground">Nothing more is charged. You can renew any time before then.</p>
           </PopupBody>
           <PopupFooter>
             <Button variant="outline" size="lg" className="flex-1" onClick={close}>
@@ -178,7 +178,7 @@ export function CancelPlanFlow({
             </Button>
           }
         >
-          We&apos;re sorry to see you go. You can reactivate any time to keep hiring without interruption.
+          We&apos;re sorry to see you go. You can renew any time to keep hiring without interruption.
         </PopupResult>
       )}
     </PlanPopup>

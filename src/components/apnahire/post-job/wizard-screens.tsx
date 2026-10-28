@@ -32,6 +32,7 @@ import {
   AccordionItem,
   AccordionTrigger,
   Alert,
+  AlertBanner,
   AlertDescription,
   AlertTitle,
   Badge,
@@ -55,7 +56,6 @@ import {
   Heart,
   Home,
   IndianRupee,
-  Info,
   Input,
   Laptop,
   Lock,
@@ -132,6 +132,7 @@ import {
   salaryLabel,
 } from "@/lib/apnahire/job-draft"
 import { cn } from "@/lib/utils"
+import { useJobSlots } from "@/hooks/use-job-slots"
 import type { JobPostDraft, JobType, PayType } from "@/types/apnahire-job"
 import { inr, num } from "@/lib/format"
 
@@ -716,6 +717,10 @@ function Workplace(ctx: ScreenCtx) {
 
 /** Every known area as "Area, City", for the location search. */
 const ALL_AREAS = Object.entries(POPULAR_AREAS).flatMap(([city, areas]) => areas.map((area) => ({ area, city })))
+/** Before a city is known: the top area of each city, to tap or to start from. */
+const POPULAR_PLACES = Object.entries(POPULAR_AREAS)
+  .map(([city, areas]) => ({ area: areas[0], city }))
+  .slice(0, 6)
 
 /** One row of the location list: an icon, the place, a tick when picked. */
 function PlaceRow({
@@ -746,28 +751,42 @@ function PlaceRow({
   )
 }
 
-/** Office or field work: one search box for the area, with the city's
- *  popular areas under it (the reference prototype's pattern) — a tap, not
- *  a city dropdown plus a free-text field. Typing searches every city;
- *  anything else typed is kept as the area in the current city. Remote work
- *  only needs a city. */
+/** Office or field work: one search box, as Google Maps' place search —
+ *  no city dropdown beside it. Before typing it lists popular places (the
+ *  city's, once one is set; across cities before that); typing searches
+ *  every area and city, and picking a place sets the area and its city
+ *  together. In production the pick comes from Google Places and brings the
+ *  pin code too (the mock areas have none). Remote work only needs a city. */
 function Location(ctx: ScreenCtx) {
   const { draft, update } = ctx
   const home = draft.locationType === "home"
   const field = draft.locationType === "field"
+  // A subscription locked to a city: every job posts there, so the search
+  // stays inside it and the city can't be changed here.
+  const locked = useJobSlots()?.city
+  React.useEffect(() => {
+    if (locked && draft.city !== locked) {
+      update("city", locked)
+      update("area", "")
+    }
+  }, [locked, draft.city, update])
   const [query, setQuery] = React.useState(draft.area)
   // The last area picked from the list (or loaded): while the box shows it,
   // the list stays on the city's popular areas instead of searching.
   const [picked, setPicked] = React.useState(draft.area)
+  // Manual entry: for a village or mandal the place search can't find.
+  const [manual, setManual] = React.useState(false)
   const q = query.trim().toLowerCase()
   const searching = q.length > 0 && q !== picked.trim().toLowerCase()
-  const confirmed = !!picked && picked === draft.area && !!draft.city
+  const confirmed = !manual && !!picked && picked === draft.area && !!draft.city
   const matches = searching
-    ? ALL_AREAS.filter((a) => `${a.area} ${a.city}`.toLowerCase().includes(q)).slice(0, 6)
-    : (POPULAR_AREAS[draft.city] ?? []).slice(0, 4).map((area) => ({ area, city: draft.city }))
+    ? ALL_AREAS.filter((a) => (!locked || a.city === locked) && `${a.area} ${a.city}`.toLowerCase().includes(q)).slice(0, 6)
+    : draft.city
+      ? (POPULAR_AREAS[draft.city] ?? []).slice(0, 4).map((area) => ({ area, city: draft.city }))
+      : POPULAR_PLACES
   // Typing a city ("hyde…") offers the city itself first: picking it
   // switches the list to that city's popular areas.
-  const cityMatches = searching ? CITIES.filter((c) => c.toLowerCase().startsWith(q)).slice(0, 2) : []
+  const cityMatches = searching && !locked ? CITIES.filter((c) => c.toLowerCase().startsWith(q)).slice(0, 2) : []
   const pickCity = (city: string) => {
     update("city", city)
     update("area", "")
@@ -780,6 +799,24 @@ function Location(ctx: ScreenCtx) {
     setQuery(area)
     setPicked(area)
   }
+  const lockedNote = locked && (
+    <AlertBanner
+      variant="info"
+      icon={<Lock aria-hidden />}
+      title={
+        <>
+          Your plan posts jobs in <span className="font-semibold">{locked}</span> only
+        </>
+      }
+    />
+  )
+  const cityField = (id: string, label: string) =>
+    locked ? null : (
+      <Field>
+        <FieldLabel htmlFor={id}>{label}</FieldLabel>
+        <ListSelect id={id} value={draft.city} options={CITIES} placeholder="Select city" onChange={(v) => update("city", v)} />
+      </Field>
+    )
   return (
     <>
       <WizardQuestion
@@ -788,19 +825,51 @@ function Location(ctx: ScreenCtx) {
         description={home ? "The city you hire from." : "Shown on the job post."}
       />
       <Checks ctx={ctx} ids={["unserved-city"]} />
-      {home || !draft.city ? (
-        <Field>
-          <FieldLabel htmlFor="job-city">City</FieldLabel>
-          <ListSelect
-            id="job-city"
-            value={draft.city}
-            options={CITIES}
-            placeholder="Select city"
-            onChange={(v) => update("city", v)}
-          />
-        </Field>
-      ) : null}
-      {!home && (
+      {lockedNote}
+      {home && cityField("job-city", "City")}
+      {!home && manual && (
+        // Manual entry: the place as the recruiter knows it, its nearest
+        // served city, and the pin code.
+        <div className="flex flex-col gap-4">
+          <Field>
+            <FieldLabel htmlFor="job-area">Village, area or locality</FieldLabel>
+            <Input
+              id="job-area"
+              className="text-base md:text-sm"
+              value={draft.area}
+              onChange={(e) => update("area", e.target.value)}
+              placeholder="e.g. Shamshabad mandal"
+            />
+          </Field>
+          {cityField("job-city", "Nearest city")}
+          <Field>
+            <FieldLabel htmlFor="job-pincode">Pin code</FieldLabel>
+            <Input
+              id="job-pincode"
+              className="text-base md:text-sm"
+              inputMode="numeric"
+              maxLength={6}
+              value={draft.pincode ?? ""}
+              onChange={(e) => update("pincode", e.target.value.replace(/\D/g, ""))}
+              placeholder="6 digits"
+            />
+          </Field>
+          <Button
+            type="button"
+            variant="link"
+            size="sm"
+            className="self-start"
+            onClick={() => {
+              setManual(false)
+              setQuery("")
+              setPicked("")
+            }}
+          >
+            Search instead
+          </Button>
+        </div>
+      )}
+      {!home && !manual && (
         <>
           {/* Picked: one confirmed card; Change goes back to the search. */}
           {confirmed ? (
@@ -810,6 +879,7 @@ function Location(ctx: ScreenCtx) {
                 <span className="text-base font-semibold text-foreground">{draft.area}</span>
                 <span className="text-sm text-muted-foreground">
                   {draft.area}, {draft.city}
+                  {draft.pincode ? ` ${draft.pincode}` : ""}
                 </span>
               </span>
               <button
@@ -832,23 +902,23 @@ function Location(ctx: ScreenCtx) {
                 />
                 <Input
                   aria-label={field ? "Base area" : "Office area"}
-                  className="pl-10"
+                  className="pl-10 text-base md:text-sm"
                   value={query}
                   onChange={(e) => {
                     setQuery(e.target.value)
                     // Typed text counts as the area until a suggestion is picked.
                     update("area", e.target.value)
                   }}
-                  placeholder="Search area or city"
+                  placeholder={locked ? `Search area in ${locked}` : "Search area or city"}
                 />
               </div>
               {matches.length + cityMatches.length > 0 && (
                 <div className="flex flex-col overflow-hidden rounded-card-nested border border-border">
                   <div className="flex items-center justify-between gap-3 px-4 pt-3 pb-1">
                     <span className="text-overline text-muted-foreground">
-                      {searching ? "Matching places" : `Popular in ${draft.city}`}
+                      {searching ? "Matching places" : draft.city ? `Popular in ${draft.city}` : "Popular places"}
                     </span>
-                    {!searching && (
+                    {!searching && draft.city && !locked && (
                       <button
                         type="button"
                         className="text-xs font-medium text-primary underline-offset-4 hover:underline"
@@ -877,12 +947,20 @@ function Location(ctx: ScreenCtx) {
                   ))}
                 </div>
               )}
+              <Button
+                type="button"
+                variant="link"
+                size="sm"
+                className="self-start"
+                onClick={() => {
+                  setManual(true)
+                  update("area", "")
+                }}
+              >
+                Can&apos;t find it? Enter it manually
+              </Button>
             </>
           )}
-          <p className="flex items-start gap-3 rounded-card-nested bg-muted p-4 text-sm text-muted-foreground">
-            <Info className="mt-0.5 size-4 shrink-0" aria-hidden />
-            Only the area is shown.
-          </p>
         </>
       )}
       {draft.locationType === "office" && draft.city && (
@@ -1687,11 +1765,13 @@ export const SCREENS: ScreenDef[] = [
     stage: "job",
     preview: "top",
     check: (d) =>
-      !d.city
-        ? "Choose a city"
-        : d.locationType !== "home" && !has(d.area)
-          ? "Add the area"
-          : blockingCheck(d, ["unserved-city"]),
+      d.locationType !== "home" && !has(d.area)
+        ? "Add the area"
+        : !d.city
+          ? "Choose a city"
+          : d.pincode && d.pincode.length !== 6
+            ? "Enter a 6-digit pin code"
+            : blockingCheck(d, ["unserved-city"]),
     Render: Location,
   },
   {

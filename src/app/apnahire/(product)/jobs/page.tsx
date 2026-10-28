@@ -34,6 +34,10 @@ import { JobList, STATUS_LABELS, type ApnaJob, type ApnaJobStatus } from "@/comp
 import { PageHeader } from "@/components/onlyrounds/page-header"
 import { PlanEndedBanner } from "@/components/apnahire/plan-ended"
 import { PriceChangeBanner } from "@/components/apnahire/price-change-banner"
+import { JobSlotsControls, PrototypeSettings } from "@/components/apnahire/prototype-settings"
+import { OfferBarPreviewControls, SubscriberPlanCard, useOfferBarPreview } from "@/components/apnahire/subscriber-plan-card"
+import { useJobSlots } from "@/hooks/use-job-slots"
+import { recentlyEnded, usePreviousPlan } from "@/hooks/use-previous-plan"
 import { COMPANY_NAME } from "@/lib/apnahire/job-draft"
 import { useFlushHeader } from "@/hooks/use-flush-header"
 import { cn } from "@/lib/utils"
@@ -157,6 +161,14 @@ function JobsPageInner() {
   const toggle = (list: string[], value: string) =>
     list.includes(value) ? list.filter((v) => v !== value) : [...list, value]
 
+  // The plan card: subscribers, or any offer bar picked in the preview
+  // settings. Never beside the "expired" banner: a plan that just ended
+  // shows that banner alone.
+  const slots = useJobSlots()
+  const offerPreview = useOfferBarPreview()
+  const prev = usePreviousPlan()
+  const showPlanCard = !!slots || (!!offerPreview && !recentlyEnded(prev))
+
   // Search and filters first; the tabs then split what they matched.
   const matched = MOCK.filter((j) => {
     if (cityFilters.length > 0 && !cityFilters.includes(j.city)) return false
@@ -242,6 +254,7 @@ function JobsPageInner() {
       <PriceChangeBanner />
       {/* A plan that just ended (a week): the way back. */}
       <PlanEndedBanner />
+      {showPlanCard && <SubscriberPlanCard template={offerPreview} />}
       <PageHeader
         variant="transparent"
         // Phones: no page title — the bottom bar already says Jobs.
@@ -341,6 +354,12 @@ function JobsPageInner() {
 
       {/* Phones: posting is the Jobs tab's main action, at thumb reach. */}
       <Fab href="/apnahire/jobs/new" icon={Plus} label="Post a job" />
+
+      {/* Prototype: the plan card's offer bar, every case. */}
+      <PrototypeSettings label="Preview plan card">
+        <OfferBarPreviewControls />
+        <JobSlotsControls />
+      </PrototypeSettings>
     </div>
   )
 }

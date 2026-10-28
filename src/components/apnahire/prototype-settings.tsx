@@ -36,7 +36,7 @@ import {
   type SlotPreset,
 } from "@/hooks/use-job-slots"
 import { usePlans } from "@/hooks/apnahire/use-plans"
-import { endSubscription } from "@/hooks/use-previous-plan"
+import { endSubscription, setPreviousPlan } from "@/hooks/use-previous-plan"
 import type { JobSlotCount } from "@/content/subscriptions"
 import { PRICING_PHASES } from "@/content/pricing-phase"
 import { setPricingPhase, usePricingPhase } from "@/hooks/use-pricing-phase"
@@ -155,10 +155,20 @@ export function JobSlotsControls() {
   return (
     <PrototypeSection title="Subscription">
       {options.map(([key, label]) => (
-        <PrototypeOption key={key} active={current === key && plans.slotCounts.includes(slots?.total as JobSlotCount)} onClick={() => setJobSlots(sampleSubscription(key, plan))}>
+        <PrototypeOption key={key} active={current === key && plans.slotCounts.includes(slots?.total as JobSlotCount)} onClick={() => {
+          // A preset is a clean state: no ended plan left over from a test.
+          setPreviousPlan(null)
+          setJobSlots(sampleSubscription(key, plan))
+        }}>
           {label}
         </PrototypeOption>
       ))}
+      {/* Back to "City not set", to replay the city-lock flows. */}
+      {slots?.city && (
+        <PrototypeOption onClick={() => setJobSlots({ ...slots, city: undefined })}>
+          Reset hiring city · {slots.city}
+        </PrototypeOption>
+      )}
       {/* The cycle ends now: a cancelled plan ends; otherwise it renews (as
           the booked downgrade if any), or its payment fails and it ends. */}
       {slots &&

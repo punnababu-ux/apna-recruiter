@@ -143,7 +143,8 @@ export function HeroLeadCard({ className, ...props }: PhoneLoginFormProps & { cl
       {/* The header's label, so the header button reads as this one moving
           up when it scrolls away. */}
       <PhoneLoginForm ctaLabel={HEADER_ACTIONS.primary.label} handsOffToHeader {...props} />
-      <LegalLine className="text-xs" />
+      {/* Desktop: one line (it ran 3px over and dropped "Privacy policy"). */}
+      <LegalLine className="text-xs md:tracking-tight md:whitespace-nowrap" />
     </Card>
   )
 }

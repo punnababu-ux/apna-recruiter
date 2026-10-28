@@ -15,7 +15,7 @@
  *                 card), then the plan's payments (invoices).
  *   Cancel plan   in the plan card's "⋯" menu: CancelPlanFlow (reason →
  *                 what is lost → cancelled). The plan runs to its renewal
- *                 date, then ends; "Reactivate plan" undoes it until then.
+ *                 date, then ends; "Renew plan" undoes it until then.
  *   Change plan   the plans step's own Unlimited cards (SubscriptionPlans,
  *                 on the checkout gradient) with this plan marked "Current
  *                 plan" at its slot count. Each card says what it does:
@@ -76,6 +76,7 @@ import { PageHeader } from "@/components/onlyrounds/page-header"
 import { CancelPlanFlow } from "@/components/apnahire/cancel-plan-flow"
 import { PlanEndedState } from "@/components/apnahire/plan-ended"
 import { recentlyEnded, usePreviousPlan } from "@/hooks/use-previous-plan"
+import { SetCityAction } from "@/components/apnahire/city-lock-dialog"
 import { PlanPopup, PopupFooter, PopupHeader } from "@/components/apnahire/plan-popup"
 import { JobSlotsControls, PricingPhaseControls, PrototypeSettings } from "@/components/apnahire/prototype-settings"
 import {
@@ -373,7 +374,7 @@ function CurrentPlan({
               actions tucked behind "⋯": cancelling lives there, never a button. */}
           <div className="flex shrink-0 items-center gap-1">
             <span className="hidden items-center gap-1 sm:flex">{badges}</span>
-            {/* Already cancelled: nothing to cancel; "Reactivate plan" is below. */}
+            {/* Already cancelled: nothing to cancel; "Renew plan" is below. */}
             {!sub.cancelled && (
               <DropdownMenu>
                 <DropdownMenuTrigger
@@ -449,8 +450,8 @@ function CurrentPlan({
               <Lock className="size-3.5" aria-label="Locked" />
             </>
           }
-          value={sub.city}
-          trend="Jobs and database searches stay in this city"
+          value={sub.city ?? <SetCityAction sub={slots} />}
+          trend={sub.city ? "Jobs post here. Database works anywhere" : "Locks to your first job's city"}
         />
       </div>
 
@@ -458,7 +459,7 @@ function CurrentPlan({
         <PopupHeader
           alone
           art="expired"
-          title="Reactivate your plan?"
+          title="Renew your plan?"
           description={
             <>
               Are you sure? Your plan renews on <span className="whitespace-nowrap">{dayLabel(sub.renewsOn)}</span> and
@@ -478,7 +479,7 @@ function CurrentPlan({
               setReactivating(false)
             }}
           >
-            Reactivate plan
+            Renew plan
           </Button>
         </PopupFooter>
       </PlanPopup>
@@ -491,7 +492,7 @@ function CurrentPlan({
           action={
             lock === "downgrade"
               ? { label: "Keep current plan", onClick: () => cancelScheduledChange(slots) }
-              : { label: "Reactivate plan", onClick: () => setReactivating(true) }
+              : { label: "Renew plan", onClick: () => setReactivating(true) }
           }
         />
       )}

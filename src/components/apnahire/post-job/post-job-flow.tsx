@@ -65,9 +65,10 @@ import {
 import { EMPTY_JOB_DRAFT, locationLabel, mergeDraft, normalizeDraft } from "@/lib/apnahire/job-draft"
 import { rememberPostIntent } from "@/lib/apnahire/post-intent"
 import { PaymentSuccess } from "@/components/apnahire/payment-success"
+import { CityLockDialog } from "@/components/apnahire/city-lock-dialog"
 import { SlotsFullDialog } from "@/components/apnahire/slots/slots-full-dialog"
 import { JobSlotsControls, PrototypeSettings, openPrototypeSettings } from "@/components/apnahire/prototype-settings"
-import { freeSlots, setJobSlots, todayLabel, useJobSlots } from "@/hooks/use-job-slots"
+import { freeSlots, lockSubscriptionCity, setJobSlots, todayLabel, useJobSlots } from "@/hooks/use-job-slots"
 import { cn } from "@/lib/utils"
 import type { JobPostDraft } from "@/types/apnahire-job"
 
@@ -429,7 +430,18 @@ export function PostJobFlow() {
     }
   }
 
-  const next = () => {
+  // A subscription without a city locks to this job's, confirmed on the
+  // location step; one with a city only posts there.
+  const [cityLockOpen, setCityLockOpen] = React.useState(false)
+  const next = (cityConfirmed = false) => {
+    if (state.screen === "location" && slots && state.draft.city) {
+      if (slots.city && slots.city !== state.draft.city) {
+        setError(`Your plan hires in ${slots.city} only`)
+        setAttempts((n) => n + 1)
+        return
+      }
+      if (!slots.city && !cityConfirmed && !def.check?.(state.draft)) return setCityLockOpen(true)
+    }
     if (state.screen === "describe") return drafting ? undefined : submitPrompt()
     // Safety net: an answer can go missing after its screen was passed (a
     // later edit, a jump back). Review doesn't send you hunting — it opens
@@ -616,9 +628,20 @@ export function PostJobFlow() {
         }
         nextLabel={nextLabel}
         nextVariant={postsNow ? "default" : "emphasis"}
-        onNext={next}
+        onNext={() => next()}
         error={error}
         errorKey={attempts}
+      />
+
+      <CityLockDialog
+        open={cityLockOpen}
+        onOpenChange={setCityLockOpen}
+        city={state.draft.city}
+        onConfirm={(city) => {
+          if (slots) lockSubscriptionCity(slots, city)
+          setCityLockOpen(false)
+          next(true)
+        }}
       />
 
       {slots && slots.jobs.length > 0 && (

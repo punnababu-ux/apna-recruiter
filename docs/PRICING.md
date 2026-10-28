@@ -121,12 +121,11 @@ them there, once (user call, 2026-10-22).
   - **All live jobs expire** when the plan ends.
   - **The hiring city is not kept.** Buying a plan again asks to lock a city
     at the next job post, as a first purchase does.
-  - **Renew the previous plan from self-checkout** (for 30 days): a slim
-    "Your previous plan" card (name, slots, today's price, "Renew") above the plan tabs.
-    Today's price, not the old one: the price lock ended with the plan. A
-    plan no longer sold shows "View plans" instead.
-  - **"Plan ended" banner** (compact, dashboard and Manage plan) for about
-    a week: "Your Unlimited monthly plan ended on 10 Nov 2026" + Renew.
+  - **"Expired" banner** for about a week, above the page title on the
+    jobs dashboard, Manage plan and the plans page: "Apna unlimited expired
+    on 6 May 2026" + "Renew now" (the plans page opens its Unlimited
+    tab). The plan card and its numbers are gone, and the sidebar's
+    "Manage plan" is "View plans" again.
     After that, the history lives in Credits & usage (`/apnahire/usage`,
     still to build): the plans bought, when they ran.
   - Later, not now: a plan audit for the customer (jobs posted, applies,
@@ -136,7 +135,7 @@ them there, once (user call, 2026-10-22).
   **One change at a time** (user call, 2026-10-23): a booked change blocks
   every other until it is undone or happens. A downgrade waits for the
   renewal date ("Keep current plan" drops it); a cancellation runs the plan
-  to its end ("Reactivate plan" undoes it). While either is booked, every
+  to its end ("Renew plan" undoes it). While either is booked, every
   plan card's CTA is off with a tooltip saying how to undo it, and "Cancel
   plan" explains it is blocked. An upgrade is instant, so it books nothing.
   No other lock (no renewal window).

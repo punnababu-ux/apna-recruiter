@@ -115,6 +115,7 @@ change between themes.
 | `--popover-foreground`   | gray-950           | gray-50             | text on popover                 |
 | `--surface-inverted`     | apna-royal-900     | apna-royal-950      | inverted hero / marketing banner|
 | `--surface-inverted-fg`  | gray-0             | gray-0              | text on inverted surface        |
+| `--lapsed-on-dark`       | red-400            | red-400             | "plan lapsed" line on a dark surface (OfferBar) |
 | `--surface-checkout-hero-fg`       | gray-900 | gray-50  | text on the checkout-hero gradient (see Gradients) |
 | `--surface-checkout-hero-fg-secondary` | gray-700 | gray-300 | secondary ink on the checkout-hero gradient — inactive tab labels + their glyphs, tab descriptions, the "Available credits" label, body subtitles. A step darker than `-muted`; the designs use it widely enough to earn a role rather than an opacity dim |
 | `--surface-checkout-hero-fg-muted`| gray-500  | gray-400 | helper text on the checkout-hero gradient |
@@ -191,6 +192,7 @@ Composed from primitives only, exposed as `bg-gradient-<name>` utilities
 | `--tabs-inverted-pill` / `--tabs-inverted-label` | `--foreground` / `--background`; dark: foreground 16% over `--muted` / `--foreground` | The jobs tabs' selected pill and label (`TabsList variant="inverted"`) |
 | `--cta-primary` / `--cta-primary-hover` | `--primary` (hover 90%); dark: apna-green-500 / 600 | The green button fill (Button `default`); `--primary` stays brighter in dark for green text, links, icons |
 | `--logo-apna` / `--logo-apna-deep` | plum-950 for both (one "apna" colour, the landing page header's); dark: plum-50 for both | The "apna" of the logos (`LogoApnaRecruiter`, `LogoApnaWordmark`), so the wordmark turns near-white in dark mode |
+| `--gradient-offer-bar` | `linear-gradient(100deg, apna-plum-400 → plum-700 → plum-950)`, both themes | OfferBar, the subscriber nudge on the plan card |
 | `--gradient-offer-premium` | 55% apna-gold-500 radial bloom top-left over `linear-gradient(137deg, apna-plum-400 → plum-700 → plum-950)`; dark: a quiet `plum-600 → 700 → 800`, no gold bloom (the gold Coin carries the accent) | subscription upgrade pop-up headers and every Plans button (`variant="premium"`) |
 | `--gradient-ai-subtle` | Light: `linear-gradient(100deg, apna-plum-50 → apna-sky-50 → apna-green-50)`. Dark: the 950 steps of the same ramps at 45–70% over the surface | soft "AI" wash behind the AI calling add-on in the express-checkout order summary (`bg-gradient-ai-subtle`); quiet enough for body text on top |
 | `--gradient-ai-demo` | Light: `linear-gradient(90deg, apna-navy-100 → apna-green-100)`. Dark: the 950 steps at 70% over the surface | violet → mint card behind the AI calling demo player in the "How AI calling works" pop-up (`bg-gradient-ai-demo`); a step stronger than `--gradient-ai-subtle` |

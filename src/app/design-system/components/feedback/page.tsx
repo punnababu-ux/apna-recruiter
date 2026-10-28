@@ -3,9 +3,9 @@
 import * as React from "react"
 import {
   Bell,
-  MoreHorizontal, AlertBanner, RenewalBanner, Meter, Button, Badge, Switch, Label } from "@apna/design-system"
+  MoreHorizontal, AlertBanner, OfferBar, OfferBarDrop, RenewalBanner, Meter, Button, Badge, Switch, Label } from "@apna/design-system"
 import { toast } from "sonner"
-import { AlertCircle, Info, CreditCard, ChevronRight, RefreshCw, Sparkles, InfinityIcon, ArrowUp, Clock } from "@apna/design-system"
+import { AlertCircle, Info, CreditCard, ChevronRight, RefreshCw, Sparkles, InfinityIcon, ArrowUp, ArrowRight, Clock } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 
 // Badge's translucent tones: `on-tint` softly darkens a light tint card (and
@@ -145,6 +145,15 @@ export default function FeedbackComponentsPage() {
             onClose={showClose ? () => toast("Close clicked") : undefined}
           />
 
+          {/* muted: a neutral note inside a form step. */}
+          <AlertBanner
+            variant="muted"
+            appearance={appearance}
+            icon={showIcon ? <Info /> : undefined}
+            title="Note: a neutral message that needs no action."
+            onClose={showClose ? () => toast("Close clicked") : undefined}
+          />
+
           <AlertBanner
             variant="success"
             appearance={appearance}
@@ -256,6 +265,38 @@ export default function FeedbackComponentsPage() {
             cta={<Button variant="secondary" trailingIcon={<ChevronRight />}>Buy now</Button>}
           />
         </div>
+      </div>
+
+      {/* OfferBar: the subscriber's nudge on the plan card, one per tone */}
+      <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-6">
+        <h2 className="border-b border-border/60 pb-2 text-h6 text-foreground">Offer bar</h2>
+        <p className="text-sm text-muted-foreground">
+          One plum bar for every subscriber nudge. tone colours the top line only: offer (grey), fix (amber), lapsed (salmon).
+          Without points and price, the right side is just the CTA.
+        </p>
+        <OfferBar
+          hook="Special upgrade offer"
+          headline={<>Pay <OfferBarDrop from="₹2,499" to="₹833" unit="/month" /> on the annual plan</>}
+          points={["1 active job slot for 365 days", "2,400 database credits"]}
+          price={{ amount: "₹9,999", strike: "₹11,110", off: "10% OFF" }}
+          deadline="Limited time offer"
+          cta={<Button variant="emphasis" trailingIcon={<ArrowRight />}>Upgrade now</Button>}
+        />
+        <OfferBar
+          tone="fix"
+          hook="Auto-pay is off"
+          headline="Your plan ends in 9 days"
+          cta={<Button variant="emphasis" trailingIcon={<ArrowRight />}>Turn on auto-pay</Button>}
+        />
+        <OfferBar
+          tone="lapsed"
+          hook="Your plan ended 39 days ago"
+          headline="Renew at the price you paid last time"
+          points={["1 active job slot for 30 days", "200 database credits"]}
+          price={{ amount: "₹2,249", strike: "₹2,499", off: "10% OFF" }}
+          deadline={<><Clock className="size-3.5" /> Offer ends in 6 days</>}
+          cta={<Button variant="emphasis" trailingIcon={<ArrowRight />}>Renew now</Button>}
+        />
       </div>
 
       {/* Count / attention badges */}

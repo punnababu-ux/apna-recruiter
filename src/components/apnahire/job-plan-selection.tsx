@@ -47,6 +47,7 @@ import {
   type CartLine,
   type SubscriptionPaymentMethod,
 } from "@/components/apnahire/checkout-drawer"
+import { CityLockDialog } from "@/components/apnahire/city-lock-dialog"
 import { PaymentModal } from "@/components/apnahire/payment-modal"
 import { TrustedByStrip } from "@/components/marketing/proof-bands"
 import { UpcomingPricesProvider } from "@/components/apnahire/upcoming-price-line"
@@ -118,6 +119,16 @@ function readDraftTitle(): string {
     return (raw && (JSON.parse(raw) as { draft?: { title?: string } }).draft?.title) || "Your job"
   } catch {
     return "Your job"
+  }
+}
+
+/** The job's city, which a subscription bought here is locked to. */
+function readDraftCity(): string {
+  try {
+    const raw = window.localStorage.getItem(JOB_DRAFT_STORAGE_KEY)
+    return (raw && (JSON.parse(raw) as { draft?: { city?: string } }).draft?.city) || ""
+  } catch {
+    return ""
   }
 }
 
@@ -310,7 +321,17 @@ export function JobPlanSelection() {
   const monthlyLine = () => planLine(plans.plan("monthly"))
   const annualLine = () => planLine(plans.annualPlan)
 
+  // A new subscription locks to the job's city: confirmed before paying.
+  const [cityLock, setCityLock] = React.useState<{ city: string; pay: () => void; open: boolean } | null>(null)
   const handleProceedToPay = (total: number, lines: CartLine[], method?: SubscriptionPaymentMethod) => {
+    const city = readDraftCity()
+    if (!slotUpgrade && city && checkoutItem?.id.startsWith("unlimited_")) {
+      setCityLock({ city, pay: () => pay(total, lines, method), open: true })
+      return
+    }
+    pay(total, lines, method)
+  }
+  const pay = (total: number, lines: CartLine[], method?: SubscriptionPaymentMethod) => {
     // Everything paid with credits (job and/or AI): post now, no payment.
     if (total === 0) {
       // The job-live screen, as after a payment, minus the payment details.
@@ -345,7 +366,7 @@ export function JobPlanSelection() {
       // (and makes the shell's plan CTA "Manage plans"). Its line id is
       // `unlimited_<term>`.
       const term = checkoutItem.id.split("_")[1] as SubscriptionPlanId
-      startSubscription(term === "annual" ? plans.annualPlan : plans.plan(term), [posted])
+      startSubscription(term === "annual" ? plans.annualPlan : plans.plan(term), [posted], readDraftCity() || undefined)
     }
     clearDraft()
     // The 10% offer is single-use.
@@ -390,7 +411,9 @@ export function JobPlanSelection() {
         onExitAttempt={attemptExit}
       />
 
-      <div className="flex-1 px-4 py-4 pb-28 sm:px-6 sm:py-6 sm:pb-12">
+      {/* Phones: room under the last section for the fixed CTA bar and the
+          home indicator it sits above (pb-safe-*), so "Trusted by" clears it. */}
+      <div className="flex-1 px-4 py-4 pb-safe-32 sm:px-6 sm:py-6 sm:pb-12">
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-5">
           {/* Posting a job means signed in, so the Jan 1 price change shows:
               the banner on top, each card's Jan price (content/price-change.ts). */}
@@ -507,6 +530,18 @@ export function JobPlanSelection() {
         mandateMethod={mandateMethod}
         onSuccess={handlePaymentSuccess}
         onFailure={handlePaymentFailure}
+      />
+
+      <CityLockDialog
+        open={!!cityLock?.open}
+        // Closed, it keeps the city so the title holds while it animates out.
+        onOpenChange={(open) => cityLock && setCityLock({ ...cityLock, open })}
+        city={cityLock?.city}
+        onConfirm={() => {
+          if (!cityLock) return
+          cityLock.pay()
+          setCityLock({ ...cityLock, open: false })
+        }}
       />
 
       {/* Shown in every build, deployed ones included: this page has no real

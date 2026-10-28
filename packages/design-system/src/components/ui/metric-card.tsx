@@ -85,7 +85,7 @@ const MetricCard = React.forwardRef<HTMLDivElement, MetricCardProps>(
     if (variant === "usage") {
       return (
         <div ref={ref} className={cn(metricCardVariants({ variant }), className)} {...props}>
-          <span className="flex items-center gap-2 text-sm text-muted-foreground sm:flex-col sm:items-start [&>svg]:size-5">
+          <span className="flex items-center gap-2 text-sm text-muted-foreground sm:flex-col sm:items-start [&>svg]:size-5 [&>svg]:shrink-0">
             {icon}
             <span className="flex items-center gap-1.5">{label}</span>
           </span>

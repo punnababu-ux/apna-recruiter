@@ -91,6 +91,9 @@
    * ------------------------------------------------------------------------ */
   --highlight:             var(--color-apna-gold-400);
   --highlight-foreground:  var(--color-gray-950);
+  /* Lapsed, on a dark surface: the salmon line of OfferBar's "lapsed" tone
+   * (an expired plan). Dark surfaces are dark in both themes, so one value. */
+  --lapsed-on-dark:        var(--color-red-400);
 
   /* --------------------------------------------------------------------------
    * Status roles — destructive, success, warning, info
@@ -668,6 +671,10 @@
   /* "Recruiter" of the lockup: the CTA green, light and dark, so the logo
      and the primary buttons are one green (2026-10-18). */
   --logo-hire:      var(--cta-primary);
+  /* OfferBar (the subscriber's nudge on the plan card): a plain plum sweep,
+   * no gold bloom, so the hook line's grey / amber / salmon all read. Always
+   * dark, so the same value in both themes. */
+  --gradient-offer-bar: linear-gradient(100deg, var(--color-apna-plum-400) 0%, var(--color-apna-plum-700) 50%, var(--color-apna-plum-950) 100%);
   --gradient-offer-premium:
     radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--color-apna-gold-500) 55%, transparent) 0%, transparent 55%),
     linear-gradient(137deg, var(--color-apna-plum-400) 5%, var(--color-apna-plum-700) 50%, var(--color-apna-plum-950) 112%);

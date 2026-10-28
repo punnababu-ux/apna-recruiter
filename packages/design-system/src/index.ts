@@ -62,6 +62,7 @@ export * from "./components/ui/close-bubble"
 export * from "./components/ui/alert-dialog"
 export * from "./components/ui/sheet"
 export * from "./components/ui/alert-banner"
+export * from "./components/ui/offer-bar"
 export * from "./components/ui/renewal-banner"
 
 // 6. Feedback & Status

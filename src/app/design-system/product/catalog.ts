@@ -404,15 +404,26 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
         ],
       },
       {
+        name: "SubscriberPlanCard",
+        file: "apnahire/subscriber-plan-card.tsx",
+        what: "The subscriber's plan on the jobs dashboard: an OfferBar on top, then apna Unlimited, valid till and four numbers. OFFER_BAR_TEMPLATES holds every case from the Figma (tenure upgrades, 2nd / 3rd slot, database top-up, auto-pay off, rebuys).",
+        live: "/apnahire/jobs",
+        where: "Jobs dashboard, above the list",
+        rules: [
+          "One bar at a time; which one is not decided yet (templates only). The prototype picks one: click \"Valid till\" to open the preview settings.",
+          "The bar's CTA is the dark companion (emphasis, white on the plum), never green.",
+          "Plan names and lengths in our words: quarterly / annual plan, days.",
+        ],
+      },
+      {
         name: "PlanEnded",
         file: "apnahire/plan-ended.tsx",
-        what: "After a plan ends (cancelled run-out or failed renewal payment): PlanEndedBanner (a week, dashboard), PreviousPlanCard (a month, self-checkout: renew at today's price) and PlanEndedState (Manage plan for that week).",
+        what: "After a plan ends (cancelled run-out or failed renewal payment): PlanEndedBanner (\"Apna unlimited expired on …\" · Renew now, for a week: jobs dashboard, Manage plan, plans page; the plan card is gone by then) and PlanEndedState (Manage plan for that week).",
         live: "/apnahire/plan",
         where: "Jobs dashboard, self-checkout above the tabs, Manage plan",
         rules: [
           "Nothing is held back: the account is on job credits the moment the plan ends.",
           "Renew charges today's price (the price lock ended with the plan); a plan no longer sold offers \"View plans\" instead.",
-          "Renew on the checkout card is the dark companion (emphasis), never a second green CTA.",
         ],
       },
       {
@@ -422,7 +433,7 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
         live: "/apnahire/plan",
         where: "Manage plan's \"⋯\" menu on the Current plan card",
         rules: [
-          "Cancelling keeps the plan until its renewal date, then it ends. Nothing more is charged; \"Reactivate plan\" undoes it until then.",
+          "Cancelling keeps the plan until its renewal date, then it ends. Nothing more is charged; \"Renew plan\" undoes it until then.",
           "Step 1's green CTA is \"Keep current plan\"; \"Continue\" stays off until a reason is picked (and the note, for Other).",
           "Step 2: outline \"Keep current plan\", destructive \"Cancel plan\". Step 3: one CTA, \"Close\".",
           "Dialog from md, bottom sheet on phones; the CloseBubble, never an inside close button.",

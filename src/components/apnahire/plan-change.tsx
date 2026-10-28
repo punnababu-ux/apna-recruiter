@@ -123,7 +123,7 @@ export function usePlanChange(count: JobSlotCount) {
           ? `Downgrade scheduled. Your current plan stays active until ${date}; the new plan starts then.`
           : `A downgrade is scheduled for ${date}. Keep your current plan first to choose another.`
         : lock === "cancel"
-          ? `Your plan is cancelled and ends on ${date}. Reactivate it first to change plans.`
+          ? `Your plan is cancelled and ends on ${date}. Renew it first to change plans.`
           : null,
     ),
     // The ribbon and green CTA sell: never on a downgrade or a locked plan.

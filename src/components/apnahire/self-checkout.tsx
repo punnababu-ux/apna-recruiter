@@ -72,7 +72,7 @@ import { PaymentModal } from "@/components/apnahire/payment-modal"
 import { PaymentSuccess } from "@/components/apnahire/payment-success"
 import { startSubscription, upgradeSubscription } from "@/hooks/use-job-slots"
 import { usePlanChange, useChoosePlan } from "@/components/apnahire/plan-change"
-import { PreviousPlanCard } from "@/components/apnahire/plan-ended"
+import { PlanEndedBanner } from "@/components/apnahire/plan-ended"
 import { addPurchasedJobCredits } from "@/hooks/use-plans-ingress"
 import { useHeaderSlot } from "@/components/marketing/header-slot"
 import { CheckoutPreviewSettings } from "@/components/apnahire/checkout-preview-settings"
@@ -594,15 +594,12 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
             tabsRef={heroTabsRef}
             intro={isLoggedOut ? PRICING_INTRO : undefined}
             // Every tab, so the page doesn't jump as the tabs change.
-            // A plan that ended this month sits above the title too: renew it
-            // in one tap (today's price).
+            // A plan that ended this week: the same "expired" banner as the
+            // jobs dashboard, Renew now opening the Unlimited tab.
             banner={
               <>
                 <PriceChangeBanner placement="plans" />
-                <PreviousPlanCard
-                  onRenew={(plan) => buyPlan(plan.id, plan.slots as JobSlotCount)}
-                  onViewPlans={() => changeTab("unlimited")}
-                />
+                <PlanEndedBanner onRenew={() => changeTab("unlimited")} />
               </>
             }
           />

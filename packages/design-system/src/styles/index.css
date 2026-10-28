@@ -51,6 +51,7 @@
   --color-accent-foreground:    var(--accent-foreground);
   --color-highlight:            var(--highlight);
   --color-highlight-foreground: var(--highlight-foreground);
+  --color-lapsed-on-dark:       var(--lapsed-on-dark);
 
   /* Status */
   --color-close-bubble:            var(--close-bubble);
@@ -1618,6 +1619,10 @@ a[href] > [data-slot="card"] {
 }
 @utility bg-gradient-illustration-gold {
   background-image: var(--gradient-illustration-gold);
+}
+
+@utility bg-gradient-offer-bar {
+  background-image: var(--gradient-offer-bar);
 }
 
 @utility bg-gradient-offer-premium {

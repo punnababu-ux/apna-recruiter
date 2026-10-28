@@ -65,6 +65,7 @@ import {
   UserSearch,
   Wallet,
 } from "@apna/design-system"
+import { SetCityAction } from "@/components/apnahire/city-lock-dialog"
 import { planOrderLabel, slotLabel, SUBSCRIPTION_TERMS } from "@/content/subscriptions"
 import { dayLabel, subscriptionOf, useJobSlots, type Subscription } from "@/hooks/use-job-slots"
 import { useIsMobile } from "@/hooks/use-mobile"
@@ -198,9 +199,9 @@ function PlanRows({ slots }: { slots: Subscription }) {
           {
             key: "city",
             icon: MapPin,
-            value: sub.city,
+            value: sub.city ?? <SetCityAction sub={slots} />,
             label: "Hiring city",
-            info: `Your plan hires in one city: its jobs and database searches stay in ${sub.city}.`,
+            info: `Your plan posts jobs in one city: ${sub.city ?? "the city you set"}. Database credits work in any city.`,
           },
         ]}
       />

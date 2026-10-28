@@ -57,7 +57,8 @@ export type Subscription = {
   /** ₹ paid for this cycle, what an upgrade credits back. */
   paid?: number
   db?: { left: number; total: number }
-  /** The one city the plan hires in. */
+  /** The one city the plan hires in. Unset until the recruiter locks it
+   *  (a plan bought from the plans page, before its first job). */
   city?: string
   scheduled?: ScheduledChange
   /** How renewals are paid; UPI autopay when not set. */
@@ -82,7 +83,7 @@ const LIVE_JOBS: SlotJob[] = [
   { id: "back-office-powai", title: "Back Office Executive", location: "Powai, Mumbai", postedAt: "2 Oct 2026", applied: 12 },
 ]
 
-/** Where a plan bought without a city on file hires (the prototype's). */
+/** The preview presets' hiring city. */
 export const DEFAULT_HIRING_CITY = "Mumbai"
 
 /** The presets' plan: today's 2-slot monthly plan, 12 days into its cycle. */
@@ -237,7 +238,6 @@ export function subscriptionOf(slots: Subscription) {
     startedOn,
     renewsOn,
     daysLeft: Math.min(termDays, Math.max(0, daysBetween(isoDay(), renewsOn))),
-    city: slots.city ?? DEFAULT_HIRING_CITY,
     payMethod: slots.payMethod ?? "upi-autopay",
     cancelled: slots.cancelled ?? false,
     // State saved before payments were kept: this cycle's payment, as
@@ -284,9 +284,15 @@ const planFields = (plan: SubscriptionPlan) => ({
   db: { left: plan.dbCredits, total: plan.dbCredits },
 })
 
-/** A plan bought from the plans pages: its slots, empty, from today. */
-export function startSubscription(plan: SubscriptionPlan, jobs: SlotJob[] = []) {
-  setJobSlots({ ...planFields(plan), jobs, city: DEFAULT_HIRING_CITY })
+/** A plan bought: its slots from today. From the plans page there is no
+ *  city yet; the job-posting plan step passes the job's, already confirmed. */
+export function startSubscription(plan: SubscriptionPlan, jobs: SlotJob[] = [], city?: string) {
+  setJobSlots({ ...planFields(plan), jobs, city })
+}
+
+/** Locks the plan to one city. Only support can change it afterwards. */
+export function lockSubscriptionCity(sub: Subscription, city: string) {
+  setJobSlots({ ...sub, city })
 }
 
 /** An upgrade, paid: the new plan from today, with its own database
@@ -343,7 +349,7 @@ export function cancelAtRenewal(sub: Subscription, reasons: string[]) {
 /** One change at a time (user call, 2026-10-23): a booked change blocks
  *  every other until it is undone or happens. A downgrade waits for the
  *  renewal date ("Keep current plan" drops it); a cancellation runs the plan
- *  to its end ("Reactivate plan" undoes it). An upgrade is instant, so it
+ *  to its end ("Renew plan" undoes it). An upgrade is instant, so it
  *  never books anything. */
 export type ChangeLock = "downgrade" | "cancel"
 export function changeLockOf(sub: SubscriptionDetails): ChangeLock | null {

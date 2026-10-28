@@ -60,6 +60,9 @@ export interface JobPostDraft {
   city: string
   /** Office address / locality for office jobs, working area for field jobs. */
   area: string
+  /** Six digits, from the place search (Google Places in production) or
+   *  typed in manual entry. Optional: drafts saved before it have none. */
+  pincode?: string
   /** Office jobs: also take candidates willing to relocate to the city. */
   relocation: boolean
   payType: PayType | ""

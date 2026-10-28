@@ -155,7 +155,9 @@ const buttonVariants = cva(
       {
         // Links sit in a line of text: no box, whatever the size.
         variant: ["link", "link-inline"],
-        className: "h-auto gap-1 rounded-sm p-0 has-data-[icon=inline-end]:pr-0 has-data-[icon=inline-start]:pl-0",
+        // min-h-0 too: the sizes' min-height would grow the line (a link in
+        // the Jobs tab caption made it 32px and dropped the credit cards).
+        className: "h-auto min-h-0 gap-1 rounded-sm p-0 has-data-[icon=inline-end]:pr-0 has-data-[icon=inline-start]:pl-0",
       },
       // An inline link takes its sentence's type size too, not the button's
       // (in a 12px legal line it rendered at 14px). Written as

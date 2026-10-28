@@ -29,6 +29,9 @@ ship, and keep one line per item. Open price questions live in
 
 ## Plan pop-up illustrations
 - [ ] Generate 8 clay objects for the plan pop-ups (feedback, plan-ending, plan-cancelled, change-locked, reactivate, downgrade, change-scheduled, upgrade) and swap out the stand-ins. Prompts: `docs/CLAY-ILLUSTRATIONS.md` → "To generate: plan pop-ups"
+- [ ] More clay icons: for banners, the remaining pop-ups, and the job posting flow wherever one fits
+- [ ] Job posting confirmation pop-ups still missing ("Are you sure?", "Continue?", exit/leave), each with its own clay icon
+- [ ] Clay icon for the city-lock pop-up (`city-lock-dialog.tsx`, stand-in: "access")
 
 ## Before production
-- [ ] Remove the hidden prototype-settings ingresses: the silent clicks on "*GST applicable" (`GstNote`, both checkouts) and the post-job "Candidate view" caption, plus `PrototypeSettings` itself (grep `openPrototypeSettings`). Current builds are not production.
+- [ ] Remove the hidden prototype-settings ingresses: the silent clicks on "*GST applicable" (`GstNote`, both checkouts) and the post-job "Candidate view" caption, the plan card's "Valid till" line (`SubscriberPlanCard`), the expired banner's "Resubscribe at the same price." (`PlanEndedBanner`), plus `PrototypeSettings` itself (grep `openPrototypeSettings`). Current builds are not production.

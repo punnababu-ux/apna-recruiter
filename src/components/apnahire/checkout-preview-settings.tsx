@@ -18,6 +18,7 @@
 
 import { useUnlimitedWordmark } from "@/components/apnahire/pricing-hero"
 import { sampleSubscription, setJobSlots } from "@/hooks/use-job-slots"
+import { setPreviousPlan } from "@/hooks/use-previous-plan"
 import { usePlans } from "@/hooks/apnahire/use-plans"
 import { setJobCredits, usePlansIngress } from "@/hooks/use-plans-ingress"
 import { replayTopUpCredits } from "@/components/apnahire/available-credits-button"
@@ -42,6 +43,7 @@ export function CheckoutPreviewSettings({
   const setPlans = (credits: number, subscribed: boolean) => {
     setJobCredits(credits)
     // A subscription is its slots (setJobSlots keeps the flag in step).
+    setPreviousPlan(null)
     setJobSlots(sampleSubscription(subscribed ? "free" : "none", catalog.plan("monthly", catalog.slotCounts[1])))
   }
   return (
