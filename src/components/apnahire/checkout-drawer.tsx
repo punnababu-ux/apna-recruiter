@@ -144,7 +144,7 @@ const DEFAULT_PACK = "100"
  */
 const SUBSCRIPTION_PAYMENT_METHODS = [
   { value: "upi-autopay", label: "UPI Autopay", icon: Smartphone },
-  { value: "card", label: "Card (Credit/Debit)", icon: CreditCard },
+  { value: "card", label: "Card", icon: CreditCard },
 ] as const satisfies readonly {
   value: SubscriptionPaymentMethod
   label: string
@@ -152,9 +152,8 @@ const SUBSCRIPTION_PAYMENT_METHODS = [
 }[]
 
 const SUBSCRIPTION_TRUST_ITEMS = [
-  { label: "Auto-renew", icon: RefreshCw },
-  { label: "Renewal reminder", icon: Mail },
-  { label: "Stop or cancel anytime", icon: Ban },
+  { label: "Renewal reminders", icon: Mail },
+  { label: "Cancel anytime", icon: Ban },
 ] as const satisfies readonly { label: string; icon: IconComponent }[]
 
 /** `STAY20` is the only coupon rendered anywhere on the board. `WELCOME10`
@@ -219,7 +218,7 @@ interface CheckoutDrawerProps {
 /** "1 April 2026" — the format the disclosure is drawn in. */
 const renewalDateFormat = new Intl.DateTimeFormat("en-IN", {
   day: "numeric",
-  month: "long",
+  month: "short",
   year: "numeric",
 })
 
@@ -932,19 +931,23 @@ export function CheckoutDrawer({
                   : `Subscribe ${inr(total)} ${periodLabel}`}
               </Button>
 
+              {/* Two lines at most on phones: the sticky footer must stay short. */}
               <p className="text-center text-xs leading-4 text-muted-foreground">
-                By subscribing, you authorise Apna Incorporated to charge you according
-                to the terms. Your plan will automatically renew on{" "}
-                {renewalDateFrom(item.renewAfterDays ?? 0)} for{" "}
-                <span className="font-semibold">{inr(renewalAmount)} </span>
-                {periodLabel} (inc. GST)
+                <RefreshCw className="mr-1 inline size-3 align-text-bottom" aria-hidden />
+                <span>
+                  Auto-renews {renewalDateFrom(item.renewAfterDays ?? 0)} at{" "}
+                  <span className="whitespace-nowrap font-semibold">
+                    {inr(renewalAmount)} {periodLabel}
+                  </span>{" "}
+                  incl. GST. By subscribing, you authorise these charges.
+                </span>
               </p>
 
               <ul className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
                 {SUBSCRIPTION_TRUST_ITEMS.map(({ label, icon: Icon }) => (
                   <li
                     key={label}
-                    className="flex items-center gap-1 text-xs text-muted-foreground"
+                    className="flex items-center gap-1 whitespace-nowrap text-xs text-muted-foreground"
                   >
                     <Icon className="size-3 shrink-0" aria-hidden />
                     {label}
