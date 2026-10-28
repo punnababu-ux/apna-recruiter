@@ -423,13 +423,14 @@
    * --surface-checkout-hero-fg / -fg-muted, which ARE fixed dark-on-light
    * text roles, since both hero backdrops keep light-toned text. */
   /* The mother gradient (switched to the brand colours 2026-10-20, Punna's
-   * call): apna's lightest steps — a faint green top-left, sky right, gold
-   * along the top, plum down the left — over white. The mesh version it
-   * replaced is kept as `?mother=mesh` (block at the end of this file). */
+   * call; plum replaced gold 2026-10-28, the "mother plum"): apna's lightest
+   * steps — a faint green top-left, sky right, plum along the top and down
+   * the left — over white. The gold version is kept as `?mother=brand`, the
+   * older mesh as `?mother=mesh` (blocks at the end of this file). */
   --gradient-checkout-hero:
     radial-gradient(circle at 6% 8%,   color-mix(in srgb, var(--color-apna-green-200) 35%, transparent) 0%, color-mix(in srgb, var(--color-apna-green-100) 18%, transparent) 25%, transparent 45%),
     radial-gradient(circle at 92% 22%, var(--color-apna-sky-200) 0%, color-mix(in srgb, var(--color-apna-sky-100) 70%, transparent) 38%, transparent 65%),
-    radial-gradient(ellipse 45% 30% at 42% 0%, color-mix(in srgb, var(--color-apna-gold-200) 70%, transparent) 0%, color-mix(in srgb, var(--color-apna-gold-100) 35%, transparent) 45%, transparent 100%),
+    radial-gradient(ellipse 45% 30% at 42% 0%, color-mix(in srgb, var(--color-apna-plum-200) 70%, transparent) 0%, color-mix(in srgb, var(--color-apna-plum-100) 35%, transparent) 45%, transparent 100%),
     radial-gradient(ellipse 40% 35% at 0% 28%, color-mix(in srgb, var(--color-apna-plum-300) 70%, transparent) 0%, color-mix(in srgb, var(--color-apna-plum-200) 45%, transparent) 45%, transparent 100%),
     radial-gradient(circle at 8% 90%, var(--color-apna-plum-200) 0%, color-mix(in srgb, var(--color-apna-plum-200) 60%, transparent) 30%, transparent 58%),
     linear-gradient(135deg, var(--color-gray-0) 0%, var(--color-apna-sky-50) 55%, var(--color-gray-0) 100%);
@@ -470,12 +471,12 @@
    * the mother's own (brand colours), so the motion re-mixes the gradient
    * rather than adding a colour. Alphas keep it a whisper: text contrast on
    * the hero is unchanged. Blobs 1/7 (left) sky, 2/5 (upper left) plum,
-   * 3 (low) green, 4/6 (right) gold — plum and gold drift on opposite sides,
-   * never into each other. Plum softened (70%). */
+   * 3 (low) green, 4/6 (right) plum (gold until 2026-10-28). Plum softened
+   * (70%). */
   --ambient-blob-1: var(--color-apna-sky-200);
   --ambient-blob-2: color-mix(in srgb, var(--color-apna-plum-300) 70%, transparent);
   --ambient-blob-3: color-mix(in srgb, var(--color-apna-green-200) 30%, transparent);
-  --ambient-blob-4: color-mix(in srgb, var(--color-apna-gold-200) 85%, transparent);
+  --ambient-blob-4: color-mix(in srgb, var(--color-apna-plum-200) 85%, transparent);
   --ambient-glow:   color-mix(in srgb, var(--color-gray-0) 85%, transparent);
   --ambient-grain-opacity: 0.06;
   --surface-checkout-hero-fg:       var(--color-gray-900);
@@ -1134,6 +1135,22 @@
   --ambient-blob-4: color-mix(in srgb, var(--color-atmosphere-mist) 90%, transparent);
 }
 
+
+/* BRAND (kept ready, 2026-10-28) — the brand gradient live 2026-10-20 to
+ * 2026-10-28, with gold along the top and gold hero blobs, before plum took
+ * gold's place (the "mother plum", now in :root above). `?mother=brand` on a
+ * marketing URL shows it (MotherPreview). To switch back, move these values
+ * into :root above. Light mode only. */
+:root[data-mother="brand"]:not(.dark) {
+  --gradient-checkout-hero:
+    radial-gradient(circle at 6% 8%,   color-mix(in srgb, var(--color-apna-green-200) 35%, transparent) 0%, color-mix(in srgb, var(--color-apna-green-100) 18%, transparent) 25%, transparent 45%),
+    radial-gradient(circle at 92% 22%, var(--color-apna-sky-200) 0%, color-mix(in srgb, var(--color-apna-sky-100) 70%, transparent) 38%, transparent 65%),
+    radial-gradient(ellipse 45% 30% at 42% 0%, color-mix(in srgb, var(--color-apna-gold-200) 70%, transparent) 0%, color-mix(in srgb, var(--color-apna-gold-100) 35%, transparent) 45%, transparent 100%),
+    radial-gradient(ellipse 40% 35% at 0% 28%, color-mix(in srgb, var(--color-apna-plum-300) 70%, transparent) 0%, color-mix(in srgb, var(--color-apna-plum-200) 45%, transparent) 45%, transparent 100%),
+    radial-gradient(circle at 8% 90%, var(--color-apna-plum-200) 0%, color-mix(in srgb, var(--color-apna-plum-200) 60%, transparent) 30%, transparent 58%),
+    linear-gradient(135deg, var(--color-gray-0) 0%, var(--color-apna-sky-50) 55%, var(--color-gray-0) 100%);
+  --ambient-blob-4: color-mix(in srgb, var(--color-apna-gold-200) 85%, transparent);
+}
 
 
 /* THE HALL (2026-10-20) — the awards page is an auditorium: house lights

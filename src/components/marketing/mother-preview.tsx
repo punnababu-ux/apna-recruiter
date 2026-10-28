@@ -1,7 +1,8 @@
 "use client"
 
 /**
- * MotherPreview — PREVIEW ONLY. `?mother=mesh` on a marketing URL shows the saved mesh
+ * MotherPreview — PREVIEW ONLY. `?mother=brand` (the gold brand gradient, live until
+ * 2026-10-28) or `?mother=mesh` on a marketing URL shows that saved
  * mother gradient (live until 2026-10-20) (semantic.css, :root[data-mother]) without
  * changing the live page.
  */
