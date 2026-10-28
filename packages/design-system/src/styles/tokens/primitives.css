@@ -429,6 +429,8 @@
   --shadow-lg:   0 4px 6px -2px var(--color-alpha-black-5), 0 10px 15px -3px var(--color-alpha-black-10);
   --shadow-xl:   0 8px 10px -6px var(--color-alpha-black-10), 0 20px 25px -5px var(--color-alpha-black-10);
   --shadow-2xl:  0 25px 50px -12px var(--color-alpha-black-20);
+  /* Upward cast for bars pinned to the bottom edge. */
+  --shadow-up:   0 -4px 12px -2px var(--color-alpha-black-10);
   --shadow-inner: inset 0 2px 4px 0 var(--color-alpha-black-5);
 
   /* --------------------------------------------------------------------------

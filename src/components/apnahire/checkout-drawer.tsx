@@ -143,11 +143,12 @@ const DEFAULT_PACK = "100"
  * Icons table.
  */
 const SUBSCRIPTION_PAYMENT_METHODS = [
-  { value: "upi-autopay", label: "UPI Autopay", icon: Smartphone },
-  { value: "card", label: "Card", icon: CreditCard },
+  { value: "upi-autopay", label: "UPI", note: "Any UPI app", icon: Smartphone },
+  { value: "card", label: "Card", note: "Credit or debit", icon: CreditCard },
 ] as const satisfies readonly {
   value: SubscriptionPaymentMethod
   label: string
+  note: string
   icon: IconComponent
 }[]
 
@@ -882,9 +883,9 @@ export function CheckoutDrawer({
         </div>
 
         {/* Footer stays pinned outside the scroll body — Figma's tallest
-            frames (913 px) overflow a typical viewport. `border-t` stands in
-            for Figma's upward drop shadow, which has no token. */}
-        <div className="flex flex-col gap-4 border-t border-border bg-card p-5 sm:rounded-bl-2xl">
+            frames (913 px) overflow a typical viewport. It floats over the
+            scroll, so it casts Figma's upward shadow. */}
+        <div className="relative z-10 flex flex-col gap-4 border-t border-border bg-card p-5 shadow-sticky sm:rounded-bl-2xl">
           {/* No "Total ₹0" when credits cover everything — the line under
               "Post job" says it once. */}
           {!nothingToPay && (
@@ -902,15 +903,16 @@ export function CheckoutDrawer({
                   needs it up front to create the recurring mandate. */}
               <fieldset className="flex flex-col gap-2">
                 <legend className="pb-2 text-sm font-semibold text-foreground">
-                  Select payment method
+                  Select autopay method
                 </legend>
                 <OptionCardGroup columns={2} aria-label="Payment method">
-                  {SUBSCRIPTION_PAYMENT_METHODS.map(({ value, label, icon: Icon }) => (
+                  {SUBSCRIPTION_PAYMENT_METHODS.map(({ value, label, note, icon: Icon }) => (
                     <OptionCard
                       key={value}
                       className="items-center p-3"
                       icon={<Icon aria-hidden />}
                       title={label}
+                      description={note}
                       selected={paymentMethod === value}
                       onSelect={() => setPaymentMethod(value)}
                     />

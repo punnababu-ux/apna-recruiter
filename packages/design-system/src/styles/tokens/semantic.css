@@ -212,6 +212,7 @@
   --shadow-elevated: var(--shadow-lg);  /* hovered cards, HoverCard          */
   --shadow-dialog:   var(--shadow-xl);  /* Dialog, AlertDialog, Sheet        */
   --shadow-marketing: var(--shadow-2xl);/* hero sections, marketing blocks   */
+  --shadow-sticky:   var(--shadow-up);  /* bottom-pinned bars (order summary total) */
 
   /* ==========================================================================
    * Motion — intent roles on top of the duration + easing primitives.

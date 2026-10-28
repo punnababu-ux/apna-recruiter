@@ -462,6 +462,7 @@ steps, so one line here retunes every surface of that kind.
 | `--shadow-card` | shadow-sm | Cards at rest, sticky headers once scrolled |
 | `--shadow-popover` | shadow-md | Popovers, menus, selects, floating controls |
 | `--shadow-elevated` | shadow-lg | Hovered cards, raised floating actions |
+| `--shadow-sticky` | shadow-up | Bottom-pinned bars that float over scrolling content (order summary total) |
 | `--shadow-dialog` | shadow-xl | Dialogs, sheets |
 | `z-docked` / `z-dropdown` / `z-sticky` / `z-overlay` | 10 / 20 / 30 / 40 | In-component layers / — / sticky headers and CTA bars / bottom nav, floating tools |
 | `z-modal` / `z-popover` / `z-toast` / `z-tooltip` | 50 / 60 / 70 / 80 | Dialogs and sheets / popovers, menus, selects (always above a dialog) / toasts / tooltips |

@@ -287,6 +287,7 @@
   --shadow-elevated:  var(--shadow-elevated);
   --shadow-dialog:    var(--shadow-dialog);
   --shadow-marketing: var(--shadow-marketing);
+  --shadow-sticky:    var(--shadow-sticky);
 
   /* --------------------------------------------------------------------
    * Motion — duration + easing utilities. Enables `duration-hover`,
