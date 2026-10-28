@@ -17,6 +17,7 @@
  */
 
 import * as React from "react"
+import Image from "next/image"
 import {
   Avatar,
   AvatarFallback,
@@ -99,7 +100,9 @@ export function Float({ className, children }: { className?: string; children: R
   return (
     <div
       className={cn(
-        "rounded-xl bg-card p-3 shadow-popover transition-interactive duration-enter group-hover:-translate-y-1",
+        // On a photo (ProductIllustration `photo`) it lifts higher, so it
+        // reads over a busy picture.
+        "rounded-xl bg-card p-3 shadow-popover transition-interactive duration-enter group-hover:-translate-y-1 group-data-photo/photo:shadow-dialog",
         className
       )}
     >
@@ -233,22 +236,104 @@ const SNIPPETS: Record<Product, () => React.JSX.Element> = {
   "apna Unlimited": Unlimited,
 }
 
+/** The homepage cards' photos (user-supplied, 2026-10-28), one per product
+ *  by colour and meaning. `focus` keeps the subject in frame as the tile
+ *  crops; the snippet sits in the photo's empty corner, `at`, so it never
+ *  covers the person (checked at desktop and phone widths). */
+type PhotoCorner = "top-left" | "top-right" | "bottom-left"
+
+/** A photo tile with a snippet in its free corner: a soft dark wash from
+ *  that corner (the snippet stands out, bright edges don't bleed into the
+ *  card) and a hairline edge. `focus` is the crop's object-position. */
+function PhotoTile({
+  src,
+  focus,
+  at,
+  small = false,
+  className,
+  children,
+}: {
+  src: string
+  focus: string
+  at: PhotoCorner
+  /** A smaller snippet, for a busy photo with a tighter free corner. */
+  small?: boolean
+  className?: string
+  children: React.ReactNode
+}) {
+  return (
+    <div
+      aria-hidden
+      data-photo
+      className={cn(
+        "group/photo relative flex overflow-hidden rounded-xl p-3 sm:p-5",
+        at === "top-right" ? "justify-end" : "justify-start",
+        at === "bottom-left" && "items-end",
+        className
+      )}
+    >
+      <Image src={src} alt="" fill sizes="(min-width: 1024px) 40vw, 100vw" className="object-cover" style={{ objectPosition: focus }} />
+      <div
+        className={cn(
+          "absolute inset-0 from-surface-inverted/50 via-surface-inverted/10 to-transparent",
+          at === "top-right" ? "bg-gradient-to-bl" : at === "bottom-left" ? "bg-gradient-to-tr" : "bg-gradient-to-br"
+        )}
+      />
+      <div
+        className={cn(
+          "relative",
+          small ? "scale-35 sm:scale-70" : "scale-50 sm:scale-80",
+          at === "top-right" ? "origin-top-right" : at === "bottom-left" ? "origin-bottom-left" : "origin-top-left"
+        )}
+      >
+        {children}
+      </div>
+      <div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-foreground/10 ring-inset" />
+    </div>
+  )
+}
+
+const PHOTOS: Record<Product, { src: string; focus: string; at: PhotoCorner }> = {
+  // Plant wall, subject right of centre: the window side is free.
+  "Smart Jobs": { src: "/images/products/smart-jobs.jpg", focus: "60% 40%", at: "top-left" },
+  // On a call, head upper middle: the café background to the right is free.
+  "AI Calling Agent": { src: "/images/products/ai-calling.webp", focus: "30% 30%", at: "top-right" },
+  // At a laptop, left of centre: the café to the right is free.
+  "Hyperlocal Database": { src: "/images/products/database.jpg", focus: "55% 40%", at: "top-right" },
+  // Yellow t-shirt, centred, laptop lower left: the windows top left are free.
+  "apna Unlimited": { src: "/images/products/unlimited.jpg", focus: "60% 35%", at: "top-left" },
+}
+
 export function ProductIllustration({
   product,
   size = "default",
   bare = false,
+  photo = false,
   className,
 }: {
   product: Product
   /** No tile of its own: the snippet alone, for a surface that already
    *  wears the product's gradient (its product page's hero). */
   bare?: boolean
+  /** The product's photo behind the snippet (homepage cards), snippet in
+   *  the photo's free corner. */
+  photo?: boolean
   /** The snippet's scale: "default" for the cards, "lg" for a big tile
    *  (the detail rows). Phones keep it at 1×. */
   size?: "default" | "lg"
   className?: string
 }) {
   const Snippet = SNIPPETS[product]
+  if (photo) {
+    const { src, focus, at } = PHOTOS[product]
+    return (
+      <div data-product={PRODUCT_KEY[product]} className={cn("flex", className)}>
+        <PhotoTile src={src} focus={focus} at={at} className={cn("flex-1", PRODUCT_GRADIENT[product])}>
+          <Snippet />
+        </PhotoTile>
+      </div>
+    )
+  }
   return (
     <div
       aria-hidden
@@ -300,16 +385,8 @@ export function TrustIllustration({ size = "default", className }: { size?: "def
 /** apna Enterprise's art in the same style —
  *  the company's hiring team (team management) over an ATS sync (ATS
  *  integrations), on the mother gradient. */
-export function EnterpriseIllustration({ className }: { className?: string }) {
-  return (
-    <div
-      aria-hidden
-      className={cn(
-        "flex items-center justify-center overflow-hidden rounded-xl bg-gradient-checkout-hero p-4",
-        className
-      )}
-    >
-      <div className="sm:scale-150">
+export function EnterpriseIllustration({ className, photo = false }: { className?: string; photo?: boolean }) {
+  const snippet = (
         <div className="flex w-72 flex-col gap-2">
           <Float className="flex flex-col gap-3">
             <div className="flex items-center gap-3">
@@ -342,7 +419,26 @@ export function EnterpriseIllustration({ className }: { className?: string }) {
             </Badge>
           </Float>
         </div>
-      </div>
+  )
+  // The homepage card's photo (user-supplied, 2026-10-28): a busy open
+  // office, so the snippet sits on the desks bottom left, the crop taken
+  // from the right so the man at his laptop stays clear of it.
+  if (photo) {
+    return (
+      <PhotoTile src="/images/products/enterprise.jpg" focus="100% 50%" at="bottom-left" small className={cn("bg-gradient-checkout-hero", className)}>
+        {snippet}
+      </PhotoTile>
+    )
+  }
+  return (
+    <div
+      aria-hidden
+      className={cn(
+        "flex items-center justify-center overflow-hidden rounded-xl bg-gradient-checkout-hero p-4",
+        className
+      )}
+    >
+      <div className="sm:scale-150">{snippet}</div>
     </div>
   )
 }

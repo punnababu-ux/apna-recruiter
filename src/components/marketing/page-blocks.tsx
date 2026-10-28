@@ -128,6 +128,7 @@ export function PageHero({
 export function Stat({
   value,
   label,
+  note,
   shortLabel,
   icon: Icon,
   size = "default",
@@ -135,6 +136,8 @@ export function Stat({
 }: {
   value: string
   label: string
+  /** A line under the label (the live product sections' subtext). */
+  note?: string
   /** Phones show this instead, where the full label would wrap to three
    *  lines in a 3-up strip. */
   shortLabel?: string
@@ -176,6 +179,7 @@ export function Stat({
       >
         {value}
       </dd>
+      {note && <dd className="order-4 text-xs text-pretty text-muted-foreground">{note}</dd>}
     </div>
   )
 }
@@ -194,7 +198,7 @@ export function StatGrid({
   tone,
   className,
 }: {
-  stats: readonly { value: string; label: string; icon?: IconComponent }[]
+  stats: readonly { value: string; label: string; note?: string; icon?: IconComponent }[]
   /** "lg" for a page that is about its numbers (By the numbers) — bigger
    *  numbers on a lifted, gradient card; "facts"
    *  for short text values (a case study's client / industry / …): label
@@ -237,6 +241,7 @@ export function StatGrid({
             key={stat.label}
             value={stat.value}
             label={stat.label}
+            note={stat.note}
             icon={stat.icon}
             size={size}
             className={cn("p-5 sm:p-6 lg:p-8", size === "lg" && "lg:p-10")}

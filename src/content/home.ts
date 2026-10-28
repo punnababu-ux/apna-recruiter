@@ -105,7 +105,11 @@ export interface ProductDetailRow {
   name: string
   eyebrow: string
   heading: string
+  /** The live section's three points, title + subtext (shown as ticks). */
   features: ProductFeature[]
+  /** Three cards under the picture, each the same shape: a number, a
+   *  one-line title, a short line (user call, 2026-10-28). */
+  cards: (ProductFeature & { value: string })[]
   /** The card's action, beside "Learn more": what a convinced visitor does
    *  next. Signed-in destinations go through login (`?next=`). */
   action: { label: string; href: string }
@@ -124,15 +128,15 @@ const login = (next: string) => `/login?next=${encodeURIComponent(next)}`
  * employer.apna.co, re-confirmed live via get_page_text on 2026-09-28 (not
  * from memory of an earlier fetch). Two features shown per product; the
  * live page lists more under each (e.g. Smart Jobs also has "AI-Suggested
- * Candidates", "Customized Lead Management", "Job Post Boosts") — trimmed
- * to the first two for this layout, not dropped because they were weaker.
+ * Candidates", "Customized Lead Management", "Job Post Boosts"). Each card
+ * follows the live section (re-read 2026-10-28): its three points (as
+ * ticks, all shown) and its three cards (under the picture), shortened to
+ * a few words each (user call, 2026-10-28). The product pages keep the
+ * live wording in full.
  *
- * apna Unlimited has no matching section on employer.apna.co under that
- * name (the live page's own "Post unlimited jobs in one plan" banner is a
- * different, shorter pitch). Its heading and features are cross-referenced
- * from copy already shipped in this repo's own checkout flow instead —
- * `unlimited-side-card.tsx` and `subscription-plans.tsx` — rather than
- * written fresh for this section.
+ * apna Unlimited: the live "Post unlimited jobs in one plan" section — its
+ * three points and three numbers, verbatim (2026-10-28). AI calling's
+ * numbers are its live sub-cards.
  *
  * The media side of every row is a placeholder (a tinted icon panel, same
  * visual language as the grid cards above) standing in for a real product
@@ -146,18 +150,17 @@ export const HOME_PRODUCT_DETAILS: ProductDetailRow[] = [
     name: "Smart Jobs",
     eyebrow: "Smart job posting",
     action: { label: "Post a job", href: login("/apnahire/jobs/new") },
-    heading: "Get applications from relevant, high-intent candidates",
+    heading: "Applications from high-intent candidates",
     features: [
-      {
-        title: "Advanced job filters & smart matching",
-        description:
-          "Use advanced filters and automated assessments to attract the most relevant candidates",
-      },
-      {
-        title: "Smart AI lead management",
-        description:
-          "Boost recruiter productivity by automatically categorizing leads into matched and non-matched candidates",
-      },
+      { title: "Smart filters & matching", description: "Reach the most relevant candidates" },
+      { title: "AI lead sorting", description: "Matched and unmatched, sorted for you" },
+      { title: "Calls & WhatsApp alerts", description: "New applicants in real time" },
+    ],
+    cards: [
+      // The live page's own numbers for job posting (its stats band).
+      { value: "60%", title: "Hire in 24 hours", description: "Get qualified candidates" },
+      { value: "160+", title: "Job categories", description: "For any role you post" },
+      { value: "2 Lakh+", title: "New candidates", description: "Join apna every month" },
     ],
   },
   {
@@ -166,32 +169,36 @@ export const HOME_PRODUCT_DETAILS: ProductDetailRow[] = [
     action: { label: "Post a job with AI calling", href: login("/apnahire/jobs/new?addon=ai-calling") },
     // AI calling is an add-on on any job (not a premium job type).
     eyebrow: "AI calling agent",
-    heading: "AI calling agent interviews and shortlists candidates 24/7",
+    heading: "AI interviews and shortlists, 24/7",
+    // The live section's three points. Its first ("Post a Premium job
+    // with AI Calling Agent") is left out: AI calling is an add-on on any
+    // job here, so the card leads with the step after it.
     features: [
-      {
-        title: "Inbound & outbound AI calling",
-        description: "AI interviews all job applicants 24/7 & shortlists only the best candidates",
-      },
-      {
-        title: "80% response rate with AI",
-        description: "Compared to just 30% call connection rate in manual hiring",
-      },
+      { title: "Set your hiring criteria", description: "AI writes role-specific questions" },
+      { title: "AI calls every applicant", description: "Follows up 5 times, even after hours" },
+      { title: "Get a ready shortlist", description: "Sorted by job fit" },
+    ],
+    cards: [
+      { value: "24/7", title: "AI calling", description: "Inbound and outbound" },
+      { value: "80%", title: "Response rate", description: "vs 30% with manual calls" },
+      { value: "50%", title: "Less time to hire", description: "You do only the final round" },
     ],
   },
   {
     name: "Hyperlocal Database",
     action: { label: "Search candidates", href: login("/apnahire/database/search-candidates") },
     eyebrow: "apna Database",
-    heading: "Quickly hire active jobseekers around your office.",
+    heading: "Hire active jobseekers near your office",
     features: [
-      {
-        title: "AI-powered search",
-        description: "Instantly turn your job descriptions into candidate searches using apnaAI",
-      },
-      {
-        title: "Area-based search",
-        description: "Effortlessly locate candidates within a 5km radius to optimize your hiring.",
-      },
+      { title: "AI-powered search", description: "Turn a job description into a search" },
+      { title: "Area-based search", description: "Candidates within 5 km" },
+      { title: "Bulk WhatsApp invites", description: "Invite many candidates at once" },
+    ],
+    cards: [
+      // "5 crore" from the live FAQ; free views and 22+ filters from its section.
+      { value: "5 Cr+", title: "Candidate profiles", description: "Search the whole base" },
+      { value: "Free", title: "Profile views", description: "Pay only to contact" },
+      { value: "22+", title: "Precision filters", description: "Fine-tune every search" },
     ],
   },
   {
@@ -199,16 +206,16 @@ export const HOME_PRODUCT_DETAILS: ProductDetailRow[] = [
     eyebrow: "apna Unlimited",
     // Public plans page: no login until Buy.
     action: { label: "See Unlimited plans", href: "/pricing?tab=unlimited" },
-    heading: "Unlimited job posting flexibility, predictable hiring cost.",
+    heading: "Post unlimited jobs in one plan",
     features: [
-      {
-        title: "Unlimited job posts",
-        description: "Free job reposts and swapping",
-      },
-      {
-        title: "WhatsApp outreach",
-        description: "To matched candidates for more applications",
-      },
+      { title: "Hire across roles", description: "Any role or department, in your city" },
+      { title: "Reuse slots instantly", description: "Expire a job, post the next" },
+      { title: "Reach candidates faster", description: "Up to 4,000 database unlocks" },
+    ],
+    cards: [
+      { value: "3,500+", title: "Businesses hiring", description: "9 in 10 within week one" },
+      { value: "7 in 10", title: "Premium roles filled", description: "Without the wait" },
+      { value: "90%", title: "Fulfilment rate", description: "Post, fill, move on" },
     ],
   },
 ]

@@ -13,6 +13,7 @@
  */
 
 import Link from "next/link"
+import { cn } from "@/lib/utils"
 import {
   ArrowRight,
   ArrowUpRight,
@@ -34,7 +35,13 @@ import { FaqBand, TrustedByBand, WhyHireBand } from "@/components/marketing/proo
 import { ContactButton } from "@/components/marketing/contact-section"
 import { HeroBackdrop } from "@/components/marketing/hero-backdrop"
 import { HeroLeadCard } from "@/components/marketing/hero-lead-card"
-import { EnterpriseIllustration, PRODUCT_ICON, PRODUCT_KEY, ProductIllustration } from "@/components/marketing/product-illustrations"
+import {
+  EnterpriseIllustration,
+  PRODUCT_GRADIENT,
+  PRODUCT_ICON,
+  PRODUCT_KEY,
+  ProductIllustration,
+} from "@/components/marketing/product-illustrations"
 import {
   HOME_ENTERPRISE,
   HOME_HERO,
@@ -44,7 +51,6 @@ import {
 } from "@/content/home"
 import { PRODUCT_LINKS } from "@/content/nav"
 import { PRESS } from "@/content/press"
-import { ENTERPRISE } from "@/content/enterprise"
 
 
 
@@ -60,10 +66,23 @@ function hrefFor(name: string) {
   return PRODUCT_LINKS.find((p) => p.label === name)?.href ?? "#"
 }
 
-/** Enterprise is the deck's last stacking card: two of its features here,
+/** Enterprise is the deck's last stacking card: three of its page's
+ *  features (as many points as the product cards), shortened the same way;
  *  the rest behind "See all features". */
-const ENTERPRISE_STACK_FEATURES = ["Team management", "ATS Integrations"]
-  .map((title) => ENTERPRISE.features.items.find((item) => item.title === title)!)
+const ENTERPRISE_STACK_FEATURES = [
+  { title: "Team management", description: "Logins and permissions for your team" },
+  { title: "ATS integrations", description: "Connect your ATS, Sheets or ERP" },
+  { title: "Dedicated customer support", description: "Help to onboard and hire better" },
+]
+
+/** Its three cards, the same shape as the products': the scale in the
+ *  Enterprise page's own line ("a pool of 50M jobseekers in 200+ industries
+ *  across 900+ cities in India"). */
+const ENTERPRISE_STACK_CARDS = [
+  { value: "50M", title: "Jobseekers", description: "One pool to hire from" },
+  { value: "200+", title: "Industries", description: "Hire across sectors" },
+  { value: "900+", title: "Cities", description: "All over India" },
+]
 
 export default function HomePage() {
   return (
@@ -153,13 +172,13 @@ export default function HomePage() {
               content/home.ts HOME_PRODUCT_DETAILS. */}
           <ScrollStack>
             {HOME_PRODUCT_DETAILS.map((product) => (
-              // p-2 insets the tile 8px from the card edge on three sides, so
-              // the corners nest: tile rounded-xl (12.5px) + 8px + border ≈
-              // the card's rounded-card (19.5px).
+              // p-2 insets the tile 8px from the card edge on phones. From lg
+              // 24px (lg:p-6): stacked cards show a 16px ledge above the one
+              // in front, and it should be the white card, not the photo.
               <ScrollStackItem
                 key={product.name}
                 data-product={PRODUCT_KEY[product.name as ProductName]}
-                className="group relative grid cursor-pointer gap-2 p-2 lg:grid-cols-2"
+                className="group relative grid cursor-pointer gap-2 p-2 lg:grid-cols-2 lg:p-6"
               >
                 {/* The whole card opens the product's page (in place of a
                     "Learn more" button); the action button stays on top. */}
@@ -168,26 +187,33 @@ export default function HomePage() {
                   aria-label={`Learn more about ${product.eyebrow}`}
                   className="absolute inset-0 rounded-card focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
                 />
-                <div className="pointer-events-none relative flex flex-col gap-8 p-6 sm:p-10 lg:p-16">
-                  {/* apna Unlimited is a brand with its own wordmark — show the
-                      "apna ∞ Unlimited" logo, not the eyebrow text. */}
-                  {product.name === "apna Unlimited" ? (
-                    <LogoApnaUnlimited variant="theme" className="h-4 w-auto self-start text-foreground" />
-                  ) : (
-                    // The product's mark from its page's hero chip, so the card
-                    // and the page it opens read as one product.
-                    <span className="flex items-center gap-2 text-overline text-muted-foreground">
-                      {(() => {
-                        const Icon = PRODUCT_ICON[product.name as ProductName]
-                        return <Icon className="size-4 shrink-0" aria-hidden />
-                      })()}
-                      {product.eyebrow}
-                    </span>
-                  )}
-                  <h3 className="text-h1 text-foreground">{product.heading}</h3>
-                  <ul className="flex flex-col gap-4">
+                {/* Three groups, spaced apart so the card scans: the name and
+                    headline, the points (ruled rows), then the buttons at
+                    the foot. */}
+                <div className="pointer-events-none relative flex flex-col gap-8 p-6 sm:p-10 lg:p-12">
+                  <div className="flex flex-col gap-3">
+                    {/* apna Unlimited is a brand with its own wordmark — show the
+                        "apna ∞ Unlimited" logo, not the eyebrow text. */}
+                    {product.name === "apna Unlimited" ? (
+                      <LogoApnaUnlimited variant="theme" className="h-4 w-auto self-start text-foreground" />
+                    ) : (
+                      // The product's mark from its page's hero chip, so the card
+                      // and the page it opens read as one product.
+                      <span className="flex items-center gap-2 text-overline text-muted-foreground">
+                        {(() => {
+                          const Icon = PRODUCT_ICON[product.name as ProductName]
+                          return <Icon className="size-4 shrink-0" aria-hidden />
+                        })()}
+                        {product.eyebrow}
+                      </span>
+                    )}
+                    <h3 className="text-h2 text-foreground">{product.heading}</h3>
+                  </div>
+                  {/* The three points, all shown, each with a tick, a rule
+                      between them (the three cards sit under the picture). */}
+                  <ul className="flex flex-col divide-y divide-border">
                     {product.features.map((feature) => (
-                      <li key={feature.title} className="flex items-start gap-3">
+                      <li key={feature.title} className="flex items-start gap-3 py-3 first:pt-0 last:pb-0">
                         <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-foreground" aria-hidden />
                         <div className="flex flex-col gap-0.5">
                           <p className="text-sm font-semibold text-foreground">{feature.title}</p>
@@ -196,44 +222,80 @@ export default function HomePage() {
                       </li>
                     ))}
                   </ul>
-                  {/* One action per card, in the dark `emphasis` button (green
-                      stays with the hero's sign-up, the page's one primary).
-                      Full width on phones. */}
-                  <Button
-                    variant="emphasis"
-                    size="lg"
-                    className="pointer-events-auto w-full sm:w-fit"
-                    nativeButton={false}
-                    render={<Link href={product.action.href} />}
-                    trailingIcon={<ArrowRight aria-hidden />}
-                  >
-                    {product.action.label}
-                  </Button>
+                  {/* The dark `emphasis` action (green stays with the hero's
+                      sign-up), "Learn more" beside it, quieter; the whole card
+                      still opens the page too. Phones stack them full width. */}
+                  <div className="pointer-events-auto mt-auto flex flex-col gap-3 sm:flex-row">
+                    <Button
+                      variant="emphasis"
+                      size="lg"
+                      className="w-full sm:w-fit"
+                      nativeButton={false}
+                      render={<Link href={product.action.href} />}
+                      trailingIcon={<ArrowRight aria-hidden />}
+                    >
+                      {product.action.label}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="w-full sm:w-fit"
+                      nativeButton={false}
+                      render={<Link href={hrefFor(product.name)} />}
+                    >
+                      Learn more
+                    </Button>
+                  </div>
                 </div>
                 {/* Phones: the illustration leads, the copy follows. It wears
                     its product's gradient on the white card. */}
-                <ProductIllustration
-                  product={product.name as ProductName}
-                  size="lg"
-                  className="pointer-events-none relative h-64 max-lg:order-first lg:h-full lg:min-h-112"
-                />
+                {/* The picture, its three cards under it (phones: both lead
+                    the card, so the copy and its button close it). Always on
+                    the right from lg (alternating was tried and dropped,
+                    user call 2026-10-28). */}
+                <div className="pointer-events-none relative flex flex-col gap-2 max-lg:order-first">
+                  <ProductIllustration
+                    product={product.name as ProductName}
+                    photo
+                    className="relative h-48 lg:h-auto lg:min-h-56 lg:flex-1"
+                  />
+                  <ul className="grid grid-cols-3 gap-2">
+                    {product.cards.map((card) => (
+                      // The picture's gradient, so the three read as part of it.
+                      <li
+                        key={card.title}
+                        className={cn("flex flex-col gap-1 rounded-card-nested p-3 sm:p-4", PRODUCT_GRADIENT[product.name as ProductName])}
+                      >
+                        <span className="text-lg font-semibold text-foreground sm:text-h3">{card.value}</span>
+                        {/* Phones: three across, small type (titles may wrap); from
+                            sm one line each, so the three read across alike. */}
+                        <span className="text-xs font-semibold text-foreground sm:truncate sm:text-sm">{card.title}</span>
+                        <span className="text-2xs text-muted-foreground sm:text-xs">{card.description}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </ScrollStackItem>
             ))}
-            <ScrollStackItem className="group relative grid cursor-pointer gap-2 p-2 lg:grid-cols-2">
+            <ScrollStackItem className="group relative grid cursor-pointer gap-2 p-2 lg:grid-cols-2 lg:p-6">
               <Link
                 href={HOME_ENTERPRISE.secondary.href}
                 aria-label={HOME_ENTERPRISE.secondary.label}
                 className="absolute inset-0 rounded-card focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
               />
-              <div className="pointer-events-none relative flex flex-col gap-8 p-6 sm:p-10 lg:p-16">
-                <span className="flex items-center gap-2 text-overline text-muted-foreground">
-                  <Building2 className="size-4 shrink-0" aria-hidden />
-                  {HOME_ENTERPRISE.eyebrow}
-                </span>
-                <h3 className="text-h1 text-foreground">{HOME_ENTERPRISE.title}</h3>
-                <ul className="flex flex-col gap-4">
+              {/* Laid out as the product cards: name and headline, ruled
+                  points, buttons at the foot. */}
+              <div className="pointer-events-none relative flex flex-col gap-8 p-6 sm:p-10 lg:p-12">
+                <div className="flex flex-col gap-3">
+                  <span className="flex items-center gap-2 text-overline text-muted-foreground">
+                    <Building2 className="size-4 shrink-0" aria-hidden />
+                    {HOME_ENTERPRISE.eyebrow}
+                  </span>
+                  <h3 className="text-h2 text-foreground">{HOME_ENTERPRISE.title}</h3>
+                </div>
+                <ul className="flex flex-col divide-y divide-border">
                   {ENTERPRISE_STACK_FEATURES.map((feature) => (
-                    <li key={feature.title} className="flex items-start gap-3">
+                    <li key={feature.title} className="flex items-start gap-3 py-3 first:pt-0 last:pb-0">
                       <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-foreground" aria-hidden />
                       <div className="flex flex-col gap-0.5">
                         <p className="text-sm font-semibold text-foreground">{feature.title}</p>
@@ -242,13 +304,37 @@ export default function HomePage() {
                     </li>
                   ))}
                 </ul>
-                <ContactButton variant="emphasis" size="lg" className="pointer-events-auto w-full sm:w-fit">
-                  {HOME_ENTERPRISE.primary.label}
-                </ContactButton>
+                <div className="pointer-events-auto mt-auto flex flex-col gap-3 sm:flex-row">
+                  <ContactButton variant="emphasis" size="lg" className="w-full sm:w-fit">
+                    {HOME_ENTERPRISE.primary.label}
+                  </ContactButton>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="w-full sm:w-fit"
+                    nativeButton={false}
+                    render={<Link href={HOME_ENTERPRISE.secondary.href} />}
+                  >
+                    {HOME_ENTERPRISE.secondary.label}
+                  </Button>
+                </div>
               </div>
               {/* The mother gradient: Enterprise is all of apna, tailored,
                   so it wears the brand's own gradient, not a fifth hue. */}
-              <EnterpriseIllustration className="pointer-events-none relative h-64 max-lg:order-first lg:h-full lg:min-h-112" />
+              <div className="pointer-events-none relative flex flex-col gap-2 max-lg:order-first">
+                <EnterpriseIllustration photo className="relative h-48 lg:h-auto lg:min-h-56 lg:flex-1" />
+                {/* Sky to plum, no gold (user call, 2026-10-28): the brand
+                    gradient's yellow patch read as noise on small tiles. */}
+                <ul className="grid grid-cols-3 gap-2">
+                  {ENTERPRISE_STACK_CARDS.map((card) => (
+                    <li key={card.title} className="flex flex-col gap-1 rounded-card-nested bg-gradient-illustration-sky p-3 sm:p-4">
+                      <span className="text-lg font-semibold text-foreground sm:text-h3">{card.value}</span>
+                      <span className="text-xs font-semibold text-foreground sm:truncate sm:text-sm">{card.title}</span>
+                      <span className="text-2xs text-muted-foreground sm:text-xs">{card.description}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </ScrollStackItem>
           </ScrollStack>
 

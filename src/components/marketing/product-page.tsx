@@ -105,16 +105,13 @@ export function ProductPage({ content }: { content: ProductPageContent }) {
                 </ContactButton>
               </div>
             </div>
-            {/* On a panel (without one the snippets read as hanging in space,
-                worst on phones), but a glass one, not the product gradient:
-                the page's canvas already wears that gradient, so a tile in it
-                vanished. Sheer (40%) glass, so the canvas shows through. A
-                card on the page, so the card corner. */}
+            {/* The product's photo with its snippet in the photo's free
+                corner, the same as its homepage card (user call,
+                2026-10-28). A card on the page, so the card corner. */}
             <ProductIllustration
               product={product}
-              size="lg"
-              bare
-              className="h-72 rounded-card border border-card/60 bg-surface-glass-faint backdrop-blur-xl sm:h-96"
+              photo
+              className="h-72 overflow-hidden rounded-card *:rounded-card sm:h-96"
             />
           </div>
         </Section>

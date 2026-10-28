@@ -53,7 +53,8 @@ export interface ProductPageContent {
   description?: string
   /** The hero's one primary action. Logged-out visitors go through login. */
   cta: { label: string; href: string }
-  stats?: { value: string; label: string }[]
+  /** `note`: the live section's line under the number. */
+  stats?: { value: string; label: string; note?: string }[]
   /** How it works, step by step — shown first, in the same card grid as
    *  the features, under the eyebrow `title` ("How it works"). */
   steps?: { title: string; items: { icon: ProductIconName; title: string; description: string }[] }
@@ -122,8 +123,12 @@ export const PRODUCT_PAGES = {
     headingAccent: "shortlists",
     cta: { label: "Post a job now", href: login("/apnahire/jobs/new") },
     stats: [
-      { value: "80%", label: "Response rate with AI" },
-      { value: "50%", label: "Less time to hire" },
+      { value: "80%", label: "Response rate with AI", note: "Compared to just 30% call connection rate in manual hiring" },
+      {
+        value: "50%",
+        label: "Less time to hire",
+        note: "AI does initial screening & shortlisting of candidates with whom you can do final interview",
+      },
       // From the Lovable homepage's "Apna index", not employer.apna.co.
       { value: "50,00,000+", label: "Calls made by the AI Calling Agent" },
     ],
@@ -229,9 +234,9 @@ export const PRODUCT_PAGES = {
     description: "Post 3+ roles every month. Fill them. Move on.",
     cta: { label: "Subscribe now", href: "/pricing" },
     stats: [
-      { value: "3,500+", label: "Businesses hiring — 9 in 10 within their first week" },
-      { value: "7 in 10", label: "Premium roles filled, without the wait" },
-      { value: "90%", label: "Fulfilment rate" },
+      { value: "3,500+", label: "Businesses hiring", note: "9 in 10 businesses are already hiring within their first week." },
+      { value: "7 in 10", label: "Premium roles filled", note: "Premium hiring without the wait." },
+      { value: "90%", label: "Fulfilment rate", note: "Post 3+ roles every month. Fill them. Move on." },
     ],
     features: {
       title: "One plan for every role you hire",

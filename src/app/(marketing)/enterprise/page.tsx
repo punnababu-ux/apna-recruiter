@@ -4,7 +4,8 @@
  * alternating gradient / white, the shared contact band at the end (every
  * "Contact sales" lands there).
  *
- *   Hero          chip, serif headline, the line, the one green CTA
+ *   Hero          as the product pages: chip, headline, the line, the green
+ *                 CTA and "See all features"; the office photo beside it
  *   Clients       the logos in their own white band, as on the homepage
  *   Features      the six Enterprise-only features, then "Plus you will
  *                 get", one gradient band; each card led by its 3D clay
@@ -28,7 +29,8 @@ import {
   SectionHeading,
 } from "@apna/design-system"
 import { FaqSection } from "@/components/apnahire/faq-section"
-import { PageHero, withAccent } from "@/components/marketing/page-blocks"
+import { HeroChip, withAccent } from "@/components/marketing/page-blocks"
+import { EnterpriseIllustration } from "@/components/marketing/product-illustrations"
 import { ValueArt, type ValueName } from "@/components/marketing/value-art"
 import { ContactButton } from "@/components/marketing/contact-section"
 import { ENTERPRISE } from "@/content/enterprise"
@@ -69,20 +71,29 @@ export default function EnterprisePage() {
   const { hero, features, plus, playbook, testimonials, faqs } = ENTERPRISE
   return (
     <>
-      <PageHero
-        icon={<Building2 aria-hidden />}
-        eyebrow={hero.eyebrow}
-        title={withAccent(hero.title, hero.titleAccent)}
-        description={hero.description}
-        actions={
-          <ContactButton
-            size="lg"
-            trailingIcon={<ArrowRight aria-hidden />}
-          >
-            {hero.cta}
-          </ContactButton>
-        }
-      />
+      {/* The product pages' hero (user call, 2026-10-28): copy and buttons
+          left, the office photo right; phones: headline, photo, buttons. */}
+      <Section size="lg" className="relative max-md:pt-8">
+        <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
+          <div className="flex flex-col gap-8 max-lg:contents">
+            <SectionHeading
+              level={1}
+              eyebrow={<HeroChip icon={<Building2 aria-hidden />}>{hero.eyebrow}</HeroChip>}
+              title={withAccent(hero.title, hero.titleAccent)}
+              description={hero.description}
+            />
+            <div className="flex flex-col gap-3 max-lg:order-last sm:flex-row">
+              <ContactButton size="lg" trailingIcon={<ArrowRight aria-hidden />}>
+                {hero.cta}
+              </ContactButton>
+              <Button size="lg" variant="outline" nativeButton={false} render={<a href="#features" />}>
+                See all features
+              </Button>
+            </div>
+          </div>
+          <EnterpriseIllustration photo className="h-72 overflow-hidden rounded-card *:rounded-card sm:h-96" />
+        </div>
+      </Section>
 
       {/* The clients, as on the homepage: their own white band. */}
       <Section tone="card" size="md">
@@ -98,7 +109,7 @@ export default function EnterprisePage() {
       </Section>
 
       {/* The exclusive features, then what every plan also gets: one band. */}
-      <Section size="md">
+      <Section size="md" id="features" className="scroll-mt-24">
         <div className="flex flex-col gap-16">
           <div className="flex flex-col gap-10">
             <SectionHeading
