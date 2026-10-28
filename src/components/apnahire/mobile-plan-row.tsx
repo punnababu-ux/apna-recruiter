@@ -341,7 +341,7 @@ export function MobileUnlimitedCard({
       })}
       className={cn(
         "flex flex-col gap-3 rounded-card bg-gradient-checkout-unlimited px-2.5 pt-5 pb-2.5 text-surface-inverted-fg",
-        onSelect && "ink press-subtle relative cursor-pointer transition-interactive",
+        onSelect && "cursor-pointer",
         className
       )}
     >
@@ -352,6 +352,8 @@ export function MobileUnlimitedCard({
       <div
         className={cn(
           "relative flex flex-col gap-3 overflow-hidden rounded-card-nested bg-plan-card p-4 text-card-foreground shadow-card",
+          // The tap answers on the white card, not the dark frame.
+          onSelect && "ink press-subtle transition-interactive",
           // Selected as in MobilePlanRow: the CTA green edge.
           radioMode && (selected ? "border-2 border-cta-primary ring-1 ring-cta-primary/20" : "border-2 border-transparent"),
           cardClassName
