@@ -23,6 +23,7 @@ import {
   type Step,
 } from "@apna/design-system"
 import { cn } from "@/lib/utils"
+import { HelpMenu } from "@/components/apnahire/post-job/help-menu"
 
 /** The wizard's three stages, then the plan page. */
 export type JobPostingStep = "job" | "candidates" | "setup" | "plan"
@@ -70,7 +71,7 @@ export function JobPostingChrome({
 
   return (
     <div className="sticky top-0 z-sticky border-b border-border bg-card">
-      <div className={cn("border-b border-border px-4 py-2.5 sm:px-6 sm:py-3", stepperClassName && "max-sm:border-b-0")}>
+      <div className={cn("px-4 py-2.5 sm:px-6 sm:py-3", current !== "plan" && "border-b border-border", stepperClassName && "max-sm:border-b-0")}>
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-2 sm:gap-3">
           <div className="flex items-center gap-2 sm:gap-3">
             <BackButton onClick={() => leave(() => router.push("/apnahire/jobs"))} aria-label="Back to jobs" />
@@ -78,6 +79,7 @@ export function JobPostingChrome({
           </div>
           <div className="flex items-center gap-1.5 sm:gap-2">
             {actions}
+            <HelpMenu />
             <Button
               type="button"
               variant="outline"
@@ -97,6 +99,9 @@ export function JobPostingChrome({
           </div>
         </div>
       </div>
+      {/* No stepper on the plan step: it's checkout now, and live's ticks
+          there can't be clicked either (user call, 2026-10-29). */}
+      {current !== "plan" && (
       <div className={cn("px-4 py-2 sm:px-6 sm:py-3", stepperClassName)}>
         <div className="mx-auto w-full max-w-6xl">
           <Stepper
@@ -106,6 +111,7 @@ export function JobPostingChrome({
           />
         </div>
       </div>
+      )}
     </div>
   )
 }

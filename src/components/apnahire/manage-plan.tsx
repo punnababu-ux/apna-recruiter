@@ -469,12 +469,11 @@ function CurrentPlan({
           }
         />
         <PopupFooter>
-          <Button variant="outline" size="lg" className="flex-1" onClick={() => setReactivating(false)}>
+          <Button variant="outline" size="lg" onClick={() => setReactivating(false)}>
             Not now
           </Button>
           <Button
             size="lg"
-            className="flex-1"
             onClick={() => {
               reactivateSubscription(slots)
               setReactivating(false)

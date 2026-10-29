@@ -247,10 +247,10 @@ export function UpgradeConfirm({
             <NoWayBack sub={sub} />
           </PopupBody>
           <PopupFooter>
-            <Button variant="outline" size="lg" className="flex-1" onClick={onClose}>
+            <Button variant="outline" size="lg" onClick={onClose}>
               Cancel
             </Button>
-            <Button size="lg" className="flex-1" onClick={() => onConfirm(plan)}>
+            <Button size="lg" onClick={() => onConfirm(plan)}>
               Upgrade now
             </Button>
           </PopupFooter>
@@ -300,11 +300,11 @@ export function DowngradeFlow({
               description="We'd appreciate your feedback to improve the product."
             />
             <ReasonStep id="downgrade-reason" state={reasons} />
-            <PopupFooter>
-              <Button variant="outline" size="lg" className="flex-1" disabled={!reasons.ready} onClick={() => setStep("confirm")}>
+            <PopupFooter stack>
+              <Button variant="outline" size="lg" disabled={!reasons.ready} onClick={() => setStep("confirm")}>
                 Continue
               </Button>
-              <Button size="lg" className="flex-1" onClick={onClose}>
+              <Button size="lg" onClick={onClose}>
                 Keep current plan
               </Button>
             </PopupFooter>
@@ -332,14 +332,14 @@ export function DowngradeFlow({
                 </Alert>
               )}
             </PopupBody>
-            <PopupFooter>
-              <Button variant="outline" size="lg" className="flex-1" onClick={onClose}>
+            {/* Two long labels: they can't share a 320px row. */}
+            <PopupFooter stack>
+              <Button variant="outline" size="lg" onClick={onClose}>
                 Keep current plan
               </Button>
               <Button
                 variant="destructive-solid"
                 size="lg"
-                className="flex-1"
                 onClick={() => {
                   scheduleDowngrade(slots, target, reasons.answers)
                   setStep("done")

@@ -44,16 +44,14 @@ export function TrustedByBand() {
 }
 
 /** The trusted-by logos, compact, for product flows (express checkout's plan
- *  step): a gray caption and a still logo row (no glide: it's a checkout,
- *  not a showcase), no band or heading. */
+ *  step): a caption and the logos in colour, gliding, no band or heading. */
 export function TrustedByStrip() {
   return (
     <div data-slot="trusted-by-strip" className="flex flex-col gap-4 pt-6">
       {/* The homepage's figure (HOME stats: 7 L+ businesses & enterprises). */}
       <p className="text-base font-semibold text-foreground">Trusted by 7 lakh+ businesses and enterprises for hiring</p>
-      {/* Still, so a fixed set: the seven that fit one desktop row (phones
-          swipe it). */}
-      <LogoWall items={CLIENT_LOGO_ITEMS.slice(0, 7)} itemHeight="compact" muted align="start" />
+      {/* In colour, gliding forever, as on the live plan step (user call, 2026-10-29). */}
+      <LogoWall items={CLIENT_LOGO_ITEMS} itemHeight="compact" marquee />
     </div>
   )
 }

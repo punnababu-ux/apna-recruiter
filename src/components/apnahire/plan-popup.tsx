@@ -117,13 +117,22 @@ export function PopupBody({ className, children }: { className?: string; childre
   return <div className={cn("flex flex-col gap-4 px-5 py-5 sm:px-6", className)}>{children}</div>
 }
 
-/** The action row: side by side from sm, stacked (primary on top) on
- *  phones. Give each button `flex-1`. */
-export function PopupFooter({ children }: { children: React.ReactNode }) {
+/** The action row (AGENTS.md "CTAs in a pop-up"): side by side, secondary
+ *  first, equal halves on every width. `stack`: a pair whose labels can't
+ *  share a 320px row — stacked on phones, primary on top. Buttons take no
+ *  width classes of their own. */
+export function PopupFooter({ stack, children }: { stack?: boolean; children: React.ReactNode }) {
   return (
     <>
       <Separator />
-      <div className="flex flex-col-reverse gap-3 px-5 py-4 sm:flex-row sm:px-6">{children}</div>
+      <div
+        className={cn(
+          "flex gap-3 px-5 py-4 sm:flex-row sm:px-6 sm:*:flex-1",
+          stack ? "flex-col-reverse *:w-full sm:*:w-auto" : "*:min-w-0 *:flex-1"
+        )}
+      >
+        {children}
+      </div>
     </>
   )
 }

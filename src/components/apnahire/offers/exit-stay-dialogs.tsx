@@ -71,11 +71,11 @@ export function StayDialog({
           }
         />
       )}
-      <PopupFooter>
-        <Button variant="outline" size="lg" className="w-full sm:flex-1" onClick={onLeave}>
+      <PopupFooter stack>
+        <Button variant="outline" size="lg" onClick={onLeave}>
           {where === "plan" ? "Go back" : "Change plan"}
         </Button>
-        <Button size="lg" className="w-full sm:flex-1" onClick={onStay}>
+        <Button size="lg" onClick={onStay}>
           Continue posting
         </Button>
       </PopupFooter>
@@ -106,10 +106,10 @@ export function LeaveReasonsDialog({
       />
       <ReasonStep id="leave-reason" state={reasons} />
       <PopupFooter>
-        <Button variant="outline" size="lg" className="w-full sm:flex-1" onClick={() => leave([])}>
+        <Button variant="outline" size="lg" onClick={() => leave([])}>
           Skip
         </Button>
-        <Button size="lg" className="w-full sm:flex-1" disabled={!reasons.ready} onClick={() => leave(reasons.answers)}>
+        <Button size="lg" disabled={!reasons.ready} onClick={() => leave(reasons.answers)}>
           Submit
         </Button>
       </PopupFooter>

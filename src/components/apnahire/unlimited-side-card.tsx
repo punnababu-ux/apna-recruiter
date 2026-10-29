@@ -29,7 +29,7 @@ import { useCardHover } from "@/components/apnahire/use-card-hover"
 import { MobileMetaLine, MobileUnlimitedCard } from "@/components/apnahire/mobile-plan-row"
 import { UpcomingPriceLine } from "@/components/apnahire/upcoming-price-line"
 import { inr } from "@/lib/format"
-import { dbCreditsLabel, slotLabel, type SubscriptionPlan } from "@/content/subscriptions"
+import { dbCreditsLabel, slotLabel, slotTermLabel, type SubscriptionPlan } from "@/content/subscriptions"
 import { usePlans } from "@/hooks/apnahire/use-plans"
 
 interface UnlimitedSideCardProps {
@@ -77,7 +77,7 @@ export function UnlimitedSideCard({
         selected={mobileSelect?.selected}
         className={cn("md:hidden", className)}
         // Same card, same structure as express checkout's Monthly plan: name
-        // and price with its unit on top, then just "1 active job slot" (no
+        // and price with its unit on top, then "1 active job slot for 30 days" (no
         // separate validity line), the plan lines, then the note and CTA.
         title="Unlimited job posts"
         mrp={strike}
@@ -87,7 +87,7 @@ export function UnlimitedSideCard({
         upcoming={<UpcomingPriceLine price={plan.janPrice} />}
         meta={
           <MobileMetaLine icon={<BriefcaseBusiness aria-hidden />}>
-            {slotLabel(plan.slots)}
+            {slotTermLabel(plan)}
           </MobileMetaLine>
         }
         features={[

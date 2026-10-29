@@ -108,7 +108,7 @@ export function CancelPlanFlow({
             </PopupDescription>
           </PopupBody>
           <PopupFooter>
-            <Button size="lg" variant="outline" className="flex-1" onClick={close}>
+            <Button size="lg" variant="outline" onClick={close}>
               Okay, got it
             </Button>
           </PopupFooter>
@@ -118,11 +118,11 @@ export function CancelPlanFlow({
           <PopupHeader art="contact"
             title="Why are you cancelling?" description="We'd appreciate your feedback to improve the product." />
           <ReasonStep id="cancel-reason" state={reasons} />
-          <PopupFooter>
-            <Button variant="outline" size="lg" className="flex-1" disabled={!reasons.ready} onClick={() => setStep("confirm")}>
+          <PopupFooter stack>
+            <Button variant="outline" size="lg" disabled={!reasons.ready} onClick={() => setStep("confirm")}>
               Continue
             </Button>
-            <Button size="lg" className="flex-1" onClick={close}>
+            <Button size="lg" onClick={close}>
               Keep current plan
             </Button>
           </PopupFooter>
@@ -142,14 +142,13 @@ export function CancelPlanFlow({
             <ChangeList title="What you lose then" items={benefits.map((text) => ({ text, lost: true }))} />
             <p className="text-sm text-muted-foreground">Nothing more is charged. You can renew any time before then.</p>
           </PopupBody>
-          <PopupFooter>
-            <Button variant="outline" size="lg" className="flex-1" onClick={close}>
+          <PopupFooter stack>
+            <Button variant="outline" size="lg" onClick={close}>
               Keep current plan
             </Button>
             <Button
               variant="destructive-solid"
               size="lg"
-              className="flex-1"
               onClick={() => {
                 cancelAtRenewal(slots, reasons.answers)
                 setStep("done")

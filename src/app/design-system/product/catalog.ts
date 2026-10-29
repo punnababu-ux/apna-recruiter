@@ -492,10 +492,18 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
       {
         name: "JobPostingChrome",
         file: "apnahire/post-job/job-posting-chrome.tsx",
-        what: "Sticky header: back, title, Save & exit, stepper.",
+        what: "Sticky header: back, title, help, Save & exit, stepper (not on the plan step).",
         live: "/apnahire/jobs/new",
         where: "Every job posting step, plan step",
         rules: ["The wizard's footer Back is a different action (previous question) from the header back (leave)."],
+      },
+      {
+        name: "HelpMenu",
+        file: "apnahire/post-job/help-menu.tsx",
+        what: "The header's help: FAQ, contact hours, chat, WhatsApp, training, HR best practices.",
+        live: "/apnahire/jobs/new/plans",
+        where: "Job posting header, every step",
+        rules: ["Popover on desktop, bottom sheet on phones.", "No \"Recommended\" tag on any row."],
       },
       {
         name: "CandidateJobPreview",

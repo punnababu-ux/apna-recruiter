@@ -78,10 +78,10 @@ export function CityLockDialog({
         />
       </PopupBody>
       <PopupFooter>
-        <Button variant="outline" size="lg" className="w-full sm:flex-1" onClick={() => onOpenChange(false)}>
+        <Button variant="outline" size="lg" onClick={() => onOpenChange(false)}>
           {city ? "Go back" : "Not now"}
         </Button>
-        <Button size="lg" className="w-full sm:flex-1" disabled={!chosen} onClick={() => onConfirm(chosen)}>
+        <Button size="lg" disabled={!chosen} onClick={() => onConfirm(chosen)}>
           Lock city
         </Button>
       </PopupFooter>

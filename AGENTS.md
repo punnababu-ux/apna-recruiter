@@ -314,14 +314,32 @@ step pop-up (a question, a confirm, a "what changes"):
    then a rule (`Separator`) above the content.
 2. **Body:** the content; lists and boxes sit under the rule, never
    straight under the subtitle.
-3. **Footer:** a rule, then the buttons: side by side from `sm`, stacked
-   on phones with the primary on top. One solid button: green for a
+3. **Footer:** a rule, then the buttons side by side, on phones too (see
+   "CTAs in a pop-up" below). One solid button: green for a
    purchase or "keep" (`default`), solid red (`destructive-solid`) for the
    irreversible last step; the other is `outline`.
 4. **The last step** of a flow is a centred confirmation: clay on top
    (`sm`), title, text, one CTA. Never a line icon.
 5. **Frame:** `PlanPopup` (dialog from md, bottom sheet on phones, the
    CloseBubble). Plan flows build on it; other product pop-ups match it.
+   A plain confirm ("Continue your draft?") is the system `AlertDialog`,
+   which draws the same parts (bottom sheet on phones, clay in
+   `AlertDialogMedia`, rule, buttons side by side; the
+   primary is green `default`, never the dark `emphasis`).
+
+**Menus have one type scale** (user call, 2026-10-29). A menu that opens
+from an icon (the job-posting help menu, the profile menu): a popover on
+desktop, a bottom sheet on phones, same content in both.
+- Group heading / menu title: `text-base font-semibold` ("Contact us",
+  "Available credits").
+- Its subtext: `text-xs text-muted-foreground` (hours, a note).
+- Row label: `text-sm` regular, `text-foreground`. Never bold, never a
+  size picked per menu.
+- A rule (`Separator`) between the heading block and the rows.
+- Icons: one clay object beside the group heading only (40px, from
+  `public/images/company/values`); rows keep 20px line icons. An external
+  link ends with the small gray `ExternalLink`.
+- No "Recommended" or other badges on a row.
 
 **Same pattern, same component — check before you build.** If a new
 surface looks like one that exists (a side panel, a pop-up, a chip row, a
@@ -353,6 +371,20 @@ that is a defect even when each looks fine alone. The shared ones:
 One accepted difference (user call, 2026-10-29): the apna Unlimited card is
 titled "Unlimited job posts" in self-checkout and "Monthly plan" in express
 checkout. Same component (`MobileUnlimitedCard`), different title.
+
+**CTAs in a pop-up — side by side, everywhere** (user call, 2026-10-29).
+Every dialog and bottom sheet with two buttons puts them in one row, on
+phones too: secondary (`outline`) first, primary last, in equal halves.
+Never uneven widths for buttons or cards in a pop-up, unless the pop-up is
+an upsell that sizes them on purpose (the exit offer's "No, thanks", the
+offer tile's 2:3 from `sm`).
+- `AlertDialogFooter` and `PopupFooter` do this. Buttons inside them take
+  no width classes (`flex-1`, `w-full`).
+- The one exception: a pair where either label doesn't fit half a 320px
+  sheet (about 130px: "Keep current plan", "Continue posting") is stacked on
+  phones, primary on top: `PopupFooter stack`. Decide it when you build
+  the pop-up, by checking at 320px; never let the label's width decide at
+  runtime. Prefer a shorter label to a stacked pair.
 
 **Button pairs that stack on phones** (RCA, 2026-10-27): a pair laid out
 `flex-col sm:flex-row` gives each button `w-full sm:flex-1`, never bare
@@ -687,8 +719,7 @@ cards) and every upsell tile (`OfferChoice`), both checkouts, light and dark
    in `OfferChoice` pass `validDays` / `term`, never a plain `note`.
    Exception (user call, 2026-10-29): a subscription card on phones
    (`MobileUnlimitedCard`) shows its slot as one line with the briefcase
-   icon — "1 active job slot" in self-checkout, "1 active job slot for N
-   days" in express — and no separate validity line.
+   icon — "1 active job slot for N days" in both checkouts — and no separate validity line.
 6. **Which upsell tiles show validity.** Self-checkout: both tiles (both are
    packs the recruiter is choosing between). Express checkout: only the
    bundle on offer; the stay tile is the credit this one job needs and has

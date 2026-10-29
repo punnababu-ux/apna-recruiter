@@ -41,11 +41,13 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
+  AlertDialogMedia,
   AlertDialogTitle,
   Button,
   WizardFooter,
   WizardTypingProvider,
 } from "@apna/design-system"
+import { ValueArt } from "@/components/marketing/value-art"
 import { useDraftPersistence } from "@/hooks/onlyrounds/use-draft-persistence"
 import { CandidateJobPreview } from "@/components/apnahire/post-job/candidate-job-preview"
 import {
@@ -666,6 +668,9 @@ export function PostJobFlow() {
       <AlertDialog open={askResume}>
         <AlertDialogContent>
           <AlertDialogHeader>
+            <AlertDialogMedia>
+              <ValueArt name="job-types" size="xs" />
+            </AlertDialogMedia>
             <AlertDialogTitle>Continue your draft?</AlertDialogTitle>
             <AlertDialogDescription>
               {normalizeFlow(pending ?? EMPTY_FLOW).draft.title.trim() || "Untitled job"}
@@ -673,7 +678,7 @@ export function PostJobFlow() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={discard}>Start new</AlertDialogCancel>
-            <AlertDialogAction variant="emphasis" onClick={resume}>
+            <AlertDialogAction onClick={resume}>
               Continue draft
             </AlertDialogAction>
           </AlertDialogFooter>

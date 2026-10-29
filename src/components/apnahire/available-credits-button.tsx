@@ -348,7 +348,7 @@ export function AvailableCreditsButton({
         <SheetTrigger render={trigger} />
         {/* The system CloseBubble sits outside the sheet; no overflow-hidden. */}
         <SheetContent side="bottom" className="gap-4 rounded-t-2xl border-t-0 p-5 pb-safe-5">
-          <SheetTitle className="text-lg font-semibold">{title}</SheetTitle>
+          <SheetTitle className="text-base font-semibold text-foreground">{title}</SheetTitle>
           {body}
           {cta}
         </SheetContent>
@@ -360,7 +360,7 @@ export function AvailableCreditsButton({
     <Popover>
       <PopoverTrigger render={trigger} />
       <PopoverContent align="end" sideOffset={8} className="w-72 gap-4 rounded-2xl p-5">
-        <PopoverTitle className="text-lg font-semibold text-foreground">{title}</PopoverTitle>
+        <PopoverTitle className="text-base font-semibold text-foreground">{title}</PopoverTitle>
         {body}
         {cta}
       </PopoverContent>
