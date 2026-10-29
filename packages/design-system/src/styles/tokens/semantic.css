@@ -609,6 +609,9 @@
   /* Jobs wears the brand green, AI Calling the sky (2026-10-18). */
   --gradient-product-smart-jobs: var(--gradient-illustration-green);
   --gradient-product-ai-calling: var(--gradient-illustration-sky);
+  /* The "+AI" tag: AI calling's sky into brand green, vivid so a small
+     tag reads (the attention ring's blue and green). White text on it. */
+  --gradient-ai-tag: linear-gradient(110deg, var(--color-apna-sky-500), var(--color-apna-green-500));
   --gradient-product-database:   var(--gradient-illustration-plum);
   --gradient-product-unlimited:  var(--gradient-illustration-gold);
   /* attention-ring: the brand light that runs around an add-on card once as

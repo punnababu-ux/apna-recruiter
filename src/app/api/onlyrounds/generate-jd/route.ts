@@ -343,8 +343,8 @@ function deriveDummyTitle(jd: string): string {
 
 export async function POST(req: NextRequest) {
   try {
-    const { body, tooLarge } = await readJsonBody(req)
-    if (tooLarge) return tooLarge
+    const { body, reject } = await readJsonBody(req)
+    if (reject) return reject
     const title: string = (body?.title ?? "").toString()
     const jd: string = (body?.jd ?? body?.seed ?? "").toString()
 

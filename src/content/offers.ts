@@ -57,12 +57,11 @@ export function withExtraOffBundle<
 /** "Pay less when you buy 3" — offered on every job tier when the
  *  recruiter has no credits. DEMO prices: about 21% off three single posts,
  *  which is the board's Premium ratio (₹1,399 → ₹1,099 /job). */
-export const JOB_BUNDLE_OFFERS: Record<JobPlanTierId, { jobs: number; pricePerJob: number; validDays: number }> = {
+/** Not for `premium-ai`: that SKU is redeem-only, never sold. */
+export const JOB_BUNDLE_OFFERS: Record<Exclude<JobPlanTierId, "premium-ai">, { jobs: number; pricePerJob: number; validDays: number }> = {
   classic: { jobs: 3, pricePerJob: 549, validDays: 90 },
   premium: { jobs: 3, pricePerJob: 1099, validDays: 90 },
   "super-premium": { jobs: 3, pricePerJob: 2199, validDays: 90 },
-  // Never offered: the P+AI card only shows to credit holders, who get no bundle offer.
-  "premium-ai": { jobs: 3, pricePerJob: 1099, validDays: 90 },
 }
 
 // The annual upgrade's plan and the slots-full extra slot follow the

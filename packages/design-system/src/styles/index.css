@@ -1586,6 +1586,9 @@ a[href] > [data-slot="card"] {
 @utility bg-gradient-product-smart-jobs {
   background-image: var(--gradient-product-smart-jobs);
 }
+@utility bg-gradient-ai-tag {
+  background-image: var(--gradient-ai-tag);
+}
 @utility bg-gradient-product-ai-calling {
   background-image: var(--gradient-product-ai-calling);
 }

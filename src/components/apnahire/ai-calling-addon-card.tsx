@@ -12,12 +12,8 @@
  *   Footer    compact demo pill (play / stop · Hindi / English) at the
  *             left · price + Add at the right
  *
- * The price block has two states, depending on the recruiter's AI calling
- * balance:
- *   no credit   ₹1,699 / "for this job"         (paid add-on)
- *   ≥1 credit   "1 AI calling credit" / "Available" (spends the credit)
- * Either way the CTA reads "Add". The parent decides what
- * the resulting cart line costs.
+ * The price block reads ₹1,699 / "for this job"; the CTA reads "Add". It is
+ * never shown to a recruiter who holds an AI job (P+AI) credit.
  *
  * Composition only: Button from the design system, token gradients
  * (`bg-gradient-product-ai-calling`, the AI Calling Agent's own sky). No
@@ -30,10 +26,8 @@ import { AiDemoCall, AiSparkle } from "@/components/apnahire/ai-demo-call"
 import { inr } from "@/lib/format"
 
 export interface AiAddonOffer {
-  /** Rupee price when no AI calling credit is available. */
+  /** Rupee price for this job. */
   price: number
-  /** AI calling credits in the recruiter's balance. One covers this job. */
-  creditsAvailable: number
 }
 
 export function AiCallingAddonCard({
@@ -43,8 +37,6 @@ export function AiCallingAddonCard({
   offer: AiAddonOffer
   onAdd: () => void
 }) {
-  const useCredit = offer.creditsAvailable > 0
-
   return (
     <section data-slot="ai-calling-addon" data-product="ai-calling" className="bg-card p-4 shadow-card">
       {/* The ring sits on a wrapper: the card clips its corners, which would clip the glow. */}
@@ -75,16 +67,16 @@ export function AiCallingAddonCard({
             <div className="flex shrink-0 items-center gap-3">
               <div className="hidden flex-col items-end sm:flex">
                 <span className="text-sm font-semibold whitespace-nowrap text-foreground">
-                  {useCredit ? "1 AI calling credit" : inr(offer.price)}
+                  {inr(offer.price)}
                 </span>
                 <span className="text-xs text-muted-foreground">
-                  {useCredit ? "Available" : "for this job"}
+                  for this job
                 </span>
               </div>
               {/* Dark gray, not green: "Proceed to pay" below is this screen's one
                   primary CTA (Button's one-primary rule). */}
               <Button type="button" variant="emphasis" className="px-3 sm:min-w-20 sm:px-4" onClick={onAdd}>
-                <span className="whitespace-nowrap sm:hidden">Add · {useCredit ? "1 credit" : inr(offer.price)}</span>
+                <span className="whitespace-nowrap sm:hidden">Add · {inr(offer.price)}</span>
                 <span className="hidden sm:inline">Add</span>
               </Button>
             </div>

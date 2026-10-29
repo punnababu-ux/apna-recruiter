@@ -192,8 +192,8 @@ function buildDummyQuestions(
 
 export async function POST(req: NextRequest) {
   try {
-    const { body, tooLarge } = await readJsonBody(req)
-    if (tooLarge) return tooLarge
+    const { body, reject } = await readJsonBody(req)
+    if (reject) return reject
     const jobTitle: string = (body?.jobTitle ?? "").toString()
     const jd: string = (body?.jd ?? "").toString()
     const sectionTitle: string = (body?.sectionTitle ?? "").toString()

@@ -492,7 +492,7 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
       {
         name: "JobPostingChrome",
         file: "apnahire/post-job/job-posting-chrome.tsx",
-        what: "Sticky header: back, title, help, Save & exit, stepper (not on the plan step).",
+        what: "Sticky header: back, title, help, Save & exit and stepper (neither on the plan step).",
         live: "/apnahire/jobs/new",
         where: "Every job posting step, plan step",
         rules: ["The wizard's footer Back is a different action (previous question) from the header back (leave)."],

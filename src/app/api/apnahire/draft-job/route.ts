@@ -132,8 +132,8 @@ export async function POST(req: NextRequest) {
   const fallback = () =>
     refining && current ? buildDummyRefine(current, instruction) : buildDummyDraft(prompt)
   try {
-    const { body, tooLarge } = await readJsonBody(req)
-    if (tooLarge) return tooLarge
+    const { body, reject } = await readJsonBody(req)
+    if (reject) return reject
     prompt = body?.prompt ?? ""
     instruction = body?.instruction ?? ""
     current = body?.current

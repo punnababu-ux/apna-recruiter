@@ -388,8 +388,8 @@ function buildDummyResponse(title: string, jd: string): ExtractionResult {
 
 export async function POST(req: NextRequest) {
   try {
-    const { body, tooLarge } = await readJsonBody(req)
-    if (tooLarge) return tooLarge
+    const { body, reject } = await readJsonBody(req)
+    if (reject) return reject
     const jd: string = body?.jd ?? ""
     const title: string = body?.title ?? ""
 

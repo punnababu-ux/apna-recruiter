@@ -153,8 +153,8 @@ function capTotal(result: CriteriaResult): CriteriaResult {
 export async function POST(req: NextRequest) {
   let tasks: Array<{ id: string; title: string; type: string }> = []
   try {
-    const { body, tooLarge } = await readJsonBody(req)
-    if (tooLarge) return tooLarge
+    const { body, reject } = await readJsonBody(req)
+    if (reject) return reject
     const title: string = (body?.title ?? "").toString()
     const jd: string = (body?.jd ?? "").toString()
     const detailsSummary: string = (body?.detailsSummary ?? "").toString()

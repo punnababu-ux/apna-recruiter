@@ -59,6 +59,7 @@ function useHeld<T>(value: T | null): T | null {
 /* ── Job bundle: 1 job vs 3 jobs ─────────────────────────────────────── */
 
 export function bundleQuote(tier: JobPlanTier, extraOff = false) {
+  if (tier.id === "premium-ai") throw new Error("premium-ai is redeem-only, never bundled")
   const offer = JOB_BUNDLE_OFFERS[tier.id]
   const off = (n: number) => (extraOff ? withExtraOff(n) : n)
   return {

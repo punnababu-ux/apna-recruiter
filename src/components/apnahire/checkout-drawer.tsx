@@ -555,24 +555,15 @@ export function CheckoutDrawer({
 
   const isSubscription = item.renewAfterDays != null
 
-  // The AI add-on spends one AI calling credit when there is one, otherwise
-  // it's bought for this job.
+  // The AI add-on is bought for this job (never shown to an AI job credit holder).
   const aiLine: CartLine | null =
     aiAddon && aiAdded
-      ? aiAddon.creditsAvailable > 0
-        ? {
-            id: "ai-calling",
-            label: "AI calling agent",
-            sublabel: "1 AI calling credit from your balance",
-            price: 0,
-            priceLabel: "1 credit",
-          }
-        : {
-            id: "ai-calling",
-            label: "AI calling agent",
-            sublabel: "Calls and screens applicants for this job",
-            price: aiAddon.price,
-          }
+      ? {
+          id: "ai-calling",
+          label: "AI calling agent",
+          sublabel: "Calls and screens applicants for this job",
+          price: aiAddon.price,
+        }
       : null
 
   const lines: CartLine[] = [

@@ -205,10 +205,13 @@ export function JobPlanSelection() {
 
   // The exit discount is only for someone about to pay (user call,
   // 2026-10-19). Leaving the page (back, Save & exit) with even one credit
-  // never shows it — they can post without paying. Closing the order summary
+  // never shows it — they can post without paying. An AI job (P+AI) credit
+  // doesn't count here: it covers one card, every other tier is still paid.
+  // Closing the order summary
   // shows it only when that order needs a payment (a partial-credit top-up,
   // a paid plan), never when credits cover it.
   const holdsCredits = hasAnyCredits(creditBalance)
+  const canPostFree = creditBalance.job > 0
   // A work-from-home job can't be posted on the subscription (user call,
   // 2026-10-19): the job's work type comes from the posting draft; the
   // review switcher can override it.
@@ -217,8 +220,8 @@ export function JobPlanSelection() {
     if (readDraft().locationType === "home") setWfh(true)
   }, [])
   // The order as it stands when the summary closes: a paid job line, or the
-  // AI calling agent added with no AI calling credit to cover it (a covered
-  // classic job + a paid AI agent is a paying order).
+  // paid AI calling agent added (a covered classic job + the agent is a
+  // paying order).
   const [aiAdded, setAiAdded] = React.useState(false)
   // Came from "Post a job with AI calling": the summary opens with it added.
   const [aiIntent, setAiIntent] = React.useState(false)
@@ -226,8 +229,8 @@ export function JobPlanSelection() {
     if (wantsAiCalling()) setAiIntent(true)
   }, [])
   const orderNeedsPayment =
-    (checkoutItem?.price ?? 0) > 0 || (aiAdded && creditBalance["ai-calling"] < 1)
-  const attemptExit = (proceed: () => void, paymentRequired = !holdsCredits, where: "plan" | "summary" = "plan") => {
+    (checkoutItem?.price ?? 0) > 0 || aiAdded
+  const attemptExit = (proceed: () => void, paymentRequired = !canPostFree, where: "plan" | "summary" = "plan") => {
     if (offer.nudgeAvailable && paymentRequired) setExitPrompt({ proceed })
     // Asked once at the order summary: leaving the plan page doesn't ask again.
     else if (offer.returning && paymentRequired && !(where === "plan" && summaryStayAsked.current)) {
@@ -400,12 +403,8 @@ export function JobPlanSelection() {
         onStepClick={(step) => step !== "plan" && router.push(`/apnahire/jobs/new?resume=1&stage=${step}`)}
         // Phones show the step in the bottom bar, as on the questions.
         stepperClassName="max-sm:hidden"
-        // Zero-credit users haven't met the credit model yet.
-        actions={
-          hasAnyCredits(creditBalance) ? (
-            <AvailableCreditsButton balance={{ job: creditBalance.job, aiCalling: creditBalance["ai-calling"] }} />
-          ) : undefined
-        }
+        // The balance this page draws on, in the bar (no Save & exit here).
+        actions={<AvailableCreditsButton balance={{ job: creditBalance.job, aiCalling: creditBalance["ai-calling"] }} />}
         onExitAttempt={(proceed) => attemptExit(proceed)}
       />
 
@@ -468,7 +467,8 @@ export function JobPlanSelection() {
         }
         item={checkoutItem}
         onProceedToPay={handleProceedToPay}
-        aiAddon={tookUpsell || creditBalance["ai-calling"] > 0 ? undefined : { price: AI_CALLING_ADDON.price, creditsAvailable: creditBalance["ai-calling"] }}
+        // Never for an AI job (P+AI) credit holder: the two must not stack.
+        aiAddon={tookUpsell || creditBalance["ai-calling"] > 0 ? undefined : { price: AI_CALLING_ADDON.price }}
         extraOffer={offer.deadline ? { code: EXTRA_OFF.code, deadline: offer.deadline } : undefined}
         onExtraOfferExpired={offer.expire}
         onAiAddedChange={setAiAdded}

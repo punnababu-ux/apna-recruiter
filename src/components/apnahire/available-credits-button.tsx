@@ -44,6 +44,7 @@ import {
   Badge,
   Bot,
   Briefcase,
+  Separator,
   Button,
   CalendarClock,
   Coin,
@@ -312,7 +313,9 @@ export function AvailableCreditsButton({
   const isMobile = useIsMobile()
   const plans = usePlansIngress()
   const slots = useJobSlots()
-  const full: CreditsBalance = { job: 0, database: 0, aiCalling: 0, ...balance }
+  // No balance passed (self-checkout, the app bar): the stored job credits.
+  const storedJobs = useJobCredits()
+  const full: CreditsBalance = { job: storedJobs, database: 0, aiCalling: 0, ...balance }
   const title = slots ? "Plan details" : "Available credits"
   const body = slots ? <PlanRows slots={slots} /> : <CreditRows balance={full} />
 
@@ -329,13 +332,40 @@ export function AvailableCreditsButton({
     </Button>
   )
 
-  const Icon = slots ? Layers : Wallet
+  // The balance chip (user call, 2026-10-30): each kind above 0 with the
+  // panel's icon — "4 job credits │ 1 AI job credit", numbers only on
+  // phones — or "0 job credits", so the bar never shifts. With a plan: "Plan details".
+  const plural = (n: number, what: string) => `${num(n)} ${what}${n === 1 ? "" : "s"}`
+  const held = [
+    { n: full.job, Icon: Briefcase, label: plural(full.job, "job credit") },
+    { n: full.aiCalling, Icon: Bot, label: plural(full.aiCalling, "AI job credit") },
+  ].filter((p) => p.n > 0)
+  const parts = slots ? [] : held.length ? held : [{ n: 0, Icon: Briefcase, label: plural(0, "job credit") }]
   const trigger = (
-    // Phones: an icon-only 32px circle (the desktop bell's size and shape);
-    // the label from sm. The accessible name stays the label.
-    <Button type="button" variant="outline" size="sm" aria-label={title} className="max-sm:size-8 max-sm:px-0">
-      <Icon className="size-4" aria-hidden />
-      <span className="hidden sm:inline">{title}</span>
+    <Button
+      type="button"
+      variant="outline"
+      size="sm"
+      aria-label={slots ? title : `${title}: ${parts.map((p) => p.label).join(", ")}`}
+      className="rounded-full bg-card"
+    >
+      {slots ? (
+        <>
+          <Layers className="size-4" aria-hidden />
+          <span className="hidden sm:inline">{title}</span>
+        </>
+      ) : (
+        parts.map(({ n, Icon, label }, i) => (
+          <React.Fragment key={label}>
+            {i > 0 && <Separator orientation="vertical" className="h-3.5 data-vertical:self-center" />}
+            <span className="flex items-center gap-1.5 whitespace-nowrap">
+              <Icon className="size-4" aria-hidden />
+              <span className="hidden sm:inline">{label}</span>
+              <span className="sm:hidden">{num(n)}</span>
+            </span>
+          </React.Fragment>
+        ))
+      )}
     </Button>
   )
 

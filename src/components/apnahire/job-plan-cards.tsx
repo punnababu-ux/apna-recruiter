@@ -49,7 +49,6 @@ import {
   type IconComponent,
   AlertBanner,
 } from "@apna/design-system"
-import type { Bundle } from "@/content/credit-bundles"
 import { usePlans } from "@/hooks/apnahire/use-plans"
 import { ExtraOffLine } from "@/components/apnahire/offers/extra-off-line"
 import { UpcomingPriceLine, useUpcomingPrices } from "@/components/apnahire/upcoming-price-line"
@@ -141,25 +140,27 @@ const dbCreditsLine = (credits: number) => (
   </span>
 )
 
-/** A card's title: the P+AI card says "Premium job" with a small AI badge;
+/** A card's title: the P+AI card says "Premium job +" and an "AI" tag;
  *  its full name stays in the data for the order summary. */
 const tierTitle = (tier: JobPlanTier) =>
   tier.id === "premium-ai" ? (
-    <span className="flex items-center gap-2">
-      Premium job
-      {/* The AI block's own wash, so the badge and the block read as one. */}
-      <Badge variant="outline" className="border-transparent bg-gradient-product-ai-calling text-foreground">
-        +AI
+    // The name never breaks; the tag moves under it as a whole when the row is narrow.
+    <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
+      <span className="whitespace-nowrap">Premium job +</span>
+      {/* Vivid sky → green (--gradient-ai-tag), so the tag reads at a glance. */}
+      <Badge variant="outline" className="border-transparent bg-gradient-ai-tag font-semibold text-primary-foreground">
+        AI
       </Badge>
     </span>
   ) : (
     tier.title
   )
 
-/** The add-on's three points, one at a time in one line: each rolls up
+/** Four points, one at a time in one line: each rolls up
  *  into place every few seconds. Screen readers get all three at once. */
 function RollingPoint() {
-  const points = AI_CALLING_ADDON.points
+  // "Calls all applicants" leads; the add-on's three points follow.
+  const points = ["Calls all applicants", ...AI_CALLING_ADDON.points]
   const [i, setI] = React.useState(0)
   React.useEffect(() => {
     const id = window.setInterval(() => setI((n) => (n + 1) % points.length), 2500)
@@ -181,10 +182,10 @@ function RollingPoint() {
  *  same wherever it is sold. */
 function AiAgentBlock() {
   return (
-    <span className="flex flex-col gap-3 rounded-card-nested bg-gradient-product-ai-calling p-3">
+    <span className="flex w-full flex-col gap-3 rounded-card-nested bg-gradient-product-ai-calling p-3">
       <span className="flex items-center gap-2 text-sm font-semibold text-foreground">
         <AiSparkle className="size-5 shrink-0" />
-        AI calling agent calls all applicants
+        AI calling agent
       </span>
       <RollingPoint />
       {/* Its own buttons: the card's select must not fire from them. */}
@@ -269,37 +270,8 @@ function SubPoint({
   )
 }
 
-/** How a recruiter who holds ANY credits would pay for a plan. Shared by
- *  the card (status line + CTA) and the page's click handler, so the card
- *  never promises something the click doesn't do. "partial" is priced at
- *  self-checkout's single-credit rate; "none" buys the plan itself. */
-export type CreditPlan =
-  | { state: "covered" }
-  | { state: "partial"; held: number; shortfall: number; price: number; mrp: number }
-  | { state: "none" }
-
-export function creditPlan(
-  tier: JobPlanTier,
-  balance: CreditBalance,
-  singleCredit: Pick<Bundle, "price" | "mrp">,
-): CreditPlan {
-  const held = balance[tier.credit.kind]
-  if (held === 0) return { state: "none" }
-  const shortfall = tier.credit.count - held
-  if (shortfall <= 0) return { state: "covered" }
-  return {
-    state: "partial",
-    held,
-    shortfall,
-    price: shortfall * singleCredit.price,
-    mrp: shortfall * singleCredit.mrp,
-  }
-}
-
-/** Any credit, job or Premium + AI, puts the cards in credit mode (and
- *  hides the subscription): a recruiter with only P+AI credits sees the
- *  other tiers as "Buy for ₹…" beside the P+AI card's "Covered". */
-export const hasAnyCredits = (balance: CreditBalance) => balance.job > 0 || balance["ai-calling"] > 0
+export { creditPlan, hasAnyCredits, type CreditPlan } from "@/lib/apnahire/credit-plan"
+import { creditPlan, hasAnyCredits } from "@/lib/apnahire/credit-plan"
 
 interface JobPlanGridCardProps {
   tier: JobPlanTier

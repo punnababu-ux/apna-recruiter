@@ -19,6 +19,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   Save,
+  Separator,
   Stepper,
   type Step,
 } from "@apna/design-system"
@@ -38,7 +39,7 @@ const STEPS: { id: JobPostingStep; label: string }[] = [
 interface JobPostingChromeProps {
   current: JobPostingStep
   onStepClick?: (step: JobPostingStep) => void
-  /** Extra header actions left of Save & exit. */
+  /** Extra header actions left of help and Save & exit, set off by a rule. */
   actions?: React.ReactNode
   /** Persist before leaving; Save & exit always returns to the jobs list. */
   onSaveExit?: () => void
@@ -73,29 +74,39 @@ export function JobPostingChrome({
     <div className="sticky top-0 z-sticky border-b border-border bg-card">
       <div className={cn("px-4 py-2.5 sm:px-6 sm:py-3", current !== "plan" && "border-b border-border", stepperClassName && "max-sm:border-b-0")}>
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-2 sm:gap-3">
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
             <BackButton onClick={() => leave(() => router.push("/apnahire/jobs"))} aria-label="Back to jobs" />
-            <span className="text-sm font-semibold text-foreground sm:text-base">Create new job</span>
+            <span className="truncate text-sm font-semibold text-foreground sm:text-base">Create new job</span>
           </div>
           <div className="flex items-center gap-1.5 sm:gap-2">
-            {actions}
+            {/* Status (the balance), a rule, then the actions: help, then leave. */}
+            {actions && (
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                {actions}
+                <Separator orientation="vertical" className="mx-0.5 h-5 data-vertical:self-center" />
+              </div>
+            )}
             <HelpMenu />
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() =>
-                leave(() => {
-                  onSaveExit?.()
-                  toast.success("Draft saved")
-                  router.push("/apnahire/jobs")
-                })
-              }
-            >
-              <Save className="size-4" aria-hidden />
-              <span className="hidden sm:inline">Save &amp; exit</span>
-              <span className="sm:hidden">Save</span>
-            </Button>
+            {/* Not on the plan step: the draft is already saved by then, so
+                back leaves without losing anything (user call, 2026-10-30). */}
+            {current !== "plan" && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  leave(() => {
+                    onSaveExit?.()
+                    toast.success("Draft saved")
+                    router.push("/apnahire/jobs")
+                  })
+                }
+              >
+                <Save className="size-4" aria-hidden />
+                <span className="hidden sm:inline">Save &amp; exit</span>
+                <span className="sm:hidden">Save</span>
+              </Button>
+            )}
           </div>
         </div>
       </div>
