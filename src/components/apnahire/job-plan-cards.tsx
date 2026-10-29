@@ -739,8 +739,9 @@ export function TieredJobPlans({
   shimmerKey = 0,
 }: Omit<JobPlanSelectProps, "onSelectSubscription">) {
   const catalogue = usePlans().tiers
-  // The legacy Premium + AI card joins only while its credits last.
-  const order: JobPlanTierId[] = creditBalance["ai-calling"] > 0 ? [...TIERED_PLAN_ORDER, "premium-ai"] : TIERED_PLAN_ORDER
+  // The legacy Premium + AI card joins only while its credits last, right after Premium.
+  const order: JobPlanTierId[] =
+    creditBalance["ai-calling"] > 0 ? ["classic", "premium", "premium-ai", "super-premium"] : TIERED_PLAN_ORDER
   const tiers = order.map((id) => offerTier(catalogue[id], extraOff))
   const onSelectTier = (tier: JobPlanTier) => selectCatalogueTier(catalogue[tier.id])
   return (
