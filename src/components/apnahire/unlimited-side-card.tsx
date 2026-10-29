@@ -26,7 +26,7 @@ import { ExtraOffLine } from "@/components/apnahire/offers/extra-off-line"
 import { MobileDiscountRow } from "@/components/apnahire/mobile-plan-row"
 import { cn } from "@/lib/utils"
 import { useCardHover } from "@/components/apnahire/use-card-hover"
-import { MobileUnlimitedCard } from "@/components/apnahire/mobile-plan-row"
+import { MobileMetaLine, MobileUnlimitedCard } from "@/components/apnahire/mobile-plan-row"
 import { UpcomingPriceLine } from "@/components/apnahire/upcoming-price-line"
 import { inr } from "@/lib/format"
 import { dbCreditsLabel, slotLabel, type SubscriptionPlan } from "@/content/subscriptions"
@@ -86,10 +86,9 @@ export function UnlimitedSideCard({
         belowPrice={<MobileDiscountRow pct={pct} note={extraOff ? EXTRA_OFF.appliedShort : undefined} />}
         upcoming={<UpcomingPriceLine price={plan.janPrice} />}
         meta={
-          <span className="flex items-center gap-2 text-xs font-medium text-foreground">
-            <BriefcaseBusiness className="size-4 shrink-0 text-checkout-primary" aria-hidden />
+          <MobileMetaLine icon={<BriefcaseBusiness aria-hidden />}>
             {slotLabel(plan.slots)}
-          </span>
+          </MobileMetaLine>
         }
         features={[
           // The slot shows above, as meta.

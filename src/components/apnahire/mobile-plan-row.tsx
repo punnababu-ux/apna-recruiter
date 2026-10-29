@@ -278,7 +278,7 @@ export function MobileDiscountRow({
 /** A left-column line: small icon + text. */
 export function MobileMetaLine({ icon, children }: { icon: React.ReactNode; children: React.ReactNode }) {
   return (
-    <span className="flex items-center gap-2 text-xs text-muted-foreground [&_svg]:size-4 [&_svg]:shrink-0">
+    <span className="flex items-center gap-2 text-xs text-muted-foreground [&_svg]:size-3.5 [&_svg]:shrink-0 [&_svg]:-translate-y-px">
       {icon}
       {children}
     </span>

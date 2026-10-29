@@ -55,6 +55,7 @@ import { ExtraOffLine } from "@/components/apnahire/offers/extra-off-line"
 import { UpcomingPriceLine, useUpcomingPrices } from "@/components/apnahire/upcoming-price-line"
 import {
   MobileDiscountRow,
+  MobileMetaLine,
   MobilePlanRow,
   MobileUnlimitedCard,
 } from "@/components/apnahire/mobile-plan-row"
@@ -103,10 +104,9 @@ const ownPct = (tier: JobPlanTier & { ownPct?: number | null }) =>
  *  its ticks (one, two, two in a circle). */
 function VisibilityLine({ tier }: { tier: JobPlanTier }) {
   return (
-    <span className="flex items-center gap-2 text-xs font-medium text-foreground">
-      <VisibilityTicks level={tier.visibilityLevel} className="size-4 shrink-0 text-checkout-primary" />
+    <MobileMetaLine icon={<VisibilityTicks level={tier.visibilityLevel} className="text-checkout-primary" />}>
       {tier.visibilityLabel}
-    </span>
+    </MobileMetaLine>
   )
 }
 
@@ -592,10 +592,9 @@ function MobileSubscriptionCard({
       upcoming={<UpcomingPriceLine price={plan.janPrice} />}
       meta={
         // Validity folds into the slot line.
-        <span className="flex items-center gap-2 text-xs font-medium text-foreground">
-          <BriefcaseBusiness className="size-4 shrink-0 text-checkout-primary" aria-hidden />
-          {slotTermLabel(plan)}
-        </span>
+        <MobileMetaLine icon={<BriefcaseBusiness className="text-checkout-primary" aria-hidden />}>
+            {slotTermLabel(plan)}
+          </MobileMetaLine>
       }
       // Closed, as the job rows: a rule, the feature icons, the DB credits.
       collapsed={
