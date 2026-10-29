@@ -404,7 +404,12 @@ export function JobPlanSelection() {
         // Phones show the step in the bottom bar, as on the questions.
         stepperClassName="max-sm:hidden"
         // The balance this page draws on, in the bar (no Save & exit here).
-        actions={<AvailableCreditsButton chip balance={{ job: creditBalance.job, aiCalling: creditBalance["ai-calling"] }} />}
+        // Hidden at zero: a first-time poster gains nothing from "0".
+        actions={
+          hasAnyCredits(creditBalance) ? (
+            <AvailableCreditsButton chip balance={{ job: creditBalance.job, aiCalling: creditBalance["ai-calling"] }} />
+          ) : undefined
+        }
         onExitAttempt={(proceed) => attemptExit(proceed)}
       />
 
