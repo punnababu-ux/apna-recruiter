@@ -194,7 +194,7 @@ export function OfferDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className={cn("gap-0 overflow-hidden rounded-2xl bg-transparent p-0 shadow-dialog ring-0 data-open:slide-in-from-bottom-16 data-closed:slide-out-to-bottom-16 data-open:zoom-in-100 data-closed:zoom-out-100 duration-sheet ease-carousel", size === "sm" ? "sm:max-w-md" : size === "lg" || wide ? "sm:max-w-2xl" : "sm:max-w-xl")}
+        className={cn("gap-0 overflow-hidden rounded-2xl bg-transparent p-0 shadow-dialog ring-0 data-open:slide-in-from-bottom-16 data-closed:slide-out-to-bottom-16 data-open:zoom-in-100 data-closed:zoom-out-100 duration-sheet ease-carousel", size === "sm" ? "sm:max-w-md" : size === "lg" ? "sm:max-w-2xl" : wide ? "sm:max-w-3xl" : "sm:max-w-xl")}
       >
         {body}
       </DialogContent>

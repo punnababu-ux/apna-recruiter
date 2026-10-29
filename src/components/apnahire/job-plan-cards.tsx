@@ -23,6 +23,7 @@
 import { AiSparkle } from "@/components/apnahire/ai-demo-call"
 import * as React from "react"
 import {
+  Info,
   Badge,
   BriefcaseBusiness,
   InfinityIcon,
@@ -47,7 +48,6 @@ import {
   X,
   type IconComponent,
   AlertBanner,
-  Info,
 } from "@apna/design-system"
 import type { Bundle } from "@/content/credit-bundles"
 import { usePlans } from "@/hooks/apnahire/use-plans"
@@ -59,8 +59,11 @@ import {
   MobileUnlimitedCard,
 } from "@/components/apnahire/mobile-plan-row"
 import { ValueArt } from "@/components/marketing/value-art"
+// Paused with the feature tooltips (see FeatureName).
+// import { TapTooltip } from "@/components/apnahire/tap-tooltip"
 import { cn } from "@/lib/utils"
-import { withExtraOff } from "@/content/offers"
+import { RECOMMENDED_EDGE, useCardHover } from "@/components/apnahire/use-card-hover"
+import { EXTRA_OFF, withExtraOff } from "@/content/offers"
 import {
   MONTHLY_PLAN_PERKS,
   RECOMMENDED_TIER,
@@ -80,17 +83,28 @@ import { dbCreditsLabel, slotLabel, slotTermLabel } from "@/content/subscription
  *  says so, and a one-time shimmer marks the moment it landed. */
 const PlanOfferContext = React.createContext({ extraOff: false, shimmerKey: 0 })
 
-function offerTier(tier: JobPlanTier, extraOff: boolean): JobPlanTier {
-  if (!extraOff) return tier
-  return { ...tier, price: withExtraOff(tier.price), mrp: tier.mrp ?? tier.price }
+function offerTier(tier: JobPlanTier, extraOff: boolean): JobPlanTier & { ownPct: number | null } {
+  // The % OFF badge is the tier's own discount, never recalculated with the
+  // 10%: the offer shows as its own line, as the cart's coupon row does.
+  const ownPct = tier.mrp && tier.mrp > tier.price ? Math.round((1 - tier.price / tier.mrp) * 100) : null
+  if (!extraOff) return { ...tier, ownPct }
+  return { ...tier, price: withExtraOff(tier.price), mrp: tier.mrp ?? tier.price, ownPct }
 }
+
+/** A tier's own % OFF, whether or not it went through offerTier. */
+const ownPct = (tier: JobPlanTier & { ownPct?: number | null }) =>
+  tier.ownPct !== undefined
+    ? tier.ownPct
+    : tier.mrp && tier.mrp > tier.price
+      ? Math.round((1 - tier.price / tier.mrp) * 100)
+      : null
 
 /** Visibility at a glance on the mobile plan rows: the tier's label next to
  *  its ticks (one, two, two in a circle). */
 function VisibilityLine({ tier }: { tier: JobPlanTier }) {
   return (
-    <span className="flex items-center gap-1.5 text-xs font-medium text-foreground">
-      <VisibilityTicks level={tier.visibilityLevel} className="size-3.5 shrink-0 text-checkout-primary" />
+    <span className="flex items-center gap-2 text-xs font-medium text-foreground">
+      <VisibilityTicks level={tier.visibilityLevel} className="size-4 shrink-0 text-checkout-primary" />
       {tier.visibilityLabel}
     </span>
   )
@@ -112,70 +126,63 @@ function featureIcon(label: string, enabled: boolean): React.ReactNode {
 /** Quiet and bottom-left, behind PricingCard's dashed footer rule. Same
  *  line as the mobile rows. That it's a limited-time offer is said once,
  *  under the cards (DbCreditsOfferNote), not on every card. */
+/** "30 database credits worth ₹300", on every card. Job tiers value a credit
+ *  at ₹10, the rate the Unlimited plan quotes (200 worth ₹2,000). */
+// "worth ₹300" glued (no-break space), so it moves to a new line whole.
+const dbWorth = (credits: number) => `${credits} database credits worth\u00A0${inr(credits * 10)}`
+
 const dbCreditsLine = (credits: number) => (
   <span className="flex items-center gap-2 text-foreground">
     <Database className="size-4 shrink-0 text-muted-foreground" aria-hidden />
     <span>
-      {credits} free DB credits
+      {dbWorth(credits)}
     </span>
   </span>
 )
 
-/** Tells the recruiter the order summary offers AI calling, so picking a
- *  job doesn't feel like it rules it out. Quiet like the credits line: the
- *  add-on announces itself in the cart (attention-ring), not here. */
-const aiAddonLine = (
-  <span className="flex items-center gap-2 text-foreground">
-    <AiSparkle className="size-4 shrink-0" />
-    <span>
-      AI calling add-on
-      <span className="text-muted-foreground"> · In cart</span>
-    </span>
-  </span>
+/** Under the cards, once (JobPlanSelection): the order summary offers AI
+ *  calling, a paid extra for any job. The design system's AlertBanner in its
+ *  primary (solid gradient) look, so it reads as information, not as part
+ *  of a plan. */
+export const aiAddonBanner = (
+  <AlertBanner
+    appearance="primary"
+    variant="info"
+    icon={<AiSparkle className="size-4 shrink-0" />}
+    title="AI calling add-on available in the next step"
+  />
 )
 
 const planFooter = (credits: number) => (
   <span className="flex flex-col gap-2">
-    {aiAddonLine}
     {dbCreditsLine(credits)}
   </span>
 )
 
-/** Short names for the phone chips, keyed by the full feature label. */
-const CHIP_LABEL: Record<string, string> = {
-  "WhatsApp notifications to candidates": "WhatsApp alerts",
-  "2x Priority WhatsApp notifications to candidates": "2x WhatsApp alerts",
-  "Featured with 'Urgently hiring' tag": "Urgent tag",
-  "Top placements in job listings": "Top placement",
+/** What each job feature does, opened from its dotted-underlined name.
+ *  Text for now; a visual (the "Urgently hiring" tag as candidates see it)
+ *  may join it later. Written in ASD-STE100 (see "Explainer copy" in
+ *  AGENTS.md). shortcut: wording drafted in design, product to confirm. */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept while the tooltips are paused (FeatureName)
+const FEATURE_INFO: Record<string, string> = {
+  "WhatsApp notifications to candidates":
+    "We send your job on WhatsApp to candidates who match it.",
+  "2x Priority WhatsApp notifications to candidates":
+    "We send your job on WhatsApp to two times more candidates, first.",
+  "Featured with 'Urgently hiring' tag":
+    "Your job shows an 'Urgently hiring' tag in search results.",
+  "Top placements in job listings":
+    "We show your job above other jobs in search results.",
 }
 
-/** Tick preview: every row's benefits as chips, always shown, so the rows
- *  compare at a glance: every benefit (a red ✕ when not included), then
- *  its DB credits. */
-function FeatureChips({ tier }: { tier: JobPlanTier }) {
-  return (
-    <div className="flex flex-wrap gap-1.5 border-t border-border pt-3">
-      {tier.features.map((f) => (
-        <Badge
-          key={f.label}
-          variant="outline"
-          className={cn("gap-1 [&>svg]:size-3", !f.enabled && "text-muted-foreground")}
-        >
-          {f.enabled ? featureIcon(f.label, true) : <X className="text-destructive" aria-hidden />}
-          {CHIP_LABEL[f.label] ?? f.label}
-        </Badge>
-      ))}
-      <Badge variant="outline" className="gap-1 [&>svg]:size-3">
-        <Database className="text-muted-foreground" aria-hidden />
-        {tier.dbCredits} DB credits
-      </Badge>
-      <Badge variant="outline" className="gap-1 [&>svg]:size-3">
-        <AiSparkle className="size-3 shrink-0" />
-        AI calling add-on
-        <span className="text-muted-foreground">· In cart</span>
-      </Badge>
-    </div>
-  )
+/** A feature's name; a tap or click opens what it means in the design
+ *  system's dark tooltip. No marker on the text (user call, 2026-10-29). */
+function FeatureName({ label }: { label: string }) {
+  // Paused (user call, 2026-10-29): the tooltips got in the way of picking a
+  // card. To bring them back, restore the two lines below.
+  // const info = FEATURE_INFO[label]
+  // if (info) return <TapTooltip content={info}>{label}</TapTooltip>
+  return <>{label}</>
 }
 
 /** Parent line + indented sub-points — the Subscription tab's 28px (`pl-7`)
@@ -256,7 +263,7 @@ function JobPlanGridCard({ tier, recommended, creditBalance, onSelect }: JobPlan
   const upcoming = useUpcomingPrices()
   const { singleCredit } = usePlans()
   const plan = creditPlan(tier, creditBalance, singleCredit)
-  const discountPct = tier.mrp ? Math.round((1 - tier.price / tier.mrp) * 100) : null
+  const discountPct = ownPct(tier)
 
   const creditStatus =
     plan.state === "covered"
@@ -273,12 +280,28 @@ function JobPlanGridCard({ tier, recommended, creditBalance, onSelect }: JobPlan
         ? `Buy ${plan.shortfall} credit${plan.shortfall === 1 ? "" : "s"} & post`
         : "Buy & post"
 
+  // Every card's CTA is the quiet outline until the card is hovered (or
+  // focused): then it turns the green primary, so only one green shows at a
+  // time (user call, 2026-10-29). Recommended keeps standing out by its blue
+  // edge instead of a resting green button.
+  const { active, props: hoverProps } = useCardHover()
   return (
-    <div className="flex flex-col">
+    <div
+      className="flex flex-col"
+      {...hoverProps}
+    >
       <PricingCard
         key={shimmerKey}
         layout="price-first"
-        className={cn("flex-1 border-transparent", shimmerKey > 0 && "animate-shimmer-once")}
+        className={cn(
+          "flex-1",
+          // The recommended plan's edge: the Recommended ribbon's blue, 2px
+          // (border + outline), so the card size never shifts. An outline,
+          // not a ring: the hover lift replaces box-shadow, which would drop
+          // a ring and make the edge and the ribbon jump.
+          recommended ? RECOMMENDED_EDGE : "border-transparent",
+          shimmerKey > 0 && "animate-shimmer-once"
+        )}
         // The whole card selects (the CTA's click bubbles here), as on
         // self-checkout — the card-hover-lift rule.
         onClick={() => onSelect(tier)}
@@ -310,7 +333,7 @@ function JobPlanGridCard({ tier, recommended, creditBalance, onSelect }: JobPlan
         cta={
           <Button
             type="button"
-            variant={recommended ? "checkout" : "outline"}
+            variant={active ? "checkout" : "outline"}
             className="h-10 w-full font-semibold"
           >
             {ctaLabel}
@@ -332,7 +355,7 @@ function JobPlanGridCard({ tier, recommended, creditBalance, onSelect }: JobPlan
           >
             {tier.features.map((f) => (
               <SubPoint key={f.label} icon={featureIcon(f.label, f.enabled)} muted={!f.enabled}>
-                {f.label}
+                <FeatureName label={f.label} />
               </SubPoint>
             ))}
           </FeatureGroup>,
@@ -341,16 +364,6 @@ function JobPlanGridCard({ tier, recommended, creditBalance, onSelect }: JobPlan
       />
     </div>
   )
-}
-
-/** Preview (`?rows=tick`): phone rows without the radio; see MobilePlanRow's
- *  `mark`. Read after mount so the server render matches. */
-export function useTickRows() {
-  const [on, setOn] = React.useState(false)
-  React.useEffect(() => {
-    setOn(new URLSearchParams(window.location.search).get("rows") === "tick")
-  }, [])
-  return on
 }
 
 export interface JobPlanSelectProps {
@@ -400,7 +413,6 @@ function MobileJobPlanRadioGroup({
   recommendedId,
   subscription,
 }: MobileJobPlanRadioGroupProps) {
-  const tickRows = useTickRows()
   const [selectedKey, setSelectedKey] = React.useState<JobPlanTierId | "unlimited">(recommendedId)
   const creditMode = hasAnyCredits(creditBalance)
   const { extraOff, shimmerKey } = React.useContext(PlanOfferContext)
@@ -428,10 +440,7 @@ function MobileJobPlanRadioGroup({
         {tiers.map((tier) => {
           const isSelected = selectedKey === tier.id
           const isRecommended = tier.id === recommendedId
-          const discountPct =
-            tier.mrp && tier.mrp > tier.price
-              ? Math.round((1 - tier.price / tier.mrp) * 100)
-              : null
+          const discountPct = ownPct(tier)
           const tierPlan = creditPlan(tier, creditBalance, singleCredit)
           const creditStatus =
             tierPlan.state === "covered"
@@ -447,7 +456,6 @@ function MobileJobPlanRadioGroup({
               selected={isSelected}
               onSelect={() => setSelectedKey(tier.id)}
               recommended={isRecommended}
-              mark={tickRows ? "tick" : "radio"}
               className={cn(shimmerKey > 0 && "animate-shimmer-once")}
               meta={
                 <>
@@ -468,45 +476,52 @@ function MobileJobPlanRadioGroup({
                 ) : (
                   // One discount signal under the price. The badge already
                   // counts the claimed 10%; the note says why it went up.
-                  <MobileDiscountRow pct={discountPct} note={extraOff ? "Incl. 10% extra" : undefined} />
+                  <MobileDiscountRow pct={discountPct} note={extraOff ? EXTRA_OFF.appliedShort : undefined} />
                 )
               }
               upcoming={creditMode ? undefined : <UpcomingPriceLine price={tier.janPrice} />}
-              details={
-                tickRows ? (
-                  <FeatureChips tier={tier} />
-                ) :
-                // Explain on selection. With no feature points (Classic),
-                // the credits line is the only content: its divider is the
-                // dashed "offer" rule, instead of a solid one.
-                <ul
-                  className={cn(
-                    "flex flex-col gap-2 border-t border-border pt-3 text-xs text-foreground animate-in fade-in-0",
-                    !tier.features.some((f) => f.enabled) && "border-dashed"
-                  )}
-                >
-                  {tier.features
-                    .filter((f) => f.enabled)
-                    .map((f) => (
-                      <li key={f.label} className="flex items-center gap-2 [&_svg]:size-4">
-                        {featureIcon(f.label, true)}
-                        {f.label}
-                      </li>
-                    ))}
-                  <li>{aiAddonLine}</li>
-                  {/* Last: the free credits are a limited-time offer, not
-                      the plan. The dashed rule sets them apart only when
-                      feature points sit above. */}
-                  <li
-                    className={cn(
-                      "flex items-center gap-2 text-foreground",
-                      tier.features.some((f) => f.enabled) && "border-t border-dashed border-border pt-2"
-                    )}
-                  >
-                    <Database className="size-4 shrink-0 text-muted-foreground" aria-hidden />
-                    <span>
-                      {tier.dbCredits} free DB credits
+              // Closed: a separator, then the three feature icons (in colour
+              // when included, grey when not) and the DB credits beside them.
+              collapsed={
+                  <div className="flex items-center justify-between gap-3 border-t border-border pt-3 text-xs">
+                    <span className="flex items-center gap-3">
+                      {tier.features.map((f) => (
+                        <span
+                          key={f.label}
+                          className={cn("flex [&_svg]:size-4", !f.enabled && "[&_svg]:text-muted-foreground/40")}
+                        >
+                          {featureIcon(f.label, true)}
+                          <span className="sr-only">
+                            {f.label}: {f.enabled ? "included" : "not included"}
+                          </span>
+                        </span>
+                      ))}
                     </span>
+                    <span className="flex items-center gap-1.5 text-muted-foreground">
+                      <Database className="size-3.5 shrink-0" aria-hidden />
+                      {dbWorth(tier.dbCredits)}
+                    </span>
+                  </div>
+              }
+              details={
+                // Explain on selection: every feature as a line, what's
+                // missing greyed with a cross, then the free DB credits.
+                <ul className="flex flex-col gap-2 border-t border-border pt-3 text-xs animate-in fade-in-0">
+                  {tier.features.map((f) => (
+                    <li
+                      key={f.label}
+                      className={cn(
+                        "flex items-center gap-2 [&_svg]:size-4",
+                        f.enabled ? "text-foreground" : "text-muted-foreground/70"
+                      )}
+                    >
+                      {featureIcon(f.label, f.enabled)}
+                      <FeatureName label={f.label} />
+                    </li>
+                  ))}
+                  <li className="flex items-center gap-2 border-t border-dashed border-border pt-2 text-foreground">
+                    <Database className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+                    <span>{dbWorth(tier.dbCredits)}</span>
                   </li>
                 </ul>
               }
@@ -555,13 +570,13 @@ function MobileSubscriptionCard({
 }) {
   const plan = { ...usePlans().plan("monthly"), ...MONTHLY_PLAN_PERKS }
   const { extraOff, shimmerKey } = React.useContext(PlanOfferContext)
-  const tickRows = useTickRows()
   const price = extraOff ? withExtraOff(plan.price) : plan.price
   // Struck price + % OFF follow the same rules as the job rows: a plan list
   // price (plan.mrp, if a discount is ever run) or, with the claimed 10%,
   // the undiscounted price.
   const strike = plan.mrp ?? (extraOff ? plan.price : undefined)
-  const discountPct = strike && strike > price ? Math.round((1 - price / strike) * 100) : null
+  // The plan's own discount only (plan.mrp); the 10% is its own line.
+  const discountPct = plan.mrp && plan.mrp > plan.price ? Math.round((1 - plan.price / plan.mrp) * 100) : null
   return (
     <MobileUnlimitedCard
       selected={selected}
@@ -569,35 +584,38 @@ function MobileSubscriptionCard({
       key={shimmerKey}
       className="sm:hidden"
       cardClassName={cn(shimmerKey > 0 && "animate-shimmer-once")}
-      title={`Unlimited ${plan.name.toLowerCase()}`}
+      title={plan.name}
       mrp={strike ? inr(strike) : undefined}
       price={inr(price)}
       unit={plan.unitShort}
-      belowPrice={<MobileDiscountRow pct={discountPct} note={extraOff ? "Incl. 10% extra" : undefined} />}
+      belowPrice={<MobileDiscountRow pct={discountPct} note={extraOff ? EXTRA_OFF.appliedShort : undefined} />}
       upcoming={<UpcomingPriceLine price={plan.janPrice} />}
       meta={
         // Validity folds into the slot line.
-        <span className="flex items-center gap-1.5 text-xs font-medium text-foreground">
-          <BriefcaseBusiness className="size-3.5 shrink-0 text-checkout-primary" aria-hidden />
+        <span className="flex items-center gap-2 text-xs font-medium text-foreground">
+          <BriefcaseBusiness className="size-4 shrink-0 text-checkout-primary" aria-hidden />
           {slotTermLabel(plan)}
         </span>
       }
-      mark={tickRows ? "tick" : "radio"}
-      features={
-        tickRows
-          ? // Chips, as the job rows': short names, the same icon colours.
-            [
-              [<InfinityIcon key="i" className="text-info" aria-hidden />, "Free job reposts and swapping"],
-              [<WhatsApp key="i" className="text-success" aria-hidden />, "WhatsApp outreach"],
-              [<Database key="i" className="text-warning" aria-hidden />, dbCreditsLabel(plan)],
-            ]
-          : [
-              // The slot sits above as meta; these show when selected.
-              [<InfinityIcon key="i" className="text-info" aria-hidden />, "Free job reposts and swapping"],
-              [<Database key="i" className="text-warning" aria-hidden />, dbCreditsLabel(plan)],
-              [<WhatsApp key="i" className="text-success" aria-hidden />, "WhatsApp outreach to matched candidates"],
-            ]
+      // Closed, as the job rows: a rule, the feature icons, the DB credits.
+      collapsed={
+        <div className="flex items-center justify-between gap-3 border-t border-border pt-3 text-xs [&_svg]:size-4">
+          <span className="flex items-center gap-3">
+            <WhatsApp className="text-success" aria-label="WhatsApp alerts" />
+            <InfinityIcon className="text-warning" aria-label="Free job reposts and swapping" />
+          </span>
+          <span className="flex items-center gap-1.5 text-muted-foreground [&_svg]:size-3.5">
+            <Database className="shrink-0" aria-hidden />
+            {dbCreditsLabel(plan)}
+          </span>
+        </div>
       }
+      features={[
+        // The slot sits above as meta; these show when selected.
+        [<WhatsApp key="i" className="text-success" aria-hidden />, "WhatsApp alerts to matched candidates"],
+        [<InfinityIcon key="i" className="text-warning" aria-hidden />, "Free job reposts and swapping"],
+        [<Database key="i" className="text-muted-foreground" aria-hidden />, dbCreditsLabel(plan)],
+      ]}
       note={plan.note}
     />
   )
@@ -751,7 +769,7 @@ function MonthlySubscriptionCard({
 }) {
   const plan = { ...usePlans().plan("monthly"), ...MONTHLY_PLAN_PERKS }
   // The claimed 10% applies to Unlimited too: same discounted price, struck
-  // list price and "10% extra off applied" line as the tier cards, in the
+  // list price and "Extra 10% off applied" line as the tier cards, in the
   // same priceSuffix slot so the lines sit level across the row.
   const { extraOff, shimmerKey } = React.useContext(PlanOfferContext)
   const upcoming = useUpcomingPrices()
@@ -759,7 +777,11 @@ function MonthlySubscriptionCard({
   // Same rule as the mobile card and the tier cards: whenever a struck price
   // shows, so does its % OFF badge.
   const strike = plan.mrp ?? (extraOff ? plan.price : undefined)
-  const discountPct = strike && strike > price ? Math.round((1 - price / strike) * 100) : null
+  // The plan's own discount only (plan.mrp); the 10% is its own line.
+  const discountPct = plan.mrp && plan.mrp > plan.price ? Math.round((1 - plan.price / plan.mrp) * 100) : null
+  // As the job cards: the CTA turns the green primary only while this card
+  // is hovered or focused, so one green shows at a time.
+  const { active, props: hoverProps } = useCardHover()
   return (
     // The frame is the click target but stays put; hovering anywhere in it
     // lifts the card inside (card-hover-lift rule) — same as self-checkout's
@@ -767,6 +789,7 @@ function MonthlySubscriptionCard({
     <div
       data-card-lift-group={blockedLabel ? undefined : true}
       onClick={blockedLabel ? undefined : onSelect}
+      {...hoverProps}
       className={cn(
         "flex flex-col gap-5 rounded-card bg-gradient-checkout-unlimited p-4",
         !blockedLabel && "cursor-pointer",
@@ -805,7 +828,12 @@ function MonthlySubscriptionCard({
           ) : undefined
         }
         cta={
-          <Button type="button" variant="checkout-inset" className="h-10 w-full font-semibold" disabled={!!blockedLabel}>
+          <Button
+            type="button"
+            variant={active && !blockedLabel ? "checkout" : "checkout-inset"}
+            className="h-10 w-full font-semibold"
+            disabled={!!blockedLabel}
+          >
             {blockedLabel ?? "Get apna unlimited"}
           </Button>
         }
@@ -824,14 +852,16 @@ function MonthlySubscriptionCard({
               </SubPoint>
             ))}
           </FeatureGroup>,
+          // Desktop: WhatsApp second, after the slot (user call, 2026-10-29);
+          // the phone card keeps it first.
+          <React.Fragment key="wa">
+            <WhatsApp aria-hidden /> WhatsApp alerts to matched candidates
+          </React.Fragment>,
           // What the plan grants, as on self-checkout's Unlimited card and
           // the Subscription tab: not the tier cards' "free" credits offer
           // footer line, which is a temporary extra.
           <>
             <UserSearch aria-hidden /> {dbCreditsLabel(plan)}
-          </>,
-          <>
-            <WhatsApp aria-hidden /> WhatsApp outreach to matched candidates
           </>,
         ]}
         footer={
@@ -854,7 +884,7 @@ function MonthlySubscriptionCard({
 function JobTypeInfoCard({ tier }: { tier: JobPlanTier }) {
   const { extraOff } = React.useContext(PlanOfferContext)
   const shown = offerTier(tier, extraOff)
-  const discountPct = shown.mrp ? Math.round((1 - shown.price / shown.mrp) * 100) : null
+  const discountPct = shown.ownPct
   const perCredit = Math.floor(shown.price / tier.credit.count)
 
   return (
@@ -889,7 +919,7 @@ function JobTypeInfoCard({ tier }: { tier: JobPlanTier }) {
         >
           {tier.features.map((f) => (
             <SubPoint key={f.label} icon={featureIcon(f.label, f.enabled)} muted={!f.enabled}>
-              {f.label}
+              <FeatureName label={f.label} />
             </SubPoint>
           ))}
         </FeatureGroup>,

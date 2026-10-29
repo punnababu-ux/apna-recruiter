@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist_Mono, Google_Sans_Flex } from "next/font/google";
+import { Geist_Mono, Inter } from "next/font/google";
 
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { InkProvider } from "@/components/ui/ink-provider";
@@ -9,12 +9,12 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 
 import "./globals.css";
 
-// Google Sans Flex · Apna body + heading typeface (replaced Inter,
-// 2026-10-23). A variable font, so every weight the token scale uses
-// (300–900) comes from one file. Exposed as `--font-sans-face`, which
-// `--font-family-sans` in primitives.css reads; swap the face here and the
-// whole system follows.
-const sans = Google_Sans_Flex({
+// Inter · Apna body + heading typeface (back from Google Sans Flex,
+// 2026-10-29, Punna's call). A variable font, so every weight the token
+// scale uses (300–900) comes from one file. Exposed as `--font-sans-face`,
+// which `--font-family-sans` in primitives.css reads; swap the face here and
+// the whole system follows.
+const sans = Inter({
   variable: "--font-sans-face",
   subsets: ["latin"],
   display: "swap",

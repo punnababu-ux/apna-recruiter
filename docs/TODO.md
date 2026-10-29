@@ -12,6 +12,10 @@ ship, and keep one line per item. Open price questions live in
 - [ ] User profile section (`/apnahire/profile`)
 - [ ] Credits & usage page (`/apnahire/usage`): balances, usage, invoices, history. Never a checkout entry point
 
+## Plan cards
+- [ ] Tell recruiters upfront, on the plan page, that the AI calling add-on can be added in the next step (and that it costs extra). Tried a line on each card, a line under the cards and a banner; paused 2026-10-29 until the right approach is decided. The banner is kept as `aiAddonBanner` (`job-plan-cards.tsx`)
+- [ ] Explain each plan feature to the recruiter (WhatsApp notifications, Urgently hiring tag, Top placement), maybe with a visual of the tag. Tap tooltips were tried and paused (2026-10-29): they got in the way of picking a card. Text and `TapTooltip` are kept, commented out in `FeatureName` (`job-plan-cards.tsx`)
+
 ## Banners
 - [ ] Which banners show at each step of the journey, and how they combine (renewal, expiry, low credits, offers); one rule for priority and stacking
 

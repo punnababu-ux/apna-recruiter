@@ -296,7 +296,7 @@ export function JobPlanSelection() {
     const left = plan.held + creditUpsellPack.credits - tier.credit.count
     return {
       id: "credit-pack",
-      label: `${creditUpsellPack.credits} Job credits`,
+      label: `${creditUpsellPack.credits} job credits`,
       sublabel: `${plan.shortfall} for ${tier.title} · ${left} left for later, valid ${creditUpsellPack.validDays} days`,
       price: creditUpsellPack.price,
       mrp: creditUpsellPack.mrp,
@@ -424,7 +424,7 @@ export function JobPlanSelection() {
               {/* The phone rows drop their shared line; it's said once here. */}
               {(
                 <span className="flex items-center gap-1.5 text-xs text-muted-foreground sm:hidden [&_svg]:size-3.5">
-                  <ClockFading aria-hidden /> Every job stays active for 15 days
+                  <ClockFading aria-hidden /> All jobs are active for 15 days
                 </span>
               )}
             </div>
@@ -448,6 +448,9 @@ export function JobPlanSelection() {
               />
             )}
           </UpcomingPricesProvider>
+          {/* Paused (user call, 2026-10-29): how to tell recruiters about the
+              AI calling add-on on this page is still open (docs/TODO.md →
+              "Plan cards"). The banner is kept as aiAddonBanner. */}
           {/* The DB credits offer is said once here, not on every card. */}
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <GstNote />

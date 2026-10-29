@@ -20,9 +20,12 @@
  *  - The coupon block takes exactly one of three shapes: a white trigger row,
  *    a bordered (shadowless) expanded panel, or a compact "saved with" row.
  *    The `Coupon discount (CODE) −₹300` figure lives in Bill details.
- *  - Bill details carries Item total (with the struck MRP total), the coupon
- *    row, Sub total, GST and the GSTIN slot (link → gray inset card → saved
- *    row → "Edit GSTIN number" card).
+ *  - Each item row shows its price after every discount, the coupon's share
+ *    included, struck at MRP (user call, 2026-10-29), so it matches the plan
+ *    card the recruiter just saw. Bill details then runs from MRP down:
+ *    Item total (MRP), Discount on MRP, the coupon row, Sub total, GST and
+ *    the GSTIN slot (link → gray inset card → saved row → "Edit GSTIN
+ *    number" card).
  *  - "Sub total" is the post-coupon taxable amount, which is what GST is
  *    charged on — this reconciles against every drawn frame.
  *
@@ -41,17 +44,16 @@
  */
 
 import * as React from "react"
+import Image from "next/image"
 import {
   Ban,
   Check,
   ChevronRight,
   CircleCheck,
-  CreditCard,
   Lock,
   Mail,
   Pencil,
   RefreshCw,
-  Smartphone,
   Sparkles,
   Tag,
   XCircle,
@@ -62,8 +64,8 @@ import {
   Button,
   ChipTabs,
   Input,
-  OptionCard,
-  OptionCardGroup,
+  RadioCard,
+  RadioCardGroup,
   Separator,
   Sheet,
   SheetPanel,
@@ -142,14 +144,35 @@ const DEFAULT_PACK = "100"
  * this repo, so they are omitted rather than substituted — see the spec's
  * Icons table.
  */
+// Each method's apps or card networks, shown as round badges. Icon crops
+// (gpay-icon, phonepe-icon) are the logos' marks alone, for a small circle.
 const SUBSCRIPTION_PAYMENT_METHODS = [
-  { value: "upi-autopay", label: "UPI", note: "Any UPI app", icon: Smartphone },
-  { value: "card", label: "Card", note: "Credit or debit", icon: CreditCard },
+  {
+    value: "upi-autopay",
+    label: "UPI",
+    logos: [
+      // UPI's own arrow mark first (supplied by design), then the apps.
+      { src: "/payments/upi-icon.png", alt: "UPI", w: 512, h: 512, size: "h-4" },
+      { src: "/payments/gpay-icon.svg", alt: "Google Pay", w: 24, h: 24, size: "h-4" },
+      { src: "/payments/paytm.svg", alt: "Paytm", w: 60, h: 19, size: "h-2" },
+      { src: "/payments/phonepe-icon.svg", alt: "PhonePe", w: 70, h: 70, size: "h-4" },
+    ],
+  },
+  {
+    value: "card",
+    label: "Card (credit/debit)",
+    logos: [
+      { src: "/payments/visa.svg", alt: "Visa", w: 512, h: 166 },
+      { src: "/payments/mastercard.svg", alt: "Mastercard", w: 1000, h: 618 },
+      { src: "/payments/amex.svg", alt: "American Express", w: 1000, h: 998 },
+      // A wordmark: drawn small so it fits its circle whole, unsquashed.
+      { src: "/payments/rupay-logo.png", alt: "RuPay", w: 1705, h: 440, size: "h-1.5" },
+    ],
+  },
 ] as const satisfies readonly {
   value: SubscriptionPaymentMethod
   label: string
-  note: string
-  icon: IconComponent
+  logos: readonly { src: string; alt: string; w: number; h: number; size?: string }[]
 }[]
 
 const SUBSCRIPTION_TRUST_ITEMS = [
@@ -327,22 +350,87 @@ function GstinCard({
   )
 }
 
+/** Payment trust marks under the pay button: the methods we accept and who
+ *  processes them. Quiet (greyscale, faded) so they reassure
+ *  without competing with the pay button.
+ *  shortcut: logos are Wikimedia Commons copies (public/payments; Juspay's
+ *  is its site's dark-mode logo with the text recoloured dark); swap in
+ *  each brand's official files, sized to its guidelines, before launch.
+ *  RuPay's copy is CC BY-SA 4.0 (Wikieditor.in, Wikimedia Commons). */
+// Heights per logo so they read the same size: wordmarks (UPI, RuPay, Visa)
+// share a cap height; the shape marks (Mastercard's circles, Amex's square
+// box) sit a little taller so they carry the same visual weight. RuPay's PNG
+// is cropped to the logo (public/payments/rupay-logo.png).
+const PAYMENT_MARKS = [
+  { src: "/payments/upi.svg", alt: "UPI", w: 463, h: 163, size: "h-3.5" },
+  { src: "/payments/rupay-logo.png", alt: "RuPay", w: 1705, h: 440, size: "h-3.5" },
+  { src: "/payments/visa.svg", alt: "Visa", w: 512, h: 166, size: "h-3" },
+  { src: "/payments/mastercard.svg", alt: "Mastercard", w: 1000, h: 618, size: "h-4" },
+  { src: "/payments/amex.svg", alt: "American Express", w: 1000, h: 998, size: "h-5" },
+] as const
+
+function PaymentMarks() {
+  return (
+    <div className="flex flex-col items-center gap-1.5">
+      {/* Who processes the payment first, then the methods. The lock leads:
+          it replaced the generic "100% safe and secure checkout", the named
+          gateways being the actual proof. Both gateways show, as the cohort
+          decides which one a recruiter pays through. Heights balance the
+          two marks: Razorpay's wordmark fills its file, Juspay's sits beside
+          an icon, so Juspay is drawn taller to match. */}
+      <p className="flex items-center gap-1.5 text-2xs text-muted-foreground">
+        <Lock className="size-3 shrink-0" aria-hidden />
+        Payments secured by
+        <Image src="/payments/razorpay.svg" alt="Razorpay" width={1896} height={401} className="h-3 w-auto opacity-70 grayscale" />
+        <span aria-hidden>·</span>
+        <Image src="/payments/juspay.svg" alt="Juspay" width={785} height={242} className="h-4.5 w-auto opacity-70 grayscale" />
+      </p>
+      <ul className="flex h-6 items-center gap-4" aria-label="Accepted payment methods">
+        {PAYMENT_MARKS.map((m) => (
+          <li key={m.alt}>
+            <Image src={m.src} alt={m.alt} width={m.w} height={m.h} className={cn(m.size, "w-auto opacity-60 grayscale")} />
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
 /** A single cart line: title + inline struck MRP and net price, then the
  *  subtitle row which for the add-on also carries "Remove". */
-function CartLineRow({ line, onRemove }: { line: CartLine; onRemove?: () => void }) {
+function CartLineRow({
+  line,
+  onRemove,
+  coupon = 0,
+  renews,
+}: {
+  line: CartLine
+  onRemove?: () => void
+  /** This line's share of the coupon: its price drops by it, struck at MRP. */
+  coupon?: number
+  /** A subscription with a coupon: the coupon is first payment only. */
+  renews?: boolean
+}) {
+  const price = line.price - coupon
+  const strike = line.mrp ?? (coupon > 0 ? line.price : undefined)
   return (
     <li className="flex flex-col gap-2">
       <div className="flex items-center justify-between gap-3">
         <p className="text-base font-semibold text-foreground">{line.label}</p>
         <div className="flex shrink-0 items-center gap-3">
-          {!line.priceLabel && line.mrp != null && line.mrp > line.price && (
-            <span className="text-sm text-muted-foreground line-through">{inr(line.mrp)}</span>
+          {!line.priceLabel && strike != null && strike > price && (
+            <span className="text-sm text-muted-foreground line-through">{inr(strike)}</span>
           )}
           <span className="text-base font-semibold text-foreground">
-            {line.priceLabel ?? inr(line.price)}
+            {line.priceLabel ?? inr(price)}
           </span>
         </div>
       </div>
+      {renews && coupon > 0 && (
+        <p className="text-xs text-muted-foreground">
+          First payment only, renews at {inr(line.price)}
+        </p>
+      )}
       {line.points?.length ? (
         <ul className="flex flex-col gap-2">
           {line.points.map((point) => (
@@ -493,7 +581,7 @@ export function CheckoutDrawer({
       ? [
           {
             id: `db-${addon.credits}`,
-            label: `${addon.credits} Database credits`,
+            label: `${addon.credits} database credits`,
             sublabel: `Valid for ${addon.validDays} days`,
             price: addon.price,
             mrp: addon.mrp,
@@ -503,11 +591,24 @@ export function CheckoutDrawer({
     ...(aiLine ? [aiLine] : []),
   ]
 
-  const { itemsNet, itemsMrp, prorationCredit, couponDiscount, subtotal, gst, total } = computeBill(
+  const { itemsNet, itemsMrp, prorationCredit, couponDiscount, lineCoupon, subtotal, gst, total } = computeBill(
     lines,
     proration?.amount ?? 0,
     appliedCoupon ? COUPONS[appliedCoupon] : null,
   )
+
+  // The coupon named by what it does, so it ties back to the plan card's
+  // "Extra 10% off": the % shows unless the cap cut it (then the % would
+  // read as a maths error next to the amount), so a capped one is code only.
+  const coupon = appliedCoupon ? COUPONS[appliedCoupon] : null
+  const couponName =
+    !coupon || !appliedCoupon
+      ? ""
+      : couponDiscount >= coupon.maxDiscount
+        ? appliedCoupon
+        : extraOffer && appliedCoupon === extraOffer.code
+          ? `extra ${coupon.discountPct}% off (${appliedCoupon})`
+          : `${coupon.discountPct}% off (${appliedCoupon})`
 
   // Figma only ever draws the upsell over a job-credit primary item; the
   // Quarterly-plan frames on the same board carry no upsell block at all.
@@ -583,6 +684,8 @@ export function CheckoutDrawer({
                   )}
                   <CartLineRow
                     line={line}
+                    coupon={lineCoupon[i]}
+                    renews={isSubscription && i === 0}
                     onRemove={
                       i === 0
                         ? undefined
@@ -697,7 +800,7 @@ export function CheckoutDrawer({
                 <Tag className="mt-0.5 size-5 shrink-0 text-checkout-primary" aria-hidden />
                 <div className="flex flex-col gap-1">
                   <p className="text-sm text-foreground">
-                    {inr(couponDiscount)} saved with {appliedCoupon}
+                    {inr(couponDiscount)} saved with {couponName}
                   </p>
                   <Button
                     type="button"
@@ -800,16 +903,17 @@ export function CheckoutDrawer({
               <p className="text-sm font-semibold text-foreground">Bill details</p>
 
               <div className="flex flex-col gap-2">
-                <BillRow label="Item total">
-                  <span className="flex items-center gap-3">
-                    {itemsMrp > itemsNet && (
-                      <span className="text-sm text-muted-foreground line-through">
-                        {inr(itemsMrp)}
-                      </span>
-                    )}
-                    <span className="text-base font-semibold text-foreground">{inr(itemsNet)}</span>
-                  </span>
+                {/* MRP down to the Sub total, one discount a line: the item
+                    rows above already show each price after all of them. */}
+                <BillRow label="Item total (MRP)">
+                  <span className="text-sm text-foreground">{inr(itemsMrp)}</span>
                 </BillRow>
+
+                {itemsMrp > itemsNet && (
+                  <BillRow label="Discount on MRP">
+                    <span className="text-sm text-checkout-primary">-{inr(itemsMrp - itemsNet)}</span>
+                  </BillRow>
+                )}
 
                 {proration && (
                   <BillRow label={proration.label}>
@@ -817,8 +921,9 @@ export function CheckoutDrawer({
                   </BillRow>
                 )}
 
+                {/* Sentence case: the coupon's name starts the row. */}
                 {appliedCoupon && (
-                  <BillRow label={`Coupon discount (${appliedCoupon})`}>
+                  <BillRow label={couponName.charAt(0).toUpperCase() + couponName.slice(1)}>
                     <span className="text-sm text-checkout-primary">-{inr(couponDiscount)}</span>
                   </BillRow>
                 )}
@@ -905,19 +1010,47 @@ export function CheckoutDrawer({
                 <legend className="pb-2 text-sm font-semibold text-foreground">
                   Select autopay method
                 </legend>
-                <OptionCardGroup columns={2} aria-label="Payment method">
-                  {SUBSCRIPTION_PAYMENT_METHODS.map(({ value, label, note, icon: Icon }) => (
-                    <OptionCard
+                {/* A radio card per method: the method's mark and name, then
+                    the apps or networks it covers as overlapping round
+                    badges, so the choice reads at a glance. */}
+                <RadioCardGroup className="grid grid-cols-2 gap-2" aria-label="Payment method">
+                  {SUBSCRIPTION_PAYMENT_METHODS.map(({ value, label, logos }) => (
+                    <RadioCard
                       key={value}
-                      className="items-center p-3"
-                      icon={<Icon aria-hidden />}
-                      title={label}
-                      description={note}
+                      radioPosition="end"
+                      className="gap-2 p-3"
                       selected={paymentMethod === value}
                       onSelect={() => setPaymentMethod(value)}
-                    />
+                    >
+                      <div className="flex flex-col gap-2">
+                        {/* Name only: the badges below carry the marks. */}
+                        <span className="text-sm font-semibold text-foreground">{label}</span>
+                        {/* Reversed in the DOM, shown left to right: each badge
+                            sits over the one to its right, so no logo is
+                            covered at its end (Paytm's wordmark). */}
+                        <span className="flex flex-row-reverse justify-end">
+                          {[...logos].reverse().map((l, i) => (
+                            <span
+                              key={l.alt}
+                              className={cn(
+                                "flex size-7 items-center justify-center overflow-hidden rounded-full bg-card ring-1 ring-border",
+                                i < logos.length - 1 && "-ml-1"
+                              )}
+                            >
+                              <Image
+                                src={l.src}
+                                alt={l.alt}
+                                width={l.w}
+                                height={l.h}
+                                className={cn("w-auto object-contain", "size" in l ? l.size : "h-3 max-w-6")}
+                              />
+                            </span>
+                          ))}
+                        </span>
+                      </div>
+                    </RadioCard>
                   ))}
-                </OptionCardGroup>
+                </RadioCardGroup>
               </fieldset>
 
               <Button
@@ -941,7 +1074,11 @@ export function CheckoutDrawer({
                   <span className="whitespace-nowrap font-semibold">
                     {inr(renewalAmount)} {periodLabel}
                   </span>{" "}
-                  incl. GST. By subscribing, you authorise these charges.
+                  incl. GST.{" "}
+                  {/* Desktop: its own line; phones keep it running on, to stay
+                      within two lines. */}
+                  <br className="max-sm:hidden" />
+                  By subscribing, you authorise these charges.
                 </span>
               </p>
 
@@ -955,6 +1092,15 @@ export function CheckoutDrawer({
                     {label}
                   </li>
                 ))}
+                {/* The gateways, folded into this row rather than the job
+                    summary's two lines, to keep the subscription footer short. */}
+                <li className="flex items-center gap-1 whitespace-nowrap text-xs text-muted-foreground">
+                  <Lock className="size-3 shrink-0" aria-hidden />
+                  Secured by
+                  <Image src="/payments/razorpay.svg" alt="Razorpay" width={1896} height={401} className="h-3 w-auto opacity-70 grayscale" />
+                  <span aria-hidden>·</span>
+                  <Image src="/payments/juspay.svg" alt="Juspay" width={785} height={242} className="h-4.5 w-auto opacity-70 grayscale" />
+                </li>
               </ul>
             </>
           ) : (
@@ -972,10 +1118,7 @@ export function CheckoutDrawer({
                   No payment needed — credits are used when the job goes live
                 </p>
               ) : (
-                <p className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-                  <Lock className="size-4" aria-hidden />
-                  100% safe and secure checkout
-                </p>
+                <PaymentMarks />
               )}
             </>
           )}

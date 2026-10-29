@@ -358,7 +358,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   }) => {
     openOrder({
       id: `job-${bundle.credits}`,
-      label: `${bundle.credits} Job credit${bundle.credits > 1 ? "s" : ""}`,
+      label: `${bundle.credits} job credit${bundle.credits > 1 ? "s" : ""}`,
       sublabel: `Valid for ${bundle.validDays} days`,
       price: bundle.price,
       mrp: bundle.mrp,
@@ -394,7 +394,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
     const pack = plans.upsellPack
     openOrder({
       id: `job-${pack.credits}`,
-      label: `${pack.credits} Job credits`,
+      label: `${pack.credits} job credits`,
       sublabel: `Valid for ${pack.validDays} days`,
       price: pack.price,
       mrp: pack.mrp,
@@ -412,7 +412,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   }) => {
     openOrder({
       id: `db-${bundle.credits}`,
-      label: `${bundle.credits.toLocaleString("en-IN")} Database credits`,
+      label: `${bundle.credits.toLocaleString("en-IN")} database credits`,
       sublabel: `Valid for ${bundle.validDays} days`,
       price: bundle.price,
       mrp: bundle.mrp,
@@ -596,11 +596,12 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
           </div>
         )}
 
-        {/* ── Hero + pricing body share the page-level ambient-gradient canvas,
-             with the homepage hero's living background (HeroBackdrop) moving
-             over it, logged in and out alike. ── */}
+        {/* ── Hero + pricing body share the page-level ambient-gradient canvas.
+             Logged out (the public pricing page), the homepage hero's living
+             background (HeroBackdrop) moves over it; logged in, the mesh is
+             still, as in express checkout (user call, 2026-10-29). ── */}
         <div className="relative isolate flex-1">
-          <HeroBackdrop />
+          {isLoggedOut && <HeroBackdrop />}
           <PricingHero
             activeTab={activeTab}
             onTabChange={changeTab}

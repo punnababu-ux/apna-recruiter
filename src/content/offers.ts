@@ -25,16 +25,18 @@ export const EXTRA_OFF = {
   eyebrow: "Limited time offer",
   headline: "Order now to get 10% extra off",
   validity: "Valid online for 24 hrs only",
-  applied: "10% extra off applied",
+  applied: "Extra 10% off applied",
   /** Phone tiles (~130px of text): the full line wraps to two in Inter. */
-  appliedShort: "10% extra off",
+  appliedShort: "Extra 10% off",
 } as const
 
 export const withExtraOff = (price: number) => Math.round(price * (1 - EXTRA_OFF.pct / 100))
 
 /** A credit bundle's display figures with the claimed offer: the price drops
- *  by 10%, the struck MRP stays, and the % OFF and per-credit price are
- *  recalculated from the new price. Per-credit keeps the design's precision
+ *  by 10%, the struck MRP stays, and the per-credit price is recalculated
+ *  from the new price. The % OFF stays the bundle's own discount: the 10%
+ *  shows as its own line beside it, as the cart's coupon row does (user
+ *  call, 2026-10-29), never folded into the badge. Per-credit keeps the design's precision
  *  (whole rupees for job credits, one decimal for database credits). Only for
  *  display: checkout gets the base bundle and applies the coupon itself. */
 export function withExtraOffBundle<
@@ -46,7 +48,6 @@ export function withExtraOffBundle<
   return {
     ...bundle,
     price,
-    discountPct: Math.round((1 - price / bundle.mrp) * 100),
     pricePerCredit: Number.isInteger(bundle.pricePerCredit)
       ? Math.round(perCredit)
       : Math.round(perCredit * 10) / 10,

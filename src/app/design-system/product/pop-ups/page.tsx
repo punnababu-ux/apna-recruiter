@@ -182,7 +182,7 @@ export default function PopUpsPage() {
         <RuleList
           rules={[
             "Once per session. Claiming starts the countdown, and every price on the page then carries the 10%.",
-            "With the offer claimed, \"10% extra off applied\" comes first under each price, then the gray per-unit note.",
+            "With the offer claimed, \"Extra 10% off applied\" comes first under each price, then the gray per-unit note.",
           ]}
         />
       </ShowcaseEntry>
@@ -272,7 +272,7 @@ export default function PopUpsPage() {
         onOpenChange={toggle("order-summary")}
         item={{
           id: "showcase-13",
-          label: "13 Job credits",
+          label: "13 job credits",
           sublabel: "Valid for 180 days",
           price: 7099,
           mrp: 8999,

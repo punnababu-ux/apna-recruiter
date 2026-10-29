@@ -6,10 +6,10 @@
  * (`job-credit-bundles.tsx`, `database-credit-bundles.tsx`,
  * `unlimited-side-card.tsx`) can't drift apart.
  *
- *   MobilePlanRow       a radio card. Left: plan name, then what you get.
- *                       Right, level with the name: what you pay (struck
- *                       price + 20px price, then the discount row), the
- *                       radio always beside the amount. `details`
+ *   MobilePlanRow       a radio card. The radio leads, left of the plan
+ *                       name (in the feature icons' column); then what you
+ *                       get. Right, level with the name: what you pay
+ *                       (struck price + 20px price, then the discount row). `details`
  *                       show only while selected ("explain on selection"),
  *                       so the unselected rows stay scannable.
  *                       `layout="inline"` (subscription rows: a name, one
@@ -25,7 +25,7 @@
  *                       `upcoming` ("₹749 from Jan 1", UpcomingPriceLine) is
  *                       the price column's last line; inline, a third line
  *                       under the radio side.
- *   MobileDiscountRow   "Incl. 10% extra" + the % OFF badge, under the price.
+ *   MobileDiscountRow   "Extra 10% off" + the % OFF badge, under the price.
  *   MobileUnlimitedCard the apna Unlimited card: dark frame, logo, then a white
  *                       card with the same name | price header, a feature
  *                       list and a note + CTA footer. With `selected` it is
@@ -41,6 +41,31 @@
 import * as React from "react"
 import { Badge, BadgePercent, LogoApnaUnlimited, RadioMark } from "@apna/design-system"
 import { cn } from "@/lib/utils"
+
+/** Brings a card fully into view when it becomes selected (it may have just
+ *  opened its details below the fold, under the sticky CTA bar). Not on
+ *  first render: only a change of selection scrolls. The card's scroll
+ *  margins (`REVEAL_MARGINS`) keep it clear of the header and the bar. */
+function useRevealOnSelect(selected?: boolean) {
+  const ref = React.useRef<HTMLDivElement>(null)
+  const was = React.useRef(selected)
+  React.useEffect(() => {
+    if (selected && !was.current) {
+      // A frame later, so the opened details are laid out first.
+      requestAnimationFrame(() =>
+        ref.current?.scrollIntoView({
+          block: "nearest",
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+        })
+      )
+    }
+    was.current = selected
+  }, [selected])
+  return ref
+}
+
+/** Clear of the page header (top) and the sticky CTA bar (bottom). */
+const REVEAL_MARGINS = "scroll-mt-20 scroll-mb-28"
 
 /* ── Radio row ──────────────────────────────────────────────────────── */
 
@@ -61,20 +86,17 @@ export interface MobilePlanRowProps {
   belowPrice?: React.ReactNode
   /** Shown only while selected, under a rule. */
   details?: React.ReactNode
+  /** Shown only while NOT selected: a compact summary of `details`. */
+  collapsed?: React.ReactNode
   /** `"inline"`: name and price share line 1, `meta` and the discount line
    *  2 (see the header). For plans with a one-line subtitle. */
   layout?: "stacked" | "inline"
-  /** Beside the discount ("Incl. 10% extra"): line 2 in the inline layout,
+  /** Beside the discount ("Extra 10% off"): line 2 in the inline layout,
    *  under the discount in the stacked one. */
   priceNote?: React.ReactNode
   /** The price's last line: `UpcomingPriceLine` (it renders nothing when
    *  off, and the slot adds no space of its own). */
   upcoming?: React.ReactNode
-  /** `"tick"` (preview, `?rows=tick`): no radio; the selected row gets a
-   *  green tick on its top-left corner, Recommended moves to the right, and
-   *  the price sits on the name's line. `details` show on every row, not
- *  only the selected one. Stacked layout only. */
-  mark?: "radio" | "tick"
   className?: string
 }
 
@@ -89,15 +111,15 @@ export function MobilePlanRow({
   unit,
   belowPrice,
   details,
+  collapsed,
   layout = "stacked",
   priceNote,
   upcoming,
-  mark = "radio",
   className,
 }: MobilePlanRowProps) {
-  const tick = mark === "tick"
+  const revealRef = useRevealOnSelect(selected)
   const radio = (
-    <RadioMark checked={selected} size="lg" className="data-checked:border-cta-primary [&>span]:bg-cta-primary" />
+    <RadioMark checked={selected} className="data-checked:border-cta-primary [&>span]:bg-cta-primary" />
   )
   const priceBlock = (
     <div className="flex shrink-0 flex-col items-end gap-1 text-right">
@@ -115,7 +137,7 @@ export function MobilePlanRow({
     </div>
   )
   return (
-    <div className="relative pt-1.5">
+    <div ref={revealRef} className={cn("relative pt-1.5", REVEAL_MARGINS)}>
       {recommended && (
         <div className="absolute -top-2 left-3 z-docked">
           <Badge variant="ribbon">Recommended</Badge>
@@ -134,14 +156,10 @@ export function MobilePlanRow({
         tabIndex={0}
         className={cn(
           "ink press-subtle @container relative flex cursor-pointer flex-col gap-3 overflow-hidden rounded-card bg-plan-card p-4 shadow-card transition-interactive",
-          // Tick rows: no border, so a header band reaches the card's edge;
-          // the selection is an outer ring instead.
-          tick
-            ? selected && "ring-2 ring-cta-primary"
-            : selected
-              // The selection green is the CTA green (green-700 on dark).
-              ? "border-2 border-cta-primary ring-1 ring-cta-primary/20"
-              : "border-2 border-transparent",
+          selected
+            // The selection green is the CTA green (green-700 on dark).
+            ? "border-2 border-cta-primary ring-1 ring-cta-primary/20"
+            : "border-2 border-transparent",
           className
         )}
       >
@@ -149,9 +167,10 @@ export function MobilePlanRow({
           // Container query, not a viewport breakpoint: the inline lines
           // need ~288px inside the card (360px phones and up).
           <div className="hidden flex-col gap-0.5 @2xs:flex">
-            {/* Line 1: name · struck price + price · radio. The radio stays
-                on the name's line, as in the stacked rows. */}
+            {/* Line 1: radio · name · struck price + price. The radio leads,
+                as in the stacked rows. */}
             <div className="flex items-center gap-2">
+              {radio}
               <span className="min-w-0 flex-1 text-plan-name text-foreground">{title}</span>
               <span className="flex shrink-0 items-baseline gap-1.5 whitespace-nowrap">
                 {mrp && <span className="text-plan-strike text-muted-foreground">{mrp}</span>}
@@ -160,12 +179,11 @@ export function MobilePlanRow({
                 <span className="text-plan-price-compact tabular-nums text-foreground">{price}</span>
                 {unit && <span className="text-plan-unit text-muted-foreground">{unit}</span>}
               </span>
-              {radio}
             </div>
             {/* Line 2 runs to the card's edge (its right side lines up
                 with the radio, not the price): reserving the radio's 28px
                 left 264px at 360px for ~285px of "Unlimited job reposts ·
-                Incl. 10% extra · 10% OFF". */}
+                Extra 10% off · 10% OFF". */}
             {(meta || priceNote || belowPrice) && (
               <div className="flex items-center justify-between gap-2">
                 <div className="min-w-0">{meta}</div>
@@ -181,21 +199,25 @@ export function MobilePlanRow({
             <Upcoming className="[&>*]:self-end">{upcoming}</Upcoming>
           </div>
         )}
-        {/* Name and meta | price: the amount sits on the name's line, the
-            radio beside it (the rule on every plan card, AGENTS.md). */}
-        <div className={cn("flex items-start justify-between gap-3", layout === "inline" && "@2xs:hidden")}>
-          <div className="flex min-w-0 flex-col gap-2">
-            <span className="text-plan-name text-foreground">{title}</span>
-            {meta}
-          </div>
-          <div className="flex shrink-0 items-start gap-2">
-            {priceBlock}
-            <span className="flex h-7 items-center">{radio}</span>
+        {/* Radio | name and meta | price: the radio leads the card, in the
+            column of the feature icons below (the rule on every plan card,
+            AGENTS.md). The price floats right, so the name and meta flow
+            beside it; a meta line too long to fit beside it drops below it
+            whole, never splitting mid-phrase ("Valid for 30 days"). */}
+        <div className={cn("flex items-start gap-2", layout === "inline" && "@2xs:hidden")}>
+          <span className="flex h-5 shrink-0 items-center">{radio}</span>
+          <div className="min-w-0 flex-1 flow-root">
+            <div className="float-right ml-3">{priceBlock}</div>
+            <span className="flow-root text-plan-name text-foreground">{title}</span>
+            {/* A meta line's icon hangs in the radio's column, its words under
+                the name (16px radio + 8px gap = the 24px the icons take). */}
+            {meta && <div className="mt-2 flex flex-col items-start gap-2 [&>*]:whitespace-nowrap [&>*:has(>svg:first-child)]:-ml-6">{meta}</div>}
           </div>
         </div>
 
         {/* Tick rows show details on every row: chips to compare, no expand. */}
-        {(selected || tick) && details}
+        {selected && details}
+        {!selected && collapsed}
       </div>
     </div>
   )
@@ -223,7 +245,7 @@ export function MobilePlanDetails({ items }: { items: Array<[React.ReactNode, Re
   )
 }
 
-/** "Incl. 10% extra" (when the exit offer is claimed) + the % OFF badge.
+/** "Extra 10% off" (when the exit offer is claimed) + the % OFF badge.
  *  With the note, it announces the offer like ExtraOffLine: the words
  *  shimmer and the discount icon rocks. The discount badge stays steady. */
 export function MobileDiscountRow({
@@ -256,7 +278,7 @@ export function MobileDiscountRow({
 /** A left-column line: small icon + text. */
 export function MobileMetaLine({ icon, children }: { icon: React.ReactNode; children: React.ReactNode }) {
   return (
-    <span className="flex items-center gap-1.5 text-xs text-muted-foreground [&_svg]:size-3.5 [&_svg]:shrink-0">
+    <span className="flex items-center gap-2 text-xs text-muted-foreground [&_svg]:size-4 [&_svg]:shrink-0">
       {icon}
       {children}
     </span>
@@ -293,9 +315,10 @@ export interface MobileUnlimitedCardProps {
   onSelect?: () => void
   /** On the white card, e.g. the offer shimmer. */
   cardClassName?: string
-  /** Radio mode only. `"tick"` (preview): the same frame and white card,
-   *  with the radio beside the price and `features` as chips on every card. */
-  mark?: "radio" | "tick"
+  /** Radio mode, while NOT selected: a compact summary of `features`.
+   *  Without it the card stays expanded whether selected or not
+   *  (self-checkout). */
+  collapsed?: React.ReactNode
   className?: string
 }
 
@@ -314,12 +337,12 @@ export function MobileUnlimitedCard({
   meta,
   onSelect,
   cardClassName,
-  mark = "radio",
+  collapsed,
   className,
 }: MobileUnlimitedCardProps) {
   const radioMode = selected !== undefined
-  const tick = radioMode && mark === "tick"
-  const expanded = !radioMode || selected
+  const revealRef = useRevealOnSelect(selected)
+  const expanded = !radioMode || selected || !collapsed
   const priceBlock = (
     <div className="flex shrink-0 flex-col items-end gap-1 text-right">
       <span className="flex items-baseline gap-1.5 whitespace-nowrap">
@@ -332,70 +355,12 @@ export function MobileUnlimitedCard({
       <Upcoming>{upcoming}</Upcoming>
     </div>
   )
-  if (tick) {
-    // The frame and white card as below; inside, as a tick-mode
-    // MobilePlanRow: the radio beside the price, the benefits as chips.
-    return (
-      <div
-        className={cn(
-          "flex flex-col gap-3 rounded-card bg-gradient-checkout-unlimited px-1.5 pt-5 pb-1.5 text-surface-inverted-fg",
-          className
-        )}
-      >
-        <div className="flex h-5 items-start px-2.5">
-          <LogoApnaUnlimited variant="gradient" className="h-4 w-auto" />
-        </div>
-        <div
-          onClick={onSelect}
-          onKeyDown={(e) => {
-            if (onSelect && (e.key === "Enter" || e.key === " ")) {
-              e.preventDefault()
-              onSelect()
-            }
-          }}
-          role="radio"
-          aria-checked={selected}
-          tabIndex={onSelect ? 0 : -1}
-          className={cn(
-            "relative flex flex-col gap-3 overflow-hidden rounded-card-nested bg-plan-card p-4 text-card-foreground shadow-card",
-            onSelect && "ink press-subtle cursor-pointer transition-interactive",
-            selected && "ring-2 ring-cta-primary",
-            cardClassName
-          )}
-        >
-          {/* The price floats right, so the name and the slot line flow
-              beside it: no space is held under a one-line name, and the
-              slot line drops below the price only when it can't fit. */}
-          <div className="flow-root">
-            <div className="float-right ml-3 flex items-start gap-2">
-              {priceBlock}
-              <span className="flex h-7 items-center">
-                <RadioMark checked={selected} size="lg" className="data-checked:border-cta-primary [&>span]:bg-cta-primary" />
-              </span>
-            </div>
-            <span className="block text-plan-name text-foreground">{title}</span>
-            {subtitle && <span className="mt-2 block text-xs text-muted-foreground">{subtitle}</span>}
-            {meta && <div className="mt-2 whitespace-nowrap">{meta}</div>}
-          </div>
-          <div className="flex flex-wrap gap-1.5 border-t border-border pt-3">
-            {features.map(([icon, text], i) => (
-              <Badge key={i} variant="outline" className="gap-1 [&>svg]:size-3">
-                {icon}
-                {text}
-              </Badge>
-            ))}
-          </div>
-          {selected && note && <span className="text-xs italic text-muted-foreground">{note}</span>}
-        </div>
-      </div>
-    )
-  }
-
   return (
     // Slim frame at the sides and bottom (1.5) so the white card gets the
     // width; the top keeps room above and below the logo. The logo sits
     // 16px in from the frame's edge.
     <div
+      ref={revealRef}
       onClick={
         onSelect
           ? (e) => {
@@ -416,6 +381,7 @@ export function MobileUnlimitedCard({
       })}
       className={cn(
         "flex flex-col gap-3 rounded-card bg-gradient-checkout-unlimited px-1.5 pt-5 pb-1.5 text-surface-inverted-fg",
+        REVEAL_MARGINS,
         onSelect && "cursor-pointer",
         className
       )}
@@ -435,19 +401,23 @@ export function MobileUnlimitedCard({
         )}
       >
         {radioMode ? (
-          // As the tick card: the price floats right, so the name and the
+          // The price floats right, so the name and the
           // lines under it flow beside it, with no space held under a
           // one-line name; a line too long to fit drops below the price.
-          <div className="flow-root">
-            <div className="float-right ml-3 flex items-start gap-2">
-              {priceBlock}
-              <span className="flex h-7 items-center">
-                <RadioMark checked={selected} size="lg" className="data-checked:border-cta-primary [&>span]:bg-cta-primary" />
-              </span>
+          <div className="flex items-start gap-2">
+            {/* The radio leads, as in MobilePlanRow. */}
+            <span className="flex h-5 shrink-0 items-center">
+              <RadioMark checked={selected} className="data-checked:border-cta-primary [&>span]:bg-cta-primary" />
+            </span>
+            <div className="min-w-0 flex-1 flow-root">
+            <div className="float-right ml-3">{priceBlock}</div>
+            <span className="flow-root text-plan-name text-foreground">{title}</span>
+            {subtitle && <span className="mt-2 block text-xs text-muted-foreground [&>*:has(>svg:first-child)]:-ml-6">{subtitle}</span>}
+            {/* Wraps beside the price instead of dropping below it: with the
+                10% offer the price side is tall, and a line that dropped
+                whole left a big gap under the name. */}
+            {meta && <div className="mt-2 has-[>*>svg:first-child]:-ml-6">{meta}</div>}
             </div>
-            <span className="block text-plan-name text-foreground">{title}</span>
-            {subtitle && <span className="mt-2 block text-xs text-muted-foreground">{subtitle}</span>}
-            {meta && <div className="mt-2 flex flex-col gap-2 whitespace-nowrap">{meta}</div>}
           </div>
         ) : (
           // Name and price share the top line; subtitle and the discount
@@ -471,6 +441,8 @@ export function MobileUnlimitedCard({
           ))}
         </div>
         )}
+
+        {!expanded && collapsed}
 
         {expanded && (note || cta) && (
           <div className="flex items-center justify-between gap-3 border-t border-border/60 pt-3">

@@ -13,7 +13,8 @@ import * as React from "react"
 import { ClockFading, ArrowRight, Briefcase, Sparkles } from "@apna/design-system"
 import { Badge, Button, PricingCard } from "@apna/design-system"
 import { cn } from "@/lib/utils"
-import { withExtraOffBundle } from "@/content/offers"
+import { CardHover, RECOMMENDED_EDGE } from "@/components/apnahire/use-card-hover"
+import { EXTRA_OFF, withExtraOffBundle } from "@/content/offers"
 import { ExtraOffLine } from "@/components/apnahire/offers/extra-off-line"
 import { MobileDiscountRow, MobileMetaLine, MobilePlanRow } from "@/components/apnahire/mobile-plan-row"
 import { UpcomingPriceLine } from "@/components/apnahire/upcoming-price-line"
@@ -89,26 +90,31 @@ export function JobCreditBundles({
             return (
               <MobilePlanRow
                 key={bundle.id}
-                title={`${bundle.credits} Job credits`}
+                title={`${bundle.credits} job credits`}
                 selected={isSelected}
                 onSelect={() => handleSelect(bundle)}
                 recommended={bundle.recommended}
                 meta={
-                  <>
-                    <MobileMetaLine icon={<ClockFading aria-hidden />}>
-                      Valid for {bundle.validDays} days
-                    </MobileMetaLine>
-                    {/* pt-1: 12px under the validity line, not the column's
-                        8px, so the unit cost reads as its own line. */}
-                    <span className="pt-1 text-xs whitespace-nowrap italic text-muted-foreground">
-                      ₹{view.pricePerCredit}{"\u00A0"}/credit
-                    </span>
-                  </>
+                  <MobileMetaLine icon={<ClockFading aria-hidden />}>
+                    Valid for {bundle.validDays} days
+                  </MobileMetaLine>
+                }
+                // The unit cost reads with the amount: right, under the discount.
+                // Green on its own, gray under the 10% offer (one green line).
+                priceNote={
+                  <span
+                    className={cn(
+                      "text-xs whitespace-nowrap italic",
+                      extraOff ? "text-muted-foreground" : "text-checkout-primary"
+                    )}
+                  >
+                    ₹{view.pricePerCredit}{"\u00A0"}/credit
+                  </span>
                 }
                 mrp={inr(bundle.mrp)}
                 price={inr(view.price)}
                 belowPrice={
-                  <MobileDiscountRow pct={view.discountPct} note={extraOff ? "Incl. 10% extra" : undefined} />
+                  <MobileDiscountRow pct={view.discountPct} note={extraOff ? EXTRA_OFF.appliedShort : undefined} />
                 }
                 upcoming={<UpcomingPriceLine price={bundle.janPrice} />}
               />
@@ -148,9 +154,12 @@ export function JobCreditBundles({
         {bundles.map((bundle) => {
           const view = withExtraOffBundle(bundle, extraOff)
           return (
+          // Outline CTA at rest, green while hovered; the recommended card
+          // stands out by its blue edge (useCardHover, as in express).
+          <CardHover key={bundle.id}>
+            {(active) => (
           <PricingCard
-            key={bundle.id}
-            className="border-transparent"
+            className={cn("flex-1", bundle.recommended ? RECOMMENDED_EDGE : "border-transparent")}
             onClick={() => onBuyNow(bundle)}
             ribbon={
               bundle.recommended && (
@@ -160,7 +169,7 @@ export function JobCreditBundles({
                 </Badge>
               )
             }
-            title={`${bundle.credits} Job credits`}
+            title={`${bundle.credits} job credits`}
             subtitle={bundle.subcopy}
             meta={[
               <>
@@ -184,13 +193,15 @@ export function JobCreditBundles({
             cta={
               <Button
                 type="button"
-                variant={bundle.recommended ? "checkout" : "outline"}
+                variant={active ? "checkout" : "outline"}
                 className="h-10 w-full font-semibold"
               >
                 Buy now
               </Button>
             }
           />
+            )}
+          </CardHover>
           )
         })}
         </div>

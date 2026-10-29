@@ -16,6 +16,8 @@ export function splitGst(total: number) {
 /**
  * The order summary's bill (Figma maths): items, minus the upgrade proration
  * credit, minus the capped coupon, then GST on what is left ("Sub total").
+ * `lineCoupon` splits the coupon across the lines, so each item row can show
+ * its price after every discount.
  */
 export function computeBill(
   lines: { price: number; mrp?: number }[],
@@ -30,7 +32,15 @@ export function computeBill(
     : 0
   const subtotal = itemsNet - prorationCredit - couponDiscount
   const gst = Math.round(subtotal * GST_RATE)
-  return { itemsNet, itemsMrp, prorationCredit, couponDiscount, subtotal, gst, total: subtotal + gst }
+  // The coupon covers the whole cart, so each line carries its share (by
+  // price; the last line takes the rounding) and shows what it now costs.
+  let left = couponDiscount
+  const lineCoupon = lines.map((l, i) => {
+    const share = i === lines.length - 1 ? left : itemsNet ? Math.round((couponDiscount * l.price) / itemsNet) : 0
+    left -= share
+    return share
+  })
+  return { itemsNet, itemsMrp, prorationCredit, couponDiscount, lineCoupon, subtotal, gst, total: subtotal + gst }
 }
 
 /* ── Plan changes (Manage plan, plan-change.tsx) ──────────────────────── */

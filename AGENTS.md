@@ -224,6 +224,13 @@ Reject the PR if you see any of:
   green "Login / Sign up" scrolls up behind the top bar, the header's turns
   green in its place and goes back to dark when the hero's returns
   (`useHeroCtaHidden`). Still one green on screen at a time.
+  Desktop plan cards, both checkouts, every tab — job tiers, job credits,
+  Unlimited, subscriptions, Database, Enterprise (user call, 2026-10-29):
+  every CTA is outlined at rest and turns green only while its card is
+  hovered or focused, so at most one is green at a time. The recommended
+  card stands out by its blue edge instead (`RECOMMENDED_EDGE`). Both come
+  from `use-card-hover.tsx` (`useCardHover` / `CardHover`); a new plan card
+  uses them, never its own copy.
 - A hand-picked white button on a dark surface. The companion inverts by
   itself: mark the dark area `data-surface="dark"` (OfferDialog's header
   does) and `emphasis` inside it renders white with a dark label. Dark gray
@@ -343,6 +350,10 @@ that is a defect even when each looks fine alone. The shared ones:
 - **Phone chip rows**: `MobileChipRow` / `SectionChips`, the self-checkout
   styling.
 
+One accepted difference (user call, 2026-10-29): the apna Unlimited card is
+titled "Unlimited job posts" in self-checkout and "Monthly plan" in express
+checkout. Same component (`MobileUnlimitedCard`), different title.
+
 **Button pairs that stack on phones** (RCA, 2026-10-27): a pair laid out
 `flex-col sm:flex-row` gives each button `w-full sm:flex-1`, never bare
 `flex-1`. In a column, `flex-1` sets the height basis to 0 and the button
@@ -436,7 +447,7 @@ Never add `shadow-card` / `shadow-elevated` to a resting card to make it
   with an icon). `PageHero` and the product hero draw it for you.
 - **Eyebrows below the hero are gray** (`text-overline
   text-muted-foreground`), never green.
-- **One typeface: Google Sans Flex, everywhere** (user call, 2026-10-23).
+- **One typeface: Inter, everywhere** (user call, 2026-10-23; back to Inter from Google Sans Flex 2026-10-29).
   Marketing pages, the homepage and the product all use it — headlines,
   section titles, quotes, numbers, body, buttons, nav, forms, footer. There
   is no serif and no italic accent: hero headlines (h1) are plain sentence
@@ -538,6 +549,34 @@ Every heading, label, button, tab, chip, badge and line of UI copy is
   style (`text-overline` / uppercase), not copy: write the copy in sentence
   case and let the style uppercase it.
 
+### Explainer copy is ASD-STE100 (user call, 2026-10-29)
+
+Every tooltip, popover and info text that explains a feature, an offer or a
+term (the plan cards' feature explainers, "Limited time offer: Database
+credits") is written in ASD-STE100 Simplified Technical English:
+
+- One topic per sentence; at most 20 words a sentence (25 if it describes).
+- Active voice, simple present tense: "We send your job…", not "Your job
+  will be sent…".
+- Approved, common words with one meaning each; one name for one thing
+  (always "database credits", never also "DB credits" in the same text).
+- No "-ing" words as verbs or modifiers ("candidates who match it", not
+  "matching candidates"), no contractions, no idioms; keep the articles.
+- Address the recruiter as "you"; apna as "we".
+
+- Short: one sentence where it can be, so it reads at a glance.
+
+It opens in the design system's dark `Tooltip` (with its arrow), through
+`TapTooltip` (`src/components/apnahire/tap-tooltip.tsx`): a tap or click
+opens it, on phones and desktop alike; hover does not. No light popover and
+no hand-made tooltip for an explainer. The text that opens it carries no
+marker (no underline, no icon) unless the page has nothing else to show it;
+then a dotted underline (`decoration-dotted`), as on "Limited time offer:
+Database credits" (user call, 2026-10-29).
+
+Labels, buttons and short UI copy keep the rules above (sentence case,
+short); this section is for the text that explains.
+
 ---
 
 ## Text that grows — layouts decide where lines break, not copy
@@ -594,6 +633,16 @@ every line may break; never let the width of a string decide it.**
    line isn't level. Run it at desktop widths (phones are exempt: the
    cards stack there), with and without
    the 10% offer, before showing a change to these surfaces.
+   **Upsell tile widths** (user call, 2026-10-29). Phones: the two tiles
+   are equal halves. From `sm`: the offer is wider (2:3), and every fact
+   line (validity, database credits) stays on ONE line in both tiles —
+   they're `sm:whitespace-nowrap`. When a pair needs more room (plan vs
+   plan, "Go annual"), widen the dialog (`OfferDialog wide`); never let a
+   fact wrap. 🛑 If asked to change the tile ratio or a dialog's width,
+   first check every upsell (Post 3 jobs, Bigger credit pack, Go annual,
+   Credits or a plan) at desktop and 375px: if a fact line would wrap, or
+   a tile's price row no longer fits, say so before changing it. Extra
+   lines put the tiles out of step and make a mess of the layout.
    **Bigger numbers wrap the whole row, never one card.** `CompareAlign`
    (mounted once in the root layout) enforces this at runtime: if one
    card's price row can't hold price, struck price and % tag on one line,
@@ -619,7 +668,8 @@ cards) and every upsell tile (`OfferChoice`), both checkouts, light and dark
 1. **One green line under a price, never two.** The per-unit note ("That's
    just ₹1,799 /month", "₹585 /credit") is green only when it stands alone.
 2. **The claimed 10% offer comes first.** With the exit offer applied, the
-   order under the price is: "10% extra off applied" (`ExtraOffLine`, green),
+   order under the price is: "Extra 10% off applied" (`ExtraOffLine`, green;
+   "Extra 10% off" on phones — both from `EXTRA_OFF`, never typed by hand),
    then the per-unit note, now gray (`text-muted-foreground`). Never the
    note above the offer line.
 3. **The % OFF pill is smoked glass, not green.** `Badge variant="discount"`
@@ -635,6 +685,10 @@ cards) and every upsell tile (`OfferChoice`), both checkouts, light and dark
 5. **Validity always carries the clock.** "Valid for N days" (or "1 active
    job slot for N days") is shown with the `ClockFading` icon, everywhere:
    in `OfferChoice` pass `validDays` / `term`, never a plain `note`.
+   Exception (user call, 2026-10-29): a subscription card on phones
+   (`MobileUnlimitedCard`) shows its slot as one line with the briefcase
+   icon — "1 active job slot" in self-checkout, "1 active job slot for N
+   days" in express — and no separate validity line.
 6. **Which upsell tiles show validity.** Self-checkout: both tiles (both are
    packs the recruiter is choosing between). Express checkout: only the
    bundle on offer; the stay tile is the credit this one job needs and has
@@ -674,12 +728,15 @@ cards) and every upsell tile (`OfferChoice`), both checkouts, light and dark
    sold (a retired plan). Renewals charge `paid`, never
    today's price, and no "new price" notice is shown for it.
 
-11. **A plan card's radio sits beside the amount** (user call, 2026-10-29).
-   On every selectable plan card — job tiers, job credit packs, Database
-   packs, apna Unlimited, subscription rows, both checkouts — the radio is
-   right of the price, on the price's line, never in a corner of its own
-   or beside the plan name alone. `MobilePlanRow` and `MobileUnlimitedCard`
-   draw it there; a new selectable plan card composes them.
+11. **A plan card's radio leads the card** (user call, 2026-10-29; it sat
+   beside the amount earlier that day). On every selectable plan card — job
+   tiers, job credit packs, Database packs, apna Unlimited, subscription
+   rows, both checkouts — the radio is the first thing, left of the plan
+   name, in the same column as the feature icons below it. The price stays
+   right, level with the name. `MobilePlanRow` and `MobileUnlimitedCard`
+   draw it there; a new selectable plan card composes them. The per-unit
+   note ("₹585 /credit") sits on the right too, under the discount row,
+   with the amount — never in the left column (2026-10-29).
 
 ---
 

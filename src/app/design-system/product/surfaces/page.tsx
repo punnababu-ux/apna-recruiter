@@ -32,7 +32,7 @@ function PlanCard({ recommended = false, credits, price, mrp, off, perCredit, da
           </Badge>
         ) : undefined
       }
-      title={`${credits} Job credits`}
+      title={`${credits} job credits`}
       meta={
         <>
           <ClockFading aria-hidden /> Valid for {days} days

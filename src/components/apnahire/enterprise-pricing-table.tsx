@@ -28,6 +28,7 @@ import { Check, ClockFading } from "@apna/design-system"
 import { Button, Card, Separator } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 import { GstNote } from "@/components/apnahire/gst-note"
+import { CardHover } from "@/components/apnahire/use-card-hover"
 import {
   MobileMetaLine,
   MobilePlanDetails,
@@ -180,13 +181,16 @@ export function EnterprisePricingTable({
           from lg they sit in one row. */}
       <div className="hidden gap-4 md:grid md:grid-cols-2 lg:grid-cols-4">
         {TIERS.map((tier) => (
+          // No recommended plan here, but the CTA rule holds: outline at
+          // rest, green while its card is hovered (useCardHover).
+          <CardHover key={tier.name}>
+            {(active) => (
           <Card
-            key={tier.name}
             padding="sm"
             // The whole card is the click target (its button just bubbles
             // to it), so it lifts like every plan card (Card's onClick).
             onClick={() => onContactSales?.(tier.name)}
-            className="gap-5 border-transparent bg-plan-card"
+            className="flex-1 gap-5 border-transparent bg-plan-card"
           >
             <div className="flex flex-col gap-2">
               {/* The plan type scale, like every plan card: not CardTitle /
@@ -227,13 +231,15 @@ export function EnterprisePricingTable({
             <div className="mt-auto">
               <Button
                 type="button"
-                variant="outline"
+                variant={active ? "checkout" : "outline"}
                 className="h-10 w-full px-6"
               >
                 Contact sales
               </Button>
             </div>
           </Card>
+            )}
+          </CardHover>
         ))}
       </div>
 

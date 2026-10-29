@@ -42,7 +42,7 @@ export interface OfferOption {
   planFacts?: { dbLine?: string; singleCity?: boolean }
   /** Corner ribbon, e.g. "27% OFF". */
   badge?: string
-  /** Show the "10% extra off applied" line. */
+  /** Show the "Extra 10% off applied" line. */
   extraOff?: boolean
   /** The price from Jan 1, 2027: "₹749 from Jan 1", the price group's last
    *  line (UpcomingPriceLine: signed-in surfaces, before the date). The
@@ -154,7 +154,7 @@ function OptionTile({
         )}
         {option.note && (
           // Green only on the upgrade tile and only on its own: under the
-          // "10% extra off applied" line it steps back to gray, as on the
+          // "Extra 10% off applied" line it steps back to gray, as on the
           // plan cards, so only one line is green.
           <p
             className={cn(
@@ -175,13 +175,13 @@ function OptionTile({
     term: term ? (
       <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
         <ClockFading className="size-4 shrink-0" aria-hidden />
-        <span>{term}</span>
+        <span className="sm:whitespace-nowrap">{term}</span>
       </span>
     ) : null,
     facts: option.planFacts?.dbLine ? (
       <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
         <Database className="size-4 shrink-0" aria-hidden />
-        <span>{option.planFacts.dbLine}</span>
+        <span className="sm:whitespace-nowrap">{option.planFacts.dbLine}</span>
       </span>
     ) : null,
     // A caveat, not a feature: no icon, italic.
@@ -213,7 +213,7 @@ function OptionTile({
       data-compare-card
       onClick={option.onSelect}
       className={cn(
-        "ink press-subtle relative grid min-w-0 cursor-pointer grid-rows-subgrid gap-y-2.5 overflow-hidden rounded-xl border p-3.5 transition-interactive sm:p-4",
+        "ink press-subtle relative grid min-w-0 cursor-pointer grid-rows-subgrid gap-y-2.5 overflow-hidden rounded-card-nested border p-3.5 transition-interactive sm:p-4",
         ROW_SPAN[rows.length],
         // The ribbon's band is reserved on BOTH tiles when either has one,
         // so the rows start level.
@@ -246,11 +246,14 @@ export function OfferChoice({ stay, upgrade }: { stay: OfferOption; upgrade: Off
   const reserveRibbon = isRibbon(stay) || isRibbon(upgrade)
   const rows = ROW_ORDER.filter((key) => rowUsed(stay, key) || rowUsed(upgrade, key))
   return (
-    // Equal widths: at 4:5 the stay tile was the narrower and its price line
-    // ("₹2,249 /month ₹2,499 10% OFF") wrapped while the other's fit. Both
-    // tiles span the same rows of this grid (subgrid), so their lines
+    // Phones: equal halves. From sm the offer gets the wider tile (2:3).
+    // The fact lines never wrap from sm (one line each): a plan-vs-plan
+    // pair (Go annual) carries the same facts in both tiles, so the narrow
+    // tile needs the room; widen the dialog (OfferDialog `wide`), never
+    // let the lines wrap. AGENTS.md: "Upsell tile widths".
+    // Both tiles span the same rows of this grid (subgrid), so their lines
     // compare one to one.
-    <div className="grid grid-cols-2 gap-x-3">
+    <div className="grid grid-cols-2 gap-x-3 sm:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
       <OptionTile option={stay} kind="stay" rows={rows} reserveRibbon={reserveRibbon} />
       <OptionTile option={upgrade} kind="upgrade" rows={rows} reserveRibbon={reserveRibbon} />
     </div>

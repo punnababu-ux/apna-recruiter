@@ -1,7 +1,7 @@
 /**
- * ExtraOffLine — "10% extra off applied", under a price once the exit offer
+ * ExtraOffLine — "Extra 10% off applied", under a price once the exit offer
  * is claimed. One line for both checkouts' desktop cards; phone rows use the
- * shorter "Incl. 10% extra" beside the % OFF badge (MobileDiscountRow).
+ * shorter "Extra 10% off" beside the % OFF badge (MobileDiscountRow).
  *
  * While the offer is on, the words shimmer and the discount icon rocks
  * together every few seconds. Same pairing on every "offer applied" line.

@@ -32,6 +32,7 @@ import {
   type ChipTabItem,
 } from "@apna/design-system"
 import { cn } from "@/lib/utils"
+import { RECOMMENDED_EDGE, useCardHover } from "@/components/apnahire/use-card-hover"
 import { GstNote } from "@/components/apnahire/gst-note"
 import { withExtraOff } from "@/content/offers"
 import {
@@ -56,11 +57,13 @@ export type { JobSlotCount, SubscriptionPlanId }
 const PLAN_IDS: SubscriptionPlanId[] = ["monthly", "quarterly", "annual"]
 
 /** Price, struck price and % OFF for a plan: the list price (`mrp`) when it
- *  has one, else the undiscounted price once the 10% offer is claimed. */
+ *  has one, else the undiscounted price once the 10% offer is claimed. The
+ *  % OFF is the plan's own (`mrp`), never recalculated with the 10%. */
 function planPricing(plan: { price: number; mrp?: number }, extraOff?: boolean) {
   const price = extraOff ? withExtraOff(plan.price) : plan.price
   const strike = plan.mrp ?? (extraOff ? plan.price : undefined)
-  const pct = strike && strike > price ? Math.round((1 - price / strike) * 100) : null
+  // The plan's own discount only: the 10% shows as its own line.
+  const pct = plan.mrp && plan.mrp > plan.price ? Math.round((1 - plan.price / plan.mrp) * 100) : null
   return { price, strike, pct }
 }
 
@@ -134,6 +137,10 @@ function PlanCard({
   const { price, strike, pct } = planPricing({ price: basePrice, mrp }, extraOff)
   // Truncated, like the design's ₹5,999 / 3 = ₹1,999.
   const note = months > 1 ? `That's just ${inr(Math.floor(price / months))}\u00A0/month` : undefined
+  // Outline CTA at rest, green while hovered; the recommended card stands
+  // out by its blue edge (useCardHover, as in express).
+  const hover = useCardHover()
+  const live = !current && !ctaDisabled
   return (
     // The whole card buys (the CTA's click bubbles here), like the Jobs-tab
     // PricingCards — the card-hover-lift rule. No `overflow-hidden`: it would
@@ -141,8 +148,10 @@ function PlanCard({
     <div
       onClick={current || ctaDisabled ? undefined : onBuy}
       data-compare-card
+      {...hover.props}
       className={cn(
-        "relative flex flex-1 flex-col justify-between gap-5 rounded-card border border-transparent bg-plan-card px-4 pb-5 pt-8",
+        "relative flex flex-1 flex-col justify-between gap-5 rounded-card border bg-plan-card px-4 pb-5 pt-8",
+        recommended && !current ? RECOMMENDED_EDGE : "border-transparent",
         !current && !ctaDisabled && "card-hover-lift ink press-subtle cursor-pointer",
       )}
     >
@@ -232,7 +241,7 @@ function PlanCard({
 
           <span className="flex items-start gap-3 text-sm">
             <WhatsApp className="size-5 shrink-0" aria-hidden />
-            <span>WhatsApp outreach to matched candidates for more applications</span>
+            <span>WhatsApp alerts to matched candidates for more applications</span>
           </span>
         </div>
       </div>
@@ -252,7 +261,7 @@ function PlanCard({
         <Button
           data-compare="cta"
           type="button"
-          variant={recommended && !current && !ctaDisabled ? "checkout" : "outline"}
+          variant={live && hover.active ? "checkout" : "outline"}
           className="h-10 w-full font-semibold"
           disabled={current || ctaDisabled}
         >
@@ -407,7 +416,7 @@ export function SubscriptionPlans({
                   extraOff && !isCurrent ? (
                     <span className="flex items-center gap-1 text-xs font-medium text-success">
                       <BadgePercent className="size-3.5 shrink-0 animate-wiggle" aria-hidden />
-                      <span className="animate-text-shimmer">Incl. 10% extra</span>
+                      <span className="animate-text-shimmer">Extra 10% off</span>
                     </span>
                   ) : undefined
                 }
@@ -421,7 +430,7 @@ export function SubscriptionPlans({
                         <><strong>{slotLabel(plan.slots)}</strong> for {plan.slotDays}{"\u00A0"}days</>,
                       ],
                       [<Database key="i" aria-hidden />, dbCreditsLabel(plan)],
-                      [<WhatsApp key="i" aria-hidden />, "WhatsApp outreach to matched candidates"],
+                      [<WhatsApp key="i" aria-hidden />, "WhatsApp alerts to matched candidates"],
                     ]}
                   />
                 }

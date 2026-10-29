@@ -94,7 +94,7 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
       {
         name: "MotherPreview",
         file: "marketing/mother-preview.tsx",
-        what: "Preview-only: ?mother=mesh shows the saved mesh mother gradient (live until 2026-10-20).",
+        what: "Preview-only: ?mother=plum (the mother plum) or ?mother=brand (gold) shows a saved mother gradient; the legacy mesh is live.",
         where: "Marketing layout, behind a URL flag",
         rules: ["Preview only. Never on by default; remove before production."],
       },
@@ -301,6 +301,26 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
         rules: ["One wording, one component. Never write your own tax line.", "Prototype: a silent click opens the preview settings. Remove before production."],
       },
       {
+        name: "DbCreditsOfferNote",
+        file: "apnahire/db-credits-offer-note.tsx",
+        what: "\"Limited time offer: Database credits\" beside the GST note, with its explainer.",
+        live: "/apnahire/jobs/new/plans",
+        where: "Express checkout plan step",
+        rules: ["Said once under the cards, never as a tag on each card."],
+      },
+      {
+        name: "TapTooltip",
+        file: "apnahire/tap-tooltip.tsx",
+        what: "The design system's dark Tooltip with its arrow, opened by a tap or click instead of hover.",
+        live: "/apnahire/jobs/new/plans",
+        where: "Plan-card feature names, the database credits note",
+        rules: [
+          "Every explainer opens in it: never a light popover, never a hand-made tooltip.",
+          "No marker on the trigger by default; a tap never selects the card around it.",
+          "Text is ASD-STE100 (AGENTS.md).",
+        ],
+      },
+      {
         name: "UpcomingPriceLine",
         file: "apnahire/upcoming-price-line.tsx",
         what: "\"↗ ₹749 from Jan 1\" on every job and plan card and every upsell tile (OfferChoice `janPrice`) until the Jan 1, 2027 price change; PriceChangeBanner on top explains it.",
@@ -379,7 +399,7 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
       {
         name: "ExitOfferDialog / CouponExpiredDialog / CountdownChip / ExtraOffLine",
         file: "apnahire/offers/",
-        what: "The 10% exit offer, its expiry, its timer and the \"10% extra off applied\" line.",
+        what: "The 10% exit offer, its expiry, its timer and the \"Extra 10% off applied\" line.",
         live: "/design-system/product/pop-ups",
         where: "Both checkouts",
         rules: ["Once per session. When claimed, the offer line comes first under a price."],

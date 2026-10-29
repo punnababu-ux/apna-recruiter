@@ -11,7 +11,7 @@
  *                           "Special upgrade offer" (2565:20984)
  *
  * When the 10% exit offer has been claimed, every price drops by it and each
- * tile shows "10% extra off applied". That's the board's "with 10% off"
+ * tile shows "Extra 10% off applied". That's the board's "with 10% off"
  * variants; the discounts stack.
  *
  * In December (the pricing phase), signed in, each tile with a Jan price shows it
@@ -86,7 +86,7 @@ export function JobBundleOfferDialog({ tier: liveTier, ...props }: UpsellCallbac
     >
       <OfferChoice
         stay={{
-          title: `1 ${tier.title}`,
+          title: `1 ${tier.title.toLowerCase()}`,
           price: single,
           mrp: tier.mrp,
           badge: pctOff(single, tier.mrp),
@@ -97,11 +97,10 @@ export function JobBundleOfferDialog({ tier: liveTier, ...props }: UpsellCallbac
           onSelect: props.onStay,
         }}
         upgrade={{
-          title: `${bundle.jobs} ${tier.title}s`,
+          title: `${bundle.jobs} ${tier.title.toLowerCase()}s`,
           price: bundle.price,
           mrp: bundle.mrp,
           badge: pctOff(bundle.price, bundle.mrp),
-          note: `That's just ${inr(bundle.perJob)}\u00A0/job`,
           validDays: bundle.validDays,
           extraOff: props.extraOff,
           ctaLabel: `Get ${bundle.jobs} jobs for ${inr(bundle.price)}`,
@@ -174,7 +173,6 @@ export function CreditPackOfferDialog({
           price: packPrice,
           mrp: pack.mrp,
           badge: pctOff(packPrice, pack.mrp),
-          note: `That's just ${inr(perPack)}\u00A0/job\u00A0credit`,
           validDays: pack.validDays,
           extraOff: props.extraOff,
           janPrice: pack.janPrice,
@@ -193,7 +191,7 @@ export function CreditPackOfferDialog({
  *  units and lengths come from SUBSCRIPTION_TERMS, the one vocabulary. */
 export type SubscriptionQuote = Pick<
   SubscriptionPlan,
-  "name" | "unit" | "price" | "months" | "slots" | "slotDays" | "dbCredits" | "dbCreditsWorth"
+  "name" | "unit" | "price" | "mrp" | "months" | "slots" | "slotDays" | "dbCredits" | "dbCreditsWorth"
 > & { janPrice?: number }
 
 function annualQuote(plan: AnnualPlan, extraOff = false) {
@@ -226,14 +224,14 @@ export function AnnualUpgradeDialog({ from: liveFrom, ...props }: UpsellCallback
           Special upgrade offer
         </>
       }
-      eyebrow={`Pay less when you upgrade to the ${annualName}`}
+      eyebrow={`Pay less, upgrade to ${annualName}`}
       priceDrop={{ from: inr(Math.round(fromPrice / from.months)), to: inr(annual.perMonth), unit: "/month" }}
     >
       <OfferChoice
         stay={{
           title: from.name,
           price: fromPrice,
-          mrp: props.extraOff ? from.price : undefined,
+          mrp: from.mrp ?? (props.extraOff ? from.price : undefined),
           unit: from.unit,
           term: slotTermLabel(from),
           planFacts: { dbLine: dbCreditsLabel(from) },
@@ -247,14 +245,13 @@ export function AnnualUpgradeDialog({ from: liveFrom, ...props }: UpsellCallback
         upgrade={{
           title: annualPlan.name,
           price: annual.price,
-          mrp: props.extraOff ? annualPlan.price : undefined,
+          mrp: annualPlan.mrp ?? (props.extraOff ? annualPlan.price : undefined),
           unit: annualPlan.unit,
           term: slotTermLabel(annualPlan),
           planFacts: { dbLine: dbCreditsLabel(annualPlan) },
           badge: `${annualPlan.monthsFree} MONTHS FREE`,
           // No "Valid in a single city" here: they've seen it on the plan
           // already, and the order summary repeats it.
-          note: `That's just ${inr(annual.perMonth)}\u00A0/month`,
           extraOff: props.extraOff,
           janPrice: annualPlan.janPrice,
           ctaLabel: `Get ${annualName} for ${inr(annual.price)}`,
@@ -316,7 +313,7 @@ export function CreditsToPlanDialog({
     >
       <OfferChoice
         stay={{
-          title: `${bundle.credits} Job credits`,
+          title: `${bundle.credits} job credits`,
           price: bundlePrice,
           mrp: bundle.mrp,
           // Under the amount, level with the plan's slot line.

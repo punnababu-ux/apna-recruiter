@@ -12,6 +12,12 @@ test("Figma frames: ₹5,999 plan", () => {
   assert.equal(withGst(5999), 7079) // renewal ignores the coupon
 })
 
+test("the coupon splits across lines and adds back up", () => {
+  const bill = computeBill([{ price: 1399 }, { price: 1699 }], 0, { discountPct: 10, maxDiscount: Infinity })
+  assert.deepEqual(bill.lineCoupon, [140, 170])
+  assert.equal(bill.lineCoupon.reduce((a, b) => a + b, 0), bill.couponDiscount)
+})
+
 test("proration never makes the bill negative", () => {
   const bill = computeBill([{ price: 1000 }], 5000, STAY20)
   assert.deepEqual([bill.prorationCredit, bill.couponDiscount, bill.total], [1000, 0, 0])

@@ -21,10 +21,11 @@
 import * as React from "react"
 import { BriefcaseBusiness, ClockFading, InfinityIcon, Database, LogoApnaUnlimited, UserSearch, WhatsApp } from "@apna/design-system"
 import { Badge, Button, PricingCard } from "@apna/design-system"
-import { withExtraOff } from "@/content/offers"
+import { EXTRA_OFF, withExtraOff } from "@/content/offers"
 import { ExtraOffLine } from "@/components/apnahire/offers/extra-off-line"
-import { MobileDiscountRow, MobileMetaLine } from "@/components/apnahire/mobile-plan-row"
+import { MobileDiscountRow } from "@/components/apnahire/mobile-plan-row"
 import { cn } from "@/lib/utils"
+import { useCardHover } from "@/components/apnahire/use-card-hover"
 import { MobileUnlimitedCard } from "@/components/apnahire/mobile-plan-row"
 import { UpcomingPriceLine } from "@/components/apnahire/upcoming-price-line"
 import { inr } from "@/lib/format"
@@ -59,11 +60,14 @@ export function UnlimitedSideCard({
   const price = extraOff ? withExtraOff(basePrice) : basePrice
   // Truncated, as the design does for ₹5,999 / 3 = ₹1,999.
   const monthlyPrice = Math.floor(price / plan.months)
-  const pct = extraOff ? Math.round((1 - price / basePrice) * 100) : null
+  // The plan's own discount only (none today): the 10% is its own line.
+  const pct = plan.mrp && plan.mrp > basePrice ? Math.round((1 - basePrice / plan.mrp) * 100) : null
   // Works for any plan length: the Jobs tab sells the monthly plan, the
   // card was first drawn for the quarterly one.
   const monthly = plan.months === 1
   const strike = extraOff ? inr(basePrice) : undefined
+  // Desktop: outline CTA at rest, green while the frame is hovered.
+  const hover = useCardHover()
   return (
     <>
       {/* ── Mobile (< md): the shared phone card, the same one express
@@ -73,28 +77,25 @@ export function UnlimitedSideCard({
         selected={mobileSelect?.selected}
         className={cn("md:hidden", className)}
         // Same card, same structure as express checkout's Monthly plan: name
-        // and price with its unit on top, the reposts promise as subtitle,
-        // three plan lines, then the note and CTA.
+        // and price with its unit on top, then just "1 active job slot" (no
+        // separate validity line), the plan lines, then the note and CTA.
         title="Unlimited job posts"
-        subtitle={
-        <MobileMetaLine icon={<ClockFading aria-hidden />}>Valid for {plan.slotDays} days</MobileMetaLine>
-      }
         mrp={strike}
         price={inr(price)}
         unit={plan.unitShort}
-        belowPrice={<MobileDiscountRow pct={pct} note={extraOff ? "Incl. 10% extra" : undefined} />}
+        belowPrice={<MobileDiscountRow pct={pct} note={extraOff ? EXTRA_OFF.appliedShort : undefined} />}
         upcoming={<UpcomingPriceLine price={plan.janPrice} />}
         meta={
-          <span className="flex items-center gap-1.5 text-xs font-medium text-foreground">
-            <BriefcaseBusiness className="size-3.5 shrink-0 text-checkout-primary" aria-hidden />
+          <span className="flex items-center gap-2 text-xs font-medium text-foreground">
+            <BriefcaseBusiness className="size-4 shrink-0 text-checkout-primary" aria-hidden />
             {slotLabel(plan.slots)}
           </span>
         }
         features={[
           // The slot shows above, as meta.
-          [<InfinityIcon key="i" className="text-info" aria-hidden />, "Free job reposts and swapping"],
-          [<Database key="i" className="text-warning" aria-hidden />, dbCreditsLabel(plan)],
-          [<WhatsApp key="i" className="text-success" aria-hidden />, "WhatsApp outreach to matched candidates"],
+          [<WhatsApp key="i" className="text-success" aria-hidden />, "WhatsApp alerts to matched candidates"],
+          [<InfinityIcon key="i" className="text-warning" aria-hidden />, "Free job reposts and swapping"],
+          [<Database key="i" className="text-muted-foreground" aria-hidden />, dbCreditsLabel(plan)],
         ]}
         note="Valid in a single city"
         cta={
@@ -121,6 +122,7 @@ export function UnlimitedSideCard({
         data-slot="unlimited-side-card"
         data-card-lift-group
         onClick={onBuyNow}
+        {...hover.props}
         className={cn(
           "hidden w-full cursor-pointer flex-col rounded-card bg-gradient-checkout-unlimited p-4 md:flex",
           className
@@ -179,7 +181,7 @@ export function UnlimitedSideCard({
               </span>
             }
             cta={
-              <Button type="button" variant="checkout-inset" className="h-10 w-full font-semibold">
+              <Button type="button" variant={hover.active ? "checkout" : "outline"} className="h-10 w-full font-semibold">
                 Buy now
               </Button>
             }
