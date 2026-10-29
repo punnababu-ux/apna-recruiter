@@ -305,17 +305,18 @@ function TopUpCreditsButton() {
 export function AvailableCreditsButton({
   balance,
   plansCta = false,
+  chip = false,
 }: {
   balance?: Partial<CreditsBalance>
   /** "View plans" under the balance; off on the checkout pages. */
   plansCta?: boolean
+  /** Show the balance as a chip (the express plan step). */
+  chip?: boolean
 }) {
   const isMobile = useIsMobile()
   const plans = usePlansIngress()
   const slots = useJobSlots()
-  // No balance passed (self-checkout, the app bar): the stored job credits.
-  const storedJobs = useJobCredits()
-  const full: CreditsBalance = { job: storedJobs, database: 0, aiCalling: 0, ...balance }
+  const full: CreditsBalance = { job: 0, database: 0, aiCalling: 0, ...balance }
   const title = slots ? "Plan details" : "Available credits"
   const body = slots ? <PlanRows slots={slots} /> : <CreditRows balance={full} />
 
@@ -332,16 +333,25 @@ export function AvailableCreditsButton({
     </Button>
   )
 
-  // The balance chip (user call, 2026-10-30): each kind above 0 with the
-  // panel's icon — "4 job credits │ 1 AI job credit", numbers only on
-  // phones — or "0 job credits", so the bar never shifts. With a plan: "Plan details".
+  // `chip` (express plan step only, user call 2026-10-30): the balance itself,
+  // each kind above 0 with the panel's icon — "4 job credits │ 1 AI job
+  // credit", numbers only on phones — or "0 job credits". Elsewhere the
+  // "Available credits" button.
   const plural = (n: number, what: string) => `${num(n)} ${what}${n === 1 ? "" : "s"}`
   const held = [
     { n: full.job, Icon: Briefcase, label: plural(full.job, "job credit") },
     { n: full.aiCalling, Icon: Bot, label: plural(full.aiCalling, "AI job credit") },
   ].filter((p) => p.n > 0)
   const parts = slots ? [] : held.length ? held : [{ n: 0, Icon: Briefcase, label: plural(0, "job credit") }]
-  const trigger = (
+  const Icon = slots ? Layers : Wallet
+  const trigger = !chip ? (
+    // Phones: an icon-only 32px circle (the desktop bell's size and shape);
+    // the label from sm. The accessible name stays the label.
+    <Button type="button" variant="outline" size="sm" aria-label={title} className="max-sm:size-8 max-sm:px-0">
+      <Icon className="size-4" aria-hidden />
+      <span className="hidden sm:inline">{title}</span>
+    </Button>
+  ) : (
     <Button
       type="button"
       variant="outline"

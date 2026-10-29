@@ -16,9 +16,8 @@
  */
 
 import * as React from "react"
-import { BackButton, Separator } from "@apna/design-system"
+import { BackButton } from "@apna/design-system"
 import { AvailableCreditsButton } from "@/components/apnahire/available-credits-button"
-import { HelpMenu } from "@/components/apnahire/post-job/help-menu"
 import { useScrolled } from "@/hooks/use-scrolled"
 import { cn } from "@/lib/utils"
 
@@ -69,11 +68,8 @@ export function CheckoutTopBar({
             </div>
           )}
 
-          {/* The job-posting bar's order: status (the balance), a rule, help. */}
-          <div className="flex flex-1 items-center justify-end gap-1.5 sm:gap-2">
+          <div className="flex flex-1 justify-end">
             <AvailableCreditsButton />
-            <Separator orientation="vertical" className="mx-0.5 h-5 data-vertical:self-center" />
-            <HelpMenu />
           </div>
         </div>
       </div>

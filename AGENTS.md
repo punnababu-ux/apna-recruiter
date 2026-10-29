@@ -386,6 +386,13 @@ offer tile's 2:3 from `sm`).
   the pop-up, by checking at 320px; never let the label's width decide at
   runtime. Prefer a shorter label to a stacked pair.
 
+**The credit balance follows intent** (user call, 2026-10-30). Express
+checkout (posting a job, mid-task) shows the balance upfront: the top-bar
+chip "💼 4 job credits │ 🤖 1 AI job credit" (`AvailableCreditsButton chip`).
+Self-checkout and the app bar keep the plain "Available credits" button:
+someone browsing plans who sees "15 credits" on the surface may decide not to
+buy. Never make the two bars match by copying one into the other.
+
 **Button pairs that stack on phones** (RCA, 2026-10-27): a pair laid out
 `flex-col sm:flex-row` gives each button `w-full sm:flex-1`, never bare
 `flex-1`. In a column, `flex-1` sets the height basis to 0 and the button
