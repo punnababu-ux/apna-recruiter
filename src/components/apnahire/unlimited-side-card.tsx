@@ -19,7 +19,7 @@
  */
 
 import * as React from "react"
-import { BriefcaseBusiness, ClockFading, RefreshCw, Database, LogoApnaUnlimited, UserSearch, WhatsApp } from "@apna/design-system"
+import { BriefcaseBusiness, ClockFading, InfinityIcon, Database, LogoApnaUnlimited, UserSearch, WhatsApp } from "@apna/design-system"
 import { Badge, Button, PricingCard } from "@apna/design-system"
 import { withExtraOff } from "@/content/offers"
 import { ExtraOffLine } from "@/components/apnahire/offers/extra-off-line"
@@ -92,9 +92,9 @@ export function UnlimitedSideCard({
         }
         features={[
           // The slot shows above, as meta.
-          [<RefreshCw key="i" aria-hidden />, "Free job reposts and swapping"],
-          [<Database key="i" aria-hidden />, dbCreditsLabel(plan)],
-          [<WhatsApp key="i" aria-hidden />, "WhatsApp outreach to matched candidates"],
+          [<InfinityIcon key="i" className="text-info" aria-hidden />, "Free job reposts and swapping"],
+          [<Database key="i" className="text-warning" aria-hidden />, dbCreditsLabel(plan)],
+          [<WhatsApp key="i" className="text-success" aria-hidden />, "WhatsApp outreach to matched candidates"],
         ]}
         note="Valid in a single city"
         cta={

@@ -61,12 +61,8 @@ export function AiDemoCall() {
       >
         {playing ? <Pause className="fill-current" /> : <Play className="fill-current" />}
       </Button>
-      {/* "Listen to" small over "Demo" larger; a rule sets off the switch. */}
-      <div className="flex flex-col whitespace-nowrap">
-        {/* Phones drop "Listen to" so the row fits beside the CTA. */}
-        <span className="hidden text-2xs leading-3 text-muted-foreground sm:inline">{DEMO.eyebrow}</span>
-        <span className="text-sm leading-4 font-semibold text-foreground">{DEMO.title}</span>
-      </div>
+      {/* "Demo" alone; a rule sets off the switch. */}
+      <span className="whitespace-nowrap text-sm leading-4 font-semibold text-foreground">{DEMO.title}</span>
       <Separator orientation="vertical" className="h-6 data-vertical:self-center sm:mx-1" />
       {/* Two letter chips; the chosen one takes the green tint. Not the dark
           solid pill: it would read as a second "Add" next to the CTA. */}

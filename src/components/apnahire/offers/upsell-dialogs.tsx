@@ -45,6 +45,17 @@ interface UpsellCallbacks {
   extraOff?: boolean
 }
 
+/** Keeps the last non-null value, so a pop-up whose caller clears its data
+ *  on a choice still has content while it slides out. */
+function useHeld<T>(value: T | null): T | null {
+  const held = React.useRef(value)
+  React.useEffect(() => {
+    if (value !== null) held.current = value
+  })
+  // eslint-disable-next-line react-hooks/refs -- only read once the live value is gone
+  return value ?? held.current
+}
+
 /* ── Job bundle: 1 job vs 3 jobs ─────────────────────────────────────── */
 
 export function bundleQuote(tier: JobPlanTier, extraOff = false) {
@@ -59,7 +70,8 @@ export function bundleQuote(tier: JobPlanTier, extraOff = false) {
   }
 }
 
-export function JobBundleOfferDialog({ tier, ...props }: UpsellCallbacks & { tier: JobPlanTier | null }) {
+export function JobBundleOfferDialog({ tier: liveTier, ...props }: UpsellCallbacks & { tier: JobPlanTier | null }) {
+  const tier = useHeld(liveTier)
   if (!tier) return null
   const single = props.extraOff ? withExtraOff(tier.price) : tier.price
   const bundle = bundleQuote(tier, props.extraOff)
@@ -113,8 +125,8 @@ export interface CreditQuote {
 }
 
 export function CreditPackOfferDialog({
-  need,
-  pack,
+  need: liveNeed,
+  pack: livePack,
   needNote,
   ...props
 }: UpsellCallbacks & {
@@ -123,6 +135,8 @@ export function CreditPackOfferDialog({
   /** Under the stay tile: "Needed to post premium job", "Valid for 30 days". */
   needNote?: string
 }) {
+  const need = useHeld(liveNeed)
+  const pack = useHeld(livePack)
   if (!need || !pack) return null
   const off = (n: number) => (props.extraOff ? withExtraOff(n) : n)
   const needPrice = off(need.price)
@@ -187,9 +201,10 @@ function annualQuote(plan: AnnualPlan, extraOff = false) {
   return { price, perMonth: Math.round(price / plan.months) }
 }
 
-export function AnnualUpgradeDialog({ from, ...props }: UpsellCallbacks & { from: SubscriptionQuote | null }) {
+export function AnnualUpgradeDialog({ from: liveFrom, ...props }: UpsellCallbacks & { from: SubscriptionQuote | null }) {
   // The pricing phase's annual plan (content/plan-catalog.ts).
   const { annualPlan } = usePlans()
+  const from = useHeld(liveFrom)
   if (!from) return null
   const off = (n: number) => (props.extraOff ? withExtraOff(n) : n)
   const fromPrice = off(from.price)
@@ -267,10 +282,12 @@ export interface CreditBundleQuote {
  *  reposts on one active slot), so the header names the plan, not a
  *  price drop. */
 export function CreditsToPlanDialog({
-  bundle,
-  plan,
+  bundle: liveBundle,
+  plan: livePlan,
   ...props
 }: UpsellCallbacks & { bundle: CreditBundleQuote | null; plan: SubscriptionQuote | null }) {
+  const bundle = useHeld(liveBundle)
+  const plan = useHeld(livePlan)
   if (!bundle || !plan) return null
   const off = (n: number) => (props.extraOff ? withExtraOff(n) : n)
   const bundlePrice = off(bundle.price)

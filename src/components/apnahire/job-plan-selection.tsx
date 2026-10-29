@@ -84,6 +84,8 @@ import {
   hasAnyCredits,
   type CreditPlan,
 } from "@/components/apnahire/job-plan-cards"
+import { ClockFading } from "@apna/design-system"
+import { DbCreditsOfferNote } from "@/components/apnahire/db-credits-offer-note"
 import {
   AI_CALLING_ADDON,
   NO_CREDITS,
@@ -415,9 +417,17 @@ export function JobPlanSelection() {
               the banner on top, each card's Jan price (content/price-change.ts). */}
           <UpcomingPricesProvider enabled>
             <PriceChangeBanner placement="plans" />
-            <h1 className="text-h6 text-checkout-hero-fg whitespace-nowrap sm:text-2xl">
-              Choose a job basis your hiring needs
-            </h1>
+            <div className="flex flex-col gap-1">
+              <h1 className="text-h6 text-checkout-hero-fg whitespace-nowrap sm:text-2xl">
+                Choose a job basis your hiring needs
+              </h1>
+              {/* The phone rows drop their shared line; it's said once here. */}
+              {(
+                <span className="flex items-center gap-1.5 text-xs text-muted-foreground sm:hidden [&_svg]:size-3.5">
+                  <ClockFading aria-hidden /> Every job stays active for 15 days
+                </span>
+              )}
+            </div>
             {/* With even one credit, no subscription: credits and a subscription
                 don't mix (user call, 2026-10-19), so it's the one-time tiers. */}
             {layout === "tiered" || holdsCredits ? (
@@ -438,7 +448,12 @@ export function JobPlanSelection() {
               />
             )}
           </UpcomingPricesProvider>
-          <GstNote />
+          {/* The DB credits offer is said once here, not on every card. */}
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <GstNote />
+            <span aria-hidden className="h-3 w-px bg-checkout-hero-fg-muted" />
+            <DbCreditsOfferNote />
+          </div>
           <TrustedByStrip />
         </div>
       </div>

@@ -156,7 +156,6 @@ export const AI_CALLING_ADDON = {
   /** The check row under the headline: what the recruiter gets. */
   points: ["30% higher call pickup", "Ready to interview candidates", "Hindi & English calling"],
   demo: {
-    eyebrow: "Listen to",
     title: "Demo",
     /** Recordings per language. No `src` yet: play runs silently for
      *  `durationSec` until product supplies the demo calls. */

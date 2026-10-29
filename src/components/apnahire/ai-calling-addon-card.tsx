@@ -55,7 +55,9 @@ export function AiCallingAddonCard({
               <AiSparkle className="size-5 shrink-0" />
               <p className="text-sm font-semibold text-foreground">{AI_CALLING_ADDON.headline}</p>
             </div>
-            <ul className="flex flex-wrap gap-x-4 gap-y-1">
+            {/* Phones: one point per line, so a point that won't fit never
+                leaves a half-empty first line. From sm they flow in a row. */}
+            <ul className="flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:gap-x-4">
               {AI_CALLING_ADDON.points.map((p) => (
                 <li key={p} className="flex items-center gap-1 text-xs text-muted-foreground">
                   <Check className="size-3.5 shrink-0 text-checkout-primary" />

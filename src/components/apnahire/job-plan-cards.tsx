@@ -20,13 +20,12 @@
  * per the user's scope decision.
  */
 
+import { AiSparkle } from "@/components/apnahire/ai-demo-call"
 import * as React from "react"
-import { useRouter } from "next/navigation"
-import { JobPostingStepMenu } from "@/components/apnahire/post-job/job-posting-chrome"
 import {
   Badge,
   BriefcaseBusiness,
-  RefreshCw,
+  InfinityIcon,
   Check,
   Button,
   ClockFading,
@@ -56,7 +55,6 @@ import { ExtraOffLine } from "@/components/apnahire/offers/extra-off-line"
 import { UpcomingPriceLine, useUpcomingPrices } from "@/components/apnahire/upcoming-price-line"
 import {
   MobileDiscountRow,
-  MobileMetaLine,
   MobilePlanRow,
   MobileUnlimitedCard,
 } from "@/components/apnahire/mobile-plan-row"
@@ -74,7 +72,7 @@ import {
   type JobPlanTierId,
 } from "@/content/job-plans"
 import { inr } from "@/lib/format"
-import { dbCreditsLabel, slotLabel } from "@/content/subscriptions"
+import { dbCreditsLabel, slotLabel, slotTermLabel } from "@/content/subscriptions"
 
 
 /** The claimed exit offer, as the plan lists see it: prices already carry
@@ -112,18 +110,73 @@ function featureIcon(label: string, enabled: boolean): React.ReactNode {
 }
 
 /** Quiet and bottom-left, behind PricingCard's dashed footer rule. Same
- *  line as the mobile rows: the credits first, then a muted "· Limited
- *  offer", so it reads as a temporary extra, not a feature of the plan, and
- *  never out-shouts the price. */
+ *  line as the mobile rows. That it's a limited-time offer is said once,
+ *  under the cards (DbCreditsOfferNote), not on every card. */
 const dbCreditsLine = (credits: number) => (
   <span className="flex items-center gap-2 text-foreground">
     <Database className="size-4 shrink-0 text-muted-foreground" aria-hidden />
     <span>
       {credits} free DB credits
-      <span className="text-muted-foreground"> · Limited offer</span>
     </span>
   </span>
 )
+
+/** Tells the recruiter the order summary offers AI calling, so picking a
+ *  job doesn't feel like it rules it out. Quiet like the credits line: the
+ *  add-on announces itself in the cart (attention-ring), not here. */
+const aiAddonLine = (
+  <span className="flex items-center gap-2 text-foreground">
+    <AiSparkle className="size-4 shrink-0" />
+    <span>
+      AI calling add-on
+      <span className="text-muted-foreground"> · In cart</span>
+    </span>
+  </span>
+)
+
+const planFooter = (credits: number) => (
+  <span className="flex flex-col gap-2">
+    {aiAddonLine}
+    {dbCreditsLine(credits)}
+  </span>
+)
+
+/** Short names for the phone chips, keyed by the full feature label. */
+const CHIP_LABEL: Record<string, string> = {
+  "WhatsApp notifications to candidates": "WhatsApp alerts",
+  "2x Priority WhatsApp notifications to candidates": "2x WhatsApp alerts",
+  "Featured with 'Urgently hiring' tag": "Urgent tag",
+  "Top placements in job listings": "Top placement",
+}
+
+/** Tick preview: every row's benefits as chips, always shown, so the rows
+ *  compare at a glance: every benefit (a red ✕ when not included), then
+ *  its DB credits. */
+function FeatureChips({ tier }: { tier: JobPlanTier }) {
+  return (
+    <div className="flex flex-wrap gap-1.5 border-t border-border pt-3">
+      {tier.features.map((f) => (
+        <Badge
+          key={f.label}
+          variant="outline"
+          className={cn("gap-1 [&>svg]:size-3", !f.enabled && "text-muted-foreground")}
+        >
+          {f.enabled ? featureIcon(f.label, true) : <X className="text-destructive" aria-hidden />}
+          {CHIP_LABEL[f.label] ?? f.label}
+        </Badge>
+      ))}
+      <Badge variant="outline" className="gap-1 [&>svg]:size-3">
+        <Database className="text-muted-foreground" aria-hidden />
+        {tier.dbCredits} DB credits
+      </Badge>
+      <Badge variant="outline" className="gap-1 [&>svg]:size-3">
+        <AiSparkle className="size-3 shrink-0" />
+        AI calling add-on
+        <span className="text-muted-foreground">· In cart</span>
+      </Badge>
+    </div>
+  )
+}
 
 /** Parent line + indented sub-points — the Subscription tab's 28px (`pl-7`)
  *  indent and one-size-down text, so sub-point icons sit under the parent
@@ -284,10 +337,20 @@ function JobPlanGridCard({ tier, recommended, creditBalance, onSelect }: JobPlan
             ))}
           </FeatureGroup>,
         ]}
-        footer={dbCreditsLine(tier.dbCredits)}
+        footer={planFooter(tier.dbCredits)}
       />
     </div>
   )
+}
+
+/** Preview (`?rows=tick`): phone rows without the radio; see MobilePlanRow's
+ *  `mark`. Read after mount so the server render matches. */
+export function useTickRows() {
+  const [on, setOn] = React.useState(false)
+  React.useEffect(() => {
+    setOn(new URLSearchParams(window.location.search).get("rows") === "tick")
+  }, [])
+  return on
 }
 
 export interface JobPlanSelectProps {
@@ -337,7 +400,7 @@ function MobileJobPlanRadioGroup({
   recommendedId,
   subscription,
 }: MobileJobPlanRadioGroupProps) {
-  const router = useRouter()
+  const tickRows = useTickRows()
   const [selectedKey, setSelectedKey] = React.useState<JobPlanTierId | "unlimited">(recommendedId)
   const creditMode = hasAnyCredits(creditBalance)
   const { extraOff, shimmerKey } = React.useContext(PlanOfferContext)
@@ -384,12 +447,11 @@ function MobileJobPlanRadioGroup({
               selected={isSelected}
               onSelect={() => setSelectedKey(tier.id)}
               recommended={isRecommended}
+              mark={tickRows ? "tick" : "radio"}
               className={cn(shimmerKey > 0 && "animate-shimmer-once")}
               meta={
                 <>
-                  <MobileMetaLine icon={<ClockFading aria-hidden />}>
-                    Active for {tier.jobActiveDays} days
-                  </MobileMetaLine>
+                  {/* "Active for 15 days" is said once, under the page title. */}
                   <VisibilityLine tier={tier} />
                   {creditMode && (
                     <span className="text-xs font-semibold text-checkout-info">
@@ -411,6 +473,9 @@ function MobileJobPlanRadioGroup({
               }
               upcoming={creditMode ? undefined : <UpcomingPriceLine price={tier.janPrice} />}
               details={
+                tickRows ? (
+                  <FeatureChips tier={tier} />
+                ) :
                 // Explain on selection. With no feature points (Classic),
                 // the credits line is the only content: its divider is the
                 // dashed "offer" rule, instead of a solid one.
@@ -428,6 +493,7 @@ function MobileJobPlanRadioGroup({
                         {f.label}
                       </li>
                     ))}
+                  <li>{aiAddonLine}</li>
                   {/* Last: the free credits are a limited-time offer, not
                       the plan. The dashed rule sets them apart only when
                       feature points sit above. */}
@@ -440,7 +506,6 @@ function MobileJobPlanRadioGroup({
                     <Database className="size-4 shrink-0 text-muted-foreground" aria-hidden />
                     <span>
                       {tier.dbCredits} free DB credits
-                      <span className="text-muted-foreground"> · Limited offer</span>
                     </span>
                   </li>
                 </ul>
@@ -462,22 +527,16 @@ function MobileJobPlanRadioGroup({
       {/* Mobile Sticky Bottom CTA Dock for selected single job tier */}
       {/* sm:hidden: this page switches to the card grid at sm, not md. */}
       <StickyCtaBar className="sm:hidden">
-        {/* Step on the left, as on every job posting step's bottom bar. */}
-        <div className="flex items-center gap-3">
-          <JobPostingStepMenu
-            current="plan"
-            onJump={(step) => router.push(`/apnahire/jobs/new?resume=1&stage=${step}`)}
-          />
-          <Button
-            type="button"
-            variant="checkout"
-            size="xl"
-            className="min-w-0 flex-1 rounded-full shadow-popover"
-            onClick={() => (unlimitedSelected ? subscription?.onSelect() : onSelectTier(selectedTier))}
-          >
-            <span className="truncate">{ctaText}</span>
-          </Button>
-        </div>
+        {/* No step menu on the plan step: the full-width CTA is the bar. */}
+        <Button
+          type="button"
+          variant="checkout"
+          size="xl"
+          className="w-full min-w-0 rounded-full shadow-popover"
+          onClick={() => (unlimitedSelected ? subscription?.onSelect() : onSelectTier(selectedTier))}
+        >
+          <span className="truncate">{ctaText}</span>
+        </Button>
       </StickyCtaBar>
     </>
   )
@@ -496,6 +555,7 @@ function MobileSubscriptionCard({
 }) {
   const plan = { ...usePlans().plan("monthly"), ...MONTHLY_PLAN_PERKS }
   const { extraOff, shimmerKey } = React.useContext(PlanOfferContext)
+  const tickRows = useTickRows()
   const price = extraOff ? withExtraOff(plan.price) : plan.price
   // Struck price + % OFF follow the same rules as the job rows: a plan list
   // price (plan.mrp, if a discount is ever run) or, with the claimed 10%,
@@ -509,27 +569,35 @@ function MobileSubscriptionCard({
       key={shimmerKey}
       className="sm:hidden"
       cardClassName={cn(shimmerKey > 0 && "animate-shimmer-once")}
-      title={plan.name}
-      subtitle={
-        <MobileMetaLine icon={<ClockFading aria-hidden />}>Valid for {plan.slotDays} days</MobileMetaLine>
-      }
+      title={`Unlimited ${plan.name.toLowerCase()}`}
       mrp={strike ? inr(strike) : undefined}
       price={inr(price)}
       unit={plan.unitShort}
       belowPrice={<MobileDiscountRow pct={discountPct} note={extraOff ? "Incl. 10% extra" : undefined} />}
       upcoming={<UpcomingPriceLine price={plan.janPrice} />}
-meta={
+      meta={
+        // Validity folds into the slot line.
         <span className="flex items-center gap-1.5 text-xs font-medium text-foreground">
           <BriefcaseBusiness className="size-3.5 shrink-0 text-checkout-primary" aria-hidden />
-          {slotLabel(plan.slots)}
+          {slotTermLabel(plan)}
         </span>
       }
-      features={[
-        // The slot sits above as meta; these show when selected.
-        [<RefreshCw key="i" aria-hidden />, "Free job reposts and swapping"],
-        [<Database key="i" aria-hidden />, dbCreditsLabel(plan)],
-        [<WhatsApp key="i" aria-hidden />, "WhatsApp outreach to matched candidates"],
-      ]}
+      mark={tickRows ? "tick" : "radio"}
+      features={
+        tickRows
+          ? // Chips, as the job rows': short names, the same icon colours.
+            [
+              [<InfinityIcon key="i" className="text-info" aria-hidden />, "Free job reposts and swapping"],
+              [<WhatsApp key="i" className="text-success" aria-hidden />, "WhatsApp outreach"],
+              [<Database key="i" className="text-warning" aria-hidden />, dbCreditsLabel(plan)],
+            ]
+          : [
+              // The slot sits above as meta; these show when selected.
+              [<InfinityIcon key="i" className="text-info" aria-hidden />, "Free job reposts and swapping"],
+              [<Database key="i" className="text-warning" aria-hidden />, dbCreditsLabel(plan)],
+              [<WhatsApp key="i" className="text-success" aria-hidden />, "WhatsApp outreach to matched candidates"],
+            ]
+      }
       note={plan.note}
     />
   )
@@ -757,7 +825,7 @@ function MonthlySubscriptionCard({
             ))}
           </FeatureGroup>,
           // What the plan grants, as on self-checkout's Unlimited card and
-          // the Subscription tab: not the tier cards' "free · Limited offer"
+          // the Subscription tab: not the tier cards' "free" credits offer
           // footer line, which is a temporary extra.
           <>
             <UserSearch aria-hidden /> {dbCreditsLabel(plan)}
@@ -826,7 +894,7 @@ function JobTypeInfoCard({ tier }: { tier: JobPlanTier }) {
           ))}
         </FeatureGroup>,
       ]}
-      footer={dbCreditsLine(tier.dbCredits)}
+      footer={planFooter(tier.dbCredits)}
     />
   )
 }

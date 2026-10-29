@@ -674,6 +674,13 @@ cards) and every upsell tile (`OfferChoice`), both checkouts, light and dark
    sold (a retired plan). Renewals charge `paid`, never
    today's price, and no "new price" notice is shown for it.
 
+11. **A plan card's radio sits beside the amount** (user call, 2026-10-29).
+   On every selectable plan card — job tiers, job credit packs, Database
+   packs, apna Unlimited, subscription rows, both checkouts — the radio is
+   right of the price, on the price's line, never in a corner of its own
+   or beside the plan name alone. `MobilePlanRow` and `MobileUnlimitedCard`
+   draw it there; a new selectable plan card composes them.
+
 ---
 
 ## Tax disclaimer — one wording, one component
