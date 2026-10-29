@@ -15,7 +15,9 @@
  * preserving pixel-for-pixel for a Phase 1 build.
  */
 
-export type JobPlanTierId = "classic" | "premium" | "super-premium"
+/** `premium-ai` is the legacy Premium + AI calling SKU: shown only to a
+ *  recruiter who still holds its credits, never sold. */
+export type JobPlanTierId = "classic" | "premium" | "super-premium" | "premium-ai"
 
 export interface JobPlanFeatureRow {
   label: string
@@ -43,8 +45,8 @@ export interface JobPlanTier {
 }
 
 /** Recruiters hold two separate balances: job credits (Classic 1, Premium 2,
- *  Super premium 4), which plans draw on, and AI calling credits, which only
- *  the AI calling add-on draws on (1 per job). */
+ *  Super premium 4), and "ai-calling": legacy Premium + AI SKU credits, which
+ *  only the `premium-ai` card draws on (1 per job). */
 export type JobCreditKind = "job" | "ai-calling"
 export type CreditBalance = Record<JobCreditKind, number>
 export interface JobPlanCredit {
@@ -55,7 +57,7 @@ export interface JobPlanCredit {
 export const NO_CREDITS: CreditBalance = { job: 0, "ai-calling": 0 }
 
 export const creditLabel = ({ kind, count }: JobPlanCredit) =>
-  `${count} ${kind === "job" ? "Job" : "AI calling"} credit${count === 1 ? "" : "s"}`
+  `${count} ${kind === "job" ? "Job" : "AI job"} credit${count === 1 ? "" : "s"}`
 
 export const JOB_PLAN_TIERS: Record<JobPlanTierId, JobPlanTier> = {
   classic: {
@@ -109,6 +111,23 @@ export const JOB_PLAN_TIERS: Record<JobPlanTierId, JobPlanTier> = {
     dbCredits: 60,
     credit: { kind: "job", count: 4 },
   },
+  // Redeem only: one P+AI credit posts a Premium job with the AI calling
+  // agent. No rupee price; it shows only while that balance is above 0.
+  "premium-ai": {
+    id: "premium-ai",
+    title: "Premium job + AI calling",
+    price: 0,
+    jobActiveDays: 15,
+    visibilityLabel: "Higher visibility",
+    visibilityLevel: 2,
+    features: [
+      { label: "WhatsApp notifications to candidates", enabled: true },
+      { label: "Featured with 'Urgently hiring' tag", enabled: true },
+      { label: "Top placements in job listings", enabled: false },
+    ],
+    dbCredits: 30,
+    credit: { kind: "ai-calling", count: 1 },
+  },
 }
 
 /** Today's tiers, before the plans sheet: Premium struck at ₹1,699,
@@ -118,6 +137,7 @@ export const TODAY_JOB_PLAN_TIERS: Record<JobPlanTierId, JobPlanTier> = {
   classic: { ...JOB_PLAN_TIERS.classic, janPrice: undefined },
   premium: { ...JOB_PLAN_TIERS.premium, mrp: 1699, janPrice: undefined },
   "super-premium": { ...JOB_PLAN_TIERS["super-premium"], mrp: undefined, janPrice: undefined },
+  "premium-ai": JOB_PLAN_TIERS["premium-ai"],
 }
 
 /** Tiered layout: three tiers (Classic, Premium, Super Premium), Premium recommended.
@@ -148,8 +168,8 @@ export const MONTHLY_PLAN_PERKS = {
 }
 
 /** AI calling, sold as an add-on in the express-checkout order summary
- *  rather than as its own plan. One AI calling credit covers one job; with
- *  none in the balance it's bought at `price` for this job. */
+ *  rather than as its own plan, at `price` for this job. Hidden for anyone
+ *  who holds an AI job (P+AI) credit, so the two never stack. */
 export const AI_CALLING_ADDON = {
   price: 1699,
   headline: "Save your time – use AI calling to interview candidates",

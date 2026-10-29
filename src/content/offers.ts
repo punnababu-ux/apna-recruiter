@@ -61,6 +61,8 @@ export const JOB_BUNDLE_OFFERS: Record<JobPlanTierId, { jobs: number; pricePerJo
   classic: { jobs: 3, pricePerJob: 549, validDays: 90 },
   premium: { jobs: 3, pricePerJob: 1099, validDays: 90 },
   "super-premium": { jobs: 3, pricePerJob: 2199, validDays: 90 },
+  // Never offered: the P+AI card only shows to credit holders, who get no bundle offer.
+  "premium-ai": { jobs: 3, pricePerJob: 1099, validDays: 90 },
 }
 
 // The annual upgrade's plan and the slots-full extra slot follow the

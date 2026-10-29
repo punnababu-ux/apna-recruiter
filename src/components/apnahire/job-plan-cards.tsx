@@ -20,7 +20,7 @@
  * per the user's scope decision.
  */
 
-import { AiSparkle } from "@/components/apnahire/ai-demo-call"
+import { AiDemoCall, AiSparkle } from "@/components/apnahire/ai-demo-call"
 import * as React from "react"
 import {
   Info,
@@ -66,6 +66,7 @@ import { cn } from "@/lib/utils"
 import { RECOMMENDED_EDGE, useCardHover } from "@/components/apnahire/use-card-hover"
 import { EXTRA_OFF, withExtraOff } from "@/content/offers"
 import {
+  AI_CALLING_ADDON,
   MONTHLY_PLAN_PERKS,
   RECOMMENDED_TIER,
   SUBSCRIPTION_PLAN_ORDER,
@@ -139,6 +140,60 @@ const dbCreditsLine = (credits: number) => (
     </span>
   </span>
 )
+
+/** A card's title: the P+AI card says "Premium job" with a small AI badge;
+ *  its full name stays in the data for the order summary. */
+const tierTitle = (tier: JobPlanTier) =>
+  tier.id === "premium-ai" ? (
+    <span className="flex items-center gap-2">
+      Premium job
+      {/* The AI block's own wash, so the badge and the block read as one. */}
+      <Badge variant="outline" className="border-transparent bg-gradient-product-ai-calling text-foreground">
+        +AI
+      </Badge>
+    </span>
+  ) : (
+    tier.title
+  )
+
+/** The add-on's three points, one at a time in one line: each rolls up
+ *  into place every few seconds. Screen readers get all three at once. */
+function RollingPoint() {
+  const points = AI_CALLING_ADDON.points
+  const [i, setI] = React.useState(0)
+  React.useEffect(() => {
+    const id = window.setInterval(() => setI((n) => (n + 1) % points.length), 2500)
+    return () => window.clearInterval(id)
+  }, [points.length])
+  return (
+    <span className="flex items-center gap-1 overflow-hidden text-xs text-muted-foreground">
+      <Check className="size-3.5 shrink-0 text-checkout-primary" aria-hidden />
+      <span key={i} aria-hidden className="animate-in fade-in-0 slide-in-from-bottom-2 duration-enter">
+        {points[i]}
+      </span>
+      <span className="sr-only">{points.join(", ")}</span>
+    </span>
+  )
+}
+
+/** The Premium + AI card's AI block: the order-summary add-on's wash,
+ *  check row and demo pill (AiCallingAddonCard), so AI calling looks the
+ *  same wherever it is sold. */
+function AiAgentBlock() {
+  return (
+    <span className="flex flex-col gap-3 rounded-card-nested bg-gradient-product-ai-calling p-3">
+      <span className="flex items-center gap-2 text-sm font-semibold text-foreground">
+        <AiSparkle className="size-5 shrink-0" />
+        AI calling agent calls all applicants
+      </span>
+      <RollingPoint />
+      {/* Its own buttons: the card's select must not fire from them. */}
+      <span className="flex" onClick={(e) => e.stopPropagation()}>
+        <AiDemoCall className="w-full" />
+      </span>
+    </span>
+  )
+}
 
 /** Under the cards, once (JobPlanSelection): the order summary offers AI
  *  calling, a paid extra for any job. The design system's AlertBanner in its
@@ -241,10 +296,10 @@ export function creditPlan(
   }
 }
 
-/** Plan cards switch to credit pricing on JOB credits only. AI calling
- *  credits belong to the add-on in the order summary, so holding just an AI
- *  credit must not turn every plan into "0 credits". */
-export const hasAnyCredits = (balance: CreditBalance) => balance.job > 0
+/** Any credit, job or Premium + AI, puts the cards in credit mode (and
+ *  hides the subscription): a recruiter with only P+AI credits sees the
+ *  other tiers as "Buy for ₹…" beside the P+AI card's "Covered". */
+export const hasAnyCredits = (balance: CreditBalance) => balance.job > 0 || balance["ai-calling"] > 0
 
 interface JobPlanGridCardProps {
   tier: JobPlanTier
@@ -313,7 +368,7 @@ function JobPlanGridCard({ tier, recommended, creditBalance, onSelect }: JobPlan
             </Badge>
           ) : undefined
         }
-        title={tier.title}
+        title={tierTitle(tier)}
         price={creditMode ? creditLabel(tier.credit) : inr(tier.price)}
         mrp={!creditMode && tier.mrp ? inr(tier.mrp) : undefined}
         badge={!creditMode && discountPct ? <Badge variant="discount">{discountPct}% OFF</Badge> : undefined}
@@ -359,6 +414,7 @@ function JobPlanGridCard({ tier, recommended, creditBalance, onSelect }: JobPlan
               </SubPoint>
             ))}
           </FeatureGroup>,
+          ...(tier.id === "premium-ai" ? [<AiAgentBlock key="ai" />] : []),
         ]}
         footer={planFooter(tier.dbCredits)}
       />
@@ -452,7 +508,7 @@ function MobileJobPlanRadioGroup({
           return (
             <MobilePlanRow
               key={`${tier.id}-${shimmerKey}`}
-              title={tier.title}
+              title={tierTitle(tier)}
               selected={isSelected}
               onSelect={() => setSelectedKey(tier.id)}
               recommended={isRecommended}
@@ -496,6 +552,12 @@ function MobileJobPlanRadioGroup({
                           </span>
                         </span>
                       ))}
+                      {tier.id === "premium-ai" && (
+                        <span className="flex">
+                          <AiSparkle className="size-4" />
+                          <span className="sr-only">AI calling agent: included</span>
+                        </span>
+                      )}
                     </span>
                     <span className="flex items-center gap-1.5 text-muted-foreground">
                       <Database className="size-3.5 shrink-0" aria-hidden />
@@ -519,6 +581,11 @@ function MobileJobPlanRadioGroup({
                       <FeatureName label={f.label} />
                     </li>
                   ))}
+                  {tier.id === "premium-ai" && (
+                    <li className="flex flex-col">
+                      <AiAgentBlock />
+                    </li>
+                  )}
                   <li className="flex items-center gap-2 border-t border-dashed border-border pt-2 text-foreground">
                     <Database className="size-4 shrink-0 text-muted-foreground" aria-hidden />
                     <span>{dbWorth(tier.dbCredits)}</span>
@@ -672,7 +739,9 @@ export function TieredJobPlans({
   shimmerKey = 0,
 }: Omit<JobPlanSelectProps, "onSelectSubscription">) {
   const catalogue = usePlans().tiers
-  const tiers = TIERED_PLAN_ORDER.map((id) => offerTier(catalogue[id], extraOff))
+  // The legacy Premium + AI card joins only while its credits last.
+  const order: JobPlanTierId[] = creditBalance["ai-calling"] > 0 ? [...TIERED_PLAN_ORDER, "premium-ai"] : TIERED_PLAN_ORDER
+  const tiers = order.map((id) => offerTier(catalogue[id], extraOff))
   const onSelectTier = (tier: JobPlanTier) => selectCatalogueTier(catalogue[tier.id])
   return (
     <PlanOfferContext.Provider value={{ extraOff, shimmerKey }}>
@@ -682,7 +751,7 @@ export function TieredJobPlans({
         onSelectTier={onSelectTier}
         recommendedId={RECOMMENDED_TIER.tiered}
       />
-      <div className="hidden sm:grid sm:gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className={cn("hidden sm:grid sm:gap-4 sm:grid-cols-2", tiers.length === 3 ? "lg:grid-cols-3" : "lg:grid-cols-4")}>
         {tiers.map((tier) => (
           <JobPlanGridCard
             key={tier.id}

@@ -468,7 +468,7 @@ export function JobPlanSelection() {
         }
         item={checkoutItem}
         onProceedToPay={handleProceedToPay}
-        aiAddon={tookUpsell ? undefined : { price: AI_CALLING_ADDON.price, creditsAvailable: creditBalance["ai-calling"] }}
+        aiAddon={tookUpsell || creditBalance["ai-calling"] > 0 ? undefined : { price: AI_CALLING_ADDON.price, creditsAvailable: creditBalance["ai-calling"] }}
         extraOffer={offer.deadline ? { code: EXTRA_OFF.code, deadline: offer.deadline } : undefined}
         onExtraOfferExpired={offer.expire}
         onAiAddedChange={setAiAdded}

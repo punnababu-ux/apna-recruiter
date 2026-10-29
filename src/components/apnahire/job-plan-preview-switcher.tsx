@@ -26,9 +26,9 @@ const CREDIT_BALANCES: { label: string; balance: CreditBalance }[] = [
   { label: "No credits", balance: { job: 0, "ai-calling": 0 } },
   { label: "1 job credit (top-up for most)", balance: { job: 1, "ai-calling": 0 } },
   { label: "4 job credits (enough for any)", balance: { job: 4, "ai-calling": 0 } },
-  { label: "1 job + 1 AI calling credit", balance: { job: 1, "ai-calling": 1 } },
-  { label: "1 AI calling credit", balance: { job: 0, "ai-calling": 1 } },
-  { label: "4 job + 1 AI calling credit", balance: { job: 4, "ai-calling": 1 } },
+  { label: "1 job + 1 AI job credit", balance: { job: 1, "ai-calling": 1 } },
+  { label: "1 AI job credit", balance: { job: 0, "ai-calling": 1 } },
+  { label: "4 job + 1 AI job credit", balance: { job: 4, "ai-calling": 1 } },
 ]
 
 const sameBalance = (a: CreditBalance, b: CreditBalance) =>

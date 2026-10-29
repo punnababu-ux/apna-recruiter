@@ -99,8 +99,8 @@ const ROWS: {
   {
     key: "aiCalling",
     icon: Bot,
-    label: "AI job calling credits",
-    info: "1 credit lets the AI calling agent screen applicants for one job.",
+    label: "AI job credits",
+    info: "1 credit posts one Premium job with the AI calling agent.",
   },
 ]
 

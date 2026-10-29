@@ -12,6 +12,7 @@
  */
 
 import * as React from "react"
+import { cn } from "@/lib/utils"
 import Image from "next/image"
 import { Button, ChipTabs, Pause, Play, Separator } from "@apna/design-system"
 import { AI_CALLING_ADDON } from "@/content/job-plans"
@@ -26,7 +27,7 @@ export function AiSparkle({ className }: { className?: string }) {
 
 /** Play / stop plus the language switch. Without a recording `src`, play
  *  runs silently for the call's length, so it behaves the same either way. */
-export function AiDemoCall() {
+export function AiDemoCall({ className }: { className?: string }) {
   const [lang, setLang] = React.useState<CallId>(DEMO.calls[0].value)
   const call = DEMO.calls.find((c) => c.value === lang) ?? DEMO.calls[0]
   const [playing, setPlaying] = React.useState(false)
@@ -50,7 +51,7 @@ export function AiDemoCall() {
 
   return (
     // Extra left padding balances the small play disc against the round end.
-    <div className="flex min-w-0 items-center gap-1.5 rounded-full border border-border bg-card py-1 pr-1 pl-2 sm:gap-2">
+    <div className={cn("flex min-w-0 items-center gap-1.5 rounded-full border border-border bg-card py-1 pr-1 pl-2 sm:gap-2", className)}>
       <Button
         type="button"
         variant="info"
@@ -63,7 +64,8 @@ export function AiDemoCall() {
       </Button>
       {/* "Demo" alone; a rule sets off the switch. */}
       <span className="whitespace-nowrap text-sm leading-4 font-semibold text-foreground">{DEMO.title}</span>
-      <Separator orientation="vertical" className="h-6 data-vertical:self-center sm:mx-1" />
+      {/* ml-auto: in a full-width pill (the P+AI card) the rule and chips sit at the right end. */}
+      <Separator orientation="vertical" className="ml-auto h-6 data-vertical:self-center sm:mr-1" />
       {/* Two letter chips; the chosen one takes the green tint. Not the dark
           solid pill: it would read as a second "Add" next to the CTA. */}
       <ChipTabs
