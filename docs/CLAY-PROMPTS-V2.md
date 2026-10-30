@@ -284,7 +284,7 @@ off-white = paper, neutral parts.
 > Subject: a chunky rounded funnel, turned about 20°, with two small profile cards dropping into its wide top, each card and its avatar fully visible. Sky blue funnel (#6CB8F0), white cards with raised gold avatars (#FFC94D). No tray (no-results is the in-tray).
 
 **database-search**
-> Same subject as **database** above.
+> ✅ Already installed (2026-10-30): the gold magnifier picking a person out of profile cards (see **database** above). Nothing to generate; skip it.
 
 **walk-ins**
 > Subject: a chunky rounded open door in its frame, a raised person (round head, rounded shoulders) standing in the doorway, walking in. Off-white frame (#F4F1EC), caramel door (#E0A76A), a sky blue person (#6CB8F0) with a white head.
