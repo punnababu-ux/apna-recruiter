@@ -98,7 +98,7 @@ off-white = paper, neutral parts.
 > Subject: a wide rounded open box, lid tipped back, filled with thick round coins; three coins stand up at the front, fanned so each raised ₹ symbol faces forward. Off-white box (#F4F1EC), gold coins (#FFC94D), white ₹ symbols, a coral ribbon band (#F06A6F) around the box.
 
 **exit-offer** (Extra 10% off)
-> ✅ Installed (2026-10-30). Rendered gold came out mustard (#E2B553); if regenerated, ask for "bright warm gold, not mustard".
+> ✅ Replaced (2026-10-30, v2): thicker starburst, slate %, no sparkle. Supplied by the user.
 >
 > Subject: a thick rounded twelve-point starburst badge with short, soft points, tilted, with a raised % symbol in the centre. Bright warm gold body (#FFC94D, not mustard), dark slate % symbol, a small off-white four-point sparkle floating just in front of its top-right.
 
