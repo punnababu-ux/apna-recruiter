@@ -272,7 +272,11 @@ off-white = paper, neutral parts.
 > Subject: a chunky, thick rounded lightning bolt, turned about 20° so its depth shows. Gold body (#FFC94D), nothing else.
 
 **dedicated-support**
-> Subject: a chunky rounded headset, turned about 20°, a thick band, two ear cups and a short thick microphone arm. Sky blue band and ear cups (#6CB8F0), white cushions, a gold mic tip (#FFC94D).
+> ✅ Round 2 approved (2026-10-30): thick mic arm, big gold mic. Installed.
+>
+> Round 1 (2026-10-30): finish and colours right. But the mic arm is thin and the gold tip tiny: at 56px it vanishes and the icon reads as music headphones, not support.
+>
+> Subject: a chunky rounded headset, turned about 20°, a thick band, two ear cups, and a prominent microphone arm as thick as the band, curving to the front, ending in a large rounded mic about the size of a third of an ear cup. Sky blue band and ear cups (#6CB8F0), white cushions, a gold mic tip (#FFC94D).
 
 **smart-inbound**
 > Subject: a chunky rounded funnel, turned about 20°, with two small profile cards dropping into its wide top, each card and its avatar fully visible. Sky blue funnel (#6CB8F0), white cards with raised gold avatars (#FFC94D). No tray (no-results is the in-tray).
