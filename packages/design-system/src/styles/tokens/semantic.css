@@ -121,6 +121,9 @@
   --info-foreground:        var(--color-gray-50);
   --info-subtle:            var(--color-apna-sky-100);
   --info-subtle-fg:         var(--color-apna-sky-900);
+  /* A feature icon that needs a hue of its own, apart from green, gold and
+     sky (the plan cards' "Dynamic visibility" pulse, V13). Icons only. */
+  --feature-violet:         var(--color-apna-navy-600);
 
   /* --------------------------------------------------------------------------
    * Lines — border, input outline, focus ring
@@ -195,6 +198,10 @@
      surface — a track, a card, a side panel. Never pick a radius per page. */
   --radius-card:        var(--radius-3xl); /* ≈20px — cards on the page       */
   --radius-card-nested: var(--radius-2xl); /* ≈16px — a card inside a surface */
+  /* A frame that holds nested cards 12px in (the phone job panel, the apna
+     Unlimited frame): its corner is the nested card's plus that inset, so
+     the two curves run parallel (concentric). ≈28px. */
+  --radius-frame:       calc(var(--radius-2xl) + var(--space-3));
   --radius-overlay: var(--radius-xl); /* dialogs, sheets, drawers           */
   --radius-hero:    var(--radius-2xl);/* marketing blocks, splashes         */
   --radius-pill:    var(--radius-full);/* avatars, pills, capsule buttons   */
@@ -700,6 +707,10 @@
    * at the top (6.3:1). */
   --gradient-checkout-unlimited:
     linear-gradient(180deg, var(--color-apna-plum-600) 0%, var(--color-apna-plum-400) 50%, var(--color-apna-plum-600) 100%);
+  /* Solid plum of the Unlimited frame (its gradient's ends), for a 2px
+   * card edge and a corner tab where the card has no dark frame (checkout
+   * V3). Fixed across themes, like the frame. */
+  --checkout-unlimited-edge:          var(--color-apna-plum-600);
   --checkout-unlimited-cta-bg:        rgba(255, 255, 255, 0.16);
   --checkout-unlimited-cta-bg-hover:  rgba(255, 255, 255, 0.26);
 
@@ -844,6 +855,7 @@
   --info-foreground:        var(--color-gray-950);
   --info-subtle:            var(--color-apna-sky-900);
   --info-subtle-fg:         var(--color-apna-sky-200);
+  --feature-violet:         var(--color-apna-navy-400);
 
   /* Lines — translucent on dark for softer hairlines */
   --border: var(--color-alpha-white-10);

@@ -54,13 +54,22 @@ const tabsListVariants = cva(
 function TabsList({
   className,
   variant = "default",
+  tone,
   children,
   ...props
-}: TabsPrimitive.List.Props & VariantProps<typeof tabsListVariants>) {
+}: TabsPrimitive.List.Props &
+  VariantProps<typeof tabsListVariants> & {
+    /** `line` only. "checkout": the active label and its underline in
+     *  checkout green, the underline 3px (self-checkout's phone tabs). Mark
+     *  the list `data-product` and the underline takes that product's
+     *  accent instead. */
+    tone?: "checkout"
+  }) {
   return (
     <TabsPrimitive.List
       data-slot="tabs-list"
       data-variant={variant}
+      data-tone={tone}
       className={cn(tabsListVariants({ variant }), className)}
       {...props}
     >
@@ -78,7 +87,14 @@ function TabsList({
           "group-data-[variant=checkout]/tabs-list:rounded-full group-data-[variant=checkout]/tabs-list:bg-plan-card group-data-[variant=checkout]/tabs-list:ring-1 group-data-[variant=checkout]/tabs-list:ring-plan-pill-ring",
           "group-data-[variant=line]/tabs-list:rounded-full group-data-[variant=line]/tabs-list:bg-foreground",
           "group-data-horizontal/tabs:group-data-[variant=line]/tabs-list:top-auto group-data-horizontal/tabs:group-data-[variant=line]/tabs-list:bottom-0 group-data-horizontal/tabs:group-data-[variant=line]/tabs-list:h-0.5",
-          "group-data-vertical/tabs:group-data-[variant=line]/tabs-list:left-auto group-data-vertical/tabs:group-data-[variant=line]/tabs-list:right-0 group-data-vertical/tabs:group-data-[variant=line]/tabs-list:w-0.5"
+          "group-data-vertical/tabs:group-data-[variant=line]/tabs-list:left-auto group-data-vertical/tabs:group-data-[variant=line]/tabs-list:right-0 group-data-vertical/tabs:group-data-[variant=line]/tabs-list:w-0.5",
+          // tone="checkout": green and 3px. Stacked on the line selectors so
+          // it outranks them.
+          "group-data-[variant=line]/tabs-list:group-data-[tone=checkout]/tabs-list:bg-checkout-primary",
+          "group-data-horizontal/tabs:group-data-[variant=line]/tabs-list:group-data-[tone=checkout]/tabs-list:h-0.75",
+          // A list marked with a product (data-product) takes that product's
+          // accent instead, e.g. the Unlimited gold while its tab is chosen.
+          "group-data-[variant=line]/tabs-list:group-data-[tone=checkout]/tabs-list:group-data-product/tabs-list:bg-product-accent"
         )}
       />
     </TabsPrimitive.List>
@@ -99,6 +115,7 @@ function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
         "group-data-[variant=checkout]/tabs-list:font-semibold group-data-[variant=checkout]/tabs-list:text-checkout-hero-fg-secondary group-data-[variant=checkout]/tabs-list:not-data-active:hover:text-checkout-hero-fg",
         "data-active:text-foreground dark:data-active:text-foreground",
         "group-data-[variant=checkout]/tabs-list:data-active:text-checkout-primary dark:group-data-[variant=checkout]/tabs-list:data-active:text-checkout-primary",
+        "group-data-[tone=checkout]/tabs-list:data-active:text-checkout-primary dark:group-data-[tone=checkout]/tabs-list:data-active:text-checkout-primary",
         className
       )}
       {...props}

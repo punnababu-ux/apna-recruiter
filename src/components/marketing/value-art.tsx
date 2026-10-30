@@ -190,8 +190,9 @@ const READY = new Set<ValueName>([
 ])
 
 /** sm: a picture at the top of a grid card (Enterprise's features).
- *  xs: beside a heading (the contact pop-up's title). */
-export function ValueArt({ name, size = "lg" }: { name: ValueName; size?: "xs" | "sm" | "md" | "lg" }) {
+ *  xs: beside a heading (the contact pop-up's title).
+ *  2xs: beside a heading in a phone sheet with a long title (48px). */
+export function ValueArt({ name, size = "lg" }: { name: ValueName; size?: "2xs" | "xs" | "sm" | "md" | "lg" }) {
   if (READY.has(name)) {
     return (
       <Image
@@ -204,7 +205,7 @@ export function ValueArt({ name, size = "lg" }: { name: ValueName; size?: "xs" |
         unoptimized
         className={cn(
           "object-contain",
-          size === "xs" ? "size-16 shrink-0" : size === "sm" ? "size-32" : size === "md" ? "size-48 sm:size-56" : "size-56 md:size-72 lg:size-80"
+          size === "2xs" ? "size-12 shrink-0" : size === "xs" ? "size-16 shrink-0" : size === "sm" ? "size-32" : size === "md" ? "size-48 sm:size-56" : "size-56 md:size-72 lg:size-80"
         )}
       />
     )
@@ -214,11 +215,11 @@ export function ValueArt({ name, size = "lg" }: { name: ValueName; size?: "xs" |
     <span
       className={cn(
         "flex items-center justify-center rounded-full border border-card/60 bg-surface-glass shadow-card backdrop-blur-xl",
-        size === "xs" ? "size-14 shrink-0" : size === "sm" ? "size-20" : size === "md" ? "size-32" : "size-48 md:size-64"
+        size === "2xs" ? "size-10 shrink-0" : size === "xs" ? "size-14 shrink-0" : size === "sm" ? "size-20" : size === "md" ? "size-32" : "size-48 md:size-64"
       )}
     >
       <Icon
-        className={cn("text-foreground", size === "xs" ? "size-6" : size === "sm" ? "size-8" : size === "md" ? "size-12" : "size-16 sm:size-20")}
+        className={cn("text-foreground", size === "2xs" ? "size-5" : size === "xs" ? "size-6" : size === "sm" ? "size-8" : size === "md" ? "size-12" : "size-16 sm:size-20")}
         aria-hidden
       />
     </span>

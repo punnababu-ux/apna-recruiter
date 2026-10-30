@@ -23,7 +23,9 @@ import { usePlans } from "@/hooks/apnahire/use-plans"
 import { setJobCredits, usePlansIngress } from "@/hooks/use-plans-ingress"
 import { replayTopUpCredits } from "@/components/apnahire/available-credits-button"
 import {
+  CheckoutVersionControls,
   ExitOfferControls,
+  PlanCardStyleControls,
   PricingPhaseControls,
   PrototypeOption,
   PrototypeSection,
@@ -48,6 +50,7 @@ export function CheckoutPreviewSettings({
   }
   return (
     <PrototypeSettings label="Preview settings">
+      <CheckoutVersionControls />
       {/* Every pricing tab bar: desktop row, sticky bars, phone chips. */}
       <PrototypeSection title="apna Unlimited tab">
         <PrototypeOption active={wordmark} onClick={() => setWordmark(true)}>
@@ -72,6 +75,7 @@ export function CheckoutPreviewSettings({
           Subscribed · beside Support
         </PrototypeOption>
       </PrototypeSection>
+      <PlanCardStyleControls />
       <PricingPhaseControls />
       <ExitOfferControls offer={offer} />
     </PrototypeSettings>

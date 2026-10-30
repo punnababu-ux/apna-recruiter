@@ -50,6 +50,8 @@ interface JobPostingChromeProps {
   /** E.g. "max-sm:hidden" when the page shows progress elsewhere on phones
    *  (the wizard footer's bar) — one progress indicator per screen. */
   stepperClassName?: string
+  /** A strip at the header's bottom, pinned with it (ExtraOffBar). */
+  below?: React.ReactNode
 }
 
 export function JobPostingChrome({
@@ -59,6 +61,7 @@ export function JobPostingChrome({
   onSaveExit,
   onExitAttempt,
   stepperClassName,
+  below,
 }: JobPostingChromeProps) {
   const router = useRouter()
   const currentIdx = STEPS.findIndex((s) => s.id === current)
@@ -69,14 +72,22 @@ export function JobPostingChrome({
   }))
 
   const leave = (proceed: () => void) => (onExitAttempt ? onExitAttempt(proceed) : proceed())
+  const title = current === "plan" ? "Select a job type" : "Create new job"
+
 
   return (
     <div className="sticky top-0 z-sticky border-b border-border bg-card">
-      <div className={cn("px-4 py-2.5 sm:px-6 sm:py-3", current !== "plan" && "border-b border-border", stepperClassName && "max-sm:border-b-0")}>
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-2 sm:gap-3">
-          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+      {/* A 64px row, as self-checkout's top bar (CheckoutTopBar h-16), so
+          both checkouts' bars are the same height (user call, 2026-10-30). */}
+      <div className={cn("px-4 sm:px-6", current !== "plan" && "border-b border-border", stepperClassName && "max-sm:border-b-0")}>
+        <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-2 sm:gap-3">
+          <div className="flex min-w-0 items-center gap-3">
             <BackButton onClick={() => leave(() => router.push("/apnahire/jobs"))} aria-label="Back to jobs" />
-            <span className="truncate text-sm font-semibold text-foreground sm:text-base">Create new job</span>
+            {/* The plan step is checkout: pick a job type, then publish (user call, 2026-10-30). */}
+            {/* text-h5: the app's page-title preset, as self-checkout's top bar
+                ("Select plans"), so both checkouts' titles match (user call,
+                2026-10-30). */}
+            <span className="truncate text-h5 text-foreground">{title}</span>
           </div>
           <div className="flex items-center gap-1.5 sm:gap-2">
             {/* Status (the balance), a rule, then the actions: help, then leave. */}
@@ -123,6 +134,7 @@ export function JobPostingChrome({
         </div>
       </div>
       )}
+      {below}
     </div>
   )
 }

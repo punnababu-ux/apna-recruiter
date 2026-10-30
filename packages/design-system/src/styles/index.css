@@ -70,6 +70,7 @@
   --color-warning-subtle:          var(--warning-subtle);
   --color-warning-subtle-foreground: var(--warning-subtle-fg);
   --color-info:                    var(--info);
+  --color-feature-violet:          var(--feature-violet);
   --color-whatsapp:                var(--whatsapp);
   --color-info-foreground:         var(--info-foreground);
   --color-info-subtle:             var(--info-subtle);
@@ -139,6 +140,7 @@
   --color-night-sky-border:   var(--night-sky-border);
   --color-night-sky-cloud:    var(--night-sky-cloud);
   --color-night-sky-star:     var(--night-sky-star);
+  --color-checkout-unlimited-edge:      var(--checkout-unlimited-edge);
   --color-checkout-unlimited-cta:       var(--checkout-unlimited-cta-bg);
   --color-checkout-unlimited-cta-hover: var(--checkout-unlimited-cta-bg-hover);
 
@@ -265,6 +267,7 @@
   --radius-surface: var(--radius-surface);
   --radius-card: var(--radius-card);
   --radius-card-nested: var(--radius-card-nested);
+  --radius-frame: var(--radius-frame);
   --radius-overlay: var(--radius-overlay);
   --radius-hero:    var(--radius-hero);
   --radius-pill:    var(--radius-pill);

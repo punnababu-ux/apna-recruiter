@@ -294,6 +294,7 @@ Two tiers are available:
 | `--radius-surface`  | `--radius-lg`     | `rounded-surface`   | Popovers, menus                      |
 | `--radius-card`     | `--radius-3xl`    | `rounded-card`      | Every card on the page background (≈20px) — `Card`'s default |
 | `--radius-card-nested` | `--radius-2xl` | `rounded-card-nested` | A card inside a surface: track, card, side panel (≈16px) |
+| `--radius-frame` | `--radius-2xl` + `--space-3` | `rounded-frame` | A frame holding nested cards 12px in (phone job panel, apna Unlimited frame): concentric with them (≈28px) |
 | `--radius-overlay`  | `--radius-xl`     | `rounded-overlay`   | Dialogs, sheets, drawers             |
 | `--radius-hero`     | `--radius-2xl`    | `rounded-hero`      | Marketing blocks, splashes           |
 | `--radius-pill`     | `--radius-full`   | `rounded-pill`      | Avatars, pill buttons, capsules      |
@@ -555,3 +556,5 @@ display voice is carried by weight (800) and tracking (-0.04em) instead.
 deliberately sets no colour: on an ink surface `--muted-foreground` is the
 wrong token, which is why `text-caption` — which does bake colour in — can't
 be reused there.
+
+| `--feature-violet` | `apna-navy-600`; dark: `apna-navy-400` | `text-feature-violet` | A feature icon needing its own hue apart from green, gold, sky (the "Dynamic visibility" pulse). Icons only |

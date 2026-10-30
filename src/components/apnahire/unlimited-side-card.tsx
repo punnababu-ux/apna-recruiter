@@ -21,15 +21,16 @@
 import * as React from "react"
 import { BriefcaseBusiness, ClockFading, InfinityIcon, Database, LogoApnaUnlimited, UserSearch, WhatsApp } from "@apna/design-system"
 import { Badge, Button, PricingCard } from "@apna/design-system"
-import { EXTRA_OFF, withExtraOff } from "@/content/offers"
+import { withExtraOff } from "@/content/offers"
 import { ExtraOffLine } from "@/components/apnahire/offers/extra-off-line"
 import { MobileDiscountRow } from "@/components/apnahire/mobile-plan-row"
 import { cn } from "@/lib/utils"
 import { useCardHover } from "@/components/apnahire/use-card-hover"
-import { MobileMetaLine, MobileUnlimitedCard } from "@/components/apnahire/mobile-plan-row"
+import { MobileMetaLine, MobileSlotLine, MobileUnlimitedCard, MobileUnlimitedLine } from "@/components/apnahire/mobile-plan-row"
+import { useCheckoutVersion, versionAtLeast } from "@/hooks/use-checkout-version"
 import { UpcomingPriceLine } from "@/components/apnahire/upcoming-price-line"
 import { inr } from "@/lib/format"
-import { dbCreditsLabel, slotLabel, slotTermLabel, type SubscriptionPlan } from "@/content/subscriptions"
+import { dbCreditsLabel, slotLabel, type SubscriptionPlan } from "@/content/subscriptions"
 import { usePlans } from "@/hooks/apnahire/use-plans"
 
 interface UnlimitedSideCardProps {
@@ -68,6 +69,10 @@ export function UnlimitedSideCard({
   const strike = extraOff ? inr(basePrice) : undefined
   // Desktop: outline CTA at rest, green while the frame is hovered.
   const hover = useCardHover()
+  // V13, phones: express V11's card (title, price alone, "1 job live at a
+  // time"), without "Job reposts and swapping"; this page sells no
+  // visibility, so no "Dynamic visibility" either (user calls, 2026-10-30).
+  const v13 = versionAtLeast(useCheckoutVersion(), "v13")
   return (
     <>
       {/* ── Mobile (< md): the shared phone card, the same one express
@@ -76,19 +81,23 @@ export function UnlimitedSideCard({
         onSelect={mobileSelect?.onSelect ?? onBuyNow}
         selected={mobileSelect?.selected}
         className={cn("md:hidden", className)}
-        // Same card, same structure as express checkout's Monthly plan: name
+        // Same card, same structure as express checkout's card: name
         // and price with its unit on top, then "1 active job slot for 30 days" (no
         // separate validity line), the plan lines, then the note and CTA.
-        title="Unlimited job posts"
-        mrp={strike}
+        title={v13 ? "Unlimited jobs for 1 month" : "Unlimited monthly plan"}
+        mrp={v13 ? undefined : strike}
         price={inr(price)}
-        unit={plan.unitShort}
-        belowPrice={<MobileDiscountRow pct={pct} note={extraOff ? EXTRA_OFF.appliedShort : undefined} />}
+        unit={v13 ? undefined : plan.unitShort}
+        belowPrice={v13 ? undefined : <MobileDiscountRow pct={pct} />}
         upcoming={<UpcomingPriceLine price={plan.janPrice} />}
         meta={
-          <MobileMetaLine icon={<BriefcaseBusiness aria-hidden />}>
-            {slotTermLabel(plan)}
-          </MobileMetaLine>
+          v13 ? (
+            <MobileMetaLine icon={<BriefcaseBusiness className="text-checkout-primary" aria-hidden />}>
+              1 job live at a time
+            </MobileMetaLine>
+          ) : (
+            <MobileSlotLine slots={plan.slots} days={plan.slotDays} muted />
+          )
         }
         features={[
           // The slot shows above, as meta.
@@ -96,6 +105,7 @@ export function UnlimitedSideCard({
           [<InfinityIcon key="i" className="text-warning" aria-hidden />, "Free job reposts and swapping"],
           [<Database key="i" className="text-muted-foreground" aria-hidden />, dbCreditsLabel(plan)],
         ]}
+        line={<MobileUnlimitedLine db={dbCreditsLabel(plan)} reposts={!v13} />}
         note="Valid in a single city"
         cta={
           mobileSelect ? undefined :
@@ -105,10 +115,10 @@ export function UnlimitedSideCard({
             type="button"
             variant="emphasis"
             size="sm"
-            className="h-8 shrink-0 rounded-full px-3.5 text-xs font-semibold"
+            className="shrink-0 px-3.5"
             onClick={onBuyNow}
           >
-            Get apna unlimited
+            Buy now
           </Button>
         }
       />

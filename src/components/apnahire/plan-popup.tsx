@@ -92,17 +92,20 @@ export function PopupHeader({
   title,
   description,
   art,
+  artSize = "xs",
   alone,
 }: {
   title: React.ReactNode
   description?: React.ReactNode
   art: ValueName
+  /** "2xs" (48px) where the title runs long beside it. */
+  artSize?: "2xs" | "xs"
   alone?: boolean
 }) {
   return (
     <>
       <div className={cn("flex items-center gap-4 px-5 pt-6 sm:px-6", alone ? "pb-5" : "pb-4")}>
-        <ValueArt name={art} size="xs" />
+        <ValueArt name={art} size={artSize} />
         <div className="flex min-w-0 flex-col gap-1">
           <PopupTitle>{title}</PopupTitle>
           {description && <PopupDescription>{description}</PopupDescription>}

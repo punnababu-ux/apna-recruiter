@@ -10,11 +10,11 @@
  */
 
 import * as React from "react"
-import { ClockFading, ArrowRight, Briefcase, Sparkles } from "@apna/design-system"
+import { ClockFading, ArrowRight, Package, Sparkles } from "@apna/design-system"
 import { Badge, Button, PricingCard } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 import { CardHover, RECOMMENDED_EDGE } from "@/components/apnahire/use-card-hover"
-import { EXTRA_OFF, withExtraOffBundle } from "@/content/offers"
+import { withExtraOffBundle } from "@/content/offers"
 import { ExtraOffLine } from "@/components/apnahire/offers/extra-off-line"
 import { MobileDiscountRow, MobileMetaLine, MobilePlanRow } from "@/components/apnahire/mobile-plan-row"
 import { UpcomingPriceLine } from "@/components/apnahire/upcoming-price-line"
@@ -34,6 +34,10 @@ export interface JobCreditBundlesProps {
   selectedBundleId?: BundleId | null
   onSelectBundle?: (bundle: Bundle) => void
   className?: string
+  /** Phones (V13): the packs sit in one panel, as express V11's job types:
+   *  a header, the cards 12px apart, then `footer` inside the panel. */
+  grouped?: boolean
+  footer?: React.ReactNode
 }
 
 export function JobCreditBundles({
@@ -43,6 +47,8 @@ export function JobCreditBundles({
   selectedBundleId,
   onSelectBundle,
   className,
+  grouped,
+  footer,
 }: JobCreditBundlesProps) {
   const { bundles } = usePlans()
   const [internalSelectedId, setInternalSelectedId] = React.useState<BundleId>(
@@ -62,27 +68,25 @@ export function JobCreditBundles({
       className={cn("flex flex-col gap-3 sm:gap-5 sm:rounded-card sm:surface-glass-dark sm:p-4", className)}
     >
       {/* ── Mobile-first selectable radio cards (< md) ── */}
-      <div className="flex flex-col gap-3 md:hidden">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Briefcase className="size-4 text-checkout-hero-fg" aria-hidden />
-            <h2 className="text-h6 text-checkout-hero-fg">
-              Job credits
-            </h2>
-          </div>
-          <Button
-            type="button"
-            variant="link"
-            size="sm"
-            className="shrink-0"
-            onClick={onBuySingleCredit}
-            trailingIcon={<ArrowRight aria-hidden />}
-          >
-            Buy 1 job credit
-          </Button>
-        </div>
+      <div className="flex flex-col gap-4 md:hidden">
+        {/* text-h4: the size of the other tabs' headings ("Enterprise plans").
+            "Buy 1 job credit" sits under the cards on phones, opposite
+            "What 1 job credit will get you?" (self-checkout, 2026-10-30). */}
+        {grouped ? null : <h2 className="text-h4 text-checkout-hero-fg">Job credit packages</h2>}
 
-        <div className="flex flex-col gap-3">
+        {/* V13: the panel of express V11 (PlanFrame's look): 12px at the
+            sides, bottom and between cards, 16px above the header, a frame
+            corner concentric with the nested cards (user call, 2026-10-30). */}
+        <div className={cn(grouped && "flex flex-col gap-3 rounded-frame surface-glass-dark px-3 pt-4 pb-3")}>
+          {grouped && (
+            <div className="flex items-center justify-between gap-2 px-1.5">
+              <h2 className="flex items-center gap-2 text-h6 leading-6 whitespace-nowrap text-foreground [&_svg]:size-5 [&_svg]:shrink-0">
+                <Package aria-hidden />
+                Job credit packages
+              </h2>
+            </div>
+          )}
+        <div className={cn("flex flex-col", grouped ? "gap-3" : "gap-4")}>
           {bundles.map((bundle) => {
             const isSelected = currentSelectedId === bundle.id
             // Display figures; selection and checkout keep the base bundle.
@@ -90,36 +94,35 @@ export function JobCreditBundles({
             return (
               <MobilePlanRow
                 key={bundle.id}
+                nested={grouped}
                 title={`${bundle.credits} job credits`}
                 selected={isSelected}
                 onSelect={() => handleSelect(bundle)}
                 recommended={bundle.recommended}
                 meta={
-                  <MobileMetaLine icon={<ClockFading aria-hidden />}>
-                    Valid for {bundle.validDays} days
-                  </MobileMetaLine>
-                }
-                // The unit cost reads with the amount: right, under the discount.
-                // Green on its own, gray under the 10% offer (one green line).
-                priceNote={
-                  <span
-                    className={cn(
-                      "text-xs whitespace-nowrap italic",
-                      extraOff ? "text-muted-foreground" : "text-checkout-primary"
-                    )}
-                  >
-                    ₹{view.pricePerCredit}{"\u00A0"}/credit
-                  </span>
+                  <>
+                    <MobileMetaLine icon={<ClockFading aria-hidden />}>
+                      Valid for {bundle.validDays} days
+                    </MobileMetaLine>
+                    {/* The unit cost under the validity, left (user call,
+                        2026-10-30). Green: the one green line on the card,
+                        now the 10% is said in the header (ExtraOffBar). */}
+                    <span className="text-xs whitespace-nowrap italic text-checkout-primary">
+                      ₹{view.pricePerCredit}{"\u00A0"}/credit
+                    </span>
+                  </>
                 }
                 mrp={inr(bundle.mrp)}
                 price={inr(view.price)}
                 belowPrice={
-                  <MobileDiscountRow pct={view.discountPct} note={extraOff ? EXTRA_OFF.appliedShort : undefined} />
+                  <MobileDiscountRow pct={view.discountPct} />
                 }
                 upcoming={<UpcomingPriceLine price={bundle.janPrice} />}
               />
             )
           })}
+        </div>
+          {grouped && footer}
         </div>
       </div>
 
@@ -131,7 +134,7 @@ export function JobCreditBundles({
         <div className="flex min-h-12 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-1">
           <div className="flex min-w-0 flex-col gap-1">
             <h2 className="text-h4 leading-6 text-checkout-hero-fg">
-              Job credits
+              Job credit packages
             </h2>
             <p className="text-sm text-checkout-hero-fg-muted">
               Pick a bundle. Choose the job type later, when you post.

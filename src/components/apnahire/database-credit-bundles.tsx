@@ -31,11 +31,10 @@ import {
 } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 import { CardHover, RECOMMENDED_EDGE } from "@/components/apnahire/use-card-hover"
-import { EXTRA_OFF, withExtraOffBundle } from "@/content/offers"
+import { withExtraOffBundle } from "@/content/offers"
 import { ExtraOffLine } from "@/components/apnahire/offers/extra-off-line"
 import { MobileDiscountRow, MobileMetaLine, MobilePlanRow } from "@/components/apnahire/mobile-plan-row"
 
-import { UserSearch } from "@apna/design-system"
 import { inr, num } from "@/lib/format"
 import { usePlans } from "@/hooks/apnahire/use-plans"
 import type { DbBundle, DbBundleId } from "@/content/credit-bundles"
@@ -75,15 +74,15 @@ export function DatabaseCreditBundles({
       className={cn("flex flex-col gap-3 sm:gap-5", className)}
     >
       {/* ── Mobile-first selectable radio cards (< md) ── */}
-      <div className="flex flex-col gap-3 md:hidden">
+      <div className="flex flex-col gap-4 md:hidden">
         <div className="flex items-center gap-2">
-          <UserSearch className="size-4 text-checkout-hero-fg" aria-hidden />
-          <h2 className="text-h6 text-checkout-hero-fg">
-            Database credits
+          {/* text-h4: the size of the other tabs' headings ("Enterprise plans"). */}
+          <h2 className="text-h4 text-checkout-hero-fg">
+            Database credit packages
           </h2>
         </div>
 
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-4">
           {dbBundles.map((bundle) => {
             const isSelected = currentSelectedId === bundle.id
             // Display figures; selection and checkout keep the base bundle.
@@ -96,26 +95,22 @@ export function DatabaseCreditBundles({
                 onSelect={() => handleSelect(bundle)}
                 recommended={bundle.recommended}
                 meta={
-                  <MobileMetaLine icon={<ClockFading aria-hidden />}>
-                    Valid for {bundle.validDays} days
-                  </MobileMetaLine>
-                }
-                // The unit cost reads with the amount: right, under the discount.
-                // Green on its own, gray under the 10% offer (one green line).
-                priceNote={
-                  <span
-                    className={cn(
-                      "text-xs whitespace-nowrap italic",
-                      extraOff ? "text-muted-foreground" : "text-checkout-primary"
-                    )}
-                  >
-                    ₹{view.pricePerCredit}{"\u00A0"}/credit
-                  </span>
+                  <>
+                    <MobileMetaLine icon={<ClockFading aria-hidden />}>
+                      Valid for {bundle.validDays} days
+                    </MobileMetaLine>
+                    {/* The unit cost under the validity, left (user call,
+                        2026-10-30). Green: the one green line on the card,
+                        now the 10% is said in the header (ExtraOffBar). */}
+                    <span className="text-xs whitespace-nowrap italic text-checkout-primary">
+                      ₹{view.pricePerCredit}{"\u00A0"}/credit
+                    </span>
+                  </>
                 }
                 mrp={inr(bundle.mrp)}
                 price={inr(view.price)}
                 belowPrice={
-                  <MobileDiscountRow pct={view.discountPct} note={extraOff ? EXTRA_OFF.appliedShort : undefined} />
+                  <MobileDiscountRow pct={view.discountPct} />
                 }
               />
             )
@@ -127,7 +122,7 @@ export function DatabaseCreditBundles({
       <div className="hidden md:flex md:flex-col md:gap-5">
         <div className="flex flex-col gap-1">
           <h2 className="text-xl font-semibold leading-tight text-checkout-hero-fg">
-            Database credits
+            Database credit packages
           </h2>
           <p className="text-sm text-checkout-hero-fg-secondary">
             22+ filters across roles, city, experience, salary and shifts, and then unlock

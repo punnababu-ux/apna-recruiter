@@ -16,7 +16,6 @@
 import * as React from "react"
 import {
   Badge,
-  BadgePercent,
   BriefcaseBusiness,
   Button,
   Check,
@@ -48,6 +47,8 @@ import {
   MobileDiscountRow,
   MobilePlanDetails,
   MobilePlanRow,
+  MobileSlotLine,
+  MobileUnlimitedLine,
 } from "@/components/apnahire/mobile-plan-row"
 import { inr } from "@/lib/format"
 import { usePlans } from "@/hooks/apnahire/use-plans"
@@ -385,7 +386,7 @@ export function SubscriptionPlans({
             is its name, the reposts line and the price; the selected one
             (Annual, the recommended plan, by default) reveals the plan details. The
             page's sticky CTA buys the selection. */}
-        <div className="flex flex-col gap-3 md:hidden">
+        <div className="flex flex-col gap-4 md:hidden">
           {PLAN_IDS.map((id) => {
             const plan = planFor(id, jobSlots)
             const isCurrent = current?.plan === id && current.slots === jobSlots
@@ -399,28 +400,22 @@ export function SubscriptionPlans({
                 selected={selectedPlan === id}
                 onSelect={() => onSelectPlan?.(id)}
                 recommended={id === recommendedPlan}
-                // The Jobs tab's Unlimited card structure, with the radio:
-                // name and price on one line, the reposts promise and the
-                // discount on the next (see MobilePlanRow's "inline").
-                layout="inline"
+                // The Jobs tab's Unlimited card structure (user call,
+                // 2026-10-30): name and price, the slot line under the name,
+                // then the same feature line (MobileUnlimitedLine).
                 meta={
-                  <span className="text-xs text-muted-foreground">
-                    {isCurrent ? "Your current plan" : "Unlimited job reposts"}
-                  </span>
+                  <>
+                    <MobileSlotLine slots={plan.slots} days={plan.slotDays} muted />
+                    {isCurrent && <span className="text-xs text-muted-foreground">Your current plan</span>}
+                  </>
                 }
                 mrp={strike ? inr(strike) : undefined}
                 price={inr(price)}
                 unit={plan.unitShort}
                 belowPrice={pct ? <MobileDiscountRow pct={pct} /> : undefined}
-                priceNote={
-                  extraOff && !isCurrent ? (
-                    <span className="flex items-center gap-1 text-xs font-medium text-success">
-                      <BadgePercent className="size-3.5 shrink-0 animate-wiggle" aria-hidden />
-                      <span className="animate-text-shimmer">Extra 10% off</span>
-                    </span>
-                  ) : undefined
-                }
+                // No "Extra 10% off" here: on phones the header's ExtraOffBar says it once.
                 upcoming={isCurrent ? undefined : <UpcomingPriceLine price={plan.janPrice} />}
+                line={<MobileUnlimitedLine db={dbCreditsLabel(plan)} />}
                 details={
                   // The Jobs tab's Unlimited card points: three short lines.
                   <MobilePlanDetails

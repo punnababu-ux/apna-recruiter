@@ -3,8 +3,8 @@
 /**
  * CheckoutTopBar — sticky top bar for the standalone checkout pages
  * (self-checkout's logged-in `/apnahire/credits`, and the job-posting plan
- * page). Starts transparent over the `bg-gradient-checkout-hero` canvas and
- * turns solid once the page scrolls (`useScrolled`). An optional `center`
+ * page). Solid white from the start; it gains its shadow once the page
+ * scrolls (`useScrolled`). An optional `center`
  * slot fades in when `showCenter` flips — the page decides when (usually
  * once its hero's own heading/tabs scroll out from under this bar).
  *
@@ -27,6 +27,8 @@ interface CheckoutTopBarProps {
   backLabel: string
   center?: React.ReactNode
   showCenter?: boolean
+  /** A strip under the bar, pinned with it (ExtraOffBar). */
+  below?: React.ReactNode
 }
 
 export function CheckoutTopBar({
@@ -35,6 +37,7 @@ export function CheckoutTopBar({
   backLabel,
   center,
   showCenter = false,
+  below,
 }: CheckoutTopBarProps) {
   const isScrolled = useScrolled()
 
@@ -42,7 +45,10 @@ export function CheckoutTopBar({
     <header
       className={cn(
         "sticky top-0 z-sticky border-b transition-interactive duration-enter",
-        isScrolled ? "border-border bg-card shadow-card" : "border-checkout-track bg-transparent shadow-none"
+        // White from the start (user call, 2026-10-30); the shadow only
+        // once the page scrolls under it.
+        "border-border bg-card",
+        isScrolled ? "shadow-card" : "shadow-none"
       )}
     >
       {/* Same gutter + column as the hero and page body, so the back arrow
@@ -73,6 +79,7 @@ export function CheckoutTopBar({
           </div>
         </div>
       </div>
+      {below}
     </header>
   )
 }

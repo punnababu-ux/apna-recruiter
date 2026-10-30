@@ -27,6 +27,7 @@ import * as React from "react"
 import { Check, ClockFading } from "@apna/design-system"
 import { Button, Card, Separator } from "@apna/design-system"
 import { cn } from "@/lib/utils"
+import { useCheckoutVersion, versionAtLeast } from "@/hooks/use-checkout-version"
 import { GstNote } from "@/components/apnahire/gst-note"
 import { CardHover } from "@/components/apnahire/use-card-hover"
 import {
@@ -113,6 +114,95 @@ const TIERS: Tier[] = [
   },
 ]
 
+/* ── V3 phones: every plan in one table ─────────────────────────────── */
+
+const EVERY_PLAN = "Every plan: valid for 360 days, with a dedicated account manager."
+
+/** "₹1,00,000" → "₹1L", "₹8,75,000" → "₹8.75L": four prices fit one row. */
+const lakh = (price: string) => `₹${Number(price.replace(/\D/g, "")) / 100000}L`
+
+/** V3, phones (user call, 2026-10-30): the four cards repeated the same
+ *  five feature names, the same validity and the same account manager.
+ *  One table instead: a column per plan, each feature named once; what
+ *  every plan shares is said once, as the section's subtitle (EVERY_PLAN). Tap a column to choose that plan
+ *  (the page's sticky "Contact sales" uses it). */
+function EnterpriseCompareTable({
+  selectedTier,
+  onSelectTier,
+}: {
+  selectedTier: string
+  onSelectTier?: (tier: string) => void
+}) {
+  // Every plan's features come in the same order; the last row (account
+  // manager) is shared, so it moves to the footnote.
+  const rows = TIERS[0].features.filter((f) => f.bold).map((f) => f.label)
+  // A unit said once in the row's name, not in every cell ("7 days" → "7").
+  const unitOf = (label: string) => (/ days$/.test(TIERS[0].features.find((f) => f.label === label)?.bold ?? "") ? "days" : null)
+  const value = (bold?: string) => bold?.replace(/ days$/, "")
+  const cell = (name: string) =>
+    cn("px-0.5 py-2.5 text-center transition-interactive", name === selectedTier && "bg-accent")
+  return (
+    <div className="flex flex-col gap-3">
+      {/* The plan cards' surface: same shadow and 2px (transparent) edge. */}
+      <div className="overflow-hidden rounded-card border-2 border-transparent bg-plan-card shadow-card">
+        <table className="w-full table-fixed text-xs tabular-nums">
+          <thead>
+            <tr className="border-b border-border">
+              <th scope="col" className="w-24 px-3 py-2.5 text-left font-medium text-muted-foreground">
+                Plan
+              </th>
+              {TIERS.map((tier) => {
+                const on = tier.name === selectedTier
+                return (
+                  <th key={tier.name} scope="col" className={cell(tier.name)}>
+                    <button
+                      type="button"
+                      aria-pressed={on}
+                      aria-label={`${tier.name}, ${tier.price}`}
+                      onClick={() => onSelectTier?.(tier.name)}
+                      className="flex w-full cursor-pointer flex-col items-center gap-1"
+                    >
+                      {/* The chosen plan's tick, where the radio would be. */}
+                      <span
+                        aria-hidden
+                        className={cn(
+                          "flex size-4 items-center justify-center rounded-full",
+                          on ? "bg-cta-primary text-primary-foreground" : "border border-border"
+                        )}
+                      >
+                        {on && <Check className="size-3" strokeWidth={3} />}
+                      </span>
+                      <span className={cn("font-semibold", on ? "text-checkout-primary" : "text-foreground")}>
+                        {tier.name}
+                      </span>
+                      <span className="text-sm font-semibold text-foreground">{lakh(tier.price)}</span>
+                    </button>
+                  </th>
+                )
+              })}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((label, r) => (
+              <tr key={label} className={cn(r < rows.length - 1 && "border-b border-border")}>
+                <th scope="row" className="px-3 py-2.5 text-left font-normal text-muted-foreground">
+                  {label}
+                  {unitOf(label) && <span className="block">({unitOf(label)})</span>}
+                </th>
+                {TIERS.map((tier) => (
+                  <td key={tier.name} className={cn(cell(tier.name), "cursor-pointer text-foreground")} onClick={() => onSelectTier?.(tier.name)}>
+                    {value(tier.features.find((f) => f.label === label)?.bold)}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
 /* ─────────────────────────────────── component ───────────────────────── */
 
 interface EnterprisePricingTableProps {
@@ -137,15 +227,18 @@ export function EnterprisePricingTable({
   onSelectTier,
   className,
 }: EnterprisePricingTableProps) {
+  const v3 = versionAtLeast(useCheckoutVersion(), "v3")
   return (
     <div
       data-slot="enterprise-pricing-table"
-      className={cn("flex flex-col gap-5", className)}
+      className={cn("flex flex-col gap-5 max-md:gap-4", className)}
     >
       <div className="flex flex-col gap-1">
-        <h2 className="text-h4 text-checkout-hero-fg">Hire anywhere in India</h2>
+        <h2 className="text-h4 text-checkout-hero-fg">Enterprise plans</h2>
         <p className="text-sm text-checkout-hero-fg-secondary">
-          For high-volume organisations that never stop hiring.
+          {/* V3: what every plan shares, said once at the top (user call,
+              2026-10-30), instead of the audience line. */}
+          {v3 ? EVERY_PLAN : "For high-volume organisations that never stop hiring."}
         </p>
       </div>
 
@@ -153,7 +246,12 @@ export function EnterprisePricingTable({
           is its name, price and validity; the selected one reveals what it
           includes. The page's sticky CTA ("Contact sales") replaces the
           four per-card buttons. */}
-      <div className="flex flex-col gap-3 md:hidden">
+      {v3 ? (
+        <div className="md:hidden">
+          <EnterpriseCompareTable selectedTier={selectedTier} onSelectTier={onSelectTier} />
+        </div>
+      ) : (
+      <div className="flex flex-col gap-4 md:hidden">
         {TIERS.map((tier) => (
           <MobilePlanRow
             key={tier.name}
@@ -176,6 +274,7 @@ export function EnterprisePricingTable({
           />
         ))}
       </div>
+      )}
 
       {/* Figma is one 1136px row of four. From md the cards pair up, and
           from lg they sit in one row. */}

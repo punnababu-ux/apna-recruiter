@@ -526,7 +526,7 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
         file: "apnahire/job-plan-cards.tsx",
         what: "What each job type gets you (Classic, Premium, Super premium).",
         live: "/design-system/product/pop-ups",
-        where: "Self-checkout Jobs tab › Need more info?",
+        where: "Self-checkout Jobs tab › What 1 job credit will get you?",
         rules: ["Read-only. Data from usePlans().tiers, so it follows the pricing phase."],
       },
       {

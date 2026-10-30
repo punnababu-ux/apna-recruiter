@@ -114,7 +114,7 @@ export default function PopUpsPage() {
       <ShowcaseEntry
         title="What each job type gets you"
         component="JobTypesDialog"
-        where="Self-checkout › Jobs tab › Need more info?"
+        where="Self-checkout › Jobs tab › What 1 job credit will get you?"
         actions={openBtn("job-types")}
       >
         <RuleList

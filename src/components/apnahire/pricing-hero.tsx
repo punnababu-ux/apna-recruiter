@@ -161,6 +161,10 @@ interface PricingHeroProps {
   /** Logged in only: a banner above the app title (the Jan 1, 2027 price
    *  change, `PriceChangeBanner placement="plans"`). Ignored with `intro`. */
   banner?: React.ReactNode
+  /** On the tabs' wrapper, e.g. to hide them where the page docks its own. */
+  tabsClassName?: string
+  /** On the banner's wrapper (which hides itself when no banner shows). */
+  bannerClassName?: string
 }
 
 export function PricingHero({
@@ -170,6 +174,8 @@ export function PricingHero({
   tabsRef,
   intro,
   banner,
+  tabsClassName,
+  bannerClassName,
 }: PricingHeroProps) {
   const [wordmark] = useUnlimitedWordmark()
   return (
@@ -201,18 +207,16 @@ export function PricingHero({
             description={intro.description}
           />
         ) : (
-          <>
-            {banner}
-            <h1 className="text-h1 font-semibold text-checkout-hero-fg max-sm:text-xl max-sm:@xs:text-2xl [[data-voice=editorial]_&]:font-editorial">
-              Everything you need to hire
-            </h1>
-          </>
+          // No heading (user call, 2026-10-30): the top bar says "Select
+          // plans"; the banner, then the tabs. `empty:hidden`: with no banner
+          // showing, the wrapper and its spacing go too.
+          <div className={cn("empty:hidden", bannerClassName)}>{banner}</div>
         )}
 
         {/* Plain block wrapper (not `display: contents`) — needed so
             `tabsRef`'s bounding box is measurable by the page's
             IntersectionObserver; `contents` would collapse it to zero size. */}
-        <div ref={tabsRef} className="w-full">
+        <div ref={tabsRef} className={cn("w-full", tabsClassName)}>
           {/* One switcher for every viewport: a two-line pill row from md,
               a scrolling chip row below it with the short labels. All four
               tabs on both — Jobs and Database are separate products. */}

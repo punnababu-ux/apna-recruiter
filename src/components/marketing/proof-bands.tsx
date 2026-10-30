@@ -10,13 +10,14 @@
  * Copy: content/home.ts (HOME_TRUSTED_BY, HOME_PROOF).
  */
 
-import { LogoWall, Section, SectionHeading } from "@apna/design-system"
+import { LogoWall, Section, SectionHeading, ShieldCheck } from "@apna/design-system"
 import { FaqSection } from "@/components/apnahire/faq-section"
 import { TestimonialGrid } from "@/components/apnahire/testimonial-grid"
 import { StatGrid } from "@/components/marketing/page-blocks"
 import { SettleIn } from "@/components/marketing/settle-in"
 import { HOME_PROOF, HOME_TRUSTED_BY } from "@/content/home"
 import { CLIENT_LOGOS } from "@/content/logos"
+import { cn } from "@/lib/utils"
 
 const CLIENT_LOGO_ITEMS = CLIENT_LOGOS.map((client) => ({
   name: client.name,
@@ -26,9 +27,9 @@ const CLIENT_LOGO_ITEMS = CLIENT_LOGOS.map((client) => ({
   ),
 }))
 
-export function TrustedByBand() {
+export function TrustedByBand({ className }: { className?: string } = {}) {
   return (
-    <Section tone="card" size="md">
+    <Section tone="card" size="md" className={className}>
       <div className="flex flex-col items-center gap-10">
         <SectionHeading
           level={2}
@@ -45,11 +46,22 @@ export function TrustedByBand() {
 
 /** The trusted-by logos, compact, for product flows (express checkout's plan
  *  step): a caption and the logos in colour, gliding, no band or heading. */
-export function TrustedByStrip() {
+export function TrustedByStrip({ compact }: { compact?: boolean }) {
   return (
-    <div data-slot="trusted-by-strip" className="flex flex-col gap-4 pt-6">
-      {/* The homepage's figure (HOME stats: 7 L+ businesses & enterprises). */}
-      <p className="text-base font-semibold text-foreground">Trusted by 7 lakh+ businesses and enterprises for hiring</p>
+    // compact: 8px above, on top of the page's 12px gap: 20px under the GST
+    // note (user call, 2026-10-30).
+    <div data-slot="trusted-by-strip" className={cn("flex flex-col gap-4", compact ? "pt-2" : "pt-6")}>
+      {/* The homepage's figure (HOME stats: 7 L+ businesses & enterprises).
+          compact (express V11): smaller, shorter, with a shield
+          (user call, 2026-10-30). */}
+      {compact ? (
+        <p className="flex items-center gap-2 text-sm font-semibold text-foreground [&_svg]:size-4 [&_svg]:shrink-0">
+          <ShieldCheck className="text-checkout-primary" aria-hidden />
+          Trusted by 7 lakh+ businesses &amp; enterprises
+        </p>
+      ) : (
+        <p className="text-base font-semibold text-foreground">Trusted by 7 lakh+ businesses and enterprises for hiring</p>
+      )}
       {/* In colour, gliding forever, as on the live plan step (user call, 2026-10-29). */}
       <LogoWall items={CLIENT_LOGO_ITEMS} itemHeight="compact" marquee />
     </div>

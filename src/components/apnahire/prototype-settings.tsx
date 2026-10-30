@@ -40,6 +40,15 @@ import { endSubscription, setPreviousPlan } from "@/hooks/use-previous-plan"
 import type { JobSlotCount } from "@/content/subscriptions"
 import { PRICING_PHASES } from "@/content/pricing-phase"
 import { setPricingPhase, usePricingPhase } from "@/hooks/use-pricing-phase"
+import { CHECKOUT_VERSIONS, setCheckoutVersion, useCheckoutVersion } from "@/hooks/use-checkout-version"
+import {
+  PLAN_CARD_LAYOUTS,
+  PLAN_CARD_SELECTIONS,
+  setPlanCardLayout,
+  setPlanCardSelection,
+  usePlanCardLayout,
+  usePlanCardSelection,
+} from "@/hooks/use-plan-card-style"
 
 const OPEN_EVENT = "apna:prototype-settings"
 
@@ -145,6 +154,44 @@ export function PricingPhaseControls() {
         </PrototypeOption>
       ))}
     </PrototypeSection>
+  )
+}
+
+/** Which design version both checkouts show (useCheckoutVersion). */
+export function CheckoutVersionControls() {
+  const version = useCheckoutVersion()
+  return (
+    <PrototypeSection title="Design version">
+      {CHECKOUT_VERSIONS.map((o) => (
+        <PrototypeOption key={o.value} active={version === o.value} onClick={() => setCheckoutVersion(o.value)}>
+          {o.label}
+        </PrototypeOption>
+      ))}
+    </PrototypeSection>
+  )
+}
+
+/** The phone plan cards' look, both checkouts (usePlanCardStyle). */
+export function PlanCardStyleControls() {
+  const layout = usePlanCardLayout()
+  const selection = usePlanCardSelection()
+  return (
+    <>
+      <PrototypeSection title="Phone plan cards">
+        {PLAN_CARD_LAYOUTS.map((o) => (
+          <PrototypeOption key={o.value} active={layout === o.value} onClick={() => setPlanCardLayout(o.value)}>
+            {o.label}
+          </PrototypeOption>
+        ))}
+      </PrototypeSection>
+      <PrototypeSection title="Phone plan selection">
+        {PLAN_CARD_SELECTIONS.map((o) => (
+          <PrototypeOption key={o.value} active={selection === o.value} onClick={() => setPlanCardSelection(o.value)}>
+            {o.label}
+          </PrototypeOption>
+        ))}
+      </PrototypeSection>
+    </>
   )
 }
 

@@ -3,6 +3,9 @@
 Read `AGENTS.md` first (the contract). This file is the working context a
 new session needs to pick up where the last one stopped.
 
+> **Latest session (2026-10-30):** phone checkouts and the design-version
+> switch (V1–V3) — see `docs/SESSION-2026-10-30-CHECKOUT.md`.
+
 ## Who and how
 
 - **Punna** (product designer, apna) drives; you design and build. Work in

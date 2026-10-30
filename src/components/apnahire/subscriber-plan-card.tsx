@@ -129,7 +129,7 @@ export const OFFER_BAR_TEMPLATES = {
     bar: {
       art: art("database-search"),
       hook: "80 database profile unlocks left",
-      headline: <>Pay <OfferBarDrop from="₹10" to="₹6" unit="/unlock" /> on a 1,000-unlock pack</>,
+      headline: <>Pay <OfferBarDrop from="₹10" to="₹6" unit="/unlock" /> on a 1,000-unlock package</>,
       points: ["1,000 database profile unlocks", "Valid for 180 days"],
       price: { amount: "₹5,999", strike: "₹9,999", off: "40% OFF" },
       deadline: countdown,

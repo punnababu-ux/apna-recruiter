@@ -46,18 +46,20 @@ const badgeVariants = cva(
         "on-dark": "bg-surface-inverted-fg/15 font-semibold text-surface-inverted-fg",
         "on-tint": "bg-foreground/15 font-semibold text-foreground",
       },
+      // leading-none on every text size: a line box taller than the pill
+      // rounds the label a pixel off-centre on 1x screens (1080p monitors).
       size: {
-        default: "h-5 px-2 py-0.5 text-xs",
-        sm: "h-4 px-1.5 py-0 text-2xs",
+        default: "h-5 px-2 py-0.5 text-xs leading-none",
+        sm: "h-4 px-1.5 py-0 text-2xs leading-none",
         /* Marketing "eyebrow" pills sit above a headline and need to read at
          * arm's length, unlike the in-table and in-card badges above. */
-        lg: "h-7 gap-1.5 px-3 py-1 text-xs [&>svg]:size-3.5!",
+        lg: "h-7 gap-1.5 px-3 py-1 text-xs leading-none [&>svg]:size-3.5!",
         /* Card corner ribbon: square except for the inside corner, so it sits
          * flush in the card's top-right. The card must clip it
          * (`overflow-hidden`). Deliberately no `[&>svg]:size-*` override —
          * the base's 12px is what the designs draw, and a second !important
          * size here would just fight it. */
-        ribbon: "h-5 rounded-none rounded-bl-xl px-4 py-0.5 text-xs",
+        ribbon: "h-5 rounded-none rounded-bl-xl px-4 py-0.5 text-xs leading-none",
         count: "h-4 min-w-4 rounded-full px-1 py-0 text-2xs leading-none",
         dot: "size-2.5 rounded-full p-0",
       },
@@ -67,7 +69,7 @@ const badgeVariants = cva(
        * phone rows, the order summary): the small one, so it sits beside a
        * price and its struck price without wrapping them (plan type scale,
        * styles/index.css). */
-      { variant: "discount", size: "default", class: "h-4 px-1.5 py-0 text-2xs" },
+      { variant: "discount", size: "default", class: "h-4 px-1.5 py-0 text-2xs leading-none" },
     ],
     defaultVariants: {
       variant: "default",

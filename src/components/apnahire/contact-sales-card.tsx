@@ -31,15 +31,20 @@ export function ContactSalesCard({ onContactSales, className }: ContactSalesCard
       )}
     >
       <div className="flex flex-1 flex-col gap-3">
-        <h3 className="text-xl font-semibold text-foreground">Need a custom solution?</h3>
+        {/* Phones: the plan cards' name size ("Unlimited monthly plan"),
+            user call 2026-10-30; desktop keeps the larger title. */}
+        <h3 className="text-plan-name text-foreground md:text-xl md:font-semibold">Need a custom solution?</h3>
         <p className="text-sm text-muted-foreground">
           Tell us more about your hiring needs and our team will get in touch with you.
         </p>
       </div>
+      {/* Phones: the small card CTA, as the Unlimited card's "Buy now"
+          (standard sm, 14px sides). Desktop keeps the 40px button. */}
       <Button
         type="button"
         variant="outline"
-        className="h-10 shrink-0 px-6 font-semibold"
+        size="sm"
+        className="shrink-0 px-3.5 md:h-10 md:min-h-10 md:px-6 md:text-sm"
       >
         Contact sales
       </Button>

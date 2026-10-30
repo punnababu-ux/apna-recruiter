@@ -61,6 +61,8 @@ import {
   CreditsToPlanDialog,
 } from "@/components/apnahire/offers/upsell-dialogs"
 import { CheckoutTopBar } from "@/components/apnahire/checkout-top-bar"
+import { ExtraOffBanner, ExtraOffBar } from "@/components/apnahire/offers/extra-off-line"
+import { lineTabs, useCheckoutVersion, versionAtLeast } from "@/hooks/use-checkout-version"
 import { HOME } from "@/lib/apnahire/nav"
 import { useSession } from "@/hooks/use-session"
 import {
@@ -238,8 +240,30 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   // hero's own (full-size) tab switcher scrolls out from under it. Timing
   // and thresholds match the source self-checkout site's header exactly
   // (scrollY > 5, 250ms cubic-bezier(0.16,1,0.3,1)).
+  const checkoutVersion = useCheckoutVersion()
+  // V13: phone job packs grouped in a panel, as express V11 (user call, 2026-10-30).
+  const groupedPacks = versionAtLeast(checkoutVersion, "v13")
+  // V6 (phones): a tap on a card buys it (order summary; Enterprise: contact
+  // sales); no sticky bar, no selected card.
+  const tapToBuy = versionAtLeast(checkoutVersion, "v6")
   const [showCompactTabs, setShowCompactTabs] = React.useState(false)
   const heroTabsRef = React.useRef<HTMLDivElement>(null)
+  // The docked tab strip (below lg) hides while the page scrolls down and
+  // comes back on the first scroll up (user call, 2026-10-30). 8px of
+  // travel before it flips, so a jittery thumb doesn't flicker it.
+  const [scrollingDown, setScrollingDown] = React.useState(false)
+  React.useEffect(() => {
+    let last = window.scrollY
+    const onScroll = () => {
+      const y = window.scrollY
+      if (Math.abs(y - last) < 8) return
+      setScrollingDown(y > last)
+      last = y
+    }
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [])
+  const showDockedTabs = !scrollingDown
 
   React.useEffect(() => {
     const el = heroTabsRef.current
@@ -543,6 +567,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
     // the title (content/price-change.ts). /pricing shows today's prices.
     <UpcomingPricesProvider enabled={!isLoggedOut}>
       <div
+        data-checkout-version={checkoutVersion}
         className={cn(
           "flex flex-col",
           // Logged-out renders inside (marketing)/layout.tsx, which already
@@ -561,7 +586,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                the (marketing) layout) is the header, and compactTabSwitcher
                above is published into it rather than rendered here. ── */
           <CheckoutTopBar
-            title="Plans"
+            title="Select plans"
             // Home, like every other page's Back (lib/apnahire/nav).
             onBack={() =>
               offer.returning
@@ -570,6 +595,8 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
             }
             backLabel="Back to jobs"
             showCenter={showCompactTabs}
+            // V2 says the 10% in a banner in the page instead (ExtraOffBanner).
+            below={versionAtLeast(checkoutVersion, "v2") ? undefined : <ExtraOffBar deadline={offer.deadline} className="md:hidden" />}
             // Revealed from lg, not md: with the title and the full-size
             // credits pill in the row, four tabs no longer fit between
             // them at tablet widths.
@@ -579,16 +606,33 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
           />
         )}
         {!isLoggedOut && (
-          /* Below lg the bar has no room for the tabs, so they dock as a strip
-             under it once the hero's row scrolls away. A zero-height sticky
-             anchor (no space in the layout) carrying the strip, so nothing
-             shifts when it appears. */
-          <div className="sticky top-16 z-sticky h-0 lg:hidden">
+          /* Below lg the tabs live in a white strip under the bar from the
+             start (user call, 2026-10-30), not in the hero: in the flow, so
+             it takes its own space at the top, and sticky under the bar. It
+             slides up behind the bar while the page scrolls down and comes
+             back on the first scroll up. */
+          <div
+            className={cn(
+              "sticky z-docked lg:hidden",
+              // Under the 10% offer strip too, when it shows (phones).
+              offer.claimed && !versionAtLeast(checkoutVersion, "v2") ? "top-16 max-md:top-26" : "top-16"
+            )}
+          >
             <div
-              inert={!showCompactTabs}
+              inert={!showDockedTabs}
               className={cn(
-                "absolute inset-x-0 top-0 flex h-16 items-center no-scrollbar overflow-x-auto border-b border-border bg-card/95 px-4 shadow-card backdrop-blur-xl transition-interactive duration-enter ease-out-ui",
-                showCompactTabs ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-2 opacity-0"
+                // shadow-card: it floats over the page as it scrolls (a pinned
+                // header, AGENTS.md "Card shadows").
+                "flex h-16 items-center no-scrollbar overflow-x-auto border-b border-border bg-card shadow-card transition-interactive duration-enter ease-out-ui",
+                // Underline tabs carry their own 16px sides, inside the scroll,
+                // so they start 16px in but can scroll off the edge; the pill
+                // strip keeps its padding on the strip.
+                !lineTabs(checkoutVersion) && "px-4",
+                // V2/V9's underline tabs sit on the strip's bottom edge, so the
+                // underline meets the divider; the strip is the tabs' 48px,
+                // with no empty band above them.
+                lineTabs(checkoutVersion) && "h-12 items-end",
+                showDockedTabs ? "translate-y-0" : "pointer-events-none -translate-y-full"
               )}
             >
               <DockedPlanTabs value={activeTab} onValueChange={changeTab} />
@@ -606,6 +650,15 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
             activeTab={activeTab}
             onTabChange={changeTab}
             tabsRef={heroTabsRef}
+            // Logged in, phones and tablets get the tabs in the strip under
+            // the top bar instead.
+            tabsClassName={isLoggedOut ? undefined : "max-lg:hidden"}
+            // Phones and tablets: 16px from the tab strip to whatever comes
+            // first, banner or heading, on every tab (user call, 2026-10-30).
+            // The hero adds no padding of its own; the banner brings 16px
+            // above it, and the body's 16px sits under it.
+            className={isLoggedOut ? undefined : "max-lg:py-0"}
+            bannerClassName="max-lg:pt-4"
             intro={isLoggedOut ? PRICING_INTRO : undefined}
             // Every tab, so the page doesn't jump as the tabs change.
             // A plan that ended this week: the same "expired" banner as the
@@ -618,10 +671,15 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
             }
           />
 
-          <div className={"px-4 pb-28 sm:px-8 md:pb-12 lg:px-12"}>
+          {/* Phones: 32px under the last line ("*GST applicable"); the room
+              for the fixed buy bar is kept at the page's end instead (the
+              trusted-by band), not here above the FAQ (user call, 2026-10-30). */}
+          <div className={cn("px-4 pb-8 sm:px-8 md:pb-12 lg:px-12", !isLoggedOut && "max-lg:pt-4 max-md:flex max-md:flex-col max-md:gap-4")}>
+            {/* V2, phones: the claimed 10% above the tab's heading ("Job credit packages"). */}
+            {versionAtLeast(checkoutVersion, "v2") && <ExtraOffBanner deadline={offer.deadline} className="md:hidden" />}
             {activeTab === "jobs" ? (
-              <div className="mx-auto flex max-w-6xl flex-col gap-3">
-                <div className="flex flex-col gap-5">
+              <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 max-md:gap-4">
+                <div className="flex flex-col gap-5 max-md:gap-4">
                   {/* Desktop: side by side from xl. The mobile/desktop split is at
                       md everywhere on this page (hero switcher, bundle lists,
                       sticky CTA) so 640–767px gets one consistent layout. */}
@@ -642,10 +700,9 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                         onSelectBundle={(bundle) => setSelectedPackage({ kind: "job", bundle })}
                       />
                       <p className="min-h-5 text-xs text-checkout-hero-fg">
-                        1 job credit = 1 classic job ・ 2 credits = 1 premium job ・ 4
-                        credits = 1 super premium job.{" "}
+                        {/* One way in to what a credit buys (user call, 2026-10-30). */}
                         <Button type="button" variant="link-inline" size="sm" className="font-semibold" onClick={() => setJobTypesOpen(true)}>
-                          Need more info?
+                          What 1 job credit will get you?
                         </Button>
                       </p>
                     </div>
@@ -664,32 +721,63 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
 
                   {/* Mobile: tap-to-select job bundles + the sticky CTA. Database
                       credits live on their own tab, as on desktop. */}
-                  <div className="flex flex-col gap-4 md:hidden">
+                  <div className={cn("flex flex-col md:hidden", groupedPacks ? "gap-3" : "gap-4")}>
                     {/* 1. Job credits section */}
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-4">
                       <JobCreditBundles
                         extraOff={offer.claimed}
                         onBuyNow={handleSelectBundle}
                         onBuySingleCredit={handleBuySingleCredit}
                         selectedBundleId={selectedPackage.kind === "job" ? selectedPackage.bundle.id : null}
-                        onSelectBundle={(bundle) => setSelectedPackage({ kind: "job", bundle })}
+                        onSelectBundle={(bundle) => (tapToBuy ? handleSelectBundle(bundle) : setSelectedPackage({ kind: "job", bundle }))}
+                        // V13: the packs in one panel, the credit links inside it.
+                        grouped={groupedPacks}
+                        footer={
+                          // Side by side when the panel has room (≥288px inside,
+                          // most phones); the link over the button below that
+                          // (320px phones). Decided by the panel, not the copy.
+                          <div className="@container px-1">
+                          <div className="flex flex-col items-start gap-3 @2xs:flex-row @2xs:items-center @2xs:justify-between">
+                            <Button type="button" variant="link-inline" size="sm" className="text-xs font-semibold text-foreground" onClick={() => setJobTypesOpen(true)}>
+                              {/* V13: plainer, and what the dialog explains (user call, 2026-10-30). */}
+                              How job credits work
+                            </Button>
+                            <Button type="button" variant="outline" size="sm" className="shrink-0 px-3.5" onClick={handleBuySingleCredit}>
+                              Buy a single job credit
+                            </Button>
+                          </div>
+                          </div>
+                        }
                       />
-                      <p className="text-xs text-checkout-hero-fg">
-                        1 job credit = 1 classic job ・ 2 credits = 1 premium job ・ 4
-                        credits = 1 super premium job.{" "}
-                        <Button type="button" variant="link-inline" size="sm" className="font-semibold" onClick={() => setJobTypesOpen(true)}>
-                          Need more info?
-                        </Button>
-                      </p>
+                      {/* What a credit buys, and the single credit, side by side
+                          (user call, 2026-10-30). The single credit is a small
+                          outline pill: findable, not competing with the green
+                          sticky CTA. The small card CTA, as the Unlimited
+                          card's "Buy now" (standard sm, 14px sides). */}
+                      {!groupedPacks && (
+                        <div className="flex items-center justify-between gap-3">
+                          <Button type="button" variant="link-inline" size="sm" className="text-xs font-semibold text-checkout-hero-fg" onClick={() => setJobTypesOpen(true)}>
+                            What 1 job credit will get you?
+                          </Button>
+                          <Button type="button" variant="outline" size="sm" className="shrink-0 px-3.5" onClick={handleBuySingleCredit}>
+                            Buy 1 job credit
+                          </Button>
+                        </div>
+                      )}
                     </div>
 
-                    {/* 2. apna Unlimited Inset Card */}
+                    {/* 2. apna Unlimited: not one of the choices above (user
+                        call, 2026-10-30). Its Buy now, or a tap anywhere on
+                        it, goes straight to its checkout, as in express. */}
                     <UnlimitedSideCard
                       extraOff={offer.claimed}
-                      mobileSelect={{
-                        selected: selectedPackage.kind === "unlimited",
-                        onSelect: () => setSelectedPackage({ kind: "unlimited" }),
-                      }}
+                      onBuyNow={() => buyMonthly()}
+                      // V3: a choice like the packs above; the sticky CTA buys it.
+                      mobileSelect={
+                        versionAtLeast(checkoutVersion, "v3")
+                          ? { selected: selectedPackage.kind === "unlimited", onSelect: () => setSelectedPackage({ kind: "unlimited" }) }
+                          : undefined
+                      }
                     />
                   </div>
 
@@ -701,31 +789,30 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                 <GstNote />
               </div>
             ) : activeTab === "database" ? (
-              <div className="mx-auto flex max-w-6xl flex-col gap-4">
-                <div className="flex flex-col gap-3">
+              <div className="mx-auto flex w-full max-w-6xl flex-col gap-4">
+                <div className="flex flex-col gap-3 max-md:gap-4">
                   <DatabaseCreditBundles
                     extraOff={offer.claimed}
                     onBuyNow={handleBuyDatabaseBundle}
                     selectedBundleId={selectedPackage.kind === "db" ? selectedPackage.bundle.id : undefined}
-                    onSelectBundle={(bundle) => setSelectedPackage({ kind: "db", bundle })}
+                    onSelectBundle={(bundle) => (tapToBuy ? handleBuyDatabaseBundle(bundle) : setSelectedPackage({ kind: "db", bundle }))}
                   />
                   <p className="text-xs text-checkout-hero-fg">
-                    1 credit = 1 candidate profile unlock ・ 2 credits = 1 candidate
-                    profile export to excel
+                    1 credit = 1 candidate profile unlock
                   </p>
                 </div>
 
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-3 max-md:gap-4">
                   <ContactSalesCard onContactSales={contactSales} />
                   <GstNote />
                 </div>
               </div>
             ) : activeTab === "unlimited" ? (
-              <div className="mx-auto flex max-w-6xl flex-col gap-4">
+              <div className="mx-auto flex w-full max-w-6xl flex-col gap-4">
                 <SubscriptionPlans
                   extraOff={offer.claimed}
                   selectedPlan={subscriptionPlan}
-                  onSelectPlan={setSubscriptionPlan}
+                  onSelectPlan={(id) => (tapToBuy ? onUnlimitedCard(id) : setSubscriptionPlan(id))}
                   slots={subscriptionSlots}
                   onSlotsChange={setSubscriptionSlots}
                   current={change?.current}
@@ -739,14 +826,14 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                 />
                 {/* Phones: GST under the Contact sales card, as on the Database
                     tab. Desktop keeps it beside the single-city note above. */}
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-4">
                   <ContactSalesCard onContactSales={contactSales} />
                   <GstNote className="md:hidden" />
                 </div>
               </div>
             ) : (
-              <div className="mx-auto flex max-w-6xl flex-col gap-4">
-                <EnterprisePricingTable onContactSales={contactSales} selectedTier={enterpriseTier} onSelectTier={setEnterpriseTier} />
+              <div className="mx-auto flex w-full max-w-6xl flex-col gap-4">
+                <EnterprisePricingTable onContactSales={contactSales} selectedTier={enterpriseTier} onSelectTier={(tier) => (tapToBuy ? contactSales() : setEnterpriseTier(tier))} />
               </div>
             )}
           </div>
@@ -759,7 +846,8 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
              apna — numbers and quotes (gradient), trusted by (white, last). ── */}
         <FaqBand />
         <WhyHireBand stats={PRICING_STATS} />
-        <TrustedByBand />
+        {/* Phones: room at the very end so the fixed buy bar never covers the logos. */}
+        <TrustedByBand className={isLoggedOut || tapToBuy ? undefined : "max-md:pb-32"} />
 
         {/* No footer band here for logged-out: (marketing)/layout.tsx already
             renders SiteFooter below this component. The logged-in page ends
@@ -769,6 +857,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
         {/* Mobile sticky bottom CTA dock: buys the current tab's selection
             (Enterprise: Contact sales). Prices carry the claimed offer, as the
             rows above do. */}
+        {!tapToBuy && (
         <StickyCtaBar>
           <Button
             type="button"
@@ -781,6 +870,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
             {stickyCtaLabel}
           </Button>
         </StickyCtaBar>
+        )}
 
         <CheckoutDrawer
           open={drawerOpen}
@@ -923,6 +1013,12 @@ function DockedPlanTabs({
   onValueChange: (tab: PricingTab) => void
 }) {
   const [wordmark] = useUnlimitedWordmark()
+  // V2: standard underline tabs instead of the pill chips (self-checkout only).
+  if (lineTabs(useCheckoutVersion())) {
+    // w-max: the row keeps its full width and scrolls, never squeezed and
+    // clipped (Database was cut off at 320–360px); px-4 scrolls with it.
+    return <CompactPlanTabs variant="line" value={value} onValueChange={onValueChange} className="w-max px-4" />
+  }
   return (
     <>
       <div className="w-full min-w-0 md:hidden">
@@ -931,6 +1027,12 @@ function DockedPlanTabs({
           value={value}
           onValueChange={onValueChange}
           appearance="checkout"
+          // Unselected tabs quieter than the checkout preset's gray-700, so
+          // the selected one leads (user call, 2026-10-30). Icons and the
+          // wordmark follow the text colour.
+          inactiveClassName="text-muted-foreground"
+          // The selected chip's label bold, every version (user call, 2026-10-30).
+          mobileActiveClassName="text-checkout-primary font-bold"
           mobileBleedClassName="-mx-4"
           mobileGutterClassName="px-4"
         />
@@ -944,21 +1046,32 @@ function CompactPlanTabs({
   value,
   onValueChange,
   className,
+  variant = "checkout",
 }: {
   value: PricingTab
   onValueChange: (tab: PricingTab) => void
   className?: string
+  /** "line": the standard underline tabs (V2's phone strip). */
+  variant?: "checkout" | "line"
 }) {
   const [wordmark] = useUnlimitedWordmark()
   return (
     <Tabs value={value} onValueChange={(v) => onValueChange(v as PricingTab)} className={className}>
-      <TabsList variant="checkout">
+      {/* V2's underline tabs: green selection, 32px apart (user call, 2026-10-30). */}
+      <TabsList
+        variant={variant}
+        tone={variant === "line" ? "checkout" : undefined}
+        // The Unlimited tab's underline takes its wordmark's gold, not green.
+        data-product={variant === "line" && value === "unlimited" ? "unlimited" : undefined}
+        className={variant === "line" ? "gap-8" : undefined}
+      >
         {pricingTabs(wordmark).map((tab) => (
           <TabsTrigger
             key={tab.value}
             value={tab.value}
             data-product={tab.accent}
-            className={cn("px-3.5", tab.accent && "text-product-accent!")}
+            // The selected tab's label bold, as the chips (user call, 2026-10-30).
+            className={cn("px-3.5 data-active:font-bold", tab.accent && "text-product-accent!")}
           >
             {tab.compactLogo ? (
               <>

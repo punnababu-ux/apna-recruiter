@@ -368,9 +368,10 @@ that is a defect even when each looks fine alone. The shared ones:
 - **Phone chip rows**: `MobileChipRow` / `SectionChips`, the self-checkout
   styling.
 
-One accepted difference (user call, 2026-10-29): the apna Unlimited card is
-titled "Unlimited job posts" in self-checkout and "Monthly plan" in express
-checkout. Same component (`MobileUnlimitedCard`), different title.
+The phone apna Unlimited card (`MobileUnlimitedCard`) is titled "Unlimited
+monthly plan" in both checkouts (user call, 2026-10-30). It is not one of
+the plan choices: it has its own "Buy now", and a tap anywhere on it goes
+straight to its checkout.
 
 **CTAs in a pop-up — side by side, everywhere** (user call, 2026-10-29).
 Every dialog and bottom sheet with two buttons puts them in one row, on
@@ -708,9 +709,12 @@ cards) and every upsell tile (`OfferChoice`), both checkouts, light and dark
    just ₹1,799 /month", "₹585 /credit") is green only when it stands alone.
 2. **The claimed 10% offer comes first.** With the exit offer applied, the
    order under the price is: "Extra 10% off applied" (`ExtraOffLine`, green;
-   "Extra 10% off" on phones — both from `EXTRA_OFF`, never typed by hand),
-   then the per-unit note, now gray (`text-muted-foreground`). Never the
-   note above the offer line.
+   from `EXTRA_OFF`, never typed by hand), then the per-unit note, now gray
+   (`text-muted-foreground`). Never the note above the offer line. On phones
+   (user call, 2026-10-30) the cards don't say it: `ExtraOffBar` says it
+   once, in a strip at the bottom of the pinned header, and the card
+   prices still carry the 10%. The phone credit packs put the per-credit
+   note under "Valid for N days", green.
 3. **The % OFF pill is smoked glass, not green.** `Badge variant="discount"`
    sits on `--surface-glass-dark` (the job credits panel's fill) with green
    text. Change it through `--checkout-discount-bg`, never per card. It
@@ -766,15 +770,20 @@ cards) and every upsell tile (`OfferChoice`), both checkouts, light and dark
    sold (a retired plan). Renewals charge `paid`, never
    today's price, and no "new price" notice is shown for it.
 
-11. **A plan card's radio leads the card** (user call, 2026-10-29; it sat
-   beside the amount earlier that day). On every selectable plan card — job
-   tiers, job credit packs, Database packs, apna Unlimited, subscription
-   rows, both checkouts — the radio is the first thing, left of the plan
-   name, in the same column as the feature icons below it. The price stays
-   right, level with the name. `MobilePlanRow` and `MobileUnlimitedCard`
-   draw it there; a new selectable plan card composes them. The per-unit
-   note ("₹585 /credit") sits on the right too, under the discount row,
-   with the amount — never in the left column (2026-10-29).
+11. **A phone plan card shows its selection with a corner tick** (user call,
+   2026-10-30; the radio led the card from 2026-10-29). No radio: the
+   selected card takes the green edge and a green corner tab with a white
+   tick, flush in its top-right corner; "Recommended" is the same kind of
+   tab in the top-left (blue, with the sparkle). Both sit inside the card
+   (20px tall; 22px top padding makes room), so cards are 16px apart on every tab,
+   both checkouts. Under the name and price, every
+   card lists what it includes in one line (no ✕ for what it lacks; a plan
+   with nothing extra has no line and no rule); nothing opens or closes. Job cards show no database credits; only the
+   Unlimited card does. `MobilePlanRow` and `MobileUnlimitedCard` draw
+   this; a new selectable plan card composes them. Other styles (radio
+   first, radio after the price, green tint; expand on select) stay
+   switchable from the hidden preview settings (`usePlanCardStyle`) while
+   the design is explored.
 
 ---
 
