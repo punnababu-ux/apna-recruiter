@@ -348,11 +348,15 @@ off-white = paper, neutral parts.
 > Subject: three chunky rounded blocks of exactly the same height side by side on one level, turned about 20°, the middle one with a raised star. Mint, sky blue and caramel blocks, a gold star (#FFC94D).
 
 **raise-the-bar**
+> ✅ Round 1 approved (2026-10-30). Bowl is round, slightly mug-like; the stem and base make it a trophy. If redone: "a cup that flares wider at the rim". Awaiting the transparent file.
+>
 > Subject: a chunky rounded trophy cup with two thick handles on a short base, turned about 20°. Gold cup (#FFC94D), a sky blue base (#6CB8F0).
 
 ### Interview prep lounge
 
 **student**
+> ✅ Round 1 installed (2026-10-30).
+>
 > Subject: a chunky rounded graduation cap, turned about 20°, a thick tassel hanging over its edge. Sky blue cap (#6CB8F0), a gold tassel (#FFC94D).
 
 **university**
