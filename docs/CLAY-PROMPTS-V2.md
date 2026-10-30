@@ -279,6 +279,8 @@ off-white = paper, neutral parts.
 > Subject: a chunky rounded headset, turned about 20°, a thick band, two ear cups, and a prominent microphone arm as thick as the band, curving to the front, ending in a large rounded mic about the size of a third of an ear cup. Sky blue band and ear cups (#6CB8F0), white cushions, a gold mic tip (#FFC94D).
 
 **smart-inbound**
+> ✅ Round 1 installed (2026-10-30).
+>
 > Subject: a chunky rounded funnel, turned about 20°, with two small profile cards dropping into its wide top, each card and its avatar fully visible. Sky blue funnel (#6CB8F0), white cards with raised gold avatars (#FFC94D). No tray (no-results is the in-tray).
 
 **database-search**
