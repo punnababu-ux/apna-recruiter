@@ -43,8 +43,6 @@ export interface JobPlanPreviewSwitcherProps {
   offer?: { claimed: boolean; returning: boolean; onReturningChange: (v: boolean) => void; onExpireSoon: () => void; onReset: () => void }
   /** The job's work type, normally read from the draft; overridable here. */
   wfh?: { value: boolean; onChange: (wfh: boolean) => void }
-  /** New user vs one who has posted a job before (the zero-balance chip). */
-  postedBefore?: { value: boolean; onChange: (v: boolean) => void }
 }
 
 export function JobPlanPreviewSwitcher({
@@ -54,7 +52,6 @@ export function JobPlanPreviewSwitcher({
   onCreditBalanceChange,
   offer,
   wfh,
-  postedBefore,
 }: JobPlanPreviewSwitcherProps) {
   return (
     <PrototypeSettings label="Preview job-plan state">
@@ -76,16 +73,6 @@ export function JobPlanPreviewSwitcher({
           </PrototypeOption>
         ))}
       </PrototypeSection>
-      {postedBefore && (
-        <PrototypeSection title="Recruiter">
-          <PrototypeOption active={!postedBefore.value} onClick={() => postedBefore.onChange(false)}>
-            New user (no job posted)
-          </PrototypeOption>
-          <PrototypeOption active={postedBefore.value} onClick={() => postedBefore.onChange(true)}>
-            Existing user (posted a job)
-          </PrototypeOption>
-        </PrototypeSection>
-      )}
       {wfh && (
         <PrototypeSection title="Job">
           <PrototypeOption active={!wfh.value} onClick={() => wfh.onChange(false)}>

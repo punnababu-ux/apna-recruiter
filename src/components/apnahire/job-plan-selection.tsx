@@ -216,9 +216,6 @@ export function JobPlanSelection() {
   // 2026-10-19): the job's work type comes from the posting draft; the
   // review switcher can override it.
   const [wfh, setWfh] = React.useState(false)
-  // Has posted a job before. No real source yet (the review switcher sets it):
-  // only they see a "0" balance; a new user sees no chip at all.
-  const [postedBefore, setPostedBefore] = React.useState(false)
   React.useEffect(() => {
     if (readDraft().locationType === "home") setWfh(true)
   }, [])
@@ -407,10 +404,9 @@ export function JobPlanSelection() {
         // Phones show the step in the bottom bar, as on the questions.
         stepperClassName="max-sm:hidden"
         // The balance this page draws on, in the bar (no Save & exit here).
-        // At zero, only for someone who has posted before: "0" tells them
-        // why this post costs money; a new user gains nothing from it.
+        // Hidden at zero for everyone: "0" adds nothing the card prices do not say.
         actions={
-          hasAnyCredits(creditBalance) || postedBefore ? (
+          hasAnyCredits(creditBalance) ? (
             <AvailableCreditsButton chip balance={{ job: creditBalance.job, aiCalling: creditBalance["ai-calling"] }} />
           ) : undefined
         }
@@ -588,7 +584,6 @@ export function JobPlanSelection() {
         onCreditBalanceChange={setCreditBalance}
         offer={{ claimed: offer.claimed, returning: offer.returning, onReturningChange: offer.setReturning, onExpireSoon: offer.expireSoon, onReset: offer.reset }}
         wfh={{ value: wfh, onChange: setWfh }}
-        postedBefore={{ value: postedBefore, onChange: setPostedBefore }}
       />
     </div>
   )
