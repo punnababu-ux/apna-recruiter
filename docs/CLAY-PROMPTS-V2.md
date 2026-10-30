@@ -320,6 +320,8 @@ off-white = paper, neutral parts.
 > Subject: a thick rounded heart, turned about 20°, a raised star on its face. Coral heart (#F06A6F), a white star.
 
 **empathy**
+> ✅ Round 1 installed (2026-10-30).
+>
 > Subject: two thick rounded speech bubbles overlapping, each with a clear tail, the front one with a raised heart. Sky blue back bubble (#6CB8F0), mint front bubble (#7FD8B4), a coral heart (#F06A6F). No dots (contact is the bubble with dots).
 
 **transparency**
