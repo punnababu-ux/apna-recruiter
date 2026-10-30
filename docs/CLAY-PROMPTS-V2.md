@@ -332,7 +332,15 @@ off-white = paper, neutral parts.
 > Subject: a chunky rounded window with a thick frame and two square panes of clear glass, turned about 20°; the right pane swung wide open. The glass is a very pale see-through sky tint with two short diagonal white glare streaks on each pane (the familiar "glass" mark). Sky blue frame (#6CB8F0), a chunky gold handle on each pane (#FFC94D). No solid panes, no eye.
 
 **momentum**
-> Subject: a chunky rounded paper plane in flight, turned about 20°, a short thick curved trail behind it. Sky blue plane (#6CB8F0), a mint trail (#7FD8B4).
+> Round 2 (user: looks bad): the wavy tail joined to the plane makes one tadpole-like shape. Curved trails keep failing; use short straight speed lines instead.
+>
+> Round 1 (2026-10-30): plane right. But the trail is three bundled tubes curling down into a hook: reads as a tentacle, and a downward hook says "falling", not momentum.
+>
+> ✅ Round 4 approved (2026-10-30): plane alone, mint crease. Installed.
+>
+> Round 3 (user: looks like the plane is pooping): anything behind the tail reads as dropping out of it. Plane alone.
+>
+> Subject: a chunky rounded paper plane alone, climbing steeply to the upper right at about 45°, turned about 20° so its folded wings and thickness show. Sky blue plane (#6CB8F0) with a mint fold line along its centre crease (#7FD8B4). Nothing behind or below it: no trail, no lines, no clouds.
 
 **ownership-over-hierarchy**
 > Subject: three chunky rounded blocks of exactly the same height side by side on one level, turned about 20°, the middle one with a raised star. Mint, sky blue and caramel blocks, a gold star (#FFC94D).
