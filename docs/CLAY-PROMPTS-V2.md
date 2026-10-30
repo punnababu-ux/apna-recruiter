@@ -241,7 +241,11 @@ off-white = paper, neutral parts.
 ### Enterprise
 
 **employer-branding**
-> Subject: a chunky rounded award rosette, turned about 20°, with two thick ribbon tails hanging below and a raised star in the centre. Gold rosette (#FFC94D), sky blue tails (#6CB8F0), a white star.
+> ✅ Round 2 approved (2026-10-30): turned, edge shows, even scallops. Installed.
+>
+> Round 1 (2026-10-30): reads, colours right. Came out dead flat-on (0°) and the scalloped rim is slightly wobbly. Regenerate with the reference attached.
+>
+> Subject: a chunky rounded award rosette, turned about 25° to the right so its thick edge shows, an evenly scalloped rim (12 identical scallops), with two thick ribbon tails hanging below and a raised star in the centre. Gold rosette (#FFC94D), sky blue tails (#6CB8F0), a white star.
 
 **team-management**
 > Subject: three rounded ID badges fanned out in a clear arc so each badge and its avatar shows whole, each with a raised round avatar. Sky blue, mint and gold badges (#6CB8F0, #7FD8B4, #FFC94D), white avatars. Always a group of three (lounge-access is a single pass).
