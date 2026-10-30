@@ -45,7 +45,7 @@ export function CityLockDialog({
   return (
     <PlanPopup open={open} onOpenChange={onOpenChange}>
       <PopupHeader
-        art="access"
+        art="city-lock"
         title={city ? `Lock your plan to ${city}?` : "Set your hiring city"}
         description="Your plan hires in one city."
       />

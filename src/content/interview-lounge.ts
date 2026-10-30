@@ -203,7 +203,7 @@ export const LOUNGE = {
       },
       {
         title: "Access",
-        art: "access",
+        art: "lounge-access",
         description: "Students access the Lounge and select the role or career pathway they want to prepare for.",
       },
       {

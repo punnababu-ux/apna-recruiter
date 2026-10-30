@@ -154,7 +154,16 @@ off-white = paper, neutral parts.
 > Subject: a thick round badge with a chunky raised check mark in the centre, nothing else. Mint body (#7FD8B4), white check.
 
 **access** (city locked, access)
-> Subject: a chunky rounded padlock, locked: the thick shackle fully closed into the body, a raised keyhole on its front. Gold body (#FFC94D), off-white shackle (#F4F1EC), a dark slate keyhole.
+> Round 1 (2026-10-30): well made (closed, chunky). But `access` serves two opposite meanings: "Lock your plan to a city" (city-lock dialog) and the Interview lounge's "Access" step (students get in). A locked padlock is wrong for the second, and a plain padlock doesn't say "city" for the first. Split into **city-lock** (this) and **lounge-access** (below).
+>
+> ✅ city-lock installed (2026-10-30); the city-lock dialog uses it.
+>
+> Subject (**city-lock**): a chunky rounded padlock, locked: the thick shackle fully closed into the body; on its front, instead of a keyhole, a raised map pin. Gold body (#FFC94D), off-white shackle (#F4F1EC), a sky blue map pin (#6CB8F0) with a white dot.
+
+**lounge-access** (Interview lounge "Access" step)
+> ✅ Installed (2026-10-30); the lounge Access step uses it. Note: team-management is also ID badges (three, fanned); different page, but keep that one a group so they never look alike.
+>
+> Subject: a chunky rounded entry pass on a short lanyard loop, a raised round avatar at its top and a raised check mark below it. Sky blue pass (#6CB8F0), white avatar, a mint check (#7FD8B4), an off-white loop (#F4F1EC).
 
 **no-results** (empty search)
 > Subject: a chunky magnifying glass tilted at an angle; its white lens shows only a raised question mark, no person and nothing else. Sky blue ring and handle (#6CB8F0), white lens, a dark slate question mark.

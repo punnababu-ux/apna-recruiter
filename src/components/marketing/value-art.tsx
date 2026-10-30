@@ -12,6 +12,8 @@ import Image from "next/image"
 import { cn } from "@/lib/utils"
 import {
   Award,
+  UserCheck,
+  MapPin,
   Pencil,
   Clock,
   Briefcase,
@@ -81,6 +83,8 @@ export type ValueName =
   // Pop-ups: one object beside the title
   | "job-types"
   | "draft"
+  | "city-lock"
+  | "lounge-access"
   | "expired"
 
 const ICON: Record<ValueName, ComponentType<{ className?: string; "aria-hidden"?: boolean }>> = {
@@ -116,6 +120,8 @@ const ICON: Record<ValueName, ComponentType<{ className?: string; "aria-hidden"?
   "coming-soon": Rocket,
   "job-types": Briefcase,
   draft: Pencil,
+  "city-lock": MapPin,
+  "lounge-access": UserCheck,
   expired: Clock,
 }
 
@@ -155,6 +161,8 @@ const READY = new Set<ValueName>([
   "no-results",
   "job-types",
   "draft",
+  "city-lock",
+  "lounge-access",
   "expired",
 ])
 
