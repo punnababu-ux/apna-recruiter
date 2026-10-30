@@ -166,7 +166,15 @@ off-white = paper, neutral parts.
 > Subject: a chunky rounded entry pass on a short lanyard loop, a raised round avatar at its top and a raised check mark below it. Sky blue pass (#6CB8F0), white avatar, a mint check (#7FD8B4), an off-white loop (#F4F1EC).
 
 **no-results** (empty search)
-> Subject: a chunky magnifying glass tilted at an angle; its white lens shows only a raised question mark, no person and nothing else. Sky blue ring and handle (#6CB8F0), white lens, a dark slate question mark.
+> Round 1 (2026-10-30): well made, but a "?" also reads as help/FAQ. User call: show an empty box instead.
+>
+> Round 2: empty reads, but the hinged lid makes it a jewellery / ring box, and the magnifier floats over the lid, not into the box.
+>
+> ✅ Round 4 approved (2026-10-30): desk in-tray, empty, magnifier on the rim. Installed.
+>
+> Round 3: came out round; a round caramel tub reads as a pet bowl. Magnifier still thin.
+>
+> Subject: a wide, shallow, open-top rectangular tray (four straight sides, softly rounded corners, like a desk in-tray), no lid at all, seen from slightly above, clearly empty inside (a plain inner floor), with a chunky magnifying glass (thick ring and handle, as thick as the tray's walls) resting on its front rim, its lens over the empty inside. Caramel box (#E0A76A) with an off-white inner floor (#F4F1EC), a sky blue magnifier ring and handle (#6CB8F0), a white lens. Nothing in the box, nothing in the lens.
 
 **coming-soon** (pages still being built)
 > Subject: a chunky rounded traffic cone with two raised stripes, standing upright on a square base (work in progress). Coral cone (#F06A6F), white stripes, an off-white base (#F4F1EC). No rocket.
