@@ -125,6 +125,8 @@ off-white = paper, neutral parts.
 > Subject: a rounded hourglass, slightly tilted, finished: the top bulb completely empty, all the sand settled in a mound at the bottom, nothing falling. Coral frame (#F06A6F), off-white glass (#F4F1EC), gold sand (#FFC94D).
 
 **contact** (Contact us, Talk to sales)
+> ✅ Round 1 approved (2026-10-30). Slightly flatter than the set (turned ~10°, not 20°); fine at 56px. Installed.
+>
 > Subject: a thick rounded speech bubble with a clear tail at its lower left, three raised dots inside. Sky blue bubble (#6CB8F0), white dots.
 
 **job-types** (job types pop-up, plan step)
