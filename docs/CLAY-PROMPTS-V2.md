@@ -183,6 +183,9 @@ off-white = paper, neutral parts.
 >
 > Subject: a small rounded flower pot with a young sprout growing out of it: a short thick stem and two chunky rounded leaves, just opened. Caramel pot (#E0A76A), off-white soil top (#F4F1EC), mint stem and leaves (#7FD8B4), a tiny gold bud (#FFC94D) between the leaves. No flower yet, no text.
 
+**restricted** (not allowed / no access; not used yet)
+> ✅ Installed (2026-10-30): the coral striped cone from coming-soon round 1, kept by user call. Use where the recruiter cannot go or do something (no permission, feature not on their plan). Watch the resemblance to a media-player logo if it is ever shown large.
+
 **ai-calling** (AI calling agent)
 > Subject: a chunky rounded phone handset tilted at an angle, two thick curved signal waves beside its upper end, and a four-point sparkle about a quarter of the handset's size floating at its upper right (the AI). Sky blue handset (#6CB8F0), white waves, a gold sparkle (#FFC94D).
 
