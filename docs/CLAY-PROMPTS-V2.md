@@ -232,6 +232,8 @@ off-white = paper, neutral parts.
 > Subject: a thick round badge turned about 20°, a chunky raised exclamation mark in the centre, nothing else. Coral body (#F06A6F), white mark.
 
 **info** (new: notes, tips, "good to know"; not used yet)
+> ✅ Round 1 approved (2026-10-30). Generated turned the other way from alert and success; installed mirrored so all three badges face the same way. Not used on any screen yet.
+>
 > Subject: a thick round badge turned about 20°, a chunky raised lowercase "i" in the centre (a round dot above a short rounded bar), nothing else. Gold body (#FFC94D), a dark slate "i" (#4A4E63). Same badge shape as alert and success.
 
 ## D · Marketing pages
