@@ -365,7 +365,13 @@ off-white = paper, neutral parts.
 > Subject: a small chunky rounded building with four thick columns and a triangular roof on a stepped base, turned about 20°. White columns, a sky blue roof and base (#6CB8F0), a gold door (#FFC94D).
 
 **government**
-> Subject: a small chunky rounded building with a large dome on top, turned about 20°. Mint body (#7FD8B4), a sky blue dome (#6CB8F0), a gold finial (#FFC94D), white windows.
+> Round 1 (2026-10-30): colours right. But the stacked gold finial looks like a swirl of poop, and a round body + dome + finial reads as a cottage or a place of worship, not a civic building.
+>
+> ✅ Stamp installed (2026-10-30).
+>
+> Round 1 note (user): any dome reads as a mosque or temple. No domes, spires or religious shapes for government.
+>
+> Subject: a chunky rounded official rubber stamp, turned about 20°, a round knob handle on a short neck and a thick square stamp base, standing on a white sheet of paper; beside it on the sheet a round stamped mark with a raised check inside. Sky blue base (#6CB8F0), a gold knob (#FFC94D), a white sheet, a mint stamped mark (#7FD8B4) with a white check. No text, no emblem, no building.
 
 **deploy**
 > Subject: a chunky rounded rocket lifting off a small round pad, turned about 20°, a short thick flame below it. Sky blue body (#6CB8F0), a white window, coral fins (#F06A6F), a gold flame (#FFC94D).
