@@ -149,6 +149,8 @@ off-white = paper, neutral parts.
 > Subject: a compact bar chart of three thick rounded bars touching side by side on one shared base, rising left to right, all bars fully visible, with a chunky arrow pointing straight up from the top of the tallest bar. Sky blue short bars (#6CB8F0), the tallest bar gold (#FFC94D), a mint arrow (#7FD8B4) with a thick stem. No off-white bars.
 
 **success** (thank-you, plan changed)
+> ✅ Round 1 installed (2026-10-30).
+>
 > Subject: a thick round badge with a chunky raised check mark in the centre, nothing else. Mint body (#7FD8B4), white check.
 
 **access** (city locked, access)
