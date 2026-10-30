@@ -121,7 +121,7 @@ off-white = paper, neutral parts.
 > Subject: a very chunky, thick rounded infinity loop, turned about 30° and tilted back so it shows depth, compact (about 1.4 times as wide as tall). The loop is one continuous twisted band: the crossing in the middle is clearly visible, one strand passing over the other. A gold briefcase about a third of the loop's height sits in front of the lower right curve, never covering the crossing. Sky blue loop (#6CB8F0), gold briefcase (#FFC94D) with a white clasp.
 
 **slots-full** (All job slots are in use)
-> ✅ Round 2 approved (2026-10-30): caramel job cards, briefcase, sky plus floating front-right. Awaiting the background-removed file.
+> ✅ Round 2 approved (2026-10-30): caramel job cards, briefcase, sky plus floating front-right. Installed.
 >
 > Round 1: finish and angle right. Red disc + white plus reads as first aid / medical. Blank mint cards read as files, not jobs (jobs are caramel elsewhere). Badge glued to the tray's face. Not installed.
 >
