@@ -130,7 +130,12 @@ off-white = paper, neutral parts.
 > Subject: a thick rounded speech bubble with a clear tail at its lower left, three raised dots inside. Sky blue bubble (#6CB8F0), white dots.
 
 **job-types** (job types pop-up, plan step)
+> ✅ Round 1 installed (2026-10-30). Also used by "Continue your draft?" (post-job flow), where a briefcase + star is the wrong message; see **draft** below.
+>
 > Subject: a chunky rounded briefcase with a thick top handle and a front clasp; a gold star badge about a third of its height floats in front of its lower right, not covering the clasp. Caramel body (#E0A76A), off-white clasp (#F4F1EC), a gold star (#FFC94D).
+
+**draft** (new: "Continue your draft?", replaces job-types there)
+> Subject: a wide rounded job card, half filled in: two raised text lines at the top, the lower half blank, a chunky pencil lying diagonally across its lower right, tip touching the card. Caramel card (#E0A76A) with a white briefcase glyph at top left and off-white lines (#F4F1EC), a gold pencil (#FFC94D) with a coral eraser (#F06A6F).
 
 **improve** (plan change: upgrade)
 > Subject: a short bar chart of three thick rounded bars rising left to right, all bars fully visible, with a chunky arrow pointing straight up from the top of the tallest bar. Mint arrow (#7FD8B4), off-white bars (#F4F1EC), the tallest bar gold (#FFC94D).
