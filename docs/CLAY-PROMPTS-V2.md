@@ -20,6 +20,33 @@ reference image."
 
 > Style: matte modelling-clay material with a fine, even clay grain, pressed in a precision mould: machine-finished, perfectly symmetrical forms, uniform rounded bevels on every edge, crisp clean seams, no fingerprints, tool marks, lumps or hand-sculpted wobble. A soft clay sheen, not glossy plastic. Soft studio key light from the top left, a gentle bright rim light along the top and right edges, subtle ambient occlusion, no cast or contact shadow. One simple object with a clear silhouette, no scene and no extra props. The main object is the hero; any secondary part (a tag, badge, sparkle) is about a third of its size, sits in front of it, never pinned to its edge, and is attached where it would be in real life. Arrows are straight (up or down), never diagonal. Stacked items are fanned in a clear arc so each one is visible. The object is one dominant colour, with at most one detail colour and one small accent; symbols are chunky raised moulded glyphs. Use only these colours: gold #FFC94D, caramel #E0A76A, tan brown #C47A3F, coral red #F06A6F, sky blue #6CB8F0, mint #7FD8B4, off-white #F4F1EC, white glyphs, dark slate #4A4E63 glyphs. No dark green, no purple or plum anywhere. Plain flat light-grey background (#E9E9EC), no text, no logos. Square 1:1, object filling about 75% of the frame, crisp silhouette for background removal.
 
+## Lessons from review (apply to every new subject)
+
+Found in rounds 1–3 (2026-10-30); the subjects below already follow them.
+
+1. **Say the finished state.** Generators draw things in progress: sand
+   still falling, a lid half open. Spell out the end state ("top bulb
+   empty, nothing falling"; "shackle fully closed").
+2. **One meaning per symbol.** Red + white plus = first aid. Check each
+   symbol for a second meaning before using it; say "No red" or "No rocket"
+   when a cliché tends to creep in.
+3. **The user's meaning, not the system's.** Database = finding people, not
+   a cylinder. Draw what the recruiter gets.
+4. **One colour per idea, across the set.** Job = caramel + white
+   briefcase. People = sky blue figure, white head. Money/offer = gold.
+   Ended/alert = coral. Done = mint.
+5. **Never cover the part that carries the meaning.** A secondary prop sits
+   at a corner (lower right), never over the crossing, the clasp, the face.
+6. **Every item in a group shows whole.** Fanned cards show each avatar.
+7. **Compact shapes.** At most about 1.4 times as wide as tall, or it
+   shrinks to half height at 56px.
+8. **No blank slabs.** A large flat face reads "empty"; give it a raised
+   detail (a grid, a glyph).
+9. **Chunky over thin.** Rings, strings, handles, rims: thick, or they
+   vanish at 56px.
+10. **No two icons share an object.** Coming soon was a rocket like deploy;
+    it is now a cone.
+
 ## The surfaces
 
 Every icon also appears in dark mode (near-black plum #1C151E), so every
@@ -91,31 +118,35 @@ off-white = paper, neutral parts.
 ## C · White pop-ups (product)
 
 **expired** (offer expired, cancel plan, plan ended)
-> Subject: a rounded hourglass, slightly tilted, the last grains settled at the bottom. Coral frame (#F06A6F), off-white glass (#F4F1EC), gold sand (#FFC94D).
+> ✅ Round 2 approved (2026-10-30): top empty, sand settled. Installed.
+>
+> Round 1: finish, tilt and colours right. Half the sand is still on top and falling, so it reads "time running out" (a countdown), not "expired".
+>
+> Subject: a rounded hourglass, slightly tilted, finished: the top bulb completely empty, all the sand settled in a mound at the bottom, nothing falling. Coral frame (#F06A6F), off-white glass (#F4F1EC), gold sand (#FFC94D).
 
 **contact** (Contact us, Talk to sales)
-> Subject: a rounded speech bubble with three raised dots inside. Sky blue bubble (#6CB8F0), white dots.
+> Subject: a thick rounded speech bubble with a clear tail at its lower left, three raised dots inside. Sky blue bubble (#6CB8F0), white dots.
 
 **job-types** (job types pop-up, plan step)
-> Subject: a rounded briefcase with a top handle and a small front clasp, a raised star badge on its front. Caramel body (#E0A76A), off-white clasp (#F4F1EC), a gold star (#FFC94D).
+> Subject: a chunky rounded briefcase with a thick top handle and a front clasp; a gold star badge about a third of its height floats in front of its lower right, not covering the clasp. Caramel body (#E0A76A), off-white clasp (#F4F1EC), a gold star (#FFC94D).
 
 **improve** (plan change: upgrade)
-> Subject: a short bar chart of three thick rounded bars rising left to right, with a chunky arrow pointing straight up in front of the tallest bar. Mint arrow (#7FD8B4), off-white bars (#F4F1EC), the tallest bar gold (#FFC94D).
+> Subject: a short bar chart of three thick rounded bars rising left to right, all bars fully visible, with a chunky arrow pointing straight up from the top of the tallest bar. Mint arrow (#7FD8B4), off-white bars (#F4F1EC), the tallest bar gold (#FFC94D).
 
 **success** (thank-you, plan changed)
-> Subject: a round badge with a raised check mark in the centre. Mint body (#7FD8B4), white check.
+> Subject: a thick round badge with a chunky raised check mark in the centre, nothing else. Mint body (#7FD8B4), white check.
 
 **access** (city locked, access)
-> Subject: a rounded padlock with a raised keyhole on its front. Gold body (#FFC94D), off-white shackle (#F4F1EC), a dark slate keyhole.
+> Subject: a chunky rounded padlock, locked: the thick shackle fully closed into the body, a raised keyhole on its front. Gold body (#FFC94D), off-white shackle (#F4F1EC), a dark slate keyhole.
 
 **no-results** (empty search)
-> Subject: a chunky magnifying glass tilted at an angle, an empty lens. Sky blue ring and handle (#6CB8F0), white lens with a soft highlight.
+> Subject: a chunky magnifying glass tilted at an angle; its white lens shows only a raised question mark, no person and nothing else. Sky blue ring and handle (#6CB8F0), white lens, a dark slate question mark.
 
 **coming-soon** (pages still being built)
-> Subject: a small rounded rocket pointing up, a round window on its body. Off-white body (#F4F1EC), sky blue window (#6CB8F0), coral fins (#F06A6F).
+> Subject: a chunky rounded traffic cone with two raised stripes, standing upright on a square base (work in progress). Coral cone (#F06A6F), white stripes, an off-white base (#F4F1EC). No rocket.
 
 **ai-calling** (AI calling agent)
-> Subject: a rounded phone handset tilted at an angle, two small curved signal waves beside it, a tiny four-point sparkle. Sky blue handset (#6CB8F0), white waves, a gold sparkle (#FFC94D).
+> Subject: a chunky rounded phone handset tilted at an angle, two thick curved signal waves beside its upper end, and a four-point sparkle about a quarter of the handset's size floating at its upper right (the AI). Sky blue handset (#6CB8F0), white waves, a gold sparkle (#FFC94D).
 
 **wallet** (balance, payments)
 > Subject: a rounded bifold wallet with a strap and a round snap button, three banknotes peeking out of the top. Tan brown body (#C47A3F), mint notes (#7FD8B4), a gold snap (#FFC94D).
@@ -134,10 +165,10 @@ off-white = paper, neutral parts.
 > Subject: a rounded award rosette with two ribbon tails and a blank raised star in the centre. Gold rosette (#FFC94D), coral tails (#F06A6F), a white star.
 
 **team-management**
-> Subject: three rounded ID badges fanned out in a clear arc so all three are visible, each with a raised round avatar. Sky blue, mint and caramel badges, white avatars.
+> Subject: three rounded ID badges fanned out in a clear arc so each badge and its avatar shows whole, each with a raised round avatar. Sky blue, mint and off-white badges, white avatars (a sky blue avatar on the off-white badge).
 
 **ats-integrations**
-> Subject: two chunky rounded puzzle pieces clicking together. Sky blue piece (#6CB8F0) and gold piece (#FFC94D).
+> Subject: two chunky rounded puzzle pieces fully joined together, the tab sitting inside the slot. Sky blue piece (#6CB8F0) and gold piece (#FFC94D).
 
 **reports**
 > Subject: a rounded clipboard holding a raised bar chart of three bars. Off-white board (#F4F1EC), caramel clip (#E0A76A), sky blue, mint and gold bars.
@@ -149,13 +180,13 @@ off-white = paper, neutral parts.
 > Subject: a rounded headset with a small microphone arm. Sky blue band and ear cups (#6CB8F0), off-white cushions (#F4F1EC), a gold mic tip (#FFC94D).
 
 **smart-inbound**
-> Subject: a wide rounded inbox tray with two wide profile cards standing in it, fanned so both are visible. Sky blue tray (#6CB8F0), off-white cards with raised gold avatars.
+> Subject: a wide rounded inbox tray with two wide profile cards standing in it, fanned so each card and its avatar shows whole; a chunky arrow above them points straight down into the tray. Off-white tray (#F4F1EC), white cards with raised sky blue avatars (#6CB8F0), a gold arrow (#FFC94D).
 
 **database-search**
 > Same subject as **database** above.
 
 **walk-ins**
-> Subject: a rounded desk calendar page with a raised check mark. Off-white page (#F4F1EC), coral header strip (#F06A6F), a mint check (#7FD8B4).
+> Subject: a chunky rounded open door in its frame, a raised person (round head, rounded shoulders) standing in the doorway, walking in. Off-white frame (#F4F1EC), caramel door (#E0A76A), a sky blue person (#6CB8F0) with a white head.
 
 **enterprise**
 > Subject: a small rounded office building with three floors of window bands and a flat roof. Off-white body (#F4F1EC), sky blue windows (#6CB8F0), a gold door (#FFC94D).
@@ -181,7 +212,7 @@ off-white = paper, neutral parts.
 > Subject: a rounded paper plane in flight with a short curved trail. Sky blue plane (#6CB8F0), an off-white trail.
 
 **ownership-over-hierarchy**
-> Subject: three rounded blocks of the same height side by side, one with a raised star. Caramel, mint and sky blue blocks, a gold star.
+> Subject: three rounded blocks of exactly the same height side by side, one with a raised star. Off-white, mint and sky blue blocks, a gold star (#FFC94D).
 
 **raise-the-bar**
 > Subject: a rounded trophy cup on a short base. Gold cup (#FFC94D), caramel base (#E0A76A).
