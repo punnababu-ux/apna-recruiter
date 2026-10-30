@@ -669,7 +669,7 @@ export function PostJobFlow() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogMedia>
-              <ValueArt name="job-types" size="xs" />
+              <ValueArt name="draft" size="xs" />
             </AlertDialogMedia>
             <AlertDialogTitle>Continue your draft?</AlertDialogTitle>
             <AlertDialogDescription>

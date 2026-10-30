@@ -135,7 +135,11 @@ off-white = paper, neutral parts.
 > Subject: a chunky rounded briefcase with a thick top handle and a front clasp; a gold star badge about a third of its height floats in front of its lower right, not covering the clasp. Caramel body (#E0A76A), off-white clasp (#F4F1EC), a gold star (#FFC94D).
 
 **draft** (new: "Continue your draft?", replaces job-types there)
-> Subject: a wide rounded job card, half filled in: two raised text lines at the top, the lower half blank, a chunky pencil lying diagonally across its lower right, tip touching the card. Caramel card (#E0A76A) with a white briefcase glyph at top left and off-white lines (#F4F1EC), a gold pencil (#FFC94D) with a coral eraser (#F06A6F).
+> ✅ Round 2 approved (2026-10-30): turned, one even colour. Installed; "Continue your draft?" uses it.
+>
+> Round 1: meaning reads (unfinished job + pencil). Flat-on, not turned; "lower half blank" came out as a two-tone seam across the card (reads as a folder). Pencil has a wood/graphite tip outside the palette (fine, it reads).
+>
+> Subject: a wide rounded job card, turned about 20° and tilted back so its thickness shows, one even caramel colour all over (no seam, no second tone): two raised text lines at its top, the space below them empty, a chunky pencil lying diagonally across its lower right, tip touching the card. Caramel card (#E0A76A) with a white briefcase glyph at top left and off-white lines (#F4F1EC), a gold pencil (#FFC94D) with a coral eraser (#F06A6F).
 
 **improve** (plan change: upgrade)
 > Subject: a short bar chart of three thick rounded bars rising left to right, all bars fully visible, with a chunky arrow pointing straight up from the top of the tallest bar. Mint arrow (#7FD8B4), off-white bars (#F4F1EC), the tallest bar gold (#FFC94D).
