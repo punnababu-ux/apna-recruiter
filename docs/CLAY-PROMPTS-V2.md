@@ -325,7 +325,11 @@ off-white = paper, neutral parts.
 > Subject: two thick rounded speech bubbles overlapping, each with a clear tail, the front one with a raised heart. Sky blue back bubble (#6CB8F0), mint front bubble (#7FD8B4), a coral heart (#F06A6F). No dots (contact is the bubble with dots).
 
 **transparency**
-> Subject: a chunky rounded open window with two square panes and a thick frame, one pane swung open, turned about 20° (nothing hidden). Sky blue frame (#6CB8F0), white panes, a gold handle (#FFC94D). No eye.
+> ✅ Round 2 approved (2026-10-30): glass reads (pale tint + glare streaks). Handles still thin; fine at 56px. Background removal may eat the pale glass: check it survives. Installed; the glass survived.
+>
+> Round 1 (2026-10-30): finish right, but solid white panes read as cupboard doors, not glass: the opposite of "transparent". Handles thin.
+>
+> Subject: a chunky rounded window with a thick frame and two square panes of clear glass, turned about 20°; the right pane swung wide open. The glass is a very pale see-through sky tint with two short diagonal white glare streaks on each pane (the familiar "glass" mark). Sky blue frame (#6CB8F0), a chunky gold handle on each pane (#FFC94D). No solid panes, no eye.
 
 **momentum**
 > Subject: a chunky rounded paper plane in flight, turned about 20°, a short thick curved trail behind it. Sky blue plane (#6CB8F0), a mint trail (#7FD8B4).
