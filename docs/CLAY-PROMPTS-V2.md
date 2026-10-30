@@ -66,7 +66,13 @@ off-white = paper, neutral parts.
 > Subject: a thick rounded desk calendar, three-quarter view, with two chunky binding rings; the page shows a raised grid of 12 small rounded squares (3 rows of 4), one square highlighted. A crown about a third of the calendar's width sits on top, centred between the rings. Sky blue header strip (#6CB8F0), off-white page (#F4F1EC) with off-white squares, the highlighted square gold (#FFC94D), white rings, a gold crown (#FFC94D). No numbers or text.
 
 **unlimited** (Credits or a plan)
-> Subject: a chunky rounded infinity loop lying at a slight angle, with a small raised briefcase glyph where the loop crosses. Sky blue loop (#6CB8F0), a gold briefcase glyph (#FFC94D).
+> ✅ Round 3 installed (2026-10-30): crossing visible, briefcase lower right; aspect 1.33 (42px tall at 56).
+>
+> Round 2: aspect 1.46 (38px tall at 56), turned, briefcase reads. But the briefcase hides the crossing, so the loops read as two rings ("OO"), not infinity. Usable; one more try with the subject below.
+>
+> Round 1 (2026-10-30): colour and finish right. Aspect 1.78, so at 56px it is only 31px tall (the other icons fill ~56); flat-on, not turned; briefcase ~12% wide, a speck at 56px. Not installed.
+>
+> Subject: a very chunky, thick rounded infinity loop, turned about 30° and tilted back so it shows depth, compact (about 1.4 times as wide as tall). The loop is one continuous twisted band: the crossing in the middle is clearly visible, one strand passing over the other. A gold briefcase about a third of the loop's height sits in front of the lower right curve, never covering the crossing. Sky blue loop (#6CB8F0), gold briefcase (#FFC94D) with a white clasp.
 
 **slots-full** (All job slots are in use)
 > Subject: a wide rounded tray with three slots, each holding an upright wide job card, all full; a round plus badge about a third of the tray's height sits in front of its right end. Off-white tray (#F4F1EC), mint cards (#7FD8B4), a coral plus badge (#F06A6F) with a white plus.
