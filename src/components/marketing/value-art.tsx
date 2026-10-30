@@ -12,6 +12,7 @@ import Image from "next/image"
 import { cn } from "@/lib/utils"
 import {
   Award,
+  CircleAlert,
   IndianRupee,
   Wallet,
   PhoneCall,
@@ -96,6 +97,7 @@ export type ValueName =
   // Balance, payments (not used yet)
   | "wallet"
   | "coin"
+  | "alert"
   | "expired"
 
 const ICON: Record<ValueName, ComponentType<{ className?: string; "aria-hidden"?: boolean }>> = {
@@ -137,6 +139,7 @@ const ICON: Record<ValueName, ComponentType<{ className?: string; "aria-hidden"?
   "ai-calling": PhoneCall,
   wallet: Wallet,
   coin: IndianRupee,
+  alert: CircleAlert,
   expired: Clock,
 }
 
@@ -182,6 +185,7 @@ const READY = new Set<ValueName>([
   "ai-calling",
   "wallet",
   "coin",
+  "alert",
   "expired",
 ])
 

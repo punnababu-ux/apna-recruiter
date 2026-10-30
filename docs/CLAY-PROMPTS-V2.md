@@ -227,6 +227,8 @@ off-white = paper, neutral parts.
 > Subject: a thick round coin turned about 25° so its edge shows, a raised rim and a chunky raised ₹ symbol in the centre. Gold body (#FFC94D), white ₹.
 
 **alert** (warnings)
+> ✅ Round 1 installed (2026-10-30). not used on any screen yet.
+>
 > Subject: a thick round badge turned about 20°, a chunky raised exclamation mark in the centre, nothing else. Coral body (#F06A6F), white mark.
 
 ## D · Marketing pages
