@@ -381,6 +381,8 @@ off-white = paper, neutral parts.
 > Subject: a chunky rounded rocket standing upright on a small round launch pad, ready to go, turned about 20°, three fins resting on the pad. No flame, no smoke, nothing under or behind it. Sky blue body (#6CB8F0), a white window with a slate rim, coral fins (#F06A6F), a gold pad (#FFC94D).
 
 **practise**
+> ✅ Round 1 installed (2026-10-30).
+>
 > Subject: a chunky rounded microphone on a short thick stand, turned about 20°. Sky blue head (#6CB8F0), a gold stand (#FFC94D).
 
 **track**
