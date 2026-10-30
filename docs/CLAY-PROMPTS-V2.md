@@ -305,6 +305,8 @@ off-white = paper, neutral parts.
 ### Company (About, Culture, Careers)
 
 **mission**
+> ✅ Round 1 installed (2026-10-30).
+>
 > Subject: a chunky rounded flag waving on a thick short pole, planted in a small round base, turned about 20°. Gold flag (#FFC94D), white pole, a sky blue base (#6CB8F0).
 
 **ownership**
