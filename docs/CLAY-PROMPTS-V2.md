@@ -248,7 +248,13 @@ off-white = paper, neutral parts.
 > Subject: a chunky rounded award rosette, turned about 25° to the right so its thick edge shows, an evenly scalloped rim (12 identical scallops), with two thick ribbon tails hanging below and a raised star in the centre. Gold rosette (#FFC94D), sky blue tails (#6CB8F0), a white star.
 
 **team-management**
-> Subject: three rounded ID badges fanned out in a clear arc so each badge and its avatar shows whole, each with a raised round avatar. Sky blue, mint and gold badges (#6CB8F0, #7FD8B4, #FFC94D), white avatars. Always a group of three (lounge-access is a single pass).
+> Round 1 (2026-10-30): colours and finish right. But the middle badge covers half of each side badge's avatar (cut-off people), and the group faces flat-on.
+>
+> ✅ Round 3 approved (2026-10-30): three figures on a base, every head visible. Installed.
+>
+> Round 2: same cut-off avatars; the generator keeps centring each avatar, so overlapping badges always hide them. Drop the badges.
+>
+> Subject: three chunky rounded person figures (round head, rounded shoulders, like simple pawns) standing close together in a shallow V on one small round base, the middle one slightly taller and in front, turned about 20° as a group; each figure fully visible, none covering another's head. Sky blue, mint and gold bodies (#6CB8F0, #7FD8B4, #FFC94D) with white heads, an off-white base (#F4F1EC). No badges, no cards.
 
 **ats-integrations**
 > Subject: two chunky rounded puzzle pieces fully joined together, the tab sitting inside the slot. Sky blue piece (#6CB8F0) and gold piece (#FFC94D).
