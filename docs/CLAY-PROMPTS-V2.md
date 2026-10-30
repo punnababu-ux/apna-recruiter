@@ -177,7 +177,11 @@ off-white = paper, neutral parts.
 > Subject: a wide, shallow, open-top rectangular tray (four straight sides, softly rounded corners, like a desk in-tray), no lid at all, seen from slightly above, clearly empty inside (a plain inner floor), with a chunky magnifying glass (thick ring and handle, as thick as the tray's walls) resting on its front rim, its lens over the empty inside. Caramel box (#E0A76A) with an off-white inner floor (#F4F1EC), a sky blue magnifier ring and handle (#6CB8F0), a white lens. Nothing in the box, nothing in the lens.
 
 **coming-soon** (pages still being built)
-> Subject: a chunky rounded traffic cone with two raised stripes, standing upright on a square base (work in progress). Coral cone (#F06A6F), white stripes, an off-white base (#F4F1EC). No rocket.
+> Round 1 (2026-10-30): well made, but a coral-and-white striped cone is close to a well-known media-player logo, and coral means alert/ended in this set, so it reads "blocked". Coming soon should feel hopeful.
+>
+> ✅ Round 2 installed (2026-10-30).
+>
+> Subject: a small rounded flower pot with a young sprout growing out of it: a short thick stem and two chunky rounded leaves, just opened. Caramel pot (#E0A76A), off-white soil top (#F4F1EC), mint stem and leaves (#7FD8B4), a tiny gold bud (#FFC94D) between the leaves. No flower yet, no text.
 
 **ai-calling** (AI calling agent)
 > Subject: a chunky rounded phone handset tilted at an angle, two thick curved signal waves beside its upper end, and a four-point sparkle about a quarter of the handset's size floating at its upper right (the AI). Sky blue handset (#6CB8F0), white waves, a gold sparkle (#FFC94D).
