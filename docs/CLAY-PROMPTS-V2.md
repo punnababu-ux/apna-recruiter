@@ -343,6 +343,8 @@ off-white = paper, neutral parts.
 > Subject: a chunky rounded paper plane alone, climbing steeply to the upper right at about 45°, turned about 20° so its folded wings and thickness show. Sky blue plane (#6CB8F0) with a mint fold line along its centre crease (#7FD8B4). Nothing behind or below it: no trail, no lines, no clouds.
 
 **ownership-over-hierarchy**
+> ✅ Round 1 installed (2026-10-30).
+>
 > Subject: three chunky rounded blocks of exactly the same height side by side on one level, turned about 20°, the middle one with a raised star. Mint, sky blue and caramel blocks, a gold star (#FFC94D).
 
 **raise-the-bar**
