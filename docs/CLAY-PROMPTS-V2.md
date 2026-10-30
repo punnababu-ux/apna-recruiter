@@ -287,7 +287,13 @@ off-white = paper, neutral parts.
 > ✅ Already installed (2026-10-30): the gold magnifier picking a person out of profile cards (see **database** above). Nothing to generate; skip it.
 
 **walk-ins**
-> Subject: a chunky rounded open door in its frame, a raised person (round head, rounded shoulders) standing in the doorway, walking in. Off-white frame (#F4F1EC), caramel door (#E0A76A), a sky blue person (#6CB8F0) with a white head.
+> Round 1 (2026-10-30): finish right. But the figure has arms and legs (an exit-sign person, not our pawn people) and turns away into the door, so it reads "leaving", the opposite of walk-in.
+>
+> ✅ Round 3 approved (2026-10-30): open door + welcome mat reads at 56px. Minor: the door swings out and the inner wall reads like a second panel; regenerate only if it bothers you large. Installed.
+>
+> Round 2: still arm stubs, and a faceless figure cannot show which way it walks, so "in" vs "out" stays unreadable. Frame came out lumpy. Drop the person.
+>
+> Subject: a chunky rounded open door in its frame, turned about 20°, the door swung wide open inward, a warm glow of light from inside; in front of it on the floor a thick rounded welcome mat. Off-white frame (#F4F1EC), caramel door (#E0A76A), a gold mat (#FFC94D), a sky blue floor inside the doorway (#6CB8F0). No people, no text on the mat. Perfectly smooth moulded surfaces.
 
 **enterprise**
 > Subject: a small chunky rounded office tower, turned about 20°, three floors with thick window bands and a flat roof. Sky blue body (#6CB8F0), white window bands, a gold door (#FFC94D).
