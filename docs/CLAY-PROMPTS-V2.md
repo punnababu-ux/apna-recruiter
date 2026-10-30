@@ -315,6 +315,8 @@ off-white = paper, neutral parts.
 > Subject: a chunky rounded key, turned about 20°, a round head and three thick teeth. Gold body (#FFC94D), a dark slate hole in the head.
 
 **customer-obsession**
+> ✅ Round 1 approved (2026-10-30). Coral here is the heart's own colour, not "alert". Installed.
+>
 > Subject: a thick rounded heart, turned about 20°, a raised star on its face. Coral heart (#F06A6F), a white star.
 
 **empathy**
