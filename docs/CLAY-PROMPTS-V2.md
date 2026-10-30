@@ -47,15 +47,23 @@ off-white = paper, neutral parts.
 > Subject: three wide rounded job cards (landscape, wider than tall) fanned out in a clear arc so all three are visible; the front card carries a raised briefcase glyph. A price tag about a third of the cards' height hangs in front of the front card, its string looped through a hole in the front card's top-right corner, with a raised arrow pointing straight down. Caramel cards (#E0A76A), white briefcase glyph, gold tag (#FFC94D) with a dark slate arrow.
 
 **credit-pack** (Bigger credit pack)
+> ✅ Installed (2026-10-30).
+>
 > Subject: a wide rounded open box, lid tipped back, filled with thick round coins; three coins stand up at the front, fanned so each raised ₹ symbol faces forward. Off-white box (#F4F1EC), gold coins (#FFC94D), white ₹ symbols, a coral ribbon band (#F06A6F) around the box.
 
 **exit-offer** (Extra 10% off)
-> Subject: a thick rounded twelve-point starburst badge, tilted, with a raised % symbol in the centre. Gold body (#FFC94D), dark slate % symbol, a small off-white four-point sparkle floating just in front of its top-right.
+> ✅ Installed (2026-10-30). Rendered gold came out mustard (#E2B553); if regenerated, ask for "bright warm gold, not mustard".
+>
+> Subject: a thick rounded twelve-point starburst badge with short, soft points, tilted, with a raised % symbol in the centre. Bright warm gold body (#FFC94D, not mustard), dark slate % symbol, a small off-white four-point sparkle floating just in front of its top-right.
 
 ## B · Plum premium header (subscription upgrades, slots full)
 
 **annual** (Go annual)
-> Subject: a thick rounded desk calendar page with two binding rings, a small crown sitting on top, centred between the rings. Sky blue header strip (#6CB8F0) on an off-white page (#F4F1EC), white rings, a gold crown (#FFC94D).
+> ✅ Round 2 approved (2026-10-30): 12-square grid, big crown, gold square. Awaiting the file to install.
+>
+> Round 1: finish right; blank page reads "empty", crown ~15% wide (a speck at 56px), 62% flat off-white, rings thin. Not installed.
+>
+> Subject: a thick rounded desk calendar, three-quarter view, with two chunky binding rings; the page shows a raised grid of 12 small rounded squares (3 rows of 4), one square highlighted. A crown about a third of the calendar's width sits on top, centred between the rings. Sky blue header strip (#6CB8F0), off-white page (#F4F1EC) with off-white squares, the highlighted square gold (#FFC94D), white rings, a gold crown (#FFC94D). No numbers or text.
 
 **unlimited** (Credits or a plan)
 > Subject: a chunky rounded infinity loop lying at a slight angle, with a small raised briefcase glyph where the loop crosses. Sky blue loop (#6CB8F0), a gold briefcase glyph (#FFC94D).
@@ -197,3 +205,22 @@ off-white = paper, neutral parts.
    #1C151E (dark mode).
 4. An icon fails if it sinks into its surface or its sheen, bevel or angle
    doesn't match the rest. Fix that subject, not the style block.
+
+## Measured (round 1, 2026-10-30)
+
+The header icon sits top-left, where the green header is its lightest
+(#00A86B). Average body vs that green has almost no light/dark contrast:
+three-jobs 1.1, credit-pack 1.3, exit-offer 1.2 (annual 1.9). They read by
+hue only (warm on green). Fine on screen today; at small sizes or for
+colour-blind users they blur. On the darker header (#135343) and plum
+(#4E3A52) all are 3.4–6.8, fine.
+
+| Icon | Main colours rendered | Aspect | Note |
+|---|---|---|---|
+| three-jobs | #D39F61 caramel, #915E37 shade | 1.16 wide | On spec |
+| credit-pack | #E4DFD8 off-white, coral ribbon | 0.99 | On spec; lightest of the three |
+| exit-offer | #E2B553 gold | 0.94 | Duller than #FFC94D; spiky shape fills 66%, looks smallest |
+| annual (r1) | #E5E2DD off-white 62%, #88A8B9 blue | 0.85 tall | Too plain; see subject |
+
+If the green-header icons need more separation, the cheaper fix is in code (a soft
+light halo behind the header icon), not a regeneration.
