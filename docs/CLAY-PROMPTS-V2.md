@@ -386,7 +386,11 @@ off-white = paper, neutral parts.
 > Subject: a chunky rounded microphone on a short thick stand, turned about 20°. Sky blue head (#6CB8F0), a gold stand (#FFC94D).
 
 **track**
-> Subject: a thick rounded speedometer dial, turned about 20°, a raised needle pointing to the upper right. Sky blue body (#6CB8F0), a white face with mint, gold and coral arc bands, a dark slate needle.
+> ✅ Round 2 approved (2026-10-30): one arc, needle in the mint. Installed.
+>
+> Round 1 (2026-10-30): finish right. But two concentric arcs and a ring of tiny ticks are busy and vanish at 56px, and the needle points at the coral (red) end, so it reads "danger / overload", not progress.
+>
+> Subject: a thick rounded speedometer dial, turned about 20°, one single thick arc across its top half going coral on the left, gold in the middle, mint on the right; a chunky raised needle pointing into the mint end (doing well). No tick marks, no second arc, no numbers. Sky blue body (#6CB8F0), a white face, a dark slate needle.
 
 ---
 
