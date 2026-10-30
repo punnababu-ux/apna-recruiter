@@ -125,20 +125,15 @@ export function OfferDialog({
             {tag}
           </Badge>
         )}
-        <div className="relative size-14">
-          {/* A soft light behind the clay: warm objects on the header's lightest
-              corner (green-500) have almost no light/dark contrast without it. */}
-          <span aria-hidden className="absolute -inset-1 rounded-full bg-card/60 blur-xl" />
-          <Image
-            src={ILLUSTRATIONS[illustration]}
-            alt=""
-            width={56}
-            height={56}
-            // Clay PNGs are served as-is (a re-encode smears their cut edge).
-            unoptimized
-            className="relative size-14 object-contain"
-          />
-        </div>
+        <Image
+          src={ILLUSTRATIONS[illustration]}
+          alt=""
+          width={56}
+          height={56}
+          // Clay PNGs are served as-is (a re-encode smears their cut edge).
+          unoptimized
+          className="size-14 object-contain"
+        />
         <Title
           className={cn(
             // "lg" (the slot upgrade) carries the most below it, so its
