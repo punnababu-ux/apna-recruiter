@@ -142,7 +142,11 @@ off-white = paper, neutral parts.
 > Subject: a wide rounded job card, turned about 20° and tilted back so its thickness shows, one even caramel colour all over (no seam, no second tone): two raised text lines at its top, the space below them empty, a chunky pencil lying diagonally across its lower right, tip touching the card. Caramel card (#E0A76A) with a white briefcase glyph at top left and off-white lines (#F4F1EC), a gold pencil (#FFC94D) with a coral eraser (#F06A6F).
 
 **improve** (plan change: upgrade)
-> Subject: a short bar chart of three thick rounded bars rising left to right, all bars fully visible, with a chunky arrow pointing straight up from the top of the tallest bar. Mint arrow (#7FD8B4), off-white bars (#F4F1EC), the tallest bar gold (#FFC94D).
+> ✅ Round 2 approved (2026-10-30): sky bars on a shared base, gold top bar, mint arrow. Installed.
+>
+> Round 1: reads as growth; arrow on the gold bar works. But two of three bars are off-white, and this sits on white pop-ups: they vanish, leaving a lone gold bar. Bars also stand apart with an empty top-left. Not installed.
+>
+> Subject: a compact bar chart of three thick rounded bars touching side by side on one shared base, rising left to right, all bars fully visible, with a chunky arrow pointing straight up from the top of the tallest bar. Sky blue short bars (#6CB8F0), the tallest bar gold (#FFC94D), a mint arrow (#7FD8B4) with a thick stem. No off-white bars.
 
 **success** (thank-you, plan changed)
 > Subject: a thick round badge with a chunky raised check mark in the centre, nothing else. Mint body (#7FD8B4), white check.
