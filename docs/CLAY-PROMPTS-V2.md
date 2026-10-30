@@ -75,10 +75,18 @@ off-white = paper, neutral parts.
 > Subject: a very chunky, thick rounded infinity loop, turned about 30° and tilted back so it shows depth, compact (about 1.4 times as wide as tall). The loop is one continuous twisted band: the crossing in the middle is clearly visible, one strand passing over the other. A gold briefcase about a third of the loop's height sits in front of the lower right curve, never covering the crossing. Sky blue loop (#6CB8F0), gold briefcase (#FFC94D) with a white clasp.
 
 **slots-full** (All job slots are in use)
-> Subject: a wide rounded tray with three slots, each holding an upright wide job card, all full; a round plus badge about a third of the tray's height sits in front of its right end. Off-white tray (#F4F1EC), mint cards (#7FD8B4), a coral plus badge (#F06A6F) with a white plus.
+> ✅ Round 2 approved (2026-10-30): caramel job cards, briefcase, sky plus floating front-right. Awaiting the background-removed file.
+>
+> Round 1: finish and angle right. Red disc + white plus reads as first aid / medical. Blank mint cards read as files, not jobs (jobs are caramel elsewhere). Badge glued to the tray's face. Not installed.
+>
+> Subject: a wide rounded tray with three slots, each holding an upright wide job card, filled to the brim, the front card carrying a raised white briefcase glyph. A round badge with a raised plus, about a third of the tray's height, floats just in front of the tray's lower right, not attached to it. Off-white tray (#F4F1EC), caramel cards (#E0A76A), a sky blue badge (#6CB8F0) with a white plus. No red.
 
 **database** (Database credits, database offers)
-> Subject: a short stack of three thick rounded discs (a database cylinder), with a magnifying glass about a third of its height standing in front of its lower right. Sky blue discs (#6CB8F0), gold magnifier ring (#FFC94D), white lens.
+> ✅ Round 2 approved (2026-10-30): reads as "find a person in a pool". Minor: the magnifier hides most of the cards' avatars, and the cards sit at a different tilt from the magnifier. If redone, fan the cards out to the left so each avatar shows whole. Installed as database-search.png.
+>
+> Round 1: finish right, but a database cylinder is a cliché and says "data", not "people". apna Database is candidate search. Concept changed.
+>
+> Subject: a chunky magnifying glass, tilted, its round lens framing a raised person (round head, rounded shoulders) inside it; behind it, two wide rounded profile cards fanned out, each with a small raised avatar circle, so the magnifier picks one person out of many. Gold magnifier ring and handle (#FFC94D), white lens, sky blue person (#6CB8F0) with a white head, off-white cards (#F4F1EC) with sky blue avatars. The magnifier is the hero; the cards are about two thirds of its height.
 
 ## C · White pop-ups (product)
 
