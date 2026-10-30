@@ -140,7 +140,7 @@ export const OFFER_BAR_TEMPLATES = {
     label: "Auto-pay off",
     bar: {
       tone: "fix",
-      art: art("access"),
+      art: art("alert"),
       hook: "Auto-pay is off",
       headline: "Your plan ends in 9 days",
       cta: "Turn on auto-pay",

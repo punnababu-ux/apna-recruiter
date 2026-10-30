@@ -286,7 +286,7 @@ export default function FeedbackComponentsPage() {
         />
         <OfferBar
           tone="fix"
-          art={<Image src="/images/company/values/access.png" alt="" width={48} height={48} unoptimized />}
+          art={<Image src="/images/company/values/alert.png" alt="" width={48} height={48} unoptimized />}
           hook="Auto-pay is off"
           headline="Your plan ends in 9 days"
           cta={<Button variant="emphasis" trailingIcon={<ArrowRight />}>Turn on auto-pay</Button>}

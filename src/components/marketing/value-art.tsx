@@ -28,7 +28,6 @@ import {
   BarChart2,
   Building2,
   CalendarCheck,
-  DoorOpen,
   GraduationCap,
   Headset,
   HeartHandshake,
@@ -62,7 +61,6 @@ export type ValueName =
   | "government"
   // The Lounge's How it works
   | "deploy"
-  | "access"
   | "practise"
   | "improve"
   | "track"
@@ -114,7 +112,6 @@ const ICON: Record<ValueName, ComponentType<{ className?: string; "aria-hidden"?
   university: Building2,
   government: Landmark,
   deploy: Wrench,
-  access: DoorOpen,
   practise: MessagesSquare,
   improve: TrendingUp,
   track: BarChart2,
@@ -160,7 +157,6 @@ const READY = new Set<ValueName>([
   "university",
   "government",
   "deploy",
-  "access",
   "practise",
   "improve",
   "track",
