@@ -253,7 +253,7 @@ export function OfferChoice({ stay, upgrade }: { stay: OfferOption; upgrade: Off
     // let the lines wrap. AGENTS.md: "Upsell tile widths".
     // Both tiles span the same rows of this grid (subgrid), so their lines
     // compare one to one.
-    <div className="grid grid-cols-2 gap-x-3 sm:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
+    <div className="grid grid-cols-2 gap-x-3 sm:grid-cols-[minmax(max-content,2fr)_minmax(max-content,3fr)]">
       <OptionTile option={stay} kind="stay" rows={rows} reserveRibbon={reserveRibbon} />
       <OptionTile option={upgrade} kind="upgrade" rows={rows} reserveRibbon={reserveRibbon} />
     </div>
