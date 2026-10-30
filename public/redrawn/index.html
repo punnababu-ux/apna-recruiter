@@ -12,7 +12,7 @@
 <!-- The design system's tokens (src/app/redrawn/tokens.css): brand colours,
      fonts, the mother gradient and the hero blobs follow the system. -->
 <link rel="stylesheet" href="/redrawn/tokens.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700&family=Inter:wght@600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: a keynote stage. One idea per full-screen slide, dark plum
    ground, the brand's own colours as the only light on stage. */
@@ -38,10 +38,10 @@
   --plum: var(--color-apna-plum-400);         /* logo plum (the wordmark) */
   --plum-soft: var(--color-apna-plum-300);
   --paper: #FFFFFF;
-  /* One typeface since 2026-10-23: Google Sans Flex. Inter, the live
-     site's old face, is loaded only for the "before" examples. */
-  --font-display: "Google Sans Flex", var(--font-family-sans);
-  --font-body: "Google Sans Flex", var(--font-family-sans);
+  /* One typeface: Inter (back from Google Sans Flex, 2026-10-29). The "before"
+     examples differ by case and accents, not by face. */
+  --font-display: "Inter", var(--font-family-sans);
+  --font-body: "Inter", var(--font-family-sans);
   --font-old: "Inter", var(--font-family-sans);
   --slide-pad: clamp(24px, 6vw, 96px);
 }
@@ -403,7 +403,7 @@ em { font-style: normal; }
 @media (prefers-reduced-motion: reduce) { .k-expand, .k-chev { transition: none; } }
 
 /* Segmented before/after switches (Before/After, Recruiter dashboard/Pricing,
-   Inter/Google Sans Flex). */
+   Inter). */
 .inner > .toggle { align-self: flex-start; }
 .toggle[hidden] { display: none; }
 .center > .toggle { align-self: center; }
@@ -804,7 +804,7 @@ em { font-style: normal; }
 
   <section class="slide" aria-label="Typography">
     <div class="inner">
-      <p class="kicker rise">Type · introducing Google Sans Flex</p>
+      <p class="kicker rise">Type · Inter, everywhere</p>
       <h2 class="rise">One typeface. One voice.</h2>
       <div class="type-demo rise" id="typedemo">
         <p class="type-eyebrow">India's #1 hiring platform</p>
@@ -814,8 +814,8 @@ em { font-style: normal; }
       </div>
       <div class="type-row rise">
         <div class="toggle" role="group" aria-label="Compare type">
-          <button type="button" id="type-before" aria-pressed="false">Before: Inter</button>
-          <button type="button" id="type-after" aria-pressed="true">After: Google Sans Flex</button>
+          <button type="button" id="type-before" aria-pressed="false">Before</button>
+          <button type="button" id="type-after" aria-pressed="true">After</button>
         </div>
         <p class="type-product">The website and the product now speak in one typeface. Weight and size carry the hierarchy, not a second font or an italic word.</p>
       </div>
@@ -833,10 +833,10 @@ em { font-style: normal; }
       <div class="clay rise">
         <img src="img/ownership.png" alt="Clay key: ownership">
         <img src="img/student.png" alt="Clay graduation cap: students">
-        <img src="img/practise.png" alt="Clay speech bubbles and microphone: practise">
-        <img src="img/empathy.png" alt="Clay hands shaking, a heart between them: empathy">
-        <img src="img/track.png" alt="Clay bar chart with a magnifier: track progress">
-        <img src="img/mission.png" alt="Clay bridge from a house to a briefcase: the mission">
+        <img src="img/practise.png" alt="Clay microphone: practise">
+        <img src="img/empathy.png" alt="Clay speech bubbles: empathy">
+        <img src="img/track.png" alt="Clay dial: track progress">
+        <img src="img/mission.png" alt="Clay flag on a platform: the mission">
       </div>
       <ul class="clay-why rise">
         <li><strong>Human.</strong><span>Hand-pressed and a little imperfect, as if someone made it. Right for a platform about people&rsquo;s livelihoods.</span></li>
@@ -844,7 +844,7 @@ em { font-style: normal; }
         <li><strong>Simple.</strong><span>One object, one idea, no words. It reads at a glance, in any language, from Bengaluru to Bareilly.</span></li>
       </ul>
       <p class="clay-room rise"><em>Glass is the room. Clay is what&rsquo;s on display.</em> Two real materials, each with one job.</p>
-      <p class="caption rise">Twenty-six so far, across culture, campus and Enterprise, all from one recipe.</p>
+      <p class="caption rise">Forty-six so far, across culture, campus, Enterprise and every product pop-up, all from one recipe.</p>
     </div>
   </section>
 
@@ -897,7 +897,7 @@ em { font-style: normal; }
       <div class="facts rise">
         <div class="fact"><b data-count="41">41</b><span>components in 8 categories, from a button to a pricing card</span></div>
         <div class="fact"><b data-count="4">4</b><span>product colours, all from the logo</span></div>
-        <div class="fact"><b data-count="1">1</b><span>typeface, Google Sans Flex, for the website and the product</span></div>
+        <div class="fact"><b data-count="1">1</b><span>typeface, Inter, for the website and the product</span></div>
         <div class="fact"><b data-count="1">1</b><span>green action per screen</span></div>
       </div>
       <p class="lede rise">Designers and engineers build from the same parts. A change made once shows up everywhere.</p>
@@ -1029,7 +1029,7 @@ em { font-style: normal; }
             <div class="na-card"><span class="nudge-ring" id="na-ring"></span><b>AI calling agent</b><span>Calls and shortlists every applicant, 24/7</span><span class="na-price">&#8377;1,600 for this job</span><span class="na-cta">Add AI calling agent</span></div>
           </div>
           <strong>A new add-on</strong>
-          <p>As the order summary opens, the add-on (AI calling, or Database in self-checkout) announces itself with light, then goes quiet. Once a session.</p>
+          <p>As the order summary opens, the add-on (AI calling, or Database in self-checkout) announces itself with light, then goes quiet. Database: once a session. AI calling: on every open, mid-posting.</p>
         </div>
       </div>
       <button type="button" class="switch rise" id="nudge-replay">Play again</button>
@@ -1483,7 +1483,7 @@ em { font-style: normal; }
   }
   lights.addEventListener("click", function () { swapShots(document.documentElement.dataset.mode === "dark"); });
 
-  // Type: before (Inter, the old live site) vs after (Google Sans Flex).
+  // Type: before (the old live site) vs after (Inter, one voice).
   var typedemo = document.getElementById("typedemo"), tb = document.getElementById("type-before"), ta = document.getElementById("type-after");
   function setNewType(on) { typedemo.classList.toggle("before", !on); ta.setAttribute("aria-pressed", String(on)); tb.setAttribute("aria-pressed", String(!on)); }
   tb.addEventListener("click", function () { setNewType(false); });
