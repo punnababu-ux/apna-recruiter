@@ -267,6 +267,8 @@ off-white = paper, neutral parts.
 > Subject: a chunky rounded clipboard, turned about 20°, holding a white sheet with a raised bar chart of three thick bars. Sky blue board (#6CB8F0), a gold clip (#FFC94D), a white sheet, mint and gold bars.
 
 **power-features**
+> ✅ Round 1 installed (2026-10-30).
+>
 > Subject: a chunky, thick rounded lightning bolt, turned about 20° so its depth shows. Gold body (#FFC94D), nothing else.
 
 **dedicated-support**
