@@ -296,7 +296,11 @@ off-white = paper, neutral parts.
 > Subject: a chunky rounded open door in its frame, turned about 20°, the door swung wide open inward, a warm glow of light from inside; in front of it on the floor a thick rounded welcome mat. Off-white frame (#F4F1EC), caramel door (#E0A76A), a gold mat (#FFC94D), a sky blue floor inside the doorway (#6CB8F0). No people, no text on the mat. Perfectly smooth moulded surfaces.
 
 **enterprise**
-> Subject: a small chunky rounded office tower, turned about 20°, three floors with thick window bands and a flat roof. Sky blue body (#6CB8F0), white window bands, a gold door (#FFC94D).
+> ✅ Round 2 approved (2026-10-30): reads as an office tower. Tall and slim, so it looks narrower than its neighbours in a square card. Installed.
+>
+> Round 1 (2026-10-30): finish right, but squat rounded stacked rings read as a database server or a food container (the cliché we removed from database), and the many thin window lines vanish at 56px.
+>
+> Subject: a slim office skyscraper, about twice as tall as it is wide, a rectangular box with straight sides and softly rounded edges, turned about 20° so two faces show; each face has a grid of chunky square windows (3 across, 4 rows), a flat roof with a small raised block on top. Sky blue body (#6CB8F0), white window bands, a gold door (#FFC94D).
 
 ### Company (About, Culture, Careers)
 
