@@ -310,6 +310,8 @@ off-white = paper, neutral parts.
 > Subject: a chunky rounded flag waving on a thick short pole, planted in a small round base, turned about 20°. Gold flag (#FFC94D), white pole, a sky blue base (#6CB8F0).
 
 **ownership**
+> ✅ Round 1 approved (2026-10-30). Minor: the hole sits off-centre (top right of the head). Installed; the hole is see-through.
+>
 > Subject: a chunky rounded key, turned about 20°, a round head and three thick teeth. Gold body (#FFC94D), a dark slate hole in the head.
 
 **customer-obsession**
