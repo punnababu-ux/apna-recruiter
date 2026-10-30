@@ -47,6 +47,24 @@ Found in rounds 1–3 (2026-10-30); the subjects below already follow them.
 10. **No two icons share an object.** Coming soon was a rocket like deploy;
     it is now a cone.
 
+11. **Off-white is never the main colour on white.** On a white page it
+    vanishes (improve, round 1). Use it for details only; the body is a
+    colour.
+12. **Name a familiar object for the shape.** "Box" became a ring box;
+    "crate" became a pet bowl; "desk in-tray" worked first time.
+13. **Check look-alikes before approving.** A striped cone is close to a
+    well-known logo; an eye in clay can look odd. Ask "what else is this?".
+14. **The mood fits the meaning.** Coming soon is hopeful (a sprout), not a
+    warning (a cone).
+15. **Put the angle in every subject** ("turned about 20°"). The opening
+    line alone did not hold it.
+16. **Always attach the reference image.** Without it the finish slips back
+    to handmade (lumps, wobbly edges).
+17. **One name, one meaning.** Before installing, check every place the
+    name is used (`access` meant both "locked" and "let in").
+18. **Erase the watermark** even on transparent files; the sparkle can
+    survive background removal.
+
 ## The surfaces
 
 Every icon also appears in dark mode (near-black plum #1C151E), so every
@@ -196,38 +214,38 @@ off-white = paper, neutral parts.
 > Subject: a chunky rounded phone handset tilted at an angle, two thick curved signal waves beside its upper end, and a chunky four-point sparkle about a third of the handset's size sitting at the end of the outer wave, touching it (the AI). Sky blue handset (#6CB8F0), mint waves (#7FD8B4), a gold sparkle (#FFC94D). No white parts. Perfectly smooth moulded surfaces, crisp even edges, no lumps.
 
 **wallet** (balance, payments)
-> Subject: a rounded bifold wallet with a strap and a round snap button, three banknotes peeking out of the top. Tan brown body (#C47A3F), mint notes (#7FD8B4), a gold snap (#FFC94D).
+> Subject: a chunky rounded bifold wallet, turned about 20°, a thick strap with a round snap button, three banknotes fanned so each shows, peeking out of the top. Tan brown body (#C47A3F), mint notes (#7FD8B4) with a raised white ₹ on the front note, a gold snap (#FFC94D).
 
 **coin** (price, credits)
-> Subject: a thick round coin seen slightly from the side, a raised rim and a raised ₹ symbol in the centre. Gold body (#FFC94D), white ₹.
+> Subject: a thick round coin turned about 25° so its edge shows, a raised rim and a chunky raised ₹ symbol in the centre. Gold body (#FFC94D), white ₹.
 
 **alert** (warnings)
-> Subject: a round badge with a raised exclamation mark. Coral body (#F06A6F), white mark.
+> Subject: a thick round badge turned about 20°, a chunky raised exclamation mark in the centre, nothing else. Coral body (#F06A6F), white mark.
 
 ## D · Marketing pages
 
 ### Enterprise
 
 **employer-branding**
-> Subject: a rounded award rosette with two ribbon tails and a blank raised star in the centre. Gold rosette (#FFC94D), coral tails (#F06A6F), a white star.
+> Subject: a chunky rounded award rosette, turned about 20°, with two thick ribbon tails hanging below and a raised star in the centre. Gold rosette (#FFC94D), sky blue tails (#6CB8F0), a white star.
 
 **team-management**
-> Subject: three rounded ID badges fanned out in a clear arc so each badge and its avatar shows whole, each with a raised round avatar. Sky blue, mint and off-white badges, white avatars (a sky blue avatar on the off-white badge).
+> Subject: three rounded ID badges fanned out in a clear arc so each badge and its avatar shows whole, each with a raised round avatar. Sky blue, mint and gold badges (#6CB8F0, #7FD8B4, #FFC94D), white avatars. Always a group of three (lounge-access is a single pass).
 
 **ats-integrations**
 > Subject: two chunky rounded puzzle pieces fully joined together, the tab sitting inside the slot. Sky blue piece (#6CB8F0) and gold piece (#FFC94D).
 
 **reports**
-> Subject: a rounded clipboard holding a raised bar chart of three bars. Off-white board (#F4F1EC), caramel clip (#E0A76A), sky blue, mint and gold bars.
+> Subject: a chunky rounded clipboard, turned about 20°, holding a white sheet with a raised bar chart of three thick bars. Sky blue board (#6CB8F0), a gold clip (#FFC94D), a white sheet, mint and gold bars.
 
 **power-features**
-> Subject: a chunky rounded lightning bolt. Gold body (#FFC94D) with a thin off-white edge highlight.
+> Subject: a chunky, thick rounded lightning bolt, turned about 20° so its depth shows. Gold body (#FFC94D), nothing else.
 
 **dedicated-support**
-> Subject: a rounded headset with a small microphone arm. Sky blue band and ear cups (#6CB8F0), off-white cushions (#F4F1EC), a gold mic tip (#FFC94D).
+> Subject: a chunky rounded headset, turned about 20°, a thick band, two ear cups and a short thick microphone arm. Sky blue band and ear cups (#6CB8F0), white cushions, a gold mic tip (#FFC94D).
 
 **smart-inbound**
-> Subject: a wide rounded inbox tray with two wide profile cards standing in it, fanned so each card and its avatar shows whole; a chunky arrow above them points straight down into the tray. Off-white tray (#F4F1EC), white cards with raised sky blue avatars (#6CB8F0), a gold arrow (#FFC94D).
+> Subject: a chunky rounded funnel, turned about 20°, with two small profile cards dropping into its wide top, each card and its avatar fully visible. Sky blue funnel (#6CB8F0), white cards with raised gold avatars (#FFC94D). No tray (no-results is the in-tray).
 
 **database-search**
 > Same subject as **database** above.
@@ -236,53 +254,53 @@ off-white = paper, neutral parts.
 > Subject: a chunky rounded open door in its frame, a raised person (round head, rounded shoulders) standing in the doorway, walking in. Off-white frame (#F4F1EC), caramel door (#E0A76A), a sky blue person (#6CB8F0) with a white head.
 
 **enterprise**
-> Subject: a small rounded office building with three floors of window bands and a flat roof. Off-white body (#F4F1EC), sky blue windows (#6CB8F0), a gold door (#FFC94D).
+> Subject: a small chunky rounded office tower, turned about 20°, three floors with thick window bands and a flat roof. Sky blue body (#6CB8F0), white window bands, a gold door (#FFC94D).
 
 ### Company (About, Culture, Careers)
 
 **mission**
-> Subject: a rounded flag on a short pole, planted in a small round base. Gold flag (#FFC94D), off-white pole and base (#F4F1EC).
+> Subject: a chunky rounded flag waving on a thick short pole, planted in a small round base, turned about 20°. Gold flag (#FFC94D), white pole, a sky blue base (#6CB8F0).
 
 **ownership**
-> Subject: a chunky rounded key with a round head. Gold body (#FFC94D), a dark slate hole in the head.
+> Subject: a chunky rounded key, turned about 20°, a round head and three thick teeth. Gold body (#FFC94D), a dark slate hole in the head.
 
 **customer-obsession**
-> Subject: a rounded heart with a small raised star on its face. Coral heart (#F06A6F), a white star.
+> Subject: a thick rounded heart, turned about 20°, a raised star on its face. Coral heart (#F06A6F), a white star.
 
 **empathy**
-> Subject: two rounded speech bubbles overlapping, one with a raised heart. Sky blue bubble (#6CB8F0) and mint bubble (#7FD8B4), a coral heart.
+> Subject: two thick rounded speech bubbles overlapping, each with a clear tail, the front one with a raised heart. Sky blue back bubble (#6CB8F0), mint front bubble (#7FD8B4), a coral heart (#F06A6F). No dots (contact is the bubble with dots).
 
 **transparency**
-> Subject: a rounded eye-shaped lens with a raised round pupil. Off-white body (#F4F1EC), sky blue iris (#6CB8F0), a dark slate pupil.
+> Subject: a chunky rounded open window with two square panes and a thick frame, one pane swung open, turned about 20° (nothing hidden). Sky blue frame (#6CB8F0), white panes, a gold handle (#FFC94D). No eye.
 
 **momentum**
-> Subject: a rounded paper plane in flight with a short curved trail. Sky blue plane (#6CB8F0), an off-white trail.
+> Subject: a chunky rounded paper plane in flight, turned about 20°, a short thick curved trail behind it. Sky blue plane (#6CB8F0), a mint trail (#7FD8B4).
 
 **ownership-over-hierarchy**
-> Subject: three rounded blocks of exactly the same height side by side, one with a raised star. Off-white, mint and sky blue blocks, a gold star (#FFC94D).
+> Subject: three chunky rounded blocks of exactly the same height side by side on one level, turned about 20°, the middle one with a raised star. Mint, sky blue and caramel blocks, a gold star (#FFC94D).
 
 **raise-the-bar**
-> Subject: a rounded trophy cup on a short base. Gold cup (#FFC94D), caramel base (#E0A76A).
+> Subject: a chunky rounded trophy cup with two thick handles on a short base, turned about 20°. Gold cup (#FFC94D), a sky blue base (#6CB8F0).
 
 ### Interview prep lounge
 
 **student**
-> Subject: a rounded graduation cap with a tassel. Sky blue cap (#6CB8F0), a gold tassel (#FFC94D).
+> Subject: a chunky rounded graduation cap, turned about 20°, a thick tassel hanging over its edge. Sky blue cap (#6CB8F0), a gold tassel (#FFC94D).
 
 **university**
-> Subject: a small rounded building with four columns and a triangular roof. Off-white body (#F4F1EC), caramel roof (#E0A76A), a gold door.
+> Subject: a small chunky rounded building with four thick columns and a triangular roof on a stepped base, turned about 20°. White columns, a sky blue roof and base (#6CB8F0), a gold door (#FFC94D).
 
 **government**
-> Subject: a small rounded domed building. Off-white body (#F4F1EC), sky blue dome (#6CB8F0), a gold finial.
+> Subject: a small chunky rounded building with a large dome on top, turned about 20°. Mint body (#7FD8B4), a sky blue dome (#6CB8F0), a gold finial (#FFC94D), white windows.
 
 **deploy**
-> Subject: a rounded rocket lifting off a small round pad. Off-white body (#F4F1EC), coral fins (#F06A6F), a gold flame.
+> Subject: a chunky rounded rocket lifting off a small round pad, turned about 20°, a short thick flame below it. Sky blue body (#6CB8F0), a white window, coral fins (#F06A6F), a gold flame (#FFC94D).
 
 **practise**
-> Subject: a rounded microphone on a short stand. Sky blue head (#6CB8F0), off-white stand (#F4F1EC).
+> Subject: a chunky rounded microphone on a short thick stand, turned about 20°. Sky blue head (#6CB8F0), a gold stand (#FFC94D).
 
 **track**
-> Subject: a thick rounded speedometer dial with a raised needle pointing to the upper right. Off-white face (#F4F1EC), mint, gold and coral arc bands, a dark slate needle.
+> Subject: a thick rounded speedometer dial, turned about 20°, a raised needle pointing to the upper right. Sky blue body (#6CB8F0), a white face with mint, gold and coral arc bands, a dark slate needle.
 
 ---
 
