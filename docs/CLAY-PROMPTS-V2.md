@@ -62,6 +62,7 @@ Found in rounds 1–3 (2026-10-30); the subjects below already follow them.
     to handmade (lumps, wobbly edges).
 17. **One name, one meaning.** Before installing, check every place the
     name is used (`access` meant both "locked" and "let in").
+19. **No small symbols.** A ₹ the size of a note corner comes out garbled. A symbol is either the hero (the coin) or left out.
 18. **Erase the watermark** even on transparent files; the sparkle can
     survive background removal.
 
@@ -214,7 +215,11 @@ off-white = paper, neutral parts.
 > Subject: a chunky rounded phone handset tilted at an angle, two thick curved signal waves beside its upper end, and a chunky four-point sparkle about a third of the handset's size sitting at the end of the outer wave, touching it (the AI). Sky blue handset (#6CB8F0), mint waves (#7FD8B4), a gold sparkle (#FFC94D). No white parts. Perfectly smooth moulded surfaces, crisp even edges, no lumps.
 
 **wallet** (balance, payments)
-> Subject: a chunky rounded bifold wallet, turned about 20°, a thick strap with a round snap button, three banknotes fanned so each shows, peeking out of the top. Tan brown body (#C47A3F), mint notes (#7FD8B4) with a raised white ₹ on the front note, a gold snap (#FFC94D).
+> ✅ Round 2 approved (2026-10-30): no symbol, notes read as money. Installed; not used on any screen yet.
+>
+> Round 1 (2026-10-30): wallet, strap and notes right. The small ₹ on the note came out garbled.
+>
+> Subject: a chunky rounded bifold wallet, turned about 20°, a thick strap with a round snap button, three banknotes fanned so each shows, peeking out of the top. Tan brown body (#C47A3F), mint notes (#7FD8B4) with a raised round dot in the centre of the front note (no symbol), a gold snap (#FFC94D).
 
 **coin** (price, credits)
 > Subject: a thick round coin turned about 25° so its edge shows, a raised rim and a chunky raised ₹ symbol in the centre. Gold body (#FFC94D), white ₹.
