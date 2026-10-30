@@ -187,7 +187,13 @@ off-white = paper, neutral parts.
 > ✅ Installed (2026-10-30): the coral striped cone from coming-soon round 1, kept by user call. Use where the recruiter cannot go or do something (no permission, feature not on their plan). Watch the resemblance to a media-player logo if it is ever shown large.
 
 **ai-calling** (AI calling agent)
-> Subject: a chunky rounded phone handset tilted at an angle, two thick curved signal waves beside its upper end, and a four-point sparkle about a quarter of the handset's size floating at its upper right (the AI). Sky blue handset (#6CB8F0), white waves, a gold sparkle (#FFC94D).
+> Round 1 (2026-10-30): handset reads. But the waves are white: on a white pop-up (and the light sky AI add-on card) they vanish, leaving a phone and a floating star. The sparkle sits apart from the phone, so "AI" reads as decoration.
+>
+> ✅ Round 3 approved (2026-10-30): smooth moulded finish back. Installed (watermark erased); not used on any screen yet.
+>
+> Round 2: colours and sparkle fixed. But the finish drifted to handmade: lumpy, uneven surfaces, soft wobbly edges. Regenerate with the three-jobs reference image attached.
+>
+> Subject: a chunky rounded phone handset tilted at an angle, two thick curved signal waves beside its upper end, and a chunky four-point sparkle about a third of the handset's size sitting at the end of the outer wave, touching it (the AI). Sky blue handset (#6CB8F0), mint waves (#7FD8B4), a gold sparkle (#FFC94D). No white parts. Perfectly smooth moulded surfaces, crisp even edges, no lumps.
 
 **wallet** (balance, payments)
 > Subject: a rounded bifold wallet with a strap and a round snap button, three banknotes peeking out of the top. Tan brown body (#C47A3F), mint notes (#7FD8B4), a gold snap (#FFC94D).

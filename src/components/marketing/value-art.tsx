@@ -12,6 +12,7 @@ import Image from "next/image"
 import { cn } from "@/lib/utils"
 import {
   Award,
+  PhoneCall,
   Ban,
   UserCheck,
   MapPin,
@@ -88,6 +89,8 @@ export type ValueName =
   | "lounge-access"
   // Not allowed / no access (not used yet)
   | "restricted"
+  // AI calling agent (not used yet)
+  | "ai-calling"
   | "expired"
 
 const ICON: Record<ValueName, ComponentType<{ className?: string; "aria-hidden"?: boolean }>> = {
@@ -126,6 +129,7 @@ const ICON: Record<ValueName, ComponentType<{ className?: string; "aria-hidden"?
   "city-lock": MapPin,
   "lounge-access": UserCheck,
   restricted: Ban,
+  "ai-calling": PhoneCall,
   expired: Clock,
 }
 
@@ -168,6 +172,7 @@ const READY = new Set<ValueName>([
   "city-lock",
   "lounge-access",
   "restricted",
+  "ai-calling",
   "expired",
 ])
 
