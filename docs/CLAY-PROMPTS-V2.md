@@ -105,7 +105,7 @@ off-white = paper, neutral parts.
 ## B · Plum premium header (subscription upgrades, slots full)
 
 **annual** (Go annual)
-> ✅ Round 2 approved (2026-10-30): 12-square grid, big crown, gold square. Awaiting the file to install.
+> ✅ Round 2 approved (2026-10-30): 12-square grid, big crown, gold square. Installed.
 >
 > Round 1: finish right; blank page reads "empty", crown ~15% wide (a speck at 56px), 62% flat off-white, rings thin. Not installed.
 >
