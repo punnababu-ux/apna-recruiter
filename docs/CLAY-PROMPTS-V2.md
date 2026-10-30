@@ -222,6 +222,8 @@ off-white = paper, neutral parts.
 > Subject: a chunky rounded bifold wallet, turned about 20°, a thick strap with a round snap button, three banknotes fanned so each shows, peeking out of the top. Tan brown body (#C47A3F), mint notes (#7FD8B4) with a raised round dot in the centre of the front note (no symbol), a gold snap (#FFC94D).
 
 **coin** (price, credits)
+> ✅ Round 1 installed (2026-10-30); not used on any screen yet. Not a replacement for the design system `Coin` (the small flat gold ₹ in buttons and the bottom bar).
+>
 > Subject: a thick round coin turned about 25° so its edge shows, a raised rim and a chunky raised ₹ symbol in the centre. Gold body (#FFC94D), white ₹.
 
 **alert** (warnings)
