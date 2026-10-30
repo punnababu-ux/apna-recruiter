@@ -374,7 +374,11 @@ off-white = paper, neutral parts.
 > Subject: a chunky rounded official rubber stamp, turned about 20°, a round knob handle on a short neck and a thick square stamp base, standing on a white sheet of paper; beside it on the sheet a round stamped mark with a raised check inside. Sky blue base (#6CB8F0), a gold knob (#FFC94D), a white sheet, a mint stamped mark (#7FD8B4) with a white check. No text, no emblem, no building.
 
 **deploy**
-> Subject: a chunky rounded rocket lifting off a small round pad, turned about 20°, a short thick flame below it. Sky blue body (#6CB8F0), a white window, coral fins (#F06A6F), a gold flame (#FFC94D).
+> ✅ Round 2 approved (2026-10-30): on its pad, no flame. Installed.
+>
+> Round 1 (2026-10-30): rocket body right. But the lumpy yellow flame dropping onto the pad repeats the momentum problem (reads as something coming out of its tail).
+>
+> Subject: a chunky rounded rocket standing upright on a small round launch pad, ready to go, turned about 20°, three fins resting on the pad. No flame, no smoke, nothing under or behind it. Sky blue body (#6CB8F0), a white window with a slate rim, coral fins (#F06A6F), a gold pad (#FFC94D).
 
 **practise**
 > Subject: a chunky rounded microphone on a short thick stand, turned about 20°. Sky blue head (#6CB8F0), a gold stand (#FFC94D).
