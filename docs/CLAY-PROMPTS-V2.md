@@ -360,6 +360,8 @@ off-white = paper, neutral parts.
 > Subject: a chunky rounded graduation cap, turned about 20°, a thick tassel hanging over its edge. Sky blue cap (#6CB8F0), a gold tassel (#FFC94D).
 
 **university**
+> ✅ Round 1 approved (2026-10-30). A columned building can also read "bank"; its card title and the student cap beside it settle it. Installed.
+>
 > Subject: a small chunky rounded building with four thick columns and a triangular roof on a stepped base, turned about 20°. White columns, a sky blue roof and base (#6CB8F0), a gold door (#FFC94D).
 
 **government**
