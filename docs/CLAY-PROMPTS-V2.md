@@ -257,6 +257,8 @@ off-white = paper, neutral parts.
 > Subject: three chunky rounded person figures (round head, rounded shoulders, like simple pawns) standing close together in a shallow V on one small round base, the middle one slightly taller and in front, turned about 20° as a group; each figure fully visible, none covering another's head. Sky blue, mint and gold bodies (#6CB8F0, #7FD8B4, #FFC94D) with white heads, an off-white base (#F4F1EC). No badges, no cards.
 
 **ats-integrations**
+> ✅ Round 1 installed (2026-10-30).
+>
 > Subject: two chunky rounded puzzle pieces fully joined together, the tab sitting inside the slot. Sky blue piece (#6CB8F0) and gold piece (#FFC94D).
 
 **reports**
