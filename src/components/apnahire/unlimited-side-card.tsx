@@ -72,7 +72,9 @@ export function UnlimitedSideCard({
   // V13, phones: express V11's card (title, price alone, "1 job live at a
   // time"), without "Job reposts and swapping"; this page sells no
   // visibility, so no "Dynamic visibility" either (user calls, 2026-10-30).
-  const v13 = versionAtLeast(useCheckoutVersion(), "v13")
+  const version = useCheckoutVersion()
+  const v13 = versionAtLeast(version, "v13")
+  const v14 = versionAtLeast(version, "v14")
   return (
     <>
       {/* ── Mobile (< md): the shared phone card, the same one express
@@ -92,7 +94,8 @@ export function UnlimitedSideCard({
         upcoming={<UpcomingPriceLine price={plan.janPrice} />}
         meta={
           v13 ? (
-            <MobileMetaLine icon={<BriefcaseBusiness className="text-checkout-primary" aria-hidden />}>
+            // V14: gray briefcase (user call, 2026-10-31).
+            <MobileMetaLine icon={<BriefcaseBusiness className={v14 ? "text-muted-foreground" : "text-checkout-primary"} aria-hidden />}>
               1 job live at a time
             </MobileMetaLine>
           ) : (
@@ -158,10 +161,18 @@ export function UnlimitedSideCard({
             title="Unlimited job posts"
             subtitle="Free job reposts and swapping"
             meta={[
-              <>
-                <ClockFading aria-hidden />
-                {slotLabel(plan.slots)} for {plan.slotDays}{"\u00A0"}days
-              </>,
+              // V14: the phone card's words, "1 job live at a time" (user
+              // call, 2026-10-31).
+              v14 ? (
+                <>
+                  <BriefcaseBusiness className="text-muted-foreground" aria-hidden />1 job live at a time
+                </>
+              ) : (
+                <>
+                  <ClockFading aria-hidden />
+                  {slotLabel(plan.slots)} for {plan.slotDays}{"\u00A0"}days
+                </>
+              ),
               <>
                 <UserSearch aria-hidden />
                 {dbCreditsLabel(plan)}

@@ -200,6 +200,39 @@ const dbCreditsLine = (credits: number) => (
 )
 
 /** Short names for the phone feature line, keyed by the full label. */
+/** V11's Unlimited city note, in full on phones and desktop. */
+const CITY_NOTE = "This plan is valid in a single city"
+const v11Label = (label: string) => DESKTOP_LABEL[label] ?? label
+
+/** V11 desktop: a plan's name with who it's for in a small line under
+ *  it, between the name and the price (user call, 2026-10-31). */
+function ForWho({ line, children }: { line?: string; children: React.ReactNode }) {
+  return (
+    <span className="flex flex-col gap-1">
+      {children}
+      {line && <span className="text-sm font-regular text-muted-foreground">{line}</span>}
+    </span>
+  )
+}
+
+/** V11 desktop: who each job type is for, under its name (user call,
+ *  2026-10-31); the visibility line keeps just "1x / 2x / 4x visibility". */
+const TIER_FOR_SHORT: Partial<Record<JobPlanTierId, string>> = {
+  classic: "For regular roles",
+  premium: "For faster hiring",
+  "premium-ai": "With AI calling",
+  "super-premium": "For hard-to-fill roles",
+}
+
+/** V11 desktop: the full wording, with "alerts" for WhatsApp (user call,
+ *  2026-10-30). */
+const DESKTOP_LABEL: Record<string, string> = {
+  "WhatsApp notifications to candidates": "WhatsApp alerts to candidates",
+  "2x Priority WhatsApp notifications to candidates": "2x WhatsApp alerts to candidates",
+  "Featured with 'Urgently hiring' tag": "Featured with 'Urgently hiring' tag",
+  "Top placements in job listings": "Top placement in job listing",
+}
+
 const LINE_LABEL: Record<string, string> = {
   "WhatsApp notifications to candidates": "WhatsApp alerts to candidates",
   "2x Priority WhatsApp notifications to candidates": "2x WhatsApp alerts to candidates",
@@ -219,7 +252,7 @@ const TIER_BOOST: Partial<Record<JobPlanTierId, string>> = {
   "super-premium": "3x",
 }
 
-const tierLine = (tier: JobPlanTier, v6 = false, boost: "number" | "bars" | false = false, v10 = false) => {
+const tierLine = (tier: JobPlanTier, v6 = false, boost: "number" | "bars" | false = false, v10 = false, v11 = false) => {
   // Only what the plan includes: no red ✕ for what it lacks (user call,
   // 2026-10-30). A plan with nothing extra (Classic) has no line, and no
   // rule above it.
@@ -245,7 +278,13 @@ const tierLine = (tier: JobPlanTier, v6 = false, boost: "number" | "bars" | fals
       .map((f) => ({
         icon: featureIcon(f.label, true),
         // V6 says where the placement is (user call, 2026-10-30).
-        label: v6 && /top placement/i.test(f.label) ? "Top placement on app" : (LINE_LABEL[f.label] ?? f.label),
+        // V11: "on job listing" (user call, 2026-10-30).
+        label:
+          v6 && /top placement/i.test(f.label)
+            ? v11
+              ? "Top placement on job listing"
+              : "Top placement on app"
+            : (LINE_LABEL[f.label] ?? f.label),
       }))
       // V10: the WhatsApp icon already says WhatsApp, so the label drops it.
       .map((item) =>
@@ -565,6 +604,11 @@ function JobPlanGridCard({ tier, recommended, creditBalance, onSelect }: JobPlan
   // time (user call, 2026-10-29). Recommended keeps standing out by its blue
   // edge instead of a resting green button.
   const { active, props: hoverProps } = useCardHover()
+  // V11 on desktop: the phone card's design (user call, 2026-10-30): nested in the
+  // panel, no blue edge (the tab marks it), price only, "1x / 2x / 4x
+  // visibility" with the ticks, only what the plan includes, no database
+  // credits, no per-card "Job active" line (the panel says it).
+  const v11d = versionAtLeast(useCheckoutVersion(), "v11")
   return (
     <div
       className="flex flex-col"
@@ -579,7 +623,8 @@ function JobPlanGridCard({ tier, recommended, creditBalance, onSelect }: JobPlan
           // (border + outline), so the card size never shifts. An outline,
           // not a ring: the hover lift replaces box-shadow, which would drop
           // a ring and make the edge and the ribbon jump.
-          recommended ? RECOMMENDED_EDGE : "border-transparent",
+          recommended && !v11d ? RECOMMENDED_EDGE : "border-transparent",
+          v11d && "rounded-card-nested",
           shimmerKey > 0 && "animate-shimmer-once"
         )}
         // The whole card selects (the CTA's click bubbles here), as on
@@ -593,10 +638,13 @@ function JobPlanGridCard({ tier, recommended, creditBalance, onSelect }: JobPlan
             </Badge>
           ) : undefined
         }
-        title={tierTitle(tier)}
+        // V11 desktop: who it's for, under the name (ForWho).
+        title={v11d ? <ForWho line={TIER_FOR_SHORT[tier.id]}>{tierTitle(tier)}</ForWho> : tierTitle(tier)}
         price={creditMode ? creditLabel(tier.credit) : inr(tier.price)}
-        mrp={!creditMode && tier.mrp ? inr(tier.mrp) : undefined}
-        badge={!creditMode && discountPct ? <Badge variant="discount">{discountPct}% OFF</Badge> : undefined}
+        // V11 drops the struck price, except under the claimed 10% offer
+        // (user call, 2026-10-31).
+        mrp={!creditMode && (!v11d || extraOff) && tier.mrp ? inr(tier.mrp) : undefined}
+        badge={!creditMode && !v11d && discountPct ? <Badge variant="discount">{discountPct}% OFF</Badge> : undefined}
         // On every card in credit mode, none outside it — structural parity.
         // Outside it: the claimed offer's line, then the Jan 1 price (credit
         // mode speaks credits, so it has no ₹ line to add).
@@ -619,7 +667,27 @@ function JobPlanGridCard({ tier, recommended, creditBalance, onSelect }: JobPlan
             {ctaLabel}
           </Button>
         }
-        meta={[
+        meta={v11d ? [
+          // Desktop has the room: the visibility line leads, every feature
+          // indented under it, what the plan lacks with a ✕ and muted, full
+          // wording (user call, 2026-10-30).
+          <FeatureGroup
+            key="visibility"
+            lead={
+              <>
+                <VisibilityTicks level={tier.visibilityLevel} className="text-checkout-primary" />{" "}
+                {(TIER_BOOST_FOR[tier.id] ?? tier.visibilityLabel).split(",")[0]}
+              </>
+            }
+          >
+            {tier.features.map((f) => (
+              <SubPoint key={f.label} icon={featureIcon(f.label, f.enabled)} muted={!f.enabled}>
+                {v11Label(f.label)}
+              </SubPoint>
+            ))}
+          </FeatureGroup>,
+          ...(tier.id === "premium-ai" ? [<AiAgentBlock key="ai" />] : []),
+        ] : [
           <>
             <ClockFading aria-hidden /> Job active for {tier.jobActiveDays} days
           </>,
@@ -641,7 +709,7 @@ function JobPlanGridCard({ tier, recommended, creditBalance, onSelect }: JobPlan
           </FeatureGroup>,
           ...(tier.id === "premium-ai" ? [<AiAgentBlock key="ai" />] : []),
         ]}
-        footer={planFooter(tier.dbCredits)}
+        footer={v11d ? undefined : planFooter(tier.dbCredits)}
       />
     </div>
   )
@@ -668,6 +736,26 @@ export interface JobPlanSelectProps {
  *  beside the subscription card. The 24px header row (`leading-6`) matches
  *  the Unlimited card's 24px logo row, so both columns' cards start level. */
 function PlanFrame({ title, className, children }: { title: string; className?: string; children: React.ReactNode }) {
+  // V11 on desktop: the phone panel: 12px sides, bottom and gaps, 16px
+  // top, concentric corner, briefcase + title, "Active for 15 days" right.
+  const v11d = versionAtLeast(useCheckoutVersion(), "v11")
+  if (v11d) {
+    return (
+      <div className={cn("flex flex-col gap-3 rounded-frame surface-glass-dark px-3 pt-4 pb-3", className)}>
+        <div className="flex items-center justify-between gap-2 px-1.5">
+          <h2 className="flex items-center gap-2 text-h6 leading-6 whitespace-nowrap text-foreground [&_svg]:size-5 [&_svg]:shrink-0">
+            <BriefcaseBusiness aria-hidden />
+            {title}
+          </h2>
+          <span className="flex shrink-0 items-center gap-1.5 text-xs font-medium whitespace-nowrap text-muted-foreground [&_svg]:size-4">
+            <ClockFading aria-hidden />
+            Active for 15 days
+          </span>
+        </div>
+        {children}
+      </div>
+    )
+  }
   return (
     <div className={cn("flex flex-col gap-5 rounded-card surface-glass-dark p-4", className)}>
       {/* A group label, not a heading to compete with the page title: 16px,
@@ -818,7 +906,7 @@ function MobileJobPlanRadioGroup({
                   )
                 }
                 upcoming={creditMode ? undefined : <UpcomingPriceLine price={tier.janPrice} />}
-                line={signals ? <SignalRow tier={tier} /> : tierLine(tier, tapToBuy, boost, boostFor)}
+                line={signals ? <SignalRow tier={tier} /> : tierLine(tier, tapToBuy, boost, boostFor, groupJobs)}
                 // Closed: a separator, then the three feature icons (in colour
                 // when included, grey when not) and the DB credits beside them.
                 collapsed={
@@ -961,8 +1049,8 @@ function MobileSubscriptionCard({
           lead={
             v11
               ? {
-                  // V11 violet, its own hue; V12 tries blue (user calls, 2026-10-30).
-                  icon: <Activity className={v12 ? "text-info" : "text-feature-violet"} aria-hidden />,
+                  // V11 green, like the visibility ticks (2026-10-31; violet before); V12 tries blue.
+                  icon: <Activity className={v12 ? "text-info" : "text-checkout-primary"} aria-hidden />,
                   label: "Dynamic visibility",
                 }
               : undefined
@@ -985,7 +1073,8 @@ function MobileSubscriptionCard({
         [<InfinityIcon key="i" className="text-warning" aria-hidden />, "Free job reposts and swapping"],
         [<Database key="i" className="text-muted-foreground" aria-hidden />, dbCreditsLabel(plan)],
       ]}
-      note={plan.note}
+      // V11: said in full (user call, 2026-10-31).
+      note={v11 ? CITY_NOTE : plan.note}
       cta={
         selected !== undefined ? undefined : (
           // The dark companion: the sticky green bar stays the one primary.
@@ -1063,6 +1152,27 @@ export function TieredJobPlans({
     creditBalance["ai-calling"] > 0 ? ["classic", "premium", "premium-ai", "super-premium"] : TIERED_PLAN_ORDER
   const tiers = order.map((id) => offerTier(catalogue[id], extraOff))
   const onSelectTier = (tier: JobPlanTier) => selectCatalogueTier(catalogue[tier.id])
+  // V11: the job types in one panel on desktop too, as on phones.
+  const v11d = versionAtLeast(useCheckoutVersion(), "v11")
+  const grid = (
+    <div
+      className={cn(
+        "hidden sm:grid sm:grid-cols-2",
+        v11d ? "sm:gap-3" : "sm:gap-4",
+        tiers.length === 3 ? "lg:grid-cols-3" : "lg:grid-cols-4"
+      )}
+    >
+      {tiers.map((tier) => (
+        <JobPlanGridCard
+          key={tier.id}
+          tier={tier}
+          recommended={tier.id === RECOMMENDED_TIER.tiered}
+          creditBalance={creditBalance}
+          onSelect={onSelectTier}
+        />
+      ))}
+    </div>
+  )
   return (
     <PlanOfferContext.Provider value={{ extraOff, shimmerKey }}>
       <MobileJobPlanRadioGroup
@@ -1071,17 +1181,13 @@ export function TieredJobPlans({
         onSelectTier={onSelectTier}
         recommendedId={RECOMMENDED_TIER.tiered}
       />
-      <div className={cn("hidden sm:grid sm:gap-4 sm:grid-cols-2", tiers.length === 3 ? "lg:grid-cols-3" : "lg:grid-cols-4")}>
-        {tiers.map((tier) => (
-          <JobPlanGridCard
-            key={tier.id}
-            tier={tier}
-            recommended={tier.id === RECOMMENDED_TIER.tiered}
-            creditBalance={creditBalance}
-            onSelect={onSelectTier}
-          />
-        ))}
-      </div>
+      {v11d ? (
+        <PlanFrame className="hidden sm:flex" title="Single job posting">
+          {grid}
+        </PlanFrame>
+      ) : (
+        grid
+      )}
     </PlanOfferContext.Provider>
   )
 }
@@ -1098,6 +1204,7 @@ export function SubscriptionJobPlans({
   const catalogue = usePlans().tiers
   const tiers = SUBSCRIPTION_PLAN_ORDER.map((id) => offerTier(catalogue[id], extraOff))
   const onSelectTier = (tier: JobPlanTier) => selectCatalogueTier(catalogue[tier.id])
+  const v11d = versionAtLeast(useCheckoutVersion(), "v11")
   return (
     <PlanOfferContext.Provider value={{ extraOff, shimmerKey }}>
       <div className="flex flex-col gap-4 sm:hidden">
@@ -1113,10 +1220,10 @@ export function SubscriptionJobPlans({
         />
       </div>
 
-      <div className="hidden sm:flex sm:flex-col sm:gap-4 xl:flex-row">
+      <div className={cn("hidden sm:flex sm:flex-col xl:flex-row", v11d ? "sm:gap-3" : "sm:gap-4")}>
         <div className="flex min-w-0 flex-1 flex-col">
           <PlanFrame className="flex-1" title="Single job posting">
-            <div className="grid flex-1 grid-cols-1 gap-4 lg:grid-cols-3">
+            <div className={cn("grid flex-1 grid-cols-1 lg:grid-cols-3", v11d ? "gap-3" : "gap-4")}>
               {tiers.map((tier) => (
                 <JobPlanGridCard
                   key={tier.id}
@@ -1173,6 +1280,10 @@ function MonthlySubscriptionCard({
   // As the job cards: the CTA turns the green primary only while this card
   // is hovered or focused, so one green shows at a time.
   const { active, props: hoverProps } = useCardHover()
+  // V11 on desktop: the phone card's design: "Unlimited jobs for 1 month", price
+  // alone, "1 job live at a time", alerts, dynamic visibility, database
+  // credits; the frame shaped like the job panel.
+  const v11d = versionAtLeast(useCheckoutVersion(), "v11")
   return (
     // The frame is the click target but stays put; hovering anywhere in it
     // lifts the card inside (card-hover-lift rule) — same as self-checkout's
@@ -1182,14 +1293,15 @@ function MonthlySubscriptionCard({
       onClick={blockedLabel ? undefined : onSelect}
       {...hoverProps}
       className={cn(
-        "flex flex-col gap-5 rounded-card bg-gradient-checkout-unlimited p-4",
+        "flex flex-col bg-gradient-checkout-unlimited",
+        v11d ? "gap-3 rounded-frame px-3 pt-4 pb-3" : "gap-5 rounded-card p-4",
         !blockedLabel && "cursor-pointer",
         className
       )}
     >
       {/* Logo row as in UnlimitedSideCard; 24px tall to match PlanFrame's
           heading so both columns' cards start level. */}
-      <div className="flex h-6 items-start pt-1.5">
+      <div className={cn("flex h-6", v11d ? "items-center px-1.5" : "items-start pt-1.5")}>
         <LogoApnaUnlimited variant="gradient" className="h-4 w-auto" />
       </div>
 
@@ -1199,12 +1311,12 @@ function MonthlySubscriptionCard({
         interactive={!blockedLabel}
         layout="price-first"
         surface="inset"
-        className={cn("flex-1 border-transparent", shimmerKey > 0 && "animate-shimmer-once")}
-        title={plan.name}
+        className={cn("flex-1 border-transparent", v11d && "rounded-card-nested", shimmerKey > 0 && "animate-shimmer-once")}
+        title={v11d ? <ForWho line="For continuous hiring">Unlimited jobs for 1 month</ForWho> : plan.name}
         price={inr(price)}
-        unit={plan.unit}
-        mrp={strike ? inr(strike) : undefined}
-        badge={discountPct ? <Badge variant="discount">{discountPct}% OFF</Badge> : undefined}
+        unit={v11d ? undefined : plan.unit}
+        mrp={strike && (!v11d || extraOff) ? inr(strike) : undefined}
+        badge={discountPct && !v11d ? <Badge variant="discount">{discountPct}% OFF</Badge> : undefined}
         // Its Jan 1 price stays a ₹ line even in credit mode, where it takes
         // the reserved line level with the tier cards' one credit status
         // line, unless the claimed offer's line already fills it.
@@ -1228,7 +1340,32 @@ function MonthlySubscriptionCard({
             {blockedLabel ?? "Get apna unlimited"}
           </Button>
         }
-        meta={[
+        meta={v11d ? [
+          // As the job cards: visibility leads (green, level with their
+          // 1x/2x/4x row) with alerts under it; then the live slot with
+          // reposts and database credits (user call, 2026-10-31).
+          <FeatureGroup
+            key="vis"
+            lead={
+              <>
+                <Activity className="text-checkout-primary" aria-hidden /> Dynamic visibility
+              </>
+            }
+          >
+            <SubPoint icon={<WhatsApp className="text-success" aria-hidden />}>WhatsApp alerts to candidates</SubPoint>
+          </FeatureGroup>,
+          <FeatureGroup
+            key="slot"
+            lead={
+              <>
+                <BriefcaseBusiness className="text-checkout-primary" aria-hidden /> 1 job live at a time
+              </>
+            }
+          >
+            <SubPoint icon={<InfinityIcon className="text-warning" aria-hidden />}>Unlimited job reposts &amp; swapping</SubPoint>
+            <SubPoint icon={<UserSearch className="text-info" aria-hidden />}>{dbCreditsLabel(plan)}</SubPoint>
+          </FeatureGroup>,
+        ] : [
           <FeatureGroup
             key="slot"
             lead={
@@ -1258,7 +1395,7 @@ function MonthlySubscriptionCard({
         footer={
           <span className="flex items-center gap-1.5">
             <MapPin className="size-4" aria-hidden />
-            {plan.note}
+            {v11d ? CITY_NOTE : plan.note}
           </span>
         }
       />
@@ -1277,6 +1414,10 @@ function JobTypeInfoCard({ tier }: { tier: JobPlanTier }) {
   const shown = offerTier(tier, extraOff)
   const discountPct = shown.ownPct
   const perCredit = Math.floor(shown.price / tier.credit.count)
+  // V14: "1x / 2x / 4x visibility", express V11's desktop wording
+  // ("WhatsApp alerts to candidates") and no database credits (user call,
+  // 2026-10-31).
+  const v14 = versionAtLeast(useCheckoutVersion(), "v14")
 
   return (
     <PricingCard
@@ -1304,18 +1445,19 @@ function JobTypeInfoCard({ tier }: { tier: JobPlanTier }) {
           key="visibility"
           lead={
             <>
-              <VisibilityTicks level={tier.visibilityLevel} className="text-checkout-primary" /> {tier.visibilityLabel}
+              <VisibilityTicks level={tier.visibilityLevel} className="text-checkout-primary" />{" "}
+              {v14 ? (TIER_BOOST_FOR[tier.id] ?? tier.visibilityLabel).split(",")[0] : tier.visibilityLabel}
             </>
           }
         >
           {tier.features.map((f) => (
             <SubPoint key={f.label} icon={featureIcon(f.label, f.enabled)} muted={!f.enabled}>
-              <FeatureName label={f.label} />
+              <FeatureName label={v14 ? v11Label(f.label) : f.label} />
             </SubPoint>
           ))}
         </FeatureGroup>,
       ]}
-      footer={planFooter(tier.dbCredits)}
+      footer={v14 ? undefined : planFooter(tier.dbCredits)}
     />
   )
 }
@@ -1361,7 +1503,7 @@ export function JobTypesDialog({
                 className="bg-muted shadow-none"
                 meta={<VisibilityLine tier={tier} boostFor ticks />}
                 price={`${n} job credit${n === 1 ? "" : "s"}`}
-                line={tierLine(tier, true, false, true)}
+                line={tierLine(tier, true, false, true, true)}
               />
             )
           })}

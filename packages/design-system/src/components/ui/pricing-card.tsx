@@ -122,8 +122,8 @@ export interface PricingCardProps extends Omit<React.ComponentProps<"div">, "tit
   layout?: "stacked" | "price-first"
   /** Bottom-pinned line under the meta list (price-first only). */
   footer?: React.ReactNode
-  /** The hover lift. Defaults to on when the card has `onClick` (a click
-   *  target as a whole), off otherwise. Pass `true` only when a frame around
+  /** The hover lift, ink and press. Defaults to on when the card has
+   *  `onClick` (a click target as a whole), off otherwise. Pass `true` only when a frame around
    *  the card takes the click (see the card-hover-lift rule). */
   interactive?: boolean
 }
@@ -215,8 +215,9 @@ export function PricingCard({
     "relative flex h-full flex-col gap-4 rounded-card-nested border p-4 pt-8",
     (interactive ?? !!props.onClick) && "card-hover-lift",
     inset ? "border-checkout-inset-border bg-checkout-inset" : "border-border bg-plan-card",
-    // A clickable card answers a press like every other surface.
-    props.onClick && "cursor-pointer ink press-subtle",
+    // A clickable card answers a press like every other surface, also when
+    // a frame around it takes the click (`interactive`).
+    (interactive ?? !!props.onClick) && "cursor-pointer ink press-subtle",
     className
   )
 

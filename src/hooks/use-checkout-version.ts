@@ -42,7 +42,10 @@
  *  v10 V6 plus, in express job cards on phones: the visibility line shows
  *      antenna bars (1, 2, 3) and says the boost ("2x boost, for faster
  *      hiring"; Super premium is 4x).
- *  v11 V10 plus, in express on phones: the three job types sit together in
+ *  v11 FINAL 2026-10-30, express checkout's default (EXPRESS_DEFAULT), phones
+ *      and desktop. Desktop: the same panel, cards and Unlimited card as
+ *      phones (one fact a line; desktop keeps the word WhatsApp).
+ *      V10 plus, in express on phones: the three job types sit together in
  *      one panel titled "Single job posting" (the desktop frame), apart
  *      from the subscription card.
  *  v12 V11 plus: the Unlimited card's "Dynamic visibility" pulse is blue
@@ -51,7 +54,8 @@
  *      credit packs in one panel ("Job credit packages", as express V11's
  *      job types), with "What 1 job credit will get you?" and "Buy 1 job
  *      credit" inside it, under the cards.
- *  v14 V13 plus V9's underline tabs on self-checkout's phone tab strip.
+ *  v14 FINAL 2026-10-31, self-checkout's default (SELF_DEFAULT). V13 plus
+ *      V9's underline tabs on self-checkout's phone tab strip.
  *
  * A new version adds an entry here, then branches where it differs:
  * `if (versionAtLeast(useCheckoutVersion(), "v2")) …` (a later version
@@ -80,23 +84,34 @@ export const CHECKOUT_VERSIONS: { value: CheckoutVersion; label: string }[] = [
   { value: "v8", label: "V8 · V6 + boost with antenna bars" },
   { value: "v9", label: "V9 · V6 + underline tabs" },
   { value: "v10", label: "V10 · V6 + bars and boost in the visibility line" },
-  { value: "v11", label: "V11 · V10 + job types grouped in a panel" },
+  { value: "v11", label: "V11 · frozen Oct 30, express default" },
   { value: "v12", label: "V12 · V11 + blue pulse for dynamic visibility" },
   { value: "v13", label: "V13 · V11 + self-checkout packs grouped" },
-  { value: "v14", label: "V14 · V13 + underline tabs" },
+  { value: "v14", label: "V14 · final Oct 31, self-checkout default" },
 ]
 
 const KEY = "apnahire:checkout-version"
 const EVENT = "apnahire:checkout-version"
 const FALLBACK: CheckoutVersion = "v1"
+/** Express checkout (the job-posting plan step) opens on V11, frozen
+ *  2026-10-30; self-checkout (/apnahire/credits) on V14, final 2026-10-31
+ *  (user calls). Every other page stays on V1. */
+const EXPRESS_DEFAULT: CheckoutVersion = "v11"
+const SELF_DEFAULT: CheckoutVersion = "v14"
+const pageDefault = () => {
+  const path = window.location.pathname
+  if (path.startsWith("/apnahire/jobs")) return EXPRESS_DEFAULT
+  if (path.startsWith("/apnahire/credits")) return SELF_DEFAULT
+  return FALLBACK
+}
 
 const known = (v: string | null) => CHECKOUT_VERSIONS.find((o) => o.value === v)?.value
 
 function read(): CheckoutVersion {
   try {
-    return known(new URLSearchParams(window.location.search).get("v")) ?? known(window.localStorage.getItem(KEY)) ?? FALLBACK
+    return known(new URLSearchParams(window.location.search).get("v")) ?? known(window.localStorage.getItem(KEY)) ?? pageDefault()
   } catch {
-    return FALLBACK
+    return pageDefault()
   }
 }
 

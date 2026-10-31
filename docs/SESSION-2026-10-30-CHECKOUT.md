@@ -25,7 +25,7 @@ https://claude.ai/artifact/GpR3b6G39KK3x7A8MMfumX. Whatever happens next
 (cleanup, making one of them the default, removing the switch) starts from
 these two. The full spec of each:
 
-**Express V11** (lineage V1 → V6 → V10 → V11; phones)
+**Express V11** — FROZEN, and express checkout's default (`EXPRESS_DEFAULT` in the hook: `/apnahire/jobs…` opens on V11 when no `?v=` or stored choice; self-checkout stays on V1). New express ideas go in a new version. (lineage V1 → V6 → V10 → V11; phones and desktop)
 - Bar: back arrow, "Select a job type" (`text-h5`) beside it, help on the
   right. No line above the cards. (A large title that moved into the bar on
   scroll was built and removed.)
@@ -49,6 +49,28 @@ these two. The full spec of each:
   visibility" on one line (violet `Activity` pulse, `text-feature-violet`),
   "200 database credits worth ₹2,000", "Valid in a single city". No reposts
   line.
+- "Top placement on job listing" (phones; was "on app").
+- **Desktop** (same version, `v11d` in `job-plan-cards.tsx`): the job types
+  always in one "Single job posting" panel (`PlanFrame`: briefcase, "Active
+  for 15 days" right, `rounded-frame`, 12px sides/bottom/gaps, 16px top),
+  nested cards, no blue edge, price only, no "Job active" line, no database
+  credits. Under each name, between it and the price, who it's for
+  (`ForWho` + `TIER_FOR_SHORT`, `text-sm` muted): "For regular
+  roles", "For faster hiring", "For hard-to-fill roles"; Unlimited "For
+  continuous hiring". Under the rule: ticks + "1x / 2x / 4x visibility" leads,
+  every feature indented under it, missing ones with ✕ and muted, full
+  wording (`DESKTOP_LABEL`): "WhatsApp alerts to candidates" / "2x WhatsApp
+  alerts to candidates", "Featured with 'Urgently hiring' tag", "Top
+  placement in job listing". Unlimited (frame shaped like the panel):
+  "Unlimited jobs for 1 month", price alone, then under the rule two
+  groups (user call, 2026-10-31): "Dynamic visibility" (`Activity` pulse,
+  green `text-checkout-primary` like the ticks; level with the 1x/2x/4x
+  row) over "WhatsApp alerts to candidates"; then "1 job live at a time"
+  (briefcase) over "Unlimited job reposts & swapping" (orange
+  `InfinityIcon`, `text-warning`) and "200 database credits worth ₹2,000"
+  (`UserSearch`, blue `text-info`); the footer keeps only "Valid in a single city". Orange
+  and blue are also the urgent tag's and top placement's colours (Sumit
+  lens 6: one colour per feature), a deliberate reuse; CTA "Get apna unlimited". CTAs outline, green on hover.
 - 12px between every section of the page; "*GST applicable" 12px under the
   card; 20px to "Trusted by 7 lakh+ businesses & enterprises" (`text-sm`
   semibold, green shield, left). No database credits offer note.
@@ -272,3 +294,42 @@ starts again from V1, V7–V10 build on V6, V11 on V10, V12 and V13 on V11, V14 
   two; Super premium's "2x" WhatsApp is shown only as two bars.
 - Before committing: `npm run check` (lint + lint:tokens + build) — only
   `tsc`, ESLint on touched files and `lint:tokens` were run this session.
+
+- 2026-10-31: "Dynamic visibility" pulse is green (`text-checkout-primary`, as the visibility ticks) on phones and desktop in V11; violet
+  retired there (`--feature-violet` stays defined, now unused in V11).
+- 2026-10-31, the claimed 10% in V11: desktop cards show the struck price
+  again while the offer is on (`(!v11d || extraOff)` on `mrp`; no % OFF
+  pill), with "Extra 10% off applied" under it. Phones (express) say it
+  with V2's solid green `ExtraOffBanner` above the panel, time left on the
+  right, instead of the pale strip in the header (`offerBanner` in
+  job-plan-selection.tsx); phone cards stay without struck prices.
+  Alignment check passes with and without the offer (desktop, 3 plans and
+  + monthly). Self-checkout V13/V14 unchanged.
+- 2026-10-31: self-checkout V14 is FINAL and the default on
+  /apnahire/credits (`SELF_DEFAULT` in the hook; express keeps V11; every
+  other page V1; a stored or `?v=` choice still wins). V14 phones show the
+  claimed 10% as the green `ExtraOffBanner` above the panel (as express
+  V11), not the header strip; the sticky tab strip now drops the strip's
+  40px when the banner replaces it (`offerBanner`, was V2-only, which left
+  an empty band above the tabs).
+- 2026-10-31: self-checkout V14 desktop Unlimited card says "1 job live at
+  a time" (green briefcase) instead of "1 active job slot for 30 days"
+  (`unlimited-side-card.tsx`, `v14`). The rest of that desktop card is the
+  older design ("Unlimited job posts", "Free job reposts and swapping",
+  /month), not yet express V11's.
+- 2026-10-31, self-checkout V14: the desktop "What each job type gets you"
+  dialog (`JobTypeInfoCard`) says "1x / 2x / 4x visibility", uses express
+  V11's desktop wording ("WhatsApp alerts to candidates", "Top placement
+  in job listing") and has no database credits footer. The "1 job live at
+  a time" briefcase is gray (`text-muted-foreground`) on both Unlimited
+  cards (desktop and phone).
+- 2026-10-31, express V11 (phones and desktop): the Unlimited card's city
+  line reads "This plan is valid in a single city" (`CITY_NOTE`), in place
+  of "Valid in a single city".
+- 2026-10-31, self-checkout V14 desktop: package icon before "Job credit
+  packages" (as phones), and the link under the panel reads "How job
+  credits work" (was "What 1 job credit will get you?"); it opens the same
+  dialog.
+- 2026-10-31, express V11 desktop: equal-width cards (row split 3 : 1
+  over the frames' chrome, 267px each) were tried and undone; the
+  Unlimited card stays 328px (`xl:w-82`).

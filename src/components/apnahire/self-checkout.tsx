@@ -241,6 +241,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   // and thresholds match the source self-checkout site's header exactly
   // (scrollY > 5, 250ms cubic-bezier(0.16,1,0.3,1)).
   const checkoutVersion = useCheckoutVersion()
+  const offerBanner = versionAtLeast(checkoutVersion, "v2") || versionAtLeast(checkoutVersion, "v14")
   // V13: phone job packs grouped in a panel, as express V11 (user call, 2026-10-30).
   const groupedPacks = versionAtLeast(checkoutVersion, "v13")
   // V6 (phones): a tap on a card buys it (order summary; Enterprise: contact
@@ -595,8 +596,9 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
             }
             backLabel="Back to jobs"
             showCenter={showCompactTabs}
-            // V2 says the 10% in a banner in the page instead (ExtraOffBanner).
-            below={versionAtLeast(checkoutVersion, "v2") ? undefined : <ExtraOffBar deadline={offer.deadline} className="md:hidden" />}
+            // V2 and V14 say the 10% in a banner in the page instead
+            // (ExtraOffBanner; V14, as express V11: user call, 2026-10-31).
+            below={offerBanner ? undefined : <ExtraOffBar deadline={offer.deadline} className="md:hidden" />}
             // Revealed from lg, not md: with the title and the full-size
             // credits pill in the row, four tabs no longer fit between
             // them at tablet widths.
@@ -614,8 +616,9 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
           <div
             className={cn(
               "sticky z-docked lg:hidden",
-              // Under the 10% offer strip too, when it shows (phones).
-              offer.claimed && !versionAtLeast(checkoutVersion, "v2") ? "top-16 max-md:top-26" : "top-16"
+              // Under the 10% offer strip too, when it shows (phones; not
+              // where the banner replaces it).
+              offer.claimed && !offerBanner ? "top-16 max-md:top-26" : "top-16"
             )}
           >
             <div
@@ -675,8 +678,8 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
               for the fixed buy bar is kept at the page's end instead (the
               trusted-by band), not here above the FAQ (user call, 2026-10-30). */}
           <div className={cn("px-4 pb-8 sm:px-8 md:pb-12 lg:px-12", !isLoggedOut && "max-lg:pt-4 max-md:flex max-md:flex-col max-md:gap-4")}>
-            {/* V2, phones: the claimed 10% above the tab's heading ("Job credit packages"). */}
-            {versionAtLeast(checkoutVersion, "v2") && <ExtraOffBanner deadline={offer.deadline} className="md:hidden" />}
+            {/* V2 and V14, phones: the claimed 10% above the tab's heading ("Job credit packages"). */}
+            {offerBanner && <ExtraOffBanner deadline={offer.deadline} className="md:hidden" />}
             {activeTab === "jobs" ? (
               <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 max-md:gap-4">
                 <div className="flex flex-col gap-5 max-md:gap-4">
@@ -702,7 +705,8 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                       <p className="min-h-5 text-xs text-checkout-hero-fg">
                         {/* One way in to what a credit buys (user call, 2026-10-30). */}
                         <Button type="button" variant="link-inline" size="sm" className="font-semibold" onClick={() => setJobTypesOpen(true)}>
-                          What 1 job credit will get you?
+                          {/* V14: the phone label (user call, 2026-10-31). */}
+                          {versionAtLeast(checkoutVersion, "v14") ? "How job credits work" : "What 1 job credit will get you?"}
                         </Button>
                       </p>
                     </div>

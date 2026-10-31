@@ -142,6 +142,7 @@ function clearDraft() {
 export function JobPlanSelection() {
   const router = useRouter()
   const checkoutVersion = useCheckoutVersion()
+  const offerBanner = versionAtLeast(checkoutVersion, "v2") || versionAtLeast(checkoutVersion, "v11")
   const [layout, setLayout] = React.useState<JobPlanLayout>("tiered")
   const [creditBalance, setCreditBalance] = React.useState<CreditBalance>(NO_CREDITS)
 
@@ -414,8 +415,9 @@ export function JobPlanSelection() {
           ) : undefined
         }
         onExitAttempt={(proceed) => attemptExit(proceed)}
-        // V2 says the 10% in a banner in the page instead (ExtraOffBanner).
-        below={versionAtLeast(checkoutVersion, "v2") ? undefined : <ExtraOffBar deadline={offer.deadline} className="sm:hidden" />}
+        // V2 and V11 say the 10% in a banner in the page instead
+        // (ExtraOffBanner; V11: user call, 2026-10-31).
+        below={offerBanner ? undefined : <ExtraOffBar deadline={offer.deadline} className="sm:hidden" />}
       />
 
       {/* Phones: room under the last section for the fixed CTA bar and the
@@ -428,8 +430,8 @@ export function JobPlanSelection() {
               the banner on top, each card's Jan price (content/price-change.ts). */}
           <UpcomingPricesProvider enabled>
             <PriceChangeBanner placement="plans" />
-            {/* V2, phones: the claimed 10% as a banner, as in self-checkout. */}
-            {versionAtLeast(checkoutVersion, "v2") && <ExtraOffBanner deadline={offer.deadline} className="sm:hidden" />}
+            {/* V2 and V11, phones: the claimed 10% as a banner, as in self-checkout. */}
+            {offerBanner && <ExtraOffBanner deadline={offer.deadline} className="sm:hidden" />}
             {/* No page heading (user call, 2026-10-30): the header says
                 "Select a job type". The phone rows drop their shared
                 validity; it's said once here, at body size so it reads. */}
