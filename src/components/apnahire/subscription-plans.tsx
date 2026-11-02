@@ -36,7 +36,6 @@ import { GstNote } from "@/components/apnahire/gst-note"
 import { withExtraOff } from "@/content/offers"
 import {
   dbCreditsLabel,
-  planCtaLabel,
   slotLabel,
   type JobSlotCount,
   type SubscriptionPlanId,
@@ -415,7 +414,8 @@ export function SubscriptionPlans({
                 belowPrice={pct ? <MobileDiscountRow pct={pct} /> : undefined}
                 // No "Extra 10% off" here: on phones the header's ExtraOffBar says it once.
                 upcoming={isCurrent ? undefined : <UpcomingPriceLine price={plan.janPrice} />}
-                line={<MobileUnlimitedLine db={dbCreditsLabel(plan)} />}
+                // No reposts line, as on the Jobs tab (user call, 2026-11-02).
+                line={<MobileUnlimitedLine db={dbCreditsLabel(plan)} reposts={false} />}
                 details={
                   // The Jobs tab's Unlimited card points: three short lines.
                   <MobilePlanDetails
@@ -449,7 +449,7 @@ export function SubscriptionPlans({
                 janPrice={isCurrent ? undefined : plan.janPrice}
                 months={plan.months}
                 extraOff={extraOff && !isCurrent}
-                ctaLabel={ctaLabels?.[id] ?? planCtaLabel(plan)}
+                ctaLabel={ctaLabels?.[id] ?? "Buy now"}
                 current={isCurrent}
                 recommended={id === recommendedPlan}
                 ctaDisabled={ctaDisabled?.[id]}

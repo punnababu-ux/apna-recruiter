@@ -49,54 +49,6 @@ function UnlimitedWordmark({ className, active }: { className?: string; active: 
   )
 }
 
-/* ── apna Unlimited wordmark in the tabs: a preview switch ────────────
- * On (default): the gold wordmark in every pricing tab bar. Off: the ∞ icon
- * + "Unlimited" in the standard tab colours, like the other tabs. Set from the page's settings gear; kept in
- * localStorage, and every tab bar on the page follows a change at once. */
-const WORDMARK_KEY = "apnahire:pricing-tab-wordmark"
-const WORDMARK_EVENT = "apnahire:pricing-tab-wordmark"
-
-function readWordmark() {
-  try {
-    return window.localStorage.getItem(WORDMARK_KEY) !== "off"
-  } catch {
-    return true
-  }
-}
-
-export function useUnlimitedWordmark(): [boolean, (on: boolean) => void] {
-  const on = React.useSyncExternalStore(
-    (notify) => {
-      window.addEventListener(WORDMARK_EVENT, notify)
-      window.addEventListener("storage", notify)
-      return () => {
-        window.removeEventListener(WORDMARK_EVENT, notify)
-        window.removeEventListener("storage", notify)
-      }
-    },
-    readWordmark,
-    () => true
-  )
-  const set = React.useCallback((next: boolean) => {
-    try {
-      window.localStorage.setItem(WORDMARK_KEY, next ? "on" : "off")
-    } catch {
-      // Storage blocked: the switch just won't persist.
-    }
-    window.dispatchEvent(new Event(WORDMARK_EVENT))
-  }, [])
-  return [on, set]
-}
-
-/** The tabs, with or without the wordmark (the switch above). */
-export function pricingTabs(wordmark: boolean): SegmentedTabItem<PricingTab>[] {
-  // Off: a plain tab like the others — icon + "apna Unlimited" in the
-  // standard tab colours (no gold accent).
-  return PRICING_TABS.map((tab) =>
-    wordmark ? tab : { ...tab, logo: undefined, compactLogo: undefined }
-  )
-}
-
 export const PRICING_TABS: SegmentedTabItem<PricingTab>[] = [
   {
     value: "jobs",
@@ -106,8 +58,8 @@ export const PRICING_TABS: SegmentedTabItem<PricingTab>[] = [
   },
   {
     value: "unlimited",
-    // "Unlimited" next to the ∞ icon (user call, 2026-10-19); the wordmark
-    // setting shows the logo instead, and this stays its accessible name.
+    // The wordmark shows instead (final, user call 2026-11-02); this stays
+    // its accessible name.
     label: "Unlimited",
     description: "Free job reposts and swapping",
     icon: <InfinityIcon className="shrink-0" aria-hidden />,
@@ -177,7 +129,6 @@ export function PricingHero({
   tabsClassName,
   bannerClassName,
 }: PricingHeroProps) {
-  const [wordmark] = useUnlimitedWordmark()
   return (
     <section
       data-slot="pricing-hero"
@@ -222,7 +173,7 @@ export function PricingHero({
               tabs on both — Jobs and Database are separate products. */}
           <div>
             <SegmentedTabSwitcher
-              items={pricingTabs(wordmark).map((tab) => ({ ...tab, shortLabel: PRICING_TAB_SHORT_LABELS[tab.value] }))}
+              items={PRICING_TABS.map((tab) => ({ ...tab, shortLabel: PRICING_TAB_SHORT_LABELS[tab.value] }))}
               value={activeTab}
               onValueChange={onTabChange}
               appearance="checkout"

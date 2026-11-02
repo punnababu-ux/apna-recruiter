@@ -26,6 +26,9 @@ export const EXTRA_OFF = {
   headline: "Order now to get 10% extra off",
   validity: "Valid online for 24 hrs only",
   applied: "Extra 10% off applied",
+  /** Express: its cards had no discount before the offer, so it isn't
+   *  "extra" (user call, 2026-11-02). Self-checkout keeps `applied`. */
+  appliedPlain: "10% off applied",
   /** Phone tiles (~130px of text): the full line wraps to two in Inter. */
   appliedShort: "Extra 10% off",
 } as const

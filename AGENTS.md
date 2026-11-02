@@ -413,6 +413,24 @@ applied coupon, a price that just changed).
 
 ---
 
+## Phone and desktop are two platforms (user call, 2026-11-02)
+
+Design the phone first, on its own terms. Phone and desktop need not match:
+a phone layout may drop, move or restyle what desktop shows (the −% as text
+instead of the pill, the 10% said once in a header strip) whenever that
+helps the phone. Never copy a desktop pattern onto the phone, or the other
+way, just to make them look alike.
+
+What both keep: the design system. The same tokens, primitives and variants,
+the same meaning per colour and icon, the same words for the same thing. A
+phone-only rule is written down where it applies (here or in the
+component's JSDoc), not left as a one-off.
+
+"Same thing, same styling" holds across the two checkouts on one platform
+(express phone ↔ self-checkout phone), not across platforms.
+
+---
+
 ## Card corners — one radius, every page
 
 Every card on every page — home, pricing, the plans step, login, the app —

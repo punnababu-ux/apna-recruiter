@@ -15,6 +15,16 @@ phones, the version switch it set up, and what is still open. Read
   commits from the start of the session are already on main (upsell tile
   width fix, redrawn deck update).
 
+> **2026-11-02 — versions retired.** Express V11 and self-checkout V14 are
+> final, on phones and desktop, and are now simply the code: the version
+> switch (`use-checkout-version.ts`, the gear's "Design version", `?v=`) and
+> every other version's code are gone. This file is the only record of V1–V14;
+> the table under "Design versions" is history, not something to switch to.
+> Last change before the freeze: on express desktop, "Active for 15 days"
+> (job cards) and "1 job live at a time" (Unlimited) are each card's first
+> list row, under the separator, so the four cards compare level; the
+> panel header no longer carries "Active for 15 days".
+
 ## Where it landed (end of 2026-10-30)
 
 **Express checkout V11 and self-checkout V14 are the near-final phone designs**
@@ -129,14 +139,14 @@ reformats whole files.
   (`cdp/shot.mjs`, `cdp/self*.mjs`, `cdp/sheet.mjs`); rebuild them from this
   if needed.
 
-## Design versions (the switch)
+## Design versions (history only — code removed 2026-11-02)
 
-`src/hooks/use-checkout-version.ts` — `useCheckoutVersion()`, `versionAtLeast(v, min)`.
-Chosen in the gear ("Design version") or `?v=v2` in the address (wins over
-the stored choice, per tab, so two tabs compare side by side). Page roots
-carry `data-checkout-version`. Later versions keep earlier ones' changes
-(`versionAtLeast`, which reads each version's lineage: V2–V5 stack, V6
-starts again from V1, V7–V10 build on V6, V11 on V10, V12 and V13 on V11, V14 on V13). New idea → new entry; V1's path stays untouched.
+The switch lived in `src/hooks/use-checkout-version.ts` (`useCheckoutVersion()`,
+`versionAtLeast`), chosen in the gear or with `?v=`. Lineage: V2–V5 stacked
+on V1, V6 restarted from V1, V7–V10 built on V6, V11 on V10, V12 and V13 on
+V11, V14 on V13. What shipped: express = V11 (V1 → V6 → V10 → V11), self-
+checkout = V14 (… → V11 → V13 → V14). To see a retired version, check out
+`26d9a89` or `d2cdc4b` (both still have the switch).
 
 | Version | Adds | Where |
 |---|---|---|

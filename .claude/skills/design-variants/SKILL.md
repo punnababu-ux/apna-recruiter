@@ -67,7 +67,10 @@ fix. Turn the fixes into proposed versions; never apply them silently.
     `rounded-card-nested`.
 14. **Mark the recommended choice once.** The tab marks it; a second border
     is noise inside a frame.
-15. **Same thing, same styling, both flows.** When one checkout is
+15. **Same thing, same styling, both flows — on one platform.** Phone and
+    desktop are separate platforms: phone first, free to break desktop
+    patterns when it helps the phone, coherent only through the design
+    system (AGENTS.md, 2026-11-02). When one checkout is
     finalized, port its structure to the other, keeping only the
     differences the page needs.
 15a. **Points nest under the fact they belong to** (2026-10-31). A sub-point
@@ -94,15 +97,14 @@ fix. Turn the fixes into proposed versions; never apply them silently.
 
 ## 2. Every idea is a new version
 
-- Checkouts: `useCheckoutVersion` / `versionAtLeast` in
-  `src/hooks/use-checkout-version.ts` (memory: project-checkout-versions).
-  Add `vN` with a label, a header-comment line and its `LINEAGE` (build on
-  the version Punna names; if none, the latest finalized one).
-- When Punna says "in V11, …", change V11 itself (and everything built on
-  it); don't spin a new version. "Try X" on a direction that may be
-  rejected → a new version (V12 blue pulse beside V11 violet).
-- Never change another version's look. A change shared by several
-  versions gets a helper (`lineTabs()`), not copied conditions.
+- Checkouts: the V1–V14 switch was retired 2026-11-02 (express V11 and
+  self-checkout V14 are the code now; history in
+  `docs/SESSION-2026-10-30-CHECKOUT.md`). A new checkout variant goes behind
+  a URL flag, like other screens, unless Punna asks for a version switch
+  again.
+- "In V11, …" / "in V14, …" now just means the live express / self-checkout
+  design: change it directly. "Try X" on a direction that may be
+  rejected → a preview behind a URL flag, the live look untouched.
 - Other screens: a URL flag or hook, the old look one switch away (memory:
   feedback-experiments-preview-only).
 - Messages arrive mid-task: fold each into the current round, in order.

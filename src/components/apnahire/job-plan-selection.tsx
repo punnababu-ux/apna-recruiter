@@ -37,9 +37,7 @@
  * case the Figma journey map calls Case I.
  */
 
-import { ExtraOffBanner, ExtraOffBar } from "@/components/apnahire/offers/extra-off-line"
-import { useCheckoutVersion, versionAtLeast } from "@/hooks/use-checkout-version"
-import { cn } from "@/lib/utils"
+import { ExtraOffBanner } from "@/components/apnahire/offers/extra-off-line"
 import * as React from "react"
 import { useRouter } from "next/navigation"
 import { AvailableCreditsButton } from "@/components/apnahire/available-credits-button"
@@ -87,7 +85,6 @@ import {
   hasAnyCredits,
   type CreditPlan,
 } from "@/components/apnahire/job-plan-cards"
-import { ClockFading } from "@apna/design-system"
 import {
   AI_CALLING_ADDON,
   NO_CREDITS,
@@ -141,8 +138,6 @@ function clearDraft() {
 
 export function JobPlanSelection() {
   const router = useRouter()
-  const checkoutVersion = useCheckoutVersion()
-  const offerBanner = versionAtLeast(checkoutVersion, "v2") || versionAtLeast(checkoutVersion, "v11")
   const [layout, setLayout] = React.useState<JobPlanLayout>("tiered")
   const [creditBalance, setCreditBalance] = React.useState<CreditBalance>(NO_CREDITS)
 
@@ -401,7 +396,7 @@ export function JobPlanSelection() {
     // Same ambient-mesh canvas as self-checkout, so buying a plan mid-posting
     // looks like the same checkout. Text on it uses the checkout-hero tokens,
     // which flip with the canvas (light mesh / dark plum).
-    <div data-checkout-version={checkoutVersion} className="flex min-h-svh flex-col bg-gradient-checkout-hero">
+    <div className="flex min-h-svh flex-col bg-gradient-checkout-hero">
       <JobPostingChrome
         current="plan"
         onStepClick={(step) => step !== "plan" && router.push(`/apnahire/jobs/new?resume=1&stage=${step}`)}
@@ -415,33 +410,25 @@ export function JobPlanSelection() {
           ) : undefined
         }
         onExitAttempt={(proceed) => attemptExit(proceed)}
-        // V2 and V11 say the 10% in a banner in the page instead
-        // (ExtraOffBanner; V11: user call, 2026-10-31).
-        below={offerBanner ? undefined : <ExtraOffBar deadline={offer.deadline} className="sm:hidden" />}
+        // The 10% is a banner in the page (ExtraOffBanner, user call,
+        // 2026-10-31), not a strip here.
       />
 
       {/* Phones: room under the last section for the fixed CTA bar and the
           home indicator it sits above (pb-safe-*), so "Trusted by" clears it. */}
       <div className="flex-1 px-4 py-4 pb-safe-32 sm:px-6 sm:py-6 sm:pb-12">
-        {/* V11: 12px between sections, as between its cards (user call,
+        {/* 12px between sections, as between its cards (user call,
             2026-10-30). */}
-        <div className={cn("mx-auto flex w-full max-w-6xl flex-col", versionAtLeast(checkoutVersion, "v11") ? "gap-3" : "gap-5")}>
+        <div className="mx-auto flex w-full max-w-6xl flex-col gap-3">
           {/* Posting a job means signed in, so the Jan 1 price change shows:
               the banner on top, each card's Jan price (content/price-change.ts). */}
           <UpcomingPricesProvider enabled>
             <PriceChangeBanner placement="plans" />
-            {/* V2 and V11, phones: the claimed 10% as a banner, as in self-checkout. */}
-            {offerBanner && <ExtraOffBanner deadline={offer.deadline} className="sm:hidden" />}
+            {/* Phones: the claimed 10% as a banner, as in self-checkout. */}
+            <ExtraOffBanner plain deadline={offer.deadline} className="sm:hidden" />
             {/* No page heading (user call, 2026-10-30): the header says
                 "Select a job type". The phone rows drop their shared
                 validity; it's said once here, at body size so it reads. */}
-            {/* V11: the job panel's title says it ("Single job, active for 15
-                days"), so this line goes (user call, 2026-10-30). */}
-            {!versionAtLeast(checkoutVersion, "v11") && (
-              <p className="flex items-center gap-2 text-sm font-medium text-checkout-hero-fg sm:hidden [&_svg]:size-4 [&_svg]:shrink-0">
-                <ClockFading aria-hidden /> Single job posting stays active for 15 days
-              </p>
-            )}
             {/* With even one credit, no subscription: credits and a subscription
                 don't mix (user call, 2026-10-19), so it's the one-time tiers. */}
             {layout === "tiered" || holdsCredits ? (
@@ -468,7 +455,7 @@ export function JobPlanSelection() {
           {/* The DB credits offer note is gone from the footer (user call,
               2026-10-30); only the GST note stays. */}
           <GstNote />
-          <TrustedByStrip compact={versionAtLeast(checkoutVersion, "v11")} />
+          <TrustedByStrip compact />
         </div>
       </div>
 

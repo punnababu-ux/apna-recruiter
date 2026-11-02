@@ -10,8 +10,9 @@
  */
 
 import * as React from "react"
-import { ClockFading, ArrowRight, Package, Sparkles } from "@apna/design-system"
+import { ClockFading, ArrowRight, Sparkles } from "@apna/design-system"
 import { Badge, Button, PricingCard } from "@apna/design-system"
+import { usePriceLayout } from "@/hooks/use-price-layout"
 import { cn } from "@/lib/utils"
 import { CardHover, RECOMMENDED_EDGE } from "@/components/apnahire/use-card-hover"
 import { withExtraOffBundle } from "@/content/offers"
@@ -19,7 +20,6 @@ import { ExtraOffLine } from "@/components/apnahire/offers/extra-off-line"
 import { MobileDiscountRow, MobileMetaLine, MobilePlanRow } from "@/components/apnahire/mobile-plan-row"
 import { UpcomingPriceLine } from "@/components/apnahire/upcoming-price-line"
 import { inr } from "@/lib/format"
-import { useCheckoutVersion, versionAtLeast } from "@/hooks/use-checkout-version"
 import { usePlans } from "@/hooks/apnahire/use-plans"
 import type { Bundle, BundleId } from "@/content/credit-bundles"
 
@@ -58,9 +58,14 @@ export function JobCreditBundles({
   // null: something outside the list is selected (the Unlimited card).
   const currentSelectedId = selectedBundleId === undefined ? internalSelectedId : selectedBundleId
 
-  // V14, desktop: the package icon before the heading, as on phones
-  // (user call, 2026-10-31).
-  const v14 = versionAtLeast(useCheckoutVersion(), "v14")
+  // Preview (phones): "−22%" on the price line, the per-credit price under
+  // it in blue (usePriceLayout; live V14 is "badge").
+  const priceLayout = usePriceLayout()
+  const withCta = priceLayout === "cta"
+  // "cta" is "inline" with the per-credit price under the validity.
+  const inlinePrice = priceLayout === "inline" || withCta
+  const belowPrice = priceLayout === "below"
+  const perCreditLeft = !(priceLayout === "inline")
   const handleSelect = (bundle: Bundle) => {
     setInternalSelectedId(bundle.id)
     onSelectBundle?.(bundle)
@@ -85,7 +90,6 @@ export function JobCreditBundles({
           {grouped && (
             <div className="flex items-center justify-between gap-2 px-1.5">
               <h2 className="flex items-center gap-2 text-h6 leading-6 whitespace-nowrap text-foreground [&_svg]:size-5 [&_svg]:shrink-0">
-                <Package aria-hidden />
                 Job credit packages
               </h2>
             </div>
@@ -111,15 +115,37 @@ export function JobCreditBundles({
                     {/* The unit cost under the validity, left (user call,
                         2026-10-30). Green: the one green line on the card,
                         now the 10% is said in the header (ExtraOffBar). */}
-                    <span className="text-xs whitespace-nowrap italic text-checkout-primary">
-                      ₹{view.pricePerCredit}{"\u00A0"}/credit
-                    </span>
+                    {perCreditLeft && (
+                      <span className={cn("text-xs whitespace-nowrap", belowPrice || withCta ? "text-info" : "italic text-checkout-primary")}>
+                        ₹{view.pricePerCredit}{"\u00A0"}/credit
+                      </span>
+                    )}
                   </>
                 }
                 mrp={inr(bundle.mrp)}
                 price={inr(view.price)}
+                priceLead={
+                  inlinePrice && view.discountPct ? (
+                    <span className="text-xs font-semibold text-checkout-primary">−{view.discountPct}%</span>
+                  ) : undefined
+                }
+                smallPrice={inlinePrice}
+                // The preview's shorter card brings the name up under the
+                // Recommended tab: 8px clear of it.
+                className={inlinePrice && bundle.recommended ? "pt-7" : undefined}
                 belowPrice={
-                  <MobileDiscountRow pct={view.discountPct} />
+                  withCta ? (
+                    // Small secondary CTA; its click bubbles to the card.
+                    <Button type="button" variant="outline" size="xs" className="px-3">
+                      Buy now
+                    </Button>
+                  ) : inlinePrice ? (
+                    <span className="text-xs whitespace-nowrap text-info">₹{view.pricePerCredit}{"\u00A0"}/credit</span>
+                  ) : belowPrice ? (
+                    view.discountPct ? <span className="text-xs font-semibold text-checkout-primary">−{view.discountPct}%</span> : undefined
+                  ) : (
+                    <MobileDiscountRow pct={view.discountPct} />
+                  )
                 }
                 upcoming={<UpcomingPriceLine price={bundle.janPrice} />}
               />
@@ -138,7 +164,6 @@ export function JobCreditBundles({
         <div className="flex min-h-12 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-1">
           <div className="flex min-w-0 flex-col gap-1">
             <h2 className="flex items-center gap-2 text-h4 leading-6 text-checkout-hero-fg [&_svg]:size-5 [&_svg]:shrink-0">
-              {v14 && <Package aria-hidden />}
               Job credit packages
             </h2>
             <p className="text-sm text-checkout-hero-fg-muted">

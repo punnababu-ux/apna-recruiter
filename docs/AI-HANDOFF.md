@@ -3,8 +3,9 @@
 Read `AGENTS.md` first (the contract). This file is the working context a
 new session needs to pick up where the last one stopped.
 
-> **Latest session (2026-10-30):** phone checkouts and the design-version
-> switch (V1–V3) — see `docs/SESSION-2026-10-30-CHECKOUT.md`.
+> **Latest (2026-11-02):** express V11 and self-checkout V14 are final and
+> the version switch is removed; the V1–V14 history is in
+> `docs/SESSION-2026-10-30-CHECKOUT.md`.
 
 ## Who and how
 

@@ -186,8 +186,6 @@ export const slotLabel = (slots: number) => `${slots} active job slot${slots ===
 export const slotTermLabel = (plan: { slots: number; slotDays: number }) =>
   `${slotLabel(plan.slots)} for ${plan.slotDays} days`
 
-/** "Buy annual plan". */
-export const planCtaLabel = (plan: Pick<SubscriptionPlan, "name">) => `Buy ${plan.name.toLowerCase()}`
 
 /** The order summary's line title: "Unlimited annual plan". */
 export const planOrderLabel = (plan: Pick<SubscriptionPlan, "name">) => `Unlimited ${plan.name.toLowerCase()}`

@@ -2,8 +2,7 @@
 
 /**
  * CheckoutPreviewSettings — the self-checkout page's floating gear
- * (bottom-left): the apna Unlimited tab's look (wordmark, or icon + label)
- * and the 10% exit offer's demo controls, the same section as express
+ * (bottom-left): the 10% exit offer's demo controls, the same section as express
  * checkout's JobPlanPreviewSwitcher.
  *
  * It used to flip the page between its logged-in and logged-out states too.
@@ -16,16 +15,14 @@
  * wired up.
  */
 
-import { useUnlimitedWordmark } from "@/components/apnahire/pricing-hero"
 import { sampleSubscription, setJobSlots } from "@/hooks/use-job-slots"
 import { setPreviousPlan } from "@/hooks/use-previous-plan"
 import { usePlans } from "@/hooks/apnahire/use-plans"
 import { setJobCredits, usePlansIngress } from "@/hooks/use-plans-ingress"
 import { replayTopUpCredits } from "@/components/apnahire/available-credits-button"
 import {
-  CheckoutVersionControls,
   ExitOfferControls,
-  PlanCardStyleControls,
+  PriceLayoutControls,
   PricingPhaseControls,
   PrototypeOption,
   PrototypeSection,
@@ -37,7 +34,6 @@ export function CheckoutPreviewSettings({
 }: {
   offer: { claimed: boolean; returning: boolean; onReturningChange: (v: boolean) => void; onExpireSoon: () => void; onReset: () => void }
 }) {
-  const [wordmark, setWordmark] = useUnlimitedWordmark()
   const plans = usePlansIngress()
   const catalog = usePlans()
   // How the app's nav shows Plans (usePlansIngress): set the account state
@@ -50,16 +46,6 @@ export function CheckoutPreviewSettings({
   }
   return (
     <PrototypeSettings label="Preview settings">
-      <CheckoutVersionControls />
-      {/* Every pricing tab bar: desktop row, sticky bars, phone chips. */}
-      <PrototypeSection title="apna Unlimited tab">
-        <PrototypeOption active={wordmark} onClick={() => setWordmark(true)}>
-          Wordmark
-        </PrototypeOption>
-        <PrototypeOption active={!wordmark} onClick={() => setWordmark(false)}>
-          Icon + &ldquo;Unlimited&rdquo;
-        </PrototypeOption>
-      </PrototypeSection>
       <PrototypeSection title="Plans in the app's nav">
         <PrototypeOption active={plans === "promote"} onClick={() => {
             setPlans(0, false)
@@ -75,7 +61,7 @@ export function CheckoutPreviewSettings({
           Subscribed · beside Support
         </PrototypeOption>
       </PrototypeSection>
-      <PlanCardStyleControls />
+      <PriceLayoutControls />
       <PricingPhaseControls />
       <ExitOfferControls offer={offer} />
     </PrototypeSettings>

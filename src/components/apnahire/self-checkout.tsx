@@ -30,14 +30,13 @@ import { GstNote } from "@/components/apnahire/gst-note"
 
 import {
   PricingHero,
-  pricingTabs,
-  useUnlimitedWordmark,
+  PRICING_TABS,
   PRICING_TAB_SHORT_LABELS,
   type PricingTab,
 } from "@/components/apnahire/pricing-hero"
 import { HeroBackdrop } from "@/components/marketing/hero-backdrop"
 import { PRICING_INTRO } from "@/content/pricing"
-import { Button, SegmentedTabSwitcher, StickyCtaBar, Tabs, TabsList, TabsTrigger } from "@apna/design-system"
+import { Button, HelpCircle, Tabs, TabsList, TabsTrigger } from "@apna/design-system"
 import { JobCreditBundles, type Bundle } from "@/components/apnahire/job-credit-bundles"
 import { DatabaseCreditBundles, type DbBundle } from "@/components/apnahire/database-credit-bundles"
 import { ContactSalesCard } from "@/components/apnahire/contact-sales-card"
@@ -61,8 +60,7 @@ import {
   CreditsToPlanDialog,
 } from "@/components/apnahire/offers/upsell-dialogs"
 import { CheckoutTopBar } from "@/components/apnahire/checkout-top-bar"
-import { ExtraOffBanner, ExtraOffBar } from "@/components/apnahire/offers/extra-off-line"
-import { lineTabs, useCheckoutVersion, versionAtLeast } from "@/hooks/use-checkout-version"
+import { ExtraOffBanner } from "@/components/apnahire/offers/extra-off-line"
 import { HOME } from "@/lib/apnahire/nav"
 import { useSession } from "@/hooks/use-session"
 import {
@@ -81,9 +79,8 @@ import { CheckoutPreviewSettings } from "@/components/apnahire/checkout-preview-
 import { ExitOfferDialog } from "@/components/apnahire/offers/exit-offer-dialog"
 import { LeaveReasonsDialog } from "@/components/apnahire/offers/exit-stay-dialogs"
 import { useExtraOff } from "@/components/apnahire/offers/use-extra-off"
-import { EXTRA_OFF, withExtraOff } from "@/content/offers"
+import { EXTRA_OFF } from "@/content/offers"
 import { useIsMobile } from "@/hooks/use-mobile"
-import { inr } from "@/lib/format"
 
 export type CheckoutAuthState = "logged-in" | "logged-out"
 
@@ -228,7 +225,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
     )
     if (!plans.slotCounts.includes(subscriptionSlots)) setSubscriptionSlots(plans.slotCounts[0])
   }
-  const [enterpriseTier, setEnterpriseTier] = React.useState(DEFAULT_ENTERPRISE_TIER)
+  const [enterpriseTier] = React.useState(DEFAULT_ENTERPRISE_TIER)
   // Every Contact sales on the page: logged out, the contact form; logged
   // in, straight to the "our team will reach out" confirmation.
   const [contactOpen, setContactOpen] = React.useState(false)
@@ -240,13 +237,6 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   // hero's own (full-size) tab switcher scrolls out from under it. Timing
   // and thresholds match the source self-checkout site's header exactly
   // (scrollY > 5, 250ms cubic-bezier(0.16,1,0.3,1)).
-  const checkoutVersion = useCheckoutVersion()
-  const offerBanner = versionAtLeast(checkoutVersion, "v2") || versionAtLeast(checkoutVersion, "v14")
-  // V13: phone job packs grouped in a panel, as express V11 (user call, 2026-10-30).
-  const groupedPacks = versionAtLeast(checkoutVersion, "v13")
-  // V6 (phones): a tap on a card buys it (order summary; Enterprise: contact
-  // sales); no sticky bar, no selected card.
-  const tapToBuy = versionAtLeast(checkoutVersion, "v6")
   const [showCompactTabs, setShowCompactTabs] = React.useState(false)
   const heroTabsRef = React.useRef<HTMLDivElement>(null)
   // The docked tab strip (below lg) hides while the page scrolls down and
@@ -446,40 +436,6 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
     })
   }
 
-  const shownPrice = (n: number) =>
-    inr((offer.claimed ? withExtraOff(n) : n))
-  const stickyKind = change?.kindOf(subscriptionPlan)
-  const stickyCtaLabel =
-    activeTab === "enterprise"
-      ? "Contact sales"
-      : activeTab === "unlimited" && change
-        ? stickyKind === "same"
-          ? "Your current plan"
-          : stickyKind === "upgrade"
-            ? `Upgrade • ${shownPrice(plans.plan(subscriptionPlan, subscriptionSlots).price)}`
-            : change.ctaLabels[subscriptionPlan]
-        : activeTab === "unlimited"
-        ? `Buy ${plans.plan(subscriptionPlan).name.toLowerCase()} • ${shownPrice(plans.plan(subscriptionPlan, subscriptionSlots).price)}`
-        : selectedPackage.kind === "unlimited"
-          ? `Get apna unlimited • ${shownPrice(plans.plan("monthly").price)}`
-        : selectedPackage.kind === "job"
-          ? `Buy ${selectedPackage.bundle.credits} job credits • ${shownPrice(selectedPackage.bundle.price)}`
-          : `Buy ${selectedPackage.bundle.credits.toLocaleString("en-IN")} database credits • ${shownPrice(selectedPackage.bundle.price)}`
-
-  const handleStickyCtaClick = () => {
-    if (activeTab === "unlimited") {
-      onUnlimitedCard(subscriptionPlan)
-    } else if (activeTab === "enterprise") {
-      contactSales()
-    } else if (selectedPackage.kind === "unlimited") {
-      buyMonthly()
-    } else if (selectedPackage.kind === "job") {
-      handleSelectBundle(selectedPackage.bundle)
-    } else {
-      handleBuyDatabaseBundle(selectedPackage.bundle)
-    }
-  }
-
   // `renewAfterDays` is what switches the drawer into its subscription
   // variant, and what the renewal date is computed from. The points carry
   // the plan's database credits, as on its card.
@@ -568,7 +524,6 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
     // the title (content/price-change.ts). /pricing shows today's prices.
     <UpcomingPricesProvider enabled={!isLoggedOut}>
       <div
-        data-checkout-version={checkoutVersion}
         className={cn(
           "flex flex-col",
           // Logged-out renders inside (marketing)/layout.tsx, which already
@@ -596,9 +551,8 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
             }
             backLabel="Back to jobs"
             showCenter={showCompactTabs}
-            // V2 and V14 say the 10% in a banner in the page instead
-            // (ExtraOffBanner; V14, as express V11: user call, 2026-10-31).
-            below={offerBanner ? undefined : <ExtraOffBar deadline={offer.deadline} className="md:hidden" />}
+            // The 10% is a banner in the page (ExtraOffBanner, user call,
+            // 2026-10-31), not a strip here.
             // Revealed from lg, not md: with the title and the full-size
             // credits pill in the row, four tabs no longer fit between
             // them at tablet widths.
@@ -614,12 +568,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
              slides up behind the bar while the page scrolls down and comes
              back on the first scroll up. */
           <div
-            className={cn(
-              "sticky z-docked lg:hidden",
-              // Under the 10% offer strip too, when it shows (phones; not
-              // where the banner replaces it).
-              offer.claimed && !offerBanner ? "top-16 max-md:top-26" : "top-16"
-            )}
+            className="sticky top-16 z-docked lg:hidden"
           >
             <div
               inert={!showDockedTabs}
@@ -627,14 +576,10 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                 // shadow-card: it floats over the page as it scrolls (a pinned
                 // header, AGENTS.md "Card shadows").
                 "flex h-16 items-center no-scrollbar overflow-x-auto border-b border-border bg-card shadow-card transition-interactive duration-enter ease-out-ui",
-                // Underline tabs carry their own 16px sides, inside the scroll,
-                // so they start 16px in but can scroll off the edge; the pill
-                // strip keeps its padding on the strip.
-                !lineTabs(checkoutVersion) && "px-4",
-                // V2/V9's underline tabs sit on the strip's bottom edge, so the
-                // underline meets the divider; the strip is the tabs' 48px,
-                // with no empty band above them.
-                lineTabs(checkoutVersion) && "h-12 items-end",
+                // The underline tabs carry their own 16px sides, inside the
+                // scroll, and sit on the strip's bottom edge, so the underline
+                // meets the divider; the strip is the tabs' 48px.
+                "h-12 items-end",
                 showDockedTabs ? "translate-y-0" : "pointer-events-none -translate-y-full"
               )}
             >
@@ -679,7 +624,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
               trusted-by band), not here above the FAQ (user call, 2026-10-30). */}
           <div className={cn("px-4 pb-8 sm:px-8 md:pb-12 lg:px-12", !isLoggedOut && "max-lg:pt-4 max-md:flex max-md:flex-col max-md:gap-4")}>
             {/* V2 and V14, phones: the claimed 10% above the tab's heading ("Job credit packages"). */}
-            {offerBanner && <ExtraOffBanner deadline={offer.deadline} className="md:hidden" />}
+            <ExtraOffBanner deadline={offer.deadline} className="md:hidden" />
             {activeTab === "jobs" ? (
               <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 max-md:gap-4">
                 <div className="flex flex-col gap-5 max-md:gap-4">
@@ -705,8 +650,9 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                       <p className="min-h-5 text-xs text-checkout-hero-fg">
                         {/* One way in to what a credit buys (user call, 2026-10-30). */}
                         <Button type="button" variant="link-inline" size="sm" className="font-semibold" onClick={() => setJobTypesOpen(true)}>
-                          {/* V14: the phone label (user call, 2026-10-31). */}
-                          {versionAtLeast(checkoutVersion, "v14") ? "How job credits work" : "What 1 job credit will get you?"}
+                          {/* The phone label (user call, 2026-10-31). */}
+                          <HelpCircle className="size-4" aria-hidden />
+                          How job credits work
                         </Button>
                       </p>
                     </div>
@@ -725,7 +671,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
 
                   {/* Mobile: tap-to-select job bundles + the sticky CTA. Database
                       credits live on their own tab, as on desktop. */}
-                  <div className={cn("flex flex-col md:hidden", groupedPacks ? "gap-3" : "gap-4")}>
+                  <div className={"flex flex-col gap-3 md:hidden"}>
                     {/* 1. Job credits section */}
                     <div className="flex flex-col gap-4">
                       <JobCreditBundles
@@ -733,9 +679,9 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                         onBuyNow={handleSelectBundle}
                         onBuySingleCredit={handleBuySingleCredit}
                         selectedBundleId={selectedPackage.kind === "job" ? selectedPackage.bundle.id : null}
-                        onSelectBundle={(bundle) => (tapToBuy ? handleSelectBundle(bundle) : setSelectedPackage({ kind: "job", bundle }))}
-                        // V13: the packs in one panel, the credit links inside it.
-                        grouped={groupedPacks}
+                        onSelectBundle={handleSelectBundle}
+                        // The packs in one panel, the credit links inside it.
+                        grouped
                         footer={
                           // Side by side when the panel has room (≥288px inside,
                           // most phones); the link over the button below that
@@ -743,7 +689,8 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                           <div className="@container px-1">
                           <div className="flex flex-col items-start gap-3 @2xs:flex-row @2xs:items-center @2xs:justify-between">
                             <Button type="button" variant="link-inline" size="sm" className="text-xs font-semibold text-foreground" onClick={() => setJobTypesOpen(true)}>
-                              {/* V13: plainer, and what the dialog explains (user call, 2026-10-30). */}
+                              {/* Plainer, and what the dialog explains (user call, 2026-10-30). */}
+                              <HelpCircle className="size-4" aria-hidden />
                               How job credits work
                             </Button>
                             <Button type="button" variant="outline" size="sm" className="shrink-0 px-3.5" onClick={handleBuySingleCredit}>
@@ -753,21 +700,6 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                           </div>
                         }
                       />
-                      {/* What a credit buys, and the single credit, side by side
-                          (user call, 2026-10-30). The single credit is a small
-                          outline pill: findable, not competing with the green
-                          sticky CTA. The small card CTA, as the Unlimited
-                          card's "Buy now" (standard sm, 14px sides). */}
-                      {!groupedPacks && (
-                        <div className="flex items-center justify-between gap-3">
-                          <Button type="button" variant="link-inline" size="sm" className="text-xs font-semibold text-checkout-hero-fg" onClick={() => setJobTypesOpen(true)}>
-                            What 1 job credit will get you?
-                          </Button>
-                          <Button type="button" variant="outline" size="sm" className="shrink-0 px-3.5" onClick={handleBuySingleCredit}>
-                            Buy 1 job credit
-                          </Button>
-                        </div>
-                      )}
                     </div>
 
                     {/* 2. apna Unlimited: not one of the choices above (user
@@ -776,12 +708,6 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                     <UnlimitedSideCard
                       extraOff={offer.claimed}
                       onBuyNow={() => buyMonthly()}
-                      // V3: a choice like the packs above; the sticky CTA buys it.
-                      mobileSelect={
-                        versionAtLeast(checkoutVersion, "v3")
-                          ? { selected: selectedPackage.kind === "unlimited", onSelect: () => setSelectedPackage({ kind: "unlimited" }) }
-                          : undefined
-                      }
                     />
                   </div>
 
@@ -799,7 +725,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                     extraOff={offer.claimed}
                     onBuyNow={handleBuyDatabaseBundle}
                     selectedBundleId={selectedPackage.kind === "db" ? selectedPackage.bundle.id : undefined}
-                    onSelectBundle={(bundle) => (tapToBuy ? handleBuyDatabaseBundle(bundle) : setSelectedPackage({ kind: "db", bundle }))}
+                    onSelectBundle={handleBuyDatabaseBundle}
                   />
                   <p className="text-xs text-checkout-hero-fg">
                     1 credit = 1 candidate profile unlock
@@ -816,7 +742,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                 <SubscriptionPlans
                   extraOff={offer.claimed}
                   selectedPlan={subscriptionPlan}
-                  onSelectPlan={(id) => (tapToBuy ? onUnlimitedCard(id) : setSubscriptionPlan(id))}
+                  onSelectPlan={onUnlimitedCard}
                   slots={subscriptionSlots}
                   onSlotsChange={setSubscriptionSlots}
                   current={change?.current}
@@ -837,7 +763,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
               </div>
             ) : (
               <div className="mx-auto flex w-full max-w-6xl flex-col gap-4">
-                <EnterprisePricingTable onContactSales={contactSales} selectedTier={enterpriseTier} onSelectTier={(tier) => (tapToBuy ? contactSales() : setEnterpriseTier(tier))} />
+                <EnterprisePricingTable onContactSales={contactSales} selectedTier={enterpriseTier} onSelectTier={contactSales} />
               </div>
             )}
           </div>
@@ -850,31 +776,13 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
              apna — numbers and quotes (gradient), trusted by (white, last). ── */}
         <FaqBand />
         <WhyHireBand stats={PRICING_STATS} />
-        {/* Phones: room at the very end so the fixed buy bar never covers the logos. */}
-        <TrustedByBand className={isLoggedOut || tapToBuy ? undefined : "max-md:pb-32"} />
+        <TrustedByBand />
 
         {/* No footer band here for logged-out: (marketing)/layout.tsx already
             renders SiteFooter below this component. The logged-in page ends
             at the trust bar because the product shell owns navigation from
             there — same reasoning, different chrome. */}
 
-        {/* Mobile sticky bottom CTA dock: buys the current tab's selection
-            (Enterprise: Contact sales). Prices carry the claimed offer, as the
-            rows above do. */}
-        {!tapToBuy && (
-        <StickyCtaBar>
-          <Button
-            type="button"
-            // A subscriber on Unlimited: green only to buy an upgrade.
-            variant={activeTab === "unlimited" && change && stickyKind !== "upgrade" ? "outline" : "checkout"}
-            size="xl"
-            disabled={activeTab === "unlimited" && !!change && (stickyKind === "same" || change.ctaDisabled[subscriptionPlan])}
-            onClick={handleStickyCtaClick}
-          >
-            {stickyCtaLabel}
-          </Button>
-        </StickyCtaBar>
-        )}
 
         <CheckoutDrawer
           open={drawerOpen}
@@ -1016,34 +924,10 @@ function DockedPlanTabs({
   value: PricingTab
   onValueChange: (tab: PricingTab) => void
 }) {
-  const [wordmark] = useUnlimitedWordmark()
-  // V2: standard underline tabs instead of the pill chips (self-checkout only).
-  if (lineTabs(useCheckoutVersion())) {
-    // w-max: the row keeps its full width and scrolls, never squeezed and
-    // clipped (Database was cut off at 320–360px); px-4 scrolls with it.
-    return <CompactPlanTabs variant="line" value={value} onValueChange={onValueChange} className="w-max px-4" />
-  }
-  return (
-    <>
-      <div className="w-full min-w-0 md:hidden">
-        <SegmentedTabSwitcher
-          items={pricingTabs(wordmark).map((tab) => ({ ...tab, shortLabel: PRICING_TAB_SHORT_LABELS[tab.value] }))}
-          value={value}
-          onValueChange={onValueChange}
-          appearance="checkout"
-          // Unselected tabs quieter than the checkout preset's gray-700, so
-          // the selected one leads (user call, 2026-10-30). Icons and the
-          // wordmark follow the text colour.
-          inactiveClassName="text-muted-foreground"
-          // The selected chip's label bold, every version (user call, 2026-10-30).
-          mobileActiveClassName="text-checkout-primary font-bold"
-          mobileBleedClassName="-mx-4"
-          mobileGutterClassName="px-4"
-        />
-      </div>
-      <CompactPlanTabs className="mx-auto hidden shrink-0 md:flex" value={value} onValueChange={onValueChange} />
-    </>
-  )
+  // Standard underline tabs (V14).
+  // w-max: the row keeps its full width and scrolls, never squeezed and
+  // clipped (Database was cut off at 320–360px); px-4 scrolls with it.
+  return <CompactPlanTabs variant="line" value={value} onValueChange={onValueChange} className="w-max px-4" />
 }
 
 function CompactPlanTabs({
@@ -1058,7 +942,6 @@ function CompactPlanTabs({
   /** "line": the standard underline tabs (V2's phone strip). */
   variant?: "checkout" | "line"
 }) {
-  const [wordmark] = useUnlimitedWordmark()
   return (
     <Tabs value={value} onValueChange={(v) => onValueChange(v as PricingTab)} className={className}>
       {/* V2's underline tabs: green selection, 32px apart (user call, 2026-10-30). */}
@@ -1069,7 +952,7 @@ function CompactPlanTabs({
         data-product={variant === "line" && value === "unlimited" ? "unlimited" : undefined}
         className={variant === "line" ? "gap-8" : undefined}
       >
-        {pricingTabs(wordmark).map((tab) => (
+        {PRICING_TABS.map((tab) => (
           <TabsTrigger
             key={tab.value}
             value={tab.value}

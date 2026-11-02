@@ -13,11 +13,13 @@ import { EXTRA_OFF } from "@/content/offers"
 import { cn } from "@/lib/utils"
 import { CountdownChip } from "@/components/apnahire/offers/countdown-chip"
 
-export function ExtraOffLine() {
+/** `plain`: "10% off applied", where nothing was discounted before the
+ *  offer (express). Default: "Extra 10% off applied" (self-checkout). */
+export function ExtraOffLine({ plain = false }: { plain?: boolean }) {
   return (
     <span className="flex items-center gap-1 text-xs not-italic text-success">
       <BadgePercent className="size-3.5 shrink-0 animate-wiggle" aria-hidden />
-      <span className="animate-text-shimmer">{EXTRA_OFF.applied}</span>
+      <span className="animate-text-shimmer">{plain ? EXTRA_OFF.appliedPlain : EXTRA_OFF.applied}</span>
     </span>
   )
 }
@@ -47,7 +49,7 @@ export function ExtraOffBar({ deadline, className }: { deadline: number | null; 
  *  solid green success banner above the tab's heading, with the time left
  *  on the right, instead of the strip in the pinned header (user call,
  *  2026-10-30). Renders nothing until claimed. */
-export function ExtraOffBanner({ deadline, className }: { deadline: number | null; className?: string }) {
+export function ExtraOffBanner({ deadline, plain = false, className }: { deadline: number | null; plain?: boolean; className?: string }) {
   if (deadline === null) return null
   return (
     <AlertBanner
@@ -61,7 +63,7 @@ export function ExtraOffBanner({ deadline, className }: { deadline: number | nul
         // inline-flex: the banner sets its title inline; a block flex box
         // inside it added a line above and pushed the icon off centre.
         <span className="inline-flex w-full items-center justify-between gap-2 align-middle">
-          {EXTRA_OFF.applied}
+          {plain ? EXTRA_OFF.appliedPlain : EXTRA_OFF.applied}
           <CountdownChip deadline={deadline} className="bg-primary-foreground/15 py-0.5 text-xs text-primary-foreground" />
         </span>
       }

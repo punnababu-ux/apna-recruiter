@@ -11,7 +11,7 @@
  * pages.
  */
 
-import { CheckoutVersionControls, ExitOfferControls, JobSlotsControls, PlanCardStyleControls, PricingPhaseControls, PrototypeOption, PrototypeSection, PrototypeSettings } from "@/components/apnahire/prototype-settings"
+import { ExitOfferControls, JobSlotsControls, PriceLayoutControls, PricingPhaseControls, PrototypeOption, PrototypeSection, PrototypeSettings } from "@/components/apnahire/prototype-settings"
 import type { JobPlanLayout } from "@/components/apnahire/job-plan-selection"
 import type { CreditBalance } from "@/content/job-plans"
 
@@ -55,7 +55,6 @@ export function JobPlanPreviewSwitcher({
 }: JobPlanPreviewSwitcherProps) {
   return (
     <PrototypeSettings label="Preview job-plan state">
-      <CheckoutVersionControls />
       <PrototypeSection title="Plan layout">
         {LAYOUTS.map((opt) => (
           <PrototypeOption key={opt.value} active={opt.value === layout} onClick={() => onLayoutChange(opt.value)}>
@@ -85,7 +84,7 @@ export function JobPlanPreviewSwitcher({
         </PrototypeSection>
       )}
       <JobSlotsControls />
-      <PlanCardStyleControls />
+      <PriceLayoutControls />
       <PricingPhaseControls />
       {offer && <ExitOfferControls offer={offer} />}
     </PrototypeSettings>

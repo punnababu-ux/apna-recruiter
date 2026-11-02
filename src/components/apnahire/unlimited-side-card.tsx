@@ -19,18 +19,17 @@
  */
 
 import * as React from "react"
-import { BriefcaseBusiness, ClockFading, InfinityIcon, Database, LogoApnaUnlimited, UserSearch, WhatsApp } from "@apna/design-system"
+import { BriefcaseBusiness, InfinityIcon, Database, LogoApnaUnlimited, UserSearch, WhatsApp } from "@apna/design-system"
 import { Badge, Button, PricingCard } from "@apna/design-system"
+import { usePriceLayout } from "@/hooks/use-price-layout"
 import { withExtraOff } from "@/content/offers"
 import { ExtraOffLine } from "@/components/apnahire/offers/extra-off-line"
-import { MobileDiscountRow } from "@/components/apnahire/mobile-plan-row"
 import { cn } from "@/lib/utils"
 import { useCardHover } from "@/components/apnahire/use-card-hover"
-import { MobileMetaLine, MobileSlotLine, MobileUnlimitedCard, MobileUnlimitedLine } from "@/components/apnahire/mobile-plan-row"
-import { useCheckoutVersion, versionAtLeast } from "@/hooks/use-checkout-version"
+import { MobileDiscountRow, MobileMetaLine, MobileUnlimitedCard, MobileUnlimitedLine } from "@/components/apnahire/mobile-plan-row"
 import { UpcomingPriceLine } from "@/components/apnahire/upcoming-price-line"
 import { inr } from "@/lib/format"
-import { dbCreditsLabel, slotLabel, type SubscriptionPlan } from "@/content/subscriptions"
+import { dbCreditsLabel, type SubscriptionPlan } from "@/content/subscriptions"
 import { usePlans } from "@/hooks/apnahire/use-plans"
 
 interface UnlimitedSideCardProps {
@@ -68,13 +67,11 @@ export function UnlimitedSideCard({
   const monthly = plan.months === 1
   const strike = extraOff ? inr(basePrice) : undefined
   // Desktop: outline CTA at rest, green while the frame is hovered.
+  const priceLayout = usePriceLayout()
+  const inlinePct = priceLayout === "inline" || priceLayout === "cta"
+  // The % beside a struck price: the plan's own, or the 10% with none.
+  const strikePct = pct ?? (extraOff ? Math.round((1 - price / basePrice) * 100) : null)
   const hover = useCardHover()
-  // V13, phones: express V11's card (title, price alone, "1 job live at a
-  // time"), without "Job reposts and swapping"; this page sells no
-  // visibility, so no "Dynamic visibility" either (user calls, 2026-10-30).
-  const version = useCheckoutVersion()
-  const v13 = versionAtLeast(version, "v13")
-  const v14 = versionAtLeast(version, "v14")
   return (
     <>
       {/* ── Mobile (< md): the shared phone card, the same one express
@@ -83,24 +80,34 @@ export function UnlimitedSideCard({
         onSelect={mobileSelect?.onSelect ?? onBuyNow}
         selected={mobileSelect?.selected}
         className={cn("md:hidden", className)}
-        // Same card, same structure as express checkout's card: name
-        // and price with its unit on top, then "1 active job slot for 30 days" (no
-        // separate validity line), the plan lines, then the note and CTA.
-        title={v13 ? "Unlimited jobs for 1 month" : "Unlimited monthly plan"}
-        mrp={v13 ? undefined : strike}
+        // Express V11's card (title, price alone, "1 job live at a time"),
+        // without reposts or "Dynamic visibility": this page sells no
+        // visibility (user calls, 2026-10-30).
+        title="Unlimited jobs for 1 month"
         price={inr(price)}
-        unit={v13 ? undefined : plan.unitShort}
-        belowPrice={v13 ? undefined : <MobileDiscountRow pct={pct} />}
+        // Under the claimed offer: struck price and its %, drawn the way
+        // the pack cards' price layout draws theirs (usePriceLayout), as in
+        // express (user call, 2026-11-02).
+        mrp={strike}
+        priceLead={strike && inlinePct ? <span className="text-xs font-semibold text-checkout-primary">−{strikePct}%</span> : undefined}
+        smallPrice={!!strike && inlinePct}
+        belowPrice={
+          priceLayout === "cta" ? (
+            <Button type="button" variant="outline" size="xs" className="px-3" onClick={onBuyNow}>
+              Buy now
+            </Button>
+          ) : strike && priceLayout === "below" ? (
+            <span className="text-xs font-semibold text-checkout-primary">−{strikePct}%</span>
+          ) : strike && priceLayout === "badge" ? (
+            <MobileDiscountRow pct={strikePct} />
+          ) : undefined
+        }
         upcoming={<UpcomingPriceLine price={plan.janPrice} />}
         meta={
-          v13 ? (
-            // V14: gray briefcase (user call, 2026-10-31).
-            <MobileMetaLine icon={<BriefcaseBusiness className={v14 ? "text-muted-foreground" : "text-checkout-primary"} aria-hidden />}>
-              1 job live at a time
-            </MobileMetaLine>
-          ) : (
-            <MobileSlotLine slots={plan.slots} days={plan.slotDays} muted />
-          )
+          // Gray briefcase (user call, 2026-10-31).
+          <MobileMetaLine icon={<BriefcaseBusiness className="text-muted-foreground" aria-hidden />}>
+            1 job live at a time
+          </MobileMetaLine>
         }
         features={[
           // The slot shows above, as meta.
@@ -108,7 +115,7 @@ export function UnlimitedSideCard({
           [<InfinityIcon key="i" className="text-warning" aria-hidden />, "Free job reposts and swapping"],
           [<Database key="i" className="text-muted-foreground" aria-hidden />, dbCreditsLabel(plan)],
         ]}
-        line={<MobileUnlimitedLine db={dbCreditsLabel(plan)} reposts={!v13} />}
+        line={<MobileUnlimitedLine db={dbCreditsLabel(plan)} reposts={false} />}
         note="Valid in a single city"
         cta={
           mobileSelect ? undefined :
@@ -161,18 +168,10 @@ export function UnlimitedSideCard({
             title="Unlimited job posts"
             subtitle="Free job reposts and swapping"
             meta={[
-              // V14: the phone card's words, "1 job live at a time" (user
-              // call, 2026-10-31).
-              v14 ? (
-                <>
-                  <BriefcaseBusiness className="text-muted-foreground" aria-hidden />1 job live at a time
-                </>
-              ) : (
-                <>
-                  <ClockFading aria-hidden />
-                  {slotLabel(plan.slots)} for {plan.slotDays}{"\u00A0"}days
-                </>
-              ),
+              // The phone card's words (user call, 2026-10-31).
+              <>
+                <BriefcaseBusiness className="text-muted-foreground" aria-hidden />1 job live at a time
+              </>,
               <>
                 <UserSearch aria-hidden />
                 {dbCreditsLabel(plan)}

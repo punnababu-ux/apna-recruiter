@@ -38,17 +38,9 @@ import {
 import { usePlans } from "@/hooks/apnahire/use-plans"
 import { endSubscription, setPreviousPlan } from "@/hooks/use-previous-plan"
 import type { JobSlotCount } from "@/content/subscriptions"
+import { setPriceLayout, usePriceLayout } from "@/hooks/use-price-layout"
 import { PRICING_PHASES } from "@/content/pricing-phase"
 import { setPricingPhase, usePricingPhase } from "@/hooks/use-pricing-phase"
-import { CHECKOUT_VERSIONS, setCheckoutVersion, useCheckoutVersion } from "@/hooks/use-checkout-version"
-import {
-  PLAN_CARD_LAYOUTS,
-  PLAN_CARD_SELECTIONS,
-  setPlanCardLayout,
-  setPlanCardSelection,
-  usePlanCardLayout,
-  usePlanCardSelection,
-} from "@/hooks/use-plan-card-style"
 
 const OPEN_EVENT = "apna:prototype-settings"
 
@@ -157,41 +149,25 @@ export function PricingPhaseControls() {
   )
 }
 
-/** Which design version both checkouts show (useCheckoutVersion). */
-export function CheckoutVersionControls() {
-  const version = useCheckoutVersion()
+/** The phone plan cards' price layout, both checkouts (usePriceLayout):
+ *  live, or one of the "−%" previews. */
+export function PriceLayoutControls() {
+  const layout = usePriceLayout()
   return (
-    <PrototypeSection title="Design version">
-      {CHECKOUT_VERSIONS.map((o) => (
-        <PrototypeOption key={o.value} active={version === o.value} onClick={() => setCheckoutVersion(o.value)}>
-          {o.label}
-        </PrototypeOption>
-      ))}
+    <PrototypeSection title="Phone plan prices">
+      <PrototypeOption active={layout === "badge"} onClick={() => setPriceLayout("badge")}>
+        Live (V14 badge · V11 price only)
+      </PrototypeOption>
+      <PrototypeOption active={layout === "inline"} onClick={() => setPriceLayout("inline")}>
+        Inline −%
+      </PrototypeOption>
+      <PrototypeOption active={layout === "below"} onClick={() => setPriceLayout("below")}>
+        −% below the price
+      </PrototypeOption>
+      <PrototypeOption active={layout === "cta"} onClick={() => setPriceLayout("cta")}>
+        Inline −% with Buy now
+      </PrototypeOption>
     </PrototypeSection>
-  )
-}
-
-/** The phone plan cards' look, both checkouts (usePlanCardStyle). */
-export function PlanCardStyleControls() {
-  const layout = usePlanCardLayout()
-  const selection = usePlanCardSelection()
-  return (
-    <>
-      <PrototypeSection title="Phone plan cards">
-        {PLAN_CARD_LAYOUTS.map((o) => (
-          <PrototypeOption key={o.value} active={layout === o.value} onClick={() => setPlanCardLayout(o.value)}>
-            {o.label}
-          </PrototypeOption>
-        ))}
-      </PrototypeSection>
-      <PrototypeSection title="Phone plan selection">
-        {PLAN_CARD_SELECTIONS.map((o) => (
-          <PrototypeOption key={o.value} active={selection === o.value} onClick={() => setPlanCardSelection(o.value)}>
-            {o.label}
-          </PrototypeOption>
-        ))}
-      </PrototypeSection>
-    </>
   )
 }
 

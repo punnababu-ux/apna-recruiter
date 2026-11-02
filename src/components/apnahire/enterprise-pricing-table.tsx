@@ -27,12 +27,11 @@ import * as React from "react"
 import { Check, ClockFading } from "@apna/design-system"
 import { Button, Card, Separator } from "@apna/design-system"
 import { cn } from "@/lib/utils"
-import { useCheckoutVersion, versionAtLeast } from "@/hooks/use-checkout-version"
 import { GstNote } from "@/components/apnahire/gst-note"
 import { CardHover } from "@/components/apnahire/use-card-hover"
 import {
   MobileMetaLine,
-  MobilePlanDetails,
+  MobileFeatureLine,
   MobilePlanRow,
 } from "@/components/apnahire/mobile-plan-row"
 
@@ -68,8 +67,8 @@ const TIERS: Tier[] = [
       { bold: "75", label: "Job credits" },
       { bold: "2,000", label: "Database unlocks" },
       { bold: "1,500", label: "WhatsApp reachouts" },
-      { bold: "7 days", label: "Employer branding" },
       { bold: "3", label: "Recruiter logins" },
+      { bold: "7 days", label: "Employer branding" },
       { label: "Dedicated account manager" },
     ],
   },
@@ -81,8 +80,8 @@ const TIERS: Tier[] = [
       { bold: "150", label: "Job credits" },
       { bold: "3,000", label: "Database unlocks" },
       { bold: "2,000", label: "WhatsApp reachouts" },
-      { bold: "30 days", label: "Employer branding" },
       { bold: "5", label: "Recruiter logins" },
+      { bold: "30 days", label: "Employer branding" },
       { label: "Dedicated account manager" },
     ],
   },
@@ -94,8 +93,8 @@ const TIERS: Tier[] = [
       { bold: "450", label: "Job credits" },
       { bold: "5,000", label: "Database unlocks" },
       { bold: "5,000", label: "WhatsApp reachouts" },
-      { bold: "60 days", label: "Employer branding" },
       { bold: "7", label: "Recruiter logins" },
+      { bold: "60 days", label: "Employer branding" },
       { label: "Dedicated account manager" },
     ],
   },
@@ -107,101 +106,12 @@ const TIERS: Tier[] = [
       { bold: "800", label: "Job credits" },
       { bold: "10,000", label: "Database unlocks" },
       { bold: "10,000", label: "WhatsApp reachouts" },
-      { bold: "120 days", label: "Employer branding" },
       { bold: "9", label: "Recruiter logins" },
+      { bold: "120 days", label: "Employer branding" },
       { label: "Dedicated account manager" },
     ],
   },
 ]
-
-/* ── V3 phones: every plan in one table ─────────────────────────────── */
-
-const EVERY_PLAN = "Every plan: valid for 360 days, with a dedicated account manager."
-
-/** "₹1,00,000" → "₹1L", "₹8,75,000" → "₹8.75L": four prices fit one row. */
-const lakh = (price: string) => `₹${Number(price.replace(/\D/g, "")) / 100000}L`
-
-/** V3, phones (user call, 2026-10-30): the four cards repeated the same
- *  five feature names, the same validity and the same account manager.
- *  One table instead: a column per plan, each feature named once; what
- *  every plan shares is said once, as the section's subtitle (EVERY_PLAN). Tap a column to choose that plan
- *  (the page's sticky "Contact sales" uses it). */
-function EnterpriseCompareTable({
-  selectedTier,
-  onSelectTier,
-}: {
-  selectedTier: string
-  onSelectTier?: (tier: string) => void
-}) {
-  // Every plan's features come in the same order; the last row (account
-  // manager) is shared, so it moves to the footnote.
-  const rows = TIERS[0].features.filter((f) => f.bold).map((f) => f.label)
-  // A unit said once in the row's name, not in every cell ("7 days" → "7").
-  const unitOf = (label: string) => (/ days$/.test(TIERS[0].features.find((f) => f.label === label)?.bold ?? "") ? "days" : null)
-  const value = (bold?: string) => bold?.replace(/ days$/, "")
-  const cell = (name: string) =>
-    cn("px-0.5 py-2.5 text-center transition-interactive", name === selectedTier && "bg-accent")
-  return (
-    <div className="flex flex-col gap-3">
-      {/* The plan cards' surface: same shadow and 2px (transparent) edge. */}
-      <div className="overflow-hidden rounded-card border-2 border-transparent bg-plan-card shadow-card">
-        <table className="w-full table-fixed text-xs tabular-nums">
-          <thead>
-            <tr className="border-b border-border">
-              <th scope="col" className="w-24 px-3 py-2.5 text-left font-medium text-muted-foreground">
-                Plan
-              </th>
-              {TIERS.map((tier) => {
-                const on = tier.name === selectedTier
-                return (
-                  <th key={tier.name} scope="col" className={cell(tier.name)}>
-                    <button
-                      type="button"
-                      aria-pressed={on}
-                      aria-label={`${tier.name}, ${tier.price}`}
-                      onClick={() => onSelectTier?.(tier.name)}
-                      className="flex w-full cursor-pointer flex-col items-center gap-1"
-                    >
-                      {/* The chosen plan's tick, where the radio would be. */}
-                      <span
-                        aria-hidden
-                        className={cn(
-                          "flex size-4 items-center justify-center rounded-full",
-                          on ? "bg-cta-primary text-primary-foreground" : "border border-border"
-                        )}
-                      >
-                        {on && <Check className="size-3" strokeWidth={3} />}
-                      </span>
-                      <span className={cn("font-semibold", on ? "text-checkout-primary" : "text-foreground")}>
-                        {tier.name}
-                      </span>
-                      <span className="text-sm font-semibold text-foreground">{lakh(tier.price)}</span>
-                    </button>
-                  </th>
-                )
-              })}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((label, r) => (
-              <tr key={label} className={cn(r < rows.length - 1 && "border-b border-border")}>
-                <th scope="row" className="px-3 py-2.5 text-left font-normal text-muted-foreground">
-                  {label}
-                  {unitOf(label) && <span className="block">({unitOf(label)})</span>}
-                </th>
-                {TIERS.map((tier) => (
-                  <td key={tier.name} className={cn(cell(tier.name), "cursor-pointer text-foreground")} onClick={() => onSelectTier?.(tier.name)}>
-                    {value(tier.features.find((f) => f.label === label)?.bold)}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  )
-}
 
 /* ─────────────────────────────────── component ───────────────────────── */
 
@@ -227,7 +137,6 @@ export function EnterprisePricingTable({
   onSelectTier,
   className,
 }: EnterprisePricingTableProps) {
-  const v3 = versionAtLeast(useCheckoutVersion(), "v3")
   return (
     <div
       data-slot="enterprise-pricing-table"
@@ -236,9 +145,10 @@ export function EnterprisePricingTable({
       <div className="flex flex-col gap-1">
         <h2 className="text-h4 text-checkout-hero-fg">Enterprise plans</h2>
         <p className="text-sm text-checkout-hero-fg-secondary">
-          {/* V3: what every plan shares, said once at the top (user call,
-              2026-10-30), instead of the audience line. */}
-          {v3 ? EVERY_PLAN : "For high-volume organisations that never stop hiring."}
+          {/* Phones: the account manager every plan has, said once here
+              instead of on each card (user call, 2026-11-02). */}
+          <span className="md:hidden">For high-volume hiring, with a dedicated account manager on every plan.</span>
+          <span className="hidden md:inline">For high-volume organisations that never stop hiring.</span>
         </p>
       </div>
 
@@ -246,11 +156,6 @@ export function EnterprisePricingTable({
           is its name, price and validity; the selected one reveals what it
           includes. The page's sticky CTA ("Contact sales") replaces the
           four per-card buttons. */}
-      {v3 ? (
-        <div className="md:hidden">
-          <EnterpriseCompareTable selectedTier={selectedTier} onSelectTier={onSelectTier} />
-        </div>
-      ) : (
       <div className="flex flex-col gap-4 md:hidden">
         {TIERS.map((tier) => (
           <MobilePlanRow
@@ -260,21 +165,28 @@ export function EnterprisePricingTable({
             onSelect={() => onSelectTier?.(tier.name)}
             meta={<MobileMetaLine icon={<ClockFading aria-hidden />}>{tier.validity}</MobileMetaLine>}
             price={tier.price}
-            details={
-              <MobilePlanDetails
-                items={tier.features.map((feature) => [
-                  <Check key="i" className="text-checkout-primary" aria-hidden />,
-                  <>
-                    {feature.bold && <strong>{feature.bold} </strong>}
-                    {feature.label}
-                  </>,
-                ])}
+            // Every tier's contents, always shown: the phone rows have no
+            // selected state (a tap opens contact sales), so a details block
+            // that waits for selection would never appear.
+            line={
+              <MobileFeatureLine
+                items={tier.features
+                  // Said once in the subtitle on phones.
+                  .filter((feature) => feature.label !== "Dedicated account manager")
+                  .map((feature) => ({
+                  icon: <Check className="text-checkout-primary" aria-hidden />,
+                  label: (
+                    <span>
+                      {feature.bold && <strong className="font-semibold">{feature.bold} </strong>}
+                      {feature.label}
+                    </span>
+                  ),
+                }))}
               />
             }
           />
         ))}
       </div>
-      )}
 
       {/* Figma is one 1136px row of four. From md the cards pair up, and
           from lg they sit in one row. */}

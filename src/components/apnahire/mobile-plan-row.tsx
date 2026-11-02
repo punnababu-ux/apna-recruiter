@@ -42,7 +42,6 @@ import * as React from "react"
 import { Badge, BadgePercent, BriefcaseBusiness, Check, InfinityIcon, LogoApnaUnlimited, RadioMark, Sparkles, UserSearch, WhatsApp, X } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 import { slotLabel } from "@/content/subscriptions"
-import { useCheckoutVersion, versionAtLeast } from "@/hooks/use-checkout-version"
 import { usePlanCardLayout, usePlanCardSelection } from "@/hooks/use-plan-card-style"
 
 /** Brings a card fully into view when it becomes selected (it may have just
@@ -74,7 +73,9 @@ const REVEAL_MARGINS = "scroll-mt-20 scroll-mb-28"
 
 export interface MobilePlanRowProps {
   title: React.ReactNode
-  selected: boolean
+  /** Ignored: rows have no selected state (a tap buys). Kept so existing
+   *  callers compile. */
+  selected?: boolean
   onSelect: () => void
   recommended?: boolean
   /** Sits inside another surface (V11's job panel): the nested card corner,
@@ -106,6 +107,11 @@ export interface MobilePlanRowProps {
   /** Beside the discount ("Extra 10% off"): line 2 in the inline layout,
    *  under the discount in the stacked one. */
   priceNote?: React.ReactNode
+  /** Before the struck price, on the price line (the `?price=inline`
+   *  preview's "−22%"). */
+  priceLead?: React.ReactNode
+  /** A size down from text-plan-price-compact (the `?price=inline` preview). */
+  smallPrice?: boolean
   /** The price's last line: `UpcomingPriceLine` (it renders nothing when
    *  off, and the slot adds no space of its own). */
   upcoming?: React.ReactNode
@@ -114,7 +120,6 @@ export interface MobilePlanRowProps {
 
 export function MobilePlanRow({
   title,
-  selected: selectedProp,
   onSelect,
   recommended,
   nested,
@@ -129,13 +134,14 @@ export function MobilePlanRow({
   line,
   layout = "stacked",
   priceNote,
+  priceLead,
+  smallPrice,
   upcoming,
   className,
 }: MobilePlanRowProps) {
-  // V6: no selected state; a tap buys (the page's onSelect opens the order
+  // No selected state: a tap buys (the page's onSelect opens the order
   // summary), so nothing stays picked.
-  const tapToBuy = versionAtLeast(useCheckoutVersion(), "v6")
-  const selected = selectedProp && !tapToBuy
+  const selected = false
   const revealRef = useRevealOnSelect(selected)
   const sel = usePlanCardSelection()
   // "line" layout: the line or nothing (a plan with no features has no
@@ -149,10 +155,11 @@ export function MobilePlanRow({
     // 2026-10-30; was 4px).
     <div className="flex shrink-0 flex-col items-end gap-2 text-right">
       <div className="flex items-baseline justify-end gap-1.5 whitespace-nowrap">
+        {priceLead}
         {mrp && <span className="text-plan-strike text-muted-foreground">{mrp}</span>}
         {/* The price leads the row (text-plan-price-compact, over text-plan-name);
             tabular figures keep the column steady. */}
-        <span className="text-plan-price-compact tabular-nums text-foreground">{price}</span>
+        <span className={cn("tabular-nums text-foreground", smallPrice ? "text-lg leading-5 font-semibold" : "text-plan-price-compact")}>{price}</span>
         {/* Muted like the struck price: only the price is dark. */}
         {unit && <span className="text-plan-unit text-muted-foreground">{unit}</span>}
       </div>
@@ -202,15 +209,15 @@ export function MobilePlanRow({
           "@container relative flex flex-col gap-3 overflow-hidden bg-plan-card px-4 pt-5.5 pb-4 shadow-card",
           !readOnly && "ink press-subtle cursor-pointer transition-interactive",
           nested ? "rounded-card-nested" : "rounded-card",
-          // V6 has no tick tab: only a Recommended card needs the room.
-          tapToBuy && !recommended && "pt-4",
+          // No tick tab: only a Recommended card needs the room.
+          !recommended && "pt-4",
           selected
             // The selection green is the CTA green (green-700 on dark).
             ? "border-2 border-cta-primary ring-1 ring-cta-primary/20"
-            : // V6 (no selection): the Recommended card keeps the desktop
-              // cards' blue edge, the colour of its corner tab. Not in V11's
-              // panel (nested): the tab alone marks it (user call, 2026-10-30).
-              tapToBuy && recommended && !nested
+            : // The Recommended card keeps the desktop cards' blue edge, the
+              // colour of its corner tab. Not in the job panel (nested): the
+              // tab alone marks it (user call, 2026-10-30).
+              recommended && !nested
               ? "border-2 border-ribbon-fill"
               : "border-2 border-transparent",
           selected && sel === "tint" && "bg-accent",
@@ -295,19 +302,6 @@ export function MobilePlanRow({
  *  Every card has 22px of top padding (the tabs are 20px; the name sits just under them), so the tab sits above the price
  *  row and takes no room beside it. */
 function CornerTick() {
-  // V5: a green circle on the card's corner, sticking out past its edge,
-  // instead of the tab (user call, 2026-10-30). The card's wrapper draws
-  // it (no clipping there); the white ring parts it from the page.
-  if (versionAtLeast(useCheckoutVersion(), "v5")) {
-    return (
-      <span
-        aria-hidden
-        className="absolute -top-1.5 -right-1.5 z-docked flex size-5 items-center justify-center rounded-full bg-cta-primary text-primary-foreground ring-2 ring-plan-card animate-in fade-in-0 zoom-in-95"
-      >
-        <Check className="size-3" strokeWidth={4} />
-      </span>
-    )
-  }
   return (
     <span
       aria-hidden
@@ -373,20 +367,17 @@ export function MobileUnlimitedLine({
   /** V11: an item that flows after the alerts ("Dynamic visibility"). */
   lead?: { icon: React.ReactNode; label: string }
 }) {
-  // V10: "Alerts to candidates" (the WhatsApp icon says WhatsApp, as on the
-  // job cards) and "Job reposts and swapping" (the infinity icon says unlimited; user
-  // call, 2026-10-30).
-  const version = useCheckoutVersion()
-  // V9 (self-checkout) takes V10's card copy too (user call, 2026-10-30).
-  const v10 = versionAtLeast(version, "v10") || versionAtLeast(version, "v9")
+  // "Alerts to candidates" (the WhatsApp icon says WhatsApp, as on the job
+  // cards) and "Job reposts and swapping" (the infinity icon says unlimited;
+  // user call, 2026-10-30).
   return (
     <MobileFeatureLine
       items={[
         // WhatsApp first, as on the job cards (user call, 2026-10-30).
-        { icon: <WhatsApp className="text-success" aria-hidden />, label: v10 ? "Alerts to candidates" : "WhatsApp alerts to candidates" },
+        { icon: <WhatsApp className="text-success" aria-hidden />, label: "Alerts to candidates" },
         ...(lead ? [lead] : []),
         ...(reposts
-          ? [{ icon: <InfinityIcon className="text-warning" aria-hidden />, label: v10 ? "Job reposts and swapping" : "Free job reposts and swapping" }]
+          ? [{ icon: <InfinityIcon className="text-warning" aria-hidden />, label: "Job reposts and swapping" }]
           : []),
       ]}
       extra={[
@@ -454,13 +445,11 @@ export function MobileDiscountRow({
 
 /** A left-column line: small icon + text. */
 export function MobileMetaLine({ icon, children }: { icon: React.ReactNode; children: React.ReactNode }) {
-  // V6: dark text, like express V6's visibility line ("Valid for 30 days",
-  // "1 active job slot for 30 days"; user call, 2026-10-30).
-  const dark = versionAtLeast(useCheckoutVersion(), "v6")
+  // Dark text, like the visibility line (user call, 2026-10-30).
   return (
     // 16px icons, centred on the text: the feature line's size (user call,
     // 2026-10-30; at 14px the visibility ticks read too small).
-    <span className={cn("flex items-center gap-2 text-xs [&_svg]:size-4 [&_svg]:shrink-0", dark ? "text-foreground" : "text-muted-foreground")}>
+    <span className={"flex items-center gap-2 text-xs text-foreground [&_svg]:size-4 [&_svg]:shrink-0"}>
       {icon}
       {children}
     </span>
@@ -494,6 +483,9 @@ export interface MobileUnlimitedCardProps {
   /** "/month", beside the price. */
   unit?: React.ReactNode
   belowPrice?: React.ReactNode
+  /** As MobilePlanRow: before the struck price, and a size-down price. */
+  priceLead?: React.ReactNode
+  smallPrice?: boolean
   /** Under `belowPrice`: `UpcomingPriceLine`. */
   upcoming?: React.ReactNode
   /** Feature lines: `[icon, text]` pairs. */
@@ -529,10 +521,11 @@ export function MobileUnlimitedCard({
   mrp,
   unit,
   belowPrice,
+  priceLead,
+  smallPrice,
   upcoming,
   features,
   note,
-  cta,
   selected,
   meta,
   onSelect,
@@ -545,21 +538,18 @@ export function MobileUnlimitedCard({
   const revealRef = useRevealOnSelect(selected)
   const sel = usePlanCardSelection()
   const layout = usePlanCardLayout()
-  // V6: no button on any card; the card's own tap buys it.
-  const cardCta = versionAtLeast(useCheckoutVersion(), "v6") ? undefined : cta
+  // No button on any card; the card's own tap buys it.
+  const cardCta = undefined
   const asLine = layout === "line"
   const expanded = !radioMode || selected || !collapsed || asLine
-  // V3: no dark frame. A white card with a 2px plum edge, and the wordmark
-  // as a corner tab like "Recommended" (user call, 2026-10-30).
-  const v3 = versionAtLeast(useCheckoutVersion(), "v3")
-  const v11 = versionAtLeast(useCheckoutVersion(), "v11")
   const priceBlock = (
     // 8px between the price and the % OFF badge under it (user call,
     // 2026-10-30; was 4px).
     <div className="flex shrink-0 flex-col items-end gap-2 text-right">
       <span className="flex items-baseline gap-1.5 whitespace-nowrap">
+        {priceLead}
         {mrp && <span className="text-plan-strike text-muted-foreground">{mrp}</span>}
-        <span className="text-plan-price-compact tabular-nums text-foreground">{price}</span>
+        <span className={cn("tabular-nums text-foreground", smallPrice ? "text-lg leading-5 font-semibold" : "text-plan-price-compact")}>{price}</span>
         {/* Muted like the struck price: only the price is dark. */}
         {unit && <span className="text-plan-unit text-muted-foreground">{unit}</span>}
       </span>
@@ -592,49 +582,27 @@ export function MobileUnlimitedCard({
         },
       })}
       className={cn(
-        v3
-          ? "relative"
-          : // Compact header strip (user call, 2026-10-30): 12px above the logo, 8px under it.
-            cn(
-              "flex flex-col bg-gradient-checkout-unlimited text-surface-inverted-fg",
-              // V11: twice the frame's edge, a corner concentric with the
-              // inner card, and the job panel's header room: 16px above,
-              // a 24px logo row, 12px under (user call, 2026-10-30).
-              v11 ? "gap-3 rounded-frame px-3 pt-4 pb-3" : "gap-2 rounded-card px-1.5 pt-3 pb-1.5"
-            ),
+        // Twice the frame's edge, a corner concentric with the inner card,
+        // and the job panel's header room: 16px above, a 24px logo row,
+        // 12px under (user call, 2026-10-30).
+        "flex flex-col gap-3 rounded-frame bg-gradient-checkout-unlimited px-3 pt-4 pb-3 text-surface-inverted-fg",
         REVEAL_MARGINS,
         onSelect && "cursor-pointer",
         className
       )}
     >
-      {v3 ? (
-        // Drawn over the card's edge, its outer corner rounded like the
-        // card's, as the Recommended tab.
-        <span className="absolute top-0 left-0 z-docked flex h-6 items-center rounded-tl-card rounded-br-card bg-checkout-unlimited-edge px-5">
-          {/* 1px down: the "p" descends, so the box centres the word high. */}
-          <LogoApnaUnlimited variant="gradient" className="h-3.5 w-auto translate-y-px" />
-        </span>
-      ) : null}
-      {/* V3: the tick drawn here, over the card's edge, as on the plan rows. */}
-      {v3 && radioMode && selected && sel === "check" && <CornerTick />}
-      {v3 ? null : (
-        <div className={cn("flex items-center justify-between px-2.5", v11 ? "h-6" : "h-3.5")}>
+      <div className="flex h-6 items-center justify-between px-2.5">
           <LogoApnaUnlimited variant="gradient" className="h-3.5 w-auto" />
-        </div>
-      )}
+      </div>
 
       <div
         className={cn(
           "relative flex flex-col gap-3 overflow-hidden bg-plan-card text-card-foreground",
-          v3
-            ? "rounded-card border-2 border-checkout-unlimited-edge px-4 pt-8 pb-4"
-            : "rounded-card-nested p-4 shadow-card",
+          "rounded-card-nested p-4 shadow-card",
           // The tap answers on the white card, not the dark frame.
           onSelect && "ink press-subtle transition-interactive",
-          // Selected as in MobilePlanRow: the CTA green edge. V3 keeps its
-          // plum edge until chosen.
-          radioMode && !v3 && (selected ? "border-2 border-cta-primary ring-1 ring-cta-primary/20" : "border-2 border-transparent"),
-          radioMode && v3 && selected && "border-cta-primary ring-1 ring-cta-primary/20",
+          // Selected as in MobilePlanRow: the CTA green edge.
+          radioMode && (selected ? "border-2 border-cta-primary ring-1 ring-cta-primary/20" : "border-2 border-transparent"),
           radioMode && selected && sel === "tint" && "bg-accent",
           cardClassName
         )}
@@ -681,7 +649,7 @@ export function MobileUnlimitedCard({
           </div>
         )}
 
-        {radioMode && !v3 && selected && sel === "check" && <CornerTick />}
+        {radioMode && selected && sel === "check" && <CornerTick />}
 
         {asLine && (line ?? <MobileFeatureLine items={features.map(([icon, text]) => ({ icon, label: text }))} />)}
 
