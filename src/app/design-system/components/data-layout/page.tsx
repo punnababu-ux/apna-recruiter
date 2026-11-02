@@ -129,7 +129,7 @@ export default function DataLayoutComponentsPage() {
               }
               price="₹3,649"
               mrp="₹4,194"
-              badge={<Badge variant="discount">13% OFF</Badge>}
+              badge={<Badge variant="discount">−13%</Badge>}
               priceSuffix="₹608 /credit"
               cta={
                 <Button variant="checkout" className="h-10 w-full font-semibold">

@@ -39,7 +39,6 @@ import {
   Flame,
   VisibilityTicks,
   LogoApnaUnlimited,
-  MapPin,
   PricingCard,
   Sparkles,
   TrendingUp,
@@ -50,7 +49,6 @@ import {
   AlertBanner,
 } from "@apna/design-system"
 import { usePlans } from "@/hooks/apnahire/use-plans"
-import { ExtraOffLine } from "@/components/apnahire/offers/extra-off-line"
 import { UpcomingPriceLine, useUpcomingPrices } from "@/components/apnahire/upcoming-price-line"
 import {
   MobileDiscountRow,
@@ -66,7 +64,7 @@ import { useIsMobile } from "@/hooks/use-mobile"
 // The V4 key's explainers; the feature-name tooltips stay paused (FeatureName).
 import { cn } from "@/lib/utils"
 import { usePriceLayout } from "@/hooks/use-price-layout"
-import { useCardHover } from "@/components/apnahire/use-card-hover"
+import { RECOMMENDED_EDGE, useCardHover } from "@/components/apnahire/use-card-hover"
 import { withExtraOff } from "@/content/offers"
 import {
   AI_CALLING_ADDON,
@@ -188,7 +186,7 @@ const TIER_FOR_SHORT: Partial<Record<JobPlanTierId, string>> = {
 const DESKTOP_LABEL: Record<string, string> = {
   "WhatsApp notifications to candidates": "WhatsApp alerts to candidates",
   "2x Priority WhatsApp notifications to candidates": "2x WhatsApp alerts to candidates",
-  "Featured with 'Urgently hiring' tag": "Featured with 'Urgently hiring' tag",
+  "Featured with 'Urgently hiring' tag": "Urgently hiring tag",
   "Top placements in job listings": "Top placement in job listing",
 }
 
@@ -404,7 +402,8 @@ function JobPlanGridCard({ tier, recommended, creditBalance, onSelect }: JobPlan
           // (border + outline), so the card size never shifts. An outline,
           // not a ring: the hover lift replaces box-shadow, which would drop
           // a ring and make the edge and the ribbon jump.
-          "rounded-card-nested border-transparent",
+          "rounded-card-nested",
+          recommended ? RECOMMENDED_EDGE : "border-transparent",
           shimmerKey > 0 && "animate-shimmer-once"
         )}
         // The whole card selects (the CTA's click bubbles here), as on
@@ -424,18 +423,15 @@ function JobPlanGridCard({ tier, recommended, creditBalance, onSelect }: JobPlan
         // V11 drops the struck price and % OFF, except under the claimed 10%
         // offer (user calls, 2026-10-31 / 2026-11-02).
         mrp={!creditMode && extraOff && tier.mrp ? inr(tier.mrp) : undefined}
-        badge={!creditMode && extraOff && offerBadgePct(tier) ? <Badge variant="discount">{offerBadgePct(tier)}% OFF</Badge> : undefined}
+        badge={!creditMode && extraOff && offerBadgePct(tier) ? <Badge variant="discount">−{offerBadgePct(tier)}%</Badge> : undefined}
                 // On every card in credit mode, none outside it — structural parity.
         // Outside it: the claimed offer's line, then the Jan 1 price (credit
         // mode speaks credits, so it has no ₹ line to add).
         priceSuffix={
           creditMode ? (
             <span className="not-italic">{creditStatus}</span>
-          ) : extraOff || upcoming ? (
-            <span className="flex flex-col gap-1">
-              {extraOff && <ExtraOffLine plain />}
-              <UpcomingPriceLine price={tier.janPrice} />
-            </span>
+          ) : upcoming ? (
+            <UpcomingPriceLine price={tier.janPrice} />
           ) : undefined
         }
         cta={
@@ -604,7 +600,7 @@ function MobileJobPlanRadioGroup({
                 // price-layout previews add them back.
                 price={creditMode ? creditLabel(tier.credit) : inr(tier.price)}
                 mrp={(showPct || offerShown) && tier.mrp && tier.mrp > tier.price ? inr(tier.mrp) : undefined}
-                priceLead={showPct && inlinePct && offerBadgePct(tier) ? <span className="text-xs font-semibold text-checkout-primary">−{offerBadgePct(tier)}%</span> : undefined}
+                priceLead={showPct && inlinePct && offerBadgePct(tier) ? <span className="text-xs leading-5 font-semibold text-checkout-primary">−{offerBadgePct(tier)}%</span> : undefined}
                 smallPrice={showPct && inlinePct}
                 belowPrice={
                   creditMode ? (
@@ -731,7 +727,7 @@ function MobileSubscriptionCard({
       // Under the claimed offer: struck price and its % OFF, drawn the way
       // the job cards' price layout draws theirs (usePriceLayout).
       mrp={strike ? inr(strike) : undefined}
-      priceLead={strike && inlinePct ? <span className="text-xs font-semibold text-checkout-primary">−{strikePct}%</span> : undefined}
+      priceLead={strike && inlinePct ? <span className="text-xs leading-5 font-semibold text-checkout-primary">−{strikePct}%</span> : undefined}
       smallPrice={!!strike && inlinePct}
       belowPrice={
         priceLayout === "cta" && !blocked ? (
@@ -750,9 +746,9 @@ function MobileSubscriptionCard({
           db={dbCreditsLabel(plan)}
           reposts={false}
           // "Dynamic visibility" (a pulse, not a level) leads the feature
-          // line, blue like Top placement (user call, 2026-11-02); the slot
-          // sits under the title.
-          lead={{ icon: <Activity className="text-info" aria-hidden />, label: "Dynamic visibility" }}
+          // line, green as on desktop (user call, 2026-11-02); the slot sits
+          // under the title.
+          lead={{ icon: <Activity className="text-checkout-primary" aria-hidden />, label: "Dynamic visibility" }}
         />
       }
       // Validity folds into the slot line.
@@ -769,22 +765,6 @@ function MobileSubscriptionCard({
       ]}
       // Said in full (user call, 2026-10-31).
       note={CITY_NOTE}
-      cta={
-        selected !== undefined ? undefined : (
-          // The dark companion: the sticky green bar stays the one primary.
-          // Same button as self-checkout's phone Unlimited card.
-          <Button
-            type="button"
-            variant="emphasis"
-            size="sm"
-            className="shrink-0 px-3.5"
-            disabled={blocked}
-            onClick={onSelect}
-          >
-            Buy now
-          </Button>
-        )
-      }
     />
   )
 }
@@ -1000,16 +980,13 @@ function MonthlySubscriptionCard({
         title={<ForWho line="For continuous hiring">Unlimited jobs for 1 month</ForWho>}
         price={inr(price)}
         mrp={strike && extraOff ? inr(strike) : undefined}
-        badge={strike && extraOff && offerBadgePct({ price, mrp: strike }) ? <Badge variant="discount">{offerBadgePct({ price, mrp: strike })}% OFF</Badge> : undefined}
+        badge={strike && extraOff && offerBadgePct({ price, mrp: strike }) ? <Badge variant="discount">−{offerBadgePct({ price, mrp: strike })}%</Badge> : undefined}
         // Its Jan 1 price stays a ₹ line even in credit mode, where it takes
         // the reserved line level with the tier cards' one credit status
         // line, unless the claimed offer's line already fills it.
         priceSuffix={
-          extraOff || upcoming ? (
-            <span className="flex flex-col gap-1">
-              {extraOff && <ExtraOffLine plain />}
-              {!(extraOff && reservePriceSuffix) && <UpcomingPriceLine price={plan.janPrice} />}
-            </span>
+          upcoming ? (
+            <UpcomingPriceLine price={plan.janPrice} />
           ) : reservePriceSuffix ? (
             <span aria-hidden>&nbsp;</span>
           ) : undefined
@@ -1050,10 +1027,8 @@ function MonthlySubscriptionCard({
           </React.Fragment>,
         ]}
         footer={
-          <span className="flex items-center gap-1.5">
-            <MapPin className="size-4" aria-hidden />
-            {CITY_NOTE}
-          </span>
+          // Italic, no icon, as on phones (user call, 2026-11-02).
+          <span className="italic">{CITY_NOTE}</span>
         }
       />
     </div>
@@ -1089,8 +1064,8 @@ function JobTypeInfoCard({ tier }: { tier: JobPlanTier }) {
       }
       price={inr(shown.price)}
       mrp={shown.mrp ? inr(shown.mrp) : undefined}
-      badge={discountPct ? <Badge variant="discount">{discountPct}% OFF</Badge> : undefined}
-      priceSuffix={<span className="whitespace-nowrap">{inr(perCredit)} /credit</span>}
+      badge={discountPct ? <Badge variant="discount">−{discountPct}%</Badge> : undefined}
+      priceSuffix={<span className="whitespace-nowrap text-info">{inr(perCredit)} /credit</span>}
       cta={null}
       meta={[
         <>

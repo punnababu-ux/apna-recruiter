@@ -607,6 +607,19 @@ Every heading, label, button, tab, chip, badge and line of UI copy is
   style (`text-overline` / uppercase), not copy: write the copy in sentence
   case and let the style uppercase it.
 
+### An aside is "Note:" or italic, never both (user call, 2026-11-02)
+
+A remark beside the main content (a limit like the single city, a
+caveat) carries exactly one marker:
+
+- **"Note: …"** in regular text, where there is room for the word. The
+  label already draws the eye, so no italic.
+- **Italic, no label**, where space is short (inside a card, a phone
+  row): "This plan is valid in a single city".
+
+Never "Note:" in italic, and never a plain aside with neither. No icon on
+either.
+
 ### Explainer copy is ASD-STE100 (user call, 2026-10-29)
 
 Every tooltip, popover and info text that explains a feature, an offer or a
@@ -707,9 +720,15 @@ every line may break; never let the width of a string decide it.**
    every card in that row puts the tag on its own line, and each marked
    line takes the row's tallest height. The marks are all it needs, so a
    new comparison surface gets it by carrying them.
-7. **Mixed sizes align on the baseline.** Price rows that mix a large
-   amount with a small unit or struck price use `items-baseline`, not
-   `items-center`.
+7. **The price group reads outward from the price** (user call,
+   2026-11-02). Left-aligned price: price → struck price → % off.
+   Right-aligned price (phone plan cards): % off → struck price → price, so
+   the price sits at the far right. When the group can't fit one line (a
+   phone upsell tile, ~130px), the struck price and % move to the next line
+   in the same order; never split them from each other.
+7a. **A price row is centred** (user call, 2026-11-02). Amount, unit
+   ("/month"), struck price and % share one horizontal centre line
+   (`items-center`), on every card, tile and platform, never the baseline.
 8. **Test at 320px with the longest realistic string.** Check 320, 360 and
    375px, a six-digit price (₹12,99,999) and the longest plan name. If
    anything splits, overflows or misaligns, the layout is wrong, not the
@@ -723,20 +742,24 @@ These hold on every plan card (`PricingCard`, the Unlimited cards, Database
 cards) and every upsell tile (`OfferChoice`), both checkouts, light and dark
 (user calls, 2026-10-19/20).
 
-1. **One green line under a price, never two.** The per-unit note ("That's
-   just ₹1,799 /month", "₹585 /credit") is green only when it stands alone.
-2. **The claimed 10% offer comes first.** With the exit offer applied, the
-   order under the price is: "Extra 10% off applied" (`ExtraOffLine`, green;
-   from `EXTRA_OFF`, never typed by hand), then the per-unit note, now gray
-   (`text-muted-foreground`). Never the note above the offer line. On phones
-   (user call, 2026-10-30) the cards don't say it: `ExtraOffBar` says it
-   once, in a strip at the bottom of the pinned header, and the card
-   prices still carry the 10%. The phone credit packs put the per-credit
-   note under "Valid for N days", green.
-3. **The % OFF pill is smoked glass, not green.** `Badge variant="discount"`
-   sits on `--surface-glass-dark` (the job credits panel's fill) with green
-   text. Change it through `--checkout-discount-bg`, never per card. It
-   has one size, the small one (10px), set in the Badge itself.
+1. **The per-unit price is blue** (user call, 2026-11-02): "₹585 /credit",
+   "That's just ₹749 /month", on every plan card and upsell tile, phones and
+   desktop (`text-info`). Green is kept for the saving (the %).
+2. **The claimed 10% is said once, in a banner** (user call, 2026-11-02).
+   With the exit offer applied, `ExtraOffBanner` ("Offer claimed · Extra 10%
+   off every plan", echoing the pop-up's "Claim offer", with "Ends in
+   23:59:12"; `EXTRA_OFF.banner`, never typed by hand; the code FIRST10
+   first shows in the order summary, "You save ₹195 with FIRST10") sits under the tabs, right above the plans, 12px from
+   them, on phones and desktop, both checkouts; never on Enterprise (no
+   discount there). No card and no upsell tile carries an offer line: the
+   struck price and the % show the saving, and the order summary lists
+   the coupon. The per-unit note stays blue whether or not the offer is
+   claimed.
+3. **The saving is text, not a pill** (user call, 2026-11-02): "−22%",
+   green semibold, after the struck price (`Badge variant="discount"`, now
+   bare text; one size set in the Badge). It is the final saving against
+   the struck price, the 10% coupon included. The struck price is a step
+   larger than the %, since bold reads bigger.
 4. **One type scale on every plan card** (user call, 2026-10-22). Plan
    name `text-plan-name`, price `text-plan-price` (phone rows and tiles
    `text-plan-price-compact`), unit and struck price `text-plan-unit` /

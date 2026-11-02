@@ -623,8 +623,10 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
               for the fixed buy bar is kept at the page's end instead (the
               trusted-by band), not here above the FAQ (user call, 2026-10-30). */}
           <div className={cn("px-4 pb-8 sm:px-8 md:pb-12 lg:px-12", !isLoggedOut && "max-lg:pt-4 max-md:flex max-md:flex-col max-md:gap-4")}>
-            {/* V2 and V14, phones: the claimed 10% above the tab's heading ("Job credit packages"). */}
-            <ExtraOffBanner deadline={offer.deadline} className="md:hidden" />
+            {/* The claimed 10%, said once above the tab's heading, phones and
+                desktop: the cards carry no offer line (user call, 2026-11-02).
+                Never on Enterprise, which has no discount. */}
+            {activeTab !== "enterprise" && <ExtraOffBanner deadline={offer.deadline} className="md:mx-auto md:mb-3 md:w-full md:max-w-6xl" />}
             {activeTab === "jobs" ? (
               <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 max-md:gap-4">
                 <div className="flex flex-col gap-5 max-md:gap-4">

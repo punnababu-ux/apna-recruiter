@@ -32,7 +32,6 @@ import {
 import { cn } from "@/lib/utils"
 import { CardHover, RECOMMENDED_EDGE } from "@/components/apnahire/use-card-hover"
 import { withExtraOffBundle } from "@/content/offers"
-import { ExtraOffLine } from "@/components/apnahire/offers/extra-off-line"
 import { MobileDiscountRow, MobileMetaLine, MobilePlanRow } from "@/components/apnahire/mobile-plan-row"
 
 import { inr, num } from "@/lib/format"
@@ -161,14 +160,12 @@ export function DatabaseCreditBundles({
               }
               price={inr(view.price)}
               mrp={inr(bundle.mrp)}
-              badge={<Badge variant="discount">{view.discountPct}% OFF</Badge>}
+              badge={<Badge variant="discount">−{view.discountPct}%</Badge>}
               priceSuffix={
               // The claimed offer's line comes first, the per-credit price under it.
               <span className="flex flex-col gap-1">
-                {extraOff && <ExtraOffLine />}
-                {/* Green only on its own; under the offer line it steps back to
-                    gray, as on the Unlimited card, so only one line is green. */}
-                <span className={extraOff ? undefined : "text-checkout-primary"}>₹{view.pricePerCredit}{"\u00A0"}/credit</span>
+                {/* Per-unit price: blue, as on every plan card (user call, 2026-11-02). */}
+                <span className="text-info">₹{view.pricePerCredit}{"\u00A0"}/credit</span>
               </span>
             }
               cta={

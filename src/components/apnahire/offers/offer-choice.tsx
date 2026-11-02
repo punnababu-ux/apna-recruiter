@@ -17,8 +17,7 @@
  */
 
 import * as React from "react"
-import { Badge, BadgePercent, Button, ClockFading, Database } from "@apna/design-system"
-import { EXTRA_OFF } from "@/content/offers"
+import { Badge, Button, ClockFading, Database } from "@apna/design-system"
 import { UpcomingPriceLine } from "@/components/apnahire/upcoming-price-line"
 import { cn } from "@/lib/utils"
 import { inr } from "@/lib/format"
@@ -128,30 +127,22 @@ function OptionTile({
       >
         {/* Phones: the struck price + % tag take the second line in every
             tile. From sm: one line, always. */}
-        <p className="flex flex-wrap items-baseline gap-x-1.5 gap-y-1 sm:flex-nowrap">
+        <p className="flex flex-wrap items-center gap-x-1.5 gap-y-1 sm:flex-nowrap">
           {/* The price and its unit never split ("₹2,499 /month"). */}
-          <span className="inline-flex items-baseline gap-1 whitespace-nowrap">
+          <span className="inline-flex items-center gap-1 whitespace-nowrap">
             <span className="text-plan-price-compact text-foreground sm:text-plan-price">{inr(option.price)}</span>
             {option.unit && <span className="text-plan-unit text-muted-foreground">{option.unit}</span>}
           </span>
           {(strike || pct) && (
             <span className="inline-flex w-full items-center gap-1.5 whitespace-nowrap sm:w-auto">
-              {strike && <span className="text-plan-strike text-muted-foreground">{inr(strike)}</span>}
-              {pct && (
-                <Badge variant="discount" size="sm">
-                  {pct}
-                </Badge>
-              )}
+              {/* The struck price, then "−22%" as text, a step apart in size
+                  (user call, 2026-11-02): a left-aligned price reads price →
+                  strike → % (AGENTS.md). */}
+              {strike && <span className="text-sm text-muted-foreground line-through max-sm:text-base">{inr(strike)}</span>}
+              {pct && <span className="text-xs font-semibold text-checkout-primary max-sm:text-sm">−{pct.replace(/\s*OFF$/i, "")}</span>}
             </span>
           )}
         </p>
-        {option.extraOff && (
-          <span className="flex items-center gap-1.5 text-xs text-success">
-            <BadgePercent className="size-4 shrink-0 animate-wiggle" aria-hidden />
-            <span className="animate-text-shimmer whitespace-nowrap sm:hidden">{EXTRA_OFF.appliedShort}</span>
-            <span className="animate-text-shimmer hidden sm:inline">{EXTRA_OFF.applied}</span>
-          </span>
-        )}
         {option.note && (
           // Green only on the upgrade tile and only on its own: under the
           // "Extra 10% off applied" line it steps back to gray, as on the
@@ -159,7 +150,10 @@ function OptionTile({
           <p
             className={cn(
               "text-xs italic",
-              upgrade && !option.extraOff ? "text-checkout-primary" : "text-muted-foreground"
+              // Per-unit prices ("₹650 /credit", "That's just ₹749 /month") are blue,
+              // as on the plan cards; other notes stay gray. shortcut: spots a
+              // price by its "/", add a prop if a gray note ever has one.
+              typeof option.note === "string" && option.note.includes("/") ? "text-info" : "text-muted-foreground"
             )}
           >
             {option.note}

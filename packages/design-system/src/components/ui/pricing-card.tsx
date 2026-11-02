@@ -179,10 +179,9 @@ export function PricingCard({
       {/* Packed left: the % tag sits right after the struck price, never
           flung to the card's far edge. */}
       <div data-compare="price" className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
-        {/* Baseline, not centre: the small struck price then sits on the
-            same line as the price's own suffix ("/month"), not floating at
-            the big figure's mid-height. */}
-        <div className="flex items-baseline gap-1.5">
+        {/* Centred: price, unit, struck price and % share one centre line
+            (user call, 2026-11-02, every price row). */}
+        <div className="flex items-center gap-1.5">
           <span
             className={cn(
               // The plan type scale (styles/index.css): every plan price,
@@ -195,7 +194,7 @@ export function PricingCard({
           </span>
           {unit && <span className={cn("text-plan-unit", fgMuted)}>{unit}</span>}
           {mrp && (
-            <span className={cn("text-plan-strike", fgMuted)}>{mrp}</span>
+            <span className={cn("text-sm line-through", fgMuted)}>{mrp}</span>
           )}
         </div>
         {badge && <div className="shrink-0">{badge}</div>}

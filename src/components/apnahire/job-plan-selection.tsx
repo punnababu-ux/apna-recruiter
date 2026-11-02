@@ -163,7 +163,11 @@ export function JobPlanSelection() {
   // Every price here follows the pricing phase (preview settings).
   const plans = usePlans()
   /** The pack the "short on credits" upsell offers (the board's 6 credits). */
-  const creditUpsellPack = plans.bundles.find((b) => b.credits === 6) ?? plans.bundles[0]
+  const basePack = plans.bundles.find((b) => b.credits === 6) ?? plans.bundles[0]
+  // Express shows no MRP, so the pack is anchored on what its credits cost
+  // one by one at the shown price, never the hidden list price (user call,
+  // 2026-11-02).
+  const creditUpsellPack = { ...basePack, mrp: basePack.credits * plans.singleCredit.price }
 
   // Took the upsell pop-up's offer: one upsell is enough, so the order
   // summary skips the AI calling add-on.
@@ -241,9 +245,13 @@ export function JobPlanSelection() {
   const singleJobLine = (tier: JobPlanTier): CartLine => ({
     id: tier.id,
     label: `${tier.title} × 1`,
-    sublabel: `${tier.jobActiveDays} days · ${tier.dbCredits} database credits`,
+    sublabel: `Active for ${tier.jobActiveDays} days`,
     price: tier.price,
-    mrp: tier.mrp,
+    // No MRP: express never shows it, so the summary doesn't anchor on it.
+    // Its database credits as their own free row, with their validity.
+    freeItems: tier.dbCredits
+      ? [{ id: `${tier.id}-db`, label: `${tier.dbCredits} database credits`, sublabel: "Valid for 7 days" }]
+      : undefined,
   })
 
   const bundleLine = (tier: JobPlanTier): CartLine => {
@@ -251,9 +259,21 @@ export function JobPlanSelection() {
     return {
       id: `${tier.id}-bundle`,
       label: `${tier.title} × ${q.jobs}`,
-      sublabel: `Post this job now · ${q.jobs - 1} more within ${q.validDays} days`,
+      sublabel: `1 used now · ${q.jobs - 1} left, valid for ${q.validDays} days`,
       price: q.price,
       mrp: q.mrp,
+      // Only the job posted now is certain: its database credits are free
+      // here. The later jobs' credits depend on the job type chosen then, so
+      // no number for them (user call, 2026-11-02).
+      freeItems: tier.dbCredits
+        ? [
+            {
+              id: `${tier.id}-bundle-db`,
+              label: `${tier.dbCredits} database credits`,
+              sublabel: "Valid for 7 days",
+            },
+          ]
+        : undefined,
     }
   }
 
@@ -291,7 +311,6 @@ export function JobPlanSelection() {
     label: creditLabel({ kind: tier.credit.kind, count: plan.shortfall }),
     sublabel: `For ${tier.title} · ${plan.held} from your balance + ${plan.shortfall} to buy`,
     price: plan.price,
-    mrp: plan.mrp,
   })
 
   const creditPackLine = (tier: JobPlanTier, plan: Extract<CreditPlan, { state: "partial" }>): CartLine => {
@@ -424,8 +443,9 @@ export function JobPlanSelection() {
               the banner on top, each card's Jan price (content/price-change.ts). */}
           <UpcomingPricesProvider enabled>
             <PriceChangeBanner placement="plans" />
-            {/* Phones: the claimed 10% as a banner, as in self-checkout. */}
-            <ExtraOffBanner plain deadline={offer.deadline} className="sm:hidden" />
+            {/* The claimed 10% as a banner, phones and desktop, as in
+                self-checkout; the cards carry no offer line. */}
+            <ExtraOffBanner deadline={offer.deadline} />
             {/* No page heading (user call, 2026-10-30): the header says
                 "Select a job type". The phone rows drop their shared
                 validity; it's said once here, at body size so it reads. */}
@@ -493,7 +513,8 @@ export function JobPlanSelection() {
               ? {
                   credits: upsell.plan.shortfall,
                   price: upsell.plan.price,
-                  mrp: upsell.plan.mrp,
+                  // No hidden MRP: struck only by the claimed offer.
+                  mrp: offer.claimed ? upsell.plan.price : undefined,
                   janPrice: plans.singleCredit.janPrice && upsell.plan.shortfall * plans.singleCredit.janPrice,
                 }
               : null

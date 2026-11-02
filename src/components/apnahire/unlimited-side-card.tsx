@@ -23,7 +23,6 @@ import { BriefcaseBusiness, InfinityIcon, Database, LogoApnaUnlimited, UserSearc
 import { Badge, Button, PricingCard } from "@apna/design-system"
 import { usePriceLayout } from "@/hooks/use-price-layout"
 import { withExtraOff } from "@/content/offers"
-import { ExtraOffLine } from "@/components/apnahire/offers/extra-off-line"
 import { cn } from "@/lib/utils"
 import { useCardHover } from "@/components/apnahire/use-card-hover"
 import { MobileDiscountRow, MobileMetaLine, MobileUnlimitedCard, MobileUnlimitedLine } from "@/components/apnahire/mobile-plan-row"
@@ -61,16 +60,16 @@ export function UnlimitedSideCard({
   // Truncated, as the design does for ₹5,999 / 3 = ₹1,999.
   const monthlyPrice = Math.floor(price / plan.months)
   // The plan's own discount only (none today): the 10% is its own line.
-  const pct = plan.mrp && plan.mrp > basePrice ? Math.round((1 - basePrice / plan.mrp) * 100) : null
   // Works for any plan length: the Jobs tab sells the monthly plan, the
   // card was first drawn for the quarterly one.
   const monthly = plan.months === 1
   const strike = extraOff ? inr(basePrice) : undefined
   // Desktop: outline CTA at rest, green while the frame is hovered.
   const priceLayout = usePriceLayout()
-  const inlinePct = priceLayout === "inline" || priceLayout === "cta"
+  const inlinePct = priceLayout === "inline" || priceLayout === "cta" || priceLayout === "cta-outline"
   // The % beside a struck price: the plan's own, or the 10% with none.
-  const strikePct = pct ?? (extraOff ? Math.round((1 - price / basePrice) * 100) : null)
+  // The saving the struck price shows, the 10% included.
+  const strikePct = extraOff ? Math.round((1 - price / basePrice) * 100) : null
   const hover = useCardHover()
   return (
     <>
@@ -89,17 +88,21 @@ export function UnlimitedSideCard({
         // the pack cards' price layout draws theirs (usePriceLayout), as in
         // express (user call, 2026-11-02).
         mrp={strike}
-        priceLead={strike && inlinePct ? <span className="text-xs font-semibold text-checkout-primary">−{strikePct}%</span> : undefined}
+        priceLead={strike && inlinePct ? <span className="text-xs leading-5 font-semibold text-checkout-primary">−{strikePct}%</span> : undefined}
         smallPrice={!!strike && inlinePct}
         belowPrice={
-          priceLayout === "cta" ? (
-            <Button type="button" variant="outline" size="xs" className="px-3" onClick={onBuyNow}>
-              Buy now
-            </Button>
-          ) : strike && priceLayout === "below" ? (
+          strike && priceLayout === "below" ? (
             <span className="text-xs font-semibold text-checkout-primary">−{strikePct}%</span>
           ) : strike && priceLayout === "badge" ? (
             <MobileDiscountRow pct={strikePct} />
+          ) : undefined
+        }
+        // The cta preview's green "Buy" sits beside "Valid in a single city".
+        cta={
+          priceLayout === "cta" || priceLayout === "cta-outline" ? (
+            <Button type="button" variant={priceLayout === "cta-outline" ? "outline" : "checkout"} size="sm" className="shrink-0 px-3.5" onClick={onBuyNow}>
+              Buy now
+            </Button>
           ) : undefined
         }
         upcoming={<UpcomingPriceLine price={plan.janPrice} />}
@@ -117,20 +120,6 @@ export function UnlimitedSideCard({
         ]}
         line={<MobileUnlimitedLine db={dbCreditsLabel(plan)} reposts={false} />}
         note="Valid in a single city"
-        cta={
-          mobileSelect ? undefined :
-          // Dark companion CTA on phones (user call, 2026-10-19): the
-          // sticky green Buy bar stays the screen's one primary.
-          <Button
-            type="button"
-            variant="emphasis"
-            size="sm"
-            className="shrink-0 px-3.5"
-            onClick={onBuyNow}
-          >
-            Buy now
-          </Button>
-        }
       />
 
       {/* No border: the design draws no stroke here. The whole frame is the
@@ -180,19 +169,17 @@ export function UnlimitedSideCard({
             price={inr(price)}
             unit={monthly ? plan.unit : undefined}
             mrp={strike}
-            badge={pct ? <Badge variant="discount">{pct}% OFF</Badge> : undefined}
+            badge={strikePct ? <Badge variant="discount">−{strikePct}%</Badge> : undefined}
             priceSuffix={
               <span className="flex flex-col gap-1">
-                {extraOff && <ExtraOffLine />}
                 {/* Monthly already shows /month on the price, but the line is
                     kept (empty) so it stays level with the job cards'
                     "₹650 /credit" beside it, offer applied or not. */}
                 {monthly ? (
                   <span aria-hidden>{"\u00A0"}</span>
                 ) : (
-                  // Green only on its own; once the offer line is above it,
-                  // it steps back to gray so only one line is green.
-                  <span className={extraOff ? undefined : "text-checkout-primary"}>
+                  // Per-unit price: blue, as on every plan card (user call, 2026-11-02).
+                  <span className="text-info">
                     That&apos;s just {inr(monthlyPrice)}{"\u00A0"}/month
                   </span>
                 )}

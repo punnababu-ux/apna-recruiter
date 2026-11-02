@@ -33,8 +33,10 @@ const badgeVariants = cva(
         // sidebar "New" tag's tint, opaque (see semantic.css).
         ribbon:
           "bg-ribbon-fill font-semibold text-ribbon-fg",
+        /* The saving as plain green text, "−22%", after the struck price
+         * (user call, 2026-11-02: the pill retired). */
         discount:
-          "bg-checkout-discount-bg font-semibold text-checkout-discount-fg",
+          "bg-transparent font-semibold text-checkout-primary",
         /* Unread / attention marker on an icon: a solid red count (size
          * "count") or a bare dot (size "dot"). Ring it in the surface it sits
          * on (`ring-2 ring-card`) so it cuts out of the icon. */
@@ -65,11 +67,10 @@ const badgeVariants = cva(
       },
     },
     compoundVariants: [
-      /* The % OFF pill has one size everywhere (plan cards, upsell tiles,
-       * phone rows, the order summary): the small one, so it sits beside a
-       * price and its struck price without wrapping them (plan type scale,
-       * styles/index.css). */
-      { variant: "discount", size: "default", class: "h-4 px-1.5 py-0 text-2xs leading-none" },
+      /* The "−22%" text has one size everywhere it sits beside a price
+       * (plan cards, upsell tiles, the order summary): 12px semibold, a step
+       * under the 14px struck price, since bold reads larger. No pill. */
+      { variant: "discount", class: "h-auto rounded-none px-0 py-0 text-xs leading-none" },
     ],
     defaultVariants: {
       variant: "default",

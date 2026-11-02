@@ -18,7 +18,7 @@
  *    (100 preselected) and a green "Add" pill — shown only for job-credit
  *    purchases with no add-on yet.
  *  - The coupon block takes exactly one of three shapes: a white trigger row,
- *    a bordered (shadowless) expanded panel, or a compact "saved with" row.
+ *    a bordered (shadowless) expanded panel, or a compact "You save ₹X with CODE" row.
  *    The `Coupon discount (CODE) −₹300` figure lives in Bill details.
  *  - Each item row shows its price after every discount, the coupon's share
  *    included, struck at MRP (user call, 2026-10-29), so it matches the plan
@@ -95,6 +95,9 @@ export interface CartLine {
   /** List price. Rendered struck-through immediately before `price` when it
    *  is greater than `price` (Figma hides the strike otherwise). */
   mrp?: number
+  /** Items that come free with this one (a job's database credits): own
+   *  rows under it, priced "Free" (no worth, no strike), never billed. */
+  freeItems?: { id: string; label: string; sublabel?: string }[]
   /** Shown instead of the rupee price when the line is paid in credits
    *  (e.g. "2 credits"); `price` is then 0 so it adds nothing to the bill. */
   priceLabel?: string
@@ -402,14 +405,11 @@ function CartLineRow({
   line,
   onRemove,
   coupon = 0,
-  renews,
 }: {
   line: CartLine
   onRemove?: () => void
   /** This line's share of the coupon: its price drops by it, struck at MRP. */
   coupon?: number
-  /** A subscription with a coupon: the coupon is first payment only. */
-  renews?: boolean
 }) {
   const price = line.price - coupon
   const strike = line.mrp ?? (coupon > 0 ? line.price : undefined)
@@ -426,11 +426,6 @@ function CartLineRow({
           </span>
         </div>
       </div>
-      {renews && coupon > 0 && (
-        <p className="text-xs text-muted-foreground">
-          First payment only, renews at {inr(line.price)}
-        </p>
-      )}
       {line.points?.length ? (
         <ul className="flex flex-col gap-2">
           {line.points.map((point) => (
@@ -608,10 +603,11 @@ export function CheckoutDrawer({
   // Everything paid with credits: no coupon, no bill, and the CTA posts.
   const nothingToPay = itemsNet === 0
 
-  // The renewal charge does NOT follow the coupon: both frames print ₹7,079
-  // even though the coupon frame's total is ₹6,725. It is the plan's own price
-  // plus its own GST — i.e. the coupon is first-cycle only.
-  const renewalAmount = withGst(item.price)
+  // A coupon on a subscription holds for every renewal, not just the first
+  // payment (user call, 2026-11-02; the board printed the full ₹7,079): the
+  // plan's price less its coupon share, plus GST. A proration credit is
+  // this payment only, so it stays out.
+  const renewalAmount = withGst(item.price - (lineCoupon[0] ?? 0))
   const periodLabel = periodLabelFor(item.renewAfterDays ?? 0)
 
   const handleApplyCoupon = (code: string) => {
@@ -676,7 +672,6 @@ export function CheckoutDrawer({
                   <CartLineRow
                     line={line}
                     coupon={lineCoupon[i]}
-                    renews={isSubscription && i === 0}
                     onRemove={
                       i === 0
                         ? undefined
@@ -685,6 +680,24 @@ export function CheckoutDrawer({
                           : () => setAddonCredits(null)
                     }
                   />
+                </React.Fragment>
+              ))}
+              {/* Free items that come with the main one: their own rows, so
+                  the value reads (user call, 2026-11-02); out of the bill. */}
+              {item?.freeItems?.map((free) => (
+                <React.Fragment key={free.id}>
+                  <li aria-hidden>
+                    <Separator />
+                  </li>
+                  <li className="flex flex-col gap-2">
+                    <div className="flex items-center justify-between gap-3">
+                      <p className="text-base font-semibold text-foreground">{free.label}</p>
+                      <div className="flex shrink-0 items-center gap-3">
+                        <span className="animate-text-shimmer text-base font-semibold text-checkout-primary">Free</span>
+                      </div>
+                    </div>
+                    {free.sublabel && <p className="text-xs text-muted-foreground">{free.sublabel}</p>}
+                  </li>
                 </React.Fragment>
               ))}
             </ul>
@@ -733,7 +746,7 @@ export function CheckoutDrawer({
                         </span>
                       </div>
                       {selectedPack.discountPct > 0 && (
-                        <Badge variant="discount">{selectedPack.discountPct}% OFF</Badge>
+                        <Badge variant="discount">−{selectedPack.discountPct}%</Badge>
                       )}
                     </div>
                   )}
@@ -791,7 +804,7 @@ export function CheckoutDrawer({
                 <Tag className="mt-0.5 size-5 shrink-0 text-checkout-primary" aria-hidden />
                 <div className="flex flex-col gap-1">
                   <p className="text-sm text-foreground">
-                    {inr(couponDiscount)} saved with {couponName}
+                    You save {inr(couponDiscount)} with {couponName}
                   </p>
                   <Button
                     type="button"

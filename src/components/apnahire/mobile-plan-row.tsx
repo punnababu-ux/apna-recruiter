@@ -110,8 +110,10 @@ export interface MobilePlanRowProps {
   /** Before the struck price, on the price line (the `?price=inline`
    *  preview's "−22%"). */
   priceLead?: React.ReactNode
-  /** A size down from text-plan-price-compact (the `?price=inline` preview). */
+  /** Price and struck price at the title size (text-plan-name) (the `?price=inline` preview). */
   smallPrice?: boolean
+  /** A button pinned to the card's bottom-right (the `?price=cta` preview). */
+  cta?: React.ReactNode
   /** The price's last line: `UpcomingPriceLine` (it renders nothing when
    *  off, and the slot adds no space of its own). */
   upcoming?: React.ReactNode
@@ -136,6 +138,7 @@ export function MobilePlanRow({
   priceNote,
   priceLead,
   smallPrice,
+  cta,
   upcoming,
   className,
 }: MobilePlanRowProps) {
@@ -154,12 +157,12 @@ export function MobilePlanRow({
     // 8px between the price and the % OFF badge under it (user call,
     // 2026-10-30; was 4px).
     <div className="flex shrink-0 flex-col items-end gap-2 text-right">
-      <div className="flex items-baseline justify-end gap-1.5 whitespace-nowrap">
+      <div className={cn("flex justify-end gap-1.5 whitespace-nowrap", "items-center")}>
         {priceLead}
-        {mrp && <span className="text-plan-strike text-muted-foreground">{mrp}</span>}
+        {mrp && <span className={cn("text-plan-strike text-muted-foreground", smallPrice && "text-sm leading-5 line-through")}>{mrp}</span>}
         {/* The price leads the row (text-plan-price-compact, over text-plan-name);
             tabular figures keep the column steady. */}
-        <span className={cn("tabular-nums text-foreground", smallPrice ? "text-lg leading-5 font-semibold" : "text-plan-price-compact")}>{price}</span>
+        <span className={cn("text-foreground", smallPrice ? "text-lg leading-5 font-semibold" : "tabular-nums text-plan-price-compact")}>{price}</span>
         {/* Muted like the struck price: only the price is dark. */}
         {unit && <span className="text-plan-unit text-muted-foreground">{unit}</span>}
       </div>
@@ -235,8 +238,8 @@ export function MobilePlanRow({
                   default corner tick needs none (user call, 2026-10-30). */}
               {sel === "left" && radio}
               <span className="min-w-0 flex-1 text-plan-name text-foreground">{title}</span>
-              <span className="flex shrink-0 items-baseline gap-1.5 whitespace-nowrap">
-                {mrp && <span className="text-plan-strike text-muted-foreground">{mrp}</span>}
+              <span className="flex shrink-0 items-center gap-1.5 whitespace-nowrap">
+                {mrp && <span className={cn("text-plan-strike text-muted-foreground", smallPrice && "text-sm leading-5 line-through")}>{mrp}</span>}
                 {/* leading-tight: the 20px price's own 28px line set the gap
                     under the name line, not the 2px between the lines. */}
                 <span className="text-plan-price-compact tabular-nums text-foreground">{price}</span>
@@ -268,6 +271,20 @@ export function MobilePlanRow({
             2026-10-30). The price floats right, so the name and meta flow
             beside it; a meta line too long to fit beside it drops below it
             whole, never splitting mid-phrase ("Valid for 30 days"). */}
+        {cta ? (
+          // The price at the top right, the button at the bottom right, as
+          // the Unlimited card's "Buy" beside its last line.
+          <div className="flex items-stretch gap-3">
+            <div className="min-w-0 flex-1">
+              <span className="block text-plan-name text-foreground">{title}</span>
+              {meta && <div className="mt-2 flex flex-col items-start gap-2 [&>*]:whitespace-nowrap">{meta}</div>}
+            </div>
+            <div className="flex shrink-0 flex-col items-end justify-between gap-2">
+              {priceBlock}
+              {cta}
+            </div>
+          </div>
+        ) : (
         <div className={cn("flex items-start gap-2", layout === "inline" && "@2xs:hidden")}>
           {sel === "left" && <span className="flex h-5 shrink-0 items-center">{radio}</span>}
           <div className="min-w-0 flex-1 flow-root">
@@ -281,6 +298,7 @@ export function MobilePlanRow({
             {meta && <div className={cn("mt-2 flex flex-col items-start gap-2 [&>*]:whitespace-nowrap", sel === "left" && "[&>*:has(>svg:first-child)]:-ml-6")}>{meta}</div>}
           </div>
         </div>
+        )}
 
         {showLine ? line : (
           <>
@@ -526,6 +544,7 @@ export function MobileUnlimitedCard({
   upcoming,
   features,
   note,
+  cta,
   selected,
   meta,
   onSelect,
@@ -538,18 +557,19 @@ export function MobileUnlimitedCard({
   const revealRef = useRevealOnSelect(selected)
   const sel = usePlanCardSelection()
   const layout = usePlanCardLayout()
-  // No button on any card; the card's own tap buys it.
-  const cardCta = undefined
+  // No button by default; the card's own tap buys it (`cta` only in the
+  // `?price=cta` preview).
+  const cardCta = cta
   const asLine = layout === "line"
   const expanded = !radioMode || selected || !collapsed || asLine
   const priceBlock = (
     // 8px between the price and the % OFF badge under it (user call,
     // 2026-10-30; was 4px).
     <div className="flex shrink-0 flex-col items-end gap-2 text-right">
-      <span className="flex items-baseline gap-1.5 whitespace-nowrap">
+      <span className={cn("flex gap-1.5 whitespace-nowrap", "items-center")}>
         {priceLead}
-        {mrp && <span className="text-plan-strike text-muted-foreground">{mrp}</span>}
-        <span className={cn("tabular-nums text-foreground", smallPrice ? "text-lg leading-5 font-semibold" : "text-plan-price-compact")}>{price}</span>
+        {mrp && <span className={cn("text-plan-strike text-muted-foreground", smallPrice && "text-sm leading-5 line-through")}>{mrp}</span>}
+        <span className={cn("text-foreground", smallPrice ? "text-lg leading-5 font-semibold" : "tabular-nums text-plan-price-compact")}>{price}</span>
         {/* Muted like the struck price: only the price is dark. */}
         {unit && <span className="text-plan-unit text-muted-foreground">{unit}</span>}
       </span>

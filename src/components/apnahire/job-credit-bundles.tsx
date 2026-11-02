@@ -16,7 +16,6 @@ import { usePriceLayout } from "@/hooks/use-price-layout"
 import { cn } from "@/lib/utils"
 import { CardHover, RECOMMENDED_EDGE } from "@/components/apnahire/use-card-hover"
 import { withExtraOffBundle } from "@/content/offers"
-import { ExtraOffLine } from "@/components/apnahire/offers/extra-off-line"
 import { MobileDiscountRow, MobileMetaLine, MobilePlanRow } from "@/components/apnahire/mobile-plan-row"
 import { UpcomingPriceLine } from "@/components/apnahire/upcoming-price-line"
 import { inr } from "@/lib/format"
@@ -61,7 +60,7 @@ export function JobCreditBundles({
   // Preview (phones): "−22%" on the price line, the per-credit price under
   // it in blue (usePriceLayout; live V14 is "badge").
   const priceLayout = usePriceLayout()
-  const withCta = priceLayout === "cta"
+  const withCta = priceLayout === "cta" || priceLayout === "cta-outline"
   // "cta" is "inline" with the per-credit price under the validity.
   const inlinePrice = priceLayout === "inline" || withCta
   const belowPrice = priceLayout === "below"
@@ -126,7 +125,7 @@ export function JobCreditBundles({
                 price={inr(view.price)}
                 priceLead={
                   inlinePrice && view.discountPct ? (
-                    <span className="text-xs font-semibold text-checkout-primary">−{view.discountPct}%</span>
+                    <span className="text-xs leading-5 font-semibold text-checkout-primary">−{view.discountPct}%</span>
                   ) : undefined
                 }
                 smallPrice={inlinePrice}
@@ -134,18 +133,23 @@ export function JobCreditBundles({
                 // Recommended tab: 8px clear of it.
                 className={inlinePrice && bundle.recommended ? "pt-7" : undefined}
                 belowPrice={
-                  withCta ? (
-                    // Small secondary CTA; its click bubbles to the card.
-                    <Button type="button" variant="outline" size="xs" className="px-3">
-                      Buy now
-                    </Button>
-                  ) : inlinePrice ? (
+                  withCta ? undefined : inlinePrice ? (
                     <span className="text-xs whitespace-nowrap text-info">₹{view.pricePerCredit}{"\u00A0"}/credit</span>
                   ) : belowPrice ? (
                     view.discountPct ? <span className="text-xs font-semibold text-checkout-primary">−{view.discountPct}%</span> : undefined
                   ) : (
                     <MobileDiscountRow pct={view.discountPct} />
                   )
+                }
+                // Green "Buy" on every card: a deliberate break of the one-green
+                // rule while this preview is explored (user call, 2026-11-02).
+                // Its click bubbles to the card.
+                cta={
+                  withCta ? (
+                    <Button type="button" variant={priceLayout === "cta-outline" ? "outline" : "checkout"} size="sm" className="px-3.5">
+                      Buy now
+                    </Button>
+                  ) : undefined
                 }
                 upcoming={<UpcomingPriceLine price={bundle.janPrice} />}
               />
@@ -212,14 +216,12 @@ export function JobCreditBundles({
             ]}
             price={inr(view.price)}
             mrp={inr(bundle.mrp)}
-            badge={<Badge variant="discount">{view.discountPct}% OFF</Badge>}
+            badge={<Badge variant="discount">−{view.discountPct}%</Badge>}
             priceSuffix={
               // The claimed offer's line comes first, the per-credit price under it.
               <span className="flex flex-col gap-1">
-                {extraOff && <ExtraOffLine />}
-                {/* Green only on its own; under the offer line it steps back to
-                    gray, as on the Unlimited card, so only one line is green. */}
-                <span className={extraOff ? undefined : "text-checkout-primary"}>₹{view.pricePerCredit}{"\u00A0"}/credit</span>
+                {/* Per-unit price: blue, as on every plan card (user call, 2026-11-02). */}
+                <span className="text-info">₹{view.pricePerCredit}{"\u00A0"}/credit</span>
                 <UpcomingPriceLine price={bundle.janPrice} />
               </span>
             }

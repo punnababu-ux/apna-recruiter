@@ -40,7 +40,6 @@ import {
   type JobSlotCount,
   type SubscriptionPlanId,
 } from "@/content/subscriptions"
-import { ExtraOffLine } from "@/components/apnahire/offers/extra-off-line"
 import { UpcomingPriceLine } from "@/components/apnahire/upcoming-price-line"
 import {
   MobileDiscountRow,
@@ -62,8 +61,9 @@ const PLAN_IDS: SubscriptionPlanId[] = ["monthly", "quarterly", "annual"]
 function planPricing(plan: { price: number; mrp?: number }, extraOff?: boolean) {
   const price = extraOff ? withExtraOff(plan.price) : plan.price
   const strike = plan.mrp ?? (extraOff ? plan.price : undefined)
-  // The plan's own discount only: the 10% shows as its own line.
-  const pct = plan.mrp && plan.mrp > plan.price ? Math.round((1 - plan.price / plan.mrp) * 100) : null
+  // The final saving against the struck price, the 10% included (the
+  // banner says the 10%; no card line does).
+  const pct = strike && strike > price ? Math.round((1 - price / strike) * 100) : null
   return { price, strike, pct }
 }
 
@@ -174,27 +174,25 @@ function PlanCard({
           <p className="text-plan-name text-foreground">{title}</p>
           {/* Price, unit and struck price never split; the % OFF badge sits
               right after them, never flung to the row's far end. */}
-          <div data-compare="price" className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-            <p className="flex items-baseline gap-1.5 whitespace-nowrap">
+          <div data-compare="price" className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <p className="flex items-center gap-1.5 whitespace-nowrap">
               <span className="text-plan-price text-foreground">{inr(price)}</span>
               <span className="text-plan-unit text-muted-foreground">{priceSuffix}</span>
-              {strike && <span className="text-plan-strike text-muted-foreground">{inr(strike)}</span>}
+              {strike && <span className="text-sm text-muted-foreground line-through">{inr(strike)}</span>}
             </p>
-            {pct ? <Badge variant="discount">{pct}% OFF</Badge> : null}
+            {pct ? <Badge variant="discount">−{pct}%</Badge> : null}
           </div>
           {/* The note line is reserved in every card whether or not it has
               one, so the dividers, feature lists and CTAs sit on the same
               baseline across the row. Without this, Monthly's divider
               rides ~16px higher. The claimed offer's line goes above it,
               in all cards. */}
-          {extraOff && <ExtraOffLine />}
           <p
             data-compare="price-suffix"
             className={cn(
               "min-h-4 text-xs italic leading-4",
-              // Green only on its own; under the offer line it steps back to
-              // gray, as on the job credit cards, so only one line is green.
-              extraOff ? "text-muted-foreground" : "text-checkout-primary",
+              // Per-unit price: blue, as on every plan card (user call, 2026-11-02).
+              "text-info",
               !note && "invisible",
             )}
             aria-hidden={!note}

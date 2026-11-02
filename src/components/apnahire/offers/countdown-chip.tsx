@@ -33,7 +33,8 @@ function hms(ms: number) {
   return [h, m, s].map((n) => String(n).padStart(2, "0")).join(":")
 }
 
-export function CountdownChip({ deadline, className }: { deadline: number; className?: string }) {
+/** `label`: words before the time ("Ends in"), for a chip read on its own. */
+export function CountdownChip({ deadline, label, className }: { deadline: number; label?: string; className?: string }) {
   const remaining = useCountdown(deadline)
   return (
     <span
@@ -45,6 +46,7 @@ export function CountdownChip({ deadline, className }: { deadline: number; class
       )}
     >
       <ClockFading className="size-4" aria-hidden />
+      {label && <span className="font-medium">{label}</span>}
       {hms(remaining)}
     </span>
   )

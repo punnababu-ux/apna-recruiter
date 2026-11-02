@@ -49,7 +49,7 @@ export function ExtraOffBar({ deadline, className }: { deadline: number | null; 
  *  solid green success banner above the tab's heading, with the time left
  *  on the right, instead of the strip in the pinned header (user call,
  *  2026-10-30). Renders nothing until claimed. */
-export function ExtraOffBanner({ deadline, plain = false, className }: { deadline: number | null; plain?: boolean; className?: string }) {
+export function ExtraOffBanner({ deadline, className }: { deadline: number | null; className?: string }) {
   if (deadline === null) return null
   return (
     <AlertBanner
@@ -63,8 +63,9 @@ export function ExtraOffBanner({ deadline, plain = false, className }: { deadlin
         // inline-flex: the banner sets its title inline; a block flex box
         // inside it added a line above and pushed the icon off centre.
         <span className="inline-flex w-full items-center justify-between gap-2 align-middle">
-          {plain ? EXTRA_OFF.appliedPlain : EXTRA_OFF.applied}
-          <CountdownChip deadline={deadline} className="bg-primary-foreground/15 py-0.5 text-xs text-primary-foreground" />
+          <span className="animate-text-shimmer sm:hidden">{EXTRA_OFF.bannerShort}</span>
+          <span className="animate-text-shimmer hidden sm:inline">{EXTRA_OFF.banner}</span>
+          <CountdownChip deadline={deadline} label="Ends in" className="bg-primary-foreground/15 py-0.5 text-xs text-primary-foreground" />
         </span>
       }
       className={className}

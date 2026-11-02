@@ -156,16 +156,19 @@ export function PriceLayoutControls() {
   return (
     <PrototypeSection title="Phone plan prices">
       <PrototypeOption active={layout === "badge"} onClick={() => setPriceLayout("badge")}>
-        Live (V14 badge · V11 price only)
+        % OFF pill (was live)
       </PrototypeOption>
       <PrototypeOption active={layout === "inline"} onClick={() => setPriceLayout("inline")}>
-        Inline −%
+        Inline −% (live)
       </PrototypeOption>
       <PrototypeOption active={layout === "below"} onClick={() => setPriceLayout("below")}>
         −% below the price
       </PrototypeOption>
       <PrototypeOption active={layout === "cta"} onClick={() => setPriceLayout("cta")}>
         Inline −% with Buy now
+      </PrototypeOption>
+      <PrototypeOption active={layout === "cta-outline"} onClick={() => setPriceLayout("cta-outline")}>
+        Inline −% with outline Buy (self-checkout)
       </PrototypeOption>
     </PrototypeSection>
   )

@@ -67,7 +67,9 @@ export function bundleQuote(tier: JobPlanTier, extraOff = false) {
     validDays: offer.validDays,
     perJob: off(offer.pricePerJob),
     price: off(offer.jobs * offer.pricePerJob),
-    mrp: offer.jobs * (tier.mrp ?? tier.price),
+    // Anchored on the price express shows for one job, never the hidden MRP
+    // (user call, 2026-11-02): the saving is buying N at once.
+    mrp: offer.jobs * tier.price,
   }
 }
 
@@ -89,8 +91,9 @@ export function JobBundleOfferDialog({ tier: liveTier, ...props }: UpsellCallbac
         stay={{
           title: `1 ${tier.title.toLowerCase()}`,
           price: single,
-          mrp: tier.mrp,
-          badge: pctOff(single, tier.mrp),
+          // Express shows no MRP: struck only by the claimed offer.
+          mrp: props.extraOff ? tier.price : undefined,
+          badge: props.extraOff ? pctOff(single, tier.price) : undefined,
           extraOff: props.extraOff,
           janPrice: tier.janPrice,
           ctaLabel: "Continue with 1 job",
@@ -158,7 +161,7 @@ export function CreditPackOfferDialog({
           title: credits(need.credits),
           price: needPrice,
           mrp: need.mrp,
-          note: needNote,
+          note: needNote ?? `${inr(perNeed)}\u00A0/credit`,
           // Self-checkout passes the stay pack's validity (both tiles show it,
           // with the clock); express checkout's stay is the credits this one
           // job needs, so it has none — only the bundle on offer does.
@@ -174,6 +177,7 @@ export function CreditPackOfferDialog({
           price: packPrice,
           mrp: pack.mrp,
           badge: pctOff(packPrice, pack.mrp),
+          note: `${inr(perPack)}\u00A0/credit`,
           validDays: pack.validDays,
           extraOff: props.extraOff,
           janPrice: pack.janPrice,
@@ -317,6 +321,7 @@ export function CreditsToPlanDialog({
           title: `${bundle.credits} job credits`,
           price: bundlePrice,
           mrp: bundle.mrp,
+          note: `${inr(Math.round(bundlePrice / bundle.credits))}\u00A0/credit`,
           // Under the amount, level with the plan's slot line.
           term: bundle.validDays != null ? `Valid for ${bundle.validDays}\u00A0days` : undefined,
           extraOff: props.extraOff,

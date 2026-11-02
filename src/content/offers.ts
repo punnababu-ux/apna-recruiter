@@ -29,6 +29,13 @@ export const EXTRA_OFF = {
   /** Express: its cards had no discount before the offer, so it isn't
    *  "extra" (user call, 2026-11-02). Self-checkout keeps `applied`. */
   appliedPlain: "10% off applied",
+  /** The page banner, both checkouts: it echoes the exit pop-up's "Claim
+   *  offer" / "10% extra off", and "every plan" holds for plans with and
+   *  without their own discount. The code itself first shows in the order
+   *  summary ("You save ₹195 with FIRST10") (user call, 2026-11-02). */
+  banner: "Offer claimed · Extra 10% off every plan",
+  /** Phones: the full line wraps beside the timer. */
+  bannerShort: "Extra 10% off claimed",
   /** Phone tiles (~130px of text): the full line wraps to two in Inter. */
   appliedShort: "Extra 10% off",
 } as const
@@ -37,9 +44,9 @@ export const withExtraOff = (price: number) => Math.round(price * (1 - EXTRA_OFF
 
 /** A credit bundle's display figures with the claimed offer: the price drops
  *  by 10%, the struck MRP stays, and the per-credit price is recalculated
- *  from the new price. The % OFF stays the bundle's own discount: the 10%
- *  shows as its own line beside it, as the cart's coupon row does (user
- *  call, 2026-10-29), never folded into the badge. Per-credit keeps the design's precision
+ *  from the new price. The % is the final saving against the MRP, the 10%
+ *  included: no card says the 10% on its own line any more, the banner
+ *  does (user call, 2026-11-02). Per-credit keeps the design's precision
  *  (whole rupees for job credits, one decimal for database credits). Only for
  *  display: checkout gets the base bundle and applies the coupon itself. */
 export function withExtraOffBundle<
@@ -51,6 +58,7 @@ export function withExtraOffBundle<
   return {
     ...bundle,
     price,
+    discountPct: Math.round((1 - price / bundle.mrp) * 100),
     pricePerCredit: Number.isInteger(bundle.pricePerCredit)
       ? Math.round(perCredit)
       : Math.round(perCredit * 10) / 10,

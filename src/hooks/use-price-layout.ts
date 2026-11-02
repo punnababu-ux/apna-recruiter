@@ -4,7 +4,8 @@
  * usePriceLayout — the prototype switch for self-checkout's phone job
  * credit prices:
  *
- *   badge   live V14: struck price + price, the % OFF pill under them, the
+ *   inline is live (user call, 2026-11-02), both checkouts.
+ *   badge   was live V14: struck price + price, the % OFF pill under them, the
  *           per-credit price in green under the validity.
  *   inline  preview (user call, 2026-11-02): "−22%" as plain text on the
  *           price line, a smaller price, the per-credit price under it in
@@ -15,6 +16,8 @@
  *   cta     preview (user call, 2026-11-02): "inline", with the per-credit
  *           price under the validity in blue and a small outline "Buy now"
  *           under every price, the Unlimited card's too.
+ *   cta-outline  preview, self-checkout (user call, 2026-11-02): "cta" with an
+ *           outline (secondary) "Buy" in place of the green one.
  *
  * Set from the preview settings ("Phone job credit prices") or `?price=inline`
  * `?price=below` or `?price=cta` (wins over the stored choice); remembered in this browser. Remove with
@@ -23,7 +26,7 @@
 
 import * as React from "react"
 
-export type PriceLayout = "badge" | "inline" | "below" | "cta"
+export type PriceLayout = "badge" | "inline" | "below" | "cta" | "cta-outline"
 
 const KEY = "apnahire:price-layout"
 const EVENT = "apnahire:price-layout"
@@ -32,10 +35,10 @@ function read(): PriceLayout {
   try {
     const flag = new URLSearchParams(window.location.search).get("price")
     const stored = window.localStorage.getItem(KEY)
-    for (const v of [flag, stored]) if (v === "inline" || v === "below" || v === "cta" || v === "badge") return v
-    return "badge"
+    for (const v of [flag, stored]) if (v === "inline" || v === "below" || v === "cta" || v === "cta-outline" || v === "badge") return v
+    return "inline"
   } catch {
-    return "badge"
+    return "inline"
   }
 }
 
@@ -49,7 +52,7 @@ function subscribe(notify: () => void) {
 }
 
 export function usePriceLayout(): PriceLayout {
-  return React.useSyncExternalStore(subscribe, read, () => "badge")
+  return React.useSyncExternalStore(subscribe, read, () => "inline")
 }
 
 export function setPriceLayout(next: PriceLayout) {
