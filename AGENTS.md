@@ -879,6 +879,10 @@ cards) and every upsell tile (`OfferChoice`), both checkouts, light and dark
    can be in (no credits, partial, covered, offer claimed, Premium + AI)
    on phone and desktop before calling it done.
 
+17. **Order summary order** (user call, 2026-11-03): the main item first,
+   then its free items ("10 database credits · Free"), then any add-on (AI
+   calling, database credits) in the order added. Phone and desktop alike.
+
 ## Tax disclaimer — one wording, one component
 
 Under any price, the tax note reads exactly **"\*GST applicable"** and is

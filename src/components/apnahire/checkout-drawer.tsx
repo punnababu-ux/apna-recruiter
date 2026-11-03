@@ -682,24 +682,30 @@ export function CheckoutDrawer({
                           : () => setAddonCredits(null)
                     }
                   />
-                </React.Fragment>
-              ))}
-              {/* Free items that come with the main one: their own rows, so
-                  the value reads (user call, 2026-11-02); out of the bill. */}
-              {item?.freeItems?.map((free) => (
-                <React.Fragment key={free.id}>
-                  <li aria-hidden>
-                    <Separator />
-                  </li>
-                  <li className="flex flex-col gap-2">
-                    <div className="flex items-center justify-between gap-3">
-                      <p className="text-base font-semibold text-foreground">{free.label}</p>
-                      <div className="flex shrink-0 items-center gap-3">
-                        <span className="animate-text-shimmer text-base font-semibold text-checkout-primary">Free</span>
+                  {/* The main item's free items sit right under it, before any
+                      add-on (user call, 2026-11-03). */}
+                  {i === 0 && (
+                    <>
+                    {/* Free items that come with the main one: their own rows, so
+                    the value reads (user call, 2026-11-02); out of the bill. */}
+                {item?.freeItems?.map((free) => (
+                  <React.Fragment key={free.id}>
+                    <li aria-hidden>
+                      <Separator />
+                    </li>
+                    <li className="flex flex-col gap-2">
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="text-base font-semibold text-foreground">{free.label}</p>
+                        <div className="flex shrink-0 items-center gap-3">
+                          <span className="animate-text-shimmer text-base font-semibold text-checkout-primary">Free</span>
+                        </div>
                       </div>
-                    </div>
-                    {free.sublabel && <p className="text-xs text-muted-foreground">{free.sublabel}</p>}
-                  </li>
+                      {free.sublabel && <p className="text-xs text-muted-foreground">{free.sublabel}</p>}
+                    </li>
+                  </React.Fragment>
+                ))}
+                    </>
+                  )}
                 </React.Fragment>
               ))}
             </ul>
