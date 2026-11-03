@@ -32,7 +32,7 @@ import {
 import { cn } from "@/lib/utils"
 import { CardHover, RECOMMENDED_EDGE } from "@/components/apnahire/use-card-hover"
 import { withExtraOffBundle } from "@/content/offers"
-import { MobileDiscountRow, MobileMetaLine, MobilePlanRow } from "@/components/apnahire/mobile-plan-row"
+import { MobileMetaLine, MobilePlanRow } from "@/components/apnahire/mobile-plan-row"
 
 import { inr, num } from "@/lib/format"
 import { usePlans } from "@/hooks/apnahire/use-plans"
@@ -98,18 +98,23 @@ export function DatabaseCreditBundles({
                     <MobileMetaLine icon={<ClockFading aria-hidden />}>
                       Valid for {bundle.validDays} days
                     </MobileMetaLine>
-                    {/* The unit cost under the validity, left (user call,
-                        2026-10-30). Green: the one green line on the card,
-                        now the 10% is said in the header (ExtraOffBar). */}
-                    <span className="text-xs whitespace-nowrap italic text-checkout-primary">
-                      ₹{view.pricePerCredit}{"\u00A0"}/credit
-                    </span>
                   </>
+                }
+                // The Jobs tab's card: inline −%, the per-credit price and
+                // Buy now under the rule (user call, 2026-11-03).
+                line={
+                  <span className="text-xs whitespace-nowrap text-info">
+                    ₹{view.pricePerCredit}{"\u00A0"}/credit
+                  </span>
                 }
                 mrp={inr(bundle.mrp)}
                 price={inr(view.price)}
-                belowPrice={
-                  <MobileDiscountRow pct={view.discountPct} />
+                priceLead={view.discountPct ? <span className="text-xs leading-5 font-semibold text-checkout-primary">−{view.discountPct}%</span> : undefined}
+                smallPrice
+                cta={
+                  <Button type="button" variant="checkout" size="sm" className="px-3.5">
+                    Buy now
+                  </Button>
                 }
               />
             )

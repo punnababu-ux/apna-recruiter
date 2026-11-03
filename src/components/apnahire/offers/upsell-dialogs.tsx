@@ -28,7 +28,7 @@ import { usePlans } from "@/hooks/apnahire/use-plans"
 import type { JobPlanTier } from "@/content/job-plans"
 import { OfferChoice } from "@/components/apnahire/offers/offer-choice"
 import { OfferDialog } from "@/components/apnahire/offers/offer-dialog"
-import { inr } from "@/lib/format"
+import { inr, num } from "@/lib/format"
 import { dbCreditsLabel, slotTermLabel, type SubscriptionPlan } from "@/content/subscriptions"
 
 // Notes glue a value to its unit with a no-break space (\u00A0): on a
@@ -131,10 +131,13 @@ export function CreditPackOfferDialog({
   need: liveNeed,
   pack: livePack,
   needNote,
+  kind = "job",
   ...props
 }: UpsellCallbacks & {
   need: CreditQuote | null
   pack: CreditQuote | null
+  /** Job credits (default) or database credits, priced in paise per credit. */
+  kind?: "job" | "database"
   /** Under the stay tile: "Needed to post premium job", "Valid for 30 days". */
   needNote?: string
 }) {
@@ -144,9 +147,11 @@ export function CreditPackOfferDialog({
   const off = (n: number) => (props.extraOff ? withExtraOff(n) : n)
   const needPrice = off(need.price)
   const packPrice = off(pack.price)
-  const perNeed = Math.round(needPrice / need.credits)
-  const perPack = Math.round(packPrice / pack.credits)
-  const credits = (n: number) => `${n} job credit${n === 1 ? "" : "s"}`
+  // Database credits cost a few rupees each: keep two decimals (₹6.25).
+  const per = (price: number, n: number) => (kind === "database" ? Math.round((price / n) * 100) / 100 : Math.round(price / n))
+  const perNeed = per(needPrice, need.credits)
+  const perPack = per(packPrice, pack.credits)
+  const credits = (n: number) => `${num(n)} ${kind === "database" ? "database" : "job"} credit${n === 1 ? "" : "s"}`
 
   return (
     <OfferDialog
@@ -168,7 +173,7 @@ export function CreditPackOfferDialog({
           validDays: need.validDays,
           extraOff: props.extraOff,
           janPrice: need.janPrice,
-          ctaLabel: `Continue with ${need.credits} credit${need.credits === 1 ? "" : "s"}`,
+          ctaLabel: `Continue with ${num(need.credits)} credit${need.credits === 1 ? "" : "s"}`,
           ctaShortLabel: "Continue",
           onSelect: props.onStay,
         }}
@@ -181,8 +186,8 @@ export function CreditPackOfferDialog({
           validDays: pack.validDays,
           extraOff: props.extraOff,
           janPrice: pack.janPrice,
-          ctaLabel: `Get ${pack.credits} credits for ${inr(packPrice)}`,
-          ctaShortLabel: `Get ${pack.credits} credits`,
+          ctaLabel: `Get ${num(pack.credits)} credits for ${inr(packPrice)}`,
+          ctaShortLabel: `Get ${num(pack.credits)} credits`,
           onSelect: props.onTake,
         }}
       />

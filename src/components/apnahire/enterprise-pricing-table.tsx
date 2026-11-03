@@ -165,6 +165,13 @@ export function EnterprisePricingTable({
             onSelect={() => onSelectTier?.(tier.name)}
             meta={<MobileMetaLine icon={<ClockFading aria-hidden />}>{tier.validity}</MobileMetaLine>}
             price={tier.price}
+            // Every card ends in its own green CTA, as on the other tabs
+            // (user call, 2026-11-03); a tap opens contact sales.
+            cta={
+              <Button type="button" variant="checkout" size="sm" className="px-3.5">
+                Contact sales
+              </Button>
+            }
             // Every tier's contents, always shown: the phone rows have no
             // selected state (a tap opens contact sales), so a details block
             // that waits for selection would never appear.

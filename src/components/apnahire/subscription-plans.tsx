@@ -42,7 +42,6 @@ import {
 } from "@/content/subscriptions"
 import { UpcomingPriceLine } from "@/components/apnahire/upcoming-price-line"
 import {
-  MobileDiscountRow,
   MobilePlanDetails,
   MobilePlanRow,
   MobileSlotLine,
@@ -409,7 +408,29 @@ export function SubscriptionPlans({
                 mrp={strike ? inr(strike) : undefined}
                 price={inr(price)}
                 unit={plan.unitShort}
-                belowPrice={pct ? <MobileDiscountRow pct={pct} /> : undefined}
+                priceLead={pct ? <span className="text-xs leading-5 font-semibold text-checkout-primary">−{pct}%</span> : undefined}
+                smallPrice={!!pct}
+                // Buy now on every plan but their own (user call, 2026-11-03).
+                cta={
+                  isCurrent ? undefined : (
+                    <Button
+                      type="button"
+                      variant="checkout"
+                      size="sm"
+                      className="px-3.5"
+                      disabled={ctaDisabled?.[id]}
+                      onClick={(e) => {
+                        // Buys, never just selects; the card's own tap stays a select.
+                        e.stopPropagation()
+                        const buy = { monthly: onBuyMonthly, quarterly: onBuyQuarterly, annual: onBuyAnnual }[id]
+                        if (buy) buy()
+                        else onSelectPlan?.(id)
+                      }}
+                    >
+                      {ctaLabels?.[id] ?? "Buy now"}
+                    </Button>
+                  )
+                }
                 // No "Extra 10% off" here: on phones the header's ExtraOffBar says it once.
                 upcoming={isCurrent ? undefined : <UpcomingPriceLine price={plan.janPrice} />}
                 // No reposts line, as on the Jobs tab (user call, 2026-11-02).

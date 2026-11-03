@@ -12,11 +12,10 @@
 import * as React from "react"
 import { ClockFading, ArrowRight, Sparkles } from "@apna/design-system"
 import { Badge, Button, PricingCard } from "@apna/design-system"
-import { usePriceLayout } from "@/hooks/use-price-layout"
 import { cn } from "@/lib/utils"
 import { CardHover, RECOMMENDED_EDGE } from "@/components/apnahire/use-card-hover"
 import { withExtraOffBundle } from "@/content/offers"
-import { MobileDiscountRow, MobileMetaLine, MobilePlanRow } from "@/components/apnahire/mobile-plan-row"
+import { MobileMetaLine, MobilePlanRow } from "@/components/apnahire/mobile-plan-row"
 import { UpcomingPriceLine } from "@/components/apnahire/upcoming-price-line"
 import { inr } from "@/lib/format"
 import { usePlans } from "@/hooks/apnahire/use-plans"
@@ -57,14 +56,6 @@ export function JobCreditBundles({
   // null: something outside the list is selected (the Unlimited card).
   const currentSelectedId = selectedBundleId === undefined ? internalSelectedId : selectedBundleId
 
-  // Preview (phones): "−22%" on the price line, the per-credit price under
-  // it in blue (usePriceLayout; live V14 is "badge").
-  const priceLayout = usePriceLayout()
-  const withCta = priceLayout === "cta" || priceLayout === "cta-outline"
-  // "cta" is "inline" with the per-credit price under the validity.
-  const inlinePrice = priceLayout === "inline" || withCta
-  const belowPrice = priceLayout === "below"
-  const perCreditLeft = !(priceLayout === "inline")
   const handleSelect = (bundle: Bundle) => {
     setInternalSelectedId(bundle.id)
     onSelectBundle?.(bundle)
@@ -111,45 +102,29 @@ export function JobCreditBundles({
                     <MobileMetaLine icon={<ClockFading aria-hidden />}>
                       Valid for {bundle.validDays} days
                     </MobileMetaLine>
-                    {/* The unit cost under the validity, left (user call,
-                        2026-10-30). Green: the one green line on the card,
-                        now the 10% is said in the header (ExtraOffBar). */}
-                    {perCreditLeft && (
-                      <span className={cn("text-xs whitespace-nowrap", belowPrice || withCta ? "text-info" : "italic text-checkout-primary")}>
-                        ₹{view.pricePerCredit}{"\u00A0"}/credit
-                      </span>
-                    )}
                   </>
+                }
+                // Under the rule, beside Buy now, so the button sits at the
+                // card's bottom as in express (user call, 2026-11-03).
+                line={
+                  <span className="text-xs whitespace-nowrap text-info">
+                    ₹{view.pricePerCredit}{"\u00A0"}/credit
+                  </span>
                 }
                 mrp={inr(bundle.mrp)}
                 price={inr(view.price)}
                 priceLead={
-                  inlinePrice && view.discountPct ? (
+                  view.discountPct ? (
                     <span className="text-xs leading-5 font-semibold text-checkout-primary">−{view.discountPct}%</span>
                   ) : undefined
                 }
-                smallPrice={inlinePrice}
-                // The preview's shorter card brings the name up under the
-                // Recommended tab: 8px clear of it.
-                className={inlinePrice && bundle.recommended ? "pt-7" : undefined}
-                belowPrice={
-                  withCta ? undefined : inlinePrice ? (
-                    <span className="text-xs whitespace-nowrap text-info">₹{view.pricePerCredit}{"\u00A0"}/credit</span>
-                  ) : belowPrice ? (
-                    view.discountPct ? <span className="text-xs font-semibold text-checkout-primary">−{view.discountPct}%</span> : undefined
-                  ) : (
-                    <MobileDiscountRow pct={view.discountPct} />
-                  )
-                }
-                // Green "Buy" on every card: a deliberate break of the one-green
-                // rule while this preview is explored (user call, 2026-11-02).
+                smallPrice
+                // Green "Buy now" on every card (user call, 2026-11-03).
                 // Its click bubbles to the card.
                 cta={
-                  withCta ? (
-                    <Button type="button" variant={priceLayout === "cta-outline" ? "outline" : "checkout"} size="sm" className="px-3.5">
-                      Buy now
-                    </Button>
-                  ) : undefined
+                  <Button type="button" variant="checkout" size="sm" className="px-3.5">
+                    Buy now
+                  </Button>
                 }
                 upcoming={<UpcomingPriceLine price={bundle.janPrice} />}
               />

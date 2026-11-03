@@ -68,10 +68,14 @@ export const SINGLE_CREDIT: Bundle = {
 export const UPSELL_PACK: UpsellPack = { credits: 47, price: 19999, mrp: 47 * 699, validDays: 360 }
 
 export const DB_BUNDLES: DbBundle[] = [
-  { id: "200", credits: 200, subcopy: SUBCOPY[0], validDays: 30, price: 1999, mrp: 2800, discountPct: 29, pricePerCredit: 10 },
-  { id: "450", credits: 450, subcopy: SUBCOPY[1], validDays: 90, price: 3649, mrp: 6300, discountPct: 42, pricePerCredit: 8.1, recommended: true },
-  { id: "1600", credits: 1600, subcopy: SUBCOPY[2], validDays: 365, price: 9999, mrp: 22400, discountPct: 55, pricePerCredit: 6.25 },
+  { id: "200", credits: 200, subcopy: SUBCOPY[0], validDays: 30, price: 1949, mrp: 2800, discountPct: 30, pricePerCredit: 9.75 },
+  { id: "450", credits: 450, subcopy: SUBCOPY[1], validDays: 90, price: 3649, mrp: 6300, discountPct: 42, pricePerCredit: 8.11, recommended: true },
+  { id: "1600", credits: 1600, subcopy: SUBCOPY[2], validDays: 180, price: 9999, mrp: 22400, discountPct: 55, pricePerCredit: 6.25 },
 ]
+
+/** Offered from the 1,600-credit pack (user call, 2026-11-03): 2,400
+ *  database credits for ₹13,999 (₹5.83 /credit), valid 360 days. */
+export const DB_UPSELL_PACK: UpsellPack = { credits: 2400, price: 13999, mrp: 33600, validDays: 360 }
 
 /* ───────────────────────────────────── today ──────────────────────────── */
 /* The plans live before the sheet (git, 2026-10-22). */
@@ -87,8 +91,5 @@ export const TODAY_SINGLE_CREDIT: Bundle = { ...SINGLE_CREDIT, janPrice: undefin
 /** Offered from the 13-credit bundle. */
 export const TODAY_UPSELL_PACK: UpsellPack = { credits: 22, price: 9999, mrp: 15378, validDays: 360 }
 
-export const TODAY_DB_BUNDLES: DbBundle[] = [
-  { id: "170", credits: 170, subcopy: SUBCOPY[0], validDays: 30, price: 1949, mrp: 3170, discountPct: 38, pricePerCredit: 11.5 },
-  { id: "380", credits: 380, subcopy: SUBCOPY[1], validDays: 90, price: 3649, mrp: 6840, discountPct: 46, pricePerCredit: 9.6, recommended: true },
-  { id: "900", credits: 900, subcopy: SUBCOPY[2], validDays: 180, price: 7099, mrp: 15750, discountPct: 54, pricePerCredit: 7.9 },
-]
+/** The same as from Jan 1: database prices do not change (user call, 2026-11-03). */
+export const TODAY_DB_BUNDLES: DbBundle[] = DB_BUNDLES

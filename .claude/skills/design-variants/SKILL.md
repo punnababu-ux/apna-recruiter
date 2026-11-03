@@ -107,14 +107,36 @@ fix. Turn the fixes into proposed versions; never apply them silently.
 15i. **One colour, one meaning.** Green = the saving; blue = the per-unit
     price ("₹585 /credit") and Recommended; gray = secondary facts.
 15j. **Make value visible, but never promise a guess.** Free extras get
-    their own cart row ("10 database credits · Valid for 7 days · Free"),
+    their own cart row ("10 database credits · Valid for 15 days · Free"),
     no struck worth, no MRP games. Show only what is certain at payment.
 15k. **Cut repeats in the cart.** Say a fact once (renewal lives in the
     autopay line, not under the item). Bundle line: "1 used now · 2 left,
     valid for 90 days".
 15l. **An aside is "Note:" or italic, never both,** and never with an icon.
 15m. **One primary per screen; the recommended card stands out by its blue
-    edge** (desktop), not by a second green.
+    edge** (desktop), not by a second green. Phone plan lists are the one
+    exception, Sumit's call over the one-green recommendation (2026-11-03): a green "Buy now" on every card (no hover on a
+    phone to light one up), the Recommended tab marks the pick (15o).
+15n. **Phone plan cards breathe** (approved 2026-11-03). `MobilePlanRow`:
+    24px above and below (32px above with the Recommended tab), both
+    checkouts. A cramped card reads cheap; don't tighten it back.
+15o. **Every phone plan card has its own Buy now; alerts are tiered**
+    (approved 2026-11-03). Every tab of both checkouts: inline −%, a green
+    "Buy now" bottom right ("Contact sales" on Enterprise), 12px top,
+    16px bottom (24px under the Recommended tab). Benefits one per line,
+    12px under the rule; the button takes a text line's height, centred on
+    the last line. No benefits? The per-unit price goes under the rule so
+    the button still sits at the bottom. Alerts on every job, phone and
+    desktop: Classic "Alerts to candidates", Premium "2x…", Super premium
+    "4x alerts to candidates". Free database credits: valid 15 days.
+15p. **Credits, never rupees, in the job-type explainer** (approved
+    2026-11-03).
+    "How job credits work" / "What each job type gets you" shows what a credit
+    gets: "1 / 2 / 4 job credits" in the price's place, no ₹ price, struck
+    price or %. It sits on the credit packs page: a job's own price there
+    makes the recruiter stop and compare "buy 3 credits" with "just buy one
+    Classic job", and that doubt costs the pack sale. The card answers "what
+    do my credits buy", not "what does a job cost".
 
 **Interaction**
 16. **Motion is continuous or it's absent.** A swap (fade one out, fade the
@@ -127,6 +149,31 @@ fix. Turn the fixes into proposed versions; never apply them silently.
 18. **Familiar controls.** Underline tabs over custom chips; a scrolling tab
     row keeps its padding inside the scroll (starts 16px in, can scroll
     off the edge, every tab reachable at 320px).
+
+## 1a. Audit: the current version
+
+Run this to confirm a screen is on the approved version, or to rebuild it
+(full record: `docs/SESSION-2026-11-03-CHECKOUT.md`). Each line: holds /
+fails.
+
+1. **No design switches.** `grep -rn "usePriceLayout\|usePlanCardStyle\|\?price=" src`
+   finds nothing. The hidden settings only change demo state (balance,
+   slots, pricing phase, offer, plan layout, nav look).
+2. **Phone cards, every tab, both checkouts** (Jobs, Unlimited, Database,
+   Enterprise; express job types and monthly plan): price row % · strike ·
+   price on one centre line; green "Buy now" bottom right; rule, then
+   benefits one per line, or the per-unit price when there is no list.
+3. **Spacing** at 375px, measured in the DOM: 12px top / 16px bottom,
+   24px under the Recommended tab, 12px from the rule to the first line,
+   Classic's single line centred on its button.
+4. **Express alerts**: Classic / Premium / Super premium say "Alerts to
+   candidates" / "2x…" / "4x alerts to candidates" on phone and desktop;
+   Classic's desktop row is included, not ✕.
+5. **Order summary**: free database credits "Valid for 15 days".
+6. **Rules from AGENTS.md still hold**: one banner for the 10%, blue
+   per-unit price, green only for the saving and the buttons, desktop
+   CTAs outlined at rest. Run `scripts/check-alignment.js` on desktop
+   with and without the offer.
 
 ## 2. Every idea is a new version
 

@@ -51,7 +51,6 @@ import {
 import { usePlans } from "@/hooks/apnahire/use-plans"
 import { UpcomingPriceLine, useUpcomingPrices } from "@/components/apnahire/upcoming-price-line"
 import {
-  MobileDiscountRow,
   MobileMetaLine,
   MobileFeatureLine,
   MobilePlanRow,
@@ -63,7 +62,6 @@ import { PlanPopup, PopupBody, PopupHeader } from "@/components/apnahire/plan-po
 import { useIsMobile } from "@/hooks/use-mobile"
 // The V4 key's explainers; the feature-name tooltips stay paused (FeatureName).
 import { cn } from "@/lib/utils"
-import { usePriceLayout } from "@/hooks/use-price-layout"
 import { RECOMMENDED_EDGE, useCardHover } from "@/components/apnahire/use-card-hover"
 import { withExtraOff } from "@/content/offers"
 import {
@@ -88,20 +86,6 @@ const PlanOfferContext = React.createContext({
   extraOff: false,
   shimmerKey: 0,
 })
-
-function offerTier(tier: JobPlanTier, extraOff: boolean): JobPlanTier & { ownPct: number | null } {
-  // The % OFF badge is the tier's own discount, never recalculated with the
-  // 10%: the offer shows as its own line, as the cart's coupon row does.
-  const ownPct = tier.mrp && tier.mrp > tier.price ? Math.round((1 - tier.price / tier.mrp) * 100) : null
-  if (!extraOff) return { ...tier, ownPct }
-  return {
-    ...tier,
-    price: withExtraOff(tier.price),
-    mrp: tier.mrp ?? tier.price,
-    ownPct,
-  }
-}
-
 
 /** Express cards: the price shown is the price (no list price, no %). The
  *  claimed 10% strikes that price and says 10% (user call, 2026-11-02): the
@@ -200,6 +184,18 @@ const LINE_LABEL: Record<string, string> = {
 /** The phone card's always-on feature line ("line" layout): what the
  *  plan includes. No database credits on the job cards: only the Unlimited
  *  card shows them (user call, 2026-10-30). */
+// Alerts by job type, Classic included, phone and desktop (user call, 2026-11-03).
+const TIERED_ALERTS: Record<string, string> = { classic: "Alerts to candidates", premium: "2x alerts to candidates", "super-premium": "4x alerts to candidates" }
+
+/** The tier's features for the desktop lists: the WhatsApp row becomes its
+ *  tiered alerts line, included on every job type. */
+const tierFeatures = (tier: JobPlanTier) =>
+  tier.features.map((f) =>
+    /whatsapp/i.test(f.label) && TIERED_ALERTS[tier.id]
+      ? { ...f, enabled: true, text: TIERED_ALERTS[tier.id] }
+      : { ...f, text: v11Label(f.label) },
+  )
+
 const tierLine = (tier: JobPlanTier) => {
   // Only what the plan includes: no red ✕ for what it lacks (user call,
   // 2026-10-30). A plan with nothing extra (Classic) has no line, and no
@@ -217,6 +213,13 @@ const tierLine = (tier: JobPlanTier) => {
       })),
     ...(tier.id === "premium-ai" ? [{ icon: <AiSparkle className="size-4" />, label: "AI calling agent" }] : []),
   ]
+  const alerts = TIERED_ALERTS[tier.id]
+  if (alerts) {
+    const i = tier.features.filter((f) => f.enabled).findIndex((f) => /whatsapp/i.test(f.label))
+    const item = { icon: featureIcon("whatsapp", true), label: alerts }
+    if (i >= 0) items[i] = item
+    else items.unshift(item)
+  }
   return items.length ? <MobileFeatureLine items={items} /> : null
 }
 
@@ -460,9 +463,9 @@ function JobPlanGridCard({ tier, recommended, creditBalance, onSelect }: JobPlan
               </>
             }
           >
-            {tier.features.map((f) => (
+            {tierFeatures(tier).map((f) => (
               <SubPoint key={f.label} icon={featureIcon(f.label, f.enabled)} muted={!f.enabled}>
-                {v11Label(f.label)}
+                {f.text}
               </SubPoint>
             ))}
           </FeatureGroup>,
@@ -533,13 +536,9 @@ function MobileJobPlanRadioGroup({
   const { shimmerKey } = React.useContext(PlanOfferContext)
   // V11 phones show the price alone. Only once the 10% exit offer is
   // claimed do the struck price and the plan's % appear, drawn by the price
-  // layout (usePriceLayout): badge (live), inline, below, or inline + Buy now
-  // (user call, 2026-11-02).
-  const priceLayout = usePriceLayout()
+  // inline, and every card has its own Buy now (user call, 2026-11-03).
   const { extraOff } = React.useContext(PlanOfferContext)
-  const showPct = !creditMode && extraOff && priceLayout !== "badge"
-  const offerShown = !creditMode && extraOff && priceLayout === "badge"
-  const inlinePct = priceLayout === "inline" || priceLayout === "cta"
+  const showPct = !creditMode && extraOff
 
   const { singleCredit } = usePlans()
 
@@ -597,23 +596,22 @@ function MobileJobPlanRadioGroup({
                   </>
                 }
                 // Live: no struck price or % OFF (user call, 2026-10-30); the
-                // price-layout previews add them back.
+                // claimed offer adds them back.
                 price={creditMode ? creditLabel(tier.credit) : inr(tier.price)}
-                mrp={(showPct || offerShown) && tier.mrp && tier.mrp > tier.price ? inr(tier.mrp) : undefined}
-                priceLead={showPct && inlinePct && offerBadgePct(tier) ? <span className="text-xs leading-5 font-semibold text-checkout-primary">−{offerBadgePct(tier)}%</span> : undefined}
-                smallPrice={showPct && inlinePct}
+                mrp={showPct && tier.mrp && tier.mrp > tier.price ? inr(tier.mrp) : undefined}
+                priceLead={showPct && offerBadgePct(tier) ? <span className="text-xs leading-5 font-semibold text-checkout-primary">−{offerBadgePct(tier)}%</span> : undefined}
+                smallPrice={showPct}
                 belowPrice={
                   creditMode ? (
                     <span className="text-xs italic text-muted-foreground">{creditStatus}</span>
-                  ) : priceLayout === "cta" ? (
-                    // Small secondary CTA; its click bubbles to the card.
-                    <Button type="button" variant="outline" size="xs" className="px-3">
+                  ) : undefined
+                }
+                // Same CTA as self-checkout's previews; its click bubbles to the card.
+                cta={
+                  !creditMode ? (
+                    <Button type="button" variant="checkout" size="sm" className="px-3.5">
                       Buy now
                     </Button>
-                  ) : offerShown ? (
-                    <MobileDiscountRow pct={offerBadgePct(tier)} />
-                  ) : showPct && priceLayout === "below" && offerBadgePct(tier) ? (
-                    <span className="text-xs font-semibold text-checkout-primary">−{offerBadgePct(tier)}%</span>
                   ) : undefined
                 }
                 upcoming={creditMode ? undefined : <UpcomingPriceLine price={tier.janPrice} />}
@@ -712,8 +710,6 @@ function MobileSubscriptionCard({
   // The price they saw, struck by the claimed 10%.
   const strike = extraOff ? plan.price : undefined
   const strikePct = strike ? offerBadgePct({ price, mrp: strike }) : null
-  const priceLayout = usePriceLayout()
-  const inlinePct = priceLayout === "inline" || priceLayout === "cta"
   return (
     <MobileUnlimitedCard
       selected={selected}
@@ -725,19 +721,15 @@ function MobileSubscriptionCard({
       title="Unlimited jobs for 1 month"
       price={inr(price)}
       // Under the claimed offer: struck price and its % OFF, drawn the way
-      // the job cards' price layout draws theirs (usePriceLayout).
+      // the job cards' draw theirs.
       mrp={strike ? inr(strike) : undefined}
-      priceLead={strike && inlinePct ? <span className="text-xs leading-5 font-semibold text-checkout-primary">−{strikePct}%</span> : undefined}
-      smallPrice={!!strike && inlinePct}
-      belowPrice={
-        priceLayout === "cta" && !blocked ? (
-          <Button type="button" variant="outline" size="xs" className="px-3" onClick={onSelect}>
+      priceLead={strike ? <span className="text-xs leading-5 font-semibold text-checkout-primary">−{strikePct}%</span> : undefined}
+      smallPrice={!!strike}
+      cta={
+        !blocked ? (
+          <Button type="button" variant="checkout" size="sm" className="shrink-0 px-3.5" onClick={onSelect}>
             Buy now
           </Button>
-        ) : strike && priceLayout === "below" ? (
-          <span className="text-xs font-semibold text-checkout-primary">−{strikePct}%</span>
-        ) : strike && priceLayout === "badge" ? (
-          <MobileDiscountRow pct={strikePct} />
         ) : undefined
       }
       upcoming={<UpcomingPriceLine price={plan.janPrice} />}
@@ -1039,33 +1031,20 @@ function MonthlySubscriptionCard({
 
 /** One tier, read-only: the plan card structure (price-first, same
  *  feature rows and database line as the posting page's cards), with the
- *  credits it takes beside the title and the per-credit price under the
- *  price. No CTA: credits are spent at posting time. */
+ *  credits it takes in place of the price. No CTA: credits are spent at posting time. */
 function JobTypeInfoCard({ tier }: { tier: JobPlanTier }) {
-  const { extraOff } = React.useContext(PlanOfferContext)
-  const shown = offerTier(tier, extraOff)
-  const discountPct = shown.ownPct
-  const perCredit = Math.floor(shown.price / tier.credit.count)
-  // "1x / 2x / 4x visibility", express's desktop wording ("WhatsApp alerts
-  // to candidates") and no database credits (user call, 2026-10-31).
+  const n = tier.credit.count
+  // Like the phone sheet: the credits a job takes stand where the price
+  // would, never a rupee price. A job's price on the credit packs page makes
+  // "buy credits" compete with "buy one job" (user call, 2026-11-03).
 
   return (
     <PricingCard
       layout="price-first"
       // Muted fill: a white plan card would vanish on the white dialog.
       className="flex-1 border-transparent bg-muted"
-      title={
-        <span className="flex items-center justify-between gap-3">
-          {tier.title}
-          <Badge variant="outline" className="shrink-0 bg-card">
-            {tier.credit.count} job credit{tier.credit.count === 1 ? "" : "s"}
-          </Badge>
-        </span>
-      }
-      price={inr(shown.price)}
-      mrp={shown.mrp ? inr(shown.mrp) : undefined}
-      badge={discountPct ? <Badge variant="discount">−{discountPct}%</Badge> : undefined}
-      priceSuffix={<span className="whitespace-nowrap text-info">{inr(perCredit)} /credit</span>}
+      title={tier.title}
+      price={`${n} job credit${n === 1 ? "" : "s"}`}
       cta={null}
       meta={[
         <>
@@ -1080,9 +1059,9 @@ function JobTypeInfoCard({ tier }: { tier: JobPlanTier }) {
             </>
           }
         >
-          {tier.features.map((f) => (
+          {tierFeatures(tier).map((f) => (
             <SubPoint key={f.label} icon={featureIcon(f.label, f.enabled)} muted={!f.enabled}>
-              <FeatureName label={v11Label(f.label)} />
+              <FeatureName label={f.text} />
             </SubPoint>
           ))}
         </FeatureGroup>,

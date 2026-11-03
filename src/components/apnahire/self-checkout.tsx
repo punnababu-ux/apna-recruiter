@@ -39,6 +39,7 @@ import { PRICING_INTRO } from "@/content/pricing"
 import { Button, HelpCircle, Tabs, TabsList, TabsTrigger } from "@apna/design-system"
 import { JobCreditBundles, type Bundle } from "@/components/apnahire/job-credit-bundles"
 import { DatabaseCreditBundles, type DbBundle } from "@/components/apnahire/database-credit-bundles"
+import { DB_UPSELL_PACK } from "@/content/credit-bundles"
 import { ContactSalesCard } from "@/components/apnahire/contact-sales-card"
 import { JobTypesDialog } from "@/components/apnahire/job-plan-cards"
 import { ContactPopup } from "@/components/marketing/contact-section"
@@ -325,7 +326,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   // biggest bundle offers the upsell pack (22 → 47 credits; today 13 → 22); the 1-slot
   // monthly subscription offers the annual plan. Every other Buy goes straight to the summary.
   // 3 credits → the monthly plan (phones), as CreditsToPlanDialog.
-  const [upsell, setUpsell] = React.useState<"pack" | "annual" | "plan" | null>(null)
+  const [upsell, setUpsell] = React.useState<"pack" | "db-pack" | "annual" | "plan" | null>(null)
   const isMobile = useIsMobile()
   // Upsells only for a signed-in recruiter on the Plans page (user call,
   // 2026-10-19); signed out (/pricing), every Buy goes straight on.
@@ -434,6 +435,17 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
       discountLabel: `Database plan discount (${bundle.discountPct}% OFF)`,
       discountAmount: bundle.mrp - bundle.price,
     })
+  }
+
+  // The biggest database pack offers the 2,400-credit pack first.
+  const dbNeed = plans.dbBundles.find((b) => b.credits === 1600)
+  const handleSelectDatabaseBundle = (bundle: DbBundle) => {
+    if (upsellsOn && bundle.credits === dbNeed?.credits) setUpsell("db-pack")
+    else handleBuyDatabaseBundle(bundle)
+  }
+  const buyDbUpsellPack = () => {
+    const pack = DB_UPSELL_PACK
+    handleBuyDatabaseBundle({ ...pack, discountPct: Math.round((1 - pack.price / pack.mrp) * 100) })
   }
 
   // `renewAfterDays` is what switches the drawer into its subscription
@@ -725,9 +737,9 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
                 <div className="flex flex-col gap-3 max-md:gap-4">
                   <DatabaseCreditBundles
                     extraOff={offer.claimed}
-                    onBuyNow={handleBuyDatabaseBundle}
+                    onBuyNow={handleSelectDatabaseBundle}
                     selectedBundleId={selectedPackage.kind === "db" ? selectedPackage.bundle.id : undefined}
-                    onSelectBundle={handleBuyDatabaseBundle}
+                    onSelectBundle={handleSelectDatabaseBundle}
                   />
                   <p className="text-xs text-checkout-hero-fg">
                     1 credit = 1 candidate profile unlock
@@ -822,6 +834,23 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
           onTake={() => {
             setUpsell(null)
             buyUpsellPack()
+          }}
+        />
+
+        <CreditPackOfferDialog
+          open={upsell === "db-pack"}
+          kind="database"
+          need={dbNeed ?? null}
+          pack={DB_UPSELL_PACK}
+          extraOff={offer.claimed}
+          onClose={() => setUpsell(null)}
+          onStay={() => {
+            setUpsell(null)
+            if (dbNeed) handleBuyDatabaseBundle(dbNeed)
+          }}
+          onTake={() => {
+            setUpsell(null)
+            buyDbUpsellPack()
           }}
         />
 

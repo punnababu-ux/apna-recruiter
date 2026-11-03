@@ -250,7 +250,7 @@ export function JobPlanSelection() {
     // No MRP: express never shows it, so the summary doesn't anchor on it.
     // Its database credits as their own free row, with their validity.
     freeItems: tier.dbCredits
-      ? [{ id: `${tier.id}-db`, label: `${tier.dbCredits} database credits`, sublabel: "Valid for 7 days" }]
+      ? [{ id: `${tier.id}-db`, label: `${tier.dbCredits} database credits`, sublabel: "Valid for 15 days" }]
       : undefined,
   })
 
@@ -270,7 +270,7 @@ export function JobPlanSelection() {
             {
               id: `${tier.id}-bundle-db`,
               label: `${tier.dbCredits} database credits`,
-              sublabel: "Valid for 7 days",
+              sublabel: "Valid for 15 days",
             },
           ]
         : undefined,

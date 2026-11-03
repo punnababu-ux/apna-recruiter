@@ -231,6 +231,14 @@ Reject the PR if you see any of:
   card stands out by its blue edge instead (`RECOMMENDED_EDGE`). Both come
   from `use-card-hover.tsx` (`useCardHover` / `CardHover`); a new plan card
   uses them, never its own copy.
+  **Phone plan cards are the exception** (Sumit's call, 2026-11-03,
+  overriding the one-green recommendation; don't revert it): every
+  card in a list of plans (both checkouts, every tab) ends in its own green
+  "Buy now" ("Contact sales" on Enterprise). A phone has no hover to light
+  one up, and a list of cards that all lead to a purchase reads as a list
+  of equal choices, not one screen with one action; the Recommended tab and
+  blue edge do the standing out. It is only for plan lists on phones:
+  every other phone screen, and every desktop surface, keeps one green.
 - A hand-picked white button on a dark surface. The companion inverts by
   itself: mark the dark area `data-surface="dark"` (OfferDialog's header
   does) and `emphasis` inside it renders white with a dark label. Dark gray
@@ -816,17 +824,24 @@ cards) and every upsell tile (`OfferChoice`), both checkouts, light and dark
    selected card takes the green edge and a green corner tab with a white
    tick, flush in its top-right corner; "Recommended" is the same kind of
    tab in the top-left (blue, with the sparkle). Both sit inside the card
-   (20px tall; 22px top padding makes room), so cards are 16px apart on every tab,
+   (20px tall; 24px top padding makes room, 12px on cards without a tab; 16px at the bottom). Every card ends in its own green "Buy now", bottom right (user call, 2026-11-03), so cards are 16px apart on every tab,
    both checkouts. Under the name and price, every
    card lists what it includes in one line (no ✕ for what it lacks; a plan
    with nothing extra has no line and no rule); nothing opens or closes. Job cards show no database credits; only the
    Unlimited card does. `MobilePlanRow` and `MobileUnlimitedCard` draw
-   this; a new selectable plan card composes them. Other styles (radio
-   first, radio after the price, green tint; expand on select) stay
-   switchable from the hidden preview settings (`usePlanCardStyle`) while
-   the design is explored.
+   this; a new selectable plan card composes them. The other styles (radio, tint, expand on select) were removed
+   (2026-11-03).
 
 ---
+
+12. **Credits, never rupees, in the job-type explainer** (user call,
+   2026-11-03).
+   "How job credits work" / "What each job type gets you" shows what a credit
+   gets: "1 / 2 / 4 job credits" in the price's place, no ₹ price, struck
+   price or %. It sits on the credit packs page: a job's own price there
+   makes the recruiter stop and compare "buy 3 credits" with "just buy one
+   Classic job", and that doubt costs the pack sale. The card answers "what
+   do my credits buy", not "what does a job cost".
 
 ## Tax disclaimer — one wording, one component
 

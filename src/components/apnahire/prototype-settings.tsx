@@ -38,7 +38,6 @@ import {
 import { usePlans } from "@/hooks/apnahire/use-plans"
 import { endSubscription, setPreviousPlan } from "@/hooks/use-previous-plan"
 import type { JobSlotCount } from "@/content/subscriptions"
-import { setPriceLayout, usePriceLayout } from "@/hooks/use-price-layout"
 import { PRICING_PHASES } from "@/content/pricing-phase"
 import { setPricingPhase, usePricingPhase } from "@/hooks/use-pricing-phase"
 
@@ -145,31 +144,6 @@ export function PricingPhaseControls() {
           {p.label}
         </PrototypeOption>
       ))}
-    </PrototypeSection>
-  )
-}
-
-/** The phone plan cards' price layout, both checkouts (usePriceLayout):
- *  live, or one of the "−%" previews. */
-export function PriceLayoutControls() {
-  const layout = usePriceLayout()
-  return (
-    <PrototypeSection title="Phone plan prices">
-      <PrototypeOption active={layout === "badge"} onClick={() => setPriceLayout("badge")}>
-        % OFF pill (was live)
-      </PrototypeOption>
-      <PrototypeOption active={layout === "inline"} onClick={() => setPriceLayout("inline")}>
-        Inline −% (live)
-      </PrototypeOption>
-      <PrototypeOption active={layout === "below"} onClick={() => setPriceLayout("below")}>
-        −% below the price
-      </PrototypeOption>
-      <PrototypeOption active={layout === "cta"} onClick={() => setPriceLayout("cta")}>
-        Inline −% with Buy now
-      </PrototypeOption>
-      <PrototypeOption active={layout === "cta-outline"} onClick={() => setPriceLayout("cta-outline")}>
-        Inline −% with outline Buy (self-checkout)
-      </PrototypeOption>
     </PrototypeSection>
   )
 }

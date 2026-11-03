@@ -21,11 +21,10 @@
 import * as React from "react"
 import { BriefcaseBusiness, InfinityIcon, Database, LogoApnaUnlimited, UserSearch, WhatsApp } from "@apna/design-system"
 import { Badge, Button, PricingCard } from "@apna/design-system"
-import { usePriceLayout } from "@/hooks/use-price-layout"
 import { withExtraOff } from "@/content/offers"
 import { cn } from "@/lib/utils"
 import { useCardHover } from "@/components/apnahire/use-card-hover"
-import { MobileDiscountRow, MobileMetaLine, MobileUnlimitedCard, MobileUnlimitedLine } from "@/components/apnahire/mobile-plan-row"
+import { MobileMetaLine, MobileUnlimitedCard, MobileUnlimitedLine } from "@/components/apnahire/mobile-plan-row"
 import { UpcomingPriceLine } from "@/components/apnahire/upcoming-price-line"
 import { inr } from "@/lib/format"
 import { dbCreditsLabel, type SubscriptionPlan } from "@/content/subscriptions"
@@ -65,8 +64,6 @@ export function UnlimitedSideCard({
   const monthly = plan.months === 1
   const strike = extraOff ? inr(basePrice) : undefined
   // Desktop: outline CTA at rest, green while the frame is hovered.
-  const priceLayout = usePriceLayout()
-  const inlinePct = priceLayout === "inline" || priceLayout === "cta" || priceLayout === "cta-outline"
   // The % beside a struck price: the plan's own, or the 10% with none.
   // The saving the struck price shows, the 10% included.
   const strikePct = extraOff ? Math.round((1 - price / basePrice) * 100) : null
@@ -85,25 +82,15 @@ export function UnlimitedSideCard({
         title="Unlimited jobs for 1 month"
         price={inr(price)}
         // Under the claimed offer: struck price and its %, drawn the way
-        // the pack cards' price layout draws theirs (usePriceLayout), as in
+        // the pack cards' price layout draws theirs, as in
         // express (user call, 2026-11-02).
         mrp={strike}
-        priceLead={strike && inlinePct ? <span className="text-xs leading-5 font-semibold text-checkout-primary">−{strikePct}%</span> : undefined}
-        smallPrice={!!strike && inlinePct}
-        belowPrice={
-          strike && priceLayout === "below" ? (
-            <span className="text-xs font-semibold text-checkout-primary">−{strikePct}%</span>
-          ) : strike && priceLayout === "badge" ? (
-            <MobileDiscountRow pct={strikePct} />
-          ) : undefined
-        }
-        // The cta preview's green "Buy" sits beside "Valid in a single city".
+        priceLead={strike ? <span className="text-xs leading-5 font-semibold text-checkout-primary">−{strikePct}%</span> : undefined}
+        smallPrice={!!strike}
         cta={
-          priceLayout === "cta" || priceLayout === "cta-outline" ? (
-            <Button type="button" variant={priceLayout === "cta-outline" ? "outline" : "checkout"} size="sm" className="shrink-0 px-3.5" onClick={onBuyNow}>
-              Buy now
-            </Button>
-          ) : undefined
+          <Button type="button" variant="checkout" size="sm" className="shrink-0 px-3.5" onClick={onBuyNow}>
+            Buy now
+          </Button>
         }
         upcoming={<UpcomingPriceLine price={plan.janPrice} />}
         meta={
