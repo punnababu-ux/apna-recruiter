@@ -351,7 +351,7 @@ export function MobileUnlimitedLine({
     <MobileFeatureLine
       items={[
         // WhatsApp first, as on the job cards (user call, 2026-10-30).
-        { icon: <WhatsApp className="text-success" aria-hidden />, label: "Alerts to candidates" },
+        { icon: <WhatsApp className="text-success" aria-hidden />, label: "Smart alerts to candidates" },
         ...(lead ? [lead] : []),
         ...(reposts
           ? [{ icon: <InfinityIcon className="text-warning" aria-hidden />, label: "Job reposts and swapping" }]

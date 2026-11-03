@@ -74,6 +74,12 @@ stays free. Preview balances: "4 job + 1 AI calling add-on credit", "4 job
 The Premium + AI card's price reads just "1 credit" (the card names the
 plan); the chip, panel and order summary keep the full name.
 
+**Parked: the plan frame without a subscription.** A preview drops the
+job-types frame when no subscription is shown (`?frame=off`,
+`useFramelessPreview` in `job-plan-cards.tsx`; comparison:
+https://claude.ai/artifact/UpDVTQLf9PfsoHBfHw3ymF). Live keeps the frame
+(user call, 2026-11-03); circle back when needed.
+
 ## Removed
 
 - `usePriceLayout` and its preview options (badge pill, inline, −% below,

@@ -885,8 +885,8 @@ cards) and every upsell tile (`OfferChoice`), both checkouts, light and dark
 
 18. **One name for alerts** (user call, 2026-11-03): the WhatsApp icon says
    WhatsApp, so the text never does. Job types: "1x / 2x / 4x alerts to
-   candidates" (Premium + AI 2x). Subscriptions and Unlimited: "Alerts to
-   candidates". Phone, desktop, explainers, cancel flow alike.
+   candidates" (Premium + AI 2x). Subscriptions and apna Unlimited: "Smart
+   alerts to candidates". Phone, desktop, explainers, cancel flow alike.
 
 ## Tax disclaimer — one wording, one component
 

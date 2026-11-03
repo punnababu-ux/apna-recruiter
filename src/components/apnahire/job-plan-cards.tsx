@@ -799,7 +799,7 @@ function MobileSubscriptionCard({
       }
       features={[
         // The slot sits above as meta ("Expand on select" layout).
-        [<WhatsApp key="i" className="text-success" aria-hidden />, "Alerts to candidates"],
+        [<WhatsApp key="i" className="text-success" aria-hidden />, "Smart alerts to candidates"],
         [<InfinityIcon key="i" className="text-warning" aria-hidden />, "Free job reposts and swapping"],
         [<Database key="i" className="text-muted-foreground" aria-hidden />, dbCreditsLabel(plan)],
       ]}
@@ -1058,7 +1058,7 @@ function MonthlySubscriptionCard({
               </>
             }
           >
-            <SubPoint icon={<WhatsApp className="text-success" aria-hidden />}>Alerts to candidates</SubPoint>
+            <SubPoint icon={<WhatsApp className="text-success" aria-hidden />}>Smart alerts to candidates</SubPoint>
           </FeatureGroup>,
           <React.Fragment key="reposts">
             <InfinityIcon className="text-warning" aria-hidden /> Unlimited job reposts &amp; swapping
