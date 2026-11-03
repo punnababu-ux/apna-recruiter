@@ -137,6 +137,9 @@ fix. Turn the fixes into proposed versions; never apply them silently.
     makes the recruiter stop and compare "buy 3 credits" with "just buy one
     Classic job", and that doubt costs the pack sale. The card answers "what
     do my credits buy", not "what does a job cost".
+15q. **Add-ons keep their list price under the coupon** (2026-11-03, an
+    exception for now). No strike on the AI calling add-on, desktop or
+    phone; the 10% shows once added. Tried and undone the same day.
 
 **Interaction**
 16. **Motion is continuous or it's absent.** A swap (fade one out, fade the

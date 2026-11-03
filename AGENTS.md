@@ -843,6 +843,12 @@ cards) and every upsell tile (`OfferChoice`), both checkouts, light and dark
    Classic job", and that doubt costs the pack sale. The card answers "what
    do my credits buy", not "what does a job cost".
 
+13. **Order-summary add-ons show their list price, coupon or not** (user
+   call, 2026-11-03; an exception for now). With the exit coupon applied,
+   the AI calling add-on still reads ₹1,699 ("Add · ₹1,699" on phones); the
+   10% shows only once it is added, in the cart's coupon row. Phones have no
+   room for a strike inside the button. Revisit before changing it.
+
 ## Tax disclaimer — one wording, one component
 
 Under any price, the tax note reads exactly **"\*GST applicable"** and is

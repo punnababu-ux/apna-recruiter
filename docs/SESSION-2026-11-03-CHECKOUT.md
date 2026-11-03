@@ -59,6 +59,11 @@ pack sale. The card is about what credits get, not what a job costs.
 **Order summary**: a job's free database credits are "Valid for 15 days"
 (was 7).
 
+**Open: the add-on under the exit coupon.** It shows its list price
+(₹1,699) and the 10% appears only once added. A desktop strike with the
+new price in the phone button was built and undone (user call): kept as an
+exception for now.
+
 ## Removed
 
 - `usePriceLayout` and its preview options (badge pill, inline, −% below,
