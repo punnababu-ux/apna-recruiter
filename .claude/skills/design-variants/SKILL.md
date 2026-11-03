@@ -15,7 +15,7 @@ screens are the reference for what "good" looks like to him. This skill:
 3. compares versions on one page at phone size,
 4. keeps the context file current.
 
-When Punna relays new feedback from Sumit, add it to the lenses here.
+When Punna relays new feedback from Sumit, or approves a design ("go with", "proceed", "straight to live", "push"), add the lesson to the lenses here in the same turn, dated. The lenses are the record of what was approved.
 
 ## 1. Sumit's lenses
 
@@ -82,6 +82,39 @@ fix. Turn the fixes into proposed versions; never apply them silently.
 15b. **An applied offer shows what it saves** (2026-10-31). When the extra
     10% is applied, show the struck price on every card, desktop too, even
     in a version that hides struck prices otherwise.
+
+**Prices and offers (approved 2026-11-02)**
+15c. **Phone and desktop are two platforms.** Phone first; it may break a
+    desktop pattern when that helps the phone. Coherence comes from the
+    design system, not from matching layouts (AGENTS.md).
+15d. **The saving is text, not a pill.** "−22%" green semibold, a step
+    smaller than the struck price (bold reads bigger); the struck price a
+    step smaller than the amount. Steps stay the same on every surface
+    (phone card 18/14/12, upsell tile 20/16/14).
+15e. **The price group reads outward from the price, on one centre line.**
+    Left-aligned: price → strike → %. Right-aligned (phone cards):
+    % → strike → price. When it can't fit (a ~130px upsell tile), strike
+    and % drop to the next line together, same order.
+15f. **The % is the final saving**, coupon included, against the struck
+    price. Never a % beside a price it doesn't describe.
+15g. **Anchor on what the user has seen.** Express shows no MRP, so its
+    upsells and order summary never strike a hidden MRP; a bundle strikes
+    N × the shown single price.
+15h. **Say an offer once.** The claimed 10% lives in one banner above the
+    plans ("Offer claimed · Extra 10% off every plan", "Ends in" timer,
+    shimmer), never as a line on each card or tile. The order summary
+    names the coupon ("You save ₹X with FIRST10").
+15i. **One colour, one meaning.** Green = the saving; blue = the per-unit
+    price ("₹585 /credit") and Recommended; gray = secondary facts.
+15j. **Make value visible, but never promise a guess.** Free extras get
+    their own cart row ("10 database credits · Valid for 7 days · Free"),
+    no struck worth, no MRP games. Show only what is certain at payment.
+15k. **Cut repeats in the cart.** Say a fact once (renewal lives in the
+    autopay line, not under the item). Bundle line: "1 used now · 2 left,
+    valid for 90 days".
+15l. **An aside is "Note:" or italic, never both,** and never with an icon.
+15m. **One primary per screen; the recommended card stands out by its blue
+    edge** (desktop), not by a second green.
 
 **Interaction**
 16. **Motion is continuous or it's absent.** A swap (fade one out, fade the
