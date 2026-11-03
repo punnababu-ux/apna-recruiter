@@ -48,7 +48,8 @@ import { cn } from "@/lib/utils"
  *  public/images/company/values; prompts in content/clay-style.ts). */
 const ILLUSTRATIONS = {
   "three-jobs": "/images/company/values/three-jobs.png",
-  "credit-pack": "/images/company/values/credit-pack.png",
+  // A wallet: the pack saves money (user call, 2026-11-03; was a gift box of coins).
+  "credit-pack": "/images/company/values/wallet.png",
   annual: "/images/company/values/annual.png",
   unlimited: "/images/company/values/unlimited.png",
   "exit-offer": "/images/company/values/exit-offer.png",
