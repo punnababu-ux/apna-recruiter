@@ -70,7 +70,6 @@ import {
   RECOMMENDED_TIER,
   SUBSCRIPTION_PLAN_ORDER,
   TIERED_PLAN_ORDER,
-  creditLabel,
   type CreditBalance,
   type JobPlanTier,
   type JobPlanTierId,
@@ -211,7 +210,7 @@ const tierLine = (tier: JobPlanTier) => {
           ? "Top placement on job listing"
           : (LINE_LABEL[f.label] ?? f.label).replace("WhatsApp alerts", "alerts").replace(/^alerts/, "Alerts"),
       })),
-    ...(tier.id === "premium-ai" ? [{ icon: <AiSparkle className="size-4" />, label: "AI calling agent" }] : []),
+    ...(tier.id === "premium-ai" ? [{ icon: <AiSparkle className="size-4" />, label: <RollingLabel /> }] : []),
   ]
   const alerts = TIERED_ALERTS[tier.id]
   if (alerts) {
@@ -220,13 +219,28 @@ const tierLine = (tier: JobPlanTier) => {
     if (i >= 0) items[i] = item
     else items.unshift(item)
   }
-  return items.length ? <MobileFeatureLine items={items} /> : null
+  if (!items.length) return null
+  // Premium + AI plays its agent's demo call on phones too, as on desktop
+  // (user call, 2026-11-03).
+  if (tier.id === "premium-ai")
+    return (
+      // The card's rule sits above this block; drop the line's own.
+      <div className="flex flex-col gap-3 [&>div:first-child]:border-0 [&>div:first-child]:pt-0">
+        <MobileFeatureLine items={items} />
+        {/* Its own buttons: the card's tap must not fire from them. */}
+        <span className="flex" onClick={(e) => e.stopPropagation()}>
+          <AiDemoCall className="w-full" />
+        </span>
+      </div>
+    )
+  return <MobileFeatureLine items={items} />
 }
 
-/** On a card the Premium + AI price is just "1 credit": the card already
- *  names the plan (user call, 2026-11-03). */
-const cardCreditLabel = (credit: JobPlanTier["credit"]) =>
-  credit.kind === "ai-calling" ? `${credit.count} credit${credit.count === 1 ? "" : "s"}` : creditLabel(credit)
+/** Credits in a card's price slot: one text style at the price size, "1 job
+ *  credit" ("1 credit" on Premium + AI: the card already names the plan)
+ *  (user call, 2026-11-03). */
+const creditLabelShort = (credit: JobPlanTier["credit"]) =>
+  `${credit.count} ${credit.kind === "ai-calling" ? "" : "job "}credit${credit.count === 1 ? "" : "s"}`
 
 /** A card's title: the P+AI card says "Premium job +" and an "AI" tag;
  *  its full name stays in the data for the order summary. */
@@ -258,6 +272,26 @@ function RollingPoint() {
     <span className="flex items-center gap-1 overflow-hidden text-xs text-muted-foreground">
       <Check className="size-3.5 shrink-0 text-checkout-primary" aria-hidden />
       <span key={i} aria-hidden className="animate-in fade-in-0 slide-in-from-bottom-2 duration-enter">
+        {points[i]}
+      </span>
+      <span className="sr-only">{points.join(", ")}</span>
+    </span>
+  )
+}
+
+/** Phones: the Premium + AI line's "AI calling agent" rolls through the
+ *  add-on's points, the desktop block's ticker in one line (user call,
+ *  2026-11-03). Screen readers get them all at once. */
+function RollingLabel() {
+  const points = ["AI calling agent", ...AI_CALLING_ADDON.points]
+  const [i, setI] = React.useState(0)
+  React.useEffect(() => {
+    const id = window.setInterval(() => setI((n) => (n + 1) % points.length), 2500)
+    return () => window.clearInterval(id)
+  }, [points.length])
+  return (
+    <span className="overflow-hidden">
+      <span key={i} aria-hidden className="inline-block animate-in fade-in-0 slide-in-from-bottom-2 duration-enter">
         {points[i]}
       </span>
       <span className="sr-only">{points.join(", ")}</span>
@@ -427,7 +461,7 @@ function JobPlanGridCard({ tier, recommended, creditBalance, onSelect }: JobPlan
         }
         // V11 desktop: who it's for, under the name (ForWho).
         title={<ForWho line={TIER_FOR_SHORT[tier.id]}>{tierTitle(tier)}</ForWho>}
-        price={creditMode ? cardCreditLabel(tier.credit) : inr(tier.price)}
+        price={creditMode ? creditLabelShort(tier.credit) : inr(tier.price)}
         // V11 drops the struck price and % OFF, except under the claimed 10%
         // offer (user calls, 2026-10-31 / 2026-11-02).
         mrp={!creditMode && extraOff && tier.mrp ? inr(tier.mrp) : undefined}
@@ -593,31 +627,27 @@ function MobileJobPlanRadioGroup({
                   <>
                     {/* "Active for 15 days" is said once, in the panel title. */}
                     <VisibilityLine tier={tier} />
+                    {/* The price already says the credits; the status says
+                        whether the balance covers them, once (user call, 2026-11-03). */}
                     {creditMode && (
-                      <span className="text-xs font-semibold text-checkout-info">
-                        Consumes {cardCreditLabel(tier.credit)}
-                      </span>
+                      <span className="text-xs font-semibold text-checkout-info">{creditStatus}</span>
                     )}
                   </>
                 }
                 // Live: no struck price or % OFF (user call, 2026-10-30); the
                 // claimed offer adds them back.
-                price={creditMode ? cardCreditLabel(tier.credit) : inr(tier.price)}
+                price={creditMode ? creditLabelShort(tier.credit) : inr(tier.price)}
+                priceAsName={creditMode}
                 mrp={showPct && tier.mrp && tier.mrp > tier.price ? inr(tier.mrp) : undefined}
                 priceLead={showPct && offerBadgePct(tier) ? <span className="text-xs leading-5 font-semibold text-checkout-primary">−{offerBadgePct(tier)}%</span> : undefined}
                 smallPrice={showPct}
-                belowPrice={
-                  creditMode ? (
-                    <span className="text-xs italic text-muted-foreground">{creditStatus}</span>
-                  ) : undefined
-                }
                 // Same CTA as self-checkout's previews; its click bubbles to the card.
                 cta={
-                  !creditMode ? (
-                    <Button type="button" variant="checkout" size="sm" className="px-3.5">
-                      Buy now
-                    </Button>
-                  ) : undefined
+                  // Every card has its CTA, credits or not: "Post now" when the
+                  // balance pays, as on desktop (user call, 2026-11-03).
+                  <Button type="button" variant="checkout" size="sm" className="px-3.5">
+                    {creditMode ? "Post now" : "Buy now"}
+                  </Button>
                 }
                 upcoming={creditMode ? undefined : <UpcomingPriceLine price={tier.janPrice} />}
                 line={tierLine(tier)}
@@ -1038,7 +1068,6 @@ function MonthlySubscriptionCard({
  *  feature rows and database line as the posting page's cards), with the
  *  credits it takes in place of the price. No CTA: credits are spent at posting time. */
 function JobTypeInfoCard({ tier }: { tier: JobPlanTier }) {
-  const n = tier.credit.count
   // Like the phone sheet: the credits a job takes stand where the price
   // would, never a rupee price. A job's price on the credit packs page makes
   // "buy credits" compete with "buy one job" (user call, 2026-11-03).
@@ -1049,7 +1078,7 @@ function JobTypeInfoCard({ tier }: { tier: JobPlanTier }) {
       // Muted fill: a white plan card would vanish on the white dialog.
       className="flex-1 border-transparent bg-muted"
       title={tier.title}
-      price={`${n} job credit${n === 1 ? "" : "s"}`}
+      price={creditLabelShort(tier.credit)}
       cta={null}
       meta={[
         <>
@@ -1103,7 +1132,6 @@ export function JobTypesDialog({
         <PopupBody className="gap-3 overflow-y-auto">
           {TIERED_PLAN_ORDER.map((id) => {
             const tier = tiers[id]
-            const n = tier.credit.count
             return (
               <MobilePlanRow
                 key={id}
@@ -1114,7 +1142,7 @@ export function JobTypesDialog({
                 onSelect={() => {}}
                 className="bg-muted shadow-none"
                 meta={<VisibilityLine tier={tier} />}
-                price={`${n} job credit${n === 1 ? "" : "s"}`}
+                price={creditLabelShort(tier.credit)}
                 line={tierLine(tier)}
               />
             )

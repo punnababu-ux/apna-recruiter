@@ -859,6 +859,26 @@ cards) and every upsell tile (`OfferChoice`), both checkouts, light and dark
    the add-on credit held, the add-on reads "1 credit · from balance"
    and is used from it, never bought; without it, "Add · ₹1,699".
 
+15. **Credits in the price slot are one text style** (user call, 2026-11-03).
+   On every plan card and explainer card, phone and desktop, "1 job credit"
+   is set whole at the price size, never a big number with a small unit
+   ("1 credit" on Premium + AI). On express phone cards it takes the plan
+   name's style (`text-plan-name`, `MobilePlanRow priceAsName`), so name
+   and credits read as one line. On phone
+   credit cards the price says the credits once: no "Consumes N job
+   credits" line; the balance status ("Covered by balance", "Buy 1 for
+   ₹699") sits on the left under the visibility line. Premium + AI keeps its
+   demo call player on phones too, and its "AI calling agent" line rolls
+   through the add-on's points (30% higher call pickup, Ready to interview
+   candidates, Hindi & English calling), as the desktop block does.
+
+16. **Every plan card state has its CTA** (user call, 2026-11-03). A rule
+   made for one state of a card applies to all of them: with credits, the
+   phone card ends in a green "Post now" where it would say "Buy now",
+   the same place and size. When you change a card, check every state it
+   can be in (no credits, partial, covered, offer claimed, Premium + AI)
+   on phone and desktop before calling it done.
+
 ## Tax disclaimer — one wording, one component
 
 Under any price, the tax note reads exactly **"\*GST applicable"** and is

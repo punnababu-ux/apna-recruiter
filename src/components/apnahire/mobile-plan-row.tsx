@@ -96,6 +96,9 @@ export interface MobilePlanRowProps {
   priceLead?: React.ReactNode
   /** Price and struck price at the title size (text-plan-name) (the `?price=inline` preview). */
   smallPrice?: boolean
+  /** Set the price in the plan name's style: credits in place of a price
+   *  ("1 job credit") on express phone cards (user call, 2026-11-03). */
+  priceAsName?: boolean
   /** A button pinned to the card's bottom-right (the `?price=cta` preview). */
   cta?: React.ReactNode
   /** The price's last line: `UpcomingPriceLine` (it renders nothing when
@@ -121,6 +124,7 @@ export function MobilePlanRow({
   priceNote,
   priceLead,
   smallPrice,
+  priceAsName,
   cta,
   upcoming,
   className,
@@ -141,7 +145,7 @@ export function MobilePlanRow({
         {mrp && <span className={cn("text-plan-strike text-muted-foreground", smallPrice && "text-sm leading-5 line-through")}>{mrp}</span>}
         {/* The price leads the row (text-plan-price-compact, over text-plan-name);
             tabular figures keep the column steady. */}
-        <span className={cn("text-foreground", smallPrice ? "text-lg leading-5 font-semibold" : "tabular-nums text-plan-price-compact")}>{price}</span>
+        <span className={cn("text-foreground", priceAsName ? "text-plan-name" : smallPrice ? "text-lg leading-5 font-semibold" : "tabular-nums text-plan-price-compact")}>{price}</span>
         {/* Muted like the struck price: only the price is dark. */}
         {unit && <span className="text-plan-unit text-muted-foreground">{unit}</span>}
       </div>
