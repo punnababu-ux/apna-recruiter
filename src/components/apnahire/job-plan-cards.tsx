@@ -167,15 +167,15 @@ const TIER_FOR_SHORT: Partial<Record<JobPlanTierId, string>> = {
 /** V11 desktop: the full wording, with "alerts" for WhatsApp (user call,
  *  2026-10-30). */
 const DESKTOP_LABEL: Record<string, string> = {
-  "WhatsApp notifications to candidates": "WhatsApp alerts to candidates",
-  "2x Priority WhatsApp notifications to candidates": "2x WhatsApp alerts to candidates",
+  "WhatsApp notifications to candidates": "Alerts to candidates",
+  "2x Priority WhatsApp notifications to candidates": "2x alerts to candidates",
   "Featured with 'Urgently hiring' tag": "Urgently hiring tag",
   "Top placements in job listings": "Top placement in job listing",
 }
 
 const LINE_LABEL: Record<string, string> = {
-  "WhatsApp notifications to candidates": "WhatsApp alerts to candidates",
-  "2x Priority WhatsApp notifications to candidates": "2x WhatsApp alerts to candidates",
+  "WhatsApp notifications to candidates": "Alerts to candidates",
+  "2x Priority WhatsApp notifications to candidates": "2x alerts to candidates",
   "Featured with 'Urgently hiring' tag": "Urgently hiring tag",
   "Top placements in job listings": "Top placement",
 }
@@ -184,7 +184,7 @@ const LINE_LABEL: Record<string, string> = {
  *  plan includes. No database credits on the job cards: only the Unlimited
  *  card shows them (user call, 2026-10-30). */
 // Alerts by job type, Classic included, phone and desktop (user call, 2026-11-03).
-const TIERED_ALERTS: Record<string, string> = { classic: "Alerts to candidates", premium: "2x alerts to candidates", "premium-ai": "2x alerts to candidates", "super-premium": "4x alerts to candidates" }
+const TIERED_ALERTS: Record<string, string> = { classic: "1x alerts to candidates", premium: "2x alerts to candidates", "premium-ai": "2x alerts to candidates", "super-premium": "4x alerts to candidates" }
 
 /** The tier's features for the desktop lists: the WhatsApp row becomes its
  *  tiered alerts line, included on every job type. */
@@ -535,11 +535,11 @@ export interface JobPlanSelectProps {
  *  track panel, cards on white inside — used only where one-time tiers sit
  *  beside the subscription card. The 24px header row (`leading-6`) matches
  *  the Unlimited card's 24px logo row, so both columns' cards start level. */
-function PlanFrame({ title, className, children }: { title: string; className?: string; children: React.ReactNode }) {
+function PlanFrame({ title, className, frameless, children }: { title: string; className?: string; frameless?: boolean; children: React.ReactNode }) {
   // The phone panel: 12px sides, bottom and gaps, 16px top, concentric
-  // corner, briefcase + title.
+  // corner, briefcase + title. `frameless`: the title and cards only.
   return (
-    <div className={cn("flex flex-col gap-3 rounded-frame surface-glass-dark px-3 pt-4 pb-3", className)}>
+    <div className={cn("flex flex-col gap-3", !frameless && "rounded-frame surface-glass-dark px-3 pt-4 pb-3", className)}>
       {/* "Active for 15 days" is on each card now, in the strip. */}
       <div className="flex items-center gap-2 px-1.5">
         <h2 className="flex items-center gap-2 text-h6 leading-6 whitespace-nowrap text-foreground [&_svg]:size-5 [&_svg]:shrink-0">
@@ -550,6 +550,16 @@ function PlanFrame({ title, className, children }: { title: string; className?: 
       {children}
     </div>
   )
+}
+
+/** PREVIEW: `?frame=off` drops the job-types frame where no subscription
+ *  is shown. Remove (keeping the chosen look) once decided. */
+function useFramelessPreview() {
+  const [on, setOn] = React.useState(false)
+  React.useEffect(() => {
+    setOn(new URLSearchParams(window.location.search).get("frame") === "off")
+  }, [])
+  return on
 }
 
 interface MobileJobPlanRadioGroupProps {
@@ -571,6 +581,9 @@ function MobileJobPlanRadioGroup({
   recommendedId,
   subscription,
 }: MobileJobPlanRadioGroupProps) {
+  // PREVIEW (?frame=off, user call 2026-11-03): no frame when there is no
+  // subscription beside the jobs to tell them apart from.
+  const frameless = useFramelessPreview() && !subscription
   const creditMode = hasAnyCredits(creditBalance)
   const { shimmerKey } = React.useContext(PlanOfferContext)
   // V11 phones show the price alone. Only once the 10% exit offer is
@@ -589,7 +602,7 @@ function MobileJobPlanRadioGroup({
             frame (PlanFrame), so they read as one choice apart from the
             subscription: 12px at the sides, bottom and between cards, 16px
             above the title, a corner concentric with the nested cards. */}
-        <div className="flex flex-col gap-3 rounded-frame surface-glass-dark px-3 pt-4 pb-3">
+        <div className={cn("flex flex-col gap-3", !frameless && "rounded-frame surface-glass-dark px-3 pt-4 pb-3")}>
           {(
             // The name left, how long it runs right, small, with the clock
             // the old line above the cards had (user call, 2026-10-30).
@@ -786,7 +799,7 @@ function MobileSubscriptionCard({
       }
       features={[
         // The slot sits above as meta ("Expand on select" layout).
-        [<WhatsApp key="i" className="text-success" aria-hidden />, "WhatsApp alerts to matched candidates"],
+        [<WhatsApp key="i" className="text-success" aria-hidden />, "Alerts to candidates"],
         [<InfinityIcon key="i" className="text-warning" aria-hidden />, "Free job reposts and swapping"],
         [<Database key="i" className="text-muted-foreground" aria-hidden />, dbCreditsLabel(plan)],
       ]}
@@ -848,6 +861,7 @@ export function TieredJobPlans({
   shimmerKey = 0,
 }: Omit<JobPlanSelectProps, "onSelectSubscription">) {
   const catalogue = usePlans().tiers
+  const frameless = useFramelessPreview()
   // The legacy Premium + AI card joins only while its credits last, right after Premium.
   const order: JobPlanTierId[] =
     creditBalance["ai-calling"] > 0 ? ["classic", "premium", "premium-ai", "super-premium"] : TIERED_PLAN_ORDER
@@ -880,7 +894,7 @@ export function TieredJobPlans({
         onSelectTier={onSelectTier}
         recommendedId={RECOMMENDED_TIER.tiered}
       />
-      <PlanFrame className="hidden sm:flex" title="Single job posting">
+      <PlanFrame className="hidden sm:flex" title="Single job posting" frameless={frameless}>
         {grid}
       </PlanFrame>
     </PlanOfferContext.Provider>
@@ -1044,7 +1058,7 @@ function MonthlySubscriptionCard({
               </>
             }
           >
-            <SubPoint icon={<WhatsApp className="text-success" aria-hidden />}>WhatsApp alerts to candidates</SubPoint>
+            <SubPoint icon={<WhatsApp className="text-success" aria-hidden />}>Alerts to candidates</SubPoint>
           </FeatureGroup>,
           <React.Fragment key="reposts">
             <InfinityIcon className="text-warning" aria-hidden /> Unlimited job reposts &amp; swapping

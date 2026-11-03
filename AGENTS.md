@@ -883,6 +883,11 @@ cards) and every upsell tile (`OfferChoice`), both checkouts, light and dark
    then its free items ("10 database credits · Free"), then any add-on (AI
    calling, database credits) in the order added. Phone and desktop alike.
 
+18. **One name for alerts** (user call, 2026-11-03): the WhatsApp icon says
+   WhatsApp, so the text never does. Job types: "1x / 2x / 4x alerts to
+   candidates" (Premium + AI 2x). Subscriptions and Unlimited: "Alerts to
+   candidates". Phone, desktop, explainers, cancel flow alike.
+
 ## Tax disclaimer — one wording, one component
 
 Under any price, the tax note reads exactly **"\*GST applicable"** and is

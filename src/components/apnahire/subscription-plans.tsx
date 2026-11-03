@@ -238,7 +238,7 @@ function PlanCard({
 
           <span className="flex items-start gap-3 text-sm">
             <WhatsApp className="size-5 shrink-0" aria-hidden />
-            <span>WhatsApp alerts to matched candidates for more applications</span>
+            <span>Alerts to candidates</span>
           </span>
         </div>
       </div>
@@ -444,7 +444,7 @@ export function SubscriptionPlans({
                         <><strong>{slotLabel(plan.slots)}</strong> for {plan.slotDays}{"\u00A0"}days</>,
                       ],
                       [<Database key="i" aria-hidden />, dbCreditsLabel(plan)],
-                      [<WhatsApp key="i" aria-hidden />, "WhatsApp alerts to matched candidates"],
+                      [<WhatsApp key="i" aria-hidden />, "Alerts to candidates"],
                     ]}
                   />
                 }

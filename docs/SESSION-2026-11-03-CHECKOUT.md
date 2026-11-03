@@ -27,7 +27,7 @@ skill's "Audit: the current version" checklist to get back here quickly.
   bottom.
 
 **Express checkout (`job-plan-cards.tsx`)**
-- Alerts on every job type, phone and desktop: Classic "Alerts to
+- Alerts on every job type, phone and desktop: Classic "1x alerts to
   candidates", Premium "2x alerts to candidates", Super premium "4x
   alerts to candidates" (`TIERED_ALERTS`). On desktop Classic's alerts
   row is included (no ✕). The "What each job type gets you" dialog uses

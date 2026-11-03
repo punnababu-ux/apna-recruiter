@@ -101,7 +101,7 @@ export function UnlimitedSideCard({
         }
         features={[
           // The slot shows above, as meta.
-          [<WhatsApp key="i" className="text-success" aria-hidden />, "WhatsApp alerts to matched candidates"],
+          [<WhatsApp key="i" className="text-success" aria-hidden />, "Alerts to candidates"],
           [<InfinityIcon key="i" className="text-warning" aria-hidden />, "Free job reposts and swapping"],
           [<Database key="i" className="text-muted-foreground" aria-hidden />, dbCreditsLabel(plan)],
         ]}

@@ -127,7 +127,7 @@ fix. Turn the fixes into proposed versions; never apply them silently.
     12px under the rule; the button takes a text line's height, centred on
     the last line. No benefits? The per-unit price goes under the rule so
     the button still sits at the bottom. Alerts on every job, phone and
-    desktop: Classic "Alerts to candidates", Premium "2x…", Super premium
+    desktop: Classic "1x alerts to candidates", Premium "2x…", Super premium
     "4x alerts to candidates". Free database credits: valid 15 days.
 15p. **Credits, never rupees, in the job-type explainer** (approved
     2026-11-03).

@@ -92,7 +92,7 @@ export function CancelPlanFlow({
     `Post jobs with ${slotLabel(sub.total)} in ${sub.city}`,
     "Unlimited free reposts and job swapping",
     `Database access, ${num(sub.db?.left ?? 0)} credits left`,
-    "WhatsApp alerts to matched candidates",
+    "Alerts to candidates",
   ]
 
   return (
