@@ -140,6 +140,15 @@ fix. Turn the fixes into proposed versions; never apply them silently.
 15q. **Add-ons keep their list price under the coupon** (2026-11-03, an
     exception for now). No strike on the AI calling add-on, desktop or
     phone; the 10% shows once added. Tried and undone the same day.
+15r. **AI calling credits are two things** (user call, 2026-11-03). A
+    "Premium + AI calling credit" (the legacy SKU, may be many) posts a
+    Premium job with the agent: only the Premium + AI card draws on it. An
+    "AI calling add-on credit" (rare, at most one, refunded when a job posted
+    with the add-on didn't go through) adds the agent to one job. The order
+    summary offers the AI calling add-on on every job type but Premium + AI,
+    in every credit case (none, partial, covered), to holders of either. With
+    the add-on credit held, the add-on reads "1 credit · from your balance"
+    and is used from it, never bought; without it, "Add · ₹1,699".
 
 **Interaction**
 16. **Motion is continuous or it's absent.** A swap (fade one out, fade the

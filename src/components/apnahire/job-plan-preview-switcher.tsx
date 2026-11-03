@@ -26,13 +26,16 @@ const CREDIT_BALANCES: { label: string; balance: CreditBalance }[] = [
   { label: "No credits", balance: { job: 0, "ai-calling": 0 } },
   { label: "1 job credit (top-up for most)", balance: { job: 1, "ai-calling": 0 } },
   { label: "4 job credits (enough for any)", balance: { job: 4, "ai-calling": 0 } },
-  { label: "1 job + 1 AI job credit", balance: { job: 1, "ai-calling": 1 } },
-  { label: "1 AI job credit", balance: { job: 0, "ai-calling": 1 } },
-  { label: "4 job + 1 AI job credit", balance: { job: 4, "ai-calling": 1 } },
+  { label: "1 job + 1 Premium + AI calling credit", balance: { job: 1, "ai-calling": 1 } },
+  { label: "1 Premium + AI calling credit", balance: { job: 0, "ai-calling": 1 } },
+  { label: "4 job + 1 Premium + AI calling credit", balance: { job: 4, "ai-calling": 1 } },
+  // Rare: a job posted with the add-on didn't go through.
+  { label: "4 job + 1 AI calling add-on credit", balance: { job: 4, "ai-calling": 0, "ai-addon": 1 } },
+  { label: "4 job + 1 Premium + AI + 1 add-on credit", balance: { job: 4, "ai-calling": 1, "ai-addon": 1 } },
 ]
 
 const sameBalance = (a: CreditBalance, b: CreditBalance) =>
-  a.job === b.job && a["ai-calling"] === b["ai-calling"]
+  a.job === b.job && a["ai-calling"] === b["ai-calling"] && (a["ai-addon"] ?? 0) === (b["ai-addon"] ?? 0)
 
 export interface JobPlanPreviewSwitcherProps {
   layout: JobPlanLayout

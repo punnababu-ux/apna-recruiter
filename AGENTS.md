@@ -397,7 +397,7 @@ offer tile's 2:3 from `sm`).
 
 **The credit balance follows intent** (user call, 2026-10-30). Express
 checkout (posting a job, mid-task) shows the balance upfront: the top-bar
-chip "💼 4 job credits │ 🤖 1 AI job credit" (`AvailableCreditsButton chip`).
+chip "💼 4 job credits │ 🤖 1 Premium + AI calling credit" (`AvailableCreditsButton chip`).
 Self-checkout and the app bar keep the plain "Available credits" button:
 someone browsing plans who sees "15 credits" on the surface may decide not to
 buy. Never make the two bars match by copying one into the other.
@@ -848,6 +848,16 @@ cards) and every upsell tile (`OfferChoice`), both checkouts, light and dark
    the AI calling add-on still reads ₹1,699 ("Add · ₹1,699" on phones); the
    10% shows only once it is added, in the cart's coupon row. Phones have no
    room for a strike inside the button. Revisit before changing it.
+
+14. **AI calling credits are two things** (user call, 2026-11-03). A
+   "Premium + AI calling credit" (the legacy SKU, may be many) posts a
+   Premium job with the agent: only the Premium + AI card draws on it. An
+   "AI calling add-on credit" (rare, at most one, refunded when a job posted
+   with the add-on didn't go through) adds the agent to one job. The order
+   summary offers the AI calling add-on on every job type but Premium + AI,
+   in every credit case (none, partial, covered), to holders of either. With
+   the add-on credit held, the add-on reads "1 credit · from your balance"
+   and is used from it, never bought; without it, "Add · ₹1,699".
 
 ## Tax disclaimer — one wording, one component
 

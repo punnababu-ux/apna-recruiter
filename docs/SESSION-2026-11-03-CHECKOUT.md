@@ -64,6 +64,16 @@ pack sale. The card is about what credits get, not what a job costs.
 new price in the phone button was built and undone (user call): kept as an
 exception for now.
 
+**AI calling credits** (express): "AI job credit" is now "Premium + AI
+calling credit" everywhere. New balance `"ai-addon"` (0 or 1): the AI
+calling add-on credit, shown in the chip and the credits panel only when
+held. The add-on is offered on every job type but Premium + AI, in every
+credit case; with the add-on credit it is free ("1 credit"), and posting
+stays free. Preview balances: "4 job + 1 AI calling add-on credit", "4 job
++ 1 Premium + AI + 1 add-on credit".
+The Premium + AI card's price reads just "1 credit" (the card names the
+plan); the chip, panel and order summary keep the full name.
+
 ## Removed
 
 - `usePriceLayout` and its preview options (badge pill, inline, −% below,

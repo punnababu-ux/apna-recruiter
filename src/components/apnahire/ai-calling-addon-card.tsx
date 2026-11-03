@@ -13,7 +13,7 @@
  *             left · price + Add at the right
  *
  * The price block reads ₹1,699 / "for this job"; the CTA reads "Add". It is
- * never shown to a recruiter who holds an AI job (P+AI) credit.
+ * shown on every job type but Premium + AI (which has the agent built in).
  *
  * Composition only: Button from the design system, token gradients
  * (`bg-gradient-product-ai-calling`, the AI Calling Agent's own sky). No
@@ -28,6 +28,9 @@ import { inr } from "@/lib/format"
 export interface AiAddonOffer {
   /** Rupee price for this job. */
   price: number
+  /** Holds the AI calling add-on credit (at most one): it pays for the
+   *  agent, and the add-on can't be bought while it is held. */
+  fromCredit?: boolean
 }
 
 export function AiCallingAddonCard({
@@ -67,16 +70,16 @@ export function AiCallingAddonCard({
             <div className="flex shrink-0 items-center gap-3">
               <div className="hidden flex-col items-end sm:flex">
                 <span className="text-sm font-semibold whitespace-nowrap text-foreground">
-                  {inr(offer.price)}
+                  {offer.fromCredit ? "1 credit" : inr(offer.price)}
                 </span>
                 <span className="text-xs text-muted-foreground">
-                  for this job
+                  {offer.fromCredit ? "from your balance" : "for this job"}
                 </span>
               </div>
               {/* Dark gray, not green: "Proceed to pay" below is this screen's one
                   primary CTA (Button's one-primary rule). */}
               <Button type="button" variant="emphasis" className="px-3 sm:min-w-20 sm:px-4" onClick={onAdd}>
-                <span className="whitespace-nowrap sm:hidden">Add · {inr(offer.price)}</span>
+                <span className="whitespace-nowrap sm:hidden">Add · {offer.fromCredit ? "1 credit" : inr(offer.price)}</span>
                 <span className="hidden sm:inline">Add</span>
               </Button>
             </div>

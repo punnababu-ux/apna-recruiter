@@ -44,11 +44,15 @@ export interface JobPlanTier {
   credit: JobPlanCredit
 }
 
-/** Recruiters hold two separate balances: job credits (Classic 1, Premium 2,
- *  Super premium 4), and "ai-calling": legacy Premium + AI SKU credits, which
- *  only the `premium-ai` card draws on (1 per job). */
+/** Recruiters hold separate balances: job credits (Classic 1, Premium 2,
+ *  Super premium 4); "ai-calling": Premium + AI calling credits (the legacy
+ *  SKU), which only the `premium-ai` card draws on (1 per job); and, rarely,
+ *  "ai-addon": the AI calling add-on credit, 0 or 1, refunded when a job
+ *  posted with the add-on didn't go through. It adds the agent to one job;
+ *  while held, the add-on is used from it, never bought (user call,
+ *  2026-11-03). Premium + AI calling credits can be many. */
 export type JobCreditKind = "job" | "ai-calling"
-export type CreditBalance = Record<JobCreditKind, number>
+export type CreditBalance = Record<JobCreditKind, number> & { "ai-addon"?: number }
 export interface JobPlanCredit {
   kind: JobCreditKind
   count: number
@@ -57,7 +61,10 @@ export interface JobPlanCredit {
 export const NO_CREDITS: CreditBalance = { job: 0, "ai-calling": 0 }
 
 export const creditLabel = ({ kind, count }: JobPlanCredit) =>
-  `${count} ${kind === "job" ? "Job" : "AI job"} credit${count === 1 ? "" : "s"}`
+  `${count} ${kind === "job" ? "job" : "Premium + AI calling"} credit${count === 1 ? "" : "s"}`
+
+/** "1 AI calling add-on credit" / "2 AI calling add-on credits". */
+export const addonCreditLabel = (count: number) => `${count} AI calling add-on credit${count === 1 ? "" : "s"}`
 
 export const JOB_PLAN_TIERS: Record<JobPlanTierId, JobPlanTier> = {
   classic: {
@@ -168,8 +175,8 @@ export const MONTHLY_PLAN_PERKS = {
 }
 
 /** AI calling, sold as an add-on in the express-checkout order summary
- *  rather than as its own plan, at `price` for this job. Hidden for anyone
- *  who holds an AI job (P+AI) credit, so the two never stack. */
+ *  rather than as its own plan, at `price` for this job. Offered on every
+ *  job type but Premium + AI, which has the agent built in. */
 export const AI_CALLING_ADDON = {
   price: 1699,
   headline: "Save your time – use AI calling to interview candidates",

@@ -51,6 +51,7 @@ import {
   IndianRupee,
   Info,
   Layers,
+  PhoneCall,
   MapPin,
   Popover,
   PopoverContent,
@@ -72,11 +73,14 @@ import { dayLabel, subscriptionOf, useJobSlots, type Subscription } from "@/hook
 import { useIsMobile } from "@/hooks/use-mobile"
 import { useJobCredits, usePlansIngress } from "@/hooks/use-plans-ingress"
 import { num } from "@/lib/format"
+import { cn } from "@/lib/utils"
 
 export interface CreditsBalance {
   job: number
   database: number
   aiCalling: number
+  /** AI calling add-on credits (rare: refunded from a job that didn't go through). */
+  aiAddon?: number
 }
 
 const ROWS: {
@@ -100,8 +104,16 @@ const ROWS: {
   {
     key: "aiCalling",
     icon: Bot,
-    label: "AI job credits",
+    label: "Premium + AI calling credits",
     info: "1 credit posts one Premium job with the AI calling agent.",
+  },
+  {
+    key: "aiAddon",
+    // Not Bot: that is the Premium + AI calling credit. The add-on is the
+    // agent's calls (user call, 2026-11-03).
+    icon: PhoneCall,
+    label: "AI calling add-on credits",
+    info: "1 credit adds the AI calling agent to one job.",
   },
 ]
 
@@ -152,7 +164,8 @@ function Rows({ rows }: { rows: Row[] }) {
 }
 
 function CreditRows({ balance }: { balance: CreditsBalance }) {
-  return <Rows rows={ROWS.map((row) => ({ ...row, value: num(balance[row.key]) }))} />
+  // The add-on row only when held: it is rare.
+  return <Rows rows={ROWS.filter((row) => row.key !== "aiAddon" || balance.aiAddon).map((row) => ({ ...row, value: num(balance[row.key] ?? 0) }))} />
 }
 
 /** "1 / 2": what's used, then the total, quieter. */
@@ -316,7 +329,7 @@ export function AvailableCreditsButton({
   const isMobile = useIsMobile()
   const plans = usePlansIngress()
   const slots = useJobSlots()
-  const full: CreditsBalance = { job: 0, database: 0, aiCalling: 0, ...balance }
+  const full: CreditsBalance = { job: 0, database: 0, aiCalling: 0, aiAddon: 0, ...balance }
   const title = slots ? "Plan details" : "Available credits"
   const body = slots ? <PlanRows slots={slots} /> : <CreditRows balance={full} />
 
@@ -340,7 +353,8 @@ export function AvailableCreditsButton({
   const plural = (n: number, what: string) => `${num(n)} ${what}${n === 1 ? "" : "s"}`
   const held = [
     { n: full.job, Icon: Briefcase, label: plural(full.job, "job credit") },
-    { n: full.aiCalling, Icon: Bot, label: plural(full.aiCalling, "AI job credit") },
+    { n: full.aiCalling, Icon: Bot, label: plural(full.aiCalling, "Premium + AI calling credit") },
+    { n: full.aiAddon ?? 0, Icon: PhoneCall, label: plural(full.aiAddon ?? 0, "AI calling add-on credit") },
   ].filter((p) => p.n > 0)
   const parts = slots ? [] : held.length ? held : [{ n: 0, Icon: Briefcase, label: plural(0, "job credit") }]
   const Icon = slots ? Layers : Wallet
@@ -368,10 +382,12 @@ export function AvailableCreditsButton({
         parts.map(({ n, Icon, label }, i) => (
           <React.Fragment key={label}>
             {i > 0 && <Separator orientation="vertical" className="h-3.5 data-vertical:self-center" />}
+            {/* All three kinds held: numbers only on desktop too, as on
+                phones; the names are in the panel (user call, 2026-11-03). */}
             <span className="flex items-center gap-1.5 whitespace-nowrap">
               <Icon className="size-4" aria-hidden />
-              <span className="hidden sm:inline">{label}</span>
-              <span className="sm:hidden">{num(n)}</span>
+              <span className={cn("hidden", parts.length < 3 && "sm:inline")}>{label}</span>
+              <span className={cn(parts.length < 3 && "sm:hidden")}>{num(n)}</span>
             </span>
           </React.Fragment>
         ))

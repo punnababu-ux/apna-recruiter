@@ -223,6 +223,11 @@ const tierLine = (tier: JobPlanTier) => {
   return items.length ? <MobileFeatureLine items={items} /> : null
 }
 
+/** On a card the Premium + AI price is just "1 credit": the card already
+ *  names the plan (user call, 2026-11-03). */
+const cardCreditLabel = (credit: JobPlanTier["credit"]) =>
+  credit.kind === "ai-calling" ? `${credit.count} credit${credit.count === 1 ? "" : "s"}` : creditLabel(credit)
+
 /** A card's title: the P+AI card says "Premium job +" and an "AI" tag;
  *  its full name stays in the data for the order summary. */
 const tierTitle = (tier: JobPlanTier) =>
@@ -422,7 +427,7 @@ function JobPlanGridCard({ tier, recommended, creditBalance, onSelect }: JobPlan
         }
         // V11 desktop: who it's for, under the name (ForWho).
         title={<ForWho line={TIER_FOR_SHORT[tier.id]}>{tierTitle(tier)}</ForWho>}
-        price={creditMode ? creditLabel(tier.credit) : inr(tier.price)}
+        price={creditMode ? cardCreditLabel(tier.credit) : inr(tier.price)}
         // V11 drops the struck price and % OFF, except under the claimed 10%
         // offer (user calls, 2026-10-31 / 2026-11-02).
         mrp={!creditMode && extraOff && tier.mrp ? inr(tier.mrp) : undefined}
@@ -590,14 +595,14 @@ function MobileJobPlanRadioGroup({
                     <VisibilityLine tier={tier} />
                     {creditMode && (
                       <span className="text-xs font-semibold text-checkout-info">
-                        Consumes {creditLabel(tier.credit)}
+                        Consumes {cardCreditLabel(tier.credit)}
                       </span>
                     )}
                   </>
                 }
                 // Live: no struck price or % OFF (user call, 2026-10-30); the
                 // claimed offer adds them back.
-                price={creditMode ? creditLabel(tier.credit) : inr(tier.price)}
+                price={creditMode ? cardCreditLabel(tier.credit) : inr(tier.price)}
                 mrp={showPct && tier.mrp && tier.mrp > tier.price ? inr(tier.mrp) : undefined}
                 priceLead={showPct && offerBadgePct(tier) ? <span className="text-xs leading-5 font-semibold text-checkout-primary">−{offerBadgePct(tier)}%</span> : undefined}
                 smallPrice={showPct}

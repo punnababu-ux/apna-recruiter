@@ -208,7 +208,7 @@ export function JobPlanSelection() {
 
   // The exit discount is only for someone about to pay (user call,
   // 2026-10-19). Leaving the page (back, Save & exit) with even one credit
-  // never shows it — they can post without paying. An AI job (P+AI) credit
+  // never shows it — they can post without paying. A Premium + AI calling credit
   // doesn't count here: it covers one card, every other tier is still paid.
   // Closing the order summary
   // shows it only when that order needs a payment (a partial-credit top-up,
@@ -231,8 +231,9 @@ export function JobPlanSelection() {
   React.useEffect(() => {
     if (wantsAiCalling()) setAiIntent(true)
   }, [])
+  // An add-on credit pays for the agent.
   const orderNeedsPayment =
-    (checkoutItem?.price ?? 0) > 0 || aiAdded
+    (checkoutItem?.price ?? 0) > 0 || (aiAdded && !creditBalance["ai-addon"])
   const attemptExit = (proceed: () => void, paymentRequired = !canPostFree, where: "plan" | "summary" = "plan") => {
     if (offer.nudgeAvailable && paymentRequired) setExitPrompt({ proceed })
     // Asked once at the order summary: leaving the plan page doesn't ask again.
@@ -425,7 +426,7 @@ export function JobPlanSelection() {
         // Hidden at zero for everyone: "0" adds nothing the card prices do not say.
         actions={
           hasAnyCredits(creditBalance) ? (
-            <AvailableCreditsButton chip balance={{ job: creditBalance.job, aiCalling: creditBalance["ai-calling"] }} />
+            <AvailableCreditsButton chip balance={{ job: creditBalance.job, aiCalling: creditBalance["ai-calling"], aiAddon: creditBalance["ai-addon"] }} />
           ) : undefined
         }
         onExitAttempt={(proceed) => attemptExit(proceed)}
@@ -486,8 +487,13 @@ export function JobPlanSelection() {
         }
         item={checkoutItem}
         onProceedToPay={handleProceedToPay}
-        // Never for an AI job (P+AI) credit holder: the two must not stack.
-        aiAddon={tookUpsell || creditBalance["ai-calling"] > 0 ? undefined : { price: AI_CALLING_ADDON.price }}
+        // Every job type but Premium + AI, which has the agent built in, in
+        // every credit case (user call, 2026-11-03). An add-on credit pays for it.
+        aiAddon={
+          tookUpsell || checkoutItem?.id.startsWith("premium-ai")
+            ? undefined
+            : { price: AI_CALLING_ADDON.price, fromCredit: !!creditBalance["ai-addon"] }
+        }
         extraOffer={offer.deadline ? { code: EXTRA_OFF.code, deadline: offer.deadline } : undefined}
         onExtraOfferExpired={offer.expire}
         onAiAddedChange={setAiAdded}

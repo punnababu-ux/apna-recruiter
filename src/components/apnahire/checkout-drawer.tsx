@@ -75,6 +75,7 @@ import { cn } from "@/lib/utils"
 import { useAttentionRing } from "@/components/apnahire/use-attention-ring"
 import { useBackToClose } from "@/hooks/use-back-to-close"
 import { AiCallingAddonCard, type AiAddonOffer } from "@/components/apnahire/ai-calling-addon-card"
+import { addonCreditLabel } from "@/content/job-plans"
 import { CountdownChip, useCountdown } from "@/components/apnahire/offers/countdown-chip"
 import { CouponExpiredDialog } from "@/components/apnahire/offers/coupon-expired-dialog"
 import { EXTRA_OFF } from "@/content/offers"
@@ -550,14 +551,15 @@ export function CheckoutDrawer({
 
   const isSubscription = item.renewAfterDays != null
 
-  // The AI add-on is bought for this job (never shown to an AI job credit holder).
+  // The AI add-on for this job: paid, or from an add-on credit.
   const aiLine: CartLine | null =
     aiAddon && aiAdded
       ? {
           id: "ai-calling",
           label: "AI calling agent",
-          sublabel: "Calls and screens applicants for this job",
-          price: aiAddon.price,
+          sublabel: aiAddon.fromCredit ? `${addonCreditLabel(1)} from your balance` : "Calls and screens applicants for this job",
+          price: aiAddon.fromCredit ? 0 : aiAddon.price,
+          ...(aiAddon.fromCredit ? { priceLabel: "1 credit" } : {}),
         }
       : null
 
