@@ -289,7 +289,7 @@ export function JobPlanSelection() {
       setCheckoutItem({
         id: `${tier.id}-covered`,
         label: tier.title,
-        sublabel: `${creditLabel(tier.credit)} from your balance`,
+        sublabel: `${creditLabel(tier.credit)} from balance`,
         price: 0,
         priceLabel: `${count} credit${count === 1 ? "" : "s"}`,
       })
@@ -310,7 +310,7 @@ export function JobPlanSelection() {
   const topupLine = (tier: JobPlanTier, plan: Extract<CreditPlan, { state: "partial" }>): CartLine => ({
     id: "credit-topup",
     label: creditLabel({ kind: tier.credit.kind, count: plan.shortfall }),
-    sublabel: `For ${tier.title} · ${plan.held} from your balance + ${plan.shortfall} to buy`,
+    sublabel: `For ${tier.title} · ${plan.held} from balance + ${plan.shortfall} to buy`,
     price: plan.price,
   })
 

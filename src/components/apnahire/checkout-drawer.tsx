@@ -557,7 +557,7 @@ export function CheckoutDrawer({
       ? {
           id: "ai-calling",
           label: "AI calling agent",
-          sublabel: aiAddon.fromCredit ? `${addonCreditLabel(1)} from your balance` : "Calls and screens applicants for this job",
+          sublabel: aiAddon.fromCredit ? `${addonCreditLabel(1)} from balance` : "Calls and screens applicants for this job",
           price: aiAddon.fromCredit ? 0 : aiAddon.price,
           ...(aiAddon.fromCredit ? { priceLabel: "1 credit" } : {}),
         }

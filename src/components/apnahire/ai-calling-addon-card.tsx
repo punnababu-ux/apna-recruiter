@@ -73,7 +73,7 @@ export function AiCallingAddonCard({
                   {offer.fromCredit ? "1 credit" : inr(offer.price)}
                 </span>
                 <span className="text-xs text-muted-foreground">
-                  {offer.fromCredit ? "from your balance" : "for this job"}
+                  {offer.fromCredit ? "from balance" : "for this job"}
                 </span>
               </div>
               {/* Dark gray, not green: "Proceed to pay" below is this screen's one

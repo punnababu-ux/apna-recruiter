@@ -147,7 +147,7 @@ fix. Turn the fixes into proposed versions; never apply them silently.
     with the add-on didn't go through) adds the agent to one job. The order
     summary offers the AI calling add-on on every job type but Premium + AI,
     in every credit case (none, partial, covered), to holders of either. With
-    the add-on credit held, the add-on reads "1 credit · from your balance"
+    the add-on credit held, the add-on reads "1 credit · from balance"
     and is used from it, never bought; without it, "Add · ₹1,699".
 
 **Interaction**
