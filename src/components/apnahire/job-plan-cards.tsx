@@ -184,7 +184,7 @@ const LINE_LABEL: Record<string, string> = {
  *  plan includes. No database credits on the job cards: only the Unlimited
  *  card shows them (user call, 2026-10-30). */
 // Alerts by job type, Classic included, phone and desktop (user call, 2026-11-03).
-const TIERED_ALERTS: Record<string, string> = { classic: "Alerts to candidates", premium: "2x alerts to candidates", "super-premium": "4x alerts to candidates" }
+const TIERED_ALERTS: Record<string, string> = { classic: "Alerts to candidates", premium: "2x alerts to candidates", "premium-ai": "2x alerts to candidates", "super-premium": "4x alerts to candidates" }
 
 /** The tier's features for the desktop lists: the WhatsApp row becomes its
  *  tiered alerts line, included on every job type. */
