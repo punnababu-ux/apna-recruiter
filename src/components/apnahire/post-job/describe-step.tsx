@@ -161,7 +161,7 @@ export function DescribeStep({
       />
 
       <div {...rise(1)} className={`${rise(1).className} flex w-full flex-col gap-2`}>
-        <label htmlFor="job-prompt" className="text-sm font-medium text-foreground">
+        <label htmlFor="job-prompt" className="text-label text-foreground">
           About the job
         </label>
         {/* While drafting, the prompt is read-only and wears the loading ring;

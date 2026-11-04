@@ -989,7 +989,7 @@ function CompactPlanTabs({
             value={tab.value}
             data-product={tab.accent}
             // The selected tab's label bold, as the chips (user call, 2026-10-30).
-            className={cn("px-3.5 data-active:font-bold", tab.accent && "text-product-accent!")}
+            className={cn("px-3.5 data-active:font-semibold", tab.accent && "text-product-accent!")}
           >
             {tab.compactLogo ? (
               <>

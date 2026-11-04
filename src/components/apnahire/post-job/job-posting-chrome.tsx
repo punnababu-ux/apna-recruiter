@@ -87,7 +87,7 @@ export function JobPostingChrome({
             {/* text-h5: the app's page-title preset, as self-checkout's top bar
                 ("Select plans"), so both checkouts' titles match (user call,
                 2026-10-30). */}
-            <span className="truncate text-h5 text-foreground">{title}</span>
+            <span className="truncate text-page-title text-foreground">{title}</span>
           </div>
           <div className="flex items-center gap-1.5 sm:gap-2">
             {/* Status (the balance), a rule, then the actions: help, then leave. */}

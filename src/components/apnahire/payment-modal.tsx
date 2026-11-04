@@ -101,7 +101,7 @@ export function PaymentModal({
              here so the amount and the method can be checked together, not to
              be changed again. */
           <div className="flex items-center gap-3 rounded-lg border border-border p-3">
-            <span className="flex-1 text-sm font-medium text-foreground">
+            <span className="flex-1 text-label text-foreground">
               {MANDATE_LABELS[mandateMethod]}
             </span>
             <span className="text-2xs text-muted-foreground">Recurring mandate</span>

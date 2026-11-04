@@ -59,7 +59,7 @@ export function PageHeader({
               </div>
             ) : null}
             {title ? (
-              <h1 className="text-xl font-semibold leading-tight">{title}</h1>
+              <h1 className="text-h6 leading-tight sm:text-xl sm:font-semibold">{title}</h1>
             ) : null}
             {description ? (
               <p className="mt-1 text-sm text-muted-foreground">{description}</p>
@@ -98,7 +98,7 @@ export function PageHeader({
               </div>
             ) : null}
             {title ? (
-              <h1 className="text-xl font-semibold leading-tight">{title}</h1>
+              <h1 className="text-h6 leading-tight sm:text-xl sm:font-semibold">{title}</h1>
             ) : null}
             {description ? (
               <p className="mt-1 text-sm text-muted-foreground">{description}</p>

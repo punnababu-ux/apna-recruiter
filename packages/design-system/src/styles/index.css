@@ -489,6 +489,76 @@
   font-weight:     var(--font-weight-semibold);
 }
 
+/* Phone section / panel title, 14 semibold ("Single job posting", a tab's
+ * "Database credit packages"). Pair with the desktop preset: `sm:text-h6`
+ * for panels, `sm:text-h4` for tab headings (user call, 2026-11-04). */
+@utility text-section-title {
+  font-family:     var(--font-heading);
+  font-size:       var(--text-sm);
+  line-height:     var(--line-height-snug);
+  font-weight:     var(--font-weight-semibold);
+}
+
+/* ── Role styles (user call, 2026-11-04) ─────────────────────────────────
+ * One class per role, phone size first, desktop from `sm`. Product code
+ * uses these instead of hand-picking a size and weight; `npm run
+ * lint:tokens` warns on the hand-picked versions. Weights: regular for body
+ * and meta, medium for things you tap, semibold for titles and prices, bold
+ * only for display text and big metrics (never below 18px).
+ *   text-page-title     16 → 18  semibold  top bars, sheet / pop-up titles
+ *   text-item-title     14 → 16  semibold  plan names, cart items, card titles
+ *   text-label          14       medium    tabs, chips, links, menu rows
+ *   text-meta           12 → 14  regular   bill rows, secondary lines
+ *   text-amount         16 → 24  semibold  a price on a card
+ *   text-amount-total   20 → 24  semibold  totals, big numbers
+ * (text-section-title, 14, pairs with sm:text-h6 / sm:text-h4.) */
+@utility text-page-title {
+  font-family:     var(--font-heading);
+  font-size:       var(--text-base);
+  line-height:     var(--line-height-snug);
+  font-weight:     var(--font-weight-semibold);
+  @variant sm { font-size: var(--text-lg); }
+}
+
+@utility text-item-title {
+  font-family:     var(--font-body);
+  font-size:       var(--text-sm);
+  line-height:     calc(var(--spacing) * 5);
+  font-weight:     var(--font-weight-semibold);
+  @variant sm { font-size: var(--text-base); }
+}
+
+@utility text-label {
+  font-family:     var(--font-body);
+  font-size:       var(--text-sm);
+  line-height:     calc(var(--spacing) * 5);
+  font-weight:     var(--font-weight-medium);
+}
+
+@utility text-meta {
+  font-family:     var(--font-body);
+  font-size:       var(--text-xs);
+  line-height:     calc(var(--spacing) * 4);
+  font-weight:     var(--font-weight-regular);
+  @variant sm { font-size: var(--text-sm); line-height: calc(var(--spacing) * 5); }
+}
+
+@utility text-amount {
+  font-family:     var(--font-body);
+  font-size:       var(--text-base);
+  line-height:     var(--line-height-tight);
+  font-weight:     var(--font-weight-semibold);
+  @variant sm { font-size: var(--text-2xl); }
+}
+
+@utility text-amount-total {
+  font-family:     var(--font-body);
+  font-size:       var(--text-xl);
+  line-height:     var(--line-height-tight);
+  font-weight:     var(--font-weight-semibold);
+  @variant sm { font-size: var(--text-2xl); }
+}
+
 @utility text-h6 {
   font-family:     var(--font-heading);
   font-size:       var(--text-base);
@@ -548,7 +618,8 @@
  * inset surfaces.
  *   text-plan-name           16 / 20  semibold   "3 Job credits", "Annual"
  *   text-plan-price          24       semibold   desktop cards
- *   text-plan-price-compact  20       semibold   phone rows, phone tiles
+ *   text-plan-name-compact   14 / 20  semibold   phone cards and tiles' plan name
+ *   text-plan-price-compact  16       semibold   phone rows, phone tiles (2026-11-04: was 20)
  *   text-plan-unit           12       regular    "/month", "/year"
  *   text-plan-strike         12       regular    struck list price */
 @utility text-plan-name {
@@ -565,9 +636,16 @@
   font-weight:  var(--font-weight-semibold);
 }
 
+@utility text-plan-name-compact {
+  font-family:  var(--font-body);
+  font-size:    var(--text-sm);
+  line-height:  calc(var(--spacing) * 5);
+  font-weight:  var(--font-weight-semibold);
+}
+
 @utility text-plan-price-compact {
   font-family:  var(--font-body);
-  font-size:    var(--text-xl);
+  font-size:    var(--text-base);
   line-height:  var(--line-height-tight);
   font-weight:  var(--font-weight-semibold);
 }

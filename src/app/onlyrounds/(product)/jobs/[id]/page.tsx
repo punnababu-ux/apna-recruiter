@@ -1358,7 +1358,7 @@ function JobDetailPageInner({ id }: { id: string }) {
             <BackButton className="mt-0.5" />
             <div className="flex flex-col gap-1.5 min-w-0">
               <div className="flex items-center gap-2">
-                <span className="text-xl font-semibold leading-tight capitalize">{jobTitle}</span>
+                <span className="text-h6 leading-tight capitalize sm:text-xl sm:font-semibold">{jobTitle}</span>
                 <Badge variant="success">Active</Badge>
               </div>
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">

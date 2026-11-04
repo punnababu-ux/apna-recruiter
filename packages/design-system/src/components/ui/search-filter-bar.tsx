@@ -164,7 +164,7 @@ export function SearchFilterBar({
             {/* No overflow-hidden: it would clip the close bubble. */}
             <SheetContent side="bottom" className="max-h-5/6 gap-0 rounded-t-2xl border-t-0 p-0 pb-safe">
               <div className="flex items-center justify-between gap-3 border-b border-border px-5 pt-5 pb-4">
-                <SheetTitle className="text-h4 text-foreground">Filters</SheetTitle>
+                <SheetTitle className="text-page-title text-foreground sm:text-h4">Filters</SheetTitle>
                 <Button
                   type="button"
                   variant="link"

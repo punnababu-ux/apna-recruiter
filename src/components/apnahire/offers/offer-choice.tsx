@@ -15,7 +15,7 @@
  * ₹19,999"); on phones, where a tile is ~160px wide, it shortens to
  * `ctaShortLabel` ("Continue", "Get 47 credits") — the price is right above.
   *
- * Type scale (phone → from sm): name 12 → 16 semibold · price 20 → 24 ·
+ * Type scale (phone → from sm): name 12 → 16 semibold · price 16 → 24 ·
  * struck price 12 → 14 · saving 12 → 14 semibold · per-unit 10 → 12 italic ·
  * validity, database credits, city 12 → 14 · CTA 14 (Button default). Figma OfferChoice matches.
  */
@@ -117,7 +117,7 @@ function OptionTile({
   const hasDetails = !!term || !!option.planFacts?.dbLine || !!option.planFacts?.singleCity
 
   const cell: Record<RowKey, React.ReactNode> = {
-    // Tile type scale (user call, 2026-11-04): phone name 12 · price 20 ·
+    // Tile type scale (user call, 2026-11-04): phone name 12 · price 16 ·
     // strike 12 · % 12 · per-unit 10 · facts 12; from sm 16 · 24 · 14 · 14 · 12 · 14.
     title: <p className="text-xs font-semibold text-foreground sm:text-base">{option.title}</p>,
     // The price group: amount + unit, struck price, % tag, the 10% extra

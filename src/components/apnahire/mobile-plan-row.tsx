@@ -145,7 +145,7 @@ export function MobilePlanRow({
         {mrp && <span className={cn("text-plan-strike text-muted-foreground", smallPrice && "text-sm leading-5 line-through")}>{mrp}</span>}
         {/* The price leads the row (text-plan-price-compact, over text-plan-name);
             tabular figures keep the column steady. */}
-        <span className={cn("text-foreground", priceAsName ? "text-plan-name" : smallPrice ? "text-lg leading-5 font-semibold" : "tabular-nums text-plan-price-compact")}>{price}</span>
+        <span className={cn("text-foreground", priceAsName ? "text-plan-name-compact" : smallPrice ? "text-base leading-5 font-semibold" : "tabular-nums text-plan-price-compact")}>{price}</span>
         {/* Muted like the struck price: only the price is dark. */}
         {unit && <span className="text-plan-unit text-muted-foreground">{unit}</span>}
       </div>
@@ -225,7 +225,7 @@ export function MobilePlanRow({
             {/* Name and meta 4px apart: the price's taller line already adds room (user call, 2026-11-03). */}
             <div className="flex flex-col gap-1">
               <div className="flex items-start justify-between gap-3">
-                <span className="min-w-0 text-plan-name text-foreground">{title}</span>
+                <span className="min-w-0 text-plan-name-compact text-foreground">{title}</span>
                 <div className="shrink-0">{priceBlock}</div>
               </div>
               {showLine && line ? (
@@ -253,7 +253,7 @@ export function MobilePlanRow({
         <div className="flex items-start gap-2">
           <div className="min-w-0 flex-1 flow-root">
             <div className="float-right ml-3">{priceBlock}</div>
-            <span className="flow-root text-plan-name text-foreground">{title}</span>
+            <span className="flow-root text-plan-name-compact text-foreground">{title}</span>
             {meta && <div className="mt-2 flex flex-col items-start gap-2 [&>*]:whitespace-nowrap">{meta}</div>}
           </div>
         </div>
@@ -521,7 +521,7 @@ export function MobileUnlimitedCard({
       <span className={cn("flex gap-1.5 whitespace-nowrap", "items-center")}>
         {priceLead}
         {mrp && <span className={cn("text-plan-strike text-muted-foreground", smallPrice && "text-sm leading-5 line-through")}>{mrp}</span>}
-        <span className={cn("text-foreground", smallPrice ? "text-lg leading-5 font-semibold" : "tabular-nums text-plan-price-compact")}>{price}</span>
+        <span className={cn("text-foreground", smallPrice ? "text-base leading-5 font-semibold" : "tabular-nums text-plan-price-compact")}>{price}</span>
         {/* Muted like the struck price: only the price is dark. */}
         {unit && <span className="text-plan-unit text-muted-foreground">{unit}</span>}
       </span>
@@ -585,7 +585,7 @@ export function MobileUnlimitedCard({
           <div className="flex items-start gap-2">
             <div className="min-w-0 flex-1 flow-root">
             <div className="float-right ml-3">{priceBlock}</div>
-            <span className="flow-root text-plan-name text-foreground">{title}</span>
+            <span className="flow-root text-plan-name-compact text-foreground">{title}</span>
             {subtitle && <span className="mt-2 block text-xs text-muted-foreground">{subtitle}</span>}
             {/* Wraps beside the price instead of dropping below it: with the
                 10% offer the price side is tall, and a line that dropped
@@ -598,7 +598,7 @@ export function MobileUnlimitedCard({
           // row sit under them.
           <div className="flex items-start justify-between gap-3">
             <div className="flex min-w-0 flex-col gap-1.5">
-              <span className="text-plan-name text-foreground">{title}</span>
+              <span className="text-plan-name-compact text-foreground">{title}</span>
               {subtitle && <span className="text-xs text-muted-foreground">{subtitle}</span>}
               {/* "1 active job slot for 30 days": the plan's slot line. */}
               {meta && <div className="mt-0.5">{meta}</div>}

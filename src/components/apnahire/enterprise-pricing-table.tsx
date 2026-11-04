@@ -143,8 +143,8 @@ export function EnterprisePricingTable({
       className={cn("flex flex-col gap-5 max-md:gap-4", className)}
     >
       <div className="flex flex-col gap-1">
-        <h2 className="text-h4 text-checkout-hero-fg">Enterprise plans</h2>
-        <p className="text-sm text-checkout-hero-fg-secondary">
+        <h2 className="text-section-title text-checkout-hero-fg sm:text-h4">Enterprise plans</h2>
+        <p className="text-xs text-checkout-hero-fg-secondary sm:text-sm">
           {/* Phones: the account manager every plan has, said once here
               instead of on each card (user call, 2026-11-02). */}
           <span className="md:hidden">For high-volume hiring, with a dedicated account manager on every plan.</span>

@@ -71,7 +71,7 @@ export function JobCreditBundles({
         {/* text-h4: the size of the other tabs' headings ("Enterprise plans").
             "Buy 1 job credit" sits under the cards on phones, opposite
             "What 1 job credit will get you?" (self-checkout, 2026-10-30). */}
-        {grouped ? null : <h2 className="text-h4 text-checkout-hero-fg">Job credit packages</h2>}
+        {grouped ? null : <h2 className="text-section-title text-checkout-hero-fg sm:text-h4">Job credit packages</h2>}
 
         {/* V13: the panel of express V11 (PlanFrame's look): 12px at the
             sides, bottom and between cards, 16px above the header, a frame
@@ -79,7 +79,7 @@ export function JobCreditBundles({
         <div className={cn(grouped && "flex flex-col gap-3 rounded-frame surface-glass-dark px-3 pt-4 pb-3")}>
           {grouped && (
             <div className="flex items-center justify-between gap-2 px-1.5">
-              <h2 className="flex items-center gap-2 text-h6 leading-6 whitespace-nowrap text-foreground [&_svg]:size-5 [&_svg]:shrink-0">
+              <h2 className="flex items-center gap-2 text-section-title leading-6 sm:text-h6 sm:leading-6 whitespace-nowrap text-foreground [&_svg]:size-5 [&_svg]:shrink-0">
                 Job credit packages
               </h2>
             </div>
