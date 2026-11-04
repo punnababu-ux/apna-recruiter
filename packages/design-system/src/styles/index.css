@@ -1253,6 +1253,81 @@
   to   { opacity: 1; }
 }
 
+/* voice-glow — a soft halo of the AI hues behind the job prompt while the
+   mic listens, breathing slowly, so speaking reads as the screen's one
+   live thing. An empty `<span aria-hidden>` first in a `relative` box.
+   Reduced motion: a still halo. */
+@utility voice-glow {
+  position: absolute;
+  inset: -6px;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background: var(--gradient-voice-glow);
+  filter: blur(14px);
+  animation: voice-glow-breathe 1.6s ease-in-out infinite alternate;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
+@keyframes voice-glow-breathe {
+  from { opacity: 0.6; transform: scale(0.98); }
+  to   { opacity: 1;   transform: scale(1.03); }
+}
+
+/* ai-wash — the drafting backdrop: a wash of colour from the top of the
+   screen that drifts sky → plum → green on a loop while the AI works, then
+   fades out as the next screen arrives. Cross-fades only (opacity), so it
+   stays on the compositor. Fixed, behind the page (`z-index: -1`): the
+   page root needs `isolate`. Toggle with `data-active`. Reduced motion:
+   the sky wash alone, still. */
+@utility ai-wash {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 75svh;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--gradient-ai-wash-1);
+  mask-image: linear-gradient(to bottom, black 30%, transparent);
+  opacity: 0;
+  transition: opacity var(--duration-carousel) var(--ease-standard);
+
+  &[data-active] { opacity: 1; }
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    animation: ai-wash-plum 6s ease-in-out infinite paused;
+  }
+  &::before { background: var(--gradient-ai-wash-2); }
+  &::after  { background: var(--gradient-ai-wash-3); animation-name: ai-wash-green; }
+  &[data-active]::before,
+  &[data-active]::after { animation-play-state: running; }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::before,
+    &::after { animation: none; }
+  }
+}
+
+@keyframes ai-wash-plum {
+  0%, 10%   { opacity: 0; }
+  35%       { opacity: 1; }
+  60%, 100% { opacity: 0; }
+}
+
+@keyframes ai-wash-green {
+  0%, 35%   { opacity: 0; }
+  60%       { opacity: 1; }
+  90%, 100% { opacity: 0; }
+}
+
 /* flip-in — a control turns over into its next state, like a split-flap
    board: it swings in from edge-on (rotateX -90°) and lands with a slight
    overshoot. For a one-time change of meaning (the top bar's credits button

@@ -74,6 +74,9 @@ import { freeSlots, lockSubscriptionCity, setJobSlots, todayLabel, useJobSlots }
 import { cn } from "@/lib/utils"
 import type { JobPostDraft } from "@/types/apnahire-job"
 
+const noSubscribe = () => () => {}
+const hasWashFlag = () => new URLSearchParams(window.location.search).has("wash")
+
 interface FlowState {
   screen: ScreenId
   prompt: string
@@ -211,6 +214,7 @@ export function PostJobFlow() {
   const [draftResult, setDraftResult] = React.useState<Partial<JobPostDraft> | null>(null)
   /** "Draft my job" is running — on the Describe screen, not a screen of its own. */
   const [drafting, setDrafting] = React.useState(false)
+  const washPreview = React.useSyncExternalStore(noSubscribe, hasWashFlag, () => false)
   /** Posted into a subscription slot: show the job-live screen. */
   const [live, setLive] = React.useState<{ title: string; note: string } | null>(null)
   const [refining, setRefining] = React.useState(false)
@@ -550,7 +554,10 @@ export function PostJobFlow() {
   }
 
   return (
-    <div className="flex min-h-svh flex-col bg-background">
+    <div className="isolate flex min-h-svh flex-col bg-background">
+      {/* PREVIEW ONLY (?wash): the Gemini-style colour wash while drafting.
+          Stays mounted so it fades out as the next screen arrives. */}
+      {washPreview && <span aria-hidden data-active={drafting || undefined} className="ai-wash" />}
       <JobPostingChrome
         current={chromeStep}
         stepperClassName="max-sm:hidden"
