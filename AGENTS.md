@@ -1035,6 +1035,7 @@ without also adding its new components, is a reject.
   captures, bulk renames or copy sweeps, simple checks) run on **Haiku or Sonnet**.
 - **Opus at default effort** is the main session: plans, decides, reviews the subagents' work.
 - Before using **Opus at medium or high effort**, ask Punna first and say why.
+- Keep progress in a file (e.g. `docs/FIGMA-SYNC-STATUS.md`) so a new chat can resume from it.
 
 **Inputs — structure multi-part requests first.**
 - When Punna's message holds several asks (or arrives in pieces mid-task), first restate it as

@@ -1,6 +1,7 @@
 # Figma sync — status (resume from here)
 
 Last updated: 2026-11-04 (end of day). Keep this file current after every Figma step.
+How to audit/sync (workflow, scripts, rules learned): skill `.claude/skills/figma-code-sync/`.
 
 ## ▶ Latest state (read this first)
 - All checkout screens are on ONE page, "Checkout — dev hand-off" (441:2), sections 0–10 in the
@@ -224,7 +225,40 @@ Icon/Infinity 322:6 added (Unlimited "Job reposts and swapping", warning).
   the subtitle row, as CartLineRow's link-inline button. On for added add-ons: E7 phone and
   D-E7 desktop (AI calling agent line). Phone E7 bill now follows the coupons directly.
 
-## ▶ RESUME HERE (2026-11-04) — "Coverage" set, approved by Punna
+## ▶ RESUME HERE (2026-11-04, later) — text colour & size audit, Figma → code 1:1
+Ask (Punna): plan-feature text colour in Figma differs from code; check text colour + size
+on every component and screen of page "Checkout — dev hand-off" (441:2); code is the truth.
+Method: dump every visible text (text | size weight | colour token ~hex) from each Figma
+screen and from the same state in the browser (dev server, mock session in localStorage
+`apnahire:session`, `apnahire:pricing-phase`=today), diff by text, fix at the component.
+Done (Figma now matches code; values read from the rendered page):
+- PricingCard v2: sub-points Body/XS muted-foreground; not-included (Icon/Close) muted 60%;
+  status 12; "AI calling agent" 14 semibold; CTA label 14 semibold (code size `card`);
+  price-last subtitle 12. Screen overrides fixed (237 included, 42 not included).
+- Button: label per size like code — xs/sm 12/600, default 14/600, lg 16/600, xl 16/600 (all semibold since main 78684e2; lg briefly set to 500 from stale code, restored).
+- Badge ribbon 12/600. CheckoutPanel aside 12/500. PageHeader/desktop title 18.
+- Phone express job prices 20 (Plan/Price compact); offer-claimed Unlimited phone price 18.
+- SelfCheckoutTabs desktop: titles checkout-primary (active) / hero-fg-secondary, subs 12/400
+  hero-fg-secondary. Phone: active 14 bold (new style Label/MD Bold), inactive 14/500 foreground 60%.
+- S3 slot switcher: active 600, inactive 400. ContactSalesCard phone: title 16, button sm.
+- UnlimitedSideCard subtitle 14 white 80%; Jobs-tab Unlimited card text on hero-fg tokens.
+- ExtraOffBanner phone label 12/500.
+- Order summary: item sub-line 12, Remove 14/600, Apply coupons 14, GSTIN link regular,
+  totals 24/600, phone title 20; AI + DB add-on points 12, DB title/item 14/600, phone Add
+  buttons size default.
+- Upsells: OfferChoice per-unit 12; OfferDialog was-price + unit white 70%; P2/P3/D-S10 label,
+  ribbons 12/500, tile names 14, price+unit split.
+- Pop-ups: titles 20 (PlanPopup + detached P4–P8, P6, P7, S9). S9 phone credits 20.
+Round 2 (all remaining screens checked): sub-points now Body/XS Loose (12/20, code leading-5);
+countdown time 600; upsell chips pinned top-right (constraint MAX, right 0, as code);
+PriceChangeBanner message 12/500; PlanEndedBanner price 24/600; PaymentSuccess total label 16
+and amount 18 bold (new style Price/Total MD); ContactPopup button lg; CouponApplied Remove 14/600;
+side-card subtitle white 80% on every screen; W1 phone prices 20, W1 desktop Unlimited card
+on hero-fg tokens; desktop "How job credits work" hero-fg.
+Differences left on purpose (state or copy, not style): E5b/E7 desktop show other offer states;
+P2 numbers; P6/P7/payment-success copy differs from code; T1 not compared.
+Code bug seen at 375px: phone card visibility line overlaps "₹749 from Jan 1" (December phase).
+## (earlier) RESUME HERE (2026-11-04) — "Coverage" set, approved by Punna
 Plan agreed: a layered file where every UNIQUE checkout component appears in at least one
 screen (phone + desktop where they differ); all other cases/edge cases later go on a separate
 flows board made of screenshots. Build these on a new page "Checkout — coverage", reusing the

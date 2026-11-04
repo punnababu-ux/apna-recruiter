@@ -106,7 +106,8 @@ const TIER_BOOST_FOR: Partial<Record<JobPlanTierId, string>> = {
   classic: "1x visibility, for regular roles",
   premium: "2x visibility, for faster hiring",
   "premium-ai": "2x visibility, with AI calling",
-  "super-premium": "4x visibility, for hard-to-fill roles",
+  // Non-breaking hyphens (U+2011): "hard‑to‑fill" never splits when the line wraps.
+  "super-premium": "4x visibility, for hard‑to‑fill roles",
 }
 
 function VisibilityLine({ tier }: { tier: JobPlanTier }) {
