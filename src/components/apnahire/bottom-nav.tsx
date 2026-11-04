@@ -3,12 +3,12 @@
 /**
  * ApnaHireBottomNav — Mobile bottom navigation for the Apna Hire product shell.
  *
- *   Jobs · Database · ( Plans ) · Fast Track · More
+ *   Jobs · Database · ( Plans ) · Express · More
  *
  * Plans follows usePlansIngress (user call, 2026-10-20): the highlighted centre
  * tile (BottomNav `featured`, inside the bar) only while credits are running out; a plain
  * tab like Database right after a credit purchase; and with a subscription
- * it leaves the bar for the More card, as "Manage plans" beside Support. Fast Track (Apna Chat,
+ * it leaves the bar for the More card, as "Manage plans" beside Support. Express (Apna Chat,
  * the recruiter's inbox) carries the count of urgent threads, those waiting
  * for the recruiter's reply. Notifications moved to a bell in the top bar
  * (user call, 2026-11-04), so the bar still holds five slots with Plans in it.
@@ -121,7 +121,7 @@ export function ApnaHireBottomNav() {
         ]),
     {
       href: "/apnahire/chats",
-      label: "Fast Track",
+      label: "Express",
       icon: MessageCircle,
       active: tabActive("/apnahire/chats"),
       badge: urgentCount ? (

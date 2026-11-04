@@ -1,5 +1,5 @@
 /**
- * Shared heights for the Fast Track screen's three panes (md+), so the white
+ * Shared heights for the Express screen's three panes (md+), so the white
  * header bars line up as one band and the rows below start at the same y.
  * Every pane draws its band and sub-row from these two strings; change the
  * height here and all three move together.

@@ -40,7 +40,7 @@ ship, and keep one line per item. Open price questions live in
 ## Before production
 - [ ] Remove the hidden prototype-settings ingresses: the silent clicks on "*GST applicable" (`GstNote`, both checkouts) and the post-job "Candidate view" caption, the plan card's "Valid till" line (`SubscriberPlanCard`), the expired banner's "Resubscribe at the same price." (`PlanEndedBanner`), plus `PrototypeSettings` itself (grep `openPrototypeSettings`). Current builds are not production.
 
-## Fast Track (recruiter chat)
+## Express (recruiter chat)
 - [ ] Dark mode contrast: white text on dark --primary (green-500) and --destructive (red-400) measures 2.65–2.95:1 (unread counts, green and red buttons), under 4.5:1. Product-wide token decision, parked 2026-11-04
 - [ ] Confirm the resume unlock cost and copy ("Unlock resume · 1 credit" was written for the prototype)
 - [ ] Search within one chat's messages

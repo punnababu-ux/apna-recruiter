@@ -102,12 +102,12 @@ export function ApnaHireSidebar({
 }: ApnaHireSidebarProps) {
   const subscribed = useActiveSubscription()
   const { urgentCount } = useChats()
-  // Fast Track (chats) sits under Jobs, with the phone tab's urgent count.
+  // Express (chats) sits under Jobs, with the phone tab's urgent count.
   const navItems: SidebarNavItem[] = [
     NAV[0],
     {
       href: "/apnahire/chats",
-      label: "Fast Track",
+      label: "Express",
       icon: MessageCircle,
       badge: urgentCount ? (
         <Badge variant="count" size="count" className="ml-auto">

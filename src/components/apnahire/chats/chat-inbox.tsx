@@ -279,7 +279,7 @@ export function ChatInbox({ activeId = null, className }: { activeId?: string | 
           scrolled ? "border-border" : "border-transparent"
         )}
       >
-        <h2 className="text-h5 mr-auto hidden shrink-0 md:block">Fast Track</h2>
+        <h2 className="text-h5 mr-auto hidden shrink-0 md:block">Express</h2>
         <div className="relative min-w-0 flex-1 md:hidden">
           <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
           <Input
@@ -358,7 +358,7 @@ export function ChatInbox({ activeId = null, className }: { activeId?: string | 
             </EmptyHeader>
           </Empty>
         ) : (
-          <ConversationList label="Fast Track">
+          <ConversationList label="Express">
             {shown.map((t) => (
               <ConversationRow
                 key={t.id}
