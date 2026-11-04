@@ -36,10 +36,13 @@ export interface FabProps {
 function useScrollCollapse() {
   const [collapsed, setCollapsed] = React.useState(false)
   React.useEffect(() => {
-    let last = window.scrollY
+    // Clamped: iOS rubber-banding pushes scrollY past both ends and back.
+    const clampedY = () =>
+      Math.min(Math.max(window.scrollY, 0), Math.max(document.documentElement.scrollHeight - window.innerHeight, 0))
+    let last = clampedY()
     let idle: ReturnType<typeof setTimeout> | undefined
     const onScroll = () => {
-      const y = window.scrollY
+      const y = clampedY()
       if (y > last + 4 && y > 24) setCollapsed(true)
       else if (y < last - 4) setCollapsed(false)
       last = y

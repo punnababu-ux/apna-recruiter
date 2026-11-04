@@ -245,9 +245,20 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   // travel before it flips, so a jittery thumb doesn't flicker it.
   const [scrollingDown, setScrollingDown] = React.useState(false)
   React.useEffect(() => {
-    let last = window.scrollY
+    // iOS (Safari and Chrome, both WebKit) rubber-bands past the ends:
+    // scrollY goes negative at the top (or past the max at the bottom) and
+    // springs back, which read as "scrolling down" and hid the tabs. Clamp
+    // to the real range, and always show them near the top.
+    const clampedY = () =>
+      Math.min(Math.max(window.scrollY, 0), Math.max(document.documentElement.scrollHeight - window.innerHeight, 0))
+    let last = clampedY()
     const onScroll = () => {
-      const y = window.scrollY
+      const y = clampedY()
+      if (y <= 8) {
+        setScrollingDown(false)
+        last = y
+        return
+      }
       if (Math.abs(y - last) < 8) return
       setScrollingDown(y > last)
       last = y
