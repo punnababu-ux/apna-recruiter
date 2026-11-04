@@ -189,7 +189,7 @@ function DemoPlayer({ moment, tone }: { moment: Moment; tone: IllustrationTone }
         <PlayButton playing={isPlaying} label={isPlaying ? "Pause recording" : "Play recording"} onClick={toggle} />
       </Disc>
       <div className="flex flex-col gap-1">
-        <DialogTitle className="text-h5 font-semibold text-foreground">{moment.title}</DialogTitle>
+        <DialogTitle className="text-h5 text-foreground">{moment.title}</DialogTitle>
         <DialogDescription className="text-overline text-muted-foreground">Live demo recording</DialogDescription>
       </div>
       <div className="flex w-full flex-col gap-2">

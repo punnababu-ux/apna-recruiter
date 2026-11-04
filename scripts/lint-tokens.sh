@@ -119,31 +119,6 @@ run_check \
   '(text-editorial-|text-quote|font-editorial|font-serif|font-quote)' \
   "$FILES_SERIF"
 
-# 5. Type roles — WARNINGS for now (2026-11-04), errors once migrated.
-#    Product code uses the role styles (text-page-title, text-section-title,
-#    text-item-title, text-label, text-meta, text-amount, text-amount-total,
-#    text-plan-*, text-h*) instead of hand-picking size + weight. Reported:
-#    a hand-picked title size (text-lg … text-3xl) with a weight, and bold
-#    below 18px. Marketing and the docs site are out of scope.
-FILES_TYPE=$(printf "%s\n" "$FILES_TS" | grep -vE '/app/\(marketing\)/|/components/marketing/|/app/design-system/' || true)
-type_warn() {
-  local label="$1" pattern="$2"
-  local hits
-  hits=$(printf "%s\n" "$FILES_TYPE" | xargs grep -nE "$pattern" 2>/dev/null | grep -v 'token-lint-ignore' || true)
-  local n; n=$(printf "%s" "$hits" | grep -c . || true)
-  if [[ "$n" -gt 0 ]]; then
-    printf "\033[0;33m⚠\033[0m %s — %s place(s)\n" "$label" "$n"
-    if [[ "${TYPE_LINT_VERBOSE:-0}" == "1" ]]; then printf "%s\n" "$hits" | sed 's/^/    /'; fi
-  else
-    printf "${GREEN}✓${NC} %s\n" "$label"
-  fi
-}
-type_warn "Type: hand-picked title size + weight (use a role style)" \
-  'className="[^"]*(^|[" ])(text-(lg|xl|2xl|3xl))[" ][^"]*font-(medium|semibold|bold)|className="[^"]*font-(medium|semibold|bold)[^"]*[" ]text-(lg|xl|2xl|3xl)[" ]'
-type_warn "Type: bold below 18px (use semibold)" \
-  'className="[^"]*(text-(2xs|xs|sm|base)[" ][^"]*font-bold|font-bold[^"]*text-(2xs|xs|sm|base)[" ])'
-printf "  (warnings only; TYPE_LINT_VERBOSE=1 npm run lint:tokens lists them)\n"
-
 printf "%s\n" "------------------------------------------------------------"
 if [[ $fail -eq 0 ]]; then
   printf "${GREEN}${BOLD}All token checks passed.${NC}\n"

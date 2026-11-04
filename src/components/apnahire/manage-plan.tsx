@@ -184,7 +184,7 @@ function OfTotal({ value, total }: { value: number; total: number }) {
   return (
     <span className="whitespace-nowrap">
       {num(value)}
-      <span className="text-label text-muted-foreground"> / {num(total)}</span>
+      <span className="text-sm font-medium text-muted-foreground"> / {num(total)}</span>
     </span>
   )
 }
@@ -202,7 +202,7 @@ function Row({
   return (
     <div className={cn("flex items-baseline justify-between gap-4", className)}>
       <span className="min-w-0 text-sm text-muted-foreground">{label}</span>
-      <span className="shrink-0 whitespace-nowrap text-label tabular-nums text-foreground">{children}</span>
+      <span className="shrink-0 whitespace-nowrap text-sm font-medium tabular-nums text-foreground">{children}</span>
     </div>
   )
 }
@@ -513,7 +513,7 @@ function Billing({ sub, listPrice }: { sub: SubscriptionDetails; listPrice: numb
     <Card padding="none" className="h-full gap-4 p-4 sm:p-6">
       <div className="flex items-center gap-3">
         <CardIcon icon={ReceiptText} />
-        <h2 className="text-section-title text-foreground sm:text-h5">Billing</h2>
+        <h2 className="text-h5 text-foreground">Billing</h2>
       </div>
 
       <div className="flex flex-col gap-3">

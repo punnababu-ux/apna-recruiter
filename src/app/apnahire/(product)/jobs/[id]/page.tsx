@@ -1366,7 +1366,7 @@ function JobDetailPageInner({ id }: { id: string }) {
             <BackButton className="mt-0.5" onClick={back} />
             <div className="flex min-w-0 flex-1 flex-col gap-1.5">
               <div className="flex items-center gap-2">
-                <span className="line-clamp-2 text-page-title leading-tight capitalize md:text-xl">{jobTitle}</span>
+                <span className="line-clamp-2 text-lg leading-tight font-semibold capitalize md:text-xl">{jobTitle}</span>
                 <Badge variant="success" className="hidden md:inline-flex">Active</Badge>
               </div>
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
@@ -1519,7 +1519,7 @@ function JobDetailPageInner({ id }: { id: string }) {
 
         {filteredCandidates.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-muted/30 px-6 py-12 text-center">
-            <p className="text-label">
+            <p className="text-sm font-medium">
               No candidates match your filters
             </p>
             <p className="text-xs text-muted-foreground">

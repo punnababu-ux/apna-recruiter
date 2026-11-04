@@ -34,7 +34,7 @@ export function CouponExpiredDialog({ open, onClose }: { open: boolean; onClose:
             one picture. */}
         <ValueArt name="expired" size="sm" />
         <div className="flex flex-col gap-2">
-          <Title className="text-page-title text-foreground sm:text-h4">Coupon expired</Title>
+          <Title className="text-xl font-semibold text-foreground">Coupon expired</Title>
           <Description className="text-sm text-foreground">
             This coupon has expired and is no longer valid
           </Description>

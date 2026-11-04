@@ -14,10 +14,6 @@
  * it reads in full ("Continue with 22 credits", "Get 47 credits for
  * ₹19,999"); on phones, where a tile is ~160px wide, it shortens to
  * `ctaShortLabel` ("Continue", "Get 47 credits") — the price is right above.
-  *
- * Type scale (phone → from sm): name 12 → 16 semibold · price 16 → 24 ·
- * struck price 12 → 14 · saving 12 → 14 semibold · per-unit 10 → 12 italic ·
- * validity, database credits, city 12 → 14 · CTA 14 (Button default). Figma OfferChoice matches.
  */
 
 import * as React from "react"
@@ -117,9 +113,7 @@ function OptionTile({
   const hasDetails = !!term || !!option.planFacts?.dbLine || !!option.planFacts?.singleCity
 
   const cell: Record<RowKey, React.ReactNode> = {
-    // Tile type scale (user call, 2026-11-04): phone name 12 · price 16 ·
-    // strike 12 · % 12 · per-unit 10 · facts 12; from sm 16 · 24 · 14 · 14 · 12 · 14.
-    title: <p className="text-xs font-semibold text-foreground sm:text-base">{option.title}</p>,
+    title: <p className="text-sm font-semibold text-foreground">{option.title}</p>,
     // The price group: amount + unit, struck price, % tag, the 10% extra
     // off, then the price note ("That's just ₹750 /month"), together — closed
     // by a rule that splits what it costs from what you get. The rows are
@@ -144,8 +138,8 @@ function OptionTile({
               {/* The struck price, then "−22%" as text, a step apart in size
                   (user call, 2026-11-02): a left-aligned price reads price →
                   strike → % (AGENTS.md). */}
-              {strike && <span className="text-xs text-muted-foreground line-through sm:text-sm">{inr(strike)}</span>}
-              {pct && <span className="text-xs font-semibold text-checkout-primary sm:text-sm">−{pct.replace(/\s*OFF$/i, "")}</span>}
+              {strike && <span className="text-sm text-muted-foreground line-through max-sm:text-base">{inr(strike)}</span>}
+              {pct && <span className="text-xs font-semibold text-checkout-primary max-sm:text-sm">−{pct.replace(/\s*OFF$/i, "")}</span>}
             </span>
           )}
         </p>
@@ -155,7 +149,7 @@ function OptionTile({
           // plan cards, so only one line is green.
           <p
             className={cn(
-              "text-2xs italic sm:text-xs",
+              "text-xs italic",
               // Per-unit prices ("₹650 /credit", "That's just ₹749 /month") are blue,
               // as on the plan cards; other notes stay gray. shortcut: spots a
               // price by its "/", add a prop if a gray note ever has one.
@@ -173,20 +167,20 @@ function OptionTile({
       </div>
     ),
     term: term ? (
-      <span className="flex items-center gap-1.5 text-xs text-muted-foreground sm:text-sm">
+      <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
         <ClockFading className="size-4 shrink-0" aria-hidden />
         <span className="sm:whitespace-nowrap">{term}</span>
       </span>
     ) : null,
     facts: option.planFacts?.dbLine ? (
-      <span className="flex items-center gap-1.5 text-xs text-muted-foreground sm:text-sm">
+      <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
         <Database className="size-4 shrink-0" aria-hidden />
         <span className="sm:whitespace-nowrap">{option.planFacts.dbLine}</span>
       </span>
     ) : null,
     // A caveat, not a feature: no icon, italic.
     city: option.planFacts?.singleCity ? (
-      <span className="text-xs text-muted-foreground italic sm:text-sm">Valid in a single city</span>
+      <span className="text-xs text-muted-foreground italic">Valid in a single city</span>
     ) : null,
     cta: (
       <Button

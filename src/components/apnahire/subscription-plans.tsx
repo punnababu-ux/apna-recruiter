@@ -351,12 +351,11 @@ export function SubscriptionPlans({
                 went near-invisible once the surrounding page went dark. */}
             <LogoApnaUnlimited
               variant="theme"
-              className={/* token-lint-ignore: optical baseline nudge for the wordmark, derived above; not a spacing step */ "h-3.5 w-auto translate-y-[2px] text-foreground sm:h-5 sm:translate-y-[3px]"}
+              className={/* token-lint-ignore: optical baseline nudge for the wordmark, derived above; not a spacing step */ "h-5 w-auto translate-y-[3px] text-foreground"}
             />
-            {/* Phones: the section-title size (14), the wordmark scaled to it (user call, 2026-11-04). */}
-            <span className="text-section-title text-foreground sm:text-xl sm:font-semibold">plans</span>
+            <span className="text-xl font-semibold text-foreground">plans</span>
           </div>
-          <p className="text-xs text-muted-foreground sm:text-sm">
+          <p className="text-sm text-muted-foreground">
             Unlimited job posting flexibility, predictable hiring cost.
           </p>
         </div>

@@ -96,7 +96,7 @@ export function PrototypeOption({
       variant={active ? "secondary" : "ghost"}
       size="sm"
       // Long labels wrap inside the panel instead of running past it.
-      className="h-auto justify-start py-1.5 text-left text-label whitespace-normal"
+      className="h-auto justify-start py-1.5 text-left text-sm font-medium whitespace-normal"
       aria-current={active ? "true" : undefined}
       disabled={disabled}
       onClick={onClick}

@@ -417,12 +417,12 @@ function CartLineRow({
   return (
     <li className="flex flex-col gap-2">
       <div className="flex items-center justify-between gap-3">
-        <p className="text-item-title text-foreground">{line.label}</p>
+        <p className="text-base font-semibold text-foreground">{line.label}</p>
         <div className="flex shrink-0 items-center gap-3">
           {!line.priceLabel && strike != null && strike > price && (
-            <span className="text-xs text-muted-foreground line-through sm:text-sm">{inr(strike)}</span>
+            <span className="text-sm text-muted-foreground line-through">{inr(strike)}</span>
           )}
-          <span className="text-item-title text-foreground">
+          <span className="text-base font-semibold text-foreground">
             {line.priceLabel ?? inr(price)}
           </span>
         </div>
@@ -430,7 +430,7 @@ function CartLineRow({
       {line.points?.length ? (
         <ul className="flex flex-col gap-2">
           {line.points.map((point) => (
-            <li key={point} className="flex items-center gap-2 text-meta text-foreground">
+            <li key={point} className="flex items-center gap-2 text-sm text-foreground">
               <Check className="size-4 shrink-0 text-foreground" aria-hidden />
               {point}
             </li>
@@ -441,7 +441,7 @@ function CartLineRow({
         <div className="flex items-start justify-between gap-3">
           <p className="text-xs text-muted-foreground">{line.points?.length ? null : line.sublabel}</p>
           {onRemove && (
-            <Button type="button" variant="link-inline" size="sm" className="shrink-0 text-meta text-foreground" onClick={onRemove}>
+            <Button type="button" variant="link-inline" size="sm" className="shrink-0 text-foreground" onClick={onRemove}>
               Remove
             </Button>
           )}
@@ -455,7 +455,7 @@ function CartLineRow({
 function BillRow({ label, children }: { label: React.ReactNode; children: React.ReactNode }) {
   return (
     <div className="flex items-center justify-between gap-3">
-      <span className="text-meta text-foreground">{label}</span>
+      <span className="text-sm text-foreground">{label}</span>
       {children}
     </div>
   )
@@ -695,9 +695,9 @@ export function CheckoutDrawer({
                     </li>
                     <li className="flex flex-col gap-2">
                       <div className="flex items-center justify-between gap-3">
-                        <p className="text-item-title text-foreground">{free.label}</p>
+                        <p className="text-base font-semibold text-foreground">{free.label}</p>
                         <div className="flex shrink-0 items-center gap-3">
-                          <span className="animate-text-shimmer text-sm font-semibold text-checkout-primary sm:text-base">Free</span>
+                          <span className="animate-text-shimmer text-base font-semibold text-checkout-primary">Free</span>
                         </div>
                       </div>
                       {free.sublabel && <p className="text-xs text-muted-foreground">{free.sublabel}</p>}
@@ -749,7 +749,7 @@ export function CheckoutDrawer({
                             {inr(selectedPack.mrp)}
                           </span>
                         )}
-                        <span className="text-item-title text-foreground">
+                        <span className="text-base font-semibold text-foreground">
                           {inr(selectedPack.price)}
                         </span>
                       </div>
@@ -918,36 +918,36 @@ export function CheckoutDrawer({
                 {/* MRP down to the Sub total, one discount a line: the item
                     rows above already show each price after all of them. */}
                 <BillRow label="Item total (MRP)">
-                  <span className="text-meta text-foreground">{inr(itemsMrp)}</span>
+                  <span className="text-sm text-foreground">{inr(itemsMrp)}</span>
                 </BillRow>
 
                 {itemsMrp > itemsNet && (
                   <BillRow label="Discount on MRP">
-                    <span className="text-meta text-checkout-primary">-{inr(itemsMrp - itemsNet)}</span>
+                    <span className="text-sm text-checkout-primary">-{inr(itemsMrp - itemsNet)}</span>
                   </BillRow>
                 )}
 
                 {proration && (
                   <BillRow label={proration.label}>
-                    <span className="text-meta text-checkout-primary">-{inr(prorationCredit)}</span>
+                    <span className="text-sm text-checkout-primary">-{inr(prorationCredit)}</span>
                   </BillRow>
                 )}
 
                 {/* Sentence case: the coupon's name starts the row. */}
                 {appliedCoupon && (
                   <BillRow label={couponName.charAt(0).toUpperCase() + couponName.slice(1)}>
-                    <span className="text-meta text-checkout-primary">-{inr(couponDiscount)}</span>
+                    <span className="text-sm text-checkout-primary">-{inr(couponDiscount)}</span>
                   </BillRow>
                 )}
 
                 <Separator />
 
                 <BillRow label="Sub total">
-                  <span className="text-item-title text-foreground">{inr(subtotal)}</span>
+                  <span className="text-base font-semibold text-foreground">{inr(subtotal)}</span>
                 </BillRow>
 
                 <BillRow label="GST (18%)">
-                  <span className="text-meta text-foreground">{inr(gst)}</span>
+                  <span className="text-sm text-foreground">{inr(gst)}</span>
                 </BillRow>
 
                 {expanded === "gstin" ? (
@@ -968,7 +968,7 @@ export function CheckoutDrawer({
                   </GstinCard>
                 ) : gstin ? (
                   <div className="flex items-center gap-2">
-                    <span className="text-meta text-foreground">GSTIN: {gstin}</span>
+                    <span className="text-sm text-foreground">GSTIN: {gstin}</span>
                     <Button
                       variant="ghost"
                       size="icon-sm"
@@ -988,7 +988,7 @@ export function CheckoutDrawer({
                       setGstinInput("")
                       setExpanded("gstin")
                     }}
-                    className="self-start text-xs text-info underline underline-offset-2 sm:text-sm"
+                    className="self-start text-sm text-info underline underline-offset-2"
                   >
                     Add GSTIN number
                   </button>
@@ -1008,10 +1008,10 @@ export function CheckoutDrawer({
           {!nothingToPay && (
           <div className="flex items-center justify-between gap-3">
             <span className="flex items-center gap-2">
-              <span className="text-sm text-foreground sm:text-base">Total</span>
-              <span className="text-2xs text-muted-foreground sm:text-xs">(Inc tax)</span>
+              <span className="text-base text-foreground">Total</span>
+              <span className="text-xs text-muted-foreground">(Inc tax)</span>
             </span>
-            <span className="text-amount-total text-foreground">{inr(total)}</span>
+            <span className="text-2xl font-semibold text-foreground">{inr(total)}</span>
           </div>
           )}
           {isSubscription ? (
@@ -1036,8 +1036,7 @@ export function CheckoutDrawer({
                     >
                       <div className="flex flex-col gap-2">
                         {/* Name only: the badges below carry the marks. */}
-                        {/* 12 on phones so "Card (credit/debit)" fits one line (user call, 2026-11-04). */}
-                        <span className="text-xs font-semibold text-foreground sm:text-sm">{label}</span>
+                        <span className="text-sm font-semibold text-foreground">{label}</span>
                         {/* Reversed in the DOM, shown left to right: each badge
                             sits over the one to its right, so no logo is
                             covered at its end (Paytm's wordmark). */}

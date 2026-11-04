@@ -105,7 +105,7 @@ function WizardQuestion({ eyebrow, title, description, className, ...props }: Wi
       {eyebrow && <div className="flex flex-wrap items-center gap-2">{eyebrow}</div>}
       {/* Calm by default: a 20px question over 14px help. The answers below
           are the focus, not the heading. */}
-      <h1 className="text-page-title text-balance text-foreground sm:text-h4">
+      <h1 className="text-h4 text-balance text-foreground">
         {typing && typeof title === "string" ? <TypedTitle text={title} /> : title}
       </h1>
       {description && <p className="text-body-sm text-pretty text-muted-foreground">{description}</p>}
@@ -129,7 +129,7 @@ function StepIntro({ art, step, title, description, children, className, ...prop
       {art && <div className="flex justify-center">{art}</div>}
       <div className="flex flex-col gap-2">
         <span className="text-xs font-semibold text-muted-foreground">{step}</span>
-        <h1 className="text-page-title text-balance text-foreground sm:text-h3">{title}</h1>
+        <h1 className="text-h3 text-balance text-foreground">{title}</h1>
         <p className="text-body-sm text-pretty text-muted-foreground">{description}</p>
       </div>
       {children}

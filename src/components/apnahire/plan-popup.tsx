@@ -76,7 +76,7 @@ export function PlanPopup({
 
 export function PopupTitle({ className, children }: { className?: string; children: React.ReactNode }) {
   const Title = React.useContext(MobileContext) ? SheetTitle : DialogTitle
-  return <Title className={cn("text-page-title text-foreground sm:text-h4", className)}>{children}</Title>
+  return <Title className={cn("text-h4 text-foreground", className)}>{children}</Title>
 }
 
 export function PopupDescription({ className, children }: { className?: string; children: React.ReactNode }) {

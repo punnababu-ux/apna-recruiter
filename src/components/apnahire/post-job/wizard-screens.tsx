@@ -1133,7 +1133,7 @@ function Salary(ctx: ScreenCtx) {
             invalid={err ? "max" : null}
           />
           {err && (
-            <p role="alert" className="text-label text-destructive">
+            <p role="alert" className="text-sm font-medium text-destructive">
               {err}
             </p>
           )}
@@ -1486,7 +1486,7 @@ function Description(ctx: ScreenCtx) {
       </Field>
       {n > 0 && (
         <div className="flex flex-col gap-2">
-          <span className="text-label text-foreground">Rewrite with AI</span>
+          <span className="text-sm font-medium text-foreground">Rewrite with AI</span>
           <PromptInput
             aria-label="How should we rewrite it?"
             value={instruction}
@@ -1685,7 +1685,7 @@ function Review(ctx: ScreenCtx) {
       </div>
 
       <div className="flex flex-col gap-2">
-        <span className="flex items-center gap-2 text-label text-foreground">
+        <span className="flex items-center gap-2 text-sm font-medium text-foreground">
           <Sparkles className="size-4" aria-hidden /> Ask AI to change something
         </span>
         <PromptInput

@@ -76,7 +76,7 @@ export function DatabaseCreditBundles({
       <div className="flex flex-col gap-4 md:hidden">
         <div className="flex items-center gap-2">
           {/* text-h4: the size of the other tabs' headings ("Enterprise plans"). */}
-          <h2 className="text-section-title text-checkout-hero-fg sm:text-h4">
+          <h2 className="text-h4 text-checkout-hero-fg">
             Database credit packages
           </h2>
         </div>

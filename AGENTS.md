@@ -888,56 +888,6 @@ cards) and every upsell tile (`OfferChoice`), both checkouts, light and dark
    candidates" (Premium + AI 2x). Subscriptions and apna Unlimited: "Smart
    alerts to candidates". Phone, desktop, explainers, cancel flow alike.
 
-19. **Upsell tile type scale** (user call, 2026-11-04), `OfferChoice`:
-   | Line | Phone | Desktop (from `sm`) |
-   |---|---|---|
-   | Plan name | 12 semibold | 16 semibold |
-   | Price | 16 semibold | 24 semibold |
-   | Struck price | 12 | 14 |
-   | Saving (−%) | 12 semibold | 14 semibold |
-   | Per-unit ("₹546 /credit") | 10 italic | 12 italic |
-   | Validity, database credits, city | 12 | 14 |
-   | CTA label | 14 semibold | 14 semibold |
-   Figma `OfferChoice` (298:418) uses the same styles.
-
-20. **Phone title scale, across the product** (user call, 2026-11-04).
-   | Role | Phone | From `sm` | Class |
-   |---|---|---|---|
-   | Page title (top bar) | 16 semibold | 18 | `text-h6 sm:text-h5` |
-   | Section / panel / tab heading | 14 semibold | panel 16, tab heading 20 | `text-section-title sm:text-h6` / `sm:text-h4` |
-   | Plan name (phone cards, credits in the price slot) | 14 semibold | 16 (`text-plan-name`) | `text-plan-name-compact` |
-   | Price (phone cards and upsell tiles) | 16 semibold | 24 (`text-plan-price`) | `text-plan-price-compact` |
-   | Meta, features, validity | 12 | as before | — |
-   | Section subtitle ("Unlimited job posting flexibility…", "For high-volume hiring…") | 12 | 14 | `text-xs sm:text-sm` |
-   Titles that play the page role on phones take 16 too: wizard question
-   and step intro, `SheetPanelHeader` and sheet titles (Filters),
-   `PopupTitle` and pop-up titles, the payment-success title, OnlyRounds
-   page headers. Section headings take 14: the FAQ band, Manage plan
-   "Billing", the Unlimited tab's "apna Unlimited plans" (wordmark h-3.5).
-   A new phone screen uses these, never `text-h4`/`text-h5` on a phone.
-   `SheetTitle` and `DialogTitle` carry `font-medium`, which beats a preset's
-   weight: with a `text-h*` preset on them, add `font-semibold`.
-
-21. **Role type styles — one class per role** (user call, 2026-11-04). Product
-   code picks a role, never a size + weight by hand. Phone first, desktop
-   from `sm`, built into the class:
-   | Class | Phone → desktop | Use for |
-   |---|---|---|
-   | `text-page-title` | 16 → 18 semibold | top bars, sheet / pop-up titles |
-   | `text-section-title` | 14 semibold (+ `sm:text-h6` / `sm:text-h4`) | panels, tab headings, bands |
-   | `text-item-title` | 14 → 16 semibold | plan names, cart items, card titles |
-   | `text-label` | 14 medium | tabs, chips, links, menu rows |
-   | `text-meta` | 12 → 14 regular | bill rows, secondary lines |
-   | `text-amount` | 16 → 24 semibold | a price on a card |
-   | `text-amount-total` | 20 → 24 semibold | totals, big numbers |
-   Weights: regular = body and meta, medium = things you tap, semibold =
-   titles, prices, emphasis, bold = display text and big metrics only (never
-   below 18px). `SheetTitle` / `DialogTitle` are semibold by default.
-   `npm run lint:tokens` warns on hand-picked title sizes and small bold
-   (`TYPE_LINT_VERBOSE=1` lists them); they become errors once migrated.
-   Migration: pass 1 checkouts + order summary (done), pass 2 rest of
-   apna Hire, pass 3 OnlyRounds and auth.
-
 ## Tax disclaimer — one wording, one component
 
 Under any price, the tax note reads exactly **"\*GST applicable"** and is

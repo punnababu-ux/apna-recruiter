@@ -542,7 +542,7 @@ function PlanFrame({ title, className, frameless, children }: { title: string; c
     <div className={cn("flex flex-col gap-3", !frameless && "rounded-frame surface-glass-dark px-3 pt-4 pb-3", className)}>
       {/* "Active for 15 days" is on each card now, in the strip. */}
       <div className="flex items-center gap-2 px-1.5">
-        <h2 className="flex items-center gap-2 text-section-title leading-6 sm:text-h6 sm:leading-6 whitespace-nowrap text-foreground [&_svg]:size-5 [&_svg]:shrink-0">
+        <h2 className="flex items-center gap-2 text-h6 leading-6 whitespace-nowrap text-foreground [&_svg]:size-5 [&_svg]:shrink-0">
           <BriefcaseBusiness aria-hidden />
           {title}
         </h2>
@@ -607,7 +607,7 @@ function MobileJobPlanRadioGroup({
             // The name left, how long it runs right, small, with the clock
             // the old line above the cards had (user call, 2026-10-30).
             <div className="flex items-center justify-between gap-2 px-1.5">
-              <h2 className="flex items-center gap-2 text-section-title leading-6 sm:text-h6 sm:leading-6 whitespace-nowrap text-foreground [&_svg]:size-5 [&_svg]:shrink-0">
+              <h2 className="flex items-center gap-2 text-h6 leading-6 whitespace-nowrap text-foreground [&_svg]:size-5 [&_svg]:shrink-0">
                 <BriefcaseBusiness aria-hidden />
                 Single job posting
               </h2>
@@ -1173,7 +1173,7 @@ export function JobTypesDialog({
         <div className="flex items-center gap-4 text-left">
           <ValueArt name="job-types" size="xs" />
           <div className="flex flex-col gap-2">
-            <DialogTitle className="text-h4 font-semibold text-foreground">What each job type gets you</DialogTitle>
+            <DialogTitle className="text-h4 text-foreground">What each job type gets you</DialogTitle>
             <DialogDescription className="text-base text-muted-foreground">
               Credits are spent when you post. You can decide the job type later, at posting time.
             </DialogDescription>

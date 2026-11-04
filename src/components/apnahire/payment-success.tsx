@@ -52,7 +52,7 @@ export function PaymentSuccess({
         <CheckCircle2 className="size-14 text-success" aria-hidden />
 
         <div className="flex flex-col items-center gap-1 text-center">
-          <h1 className="text-h6 font-heading font-bold text-foreground sm:text-h3">
+          <h1 className="text-h3 font-heading font-bold text-foreground">
             {postedJob ? "Your job is live" : "Payment successful"}
           </h1>
           {postedJob && (
