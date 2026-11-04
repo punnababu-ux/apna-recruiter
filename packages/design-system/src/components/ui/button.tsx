@@ -133,6 +133,10 @@ const buttonVariants = cva(
         // header surface (data-surface="dark") still gets the white inverted.
         emphasis:
           "bg-cta-emphasis text-cta-emphasis-foreground hover:bg-cta-emphasis-hover active:bg-cta-emphasis-hover in-data-[surface=dark]:bg-cta-inverted in-data-[surface=dark]:text-cta-inverted-foreground in-data-[surface=dark]:hover:bg-cta-inverted-hover in-data-[surface=dark]:active:bg-cta-inverted-hover",
+        /* Solid white, no border: the action on a tinted banner (the plan-ended
+         * RenewalBanner's "Renew now"), where secondary's grey sinks into the tint. */
+        inverted:
+          "bg-cta-inverted text-cta-inverted-foreground hover:bg-cta-inverted-hover hover:shadow-control active:bg-cta-inverted-hover aria-expanded:bg-cta-inverted-hover",
       },
       // Every size pins min-height to its height: a layout class on the
       // button (flex-1 in a column stack) can't squash it to text height.

@@ -200,15 +200,15 @@ export function MobilePlanRow({
           // With Buy now: 12px above (24px under the tab), 16px below, to fit
           // more above the fold on small phones (user call, 2026-11-03).
           cta && (recommended ? "pt-6 pb-4" : "pt-3 pb-4"),
+          // Edges are an inset ring, not a border: they take no room, so every
+          // card keeps the same 16px inset (user call, 2026-11-03).
           selected
             // The selection green is the CTA green (green-700 on dark).
-            ? "border-2 border-cta-primary ring-1 ring-cta-primary/20"
+            ? "ring-2 ring-inset ring-cta-primary"
             : // The Recommended card keeps the desktop cards' blue edge, the
               // colour of its corner tab. Not in the job panel (nested): the
               // tab alone marks it (user call, 2026-10-30).
-              recommended && !nested
-              ? "border-2 border-ribbon-fill"
-              : "border-2 border-transparent",
+              recommended && !nested && "ring-2 ring-inset ring-ribbon-fill",
           className
         )}
       >
@@ -574,7 +574,7 @@ export function MobileUnlimitedCard({
           // The tap answers on the white card, not the dark frame.
           onSelect && "ink press-subtle transition-interactive",
           // Selected as in MobilePlanRow: the CTA green edge.
-          radioMode && (selected ? "border-2 border-cta-primary ring-1 ring-cta-primary/20" : "border-2 border-transparent"),
+          radioMode && selected && "ring-2 ring-inset ring-cta-primary",
           cardClassName
         )}
       >
@@ -614,7 +614,9 @@ export function MobileUnlimitedCard({
         {(note || cardCta) && (
           <div className="flex items-center justify-between gap-3">
             {note && <span className="text-xs italic text-muted-foreground">{note}</span>}
-            {cardCta}
+            {/* A text line's height, as MobilePlanRow's CTA, so the bottom
+                padding matches the plan cards'. */}
+            {cardCta && <div className="-my-1.5 shrink-0">{cardCta}</div>}
           </div>
         )}
       </div>

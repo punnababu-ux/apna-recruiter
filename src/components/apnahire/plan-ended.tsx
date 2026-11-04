@@ -83,7 +83,7 @@ export function PlanEndedBanner({ className, onRenew }: { className?: string; on
       }
       cta={
         // The plans page opens its Unlimited tab in place.
-        <Button variant="secondary" trailingIcon={<ChevronRight />} onClick={onRenew ?? (() => router.push(RENEW_HREF))}>
+        <Button variant="inverted" trailingIcon={<ChevronRight />} onClick={onRenew ?? (() => router.push(RENEW_HREF))}>
           Renew now
         </Button>
       }
