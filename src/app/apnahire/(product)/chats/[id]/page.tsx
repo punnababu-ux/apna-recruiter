@@ -2,7 +2,9 @@
 
 /**
  * /apnahire/chats/[id] — one Apna Chat thread, opened from the inbox. A
- * drill-down: full screen on phones, with its own header (ChatThread).
+ * drill-down: full screen on phones, with its own header (ChatThread); from
+ * md the thread pane beside the list (chats/layout.tsx). Keyed by id, so a
+ * draft never carries over to another chat.
  */
 
 import { use } from "react"
@@ -16,7 +18,7 @@ export default function ChatThreadPage({ params }: { params: Promise<{ id: strin
   const thread = threads.find((t) => t.id === id)
   if (!thread) {
     return (
-      <main className="flex flex-1 items-center justify-center p-6">
+      <main className="flex flex-1 items-center justify-center p-6 md:min-h-0">
         <Empty>
           <EmptyHeader>
             <EmptyMedia variant="icon">
@@ -30,8 +32,8 @@ export default function ChatThreadPage({ params }: { params: Promise<{ id: strin
     )
   }
   return (
-    <main className="flex flex-1 flex-col">
-      <ChatThread thread={thread} />
+    <main className="flex flex-1 flex-col md:min-h-0">
+      <ChatThread key={thread.id} thread={thread} />
     </main>
   )
 }

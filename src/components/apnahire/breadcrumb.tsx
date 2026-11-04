@@ -11,6 +11,7 @@
 import Link from "next/link"
 import { Suspense } from "react"
 import { usePathname } from "next/navigation"
+import { useChats } from "@/hooks/apnahire/use-chats"
 
 import {
   Breadcrumb,
@@ -66,9 +67,12 @@ function Crumbs() {
 
   const section = SECTIONS[sectionKey]
   const sectionLabel = section?.label ?? humanize(sectionKey)
+  // A chat's crumb is the candidate's name, not its id.
+  const { threads } = useChats()
+  const chatName = sectionKey === "chats" ? threads.find((t) => t.id === subKey)?.candidate.name : undefined
 
   if (subKey) {
-    const subLabel = SUB_LABELS[subKey] ?? humanize(subKey)
+    const subLabel = chatName ?? SUB_LABELS[subKey] ?? humanize(subKey)
     return (
       <Breadcrumb>
         <BreadcrumbList>

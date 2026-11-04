@@ -3,7 +3,10 @@
 /**
  * ChatThread — one Apna Chat thread, for one job and one candidate (PRD
  * FR-1). A drill-down: on phones it is the whole screen (no top or bottom
- * bar), so its header is the app bar.
+ * bar), so its header is the app bar. From md it is the right pane of the
+ * chat workspace: it scrolls on its own, the header sticks to the top of the
+ * pane and the composer to its bottom, and Back is hidden (the list is
+ * beside it).
  *
  *   Header    Back · avatar (lg) · name and facts · ⋮ (Not interested), then
  *             the job's nested card (rounded-card-nested, press-subtle)
@@ -147,11 +150,11 @@ export function ChatThread({ thread }: { thread: Thread }) {
   }
 
   return (
-    <div className="chat-wallpaper flex min-h-svh flex-col md:min-h-0 md:flex-1">
-      {/* The app bar on phones; under the 64px top bar from md. */}
-      <header className="sticky top-0 z-sticky flex flex-col gap-3 border-b border-border bg-card px-4 py-3 md:top-16">
+    <div className="chat-wallpaper flex min-h-svh flex-col md:min-h-0 md:flex-1 md:overflow-y-auto">
+      {/* The app bar on phones; the top of the pane from md. */}
+      <header className="sticky top-0 z-sticky flex flex-col gap-3 border-b border-border bg-card px-4 py-3">
         <div className="flex items-center gap-3">
-          <BackButton onClick={back} />
+          <BackButton className="md:hidden" onClick={back} />
           <Avatar size="lg">
             {thread.candidate.photo && <AvatarImage src={thread.candidate.photo} alt={thread.candidate.name} />}
             <AvatarFallback className="bg-accent text-accent-foreground">{thread.candidate.initial}</AvatarFallback>
