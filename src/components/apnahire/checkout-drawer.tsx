@@ -1036,7 +1036,8 @@ export function CheckoutDrawer({
                     >
                       <div className="flex flex-col gap-2">
                         {/* Name only: the badges below carry the marks. */}
-                        <span className="text-sm font-semibold text-foreground">{label}</span>
+                        {/* 12 on phones so "Card (credit/debit)" fits one line (user call, 2026-11-04). */}
+                        <span className="text-xs font-semibold text-foreground sm:text-sm">{label}</span>
                         {/* Reversed in the DOM, shown left to right: each badge
                             sits over the one to its right, so no logo is
                             covered at its end (Paytm's wordmark). */}

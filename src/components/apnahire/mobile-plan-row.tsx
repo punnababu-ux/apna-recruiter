@@ -224,13 +224,18 @@ export function MobilePlanRow({
           <>
             {/* Name and meta 4px apart: the price's taller line already adds room (user call, 2026-11-03). */}
             <div className="flex flex-col gap-1">
+              {/* Name and meta share the left column, so a taller price
+                  column (the Jan 1 price line) never pushes the meta down. */}
               <div className="flex items-start justify-between gap-3">
-                <span className="min-w-0 text-plan-name text-foreground">{title}</span>
+                {/* 8px: the gap the price's taller row used to make, kept now
+                    the meta no longer sits under that row. */}
+                <div className="flex min-w-0 flex-col gap-2">
+                  <span className="text-plan-name text-foreground">{title}</span>
+                  {showLine && line && meta && <div className="flex flex-col items-start gap-2 [&>*]:whitespace-nowrap">{meta}</div>}
+                </div>
                 <div className="shrink-0">{priceBlock}</div>
               </div>
-              {showLine && line ? (
-                meta && <div className="flex flex-col items-start gap-2 [&>*]:whitespace-nowrap">{meta}</div>
-              ) : (
+              {showLine && line ? null : (
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex min-w-0 flex-col items-start gap-2 [&>*]:whitespace-nowrap">{meta}</div>
                   <div className="shrink-0 self-end">{cta}</div>

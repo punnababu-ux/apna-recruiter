@@ -138,14 +138,14 @@ export function OfferDialog({
         />
         <Title
           className={cn(
-            // "lg" (the slot upgrade) carries the most below it, so its
-            // eyebrow steps down on phones to keep the sheet short.
-            "font-body font-regular sm:text-xl",
-            size === "lg" ? "text-base" : "text-lg",
+            // Every upsell and offer pop-up: 14 on phones, 20 from sm,
+            // regular (user call, 2026-11-04).
+            "text-sm sm:text-xl",
             dark ? "text-surface-inverted-fg" : "text-muted-foreground"
           )}
         >
-          {eyebrow}
+          {/* The weight sits on the text: Sheet/DialogTitle are semibold by default. */}
+          <span className="font-body font-regular">{eyebrow}</span>
         </Title>
         {headline && (
           <p className={cn("text-2xl font-semibold", size === "md" && "sm:text-3xl")}>{headline}</p>
