@@ -493,3 +493,25 @@ built only from instances of the components above. Screen list = artifact sectio
 - Setting `fontName` after `textStyleId` detaches the style — set the style last.
 - `resize()` resets auto-layout sizing to FIXED; re-set `primaryAxisSizingMode='AUTO'` after.
 - Figma session id used so far: e132f763-1e2f-4ae9-9669-a4f684175e9f (create a new one if expired).
+
+## Round 3 — plan tabs (2026-11-04)
+
+Components only: SelfCheckoutTabs/phone (305:111), DockedPlanTabs/desktop (396:316), SelfCheckoutTabs/desktop (331:53).
+- Selected: green `checkout-primary`, text and icon. Phone/docked 14 bold (Label/MD Bold), desktop hero 18 semibold (Title/LG).
+- Not selected, phone + docked: 14 medium, text, icon and logo all `foreground` at 60%.
+- Not selected, desktop hero: titles, icons, logo and subtitles all `surface-checkout-hero-fg-secondary` (gray-700), as code renders.
+- Gotcha: LogoApnaUnlimited (126:5) carried fills on its vector-network regions, so instance fill overrides did nothing. Regions now inherit the node fill.
+- New screens: D-P1 Exit offer · desktop 484:22 (section 7, beside P1; dialog 448×333 as code:
+  header pad 24/24/28, clay 56, eyebrow Body/XL, title H3, validity Body/MD, body pad 24 gap 24),
+  S1 Payment successful · phone 484:90 (section 10, beside S1 desktop; card 358 wide).
+- Payment failure: no screen in code. A failed payment returns to the order summary
+  (handlePaymentFailure in self-checkout.tsx / job-plan-selection.tsx). Not drawn — awaiting Punna.
+- Payment failure DESIGNED (Punna, 2026-11-05; not in code yet): component PaymentFailed 486:13
+  (Checkout shell, beside PaymentSuccess): AlertCircle 56 destructive, "Payment failed",
+  "No money was taken. If any was debited, we refund it in 5–7 days.", Order details,
+  Change method (outline) + Try again (green). Screens S2 desktop 486:69, S2 phone 486:134
+  (section 10, under the banners).
+- PaymentFailed is now in code (payment-success.tsx, 2026-11-05): both checkouts show it when the
+  gateway fails; Try again reopens the payment step, Change method reopens the order summary.
+  Buttons stack on phones (Try again on top) because "Change method" doesn't fit half a 320px
+  card; Figma phone S2 486:134 matches.

@@ -70,7 +70,7 @@ import {
   type SubscriptionPaymentMethod,
 } from "@/components/apnahire/checkout-drawer"
 import { PaymentModal } from "@/components/apnahire/payment-modal"
-import { PaymentSuccess } from "@/components/apnahire/payment-success"
+import { PaymentFailed, PaymentSuccess } from "@/components/apnahire/payment-success"
 import { startSubscription, upgradeSubscription } from "@/hooks/use-job-slots"
 import { usePlanChange, useChoosePlan } from "@/components/apnahire/plan-change"
 import { PlanEndedBanner } from "@/components/apnahire/plan-ended"
@@ -524,10 +524,21 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
     })
   }
 
+  const [paymentFailed, setPaymentFailed] = React.useState(false)
   const handlePaymentFailure = () => {
-    // Mocked failure — return to the drawer so the user can retry.
     setPaymentOpen(false)
-    setDrawerOpen(true)
+    setPaymentFailed(true)
+  }
+
+  if (paymentFailed) {
+    return (
+      <PaymentFailed
+        lines={checkoutItem ? [checkoutItem] : []}
+        total={paymentAmount}
+        onRetry={() => { setPaymentFailed(false); setPaymentOpen(true) }}
+        onChangeMethod={() => { setPaymentFailed(false); setDrawerOpen(true) }}
+      />
+    )
   }
 
   if (order) {
