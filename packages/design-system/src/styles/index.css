@@ -517,7 +517,7 @@
   font-size:       var(--text-base);
   line-height:     var(--line-height-snug);
   font-weight:     var(--font-weight-semibold);
-  @variant sm { font-size: var(--text-lg); }
+  @media (width >= 40rem) { font-size: var(--text-lg); }
 }
 
 @utility text-item-title {
@@ -525,7 +525,7 @@
   font-size:       var(--text-sm);
   line-height:     calc(var(--spacing) * 5);
   font-weight:     var(--font-weight-semibold);
-  @variant sm { font-size: var(--text-base); }
+  @media (width >= 40rem) { font-size: var(--text-base); }
 }
 
 @utility text-label {
@@ -540,7 +540,7 @@
   font-size:       var(--text-xs);
   line-height:     calc(var(--spacing) * 4);
   font-weight:     var(--font-weight-regular);
-  @variant sm { font-size: var(--text-sm); line-height: calc(var(--spacing) * 5); }
+  @media (width >= 40rem) { font-size: var(--text-sm); line-height: calc(var(--spacing) * 5); }
 }
 
 @utility text-amount {
@@ -548,7 +548,7 @@
   font-size:       var(--text-base);
   line-height:     var(--line-height-tight);
   font-weight:     var(--font-weight-semibold);
-  @variant sm { font-size: var(--text-2xl); }
+  @media (width >= 40rem) { font-size: var(--text-2xl); }
 }
 
 @utility text-amount-total {
@@ -556,7 +556,7 @@
   font-size:       var(--text-xl);
   line-height:     var(--line-height-tight);
   font-weight:     var(--font-weight-semibold);
-  @variant sm { font-size: var(--text-2xl); }
+  @media (width >= 40rem) { font-size: var(--text-2xl); }
 }
 
 @utility text-h6 {
