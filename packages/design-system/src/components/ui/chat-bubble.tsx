@@ -11,6 +11,7 @@
  *   <ChatBubble variant="incoming|outgoing|assistant"
  *               time="10:42" status="sent|read"   // status: outgoing/assistant
  *               label="Apna Assistant for …"      // assistant sender line, Sparkles icon
+ *               media={<img src alt width height />}   // photo above the text
  *               groupPosition="single|first|middle|last">text</ChatBubble>
  *   <ChatChoice time="10:41">Interested</ChatChoice>   candidate quick reply
  *   <ChatNotice icon={<ShieldAlert />} tone="default|warning">…</ChatNotice>
@@ -34,6 +35,17 @@
  * Radius: bubbles use `rounded-bubble`. ChatNotice uses `rounded-surface`:
  * it is a small inline notice, not a card (Card corners rule covers cards on
  * a page or nested in one), so the mid surface role fits, not card/card-nested.
+ *
+ * Media: `media` (an <img> with width and height set, so the bubble does not
+ * jump when it loads) sits above the text, WhatsApp style: the photo is inset
+ * 4px from the bubble edge (the bubble's padding less the negative margin) and
+ * runs full width. Its corners are `rounded-field`: the bubble's own radius
+ * minus the inset would be near `rounded-field` already, and field is the
+ * smaller role the grouped corners use, so the photo nests inside the bubble
+ * without a corner clash. The photo is capped at max-h-80 and cropped
+ * (object-cover). The bubble keeps its border or shadow-control edge, so an
+ * image bubble stays visible on the wallpaper; the time stays under the photo,
+ * at the end, on the bubble's own surface. Give the <img> a meaningful alt.
  *
  * A11y: ChatMessageList is role="log" aria-live="polite". Ticks are
  * decorative; the status is announced via a visually-hidden "Sent"/"Read".
@@ -108,6 +120,7 @@ function ChatBubble({
   time,
   status,
   label,
+  media,
   groupPosition = "single",
   className,
   children,
@@ -119,6 +132,8 @@ function ChatBubble({
   status?: "sent" | "read"
   /** Assistant sender line, shown above the text with a Sparkles icon. */
   label?: React.ReactNode
+  /** A photo above the text: an <img> with width, height and alt. */
+  media?: React.ReactNode
   groupPosition?: ChatGroupPosition
   children?: React.ReactNode
 }) {
@@ -141,7 +156,15 @@ function ChatBubble({
           <span>{label}</span>
         </span>
       )}
-      <span className="whitespace-pre-wrap break-words">{children}</span>
+      {media && (
+        <div
+          data-slot="chat-bubble-media"
+          className="-mx-2 -mt-1 mb-1 overflow-hidden rounded-field [&>img]:block [&>img]:h-auto [&>img]:max-h-80 [&>img]:w-full [&>img]:object-cover"
+        >
+          {media}
+        </div>
+      )}
+      {children && <span className="whitespace-pre-wrap break-words">{children}</span>}
       {(time || showStatus) && (
         <span
           data-slot="chat-bubble-meta"

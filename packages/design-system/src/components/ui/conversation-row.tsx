@@ -7,6 +7,7 @@
  *   <ConversationList label="Conversations">
  *     <ConversationRow
  *       name="Ravi Kumar" initial="R"
+ *       avatarSrc="/images/chats/ravi-kumar.jpg"   // optional photo; the initial is the fallback
  *       subtitle="Delivery Executive · Super premium"
  *       preview="Can I join from Monday?" time="10:42"
  *       unread unreadCount={2}
@@ -33,13 +34,15 @@ import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 
 import { cn } from "@/lib/utils"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 
 interface ConversationRowProps extends useRender.ComponentProps<"a"> {
   name: string
-  /** Avatar fallback letter. */
+  /** Avatar fallback letter, shown while there is no photo or it fails to load. */
   initial: string
+  /** Photo for the avatar (alt = name). */
+  avatarSrc?: string
   /** e.g. the job and plan: "Delivery Executive · Super premium". */
   subtitle?: string
   /** Last message, clamped to one line. */
@@ -57,6 +60,7 @@ interface ConversationRowProps extends useRender.ComponentProps<"a"> {
 function ConversationRow({
   name,
   initial,
+  avatarSrc,
   subtitle,
   preview,
   time,
@@ -83,6 +87,7 @@ function ConversationRow({
         children: (
           <>
             <Avatar size="lg">
+              {avatarSrc && <AvatarImage src={avatarSrc} alt={name} />}
               <AvatarFallback className="bg-accent text-accent-foreground">{initial}</AvatarFallback>
             </Avatar>
             <div className="flex min-w-0 flex-1 flex-col gap-0.5">

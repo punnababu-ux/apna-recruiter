@@ -60,6 +60,8 @@ export interface ChatMessage {
   quickReply?: boolean
   /** Recruiter messages: the candidate has read it. */
   read?: boolean
+  /** A photo sent in the message, shown above the text. */
+  image?: { src: string; alt: string; width: number; height: number }
 }
 
 export interface ChatJob {
@@ -75,7 +77,7 @@ export interface ChatJob {
 export interface ChatThread {
   id: string
   job: ChatJob
-  candidate: { name: string; initial: string; meta: string }
+  candidate: { name: string; initial: string; meta: string; photo?: string }
   status: ThreadStatus
   closedReason?: ClosedReason
   /** Relative, as shown in the inbox: "2m". */
@@ -132,11 +134,11 @@ export const MOCK_THREADS: ChatThread[] = [
   {
     id: "t-ravi",
     job: DELIVERY,
-    candidate: { name: "Ravi Kumar", initial: "R", meta: "M, 24 yrs · 2 yrs experience" },
+    candidate: { name: "Ravi Kumar", initial: "R", meta: "M, 24 yrs · 2 yrs experience", photo: "/images/chats/ravi-kumar.jpg" },
     status: "urgent",
     lastAt: "2m",
     unread: true,
-    summary: "Ravi is interested. He has a bike and a driving licence and asks about the petrol allowance.",
+    summary: "Ravi is interested. He has a bike (he sent a photo) and a driving licence and asks about the petrol allowance.",
     suggestedReplies: ["Yes, we pay ₹2,000 each month for petrol.", "Can you come for an interview tomorrow?"],
     messages: [
       {
@@ -147,12 +149,19 @@ export const MOCK_THREADS: ChatThread[] = [
       },
       { id: "m2", from: "candidate", text: "Interested", time: "10:40 am", quickReply: true },
       { id: "m3", from: "candidate", text: "Yes, I have both. Is there a petrol allowance?", time: "10:41 am" },
+      {
+        id: "m3b",
+        from: "candidate",
+        text: "This is my bike.",
+        time: "10:42 am",
+        image: { src: "/images/chats/bike.jpg", alt: "Ravi's motorbike, parked on a street", width: 600, height: 900 },
+      },
     ],
   },
   {
     id: "t-amit",
     job: BACK_OFFICE,
-    candidate: { name: "Amit Patil", initial: "A", meta: "M, 27 yrs · 3 yrs experience" },
+    candidate: { name: "Amit Patil", initial: "A", meta: "M, 27 yrs · 3 yrs experience", photo: "/images/chats/amit-patil.jpg" },
     status: "urgent",
     lastAt: "18m",
     unread: true,
@@ -172,7 +181,7 @@ export const MOCK_THREADS: ChatThread[] = [
   {
     id: "t-sana",
     job: TELECALLER,
-    candidate: { name: "Sana Mirza", initial: "S", meta: "F, 22 yrs · Fresher" },
+    candidate: { name: "Sana Mirza", initial: "S", meta: "F, 22 yrs · Fresher", photo: "/images/chats/sana-mirza.jpg" },
     status: "ai-screening",
     lastAt: "35m",
     unread: false,
@@ -196,7 +205,7 @@ export const MOCK_THREADS: ChatThread[] = [
   {
     id: "t-meera",
     job: TELECALLER,
-    candidate: { name: "Meera Nair", initial: "M", meta: "F, 25 yrs · 1 yr experience" },
+    candidate: { name: "Meera Nair", initial: "M", meta: "F, 25 yrs · 1 yr experience", photo: "/images/chats/meera-nair.jpg" },
     status: "shortlisted",
     lastAt: "1h",
     unread: true,
@@ -216,7 +225,7 @@ export const MOCK_THREADS: ChatThread[] = [
   {
     id: "t-kiran",
     job: DELIVERY,
-    candidate: { name: "Kiran Shinde", initial: "K", meta: "M, 29 yrs · 4 yrs experience" },
+    candidate: { name: "Kiran Shinde", initial: "K", meta: "M, 29 yrs · 4 yrs experience", photo: "/images/chats/kiran-shinde.jpg" },
     status: "interview",
     lastAt: "Yesterday",
     unread: false,
@@ -235,7 +244,7 @@ export const MOCK_THREADS: ChatThread[] = [
   {
     id: "t-imran",
     job: BACK_OFFICE,
-    candidate: { name: "Imran Shaikh", initial: "I", meta: "M, 31 yrs · 6 yrs experience" },
+    candidate: { name: "Imran Shaikh", initial: "I", meta: "M, 31 yrs · 6 yrs experience", photo: "/images/chats/imran-shaikh.jpg" },
     status: "closed",
     closedReason: "not-interested",
     lastAt: "Mon",
@@ -254,7 +263,7 @@ export const MOCK_THREADS: ChatThread[] = [
   {
     id: "t-pooja",
     job: TELECALLER,
-    candidate: { name: "Pooja Rao", initial: "P", meta: "F, 23 yrs · Fresher" },
+    candidate: { name: "Pooja Rao", initial: "P", meta: "F, 23 yrs · Fresher", photo: "/images/chats/pooja-rao.jpg" },
     status: "closed",
     closedReason: "no-reply",
     lastAt: "Sun",

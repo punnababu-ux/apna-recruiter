@@ -269,6 +269,7 @@ export function ChatInbox() {
                 key={t.id}
                 name={t.candidate.name}
                 initial={t.candidate.initial}
+                avatarSrc={t.candidate.photo}
                 subtitle={`${t.job.title} · ${TIER_LABEL[t.job.tier]}`}
                 preview={preview(t)}
                 time={t.lastAt}

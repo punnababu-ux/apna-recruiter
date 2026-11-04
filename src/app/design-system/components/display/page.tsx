@@ -201,6 +201,16 @@ export default function DisplayComponentsPage() {
           <ChatBubble variant="incoming" groupPosition="last" time="10:42">
             And what are the shift timings?
           </ChatBubble>
+          <ChatBubble
+            variant="incoming"
+            time="10:43"
+            media={
+              // eslint-disable-next-line @next/next/no-img-element -- demo photo, size known
+              <img src="/images/chats/bike.jpg" alt="An orange motorbike parked on a street" width={600} height={900} loading="lazy" />
+            }
+          >
+            This is my bike.
+          </ChatBubble>
           <ChatBubble variant="outgoing" time="10:44" status="read">
             Yes, Pune. Shifts are 9am to 6pm.
           </ChatBubble>
@@ -216,6 +226,7 @@ export default function DisplayComponentsPage() {
           <ConversationRow
             name="Ravi Kumar"
             initial="R"
+            avatarSrc="/images/chats/ravi-kumar.jpg"
             subtitle="Delivery Executive · Super premium"
             preview="Can you share the joining date?"
             time="10:42"

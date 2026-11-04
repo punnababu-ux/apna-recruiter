@@ -35,6 +35,7 @@ import Link from "next/link"
 import {
   Avatar,
   AvatarFallback,
+  AvatarImage,
   BackButton,
   Badge,
   Button,
@@ -103,6 +104,12 @@ function Messages({ messages }: { messages: ChatMessage[] }) {
                 status={m.from === "candidate" ? undefined : m.read ? "read" : "sent"}
                 label={m.from === "ai" ? AI_LABEL : undefined}
                 groupPosition={positionOf(messages, i)}
+                media={
+                  m.image && (
+                    // eslint-disable-next-line @next/next/no-img-element -- mock photo, size known
+                    <img src={m.image.src} alt={m.image.alt} width={m.image.width} height={m.image.height} loading="lazy" />
+                  )
+                }
               >
                 {m.text}
               </ChatBubble>
@@ -146,6 +153,7 @@ export function ChatThread({ thread }: { thread: Thread }) {
         <div className="flex items-center gap-3">
           <BackButton onClick={back} />
           <Avatar size="lg">
+            {thread.candidate.photo && <AvatarImage src={thread.candidate.photo} alt={thread.candidate.name} />}
             <AvatarFallback className="bg-accent text-accent-foreground">{thread.candidate.initial}</AvatarFallback>
           </Avatar>
           <div className="flex min-w-0 flex-1 flex-col">
