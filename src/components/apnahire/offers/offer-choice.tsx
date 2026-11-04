@@ -14,6 +14,10 @@
  * it reads in full ("Continue with 22 credits", "Get 47 credits for
  * ₹19,999"); on phones, where a tile is ~160px wide, it shortens to
  * `ctaShortLabel` ("Continue", "Get 47 credits") — the price is right above.
+  *
+ * Type scale (phone → from sm): name 12 → 16 semibold · price 20 → 24 ·
+ * struck price 12 → 14 · saving 12 → 14 semibold · per-unit 10 → 12 italic ·
+ * validity, database credits, city 12 → 14. Figma OfferChoice matches.
  */
 
 import * as React from "react"

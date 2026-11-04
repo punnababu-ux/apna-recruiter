@@ -386,7 +386,11 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
         what: "The shell and two tiles every upsell and exit pop-up share.",
         live: "/design-system/product/pop-ups",
         where: "All upsells, exit offer, slots full",
-        rules: ["New upsell = OfferDialog + OfferChoice. Never a new dialog layout.", "Tiles compare line for line."],
+        rules: [
+          "New upsell = OfferDialog + OfferChoice. Never a new dialog layout.",
+          "Tiles compare line for line.",
+          "Type scale, phone → desktop: name 12 → 16 semibold, price 20 → 24 semibold, struck price 12 → 14, saving 12 → 14 semibold, per-unit 10 → 12 italic, validity / database credits / city 12 → 14 (AGENTS.md rule 19).",
+        ],
       },
       {
         name: "Upsell dialogs",
