@@ -60,6 +60,7 @@ import {
   Sparkles,
   Star,
 } from "@apna/design-system"
+import { BAND, SUBROW } from "@/components/apnahire/chats/chat-bands"
 import { SORT_OPTIONS, sortThreads, type ChatSort } from "@/components/apnahire/chats/chat-sort"
 import { useFlushHeader } from "@/hooks/use-flush-header"
 import { useChats } from "@/hooks/apnahire/use-chats"
@@ -154,6 +155,8 @@ export function ChatInbox({ activeId = null, className }: { activeId?: string | 
   const [jobIds, setJobIds] = React.useState<string[]>([])
   const [sort, setSort] = React.useState<ChatSort>("urgent-first")
   const [searchQuery, setSearchQuery] = React.useState("")
+  // From md the search is an icon in the band; its field opens in the sub-row.
+  const [searchOpen, setSearchOpen] = React.useState(false)
   const query = searchQuery.trim()
   const filterCount = statuses.length + jobIds.length
 
@@ -182,18 +185,18 @@ export function ChatInbox({ activeId = null, className }: { activeId?: string | 
             variant="outline"
             size="icon"
             aria-label={filterCount ? `Filters, ${filterCount} on` : "Filters"}
-            className="relative shrink-0 md:w-auto md:px-3"
+            className="relative shrink-0 xl:w-auto xl:px-3"
           />
         }
       >
         <Filter aria-hidden />
-        <span className="hidden md:inline">Filters</span>
+        <span className="hidden xl:inline">Filters</span>
         {filterCount > 0 && (
           <>
-            <Badge variant="default" className="hidden h-5 min-w-5 px-1.5 text-2xs font-semibold md:inline-flex">
+            <Badge variant="default" className="hidden h-5 min-w-5 px-1.5 text-2xs font-semibold xl:inline-flex">
               {filterCount}
             </Badge>
-            <Badge variant="count" size="dot" className="absolute top-1 right-1 ring-2 ring-card md:hidden" />
+            <Badge variant="count" size="dot" className="absolute top-1 right-1 ring-2 ring-card xl:hidden" />
           </>
         )}
       </DropdownMenuTrigger>
@@ -262,7 +265,7 @@ export function ChatInbox({ activeId = null, className }: { activeId?: string | 
     <div
       data-slot="chat-inbox"
       className={cn(
-        "flex flex-1 flex-col md:min-h-0 md:w-96 md:flex-none md:shrink-0 md:border-r md:border-border md:bg-card",
+        "flex flex-1 flex-col md:min-h-0 md:w-72 md:flex-none xl:w-80 md:shrink-0 md:border-r md:border-border md:bg-card",
         className
       )}
     >
@@ -271,12 +274,13 @@ export function ChatInbox({ activeId = null, className }: { activeId?: string | 
           header from md, where only the rows scroll. */}
       <section
         className={cn(
-          "sticky top-16 z-docked flex items-center gap-2 border-b bg-card px-4 py-2 transition-interactive md:static md:shrink-0 md:border-border",
+          "sticky top-16 z-docked flex items-center gap-2 border-b bg-card px-4 py-2 transition-interactive md:static md:py-0",
+          BAND,
           scrolled ? "border-border" : "border-transparent"
         )}
       >
-        <h2 className="text-h5 mr-1 hidden shrink-0 md:block">Chats</h2>
-        <div className="relative min-w-0 flex-1">
+        <h2 className="text-h5 mr-auto hidden shrink-0 md:block">Fast Track</h2>
+        <div className="relative min-w-0 flex-1 md:hidden">
           <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
           <Input
             type="search"
@@ -288,9 +292,51 @@ export function ChatInbox({ activeId = null, className }: { activeId?: string | 
             className="bg-card pl-9"
           />
         </div>
+        <Button
+          variant="outline"
+          size="icon"
+          aria-label={searchOpen ? "Close search" : "Search"}
+          aria-expanded={searchOpen}
+          className="hidden shrink-0 md:inline-flex"
+          onClick={() => {
+            if (searchOpen) setSearchQuery("")
+            setSearchOpen((o) => !o)
+          }}
+        >
+          <Search aria-hidden />
+        </Button>
         {filtersMenu}
         {sortMenu}
       </section>
+
+      {/* The sub-row under the band (md+): the search field when open, else
+          how many are shown and the sort. Same height as the thread's job
+          row and the profile's match row. */}
+      <div className={cn("hidden gap-2", SUBROW)}>
+        {searchOpen ? (
+          <div className="relative min-w-0 flex-1">
+            <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
+            <Input
+              type="search"
+              aria-label="Search chats"
+              placeholder="Search by name, job or message"
+              autoFocus
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="bg-card pl-9"
+            />
+          </div>
+        ) : (
+          <>
+            <span className="text-body-sm text-foreground">
+              {shown.length} {shown.length === 1 ? "candidate" : "candidates"}
+            </span>
+            <span className="text-caption ml-auto text-muted-foreground">
+              {SORT_OPTIONS.find((o) => o.value === sort)?.label}
+            </span>
+          </>
+        )}
+      </div>
 
       <section className="bg-card md:min-h-0 md:flex-1 md:overflow-y-auto">
         {shown.length === 0 ? (
@@ -312,7 +358,7 @@ export function ChatInbox({ activeId = null, className }: { activeId?: string | 
             </EmptyHeader>
           </Empty>
         ) : (
-          <ConversationList label="Chats">
+          <ConversationList label="Fast Track">
             {shown.map((t) => (
               <ConversationRow
                 key={t.id}

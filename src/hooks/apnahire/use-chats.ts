@@ -32,6 +32,20 @@ export function useChats() {
     markRead: React.useCallback((id: string) => {
       set(state.map((t) => (t.id === id && t.unread ? { ...t, unread: false } : t)))
     }, []),
+    /** A private note on the candidate. Newest first. */
+    addNote: React.useCallback((id: string, text: string) => {
+      const clean = text.trim()
+      if (!clean) return
+      set(
+        state.map((t) =>
+          t.id === id ? { ...t, notes: [{ id: `n${Date.now()}`, text: clean, at: "Just now" }, ...t.notes] } : t
+        )
+      )
+    }, []),
+    /** Mock: spends a database credit and opens the resume. */
+    unlockResume: React.useCallback((id: string) => {
+      set(state.map((t) => (t.id === id ? { ...t, resumeUnlocked: true } : t)))
+    }, []),
     /** The recruiter replies: the thread is no longer urgent, and the AI
      *  stops (PRD: the recruiter takes over). */
     reply: React.useCallback((id: string, text: string) => {

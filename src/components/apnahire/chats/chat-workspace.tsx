@@ -6,8 +6,15 @@
  * stays mounted (and keeps its scroll, search and filters) while the thread
  * beside it changes.
  *
- *   Desktop (md+)  Two panes under the 64px top bar: the list (w-96) and the
- *                  page (the thread, or the "Pick a chat" Empty). The root is
+ *   Header band    From md all three panes share one h-16 band and one h-14
+ *                  sub-row (chat-bands.ts), so the bars read as one line.
+ *
+ *   Desktop (md+)  Two panes under the 64px top bar: the list (w-72, w-80
+ *                  from xl) and the page (the thread, or the "Pick a chat"
+ *                  Empty). From xl a third pane, the candidate profile
+ *                  (CandidateProfilePanel, w-80), sits at the right for the
+ *                  open chat, under a "Candidate" band; below xl the thread header's Profile button
+ *                  opens it in a side panel. The root is
  *                  absolutely placed in the shell's inset (`top-16 bottom-0`),
  *                  so it is exactly the viewport minus the top bar with no
  *                  calc or arbitrary value; each pane scrolls on its own.
@@ -17,7 +24,10 @@
 
 import * as React from "react"
 import { usePathname } from "next/navigation"
+import { CandidateProfilePanel } from "@/components/apnahire/chats/candidate-profile-panel"
+import { BAND } from "@/components/apnahire/chats/chat-bands"
 import { ChatInbox } from "@/components/apnahire/chats/chat-inbox"
+import { useChats } from "@/hooks/apnahire/use-chats"
 import { cn } from "@/lib/utils"
 
 /** The open chat's id from the path, or null on the list. */
@@ -28,6 +38,8 @@ function openChatId(pathname: string) {
 
 export function ChatWorkspace({ children }: { children: React.ReactNode }) {
   const activeId = openChatId(usePathname())
+  const { threads } = useChats()
+  const active = activeId ? threads.find((t) => t.id === activeId) : undefined
   return (
     <div
       data-slot="chat-workspace"
@@ -37,6 +49,19 @@ export function ChatWorkspace({ children }: { children: React.ReactNode }) {
       <div className={cn("flex min-w-0 flex-1 flex-col md:min-h-0 md:overflow-hidden", !activeId && "max-md:hidden")}>
         {children}
       </div>
+      {active && (
+        <aside
+          aria-label="Candidate profile"
+          className="hidden min-h-0 flex-col border-l border-border bg-card xl:flex xl:w-80 xl:shrink-0"
+        >
+          <div className={cn("flex items-center", BAND)}>
+            <h2 className="text-h5">Candidate</h2>
+          </div>
+          <div className="min-h-0 flex-1 overflow-y-auto">
+            <CandidateProfilePanel key={active.id} thread={active} />
+          </div>
+        </aside>
+      )}
     </div>
   )
 }

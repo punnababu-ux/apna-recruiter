@@ -26,7 +26,7 @@ import {
 const SECTIONS: Record<string, { label: string; href: string }> = {
   dashboard:      { label: "Dashboard",      href: "/apnahire/dashboard" },
   jobs:           { label: "Jobs",           href: "/apnahire/jobs" },
-  chats:          { label: "Chats",          href: "/apnahire/chats" },
+  chats:          { label: "Fast Track",       href: "/apnahire/chats" },
   database:       { label: "Database",       href: "/apnahire/database/search-candidates" },
   "invite-centre":{ label: "Invite Centre",  href: "/apnahire/invite-centre/database-wa-invites" },
   reports:        { label: "Reports",        href: "/apnahire/reports" },

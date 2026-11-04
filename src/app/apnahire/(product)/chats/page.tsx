@@ -1,8 +1,8 @@
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle, MessageCircle } from "@apna/design-system"
 
 /**
- * /apnahire/chats — Apna Chat, the recruiter's inbox: the phone bar's Chats
- * tab and the desktop sidebar's Chats item. The list itself is the layout's
+ * /apnahire/chats — Apna Chat, the recruiter's inbox: the phone bar's Fast Track
+ * tab and the desktop sidebar's Fast Track item. The list itself is the layout's
  * (ChatWorkspace), so phones show only the list here; from md this is the
  * thread pane with nothing picked yet.
  */
@@ -14,8 +14,8 @@ export default function ChatsPage() {
           <EmptyMedia variant="icon">
             <MessageCircle />
           </EmptyMedia>
-          <EmptyTitle>Pick a chat</EmptyTitle>
-          <EmptyDescription>Choose a candidate on the left to read the thread and reply.</EmptyDescription>
+          <EmptyTitle>Pick a candidate</EmptyTitle>
+          <EmptyDescription>Choose a candidate on the left to read the Fast Track chat and reply.</EmptyDescription>
         </EmptyHeader>
       </Empty>
     </main>

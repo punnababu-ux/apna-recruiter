@@ -74,6 +74,44 @@ export interface ChatJob {
   aiAddOn: boolean
 }
 
+export interface CandidateProfile {
+  location: string
+  experience: string
+  education: string
+  languages: string[]
+  skills: string[]
+  currentSalary?: string
+  expectedSalary?: string
+  availability: string
+  /** Shown instead of the number: calls are masked (PRD FR-10). */
+  phoneMasked: string
+}
+
+export type MatchLevel = "high" | "medium" | "low"
+
+export const MATCH_LABEL: Record<MatchLevel, string> = {
+  high: "High match",
+  medium: "Medium match",
+  low: "Low match",
+}
+
+export interface JobMatch {
+  level: MatchLevel
+  /** 0 to 100. */
+  score: number
+  /** Why a good match, tied to the job's must-haves. */
+  strengths: string[]
+  /** Why not. */
+  gaps: string[]
+}
+
+export interface ChatNote {
+  id: string
+  text: string
+  /** As shown: "Today, 11:05 am". */
+  at: string
+}
+
 export interface ChatThread {
   id: string
   job: ChatJob
@@ -88,6 +126,14 @@ export interface ChatThread {
   /** Urgent threads: replies the recruiter can send with one tap. */
   suggestedReplies?: string[]
   messages: ChatMessage[]
+  /** The candidate's profile, for the profile panel beside the thread. */
+  profile: CandidateProfile
+  /** How well the candidate fits this job, and why. */
+  match: JobMatch
+  /** The resume is behind a database credit until the recruiter unlocks it. */
+  resumeUnlocked: boolean
+  /** The recruiter's private notes on this candidate, newest first. */
+  notes: ChatNote[]
 }
 
 export const RECRUITER_NAME = "Alok Singh"
@@ -130,7 +176,9 @@ const BACK_OFFICE: ChatJob = {
   aiAddOn: false,
 }
 
-export const MOCK_THREADS: ChatThread[] = [
+type ThreadBase = Omit<ChatThread, "profile" | "match" | "resumeUnlocked" | "notes">
+
+const BASE_THREADS: ThreadBase[] = [
   {
     id: "t-ravi",
     job: DELIVERY,
@@ -280,3 +328,171 @@ export const MOCK_THREADS: ChatThread[] = [
     ],
   },
 ]
+
+type ThreadDetails = Pick<ChatThread, "profile" | "match" | "resumeUnlocked" | "notes">
+
+/** Profile, match and notes for each thread's candidate, by thread id. */
+const DETAILS: Record<string, ThreadDetails> = {
+  "t-ravi": {
+    profile: {
+      location: "Andheri West, Mumbai",
+      experience: "2 yrs as a delivery partner",
+      education: "12th pass",
+      languages: ["Hindi", "Marathi"],
+      skills: ["Two-wheeler", "Driving licence", "Route knowledge", "Cash handling"],
+      currentSalary: "₹16,000 a month",
+      expectedSalary: "₹20,000 a month",
+      availability: "Can start in 1 week",
+      phoneMasked: "+91 ••••• ••321",
+    },
+    match: {
+      level: "high",
+      score: 92,
+      strengths: [
+        "Has his own bike and a driving licence",
+        "2 yrs of delivery work",
+        "Lives 3 km from Andheri East",
+        "Expected salary is inside the range",
+      ],
+      gaps: ["Asks for a petrol allowance"],
+    },
+    resumeUnlocked: false,
+    notes: [],
+  },
+  "t-amit": {
+    profile: {
+      location: "Wakad, Pune",
+      experience: "3 yrs in data entry",
+      education: "B.Com",
+      languages: ["Hindi", "Marathi", "English"],
+      skills: ["Data entry", "MS Excel", "Typing 40 wpm"],
+      currentSalary: "₹17,000 a month",
+      expectedSalary: "₹21,000 a month",
+      availability: "Notice period of 30 days",
+      phoneMasked: "+91 ••••• ••874",
+    },
+    match: {
+      level: "medium",
+      score: 68,
+      strengths: ["3 yrs of data entry", "Knows MS Excel", "Lives 8 km from Hinjewadi"],
+      gaps: ["Notice period of 30 days", "Expected salary is above the range", "No tally experience"],
+    },
+    resumeUnlocked: true,
+    notes: [{ id: "n1", text: "Asked for a call after 4 pm. Check the notice period.", at: "Today, 10:30 am" }],
+  },
+  "t-sana": {
+    profile: {
+      location: "HSR Layout, Bengaluru",
+      experience: "Fresher",
+      education: "B.A.",
+      languages: ["Kannada", "English", "Hindi"],
+      skills: ["Communication", "Kannada and English", "Typing"],
+      expectedSalary: "₹15,000 a month",
+      availability: "Not confirmed yet",
+      phoneMasked: "+91 ••••• ••540",
+    },
+    match: {
+      level: "medium",
+      score: 64,
+      strengths: ["Speaks Kannada and English", "Lives 5 km from Koramangala"],
+      gaps: ["No calling experience", "Start date not confirmed", "Target of 80 calls not confirmed"],
+    },
+    resumeUnlocked: false,
+    notes: [],
+  },
+  "t-meera": {
+    profile: {
+      location: "BTM Layout, Bengaluru",
+      experience: "1 yr in sales calling",
+      education: "B.Com",
+      languages: ["Kannada", "English", "Malayalam"],
+      skills: ["Sales calling", "Lead follow-up", "CRM basics"],
+      currentSalary: "₹14,000 a month",
+      expectedSalary: "₹17,000 a month",
+      availability: "Can start on Monday",
+      phoneMasked: "+91 ••••• ••295",
+    },
+    match: {
+      level: "high",
+      score: 88,
+      strengths: [
+        "Speaks Kannada and English",
+        "1 yr of sales calling",
+        "Can start on Monday",
+        "Lives 4 km from Koramangala",
+      ],
+      gaps: ["Only 1 yr of experience"],
+    },
+    resumeUnlocked: false,
+    notes: [],
+  },
+  "t-kiran": {
+    profile: {
+      location: "Powai, Mumbai",
+      experience: "4 yrs as a delivery partner",
+      education: "10th pass",
+      languages: ["Hindi", "Marathi"],
+      skills: ["Two-wheeler", "Driving licence", "Route knowledge"],
+      currentSalary: "₹19,000 a month",
+      expectedSalary: "₹22,000 a month",
+      availability: "Can start in 2 weeks",
+      phoneMasked: "+91 ••••• ••118",
+    },
+    match: {
+      level: "high",
+      score: 85,
+      strengths: ["4 yrs of delivery work", "Has a bike and a driving licence", "Expected salary is inside the range"],
+      gaps: ["Lives 12 km from Andheri East", "Can start in 2 weeks"],
+    },
+    resumeUnlocked: true,
+    notes: [],
+  },
+  "t-imran": {
+    profile: {
+      location: "Kharadi, Pune",
+      experience: "6 yrs in back office work",
+      education: "B.Com",
+      languages: ["Hindi", "English", "Urdu"],
+      skills: ["Data entry", "MS Excel", "Tally", "Billing"],
+      currentSalary: "₹24,000 a month",
+      expectedSalary: "₹30,000 a month",
+      availability: "Notice period of 60 days",
+      phoneMasked: "+91 ••••• ••762",
+    },
+    match: {
+      level: "low",
+      score: 38,
+      strengths: ["6 yrs of back office work", "Knows MS Excel and Tally"],
+      gaps: [
+        "Expected salary is ₹30,000, above the range",
+        "Notice period of 60 days",
+        "Lives 22 km from Hinjewadi",
+        "Said he is not interested",
+      ],
+    },
+    resumeUnlocked: false,
+    notes: [],
+  },
+  "t-pooja": {
+    profile: {
+      location: "Whitefield, Bengaluru",
+      experience: "Fresher",
+      education: "12th pass",
+      languages: ["Kannada", "Hindi"],
+      skills: ["Communication"],
+      expectedSalary: "₹14,000 a month",
+      availability: "Not confirmed yet",
+      phoneMasked: "+91 ••••• ••609",
+    },
+    match: {
+      level: "low",
+      score: 35,
+      strengths: ["Speaks Kannada"],
+      gaps: ["Does not speak English", "No calling experience", "Lives 18 km from Koramangala", "No reply to 3 messages"],
+    },
+    resumeUnlocked: false,
+    notes: [],
+  },
+}
+
+export const MOCK_THREADS: ChatThread[] = BASE_THREADS.map((t) => ({ ...t, ...DETAILS[t.id] }))

@@ -4,11 +4,14 @@
  * ChatThread — one Apna Chat thread, for one job and one candidate (PRD
  * FR-1). A drill-down: on phones it is the whole screen (no top or bottom
  * bar), so its header is the app bar. From md it is the right pane of the
- * chat workspace: it scrolls on its own, the header sticks to the top of the
+ * chat workspace: it scrolls on its own, the header (an h-16 band, then the
+ * job card as an h-14 sub-row, both shared with the other panes, see
+ * chat-bands.ts) sticks to the top of the
  * pane and the composer to its bottom, and Back is hidden (the list is
  * beside it).
  *
- *   Header    Back · avatar (lg) · name and facts · ⋮ (Not interested), then
+ *   Header    Back · avatar (lg) · name and facts (both open the profile panel
+ *             below xl) · Profile button (below xl) · ⋮ (Not interested), then
  *             the job's nested card (rounded-card-nested, press-subtle)
  *   Wallpaper The whole area under the header (messages and composer) is
  *             `chat-wallpaper`: the doodle canvas, so the bubbles, dividers
@@ -54,13 +57,17 @@ import {
   DropdownMenuTrigger,
   MapPin,
   MoreVertical,
+  UserRound,
   ShieldCheck,
   Sparkles,
   SuggestionChips,
 } from "@apna/design-system"
+import { CandidateProfileSheet } from "@/components/apnahire/chats/candidate-profile-panel"
+import { BAND, SUBROW } from "@/components/apnahire/chats/chat-bands"
 import { PlanPopup, PopupBody, PopupHeader } from "@/components/apnahire/plan-popup"
 import { IconLabel } from "@/components/onlyrounds/shared"
 import { useChats } from "@/hooks/apnahire/use-chats"
+import { cn } from "@/lib/utils"
 import { useAppBack } from "@/lib/apnahire/nav"
 import {
   AI_LABEL,
@@ -129,6 +136,7 @@ export function ChatThread({ thread }: { thread: Thread }) {
   const { markRead, reply } = useChats()
   const [draft, setDraft] = React.useState("")
   const [summaryOpen, setSummaryOpen] = React.useState(false)
+  const [profileOpen, setProfileOpen] = React.useState(false)
   const end = React.useRef<HTMLDivElement>(null)
   const urgent = thread.status === "urgent"
 
@@ -152,17 +160,35 @@ export function ChatThread({ thread }: { thread: Thread }) {
   return (
     <div className="chat-wallpaper flex min-h-svh flex-col md:min-h-0 md:flex-1 md:overflow-y-auto">
       {/* The app bar on phones; the top of the pane from md. */}
-      <header className="sticky top-0 z-sticky flex flex-col gap-3 border-b border-border bg-card px-4 py-3">
-        <div className="flex items-center gap-3">
+      <header className="sticky top-0 z-sticky flex flex-col border-b border-border bg-card max-md:gap-3 max-md:px-4 max-md:py-3 md:border-b-0">
+        <div className={cn("flex items-center gap-3", BAND)}>
           <BackButton className="md:hidden" onClick={back} />
-          <Avatar size="lg">
-            {thread.candidate.photo && <AvatarImage src={thread.candidate.photo} alt={thread.candidate.name} />}
-            <AvatarFallback className="bg-accent text-accent-foreground">{thread.candidate.initial}</AvatarFallback>
-          </Avatar>
-          <div className="flex min-w-0 flex-1 flex-col">
-            <span className="text-h6 truncate">{thread.candidate.name}</span>
-            <span className="text-caption truncate text-muted-foreground">{thread.candidate.meta}</span>
-          </div>
+          {/* Below xl the avatar and name open the profile panel too. */}
+          <button
+            type="button"
+            onClick={() => setProfileOpen(true)}
+            className="flex min-w-0 flex-1 items-center gap-3 rounded-control text-left xl:pointer-events-none"
+            aria-label={`Open ${thread.candidate.name}'s profile`}
+          >
+            <Avatar size="lg">
+              {thread.candidate.photo && <AvatarImage src={thread.candidate.photo} alt="" />}
+              <AvatarFallback className="bg-accent text-accent-foreground">{thread.candidate.initial}</AvatarFallback>
+            </Avatar>
+            <span className="flex min-w-0 flex-1 flex-col">
+              <span className="text-h6 truncate">{thread.candidate.name}</span>
+              <span className="text-caption truncate text-muted-foreground">{thread.candidate.meta}</span>
+            </span>
+          </button>
+          <Button
+            type="button"
+            variant="outline"
+            size="icon-sm"
+            aria-label="Candidate profile"
+            className="shrink-0 xl:hidden"
+            onClick={() => setProfileOpen(true)}
+          >
+            <UserRound className="size-4" aria-hidden />
+          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger
               render={
@@ -178,24 +204,32 @@ export function ChatThread({ thread }: { thread: Thread }) {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        {/* The job card: which job this thread is about. */}
-        <Link
-          href="/apnahire/jobs"
-          className="ink relative flex items-center justify-between gap-3 rounded-card-nested border border-border px-3 py-2 transition-interactive press-subtle"
-        >
-          <span className="flex min-w-0 flex-col">
-            <span className="text-body-sm truncate font-semibold">{thread.job.title}</span>
-            <span className="text-caption truncate text-muted-foreground">
-              <IconLabel icon={MapPin}>
-                {thread.job.area}, {thread.job.city}
-              </IconLabel>
+        {/* The job card: which job this thread is about. From md it is the
+            sub-row under the band (one line, same height as the list's and
+            the profile's sub-rows). */}
+        <div className={SUBROW}>
+          <Link
+            href="/apnahire/jobs"
+            className="ink relative flex w-full items-center justify-between gap-3 rounded-card-nested border border-border px-3 py-2 transition-interactive press-subtle md:h-9 md:py-0"
+          >
+            <span className="flex min-w-0 flex-col md:flex-row md:items-center md:gap-2">
+              <span className="text-body-sm truncate font-semibold">{thread.job.title}</span>
+              <span className="text-caption truncate text-muted-foreground">
+                <IconLabel icon={MapPin}>
+                  {thread.job.area}, {thread.job.city}
+                </IconLabel>
+              </span>
             </span>
-          </span>
-          <Badge variant="secondary">{TIER_LABEL[thread.job.tier]}</Badge>
-        </Link>
+            <Badge variant="secondary" className="shrink-0">
+              {TIER_LABEL[thread.job.tier]}
+            </Badge>
+          </Link>
+        </div>
       </header>
 
-      <ChatMessageList className="flex-1 px-4 py-4">
+      <CandidateProfileSheet thread={thread} open={profileOpen} onOpenChange={setProfileOpen} />
+
+      <ChatMessageList className="flex-1 px-4 py-4 md:py-3">
         <ChatNotice icon={<ShieldCheck aria-hidden />}>{MONEY_WARNING}</ChatNotice>
         <Messages messages={thread.messages} />
         <div ref={end} />
