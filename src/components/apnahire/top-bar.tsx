@@ -14,8 +14,8 @@
  * (src/lib/apnahire/nav.ts). From md: the breadcrumb.
  *
  * Layout (left → right):
- *   SidebarTrigger · ApnaHireBreadcrumb · [actions slot] · Notifications (md+;
- *   phones have the bottom bar's tab) · Available credits · Avatar with
+ *   SidebarTrigger · ApnaHireBreadcrumb · [actions slot] · Notifications
+ *   (not on the notification page itself) · Available credits · Avatar with
  *   profile popover
  *
  * Callers can inject extra `actions` before the balance for page-specific
@@ -123,9 +123,7 @@ export function ApnaHireTopBar({
 
         {/* The product shell is the one place the balance offers "View
             plans"; the checkout pages are already showing plans. */}
-        <div className="hidden md:block">
-          <NotificationsButton />
-        </div>
+        {!pathname.startsWith("/apnahire/notifications") && <NotificationsButton />}
 
         <AvailableCreditsButton plansCta />
 

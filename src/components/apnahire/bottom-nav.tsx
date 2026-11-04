@@ -3,13 +3,15 @@
 /**
  * ApnaHireBottomNav — Mobile bottom navigation for the Apna Hire product shell.
  *
- *   Jobs · Database · ( Plans ) · Notifications · More
+ *   Jobs · Database · ( Plans ) · Chats · More
  *
  * Plans follows usePlansIngress (user call, 2026-10-20): the highlighted centre
  * tile (BottomNav `featured`, inside the bar) only while credits are running out; a plain
  * tab like Database right after a credit purchase; and with a subscription
- * it leaves the bar for the More card, as "Manage plans" beside Support. Notifications carries
- * the unread count and opens the notification centre page.
+ * it leaves the bar for the More card, as "Manage plans" beside Support. Chats (Apna Chat,
+ * the recruiter's inbox) carries the count of urgent threads, those waiting
+ * for the recruiter's reply. Notifications moved to a bell in the top bar
+ * (user call, 2026-11-04), so the bar still holds five slots with Plans in it.
  *
  * A section with sub-pages (Database, Invite centre) opens its first page;
  * the page's chips (SectionChips) move between the rest.
@@ -34,7 +36,6 @@ import {
   AlertBanner,
   AlertCircle,
   BarChart2,
-  Bell,
   BottomNav,
   BottomNavMenu,
   Briefcase,
@@ -43,6 +44,7 @@ import {
   HelpCircle,
   IndianRupee,
   Mail,
+  MessageCircle,
   MoreHorizontal,
   Settings,
   Trophy,
@@ -50,7 +52,7 @@ import {
   type BottomNavItem,
   type BottomNavMenuItem,
 } from "@apna/design-system"
-import { useNotifications } from "@/hooks/apnahire/use-notifications"
+import { useChats } from "@/hooks/apnahire/use-chats"
 import { useAccountAlert } from "@/hooks/apnahire/use-account-alert"
 import { hidesBottomNav } from "@/lib/apnahire/nav"
 import { usePlansIngress } from "@/hooks/use-plans-ingress"
@@ -66,7 +68,7 @@ export function BottomNavSpacer() {
 export function ApnaHireBottomNav() {
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = React.useState(false)
-  const { unreadCount } = useNotifications()
+  const { urgentCount } = useChats()
   const account = useAccountAlert()
   const plans = usePlansIngress()
 
@@ -118,14 +120,14 @@ export function ApnaHireBottomNav() {
           },
         ]),
     {
-      href: "/apnahire/notifications",
-      label: "Notifications",
-      icon: Bell,
-      active: tabActive("/apnahire/notifications"),
-      badge: unreadCount ? (
+      href: "/apnahire/chats",
+      label: "Chats",
+      icon: MessageCircle,
+      active: tabActive("/apnahire/chats"),
+      badge: urgentCount ? (
         <Badge variant="count" size="count">
-          {unreadCount}
-          <span className="sr-only"> unread</span>
+          {urgentCount}
+          <span className="sr-only"> urgent</span>
         </Badge>
       ) : undefined,
     },

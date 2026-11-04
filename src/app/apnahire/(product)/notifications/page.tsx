@@ -2,7 +2,8 @@ import { NotificationList } from "@/components/apnahire/notifications/notificati
 
 /**
  * /apnahire/notifications — the notification centre on phones, opened from
- * the bottom bar's bell; the top bar carries the "Notifications" title.
+ * the top bar's bell as a full-screen page; the top bar carries Back and
+ * the "Notifications" title.
  * Desktop opens the same list in a side panel from the top bar
  * (NotificationsButton); landing here on desktop still works.
  */

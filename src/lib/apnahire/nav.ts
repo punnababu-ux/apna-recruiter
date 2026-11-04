@@ -3,8 +3,9 @@
 /**
  * Phone navigation rules for the apna Hire product shell.
  *
- *   Tabs (Jobs, Database, Notifications) are roots: the bottom bar, no Back.
- *   Pages opened from the bar's More card are full screens: no bottom bar,
+ *   Tabs (Jobs, Database, Chats) are roots: the bottom bar, no Back.
+ *   Pages opened from the bar's More card, and Notifications (the top bar's
+ *   bell), are full screens: no bottom bar,
  *   Back + the page's name in the top bar (as secondary screens in native
  *   apps slide over the tab bar).
  *   Drill-downs (a page below a section, e.g. one job) are full screens too,
@@ -20,8 +21,9 @@
 import * as React from "react"
 import { usePathname, useRouter } from "next/navigation"
 
-/** The More card's destinations: full screen on phones. */
+/** The More card's destinations and the bell's page: full screen on phones. */
 export const FULL_SCREEN_PREFIXES = [
+  "/apnahire/notifications",
   "/apnahire/invite-centre",
   "/apnahire/reports",
   "/apnahire/campus-ai",

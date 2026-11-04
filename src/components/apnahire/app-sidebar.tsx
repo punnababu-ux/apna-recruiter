@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Briefcase, CreditCard, Database, HelpCircle, IndianRupee, Mail, BarChart2, Trophy } from "@apna/design-system"
+import { Briefcase, CreditCard, Database, HelpCircle, IndianRupee, Mail, MessageCircle, BarChart2, Trophy } from "@apna/design-system"
 
 import {
   ReusableSidebar,
@@ -15,6 +15,7 @@ import { Badge } from "@apna/design-system"
 import { useActiveSubscription } from "@/hooks/use-active-subscription"
 import { usePlansIngress } from "@/hooks/use-plans-ingress"
 import { ACCOUNT_ALERT, useAccountAlert } from "@/hooks/apnahire/use-account-alert"
+import { useChats } from "@/hooks/apnahire/use-chats"
 
 const WORKSPACES: SidebarWorkspace[] = [
   {
@@ -100,6 +101,23 @@ export function ApnaHireSidebar({
   hasActiveSubscription,
 }: ApnaHireSidebarProps) {
   const subscribed = useActiveSubscription()
+  const { urgentCount } = useChats()
+  // Chats sits under Jobs, with the phone tab's urgent count.
+  const navItems: SidebarNavItem[] = [
+    NAV[0],
+    {
+      href: "/apnahire/chats",
+      label: "Chats",
+      icon: MessageCircle,
+      badge: urgentCount ? (
+        <Badge variant="count" size="count" className="ml-auto">
+          {urgentCount}
+          <span className="sr-only"> urgent</span>
+        </Badge>
+      ) : undefined,
+    },
+    ...NAV.slice(1),
+  ]
   // Shared with the phone More card: dismissing here clears it there.
   const account = useAccountAlert()
   const hasPlan = hasActiveSubscription ?? subscribed
@@ -128,7 +146,7 @@ export function ApnaHireSidebar({
       workspaces={WORKSPACES}
       activeWorkspaceId={activeWorkspaceId}
       onWorkspaceChange={handleWorkspaceChange}
-      navItems={NAV}
+      navItems={navItems}
       alertBanner={
         alertShown && account.alert
           ? {
