@@ -5,17 +5,19 @@
  * FR-1). A drill-down: on phones it is the whole screen (no top or bottom
  * bar), so its header is the app bar.
  *
- *   Header    Back · avatar · name and facts · ⋮ (Not interested)
- *   Job card  the job the thread is about, with its tier (FR-1)
- *   Warning   "Apna never asks for money…" (PRD guardrails)
- *   Messages  candidate on the left; the recruiter and the AI on the right,
- *             the AI's carrying its "Apna Assistant for…" label. Candidate
- *             quick replies read as chips (FR-4); the recruiter's show
- *             Sent or Read (FR-15)
- *   Urgent    the AI summary and suggested replies above the composer
- *             (FR-6); a suggestion fills the composer, it never sends
- *   Composer  text and Send. Sending takes the thread off Urgent and stops
- *             the AI (useChats)
+ *   Header    Back · avatar (lg) · name and facts · ⋮ (Not interested), then
+ *             the job's nested card (rounded-card-nested, press-subtle)
+ *   Messages  ChatMessageList: a ChatNotice for "Apna never asks for money…"
+ *             (PRD guardrails), then ChatDayDividers and ChatBubbles. The
+ *             candidate is incoming; the recruiter outgoing with Sent or
+ *             Read (FR-15); the AI an assistant bubble with its "Apna
+ *             Assistant for…" label. Candidate quick replies are ChatChoice
+ *             (FR-4). Consecutive messages from one sender are grouped
+ *   Composer  ChatComposer, docked. On urgent threads its top slot holds the
+ *             AI summary (Alert, info: AI output, no alarm; the inbox
+ *             already carries the one red "Urgent") and SuggestionChips
+ *             (FR-6); a suggestion fills the composer, it never sends.
+ *             Sending takes the thread off Urgent and stops the AI (useChats)
  *
  * Scripted mock data: nothing leaves the prototype.
  */
@@ -23,22 +25,31 @@
 import * as React from "react"
 import Link from "next/link"
 import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
   Avatar,
   AvatarFallback,
   BackButton,
   Badge,
   Button,
+  ChatBubble,
+  ChatChoice,
+  ChatComposer,
+  ChatDayDivider,
+  ChatMessageList,
+  ChatNotice,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
   MapPin,
   MoreVertical,
-  Send,
   ShieldCheck,
   Sparkles,
-  Textarea,
+  SuggestionChips,
 } from "@apna/design-system"
+import { IconLabel } from "@/components/onlyrounds/shared"
 import { useChats } from "@/hooks/apnahire/use-chats"
 import { useAppBack } from "@/lib/apnahire/nav"
 import {
@@ -48,43 +59,49 @@ import {
   type ChatMessage,
   type ChatThread as Thread,
 } from "@/content/chats"
-import { cn } from "@/lib/utils"
 
-function Bubble({ m }: { m: ChatMessage }) {
-  const mine = m.from !== "candidate"
-  if (m.quickReply) {
-    return (
-      <div className="flex flex-col items-start gap-1">
-        <Badge variant="outline" className="h-8 bg-card px-3 text-sm">
-          {m.text}
-        </Badge>
-        <span className="text-xs text-muted-foreground">{m.time}</span>
-      </div>
-    )
-  }
+type Position = "single" | "first" | "middle" | "last"
+
+/** "10:42 am" is today; "Yesterday", "Mon" are their own day. */
+const dayOf = (m: ChatMessage) => (m.time.includes(":") ? "Today" : m.time)
+
+/** Where a message sits in a run from one sender on one day. */
+function positionOf(messages: ChatMessage[], i: number): Position {
+  const m = messages[i]
+  const same = (o?: ChatMessage) => !!o && o.from === m.from && !o.quickReply && dayOf(o) === dayOf(m)
+  const prev = same(messages[i - 1])
+  const next = same(messages[i + 1])
+  return prev && next ? "middle" : prev ? "last" : next ? "first" : "single"
+}
+
+function Messages({ messages }: { messages: ChatMessage[] }) {
   return (
-    <div className={cn("flex flex-col gap-1", mine ? "items-end" : "items-start")}>
-      {m.from === "ai" && (
-        <span className="flex items-center gap-1 text-xs text-muted-foreground">
-          <Sparkles className="size-3.5" aria-hidden />
-          {AI_LABEL}
-        </span>
-      )}
-      <p
-        className={cn(
-          "max-w-xs rounded-2xl px-3 py-2 text-sm md:max-w-md",
-          m.from === "candidate" && "border border-border bg-card text-foreground",
-          m.from === "recruiter" && "bg-accent text-accent-foreground",
-          m.from === "ai" && "bg-muted text-foreground"
-        )}
-      >
-        {m.text}
-      </p>
-      <span className="text-xs text-muted-foreground">
-        {m.time}
-        {m.from === "recruiter" && ` · ${m.read ? "Read" : "Sent"}`}
-      </span>
-    </div>
+    <>
+      {messages.map((m, i) => {
+        const day = dayOf(m)
+        const divider = i === 0 || dayOf(messages[i - 1]) !== day
+        // Older days show the day in the divider, so the bubble has no time.
+        const time = m.time.includes(":") ? m.time : undefined
+        return (
+          <React.Fragment key={m.id}>
+            {divider && <ChatDayDivider>{day}</ChatDayDivider>}
+            {m.quickReply ? (
+              <ChatChoice time={time}>{m.text}</ChatChoice>
+            ) : (
+              <ChatBubble
+                variant={m.from === "candidate" ? "incoming" : m.from === "ai" ? "assistant" : "outgoing"}
+                time={time}
+                status={m.from === "candidate" ? undefined : m.read ? "read" : "sent"}
+                label={m.from === "ai" ? AI_LABEL : undefined}
+                groupPosition={positionOf(messages, i)}
+              >
+                {m.text}
+              </ChatBubble>
+            )}
+          </React.Fragment>
+        )
+      })}
+    </>
   )
 }
 
@@ -102,9 +119,7 @@ export function ChatThread({ thread }: { thread: Thread }) {
     end.current?.scrollIntoView({ block: "end" })
   }, [thread.messages.length])
 
-  const send = () => {
-    const text = draft.trim()
-    if (!text) return
+  const send = (text: string) => {
     reply(thread.id, text)
     setDraft("")
   }
@@ -115,14 +130,12 @@ export function ChatThread({ thread }: { thread: Thread }) {
       <header className="sticky top-0 z-sticky flex flex-col gap-3 border-b border-border bg-card px-4 py-3 md:top-16">
         <div className="flex items-center gap-3">
           <BackButton onClick={back} />
-          <Avatar className="size-10 shrink-0">
-            <AvatarFallback className="bg-muted text-sm font-semibold text-muted-foreground">
-              {thread.candidate.initial}
-            </AvatarFallback>
+          <Avatar size="lg">
+            <AvatarFallback className="bg-accent text-accent-foreground">{thread.candidate.initial}</AvatarFallback>
           </Avatar>
           <div className="flex min-w-0 flex-1 flex-col">
-            <span className="truncate text-base font-semibold text-foreground">{thread.candidate.name}</span>
-            <span className="truncate text-xs text-muted-foreground">{thread.candidate.meta}</span>
+            <span className="text-h6 truncate">{thread.candidate.name}</span>
+            <span className="text-caption truncate text-muted-foreground">{thread.candidate.meta}</span>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger
@@ -142,78 +155,43 @@ export function ChatThread({ thread }: { thread: Thread }) {
         {/* The job card: which job this thread is about. */}
         <Link
           href="/apnahire/jobs"
-          className="ink relative flex items-center justify-between gap-3 rounded-lg border border-border px-3 py-2 transition-interactive"
+          className="ink relative flex items-center justify-between gap-3 rounded-card-nested border border-border px-3 py-2 transition-interactive press-subtle"
         >
           <span className="flex min-w-0 flex-col">
-            <span className="truncate text-sm font-semibold text-foreground">{thread.job.title}</span>
-            <span className="flex items-center gap-1 truncate text-xs text-muted-foreground">
-              <MapPin className="size-3.5 shrink-0" aria-hidden />
-              {thread.job.area}, {thread.job.city}
+            <span className="text-body-sm truncate font-semibold">{thread.job.title}</span>
+            <span className="text-caption truncate text-muted-foreground">
+              <IconLabel icon={MapPin}>
+                {thread.job.area}, {thread.job.city}
+              </IconLabel>
             </span>
           </span>
           <Badge variant="secondary">{TIER_LABEL[thread.job.tier]}</Badge>
         </Link>
       </header>
 
-      <div className="flex flex-1 flex-col gap-4 px-4 py-4">
-        <p className="flex items-center justify-center gap-1.5 text-center text-xs text-muted-foreground">
-          <ShieldCheck className="size-3.5 shrink-0" aria-hidden />
-          {MONEY_WARNING}
-        </p>
-        {thread.messages.map((m) => (
-          <Bubble key={m.id} m={m} />
-        ))}
+      <ChatMessageList className="flex-1 px-4 py-4">
+        <ChatNotice icon={<ShieldCheck aria-hidden />}>{MONEY_WARNING}</ChatNotice>
+        <Messages messages={thread.messages} />
         <div ref={end} />
-      </div>
+      </ChatMessageList>
 
-      <footer className="sticky bottom-0 flex flex-col gap-3 border-t border-border bg-card px-4 pt-3 pb-safe-3">
-        {urgent && thread.summary && (
-          <div className="flex flex-col gap-2">
-            <Badge variant="destructive">Urgent: needs reply</Badge>
-            <p className="flex gap-1.5 text-sm text-foreground">
-              <Sparkles className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden />
-              <span>
-                <span className="font-semibold">AI summary: </span>
-                {thread.summary}
-              </span>
-            </p>
-            {thread.suggestedReplies && (
-              <div className="flex flex-wrap gap-2">
-                {thread.suggestedReplies.map((s) => (
-                  <Button key={s} variant="outline" size="sm" onClick={() => setDraft(s)}>
-                    {s}
-                  </Button>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-        <form
-          className="flex items-end gap-2"
-          onSubmit={(e) => {
-            e.preventDefault()
-            send()
-          }}
-        >
-          <Textarea
-            aria-label="Message"
-            placeholder="Type a message"
-            rows={1}
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault()
-                send()
-              }
-            }}
-            className="max-h-32 min-h-10 px-3 py-2 text-sm"
-          />
-          <Button type="submit" size="icon" aria-label="Send" disabled={!draft.trim()}>
-            <Send className="size-4" aria-hidden />
-          </Button>
-        </form>
-      </footer>
+      <ChatComposer
+        value={draft}
+        onValueChange={setDraft}
+        onSend={send}
+        top={
+          urgent && thread.summary ? (
+            <div className="flex flex-col gap-2">
+              <Alert variant="info">
+                <Sparkles aria-hidden />
+                <AlertTitle>AI summary</AlertTitle>
+                <AlertDescription>{thread.summary}</AlertDescription>
+              </Alert>
+              {thread.suggestedReplies && <SuggestionChips items={thread.suggestedReplies} onSelect={setDraft} />}
+            </div>
+          ) : undefined
+        }
+      />
     </div>
   )
 }

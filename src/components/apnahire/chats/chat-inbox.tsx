@@ -7,7 +7,10 @@
  *            with counts — the notification list's filter components
  *            (MobileChipRow on phones, Tabs from md) — and a job filter
  *            behind the funnel at the row's end
- *   Row      avatar · name · time · job and tier · last message · status
+ *   Rows     ConversationRow in a ConversationList: avatar · name · time ·
+ *            job and tier · last message · unread count · status. The
+ *            filter bar gains its bottom line once the page scrolls (as the
+ *            notification list's). No chats: an Empty with an icon
  *
  * Urgent threads show first, then the rest by recency (the mock list's
  * order). Only "Urgent: needs reply" is coloured: it is the one thing the
@@ -21,8 +24,8 @@
 import * as React from "react"
 import Link from "next/link"
 import {
-  Avatar,
-  AvatarFallback,
+  ConversationList,
+  ConversationRow,
   Badge,
   Button,
   Check,
@@ -30,7 +33,13 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
   Filter,
+  MessageCircle,
   Tabs,
   TabsList,
   TabsTrigger,
@@ -72,45 +81,25 @@ function preview(t: ChatThread) {
   return last.text
 }
 
-function ThreadRow({ t }: { t: ChatThread }) {
-  return (
-    <li className="border-b border-border last:border-b-0">
-      <Link
-        href={`/apnahire/chats/${t.id}`}
-        className={cn(
-          "ink relative flex gap-3 px-4 py-4 transition-interactive",
-          t.unread ? "bg-accent/40" : "bg-card"
-        )}
-      >
-        <Avatar className="size-10 shrink-0">
-          <AvatarFallback className="bg-muted text-sm font-semibold text-muted-foreground">
-            {t.candidate.initial}
-          </AvatarFallback>
-        </Avatar>
-        <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <div className="flex items-start justify-between gap-3">
-            <p className="truncate text-base font-semibold text-foreground">{t.candidate.name}</p>
-            <span className="flex shrink-0 items-center gap-1.5 text-xs whitespace-nowrap text-muted-foreground">
-              {t.lastAt}
-              {t.unread && (
-                <>
-                  <span className="size-2 rounded-full bg-primary" aria-hidden />
-                  <span className="sr-only">Unread</span>
-                </>
-              )}
-            </span>
-          </div>
-          <p className="truncate text-xs text-muted-foreground">
-            {t.job.title} · {TIER_LABEL[t.job.tier]}
-          </p>
-          <p className={cn("line-clamp-1 text-sm", t.unread ? "text-foreground" : "text-muted-foreground")}>
-            {preview(t)}
-          </p>
-          {statusBadge(t) && <div className="flex pt-1">{statusBadge(t)}</div>}
-        </div>
-      </Link>
-    </li>
-  )
+/** The candidate's messages after the recruiter's or the AI's last one. */
+function unreadCount(t: ChatThread) {
+  if (!t.unread) return 0
+  let n = 0
+  for (let i = t.messages.length - 1; i >= 0 && t.messages[i].from === "candidate"; i--) n++
+  return Math.max(1, n)
+}
+
+/** Phones: true once the page has scrolled, so the sticky filter bar shows
+ *  its bottom line only when rows pass beneath it (as the notification list). */
+function useScrolledPast() {
+  const [scrolled, setScrolled] = React.useState(false)
+  React.useEffect(() => {
+    const update = () => setScrolled(window.scrollY > 2)
+    update()
+    window.addEventListener("scroll", update, { passive: true })
+    return () => window.removeEventListener("scroll", update)
+  }, [])
+  return scrolled
 }
 
 function JoinTopBar() {
@@ -120,6 +109,7 @@ function JoinTopBar() {
 
 export function ChatInbox() {
   const { threads } = useChats()
+  const scrolled = useScrolledPast()
   const [status, setStatus] = React.useState<StatusFilter>("all")
   const [jobId, setJobId] = React.useState<string | null>(null)
 
@@ -175,7 +165,12 @@ export function ChatInbox() {
       <JoinTopBar />
       {/* The notification page's filter bar: chips beside a fixed control,
           a white bar joined to the top bar on phones; Tabs from md. */}
-      <section className="sticky top-16 z-docked flex items-center gap-2 border-b border-border bg-card pt-2 pr-2 pb-2 pl-4 md:static md:py-3">
+      <section
+        className={cn(
+          "sticky top-16 z-docked flex items-center gap-2 border-b bg-card pt-2 pr-2 pb-2 pl-4 transition-interactive md:static md:border-border md:py-3",
+          scrolled ? "border-border" : "border-transparent"
+        )}
+      >
         <div className="min-w-0 flex-1">
           <MobileChipRow items={filterItems} value={status} onValueChange={setStatus} gutter="page-start" />
           <Tabs className="hidden md:flex" value={status} onValueChange={(v) => setStatus(v as StatusFilter)}>
@@ -193,15 +188,36 @@ export function ChatInbox() {
 
       <section className="bg-card">
         {shown.length === 0 ? (
-          <p className="px-4 py-10 text-center text-sm text-muted-foreground">
-            {status === "urgent" ? "No one is waiting for a reply." : "No chats here yet."}
-          </p>
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <MessageCircle />
+              </EmptyMedia>
+              <EmptyTitle>{status === "urgent" ? "No one is waiting for a reply" : "No chats here yet"}</EmptyTitle>
+              <EmptyDescription>
+                {status === "urgent"
+                  ? "Chats that need your answer show up here."
+                  : "Candidates you message appear here."}
+              </EmptyDescription>
+            </EmptyHeader>
+          </Empty>
         ) : (
-          <ul>
+          <ConversationList label="Chats">
             {shown.map((t) => (
-              <ThreadRow key={t.id} t={t} />
+              <ConversationRow
+                key={t.id}
+                name={t.candidate.name}
+                initial={t.candidate.initial}
+                subtitle={`${t.job.title} · ${TIER_LABEL[t.job.tier]}`}
+                preview={preview(t)}
+                time={t.lastAt}
+                unread={t.unread}
+                unreadCount={unreadCount(t) || undefined}
+                status={statusBadge(t)}
+                render={<Link href={`/apnahire/chats/${t.id}`} />}
+              />
             ))}
-          </ul>
+          </ConversationList>
         )}
       </section>
     </div>
