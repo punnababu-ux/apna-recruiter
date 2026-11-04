@@ -17,7 +17,7 @@
   *
  * Type scale (phone → from sm): name 12 → 16 semibold · price 20 → 24 ·
  * struck price 12 → 14 · saving 12 → 14 semibold · per-unit 10 → 12 italic ·
- * validity, database credits, city 12 → 14. Figma OfferChoice matches.
+ * validity, database credits, city 12 → 14 · CTA 14 (Button default). Figma OfferChoice matches.
  */
 
 import * as React from "react"

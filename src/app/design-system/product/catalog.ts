@@ -389,7 +389,7 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
         rules: [
           "New upsell = OfferDialog + OfferChoice. Never a new dialog layout.",
           "Tiles compare line for line.",
-          "Type scale, phone → desktop: name 12 → 16 semibold, price 20 → 24 semibold, struck price 12 → 14, saving 12 → 14 semibold, per-unit 10 → 12 italic, validity / database credits / city 12 → 14 (AGENTS.md rule 19).",
+          "Type scale, phone → desktop: name 12 → 16 semibold, price 20 → 24 semibold, struck price 12 → 14, saving 12 → 14 semibold, per-unit 10 → 12 italic, validity / database credits / city 12 → 14, CTA 14 semibold on both (AGENTS.md rule 19).",
         ],
       },
       {

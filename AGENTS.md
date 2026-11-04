@@ -897,6 +897,7 @@ cards) and every upsell tile (`OfferChoice`), both checkouts, light and dark
    | Saving (−%) | 12 semibold | 14 semibold |
    | Per-unit ("₹546 /credit") | 10 italic | 12 italic |
    | Validity, database credits, city | 12 | 14 |
+   | CTA label | 14 semibold | 14 semibold |
    Figma `OfferChoice` (298:418) uses the same styles.
 
 ## Tax disclaimer — one wording, one component
