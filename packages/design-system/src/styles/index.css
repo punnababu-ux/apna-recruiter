@@ -271,6 +271,7 @@
   --radius-overlay: var(--radius-overlay);
   --radius-hero:    var(--radius-hero);
   --radius-pill:    var(--radius-pill);
+  --radius-bubble:  var(--radius-bubble);
 
   /* --------------------------------------------------------------------
    * Shadow — primitive ramp + intent aliases.

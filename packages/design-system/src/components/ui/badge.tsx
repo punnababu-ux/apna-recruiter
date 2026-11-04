@@ -41,6 +41,9 @@ const badgeVariants = cva(
          * "count") or a bare dot (size "dot"). Ring it in the surface it sits
          * on (`ring-2 ring-card`) so it cuts out of the icon. */
         count: "bg-destructive font-semibold text-destructive-foreground",
+        /* The same count in green: unread messages in a conversation list
+         * (WhatsApp's pill). Red stays for alerts that need attention. */
+        "count-positive": "bg-primary font-semibold text-primary-foreground",
         /* Translucent pills that tint the surface under them instead of
          * sitting on it as a block: `on-dark` lightens a dark/gradient
          * surface (offer headers, solid banners), `on-tint` darkens a light

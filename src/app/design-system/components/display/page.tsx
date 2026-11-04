@@ -13,6 +13,14 @@ import {
   EmptyDescription,
   Button,
   MetricCard,
+  ChatBubble,
+  ChatChoice,
+  ChatDayDivider,
+  ChatNotice,
+  ChatMessageList,
+  ConversationRow,
+  ConversationList,
+  ShieldAlert,
 } from "@apna/design-system"
 import { User, Plus, Briefcase, Users, CalendarCheck, TrendingUp } from "@apna/design-system"
 
@@ -166,6 +174,74 @@ export default function DisplayComponentsPage() {
             Add Candidate
           </Button>
         </Empty>
+      </div>
+
+      {/* Chat bubbles */}
+      <div className="rounded-xl border border-border bg-card p-6 space-y-4">
+        <h2 className="text-base font-semibold text-foreground font-heading border-b border-border/60 pb-2">
+          Chat Messages
+        </h2>
+        <ChatMessageList className="max-w-xl rounded-lg bg-muted/40 p-4">
+          <ChatDayDivider>Today</ChatDayDivider>
+          <ChatNotice icon={<ShieldAlert />} tone="warning">
+            Apna never asks for money. Report any request for payment.
+          </ChatNotice>
+          <ChatBubble
+            variant="assistant"
+            label="Apna Assistant for Alok Singh, PixelVeda Studios"
+            time="10:40"
+            status="sent"
+          >
+            Hi! Alok at PixelVeda Studios is hiring a Delivery Executive. Are you interested?
+          </ChatBubble>
+          <ChatChoice time="10:41">Interested</ChatChoice>
+          <ChatBubble variant="incoming" groupPosition="first">
+            Is the job in Pune?
+          </ChatBubble>
+          <ChatBubble variant="incoming" groupPosition="last" time="10:42">
+            And what are the shift timings?
+          </ChatBubble>
+          <ChatBubble variant="outgoing" time="10:44" status="read">
+            Yes, Pune. Shifts are 9am to 6pm.
+          </ChatBubble>
+        </ChatMessageList>
+      </div>
+
+      {/* Conversation list */}
+      <div className="rounded-xl border border-border bg-card p-6 space-y-4">
+        <h2 className="text-base font-semibold text-foreground font-heading border-b border-border/60 pb-2">
+          Conversation List
+        </h2>
+        <ConversationList label="Conversations" className="max-w-md rounded-lg border border-border">
+          <ConversationRow
+            name="Ravi Kumar"
+            initial="R"
+            subtitle="Delivery Executive · Super premium"
+            preview="Can you share the joining date?"
+            time="10:42"
+            unreadCount={2}
+            status={<Badge variant="destructive">Urgent: needs reply</Badge>}
+          />
+          <ConversationRow
+            name="Meena Shah"
+            initial="M"
+            subtitle="Delivery Executive"
+            preview="Thanks, I will be there at 11."
+            time="Yesterday"
+          />
+          <ConversationRow
+            name="Imran Khan"
+            initial="I"
+            subtitle="Delivery Executive"
+            preview="Interested"
+            time="Mon"
+            active
+          />
+        </ConversationList>
+        <div className="flex items-center gap-2">
+          <Badge variant="count-positive" size="count">3</Badge>
+          <span className="text-xs text-muted-foreground">Badge <code>count-positive</code> (green count)</span>
+        </div>
       </div>
     </div>
   )

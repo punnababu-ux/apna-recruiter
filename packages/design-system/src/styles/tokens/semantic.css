@@ -205,6 +205,7 @@
   --radius-overlay: var(--radius-xl); /* dialogs, sheets, drawers           */
   --radius-hero:    var(--radius-2xl);/* marketing blocks, splashes         */
   --radius-pill:    var(--radius-full);/* avatars, pills, capsule buttons   */
+  --radius-bubble:  var(--radius-xl); /* chat message bubbles               */
 
   /* ==========================================================================
    * Elevation — intent roles on top of the primitive shadow ramp.

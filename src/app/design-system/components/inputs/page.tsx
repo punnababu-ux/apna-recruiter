@@ -32,6 +32,9 @@ import {
   Slider,
   SearchFilterBar,
   PromptInput,
+  ChatComposer,
+  SuggestionChips,
+  Sparkles,
   Button,
   Mic,
   OptionCard,
@@ -46,6 +49,40 @@ import {
   Truck,
   Laptop,
 } from "@apna/design-system"
+
+function ChatComposerDemo() {
+  const [value, setValue] = React.useState("")
+  const [sent, setSent] = React.useState<string[]>([])
+  return (
+    <div className="max-w-md space-y-3">
+      {sent.length > 0 && (
+        <ul className="space-y-1 text-sm text-muted-foreground">
+          {sent.map((m, i) => (
+            <li key={i}>Sent: {m}</li>
+          ))}
+        </ul>
+      )}
+      <ChatComposer
+        docked={false}
+        value={value}
+        onValueChange={setValue}
+        onSend={(text) => {
+          setSent((prev) => [...prev, text])
+          setValue("")
+        }}
+        placeholder="Message Ravi"
+        top={
+          <SuggestionChips
+            label="Suggested replies"
+            icon={<Sparkles />}
+            items={["Share your joining date", "Are you available today?", "Send documents"]}
+            onSelect={setValue}
+          />
+        }
+      />
+    </div>
+  )
+}
 
 const SEARCH_DEMO = [
   { label: "Product", items: [{ id: "jobs", label: "Smart Job Posting" }, { id: "db", label: "apna Database" }, { id: "ai", label: "AI Calling Agent" }] },
@@ -395,6 +432,14 @@ export default function InputsComponentsPage() {
             />
           </div>
         </div>
+      </div>
+
+      {/* Chat composer */}
+      <div className="rounded-xl border border-border bg-card p-6 space-y-4">
+        <h2 className="text-base font-semibold text-foreground font-heading border-b border-border/60 pb-2">
+          Chat Composer & Suggestion Chips
+        </h2>
+        <ChatComposerDemo />
       </div>
     </div>
   )
