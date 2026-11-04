@@ -44,7 +44,7 @@ export function ContactSalesCard({ onContactSales, className }: ContactSalesCard
         type="button"
         variant="outline"
         size="sm"
-        className="shrink-0 px-3.5 md:h-10 md:min-h-10 md:px-6 md:text-sm"
+        className="shrink-0 px-3.5 md:h-10 md:min-h-10 md:px-4 md:text-sm"
       >
         Contact sales
       </Button>

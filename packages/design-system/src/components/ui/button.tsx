@@ -147,6 +147,9 @@ const buttonVariants = cva(
         sm: "h-8 min-h-8 gap-1.5 px-2.5 text-xs font-semibold font-heading in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&_svg:not([class*='size-'])]:size-3.5",
         lg: "h-10 min-h-10 gap-2 px-4 text-base font-medium font-heading has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3 [&_svg:not([class*='size-'])]:size-4.5",
         xl: "h-12 min-h-12 gap-2 px-6 text-base font-semibold font-heading [&_svg:not([class*='size-'])]:size-5",
+        // Desktop plan / pricing card CTA: lg's height with the default
+        // label (14 semibold), so every card CTA is one size (2026-11-04).
+        card: "h-10 min-h-10 gap-1.5 px-4 text-sm font-semibold font-heading has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3",
         icon: "size-9 min-h-9",
         "icon-xs":
           "size-6 min-h-6 in-data-[slot=button-group]:rounded-lg [&_svg:not([class*='size-'])]:size-3",

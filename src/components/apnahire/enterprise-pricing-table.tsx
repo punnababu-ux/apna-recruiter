@@ -250,7 +250,7 @@ export function EnterprisePricingTable({
               <Button
                 type="button"
                 variant={active ? "checkout" : "outline"}
-                className="h-10 w-full px-6"
+                size="card" className="w-full px-6"
               >
                 Contact sales
               </Button>

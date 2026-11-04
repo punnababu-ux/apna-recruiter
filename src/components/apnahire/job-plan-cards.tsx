@@ -480,7 +480,7 @@ function JobPlanGridCard({ tier, recommended, creditBalance, onSelect }: JobPlan
           <Button
             type="button"
             variant={active ? "checkout" : "outline"}
-            className="h-10 w-full font-semibold"
+            size="card" className="w-full"
           >
             {ctaLabel}
           </Button>
@@ -1036,7 +1036,7 @@ function MonthlySubscriptionCard({
           <Button
             type="button"
             variant={active && !blockedLabel ? "checkout" : "checkout-inset"}
-            className="h-10 w-full font-semibold"
+            size="card" className="w-full"
             disabled={!!blockedLabel}
           >
             {blockedLabel ?? "Buy now"}

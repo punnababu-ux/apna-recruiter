@@ -174,7 +174,7 @@ export function UnlimitedSideCard({
               </span>
             }
             cta={
-              <Button type="button" variant={hover.active ? "checkout" : "outline"} className="h-10 w-full font-semibold">
+              <Button type="button" variant={hover.active ? "checkout" : "outline"} size="card" className="w-full">
                 Buy now
               </Button>
             }

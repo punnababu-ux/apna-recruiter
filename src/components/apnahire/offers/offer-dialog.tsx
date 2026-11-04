@@ -138,9 +138,9 @@ export function OfferDialog({
         />
         <Title
           className={cn(
-            // Every upsell and offer pop-up: 14 on phones, 20 from sm,
-            // regular (user call, 2026-11-04).
-            "text-sm sm:text-xl",
+            // Every upsell and offer pop-up: 16 on phones, 20 from sm,
+            // regular (user calls, 2026-11-04).
+            "text-base sm:text-xl",
             dark ? "text-surface-inverted-fg" : "text-muted-foreground"
           )}
         >
@@ -148,7 +148,8 @@ export function OfferDialog({
           <span className="font-body font-regular">{eyebrow}</span>
         </Title>
         {headline && (
-          <p className={cn("text-2xl font-semibold", size === "md" && "sm:text-3xl")}>{headline}</p>
+          // 20 on phones so "Order now to get 10% extra off" holds one line.
+          <p className={cn("text-xl font-semibold sm:text-2xl", size === "md" && "sm:text-3xl")}>{headline}</p>
         )}
         {priceDrop && (
           <p className="flex flex-wrap items-center gap-x-3 gap-y-1">

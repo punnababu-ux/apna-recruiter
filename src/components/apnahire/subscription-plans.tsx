@@ -247,7 +247,7 @@ function PlanCard({
       {ctaHint && !current ? (
         <Tooltip>
           <TooltipTrigger render={<span data-compare="cta" className="block w-full" />}>
-            <Button type="button" variant="outline" className="pointer-events-none h-10 w-full font-semibold" disabled>
+            <Button type="button" variant="outline" size="card" className="pointer-events-none w-full" disabled>
               {ctaLabel}
             </Button>
           </TooltipTrigger>
@@ -258,7 +258,7 @@ function PlanCard({
           data-compare="cta"
           type="button"
           variant={live && hover.active ? "checkout" : "outline"}
-          className="h-10 w-full font-semibold"
+          size="card" className="w-full"
           disabled={current || ctaDisabled}
         >
           {current ? "Your current plan" : ctaLabel}

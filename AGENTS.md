@@ -895,6 +895,16 @@ cards) and every upsell tile (`OfferChoice`), both checkouts, light and dark
    jobs · 3 jobs". All of it comes from `slotLabel` / `slotTermLabel` in
    `src/content/subscriptions.ts`; never type it by hand.
 
+20. **One button size per place** (user call, 2026-11-04).
+   | Where | Size | Height |
+   |---|---|---|
+   | The one committing action ("Proceed to pay", "Subscribe") | `xl` | 48 |
+   | Pop-up and flow buttons (every footer, `AlertDialog` too) | `lg` | 40 |
+   | Desktop plan / pricing card CTA | `card` | 40, 14 semibold |
+   | Inline in a banner or row (Renew now, the add-on's Add) | `default` | 36 |
+   | Phone plan cards, top bars, toolbars | `sm` | 32 |
+   Never stretch a size with `h-*`; pick the one for the place.
+
 ## Tax disclaimer — one wording, one component
 
 Under any price, the tax note reads exactly **"\*GST applicable"** and is

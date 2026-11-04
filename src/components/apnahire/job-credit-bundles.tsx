@@ -204,7 +204,7 @@ export function JobCreditBundles({
               <Button
                 type="button"
                 variant={active ? "checkout" : "outline"}
-                className="h-10 w-full font-semibold"
+                size="card" className="w-full"
               >
                 Buy now
               </Button>

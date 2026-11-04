@@ -177,7 +177,7 @@ export function DatabaseCreditBundles({
                 <Button
                   type="button"
                   variant={active ? "checkout" : "outline"}
-                  className="h-10 w-full"
+                  size="card" className="w-full"
                 >
                   Buy now
                 </Button>
