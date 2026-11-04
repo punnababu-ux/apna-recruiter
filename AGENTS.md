@@ -888,6 +888,17 @@ cards) and every upsell tile (`OfferChoice`), both checkouts, light and dark
    candidates" (Premium + AI 2x). Subscriptions and apna Unlimited: "Smart
    alerts to candidates". Phone, desktop, explainers, cancel flow alike.
 
+19. **Upsell tile type scale** (user call, 2026-11-04), `OfferChoice`:
+   | Line | Phone | Desktop (from `sm`) |
+   |---|---|---|
+   | Plan name | 12 semibold | 16 semibold |
+   | Price | 20 semibold | 24 semibold |
+   | Struck price | 12 | 14 |
+   | Saving (−%) | 12 semibold | 14 semibold |
+   | Per-unit ("₹546 /credit") | 10 italic | 12 italic |
+   | Validity, database credits, city | 12 | 14 |
+   Figma `OfferChoice` (298:418) uses the same styles.
+
 ## Tax disclaimer — one wording, one component
 
 Under any price, the tax note reads exactly **"\*GST applicable"** and is

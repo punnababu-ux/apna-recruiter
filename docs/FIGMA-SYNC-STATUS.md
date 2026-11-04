@@ -198,6 +198,12 @@ Icon/Infinity 322:6 added (Unlimited "Job reposts and swapping", warning).
   the subtitle row, as CartLineRow's link-inline button. On for added add-ons: E7 phone and
   D-E7 desktop (AI calling agent line). Phone E7 bill now follows the coupons directly.
 
+## Upsell tile type scale (2026-11-04)
+OfferChoice phone variants now: name Label/SM 12, price Plan/Price compact 20, strike
+Plan/Strike 12, % Plan/Discount 12, per-unit new style Caption/2XS Italic 10, validity
+Body/XS 12. Desktop variants unchanged (16 / 24 / 14 / 14 / 12 / 14). Code matches
+(offer-choice.tsx, AGENTS.md rule 19). All 6 phone instances (E5 phone, P2, P3) updated.
+
 ## ▶ RESUME HERE (2026-11-04) — "Coverage" set, approved by Punna
 Plan agreed: a layered file where every UNIQUE checkout component appears in at least one
 screen (phone + desktop where they differ); all other cases/edge cases later go on a separate
