@@ -1,6 +1,22 @@
 # Figma sync — status (resume from here)
 
-Last updated: 2026-11-04. Keep this file current after every Figma step.
+Last updated: 2026-11-04 (end of day). Keep this file current after every Figma step.
+
+## ▶ Latest state (read this first)
+- All checkout screens are on ONE page, "Checkout — dev hand-off" (441:2), sections 0–10 in the
+  hand-off's order (details below). Every upsell, exit pop-up, menu and edge state is drawn,
+  phone + desktop.
+- Icons: all 62 rebuilt to lucide geometry (2px stroke, 24 grid), 24×24, aspect-locked, inner
+  layers Scale/Scale. Database-credit lines use UserSearch everywhere (code too).
+- Buttons: one weight, semibold, every size and variant incl. links (code + Figma; new text
+  style Label/LG Semibold for lg labels).
+- Database add-on chips: unselected white, no border — DatabaseAddonCard 344:308 (Figma) and
+  ChipTabs variant "choice-on-tint" (code).
+- Active apna Unlimited tab logo: LogoApnaUnlimited/gradient-deep 434:2.
+- Upsell dialogs/tiles measured against the app (D-E5 = 576×436 exactly); rows 10px apart,
+  a line reserved only when the partner tile has it.
+- Open: nothing blocking. Gotcha for writes: one heavy main component per call; on repeated
+  "overflow" errors open a new session.
 
 ## Goal
 Make the Figma design system match the code 1:1 (same component names,
@@ -14,6 +30,16 @@ variants, tokens), then build the 32 checkout screens from instances only.
 - Work in batches; ask Punna before starting each batch. Never ask to commit.
 
 ## How the file is organised
+- **Checkout screens: one page, "Checkout — dev hand-off" (441:2)**, in the order of the
+  Checkout Dev Handoff artifact. Sections: 0 Start here (links + rules for every plan card) ·
+  1 Express plans · 2 Express with credits · 3 Express upsells & order summary · 4 Self-checkout
+  four tabs · 5 Self-checkout upsells & order summary · 6 How job credits work · 7 Exit pop-ups ·
+  8 Order summary details · 9 Menus, chrome & edge states · 10 After payment & banners. Each
+  section opens with its rules; each row is one state: label, phone (x 80), desktop (x 590).
+  Frame ids are unchanged (moved, not copied). The old "Checkout — phone" and "Checkout —
+  coverage" pages were emptied and removed (2026-11-04); "Checkout — desktop" is now "Checkout —
+  scratch (not in hand-off)" and holds only a D-E1 copy (440:11693) that isn't part of the set.
+  New screens go into the matching section, never onto a loose page.
 - One page per component, grouped under divider pages ATOMS / MOLECULES / ORGANISMS.
 - Variable collections: Primitives (raw), Color (Light/Dark, aliases Primitives),
   Spacing, Radius, Typography. Components bind to Color/Spacing/Radius only.
@@ -287,6 +313,108 @@ Order (original):
 Code change (committed + pushed 2026-11-04, branch claude/affectionate-hugle-3d5771): mobile-plan-row.tsx —
 Unlimited card CTA `-my-1.5`; plan-card edges are `ring-2 ring-inset` (no 2px border) so every
 phone card has a true 16px inset. Lint + token check passed. Never ask Punna to commit.
+
+## Coverage gaps closed (2026-11-04, after the audit against the dev hand-off)
+Audit found 9 unique parts missing; all built. Page "Checkout — coverage" unless noted.
+1. "Are you sure?" (StayDialog where="summary"): P8 phone 391:1442, D-P8 desktop 391:1486.
+   P4 fixed to match code: job-types clay (was wallet), no empty body (header `alone`),
+   bold "7 lakh+" / "48 hours". P5 now uses Clay/contact.
+2. Desktop pop-up frame: PlanPopup/desktop 391:1671 (page OfferDialog · PlanPopup; 448 wide,
+   radius-role/overlay, px 24, buttons side by side, outline first). Desktop screens D-P4
+   391:1464, D-P5 391:1508, D-P6 391:1544, D-P7 391:1564 (row y 5200).
+   GOTCHA: a Button instance set to HUG in a horizontal footer collapses to 24px — resize to 40
+   and set FIXED.
+3. Menus (page AvailableCreditsButton): CreditsMenu set 394:143 (desktop 288 popover | phone
+   sheet; Count 1–4 text props, "Show add-on row"), HelpMenu set 394:242. Screens M1 394:1742,
+   D-M1 394:1814, M2 394:2247, D-M2 394:2312. New icons Icon/MessagesSquare 393:5,
+   Icon/CalendarDays 393:19; clays Clay/contact 390:1521, Clay/success 390:1522,
+   Clay/dedicated-support 390:1523.
+4. Jan 1 line: MobilePlanRow and PricingCard v2 have "Upcoming price" (text) + "Show upcoming
+   price" (off by default). Phone: right of the meta line (new "meta-row"); desktop: after
+   price-note. Gap: "₹749" isn't medium weight (one text prop, no mixed weight).
+5. S9 How job credits work · phone 394:8525 (muted MobilePlanRow credits cards, CTA hidden).
+   Features stack one per line; code flows them inline with "·" on phones.
+6. S8 Order summary · self-checkout · phone 394:8751 (DatabaseAddonCard, discount bill).
+7. ContactThanks set 396:180 (page OfferDialog · PlanPopup): signed-in Contact sales is a
+   confirmation, not a form. Screens K1 396:4320, D-K1 396:4350. The signed-out form is not drawn.
+8. DockedPlanTabs/desktop 396:316 (page Checkout shell). Screens D-T1 396:4378 (tabs in the bar),
+   T1 396:4463 (phone chip row stuck under the bar).
+9. Work-from-home: W1 396:3847, D-W1 396:4039 — Unlimited card at 55%, phone CTA hidden,
+   desktop CTA "Not for work-from-home jobs", solid info banner (tapped state).
+
+Review fixes (Punna, 2026-11-04):
+- P3 Credits or a plan rebuilt to CreditsToPlanDialog: Gradient/offer-premium header,
+  Clay/unlimited 397:5404 (new), "Special upgrade offer" tag, headline "Unlimited job posts for
+  30 days" (Unlimited in `highlight`), UNLIMITED POSTS ribbon (band reserved in both tiles),
+  "Monthly plan ₹2,499 /month", slot + database credits + "Valid in a single city", CTA "Get
+  monthly plan". Tiles detached (screen-level); dialog 398:4944.
+- RULE (upsell tiles): reserve a line only when ONE tile has it. A row that is empty in both
+  tiles is hidden (visible=false), not opacity 0 — it left a gap in E5 / D-E5 (per-unit).
+- "1 active job slot" → "1 job live at a time" on 16 screen texts (phone, desktop, coverage).
+- TrustedByStrip set 400:504 (page Checkout shell; phone 358×68, desktop 1152×76, measured from
+  the app): Icon/ShieldCheck 400:508 (new) + "Trusted by 7 lakh+ businesses & enterprises"
+  (Label/MD), logos 24px / 32px tall, 56 apart, in a clipped "marquee" frame with a gradient
+  mask for the 10% edge fade. Logo components Logo/Paytm … Logo/HDFC Bank 400:259–400:267
+  (first 9 of content/logos.ts). Placed under the GST note on E1–E5, D-E1–D-E8, and the
+  express-based coverage screens (M1, M2, W1 + desktop). Express only; self-checkout has none.
+- Icon colours audited against the app (computed colours, both checkouts, phone + desktop) and
+  fixed at the source (MobileUnlimitedCard, UnlimitedSideCard, PricingCard v2) and on ~60
+  screen icons. Reference: database credits gray everywhere except express desktop (info blue);
+  visibility ticks green; clock gray (express phone), green (express desktop), black (self
+  phone), gray (self desktop); Unlimited-card briefcase green in express, gray in self, black
+  on the phone Unlimited tab; "Top placement" arrow info blue. "Dynamic visibility" is now
+  Icon/Activity 405:4 (was TrendingUp).
+- Database credits icon is UserSearch everywhere, upsell tiles included (code changed too:
+  offer-choice.tsx, job-plan-cards.tsx ×3, unlimited-side-card.tsx — the Database cylinder is
+  gone from database-credit lines).
+- Slot chips read "1 job · 2 jobs · 3 jobs" (S3, D-S3).
+- Upsell spacing measured in the app (desktop "Pay less when you buy 3": card 576×436, header
+  201, tiles 206 + 310, rows 10px apart, 48px CTA row). Fixed at the source:
+  OfferDialog/desktop 342:202 — 576 wide, header pb 28, clay 56, lead Body/XL (20/28),
+  compare Price/Was LG (30/36 semibold) → Price/Offer LG (36/40 bold), units Body 16; CloseBubble
+  flush with the card's right edge, 40 above (x 544). OfferChoice 298:418 — rows and price group
+  10px apart, desktop padding 16, names Label/MD (14 semibold), desktop % Plan/Discount 12,
+  phone % Label/MD 14 + strike Body/MD Strike 16, validity Body/XS 12 gap 6, spacer zero
+  height (no grow) so it adds one gap above the CTA. New text styles: Body/XL, Price/Was LG,
+  Price/Offer LG, Body/MD Strike. D-E5 now 576×436 (= app), D-S6/D-S7 follow.
+- P2 Go annual rebuilt to AnnualUpgradeDialog (dialog 413:13102, from the P3 premium dialog):
+  Clay/annual 413:7793 (new), "Special upgrade offer", "Pay less, upgrade to annual plan",
+  ₹2,499 /month → ₹833 /month; tiles Monthly plan ₹2,499 /month | Annual plan ₹9,999 /year
+  ₹15,999 −38% (8 MONTHS FREE ribbon), slot + database credits lines, CTAs Continue / Get
+  annual plan. P3 moved to the same 10px row grid.
+- Every upsell is now drawn, phone + desktop (copy taken from the app):
+  | Upsell (trigger) | Phone | Desktop |
+  | Express: pay less when you buy 3 (no credits) | E5 307:782 | D-E5 343:2415 |
+  | Express: bigger credit pack (short of credits) | E5b 416:3590 | D-E5b 417:7003 |
+  | Both: go annual (Unlimited monthly) | P2 350:1139 | D-S10 417:7088 (wide, 768, tiles 283/425) |
+  | Self: bigger job pack (13 credits) | S6 416:3671 | D-S6 343:2592 |
+  | Self: bigger database pack (1,600) | S7 416:3759 | D-S7 344:5986 |
+  | Self: credits or a plan (3 credits, phones only) | P3 350:1210 | — |
+  The need note ("Needed to post premium job") takes the strike line in the credits tile; that
+  tile's spacer grows so its CTA pins level.
+- Icons normalised (2026-11-04, page Icons 33:2, 62 components). Every lucide-based icon is
+  rebuilt from node_modules/lucide-react `__iconNode` at stroke 2 on the 24 grid, outlined and
+  flattened INTO THE ICON'S EXISTING FIRST VECTOR (`vectorPaths` swap), so instance colour
+  overrides survive (checked: W1 banner Info stays white). Inner layers: constraints Scale/Scale,
+  aspect locked; component aspect locked. Old Material glyphs replaced: CorporateFare →
+  Icon/Building2 (code's Enterprise icon), ProgressActivity → Icon/LoaderCircle, AllInclusive →
+  infinity geometry. WhatsApp = Tabler brand-whatsapp (icons.tsx); VisibilityTicks1–3 and
+  XCircleFilled are custom filled glyphs (shapes kept).
+  STATUS: done, 62/62 (verified: every component 24×24 and aspect-locked, every inner layer
+  aspect-locked with Scale/Scale constraints, no live strokes; all render at one weight).
+  GOTCHA: a write that touches a heavily used main (BriefcaseBusiness, ClockFading…) can fail
+  with "upstream … overflow"; do ONE icon per call, retry once, and open a new session
+  (create_session) when every write starts failing.
+- Active apna Unlimited tab logo = LogoApnaUnlimited/gradient-deep 434:2 (new; apna-gold-800 →
+  600 top to bottom, stops bound to the gold variables), as pricing-hero.tsx in light mode.
+  Swapped on S3 310:2004, D-S3 333:325, D-S10 417:7088. LogoApnaUnlimited/gradient 126:13's
+  stops are now bound to gold-500 → 300 (dark mode).
+- Database add-on chips (order summary): unselected chips are white with no border (Punna's
+  Figma change). Code: ChipTabs variant "choice-on-tint" (chip-tabs.tsx), used in
+  checkout-drawer.tsx; showcase on /design-system/components/navigation.
+- E5 / D-E5: tile price groups were pinned FIXED from the alignment pass; now HUG. On E5 the
+  tiles' spacers are hidden so the tiles hug (188) with CTAs level — the OfferChoice spacer
+  can't shrink below its main size in an instance.
 
 ## Batch 4 — screens (paused for the new plan)
 - Shell components, page "Checkout shell": PageHeader/phone 305:47 (Title, Show credits chip,

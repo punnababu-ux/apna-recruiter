@@ -31,7 +31,6 @@ import {
   Check,
   Button,
   ClockFading,
-  Database,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -688,7 +687,7 @@ function MobileJobPlanRadioGroup({
                       )}
                     </span>
                     <span className="flex items-center gap-1.5 text-muted-foreground">
-                      <Database className="size-3.5 shrink-0" aria-hidden />
+                      <UserSearch className="size-3.5 shrink-0" aria-hidden />
                       {dbWorth(tier.dbCredits)}
                     </span>
                   </div>
@@ -715,7 +714,7 @@ function MobileJobPlanRadioGroup({
                       </li>
                     )}
                     <li className="flex items-center gap-2 border-t border-dashed border-border pt-2 text-foreground">
-                      <Database className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+                      <UserSearch className="size-4 shrink-0 text-muted-foreground" aria-hidden />
                       <span>{dbWorth(tier.dbCredits)}</span>
                     </li>
                   </ul>
@@ -801,7 +800,7 @@ function MobileSubscriptionCard({
         // The slot sits above as meta ("Expand on select" layout).
         [<WhatsApp key="i" className="text-success" aria-hidden />, "Smart alerts to candidates"],
         [<InfinityIcon key="i" className="text-warning" aria-hidden />, "Free job reposts and swapping"],
-        [<Database key="i" className="text-muted-foreground" aria-hidden />, dbCreditsLabel(plan)],
+        [<UserSearch key="i" className="text-muted-foreground" aria-hidden />, dbCreditsLabel(plan)],
       ]}
       // Said in full (user call, 2026-10-31).
       note={CITY_NOTE}

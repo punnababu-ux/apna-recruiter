@@ -62,6 +62,7 @@ const SEGMENTED_DEMO_ITEMS: SegmentedTabItem[] = [
 
 export default function NavigationComponentsPage() {
   const [activeChip, setActiveChip] = React.useState("active")
+  const [pack, setPack] = React.useState("100")
   const [activeSegment, setActiveSegment] = React.useState("jobs")
 
   return (
@@ -168,6 +169,21 @@ export default function NavigationComponentsPage() {
           value={activeChip}
           onValueChange={setActiveChip}
         />
+        {/* choice-on-tint: on a tinted card grey chips vanish, so unselected ones are white. */}
+        <div className="flex flex-col gap-2 rounded-card-nested bg-muted p-4">
+          <p className="text-xs text-muted-foreground">variant=&quot;choice-on-tint&quot; (the order summary&apos;s database add-on)</p>
+          <ChipTabs
+            variant="choice-on-tint"
+            aria-label="Pack size"
+            items={[
+              { value: "50", label: "50" },
+              { value: "100", label: "100" },
+              { value: "200", label: "200" },
+            ]}
+            value={pack}
+            onValueChange={setPack}
+          />
+        </div>
       </div>
 
       {/* NavigationMenu */}

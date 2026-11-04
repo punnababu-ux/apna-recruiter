@@ -17,7 +17,7 @@
  */
 
 import * as React from "react"
-import { Badge, Button, ClockFading, Database } from "@apna/design-system"
+import { Badge, Button, ClockFading, UserSearch } from "@apna/design-system"
 import { UpcomingPriceLine } from "@/components/apnahire/upcoming-price-line"
 import { cn } from "@/lib/utils"
 import { inr } from "@/lib/format"
@@ -174,7 +174,7 @@ function OptionTile({
     ) : null,
     facts: option.planFacts?.dbLine ? (
       <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-        <Database className="size-4 shrink-0" aria-hidden />
+        <UserSearch className="size-4 shrink-0" aria-hidden />
         <span className="sm:whitespace-nowrap">{option.planFacts.dbLine}</span>
       </span>
     ) : null,
