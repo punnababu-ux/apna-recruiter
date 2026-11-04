@@ -7,7 +7,7 @@
  *
  * API
  *   <ChatMessageList>                       role="log" column; gap between groups
- *   <ChatDayDivider>Today</ChatDayDivider>  centred muted pill
+ *   <ChatDayDivider>Today</ChatDayDivider>  centred card pill
  *   <ChatBubble variant="incoming|outgoing|assistant"
  *               time="10:42" status="sent|read"   // status: outgoing/assistant
  *               label="Apna Assistant for …"      // assistant sender line, Sparkles icon
@@ -16,9 +16,20 @@
  *   <ChatNotice icon={<ShieldAlert />} tone="default|warning">…</ChatNotice>
  *
  * Variants: incoming = bg-card + border, start side. outgoing = bg-accent,
- * end side. assistant = bg-muted, end side (speaks for the recruiter).
+ * end side. assistant = the info-subtle surface (AI is sky across the
+ * product, as the AI summary is), end side: it speaks for the recruiter.
+ * Its label and time use the surface's own foreground, never the generic
+ * muted grey, so they keep contrast on the tint (contrast rule: text
+ * ≥ 4.5:1 on its own surface; the bubble stands apart from the wallpaper).
  * Consecutive bubbles from one sender pass groupPosition: the corner on the
  * sender's side tightens to `rounded-field` where it touches a neighbour.
+ *
+ * Wallpaper: the list is meant to sit on `chat-wallpaper` (doodle canvas). So
+ * the pieces lift off it like WhatsApp's: bubbles, ChatChoice, ChatDayDivider
+ * and ChatNotice all carry `shadow-control`, the smallest elevation role (a
+ * hairline lift). `shadow-card` would be a card's resting shadow: too heavy for
+ * a row of small bubbles. Incoming stays bg-card; the divider and the default
+ * notice are bg-card too (the muted pill would vanish into the muted canvas).
  *
  * Radius: bubbles use `rounded-bubble`. ChatNotice uses `rounded-surface`:
  * it is a small inline notice, not a card (Card corners rule covers cards on
@@ -45,13 +56,13 @@ type ChatBubbleVariant = "incoming" | "outgoing" | "assistant"
 type ChatGroupPosition = "single" | "first" | "middle" | "last"
 
 const bubbleVariants = cva(
-  "relative flex w-fit max-w-xs flex-col rounded-bubble px-3 py-2 text-body-sm md:max-w-md",
+  "relative flex w-fit max-w-xs flex-col rounded-bubble px-3 py-2 text-body-sm shadow-control md:max-w-md",
   {
     variants: {
       variant: {
         incoming: "self-start border border-border bg-card text-card-foreground",
         outgoing: "self-end bg-accent text-accent-foreground",
-        assistant: "self-end bg-muted text-foreground",
+        assistant: "self-end border border-info/30 bg-info-subtle text-info-subtle-foreground",
       },
     },
   }
@@ -112,6 +123,8 @@ function ChatBubble({
   children?: React.ReactNode
 }) {
   const showStatus = status && variant !== "incoming"
+  // The label and time read on the bubble's own surface.
+  const metaTone = variant === "assistant" ? "text-info-subtle-foreground" : "text-muted-foreground"
   return (
     <div
       data-slot="chat-bubble"
@@ -122,7 +135,7 @@ function ChatBubble({
       {label && (
         <span
           data-slot="chat-bubble-label"
-          className="mb-1 flex items-center gap-1 text-caption text-muted-foreground"
+          className={cn("mb-1 flex items-center gap-1 text-caption", metaTone)}
         >
           <Sparkles aria-hidden className="size-3.5 shrink-0" />
           <span>{label}</span>
@@ -132,7 +145,7 @@ function ChatBubble({
       {(time || showStatus) && (
         <span
           data-slot="chat-bubble-meta"
-          className="mt-0.5 flex items-center gap-1 self-end text-caption text-muted-foreground"
+          className={cn("mt-0.5 flex items-center gap-1 self-end text-caption", metaTone)}
         >
           {time && <time>{time}</time>}
           {showStatus && <ChatTicks status={status} />}
@@ -155,7 +168,7 @@ function ChatChoice({
     <div
       data-slot="chat-choice"
       className={cn(
-        "inline-flex w-fit max-w-xs items-center gap-2 self-start rounded-full border border-border bg-card px-4 py-1.5 text-body-sm font-medium text-card-foreground md:max-w-md",
+        "inline-flex w-fit max-w-xs items-center gap-2 self-start rounded-full border border-border bg-card px-4 py-1.5 text-body-sm font-medium text-card-foreground shadow-control md:max-w-md",
         className
       )}
       {...props}
@@ -171,7 +184,7 @@ function ChatDayDivider({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="chat-day-divider"
       className={cn(
-        "w-fit self-center rounded-full bg-muted px-3 py-1 text-caption text-muted-foreground",
+        "w-fit self-center rounded-full bg-card px-3 py-1 text-caption text-muted-foreground shadow-control",
         className
       )}
       {...props}
@@ -195,10 +208,10 @@ function ChatNotice({
       data-slot="chat-notice"
       data-tone={tone}
       className={cn(
-        "flex w-fit max-w-xs items-start gap-2 self-center rounded-surface px-3 py-2 text-center text-caption md:max-w-md [&>svg]:mt-0.5 [&>svg]:size-3.5 [&>svg]:shrink-0",
+        "flex w-fit max-w-xs items-start gap-2 self-center rounded-surface px-3 py-2 text-center text-caption shadow-control md:max-w-md [&>svg]:mt-0.5 [&>svg]:size-3.5 [&>svg]:shrink-0",
         tone === "warning"
           ? "bg-warning-subtle text-warning-subtle-foreground"
-          : "bg-muted text-muted-foreground",
+          : "bg-card text-muted-foreground",
         className
       )}
       {...props}

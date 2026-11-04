@@ -53,33 +53,64 @@ import {
 function ChatComposerDemo() {
   const [value, setValue] = React.useState("")
   const [sent, setSent] = React.useState<string[]>([])
+  const [floating, setFloating] = React.useState("")
+  const props = {
+    onSend: (text: string) => {
+      setSent((prev) => [...prev, text])
+      setValue("")
+      setFloating("")
+    },
+    placeholder: "Message Ravi",
+  }
   return (
-    <div className="max-w-md space-y-3">
-      {sent.length > 0 && (
-        <ul className="space-y-1 text-sm text-muted-foreground">
-          {sent.map((m, i) => (
-            <li key={i}>Sent: {m}</li>
-          ))}
-        </ul>
-      )}
-      <ChatComposer
-        docked={false}
-        value={value}
-        onValueChange={setValue}
-        onSend={(text) => {
-          setSent((prev) => [...prev, text])
-          setValue("")
-        }}
-        placeholder="Message Ravi"
-        top={
-          <SuggestionChips
-            label="Suggested replies"
-            icon={<Sparkles />}
-            items={["Share your joining date", "Are you available today?", "Send documents"]}
-            onSelect={setValue}
+    <div className="grid gap-6 md:grid-cols-2">
+      <div className="space-y-3">
+        <p className="text-sm text-muted-foreground">Docked, wrapping chips</p>
+        {sent.length > 0 && (
+          <ul className="space-y-1 text-sm text-muted-foreground">
+            {sent.map((m, i) => (
+              <li key={i}>Sent: {m}</li>
+            ))}
+          </ul>
+        )}
+        <ChatComposer
+          docked={false}
+          value={value}
+          onValueChange={setValue}
+          {...props}
+          top={
+            <SuggestionChips
+              label="Suggested replies"
+              icon={<Sparkles />}
+              items={["Share your joining date", "Are you available today?", "Send documents"]}
+              onSelect={setValue}
+            />
+          }
+        />
+      </div>
+      <div className="space-y-3">
+        <p className="text-sm text-muted-foreground">Floating on chat-wallpaper, scrolling chips</p>
+        <div className="chat-wallpaper flex min-h-64 flex-col justify-end overflow-hidden rounded-lg border border-border">
+          <ChatComposer
+            variant="floating"
+            value={floating}
+            onValueChange={setFloating}
+            {...props}
+            top={
+              <SuggestionChips
+                layout="scroll"
+                items={[
+                  { label: "AI summary", icon: <Sparkles /> },
+                  "Share your joining date",
+                  "Are you available today?",
+                  "Send documents",
+                ]}
+                onSelect={setFloating}
+              />
+            }
           />
-        }
-      />
+        </div>
+      </div>
     </div>
   )
 }

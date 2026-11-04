@@ -7,16 +7,24 @@
  *
  *   Header    Back · avatar (lg) · name and facts · ⋮ (Not interested), then
  *             the job's nested card (rounded-card-nested, press-subtle)
+ *   Wallpaper The whole area under the header (messages and composer) is
+ *             `chat-wallpaper`: the doodle canvas, so the bubbles, dividers
+ *             and chips (bg-card, shadow-control) lift off it as in WhatsApp
  *   Messages  ChatMessageList: a ChatNotice for "Apna never asks for money…"
  *             (PRD guardrails), then ChatDayDividers and ChatBubbles. The
  *             candidate is incoming; the recruiter outgoing with Sent or
  *             Read (FR-15); the AI an assistant bubble with its "Apna
  *             Assistant for…" label. Candidate quick replies are ChatChoice
  *             (FR-4). Consecutive messages from one sender are grouped
- *   Composer  ChatComposer, docked. On urgent threads its top slot holds the
- *             AI summary (Alert, info: AI output, no alarm; the inbox
- *             already carries the one red "Urgent") and SuggestionChips
- *             (FR-6); a suggestion fills the composer, it never sends.
+ *   Composer  ChatComposer, floating (transparent, pill input, round Mic or
+ *             Send beside it). On urgent threads with a summary its top slot
+ *             is one scrolling chip row: "AI summary" (Sparkles) first, then
+ *             the suggested replies (FR-6). A reply chip fills the composer,
+ *             it never sends. The summary is on request, not always shown:
+ *             "AI summary" opens a PlanPopup (bottom sheet on phones, dialog
+ *             from md, the CloseBubble) with the ai-calling clay (the one AI
+ *             object in ValueArt), the summary text and the same replies as
+ *             actions; picking one fills the composer and closes the pop-up.
  *             Sending takes the thread off Urgent and stops the AI (useChats)
  *
  * Scripted mock data: nothing leaves the prototype.
@@ -25,9 +33,6 @@
 import * as React from "react"
 import Link from "next/link"
 import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
   Avatar,
   AvatarFallback,
   BackButton,
@@ -49,6 +54,7 @@ import {
   Sparkles,
   SuggestionChips,
 } from "@apna/design-system"
+import { PlanPopup, PopupBody, PopupHeader } from "@/components/apnahire/plan-popup"
 import { IconLabel } from "@/components/onlyrounds/shared"
 import { useChats } from "@/hooks/apnahire/use-chats"
 import { useAppBack } from "@/lib/apnahire/nav"
@@ -59,6 +65,9 @@ import {
   type ChatMessage,
   type ChatThread as Thread,
 } from "@/content/chats"
+
+/** The "AI summary" chip's value: not a reply, so it never lands in the draft. */
+const SUMMARY = "ai-summary"
 
 type Position = "single" | "first" | "middle" | "last"
 
@@ -109,6 +118,7 @@ export function ChatThread({ thread }: { thread: Thread }) {
   const back = useAppBack("/apnahire/chats")
   const { markRead, reply } = useChats()
   const [draft, setDraft] = React.useState("")
+  const [summaryOpen, setSummaryOpen] = React.useState(false)
   const end = React.useRef<HTMLDivElement>(null)
   const urgent = thread.status === "urgent"
 
@@ -124,8 +134,13 @@ export function ChatThread({ thread }: { thread: Thread }) {
     setDraft("")
   }
 
+  const pickReply = (text: string) => {
+    setDraft(text)
+    setSummaryOpen(false)
+  }
+
   return (
-    <div className="flex min-h-svh flex-col bg-muted md:min-h-0 md:flex-1">
+    <div className="chat-wallpaper flex min-h-svh flex-col md:min-h-0 md:flex-1">
       {/* The app bar on phones; under the 64px top bar from md. */}
       <header className="sticky top-0 z-sticky flex flex-col gap-3 border-b border-border bg-card px-4 py-3 md:top-16">
         <div className="flex items-center gap-3">
@@ -176,22 +191,43 @@ export function ChatThread({ thread }: { thread: Thread }) {
       </ChatMessageList>
 
       <ChatComposer
+        variant="floating"
         value={draft}
         onValueChange={setDraft}
         onSend={send}
         top={
           urgent && thread.summary ? (
-            <div className="flex flex-col gap-2">
-              <Alert variant="info">
-                <Sparkles aria-hidden />
-                <AlertTitle>AI summary</AlertTitle>
-                <AlertDescription>{thread.summary}</AlertDescription>
-              </Alert>
-              {thread.suggestedReplies && <SuggestionChips items={thread.suggestedReplies} onSelect={setDraft} />}
-            </div>
+            <SuggestionChips
+              layout="scroll"
+              label="AI summary and suggested replies"
+              items={[
+                { label: "AI summary", icon: <Sparkles aria-hidden />, value: SUMMARY },
+                ...(thread.suggestedReplies ?? []),
+              ]}
+              onSelect={(item) => (item === SUMMARY ? setSummaryOpen(true) : setDraft(item))}
+            />
           ) : undefined
         }
       />
+
+      {thread.summary && (
+        <PlanPopup open={summaryOpen} onOpenChange={setSummaryOpen}>
+          <PopupHeader art="ai-calling" title="AI summary" description="Apna Assistant, from this chat" />
+          <PopupBody>
+            <p className="text-body-sm text-foreground">{thread.summary}</p>
+            {thread.suggestedReplies && (
+              <div className="flex flex-col gap-2">
+                <span className="text-caption text-muted-foreground">Suggested replies</span>
+                <SuggestionChips
+                  items={thread.suggestedReplies}
+                  icon={<Sparkles aria-hidden />}
+                  onSelect={pickReply}
+                />
+              </div>
+            )}
+          </PopupBody>
+        </PlanPopup>
+      )}
     </div>
   )
 }

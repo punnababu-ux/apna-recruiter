@@ -135,6 +135,13 @@
   --border-strong: var(--color-gray-300);
   --ring:    var(--color-apna-green-500); /* brand focus ring                 */
 
+  /* Chat wallpaper — the doodle canvas behind a chat thread (`chat-wallpaper`
+   * utility). Base is a step darker than the card so white bubbles lift off
+   * it; the pattern is the line-icon tile, painted in this colour through a
+   * mask, so it follows the theme. */
+  --chat-wallpaper:         var(--color-gray-200);
+  --chat-wallpaper-pattern: var(--color-gray-300);
+
   /* --------------------------------------------------------------------------
    * Sidebar — a self-contained sub-surface with its own role tokens.
    * ------------------------------------------------------------------------ */
@@ -206,6 +213,7 @@
   --radius-hero:    var(--radius-2xl);/* marketing blocks, splashes         */
   --radius-pill:    var(--radius-full);/* avatars, pills, capsule buttons   */
   --radius-bubble:  var(--radius-xl); /* chat message bubbles               */
+  --radius-composer: var(--radius-3xl); /* the floating chat composer pill  */
 
   /* ==========================================================================
    * Elevation — intent roles on top of the primitive shadow ramp.
@@ -863,6 +871,10 @@
   --input:  var(--color-alpha-white-15);
   --border-strong: var(--color-alpha-white-20);
   --ring:   var(--color-apna-green-400);
+
+  /* Chat wallpaper — darker than the dark card; the doodles are a faint white. */
+  --chat-wallpaper:         var(--color-apna-plum-950);
+  --chat-wallpaper-pattern: var(--color-alpha-white-10);
 
   /* Sidebar — card 1 / card 2 on the same elevation ladder as above. */
   --sidebar:                    var(--color-apna-plum-900);

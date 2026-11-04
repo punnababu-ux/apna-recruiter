@@ -181,7 +181,7 @@ export default function DisplayComponentsPage() {
         <h2 className="text-base font-semibold text-foreground font-heading border-b border-border/60 pb-2">
           Chat Messages
         </h2>
-        <ChatMessageList className="max-w-xl rounded-lg bg-muted/40 p-4">
+        <ChatMessageList className="chat-wallpaper max-w-xl rounded-lg p-4">
           <ChatDayDivider>Today</ChatDayDivider>
           <ChatNotice icon={<ShieldAlert />} tone="warning">
             Apna never asks for money. Report any request for payment.
