@@ -148,13 +148,17 @@ function AlertDialogDescription({
   )
 }
 
+// Both footer buttons are `lg` (40px), the size every pop-up footer uses
+// (PopupFooter callers), so a confirm doesn't look smaller (user call, 2026-11-04).
 function AlertDialogAction({
   className,
+  size = "lg",
   ...props
 }: React.ComponentProps<typeof Button>) {
   return (
     <Button
       data-slot="alert-dialog-action"
+      size={size}
       className={cn(className)}
       {...props}
     />
@@ -164,7 +168,7 @@ function AlertDialogAction({
 function AlertDialogCancel({
   className,
   variant = "outline",
-  size = "default",
+  size = "lg",
   ...props
 }: AlertDialogPrimitive.Close.Props &
   Pick<React.ComponentProps<typeof Button>, "variant" | "size">) {
