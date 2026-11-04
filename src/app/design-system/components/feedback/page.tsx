@@ -243,7 +243,7 @@ export default function FeedbackComponentsPage() {
             surface={premiumSurface ? "premium" : "default"}
             title="Unlimited hiring for 90 days."
             subtitle="0 job credits left. Repost any job, any time."
-            items={[{ label: "1 active job slot for 90 days" }, { label: "600 database credits" }]}
+            items={[{ label: "1 job live at a time for 90 days" }, { label: "600 database credits" }]}
             price="₹5,400"
             mrp="₹5,999"
             badge={<DiscountBadge appearance="primary">10% OFF</DiscountBadge>}
@@ -279,7 +279,7 @@ export default function FeedbackComponentsPage() {
           art={<Image src="/images/company/values/annual.png" alt="" width={48} height={48} unoptimized />}
           hook="Special upgrade offer"
           headline={<>Pay <OfferBarDrop from="₹2,499" to="₹833" unit="/month" /> on the annual plan</>}
-          points={["1 active job slot for 365 days", "2,400 database credits"]}
+          points={["1 job live at a time for 365 days", "2,400 database credits"]}
           price={{ amount: "₹9,999", strike: "₹11,110", off: "10% OFF" }}
           deadline="Limited time offer"
           cta={<Button variant="emphasis" trailingIcon={<ArrowRight />}>Upgrade now</Button>}
@@ -296,7 +296,7 @@ export default function FeedbackComponentsPage() {
           art={<Image src="/images/company/values/expired.png" alt="" width={48} height={48} unoptimized />}
           hook="Your plan ended 39 days ago"
           headline="Renew at the price you paid last time"
-          points={["1 active job slot for 30 days", "200 database credits"]}
+          points={["1 job live at a time for 30 days", "200 database credits"]}
           price={{ amount: "₹2,249", strike: "₹2,499", off: "10% OFF" }}
           deadline={<><Clock className="size-3.5" /> Offer ends in 6 days</>}
           cta={<Button variant="emphasis" trailingIcon={<ArrowRight />}>Renew now</Button>}
@@ -353,7 +353,7 @@ export default function FeedbackComponentsPage() {
         </div>
         <div className="flex flex-col gap-6 bg-background p-4 sm:p-6">
           <Meter label="Days left in this cycle" size="lg" value={18} max={30} />
-          <Meter label="Job slots in use" value={1} max={2} />
+          <Meter label="Jobs live" value={1} max={2} />
           <Meter label="Database credits left" value={40} max={500} tone="warning" />
           <Meter label="Database credits left" value={0} max={500} tone="destructive" />
         </div>

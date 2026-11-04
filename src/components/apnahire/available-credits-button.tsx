@@ -200,7 +200,7 @@ function PlanRows({ slots }: { slots: Subscription }) {
             key: "slots",
             icon: Briefcase,
             value: <OfTotal used={sub.jobs.length} total={sub.total} />,
-            label: "Job slots in use",
+            label: "Jobs live",
             info: "A slot holds one live job at a time. Expire a job to free its slot for the next.",
           },
           {
@@ -221,7 +221,7 @@ function PlanRows({ slots }: { slots: Subscription }) {
       />
       {next && (
         <p className="text-sm text-muted-foreground">
-          Changes to the {planOrderLabel(SUBSCRIPTION_TERMS[next.term])} with {slotLabel(next.slots)} on{" "}
+          Changes to the {planOrderLabel(SUBSCRIPTION_TERMS[next.term])} ({slotLabel(next.slots)}) on{" "}
           <span className="whitespace-nowrap">{dayLabel(sub.renewsOn)}</span>.
         </p>
       )}

@@ -67,13 +67,12 @@ function planPricing(plan: { price: number; mrp?: number }, extraOff?: boolean) 
 }
 
 
-/* The selected chip spells out what it is ("3 active job slots"); the
-   others stay short ("1 Job", "5 Jobs"). Figma's chip reads "1 Active job
-   slow" (1971:9005), a typo; we spell it "slot", in sentence case. */
+/* Chips name the count only: "1 job", "2 jobs", "3 jobs" (user call,
+   2026-11-04); the cards under them say "live at a time". */
 const jobSlotOptions = (counts: JobSlotCount[], selected: JobSlotCount): ChipTabItem<string>[] =>
   counts.map((n) => ({
     value: String(n),
-    label: n === selected ? slotLabel(n) : `${n} Job${n === 1 ? "" : "s"}`,
+    label: `${n} job${n === 1 ? "" : "s"}`,
   }))
 
 /* Sub-points under the job-slot line — the same three in both plans.
@@ -217,7 +216,7 @@ function PlanCard({
             <span className="flex items-start gap-3 text-sm">
               <BriefcaseBusiness className="size-5 shrink-0" aria-hidden />
               <span>
-                <span className="font-semibold">{slots}</span> active job slot{slots === 1 ? "" : "s"} for {slotDays}{"\u00A0"}days
+                <span className="font-semibold">{slots}</span> job{slots === 1 ? "" : "s"} live at a time for {slotDays}{"\u00A0"}days
               </span>
             </span>
             {UNLIMITED_POINTS.map((point) => (

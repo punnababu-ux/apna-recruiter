@@ -422,7 +422,7 @@ export function PostJobFlow() {
       title,
       note: expired
         ? `${expired.title} expired to free its slot`
-        : `${kept.length + 1} of ${slots.total} job slots in use`,
+        : `${kept.length + 1} of ${slots.total} jobs live`,
     })
     setSlotsFullOpen(false)
     try {

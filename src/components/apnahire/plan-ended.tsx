@@ -99,7 +99,7 @@ export function PlanEndedState() {
       <EmptyHeader>
         <EmptyTitle>Your plan ended</EmptyTitle>
         <EmptyDescription>
-          Your {planName(prev).toLowerCase()} with {slotLabel(prev.slots)} ended on {dayLabel(prev.endedOn)}. {why(prev)}{" "}
+          Your {planName(prev).toLowerCase()} ({slotLabel(prev.slots)}) ended on {dayLabel(prev.endedOn)}. {why(prev)}{" "}
           Its live jobs have expired. You can post with job credits, or renew to hire without counting credits.
         </EmptyDescription>
       </EmptyHeader>

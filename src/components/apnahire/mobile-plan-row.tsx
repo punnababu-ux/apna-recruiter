@@ -439,7 +439,7 @@ export function MobileMetaLine({ icon, children }: { icon: React.ReactNode; chil
 }
 
 /** A subscription's slot line, the same on every phone Unlimited card and
- *  subscription row: "1 active job slot for 30 days", plain (not bold, user
+ *  subscription row: "1 job live at a time for 30 days", plain (not bold, user
  *  call 2026-10-30). */
 export function MobileSlotLine({ slots, days, muted }: { slots: number; days: number; muted?: boolean }) {
   return (
@@ -605,7 +605,7 @@ export function MobileUnlimitedCard({
             <div className="flex min-w-0 flex-col gap-1.5">
               <span className="text-plan-name text-foreground">{title}</span>
               {subtitle && <span className="text-xs text-muted-foreground">{subtitle}</span>}
-              {/* "1 active job slot for 30 days": the plan's slot line. */}
+              {/* "1 job live at a time for 30 days": the plan's slot line. */}
               {meta && <div className="mt-0.5">{meta}</div>}
             </div>
             {priceBlock}

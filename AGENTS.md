@@ -774,12 +774,12 @@ cards) and every upsell tile (`OfferChoice`), both checkouts, light and dark
    `text-plan-strike` (12px). Job credits, Database, Unlimited /
    Subscription, Enterprise, both checkouts: never a size picked per card,
    never `CardTitle` / `text-h3` for a plan.
-5. **Validity always carries the clock.** "Valid for N days" (or "1 active
-   job slot for N days") is shown with the `ClockFading` icon, everywhere:
+5. **Validity always carries the clock.** "Valid for N days" (or "1 job live
+   at a time for N days") is shown with the `ClockFading` icon, everywhere:
    in `OfferChoice` pass `validDays` / `term`, never a plain `note`.
    Exception (user call, 2026-10-29): a subscription card on phones
    (`MobileUnlimitedCard`) shows its slot as one line with the briefcase
-   icon — "1 active job slot for N days" in both checkouts — and no separate validity line.
+   icon — "1 job live at a time for N days" in both checkouts — and no separate validity line.
 6. **Which upsell tiles show validity.** Self-checkout: both tiles (both are
    packs the recruiter is choosing between). Express checkout: only the
    bundle on offer; the stay tile is the credit this one job needs and has
@@ -791,8 +791,8 @@ cards) and every upsell tile (`OfferChoice`), both checkouts, light and dark
 8. **One vocabulary for subscription terms** (user call, 2026-10-22).
    Plan names, units and lengths come from `SUBSCRIPTION_TERMS` in
    `src/content/subscriptions.ts` (with `slotTermLabel`, `dbCreditsLabel`,
-   `planOrderLabel` / `planOrderPoints`): "Annual plan", "/year", "1 active
-   job slot for 365 days". A term's length is always in days; never
+   `planOrderLabel` / `planOrderPoints`): "Annual plan", "/year", "1 job live
+   at a time for 365 days". A term's length is always in days; never
    "yearly", "1 year", "12-months plan" or "3 months". Never type these
    words by hand — and every surface that sells a plan shows its database
    credits (cards, upsell tiles, slots-full pop-up, order summary).
@@ -887,6 +887,13 @@ cards) and every upsell tile (`OfferChoice`), both checkouts, light and dark
    WhatsApp, so the text never does. Job types: "1x / 2x / 4x alerts to
    candidates" (Premium + AI 2x). Subscriptions and apna Unlimited: "Smart
    alerts to candidates". Phone, desktop, explainers, cancel flow alike.
+
+19. **One name for a slot: "1 job live at a time"** (user call, 2026-11-04).
+   Never "active job slot" or "job slot" in copy. With a length: "1 job live
+   at a time for 30 days"; plural "3 jobs live at a time". Meters: "Jobs
+   live" ("2 of 3 jobs live"). Slot chips name the count only: "1 job · 2
+   jobs · 3 jobs". All of it comes from `slotLabel` / `slotTermLabel` in
+   `src/content/subscriptions.ts`; never type it by hand.
 
 ## Tax disclaimer — one wording, one component
 

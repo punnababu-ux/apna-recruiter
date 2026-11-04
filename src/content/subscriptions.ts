@@ -179,10 +179,11 @@ export function chartPlan(chart: SubscriptionChart, id: SubscriptionPlanId, slot
 export const dbCreditsLabel = (plan: Pick<SubscriptionPlan, "dbCredits" | "dbCreditsWorth">) =>
   `${num(plan.dbCredits)} database credits worth ${inr(plan.dbCreditsWorth)}`
 
-/** "1 active job slot", "3 active job slots" (sentence case). */
-export const slotLabel = (slots: number) => `${slots} active job slot${slots === 1 ? "" : "s"}`
+/** "1 job live at a time", "3 jobs live at a time": one name for a slot,
+ *  everywhere (user call, 2026-11-04; was "1 active job slot"). */
+export const slotLabel = (slots: number) => `${slots} job${slots === 1 ? "" : "s"} live at a time`
 
-/** "1 active job slot for 30 days" — a plan's slot line, always in days. */
+/** "1 job live at a time for 30 days" — a plan's slot line, always in days. */
 export const slotTermLabel = (plan: { slots: number; slotDays: number }) =>
   `${slotLabel(plan.slots)} for ${plan.slotDays} days`
 

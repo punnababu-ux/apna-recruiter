@@ -33,7 +33,7 @@ export interface OfferOption {
   note?: React.ReactNode
   validDays?: number
   /** A time limit right under the price, plain with the clock icon
-   *  ("Valid for 30 days", "1 active job slot for 30 days"). */
+   *  ("Valid for 30 days", "1 job live at a time for 30 days"). */
   term?: string
   /** A subscription's grants and terms: its database credits
    *  ("200 database credits worth ₹2,000", `dbCreditsLabel`) and its one

@@ -134,7 +134,7 @@ export function usePlanChange(count: JobSlotCount) {
 }
 export type PlanChange = NonNullable<ReturnType<typeof usePlanChange>>
 
-/** "Unlimited monthly plan (1 active job slot)". */
+/** "Unlimited monthly plan (1 job live at a time)". */
 const planWithSlots = (term: SubscriptionPlanId, slots: number) =>
   `${planOrderLabel(SUBSCRIPTION_TERMS[term])} (${slotLabel(slots)})`
 

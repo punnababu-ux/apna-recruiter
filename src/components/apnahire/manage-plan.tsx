@@ -425,7 +425,7 @@ function CurrentPlan({
           variant="usage"
           className={USAGE_TILE}
           icon={<Briefcase aria-hidden />}
-          label="Job slots in use"
+          label="Jobs live"
           value={<OfTotal value={sub.jobs.length} total={sub.total} />}
           trend={
             full

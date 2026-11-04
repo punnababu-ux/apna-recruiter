@@ -342,7 +342,7 @@ export function CreditsToPlanDialog({
           unit: plan.unit,
           badge: "UNLIMITED POSTS",
           // Compares row for row with the credits tile: under each amount,
-          // its time limit ("Valid for N days" / "1 active job slot for N
+          // its time limit ("Valid for N days" / "1 job live at a time for N
           // days"); then what the plan grants (database credits) and the
           // city limit, bottom right.
           term: slotTermLabel(plan),
