@@ -88,6 +88,46 @@ Progress and history live in `docs/FIGMA-SYNC-STATUS.md`. Read its
   gets non-breaking hyphens (U+2011, "hard‑to‑fill"), and a long meta line
   may wrap beside a wide price column rather than run under it.
 
+## Rules learned, round 3 (2026-11-05: tabs, new screens)
+
+- **Tabs: one colour per state for text, icon and logo.** Selected: green
+  `checkout-primary` on text and icon. Not selected: phone sticky bar and
+  desktop docked bar are `foreground` at 60%, 14 medium; the desktop hero tabs
+  are `surface-checkout-hero-fg-secondary` (titles 18 semibold, subtitles
+  12). Selected label: 14 bold (Label/MD Bold) on the phone and docked bars,
+  18 semibold green on the hero. Read the rendered colour of the svg as well
+  as the label: they must match.
+- **"The sticky tabs on mobile"** means `SelfCheckoutTabs/phone` (305:111),
+  the Base UI Tabs `checkout` variant inside the header. It is not the
+  SegmentedTabSwitcher chip row; check which one docks by scrolling the page
+  and reading the `fixed`/`sticky` ancestor.
+- **Logos keep their colour in vector-network regions.** LogoApnaUnlimited
+  (126:5) ignored instance fill overrides until its region fills were
+  cleared on the main (`setVectorNetworkAsync` with regions minus `fills`).
+  Instances can't take vector-data overrides. If a recolour "does nothing",
+  check `vectorNetwork.regions[].fills`.
+- **Repaint icons by structure.** Walk every non-text shape inside each tab
+  frame (fills and strokes), with `skipInvisibleInstanceChildren=false`.
+  Picking only `VECTOR` nodes by name misses glyphs.
+- **New hand-off screens: clone the nearest sibling screen**, not a blank
+  frame. D-P1 came from D-P4 (scrim + centred dialog), and the phone success
+  from the desktop one (390×844, card 358). Measure the live dialog in the
+  pop-ups demo (`/design-system/product/pop-ups`) for padding and gaps. Put a
+  `state:` label above each new screen, and never place frames over the
+  section's other rows (check `maxY` first).
+- **A screen the code doesn't have: ask first.** Payment failure had no page
+  (it reopened the order summary). Punna chose "design it", then "build it":
+  design in Figma first, then code, then make the two match. Decide phone
+  button stacking at 320px in code, and mirror it in Figma. You can't move
+  children inside an instance, so swap the two buttons' main components.
+- **Clays come from the design system, never from Figma.** Use the
+  ValueArt names (`public/images/company/values/*.png`): success, alert,
+  expired, restricted, wallet. Don't download or screenshot Figma clay
+  images to install them. Figma re-encodes uploads, so hashes won't match.
+  When a Figma clay has no file in the repo, ask which DS clay to use.
+  Current picks: payment success `success`, payment failed `alert`, coupon
+  expired `expired`, self-checkout leave reasons `restricted`.
+
 ## Plugin API gotchas
 
 See `docs/FIGMA-SYNC-STATUS.md` → "Gotchas learned". The ones that bit
