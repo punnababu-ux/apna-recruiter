@@ -90,8 +90,10 @@ export interface ChatThread {
 
 export const RECRUITER_NAME = "Alok Singh"
 
+export const AI_NAME = "Apna Assistant"
+
 /** Every AI message starts with this label (PRD guardrails). */
-export const AI_LABEL = `Apna Assistant for ${RECRUITER_NAME}, ${COMPANY_NAME}`
+export const AI_LABEL = `${AI_NAME} for ${RECRUITER_NAME}, ${COMPANY_NAME}`
 
 /** Shown in every thread (PRD guardrails). */
 export const MONEY_WARNING = "Apna never asks for money. Report any request for payment."
