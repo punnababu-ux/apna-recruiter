@@ -7,7 +7,7 @@ Update it at the end of any session that moves a stream.
 ## Repo state at freeze
 | Worktree (folder) | Branch | State |
 |---|---|---|
-| `self-checkout-figma-design-0de944` | `claude/organize-knowledge-base-docs-f3827e` | **Uncommitted:** docs reorganized into folders, skills cleaned, this file. Waits for Punna's commit call |
+| `self-checkout-figma-design-0de944` | `claude/organize-knowledge-base-docs-f3827e` | Committed and pushed 2026-11-05; main merged in. Open a PR to land it on main |
 | `apna-ds` (main checkout) | `main` | Clean |
 | `epic-bose-ad6f2b`, `ai-calling-upsell-comparison-6160a5`, `rebuy-banner-design-461cc8` | job-posting / figma-sync branches | Clean, nothing ahead of main: safe to remove when Punna wants |
 
@@ -25,12 +25,12 @@ No other branch is ahead of `origin/main`. No stashes.
 | Marketing pages without Lovable source | Parked (`start-here/AI-HANDOFF.md` → Pending) | Punna's call | Punna |
 
 ## 🟡 Needs Punna (sign-off or manual step)
-1. **Commit today's work** in this worktree (docs move + skill cleanup). Claude never commits unasked.
+1. **Merge the PR** for `claude/organize-knowledge-base-docs-f3827e` (docs reorganization) once reviewed.
 2. **Pricing numbers:** new MRPs after Jan 1, 2027; database volume discount %; "Buy 3" per-job prices; extra-slot proration; 47-credit pack MRP and validity.
 3. **Subscription assumptions** (PRICING.md §5): DB credits fresh on upgrade; longer term + fewer slots = downgrade; extra jobs expire newest-first at renewal. Confirm or correct.
 4. **Copy:** AI Calling Agent page line "Screening that never clocks off"; drop the two repeated stat cards?
 5. **Clay assets:** approve the 8 plan pop-up objects once generated (review flow: raw first, cutout after approval).
-6. **Live employer.apna.co onboarding capture:** needs Punna's OTP.
+6. **Live employer.apna.co onboarding capture:** needs Punna's OTP (the signed-in app is already captured: `reference/LIVE-EMPLOYER-KB.md`).
 7. **Graph labels:** `graphify label .` needs an LLM key (none set). Optional.
 8. **Copy the graph to the main checkout** after this branch merges (`cp -R graphify-out ../../../`), so queries from main see the new doc paths.
 

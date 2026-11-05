@@ -40,6 +40,7 @@ One-page index: what Punna means → where it lives. Rules are in `AGENTS.md`
 | tokens / colours / gradients | — | `packages/design-system/src/styles/tokens/{primitives,semantic}.css`, utilities in `styles/index.css` |
 | primitives (Button, PricingCard, Sheet…) | — | `packages/design-system/src/components/ui/<name>.tsx`, export in `index.ts` |
 | pricing chart (all plans, gaps) | — | `docs/reference/PRICING.md` — keep in sync with price edits |
+| live employer app (employer.apna.co) | — | `docs/reference/LIVE-EMPLOYER-KB.md` — page-by-page; never spend credits exploring |
 | to-do / backlog | — | `docs/status/TODO.md` — add items as Punna names them |
 | alignment check | — | `scripts/check-alignment.js` (run in page, desktop width) |
 

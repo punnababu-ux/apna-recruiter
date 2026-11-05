@@ -26,6 +26,7 @@ move or retire a doc.
 | `reference/COMPONENTS.md` | Design-system component inventory + import snippets |
 | `reference/TOKENS.md` | Every semantic token and its primitive (grep it) |
 | `reference/PRICING.md` | Every plan's price in the prototype, open price questions |
+| `reference/LIVE-EMPLOYER-KB.md` | The live employer.apna.co app, page by page (read before planning recruiter-app work) |
 | `reference/CLAY-ILLUSTRATIONS.md` | Clay 3D illustration style, rules, live prompt |
 | `reference/CLAY-PROMPTS-V2.md` | Draft v2 clay prompts (not live yet; replaces the style once approved) |
 | `status/WORK-STREAMS.md` | Freeze: streams, needs-Punna list, recurring reminders (graph rebuild) |
