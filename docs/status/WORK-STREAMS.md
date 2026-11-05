@@ -26,7 +26,7 @@ No other branch is ahead of `origin/main`. No stashes.
 | Marketing pages without Lovable source | Parked (`start-here/AI-HANDOFF.md` → Pending) | Punna's call | Punna |
 
 ## 🟡 Needs Punna (sign-off or manual step)
-1. **GitHub CLI sign-in** (`gh auth login`) so Claude can open PRs; today's work went to main by fast-forward.
+1. **Branch + PR flow:** not now. Pushes go straight to main when Punna asks (after `npm run check`); Punna says when to switch to branches.
 2. **Pricing numbers:** new MRPs after Jan 1, 2027; database volume discount %; "Buy 3" per-job prices; extra-slot proration; 47-credit pack MRP and validity.
 3. **Subscription assumptions** (PRICING.md §5): DB credits fresh on upgrade; longer term + fewer slots = downgrade; extra jobs expire newest-first at renewal. Confirm or correct.
 4. **Copy:** AI Calling Agent page line "Screening that never clocks off"; drop the two repeated stat cards?
@@ -47,5 +47,5 @@ No other branch is ahead of `origin/main`. No stashes.
 ## What Claude does without asking
 Docs/index upkeep, graph code updates, lint/type checks, Figma audits when asked
 about Figma, renaming/moving docs with every reference fixed, memory upkeep.
-Never without Punna: commits, pushes, merges, deleting worktrees, Opus at
+Never without Punna: commits, pushes (straight to main for now), merges, deleting worktrees, Opus at
 medium/high effort, anything in "Needs Punna".
