@@ -84,8 +84,8 @@ export function PopupDescription({ className, children }: { className?: string; 
   return <Description className={cn("text-sm text-muted-foreground", className)}>{children}</Description>
 }
 
-/** Every step's title row, the pop-up header pattern (docs/CLAY-
- *  ILLUSTRATIONS.md): one clay object beside the title (`xs`), then a rule
+/** Every step's title row, the pop-up header pattern (docs/reference/
+ *  CLAY-ILLUSTRATIONS.md): one clay object beside the title (`xs`), then a rule
  *  above the content. `alone`: no PopupBody follows (a plain confirm), so
  *  it closes its own space and the footer's rule is the only one. */
 export function PopupHeader({

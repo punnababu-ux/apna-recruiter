@@ -274,7 +274,7 @@ export function JobList({ jobs, empty }: { jobs: ApnaJob[]; empty?: React.ReactN
   if (jobs.length === 0) {
     if (empty) return <>{empty}</>
     return (
-      <div className="flex min-h-64 items-center justify-center rounded-lg border border-dashed border-border bg-card p-8 text-sm text-muted-foreground">
+      <div className="flex min-h-64 items-center justify-center rounded-card border border-dashed border-border bg-card p-8 text-sm text-muted-foreground">
         No jobs here yet.
       </div>
     )

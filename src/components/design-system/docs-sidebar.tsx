@@ -68,7 +68,10 @@ const DOCS_NAV: NavGroup[] = [
   },
   {
     title: "Engineering",
-    items: [{ href: "/design-system/engineering/architecture", label: "Architecture", icon: Layers }],
+    items: [
+      { href: "/design-system/engineering/architecture", label: "Architecture", icon: Layers },
+      { href: "/design-system/engineering/working-rules", label: "Working rules", icon: BookOpen },
+    ],
   },
 ]
 

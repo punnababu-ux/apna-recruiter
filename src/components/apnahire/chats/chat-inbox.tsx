@@ -465,8 +465,6 @@ export function ChatInbox({ activeId = null, className }: { activeId?: string | 
                 unreadCount={unreadCount(t) || undefined}
                 statusIcon={statusIcon(t)}
                 active={t.id === activeId}
-                // The open row: the accent fill plus a primary bar at its start.
-                className={cn(t.id === activeId && "before:absolute before:inset-y-0 before:left-0 before:w-1 before:bg-primary")}
                 render={<Link href={`/apnahire/chats/${t.id}`} scroll={false} />}
               />
             ))}

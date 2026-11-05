@@ -2,7 +2,7 @@
 
 /**
  * Job details page: the ⋮ side panel and the status banner (live
- * employer.apna.co, docs/live-employer-kb/README.md §3 "Header").
+ * employer.apna.co, docs/reference/LIVE-EMPLOYER-KB.md §3 "Header").
  *
  *   JobInfoPanel      SheetPanel with three white sections: Plan (job type +
  *                     when it ends), Preference (who contacts first, alerts),

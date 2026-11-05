@@ -250,7 +250,7 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
         what: "Jobs tab: credit bundle cards in the dark glass panel.",
         live: "/pricing",
         where: "Self-checkout Jobs tab",
-        rules: ["Plan cards: solid, borderless, in surface-glass-dark. See Surfaces.", "Prices from the pricing sheet (docs/PRICING.md); never hard-code a new one."],
+        rules: ["Plan cards: solid, borderless, in surface-glass-dark. See Surfaces.", "Prices from the pricing sheet (docs/reference/PRICING.md); never hard-code a new one."],
       },
       {
         name: "UnlimitedSideCard",
@@ -466,6 +466,39 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
     description: "Create new job (/apnahire/jobs/new) and its plan step.",
     entries: [
       {
+        name: "AreaMap",
+        file: "apnahire/post-job/area-map.tsx",
+        what: "OpenStreetMap preview of the picked area, so the recruiter sees the pin lands where they meant. Nominatim finds the place, OSM's embed draws it.",
+        live: "/apnahire/jobs/new",
+        where: "Location question (office or field work), once a place is picked",
+        rules: [
+        "No key, no dependency. Public Nominatim allows about 1 request a second: move to a hosted geocoder before production.",
+        "If the place is not found, show the placeholder only; the area card still says where.",
+        ],
+      },
+      {
+        name: "JobPostingStepMenu",
+        file: "apnahire/post-job/job-posting-chrome.tsx",
+        what: "The 'Step 2 of 4 / Who can apply' control in the wizard footer. Opens every question grouped by step: a bottom sheet on phones, a menu on desktop.",
+        live: "/apnahire/jobs/new",
+        where: "WizardFooter status slot, every wizard question and the plan page",
+        rules: [
+        "Questions already reached open directly on every width; later ones are shown but disabled.",
+        "On phones the current question carries 'You are here' with the recruiter's avatar (user call, 2026-11-05).",
+        ],
+      },
+      {
+        name: "Job field editors (ChoiceCards, ChipMultiSelect, ListSelect, AddCustom, requirement and contact fields)",
+        file: "apnahire/post-job/job-fields.tsx",
+        what: "The parts of a wizard screen below its main question: choice cards with a Must-have switch, chip multi-select, free-text add row, and the walk-in, joining-fee, other-recruiter and screening-question editors.",
+        live: "/apnahire/jobs/new",
+        where: "Wizard questions: education, English, experience, interview, contact, screening, perks",
+        rules: [
+        "The Must-have switch sits beside the card's button, not in it (no control inside a control).",
+        "Must-have on: only matches can apply. Off: it only ranks them.",
+        ],
+      },
+      {
         name: "PostJobFlow",
         file: "apnahire/post-job/post-job-flow.tsx",
         what: "The wizard: one decision per screen, auto-saved.",
@@ -536,6 +569,83 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
         live: "/design-system/product/pop-ups",
         where: "Subscriber posting with every slot taken",
         rules: ["Two ways out: expire a job, or add a slot."],
+      },
+    ],
+  },
+  {
+    title: "Express · recruiter chat",
+    description: "Apna Chat for recruiters (/apnahire/chats): the inbox, the thread and Candidate 360.",
+    entries: [
+      {
+        name: "ChatInbox",
+        file: "apnahire/chats/chat-inbox.tsx",
+        what: "The list pane of Apna Chat's Express screen: search, Filters, Sort, an applied-filters row and the conversation rows. Full width on phones, a left pane from md.",
+        live: "/apnahire/chats",
+        where: "/apnahire/chats layout (ChatWorkspace), phone Express tab, desktop sidebar Express item",
+        rules: [
+        "Only the Urgent status icon is coloured (text-destructive); shape differs per status so colour is never the only cue.",
+        "Filters are one DropdownMenu with Status and Job groups; none checked in a group means all.",
+        "Rows link to /apnahire/chats/[id] with no scroll reset so the list keeps its place.",
+        ],
+      },
+      {
+        name: "ChatAppliedRow",
+        file: "apnahire/chats/chat-applied-row.tsx",
+        what: "The count line of the chat list ('34 of 307 chats') with one removable chip per applied filter or search, then Clear all.",
+        live: "/apnahire/chats",
+        where: "Under the ChatInbox header band",
+        rules: [
+        "Chips sit on ONE horizontally scrolling line, so many chips never grow the row.",
+        "No removable-chip primitive exists, so a chip is Button size xs outline with an X.",
+        ],
+      },
+      {
+        name: "ChatWorkspace",
+        file: "apnahire/chats/chat-workspace.tsx",
+        what: "Layout of the Chats section: list pane beside the open thread, with the Candidate 360 pane from xl.",
+        live: "/apnahire/chats",
+        where: "src/app/apnahire/(product)/chats/layout.tsx",
+        rules: [
+        "From md all three panes share one h-16 band and one h-14 sub-row (chat-bands.ts).",
+        "The list stays mounted, keeping scroll, search and filters, while the thread changes.",
+        "Phones keep the list-then-full-screen-thread flow.",
+        ],
+      },
+      {
+        name: "ChatThread",
+        file: "apnahire/chats/chat-thread.tsx",
+        what: "One Apna Chat thread for one job and one candidate: header, messages, notices and the floating composer with attachments, templates and AI summary.",
+        live: "/apnahire/chats",
+        where: "/apnahire/chats/[id]; full screen on phones, right pane from md",
+        rules: [
+        "A reply chip fills the composer, it never sends; a template fills the draft, it never sends.",
+        "Not interested closes the chat with a toast and Undo, no dialog.",
+        "Limits: 25 MB a file, 10 files a message; a file over a limit is skipped with a toast that says why.",
+        ],
+      },
+      {
+        name: "CandidateProfilePanel / CandidateProfileSheet",
+        file: "apnahire/chats/candidate-profile-panel.tsx",
+        what: "'Candidate 360': who the candidate is and why they fit the job, as a third pane from xl or in a right side panel below xl.",
+        live: "/apnahire/chats",
+        where: "ChatWorkspace (xl pane) and ChatThread header (sheet)",
+        rules: [
+        "Call is a masked call: a toast, no tel: link, so neither side sees the other's number.",
+        "Locked resume shows the panel's one primary button, 'Unlock resume · 1 credit'.",
+        "Sections are an Accordion with one heading style (text-h6).",
+        ],
+      },
+      {
+        name: "TemplatePicker",
+        file: "apnahire/chats/template-picker.tsx",
+        what: "The composer's Templates button: a Popover with search and grouped canned responses; picking fills the draft with placeholders resolved.",
+        live: "/apnahire/chats",
+        where: "ChatThread composer, leading slot",
+        rules: [
+        "Picking fills the draft and closes the picker; it never sends.",
+        "Keyboard: up/down move, Enter picks, Esc closes and focus returns to the message box.",
+        "The parent owns `open`, so typing '/' into an empty box also opens it.",
+        ],
       },
     ],
   },

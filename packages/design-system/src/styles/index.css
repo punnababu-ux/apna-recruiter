@@ -1231,12 +1231,14 @@
 /* loading-ring — attention-ring's strip of light, looping while the AI
    works on what's inside the card (the job prompt as "Draft my job" runs).
    Steady, no fade: here the loop is meant to read as "loading". Same markup:
-   an empty `<span aria-hidden>` last in a `relative` card. Reduced motion: a
-   still gradient edge. */
+   an empty `<span aria-hidden>` last in a `relative` box that sets a
+   stacking context (`z-10` / `isolate`). It sits BEHIND the card, 2px out,
+   so its glow lights the background and never washes over the field
+   (user call, 2026-11-05). Reduced motion: a still gradient edge. */
 @utility loading-ring {
   position: absolute;
-  inset: 0;
-  z-index: 1;
+  inset: -2px;
+  z-index: -1;
   border-radius: inherit;
   pointer-events: none;
   filter:
@@ -1273,12 +1275,14 @@
    screen fills with a soft wash that slowly shifts sky → gold → green and
    fades out lower down. Three stacked layers cross-fade, so the colour
    changes without a hard edge. Markup: an empty
-   `<span aria-hidden className="ai-backdrop" />`. Reduced motion: a still
+   `<span aria-hidden className="ai-backdrop" />` inside the page root, which
+   must be `isolate` with its own background: z-index -1 puts the wash above
+   that background and behind every piece of content. Reduced motion: a still
    sky wash. */
 @utility ai-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: -1;
   pointer-events: none;
   background: radial-gradient(140% 90% at 50% 0%, var(--ai-wash-1), transparent 80%);
   mask-image: linear-gradient(black 0%, black 50%, transparent 95%);
@@ -1749,6 +1753,12 @@ a[href] > [data-slot="card"] {
 }
 @utility bg-gradient-banner-destructive {
   background-image: var(--gradient-banner-destructive);
+}
+@utility bg-gradient-result-success {
+  background-image: var(--gradient-result-success);
+}
+@utility bg-gradient-result-failure {
+  background-image: var(--gradient-result-failure);
 }
 /* Frosted dark glass (--surface-glass-dark): the smoked counterpart of the
  * white glass — an 8% black pane, blurred, with a hairline light edge, for a

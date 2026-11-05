@@ -254,7 +254,7 @@ checkout = V14 (… → V11 → V13 → V14). To see a retired version, check ou
   `subscription-plans.tsx`, `unlimited-side-card.tsx`,
   `contact-sales-card.tsx`, `subscriber-plan-card.tsx`,
   `marketing/proof-bands.tsx`; design system `badge.tsx`, `tabs.tsx`,
-  `semantic.css`, `index.css`; `AGENTS.md`, `docs/COMPONENTS.md`.
+  `semantic.css`, `index.css`; `AGENTS.md`, `docs/reference/COMPONENTS.md`.
 
 ## Open / to check
 

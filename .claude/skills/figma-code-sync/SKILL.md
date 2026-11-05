@@ -10,8 +10,8 @@ styles), not from Tailwind classes or memory: a class can be overridden by a
 parent, a size variant, or a product className. Fix Figma at the **main
 component** first; fix screen instances only for per-state overrides.
 
-Progress and history live in `docs/FIGMA-SYNC-STATUS.md`. Read its
-"RESUME HERE" section first and update it after every step.
+Progress and history live in `docs/status/FIGMA-SYNC-STATUS.md`. Read its
+"▶ Latest state" section first (top of the file) and update it after every step.
 
 ## Workflow (what worked, 2026-11-04 audit)
 
@@ -130,7 +130,7 @@ Progress and history live in `docs/FIGMA-SYNC-STATUS.md`. Read its
 
 ## Plugin API gotchas
 
-See `docs/FIGMA-SYNC-STATUS.md` → "Gotchas learned". The ones that bit
+See `docs/status/FIGMA-SYNC-STATUS.md` → "Gotchas learned". The ones that bit
 most: `setBoundVariableForPaint` drops opacity (set it on the returned
 paint); bind with the resolved value as the fallback colour;
 `figma.skipInvisibleInstanceChildren=false` to find hidden rows; load every

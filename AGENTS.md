@@ -1,8 +1,8 @@
 # Poneglyph — Agent & Designer Guide
 
-> Picking up mid-project? Read `docs/AI-HANDOFF.md` after this file: the
+> Doc index: `docs/README.md`. Stream status + what needs Punna: `docs/status/WORK-STREAMS.md`. Picking up mid-project? Read `docs/start-here/AI-HANDOFF.md` after this file: the
 > working context, workflows and what is pending. For "where is X", read
-> `docs/PROJECT-MAP.md` first instead of exploring the repo.
+> `docs/start-here/PROJECT-MAP.md` first instead of exploring the repo.
 
 This file is the contract for any AI agent or designer working in this
 repository. Read it before you generate code. The rules are short and they
@@ -318,7 +318,7 @@ only for a forced choice.
 **Every pop-up has the same parts** (user call, 2026-10-23). A
 step pop-up (a question, a confirm, a "what changes"):
 1. **Header:** one clay object beside the title (`ValueArt` `xs`, see
-   docs/CLAY-ILLUSTRATIONS.md), the title, an optional one-line subtitle,
+   docs/reference/CLAY-ILLUSTRATIONS.md), the title, an optional one-line subtitle,
    then a rule (`Separator`) above the content.
 2. **Body:** the content; lists and boxes sit under the rule, never
    straight under the subtitle.
@@ -946,7 +946,7 @@ Trigger: you need a UI pattern that doesn't exist yet.
    - Variant props via `class-variance-authority` when there are >2 variants.
    - Named exports, no default exports.
    - File-level JSDoc header: purpose, API, a11y notes, minimal usage.
-3. Wire it into `docs/COMPONENTS.md` (add a row — import snippet + tldr).
+3. Wire it into `docs/reference/COMPONENTS.md` (add a row — import snippet + tldr).
 4. Add it to its category page under `src/app/design-system/components/`
    so it's visually verifiable on every commit. (The catch-all kitchen sink
    at `src/app/design-system/showcase/` is legacy — new work goes on the
@@ -1002,9 +1002,11 @@ src/
   hooks/ lib/ content/        App hooks, utilities, copy/content.
 scripts/
   lint-tokens.sh              Token lint (npm run lint:tokens).
-docs/
-  TOKENS.md                   Every semantic token with its primitive target.
-  COMPONENTS.md               Component inventory + API snippets.
+docs/                         Index: docs/README.md
+  start-here/                 AI-HANDOFF.md, PROJECT-MAP.md (read first)
+  reference/                  TOKENS.md, COMPONENTS.md, PRICING.md, clay style
+  status/                     TODO.md, FIGMA-SYNC-STATUS.md, review boards
+  history/                    Past sessions, audits, plans (read-only)
 AGENTS.md                     ← you are here.
 ```
 
@@ -1024,13 +1026,13 @@ npm run check        # All three. Run this before every commit.
 Before you `git commit`:
 
 - [ ] `npm run check` is green.
-- [ ] New components are listed in `docs/COMPONENTS.md`.
-- [ ] New semantic tokens are documented in `docs/TOKENS.md`.
+- [ ] New components are listed in `docs/reference/COMPONENTS.md`.
+- [ ] New semantic tokens are documented in `docs/reference/TOKENS.md`.
 - [ ] Any `token-lint-ignore` exception is justified in the PR description.
 - [ ] No new `style={{ … }}` props set color / font / spacing.
 
 A PR that uses a raw colour, introduces a component not listed in
-`docs/COMPONENTS.md`, breaks `npm run lint:tokens`, or adds a template
+`docs/reference/COMPONENTS.md`, breaks `npm run lint:tokens`, or adds a template
 without also adding its new components, is a reject.
 
 ---
@@ -1042,7 +1044,11 @@ without also adding its new components, is a reject.
   captures, bulk renames or copy sweeps, simple checks) run on **Haiku or Sonnet**.
 - **Opus at default effort** is the main session: plans, decides, reviews the subagents' work.
 - Before using **Opus at medium or high effort**, ask Punna first and say why.
-- Keep progress in a file (e.g. `docs/FIGMA-SYNC-STATUS.md`) so a new chat can resume from it.
+- Keep progress in a file (e.g. `docs/status/FIGMA-SYNC-STATUS.md`) so a new chat can resume from it.
+- **Look up before you explore.** "Where is X" → `docs/start-here/PROJECT-MAP.md`, then
+  `graphify query "…"`; only then grep. Read the section you need, not whole files.
+- **Independent subagents go out in one message** so they run in parallel; give each a
+  short brief and ask for a short reply (counts, paths), not file dumps.
 
 **Inputs — structure multi-part requests first.**
 - When Punna's message holds several asks (or arrives in pieces mid-task), first restate it as

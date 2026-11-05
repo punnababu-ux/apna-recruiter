@@ -7,7 +7,7 @@ description: Run any screen through Sumit's design review (Punna's manager) and 
 
 Sumit is Punna's manager. Two long rounds of his feedback shaped the phone
 checkouts: express V11 and self-checkout V14 (2026-10-30), specified in full
-in `docs/SESSION-2026-10-30-CHECKOUT.md` ("Where it landed"). Those two
+in `docs/history/SESSION-2026-10-30-CHECKOUT.md` ("Where it landed"). Those two
 screens are the reference for what "good" looks like to him. This skill:
 
 1. reviews a screen with his lenses,
@@ -21,6 +21,10 @@ When Punna relays new feedback from Sumit, or approves a design ("go with", "pro
 
 Write one line per lens for the screen under review: holds / fails, and the
 fix. Turn the fixes into proposed versions; never apply them silently.
+
+Lenses are numbered 1–N in one list: add a new one at the end of its group
+and renumber (no 15a-style suffixes). A rule that also lives in AGENTS.md
+gets a pointer here, not a copy.
 
 **Words**
 1. **Let the icon speak; cut words it already says.** WhatsApp icon →
@@ -73,54 +77,48 @@ fix. Turn the fixes into proposed versions; never apply them silently.
     system (AGENTS.md, 2026-11-02). When one checkout is
     finalized, port its structure to the other, keeping only the
     differences the page needs.
-15a. **Points nest under the fact they belong to** (2026-10-31). A sub-point
+16. **Points nest under the fact they belong to** (2026-10-31). A sub-point
     sits under its parent only when it is part of that fact: WhatsApp alerts
     under "Dynamic visibility"; reposts & swapping and database credits
     under "1 job live at a time". A limit (the city) is its own plain line
     at the end: "This plan is valid in a single city". Never nest a fact
     under a feature it doesn't explain.
-15b. **An applied offer shows what it saves** (2026-10-31). When the extra
+17. **An applied offer shows what it saves** (2026-10-31). When the extra
     10% is applied, show the struck price on every card, desktop too, even
     in a version that hides struck prices otherwise.
 
 **Prices and offers (approved 2026-11-02)**
-15c. **Phone and desktop are two platforms.** Phone first; it may break a
-    desktop pattern when that helps the phone. Coherence comes from the
-    design system, not from matching layouts (AGENTS.md).
-15d. **The saving is text, not a pill.** "−22%" green semibold, a step
+18. **The saving is text, not a pill.** "−22%" green semibold, a step
     smaller than the struck price (bold reads bigger); the struck price a
     step smaller than the amount. Steps stay the same on every surface
     (phone card 18/14/12, upsell tile 20/16/14).
-15e. **The price group reads outward from the price, on one centre line.**
+19. **The price group reads outward from the price, on one centre line.**
     Left-aligned: price → strike → %. Right-aligned (phone cards):
     % → strike → price. When it can't fit (a ~130px upsell tile), strike
     and % drop to the next line together, same order.
-15f. **The % is the final saving**, coupon included, against the struck
+20. **The % is the final saving**, coupon included, against the struck
     price. Never a % beside a price it doesn't describe.
-15g. **Anchor on what the user has seen.** Express shows no MRP, so its
+21. **Anchor on what the user has seen.** Express shows no MRP, so its
     upsells and order summary never strike a hidden MRP; a bundle strikes
     N × the shown single price.
-15h. **Say an offer once.** The claimed 10% lives in one banner above the
+22. **Say an offer once.** The claimed 10% lives in one banner above the
     plans ("Offer claimed · Extra 10% off every plan", "Ends in" timer,
     shimmer), never as a line on each card or tile. The order summary
     names the coupon ("You save ₹X with FIRST10").
-15i. **One colour, one meaning.** Green = the saving; blue = the per-unit
+23. **One colour, one meaning.** Green = the saving; blue = the per-unit
     price ("₹585 /credit") and Recommended; gray = secondary facts.
-15j. **Make value visible, but never promise a guess.** Free extras get
+24. **Make value visible, but never promise a guess.** Free extras get
     their own cart row ("10 database credits · Valid for 15 days · Free"),
     no struck worth, no MRP games. Show only what is certain at payment.
-15k. **Cut repeats in the cart.** Say a fact once (renewal lives in the
+25. **Cut repeats in the cart.** Say a fact once (renewal lives in the
     autopay line, not under the item). Bundle line: "1 used now · 2 left,
     valid for 90 days".
-15l. **An aside is "Note:" or italic, never both,** and never with an icon.
-15m. **One primary per screen; the recommended card stands out by its blue
+26. **An aside is "Note:" or italic, never both,** and never with an icon.
+27. **One primary per screen; the recommended card stands out by its blue
     edge** (desktop), not by a second green. Phone plan lists are the one
     exception, Sumit's call over the one-green recommendation (2026-11-03): a green "Buy now" on every card (no hover on a
-    phone to light one up), the Recommended tab marks the pick (15o).
-15n. **Phone plan cards breathe** (approved 2026-11-03). `MobilePlanRow`:
-    24px above and below (32px above with the Recommended tab), both
-    checkouts. A cramped card reads cheap; don't tighten it back.
-15o. **Every phone plan card has its own Buy now; alerts are tiered**
+    phone to light one up), the Recommended tab marks the pick (lens 28).
+28. **Every phone plan card has its own Buy now; alerts are tiered**
     (approved 2026-11-03). Every tab of both checkouts: inline −%, a green
     "Buy now" bottom right ("Contact sales" on Enterprise), 12px top,
     16px bottom (24px under the Recommended tab). Benefits one per line,
@@ -128,57 +126,51 @@ fix. Turn the fixes into proposed versions; never apply them silently.
     the last line. No benefits? The per-unit price goes under the rule so
     the button still sits at the bottom. Alerts on every job, phone and
     desktop: Classic "1x alerts to candidates", Premium "2x…", Super premium
-    "4x alerts to candidates". Free database credits: valid 15 days.
-15p. **Credits, never rupees, in the job-type explainer** (approved
-    2026-11-03).
-    "How job credits work" / "What each job type gets you" shows what a credit
-    gets: "1 / 2 / 4 job credits" in the price's place, no ₹ price, struck
-    price or %. It sits on the credit packs page: a job's own price there
-    makes the recruiter stop and compare "buy 3 credits" with "just buy one
-    Classic job", and that doubt costs the pack sale. The card answers "what
-    do my credits buy", not "what does a job cost".
-15q. **Add-ons keep their list price under the coupon** (2026-11-03, an
-    exception for now). No strike on the AI calling add-on, desktop or
-    phone; the 10% shows once added. Tried and undone the same day.
-15r. **AI calling credits are two things** (user call, 2026-11-03). A
-    "Premium + AI calling credit" (the legacy SKU, may be many) posts a
-    Premium job with the agent: only the Premium + AI card draws on it. An
-    "AI calling add-on credit" (rare, at most one, refunded when a job posted
-    with the add-on didn't go through) adds the agent to one job. The order
-    summary offers the AI calling add-on on every job type but Premium + AI,
-    in every credit case (none, partial, covered), to holders of either. With
-    the add-on credit held, the add-on reads "1 credit · from balance"
-    and is used from it, never bought; without it, "Add · ₹1,699".
-15s. **Credits in the price slot are one text style** (user call, 2026-11-03).
-    On every plan card and explainer card, phone and desktop, "1 job credit"
-    is set whole at the price size, never a big number with a small unit
-    ("1 credit" on Premium + AI). On express phone cards it takes the plan
-    name's style (`text-plan-name`, `MobilePlanRow priceAsName`), so name
-    and credits read as one line. On phone
-    credit cards the price says the credits once: no "Consumes N job
-    credits" line; the balance status ("Covered by balance", "Buy 1 for
-    ₹699") sits on the left under the visibility line. Premium + AI keeps its
-    demo call player on phones too, and its "AI calling agent" line rolls
-    through the add-on's points (30% higher call pickup, Ready to interview
-    candidates, Hindi & English calling), as the desktop block does.
-15t. **Every plan card state has its CTA** (user call, 2026-11-03). A rule
-    made for one state of a card applies to all of them: with credits, the
-    phone card ends in a green "Post now" where it would say "Buy now",
-    the same place and size. When you change a card, check every state it
-    can be in (no credits, partial, covered, offer claimed, Premium + AI)
-    on phone and desktop before calling it done.
+    "4x alerts to candidates". Free database credits: valid 15 days. A cramped card reads cheap; don't tighten it back (approved 2026-11-03).
+29. **Rules approved 2026-11-03, kept in AGENTS.md** ("Prices, offers and
+    validity"; read them there, don't copy them here):
+    - Rule 12: credits, never rupees, in the job-type explainer.
+    - Rule 13: add-ons keep their list price under the coupon.
+    - Rule 14: AI calling credits are two things (Premium + AI vs add-on).
+    - Rule 15: credits in the price slot are one text style.
+    - Rule 16: every plan card state has its CTA.
 
 **Interaction**
-16. **Motion is continuous or it's absent.** A swap (fade one out, fade the
+30. **Motion is continuous or it's absent.** A swap (fade one out, fade the
     other in) is wrong; a moving element must travel with the gesture.
     If the effect doesn't earn its place, Sumit prefers the static state
     (the collapsing large title was removed).
-17. **Explanations open as bottom sheets on phones**, reusing the screen's
+31. **Explanations open as bottom sheets on phones**, reusing the screen's
     own cards (read-only, no tap feedback) instead of a different
     component.
-18. **Familiar controls.** Underline tabs over custom chips; a scrolling tab
+32. **Familiar controls.** Underline tabs over custom chips; a scrolling tab
     row keeps its padding inside the scroll (starts 16px in, can scroll
     off the edge, every tab reachable at 320px).
+
+## 1a. Audit: the current version
+
+Run this to confirm a screen is on the approved version, or to rebuild it
+(full record: `docs/history/SESSION-2026-11-03-CHECKOUT.md`). Each line: holds /
+fails.
+
+1. **No design switches.** `grep -rn "usePriceLayout\|usePlanCardStyle\|\?price=" src`
+   finds nothing. The hidden settings only change demo state (balance,
+   slots, pricing phase, offer, plan layout, nav look).
+2. **Phone cards, every tab, both checkouts** (Jobs, Unlimited, Database,
+   Enterprise; express job types and monthly plan): price row % · strike ·
+   price on one centre line; green "Buy now" bottom right; rule, then
+   benefits one per line, or the per-unit price when there is no list.
+3. **Spacing** at 375px, measured in the DOM: 12px top / 16px bottom,
+   24px under the Recommended tab, 12px from the rule to the first line,
+   Classic's single line centred on its button.
+4. **Express alerts**: Classic / Premium / Super premium say "1x alerts to
+   candidates" / "2x…" / "4x…" (AGENTS.md rule 18) on phone and desktop;
+   Classic's desktop row is included, not ✕.
+5. **Order summary**: free database credits "Valid for 15 days".
+6. **Rules from AGENTS.md still hold**: one banner for the 10%, blue
+   per-unit price, green only for the saving and the buttons, desktop
+   CTAs outlined at rest. Run `scripts/check-alignment.js` on desktop
+   with and without the offer.
 
 ## 1b. Colour on the mesh (2026-11-05)
 
@@ -209,36 +201,11 @@ from blue round to pink.
 Check with a quick script: hue (HLS) of each stop and blob, and WCAG
 contrast of each stop on each blob, before showing the result.
 
-## 1a. Audit: the current version
-
-Run this to confirm a screen is on the approved version, or to rebuild it
-(full record: `docs/SESSION-2026-11-03-CHECKOUT.md`). Each line: holds /
-fails.
-
-1. **No design switches.** `grep -rn "usePriceLayout\|usePlanCardStyle\|\?price=" src`
-   finds nothing. The hidden settings only change demo state (balance,
-   slots, pricing phase, offer, plan layout, nav look).
-2. **Phone cards, every tab, both checkouts** (Jobs, Unlimited, Database,
-   Enterprise; express job types and monthly plan): price row % · strike ·
-   price on one centre line; green "Buy now" bottom right; rule, then
-   benefits one per line, or the per-unit price when there is no list.
-3. **Spacing** at 375px, measured in the DOM: 12px top / 16px bottom,
-   24px under the Recommended tab, 12px from the rule to the first line,
-   Classic's single line centred on its button.
-4. **Express alerts**: Classic / Premium / Super premium say "Alerts to
-   candidates" / "2x…" / "4x alerts to candidates" on phone and desktop;
-   Classic's desktop row is included, not ✕.
-5. **Order summary**: free database credits "Valid for 15 days".
-6. **Rules from AGENTS.md still hold**: one banner for the 10%, blue
-   per-unit price, green only for the saving and the buttons, desktop
-   CTAs outlined at rest. Run `scripts/check-alignment.js` on desktop
-   with and without the offer.
-
 ## 2. Every idea is a new version
 
 - Checkouts: the V1–V14 switch was retired 2026-11-02 (express V11 and
   self-checkout V14 are the code now; history in
-  `docs/SESSION-2026-10-30-CHECKOUT.md`). A new checkout variant goes behind
+  `docs/history/SESSION-2026-10-30-CHECKOUT.md`). A new checkout variant goes behind
   a URL flag, like other screens, unless Punna asks for a version switch
   again.
 - "In V11, …" / "in V14, …" now just means the live express / self-checkout
@@ -282,7 +249,7 @@ fails.
 ## 5. Keep the context file current
 
 After every round, update the session context file
-(`docs/SESSION-<date>-<area>.md`): the version table row, shared changes,
+(`docs/history/SESSION-<date>-<area>.md`; start a new one per round of work): the version table row, shared changes,
 "Where it landed" when something is finalized, the comparison link, how it
 was captured, and open questions (a lens that conflicts with AGENTS.md,
 e.g. "1 month" vs "lengths in days"). Never commit; Punna says when (memory:

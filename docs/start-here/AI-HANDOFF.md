@@ -1,15 +1,18 @@
 # AI handoff — working context (updated 2026-11-04)
 
 Read `AGENTS.md` first (the contract), then this file, then
-`docs/PROJECT-MAP.md` for "where is X". Any AI (Claude, Codex, Cursor,
+`docs/start-here/PROJECT-MAP.md` for "where is X". Any AI (Claude, Codex, Cursor,
 Gemini…) can pick up from here.
+
+> **Freeze (2026-11-05):** state of every stream, the needs-Punna list and
+> recurring reminders live in `docs/status/WORK-STREAMS.md`. Start there.
 
 > **Latest (2026-11-04):** the checkout is the focus. Express V11 and
 > self-checkout V14 are final (version switch removed; history in
-> `docs/SESSION-2026-10-30-CHECKOUT.md`, later calls in
-> `docs/SESSION-2026-11-03-CHECKOUT.md`). The design rules for it are all in
+> `docs/history/SESSION-2026-10-30-CHECKOUT.md`, later calls in
+> `docs/history/SESSION-2026-11-03-CHECKOUT.md`). The design rules for it are all in
 > AGENTS.md → "Prices, offers and validity". Figma sync progress is in
-> `docs/FIGMA-SYNC-STATUS.md`. The developer hand-off is below.
+> `docs/status/FIGMA-SYNC-STATUS.md`. The developer hand-off is below.
 >
 > **Stale below this line, from 2026-10-17:** the marketing notes still
 > mention a serif and the old product colours. AGENTS.md wins: Inter only,
@@ -25,7 +28,7 @@ Gemini…) can pick up from here.
   and is not kept in sync.
 - **Figma:** the same screens, same order, on the page "Checkout — dev hand-off" of
   https://www.figma.com/design/f8O8wKTD4EdBvFj7h5ilev (sections 0–10, phone left, desktop
-  right; see docs/FIGMA-SYNC-STATUS.md).
+  right; see docs/status/FIGMA-SYNC-STATUS.md).
 - **Live prototype:** poneglyphag.vercel.app (rebuilt from `main`).
   Express `/apnahire/jobs/new/plans`, self-checkout `/apnahire/credits`.
   States (credit balance, plan layout, offer, returning recruiter, pricing

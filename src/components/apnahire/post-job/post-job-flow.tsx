@@ -631,7 +631,7 @@ export function PostJobFlow() {
   }
 
   return (
-    <div className="isolate flex min-h-svh flex-col bg-background">
+    <div data-ai-backdrop-host className="isolate flex min-h-svh flex-col bg-background">
       {/* PREVIEW ONLY (?wash): the Gemini-style colour wash while drafting.
           Stays mounted so it fades out as the next screen arrives. */}
       {washPreview && <span aria-hidden data-active={drafting || undefined} className="ai-wash" />}
@@ -775,6 +775,9 @@ export function PostJobFlow() {
       <AlertDialog open={confirmRedraft} onOpenChange={setConfirmRedraft}>
         <AlertDialogContent>
           <AlertDialogHeader>
+            <AlertDialogMedia>
+              <ValueArt name="draft" size="xs" />
+            </AlertDialogMedia>
             <AlertDialogTitle>Redraft the job?</AlertDialogTitle>
             <AlertDialogDescription>This replaces your current answers.</AlertDialogDescription>
           </AlertDialogHeader>
@@ -787,7 +790,7 @@ export function PostJobFlow() {
             >
               Keep answers
             </AlertDialogCancel>
-            <AlertDialogAction variant="emphasis" onClick={() => void runDraft()}>
+            <AlertDialogAction onClick={() => void runDraft()}>
               Redraft
             </AlertDialogAction>
           </AlertDialogFooter>

@@ -1004,7 +1004,7 @@ export default function Home() {
           {/* ===================================================================
            * TOKENS · Tier 2 semantics. These are what components read.
            * Each swatch shows the alias name; the colour resolves through the
-           * primitive it points at (see docs/TOKENS.md for the mapping table).
+           * primitive it points at (see docs/reference/TOKENS.md for the mapping table).
            * ================================================================= */}
           <Section id="surfaces" title="Surfaces · Tier 2 semantics">
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">

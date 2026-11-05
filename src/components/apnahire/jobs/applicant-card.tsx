@@ -2,7 +2,7 @@
 
 /**
  * ApplicantCard — one candidate who applied to a job (ECC "Applied" tab),
- * as on live employer.apna.co (docs/live-employer-kb/README.md §3).
+ * as on live employer.apna.co (docs/reference/LIVE-EMPLOYER-KB.md §3).
  *
  *   header   initials, name (opens the profile), match bars + score, "View profile"
  *   facts    gender, age · experience · expected salary · area

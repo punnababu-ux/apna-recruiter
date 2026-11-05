@@ -2,12 +2,12 @@
 
 One-page index: what Punna means → where it lives. Rules are in `AGENTS.md`
 (read only the section you need); working context and pending list in
-`docs/AI-HANDOFF.md`. Keep this file current when you add a route or area.
+`docs/start-here/AI-HANDOFF.md`. Keep this file current when you add a route or area.
 
 ## Token-saving workflow
 - Don't `ls`/grep the whole repo. Find the term below, open that file.
-- Don't read AGENTS.md end to end (784 lines); jump to the section by heading.
-- Component API → `docs/COMPONENTS.md`; token names → `docs/TOKENS.md` (grep, don't read).
+- Don't read AGENTS.md end to end (1147 lines); jump to the section by heading.
+- Component API → `docs/reference/COMPONENTS.md`; token names → `docs/reference/TOKENS.md` (grep, don't read).
 - Verify with `npm run check`; dev server `preview_start {name:"apna-recruiter-dev"}` (port 3002).
 
 ## Glossary — what Punna says → where
@@ -19,7 +19,7 @@ One-page index: what Punna means → where it lives. Rules are in `AGENTS.md`
 | company pages | `/about/*`, `/careers`, `/newsroom/*`, `/customer-stories/*`, `/enterprise` | `marketing/page-blocks.tsx`, `content/company.ts`, `press.ts`, `enterprise.ts` |
 | lounge | `/interview-prep-lounge` | `marketing/moment-carousel.tsx`, `content/interview-lounge.ts` |
 | header / footer / contact band | marketing layout | `marketing/site-header.tsx`, `site-footer.tsx`, `contact-section.tsx`, `(marketing)/layout.tsx` |
-| clay pictures / 3D assets | /design-system/foundations/clay | **style + prompt: `docs/CLAY-ILLUSTRATIONS.md`, `src/content/clay-style.ts`**; `marketing/value-art.tsx` (`READY`), `public/images/company/values/`, `scripts/clay-cutout.py` |
+| clay pictures / 3D assets | /design-system/foundations/clay | **style + prompt: `docs/reference/CLAY-ILLUSTRATIONS.md`, `src/content/clay-style.ts`**; `marketing/value-art.tsx` (`READY`), `public/images/company/values/`, `scripts/clay-cutout.py` |
 | login / OTP / enterprise login | `/login`, `/login/otp`, `/login/enterprise` | `components/auth/*`, `content/auth.ts` |
 | self-checkout / buy credits / plans page | `/apnahire/credits` | `apnahire/self-checkout.tsx`, `job-credit-bundles.tsx`, `database-credit-bundles.tsx`, `subscription-plans.tsx`, `unlimited-side-card.tsx`, `contact-sales-card.tsx` |
 | express checkout / plans step (in job post) | `/apnahire/jobs/new/plans` | `apnahire/job-plan-selection.tsx`, `job-plan-cards.tsx`, `mobile-plan-row.tsx`, `content/job-plans.ts` |
@@ -39,8 +39,9 @@ One-page index: what Punna means → where it lives. Rules are in `AGENTS.md`
 | design-system docs site | `/design-system/*` | category pages under `src/app/design-system/components/` |
 | tokens / colours / gradients | — | `packages/design-system/src/styles/tokens/{primitives,semantic}.css`, utilities in `styles/index.css` |
 | primitives (Button, PricingCard, Sheet…) | — | `packages/design-system/src/components/ui/<name>.tsx`, export in `index.ts` |
-| pricing chart (all plans, gaps) | — | `docs/PRICING.md` — keep in sync with price edits |
-| to-do / backlog | — | `docs/TODO.md` — add items as Punna names them |
+| pricing chart (all plans, gaps) | — | `docs/reference/PRICING.md` — keep in sync with price edits |
+| live employer app (employer.apna.co) | — | `docs/reference/LIVE-EMPLOYER-KB.md` — page-by-page; never spend credits exploring |
+| to-do / backlog | — | `docs/status/TODO.md` — add items as Punna names them |
 | alignment check | — | `scripts/check-alignment.js` (run in page, desktop width) |
 
 ## Content & copy
@@ -51,4 +52,4 @@ interview-coach-ai-05.lovable.app (lounge), employer.apna.co (product). Never in
 marketing ≫ home > apnahire ≈ design-system > offers, pricing, checkout, express.
 Latest: express checkout "trusted by" logo row under plans.
 
-## Pending / parked → `docs/TODO.md` (backlog), `docs/AI-HANDOFF.md` "Pending" + memory `project_parked_items.md`.
+## Pending / parked → `docs/status/TODO.md` (backlog), `docs/start-here/AI-HANDOFF.md` "Pending" + memory `project_parked_items.md`.

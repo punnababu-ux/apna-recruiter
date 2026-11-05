@@ -10,6 +10,7 @@
 
 import * as React from "react"
 import {
+  SuggestionChips,
   Button,
   ChipTabs,
   Field,
@@ -248,11 +249,10 @@ export function ChoiceCards<V extends string>({
         )
         if (!withSwitch && !extra) return card
         return (
-          <div key={v} className="overflow-hidden rounded-xl border border-primary bg-accent ring-1 ring-primary">
+          <div key={v} className="overflow-hidden rounded-card-nested border border-primary bg-accent ring-1 ring-primary">
             {card}
-            {/* Fields sit on white, so inputs and sliders keep their normal
-                look; only the picked answer's header carries the tint. */}
-            {extra && <div className="border-t border-primary/20 bg-card p-4">{extra}</div>}
+            {/* The fields sit on the picked card's tint, one green card (user call, 2026-11-05). */}
+            {extra && <div className="border-t border-primary/20 p-4">{extra}</div>}
             {withSwitch && (
               <div className="px-4 py-3">
                 <label className="flex items-center gap-3">
@@ -529,7 +529,7 @@ export function ScreeningQuestionsField({ draft, update }: FieldEditorProps) {
       {qs.length > 0 && (
         <ul className="flex flex-col gap-2">
           {qs.map((q) => (
-            <li key={q.id} className="flex flex-wrap items-center gap-3 rounded-lg border border-border p-3">
+            <li key={q.id} className="flex flex-wrap items-center gap-3 rounded-card-nested border border-border p-3">
               <span className="min-w-0 flex-1 text-sm text-foreground">{q.question}</span>
               <label className="flex items-center gap-2 text-xs text-muted-foreground">
                 Required
@@ -564,20 +564,13 @@ export function ScreeningQuestionsField({ draft, update }: FieldEditorProps) {
       {suggestions.length > 0 && (
         <div className="flex flex-col gap-2">
           <p className="text-xs font-medium text-muted-foreground">Suggested</p>
-          <div className="flex flex-wrap gap-2">
-            {suggestions.map((s) => (
-              <Button
-                key={s}
-                type="button"
-                size="sm"
-                variant="outline"
-                className="h-auto max-w-full rounded-full py-1.5 text-left whitespace-normal"
-                onClick={() => update("screeningQuestions", [...qs, newQuestion(s)])}
-              >
-                <Plus className="size-3.5" aria-hidden /> {s}
-              </Button>
-            ))}
-          </div>
+          {/* SuggestionChips wraps long questions over lines, which Button can't. */}
+          <SuggestionChips
+            items={suggestions}
+            label="Suggested questions"
+            icon={<Plus aria-hidden />}
+            onSelect={(s) => update("screeningQuestions", [...qs, newQuestion(s)])}
+          />
         </div>
       )}
       <AddCustom

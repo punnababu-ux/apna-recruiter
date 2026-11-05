@@ -76,7 +76,7 @@ import {
 
 // ── Mock data ─────────────────────────────────────────────────────────────
 
-/** Applied tab filters, as on live (docs/live-employer-kb §3 "Applied tab"). */
+/** Applied tab filters, as on live (docs/reference/LIVE-EMPLOYER-KB.md §3 "Applied tab"). */
 const FILTERS = [
   {
     id: "show",

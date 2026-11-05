@@ -105,7 +105,8 @@ function ConversationRow({
       {
         className: cn(
           "ink relative flex w-full items-start gap-3 border-b border-border px-4 py-3 text-left transition-interactive outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-inset",
-          active && "bg-accent",
+          // The open row: accent fill plus a primary bar at its start (::after, since ink paints ::before).
+          active && "bg-accent after:absolute after:inset-y-0 after:left-0 after:w-1 after:bg-primary",
           className
         ),
         children: (

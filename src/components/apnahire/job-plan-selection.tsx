@@ -483,7 +483,7 @@ export function JobPlanSelection() {
             )}
           </UpcomingPricesProvider>
           {/* Paused (user call, 2026-10-29): how to tell recruiters about the
-              AI calling add-on on this page is still open (docs/TODO.md →
+              AI calling add-on on this page is still open (docs/status/TODO.md →
               "Plan cards"). The banner is kept as aiAddonBanner. */}
           {/* The DB credits offer note is gone from the footer (user call,
               2026-10-30); only the GST note stays. */}

@@ -234,7 +234,7 @@ function ContactThanks({
   return (
     <div role="status" className="flex flex-col items-center gap-6 py-2 text-center">
       {/* The success moment, in clay (one of the product's emotional
-          beats, where clay is allowed — see docs/CLAY-ILLUSTRATIONS.md). */}
+          beats, where clay is allowed — see docs/reference/CLAY-ILLUSTRATIONS.md). */}
       <ValueArt name="success" size="sm" />
       <div className="flex flex-col gap-3">
         <Title className="text-h4 text-balance text-foreground">{title}</Title>

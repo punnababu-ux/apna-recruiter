@@ -438,6 +438,10 @@
   --gradient-banner-success:     linear-gradient(135deg, var(--color-apna-green-600) 0%, var(--color-apna-green-950) 100%);
   --gradient-banner-warning:     linear-gradient(135deg, var(--color-apna-gold-400) 0%, var(--color-apna-gold-600) 100%);
   --gradient-banner-destructive: linear-gradient(135deg, var(--color-red-600) 0%, var(--color-red-950) 100%);
+  /* Payment result pages: a soft wash behind the result card, green when the
+   * payment went through, red when it failed. Fades to the page background. */
+  --gradient-result-success: linear-gradient(180deg, var(--color-apna-green-100) 0%, var(--color-apna-green-50) 45%, var(--background) 100%);
+  --gradient-result-failure: linear-gradient(180deg, var(--color-red-100) 0%, var(--color-red-50) 45%, var(--background) 100%);
 
   /* Checkout hero — soft multi-tone ambient mesh, used behind the
    * self-checkout / pricing page hero + tab selector. Matches the
@@ -930,6 +934,8 @@
   --gradient-banner-success:     linear-gradient(135deg, var(--color-apna-green-700) 0%, var(--color-apna-green-950) 100%);
   --gradient-banner-warning:     linear-gradient(135deg, var(--color-apna-gold-500) 0%, var(--color-apna-gold-700) 100%);
   --gradient-banner-destructive: linear-gradient(135deg, var(--color-red-800) 0%, var(--color-red-950) 100%);
+  --gradient-result-success: linear-gradient(180deg, var(--color-apna-green-950) 0%, var(--background) 70%);
+  --gradient-result-failure: linear-gradient(180deg, var(--color-red-950) 0%, var(--background) 70%);
 
   /* Checkout hero (dark) — the source has no dark design to port, so this is
    * an original dark treatment: soft white glows over a dark diagonal wash,
