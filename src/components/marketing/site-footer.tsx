@@ -11,6 +11,7 @@
 
 import Link from "next/link"
 import { LogoApnaWordmark } from "@apna/design-system"
+import { FooterWatermark } from "@/components/marketing/footer-watermark"
 import { cn } from "@/lib/utils"
 import {
   APP_STORE_LINKS,
@@ -137,12 +138,7 @@ export function SiteFooter({ className }: { className?: string }) {
         </div>
       </div>
 
-      {/* Sign-off watermark: the wordmark edge to edge, faint, cropped by the
-          page's end and fading out (decorative). */}
-      <div aria-hidden className="mt-12 overflow-hidden mask-b-from-20%">
-        <LogoApnaWordmark variant="deep" className="h-auto w-full translate-y-1/4 opacity-5 dark:hidden" />
-        <LogoApnaWordmark variant="white" className="hidden h-auto w-full translate-y-1/4 opacity-5 dark:block" />
-      </div>
+      <FooterWatermark />
     </footer>
   )
 }

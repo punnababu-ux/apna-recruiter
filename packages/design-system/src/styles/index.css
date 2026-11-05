@@ -1976,3 +1976,22 @@ a[href] > [data-slot="card"] {
   transition: translate 120ms linear;
   @media (prefers-reduced-motion: reduce) { transition: none; }
 }
+
+/* Scroll-linked parallax (2026-11-05). A frame carries `--parallax-p`, its
+   scroll progress from 0 (just entering view) to 1 (fully shown; for the
+   footer watermark, the page's end), set by a small scroll listener. Two
+   layers move at different rates: `parallax-rise` (the back layer rises and
+   grows to full size) and `parallax-drift` (what moves inside it). At 1 both
+   sit at rest; reduced motion keeps them at rest. */
+@utility parallax-rise {
+  @media (prefers-reduced-motion: no-preference) {
+    translate: 0 calc((1 - var(--parallax-p, 1)) * 45%);
+    scale: calc(0.7 + 0.3 * var(--parallax-p, 1));
+  }
+}
+@utility parallax-drift {
+  @media (prefers-reduced-motion: no-preference) {
+    translate: 0 calc((1 - var(--parallax-p, 1)) * -12%);
+    scale: calc(1.05 + 0.2 * (1 - var(--parallax-p, 1)));
+  }
+}
