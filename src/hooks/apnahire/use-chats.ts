@@ -11,10 +11,17 @@
  * "sending", then mock timers move it to "sent" (~0.6 s), "delivered"
  * (~1.5 s) and "read" (~4 s). The timers are module-level, not per render,
  * and each removes itself when it fires.
+ *
+ * closeThread / reopenThread: the recruiter's "Not interested" closes the
+ * thread as "Not a fit" and the AI stops (PRD); it remembers the status it
+ * had, so Undo and "Reopen chat" restore it (else "active"). Data rule (PRD):
+ * a candidate message that arrives on a closed thread reopens it as urgent.
+ * The mock has no live incoming messages, so nothing implements this yet: the
+ * incoming path must do `status: "urgent", closedReason: undefined`.
  */
 
 import * as React from "react"
-import { MOCK_THREADS, type ChatThread, type MessageStatus } from "@/content/chats"
+import { MOCK_THREADS, type ChatThread, type ClosedReason, type MessageStatus } from "@/content/chats"
 
 let state: ChatThread[] = MOCK_THREADS
 const listeners = new Set<() => void>()
@@ -84,6 +91,26 @@ export function useChats() {
     /** Mock: spends a database credit and opens the resume. */
     unlockResume: React.useCallback((id: string) => {
       set(state.map((t) => (t.id === id ? { ...t, resumeUnlocked: true } : t)))
+    }, []),
+    /** Closes the thread with a reason and stops the AI. Remembers the status for reopenThread. */
+    closeThread: React.useCallback((id: string, reason: ClosedReason) => {
+      set(
+        state.map((t) =>
+          t.id === id && t.status !== "closed"
+            ? { ...t, status: "closed", closedReason: reason, statusBeforeClose: t.status }
+            : t
+        )
+      )
+    }, []),
+    /** Reopens a closed thread: back to the status it had before closing, else "active". */
+    reopenThread: React.useCallback((id: string) => {
+      set(
+        state.map((t) =>
+          t.id === id && t.status === "closed"
+            ? { ...t, status: t.statusBeforeClose ?? "active", closedReason: undefined, statusBeforeClose: undefined }
+            : t
+        )
+      )
     }, []),
     /** The recruiter replies: the thread is no longer urgent, and the AI
      *  stops (PRD: the recruiter takes over). */

@@ -25,6 +25,15 @@ import {
 } from "@apna/design-system"
 import { User, Plus, Briefcase, Users, CalendarCheck, TrendingUp } from "@apna/design-system"
 
+/** A size-7 sender avatar for the ChatBubble demo; the ring keeps its edge on the wallpaper. */
+function senderAvatar(initial: string) {
+  return (
+    <Avatar className="size-7 ring-2 ring-card">
+      <AvatarFallback className="bg-accent text-xs text-accent-foreground">{initial}</AvatarFallback>
+    </Avatar>
+  )
+}
+
 export default function DisplayComponentsPage() {
   return (
     <div className="space-y-10">
@@ -196,10 +205,10 @@ export default function DisplayComponentsPage() {
             Hi! Alok at PixelVeda Studios is hiring a Delivery Executive. Are you interested?
           </ChatBubble>
           <ChatChoice time="10:41 am">Interested</ChatChoice>
-          <ChatBubble variant="incoming" groupPosition="first" time="10:41 am">
+          <ChatBubble variant="incoming" groupPosition="first" time="10:41 am" avatar={senderAvatar("R")} senderName="Ravi">
             Is the job in Pune?
           </ChatBubble>
-          <ChatBubble variant="incoming" groupPosition="last" time="10:42 am">
+          <ChatBubble variant="incoming" groupPosition="last" time="10:42 am" avatar={senderAvatar("R")} senderName="Ravi">
             And what are the shift timings?
           </ChatBubble>
           <ChatBubble
@@ -212,7 +221,7 @@ export default function DisplayComponentsPage() {
           >
             This is my bike.
           </ChatBubble>
-          <ChatBubble variant="outgoing" time="10:44 am" status="read">
+          <ChatBubble variant="outgoing" time="10:44 am" status="read" avatar={senderAvatar("A")} senderName="You">
             Yes, Pune. Shifts are 9am to 6pm.
           </ChatBubble>
           <ChatUnreadDivider className="-mx-4">2 unread messages</ChatUnreadDivider>

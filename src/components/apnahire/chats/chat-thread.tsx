@@ -11,7 +11,7 @@
  * beside it).
  *
  *   Header    Back · avatar (lg) · name and facts (both open the profile panel
- *             below xl) · Profile button (below xl) · ⋮ (Not interested), then
+ *             below xl) · Profile button (below xl) · ⋮ (Not interested / Reopen chat), then
  *             the job's nested card (rounded-card-nested, press-subtle)
  *   Wallpaper The whole area under the header (messages and composer) is
  *             `chat-wallpaper`: the doodle canvas, so the bubbles, dividers
@@ -30,6 +30,9 @@
  *   Expired   A job that expired (ChatJob.expired): a warning ChatNotice above the
  *             messages (no badge on the job card, it would repeat it). The thread
  *             stays open; the AI sends nothing new
+ *   Closed    A closed thread (⋮ Not interested, or the AI closed it): the composer and chips
+ *             give way to a ChatNotice and a "Reopen chat" button; Not interested shows a
+ *             toast with Undo, no dialog
  *   Unavailable  A deleted or blocked candidate: the composer and the chips
  *             give way to one ChatNotice bar (UNAVAILABLE_COPY); history stays
  *   Composer  ChatComposer, floating (transparent, pill input, round Mic or
@@ -48,6 +51,7 @@
 
 import * as React from "react"
 import Link from "next/link"
+import { toast } from "sonner"
 import {
   Avatar,
   AvatarFallback,
@@ -84,7 +88,9 @@ import { cn } from "@/lib/utils"
 import { useAppBack } from "@/lib/apnahire/nav"
 import {
   AI_LABEL,
+  CLOSED_LABEL,
   EXPIRED_NOTICE,
+  RECRUITER_NAME,
   MONEY_WARNING,
   TIER_LABEL,
   UNAVAILABLE_COPY,
@@ -113,13 +119,42 @@ function trailingCandidateCount(messages: ChatMessage[]) {
   return n
 }
 
+/** The small avatar beside a bubble (size-7, the ChatBubble slot). The ring keeps its edge on the wallpaper. */
+function SenderAvatar({ from, candidate }: { from: ChatMessage["from"]; candidate: Thread["candidate"] }) {
+  const ring = "size-7 ring-2 ring-card"
+  if (from === "candidate") {
+    return (
+      <Avatar className={ring}>
+        {candidate.photo && <AvatarImage src={candidate.photo} alt="" />}
+        <AvatarFallback className="bg-accent text-xs text-accent-foreground">{candidate.initial}</AvatarFallback>
+      </Avatar>
+    )
+  }
+  if (from === "ai") {
+    return (
+      <Avatar className={ring}>
+        <AvatarFallback className="bg-info-subtle text-info-subtle-foreground">
+          <Sparkles aria-hidden className="size-4" />
+        </AvatarFallback>
+      </Avatar>
+    )
+  }
+  return (
+    <Avatar className={ring}>
+      <AvatarFallback className="bg-accent text-xs text-accent-foreground">{RECRUITER_NAME.charAt(0)}</AvatarFallback>
+    </Avatar>
+  )
+}
+
 function Messages({
   messages,
+  candidate,
   unreadCount,
   unreadRef,
   onImageLoad,
 }: {
   messages: ChatMessage[]
+  candidate: Thread["candidate"]
   /** Candidate messages to flag as unread (0: no divider). They are the last `unreadCount` messages. */
   unreadCount: number
   unreadRef: React.Ref<HTMLDivElement>
@@ -140,13 +175,21 @@ function Messages({
               </ChatUnreadDivider>
             )}
             {m.quickReply ? (
-              <ChatChoice time={m.time}>{m.text}</ChatChoice>
+              <ChatChoice
+                time={m.time}
+                avatar={<SenderAvatar from="candidate" candidate={candidate} />}
+                senderName={candidate.name.split(" ")[0]}
+              >
+                {m.text}
+              </ChatChoice>
             ) : (
               <ChatBubble
                 variant={m.from === "candidate" ? "incoming" : m.from === "ai" ? "assistant" : "outgoing"}
                 time={m.time}
                 status={m.from === "candidate" ? undefined : (m.status ?? "sent")}
                 label={m.from === "ai" ? AI_LABEL : undefined}
+                avatar={<SenderAvatar from={m.from} candidate={candidate} />}
+                senderName={m.from === "candidate" ? candidate.name.split(" ")[0] : m.from === "recruiter" ? "You" : undefined}
                 groupPosition={positionOf(messages, i)}
                 media={
                   m.image && (
@@ -174,7 +217,7 @@ function Messages({
 
 export function ChatThread({ thread }: { thread: Thread }) {
   const back = useAppBack("/apnahire/chats")
-  const { markRead, reply } = useChats()
+  const { markRead, reply, closeThread, reopenThread } = useChats()
   const [draft, setDraft] = React.useState("")
   const [summaryOpen, setSummaryOpen] = React.useState(false)
   const [profileOpen, setProfileOpen] = React.useState(false)
@@ -184,6 +227,7 @@ export function ChatThread({ thread }: { thread: Thread }) {
   const opening = React.useRef(false)
   const unavailable = thread.candidate.availability
   const urgent = thread.status === "urgent" && !unavailable
+  const closed = thread.status === "closed"
 
   // Whether the thread was unread when opened: captured before markRead clears
   // it, and again when the pane switches to another thread.
@@ -219,6 +263,13 @@ export function ChatThread({ thread }: { thread: Thread }) {
   const send = (text: string) => {
     reply(thread.id, text)
     setDraft("")
+  }
+
+  /** No confirmation: the toast's Undo is the way back (undo over confirmation). */
+  const notInterested = () => {
+    const id = thread.id
+    closeThread(id, "not-a-fit")
+    toast("Chat closed: not a fit", { duration: 8000, action: { label: "Undo", onClick: () => reopenThread(id) } })
   }
 
   const pickReply = (text: string) => {
@@ -268,9 +319,13 @@ export function ChatThread({ thread }: { thread: Thread }) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               {/* PRD: the recruiter's "Not interested" closes the thread as
-                  "Not a fit" and stops the AI. Not wired in this spike. */}
-              <DropdownMenuItem className="whitespace-nowrap" disabled={!!unavailable}>
-                Not interested
+                  "Not a fit" and stops the AI. Undo is in the toast. */}
+              <DropdownMenuItem
+                className="whitespace-nowrap"
+                disabled={!!unavailable}
+                onClick={closed ? () => reopenThread(thread.id) : notInterested}
+              >
+                {closed ? "Reopen chat" : "Not interested"}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -309,6 +364,7 @@ export function ChatThread({ thread }: { thread: Thread }) {
         )}
         <Messages
           messages={thread.messages}
+          candidate={thread.candidate}
           unreadCount={unreadCount}
           unreadRef={unreadDivider}
           onImageLoad={() => {
@@ -324,6 +380,18 @@ export function ChatThread({ thread }: { thread: Thread }) {
           <ChatNotice icon={<Ban aria-hidden />} className="max-w-none">
             {UNAVAILABLE_COPY[unavailable].notice}
           </ChatNotice>
+        </div>
+      ) : closed ? (
+        // Closed: no composer and no AI chips. "Reopen chat" is the way back.
+        <div className="sticky bottom-0 z-sticky flex flex-col items-center gap-2 px-3 pt-2 pb-safe-3">
+          <ChatNotice icon={<Ban aria-hidden />} className="max-w-none">
+            {thread.closedReason === "not-a-fit"
+              ? "You closed this chat: not a fit."
+              : `Chat closed: ${CLOSED_LABEL[thread.closedReason ?? "not-a-fit"].toLowerCase()}.`}
+          </ChatNotice>
+          <Button type="button" variant="outline" onClick={() => reopenThread(thread.id)}>
+            Reopen chat
+          </Button>
         </div>
       ) : (
         <ChatComposer

@@ -13,8 +13,10 @@
  *               status="sending|sent|delivered|read"   // outgoing/assistant only
  *               label="Apna Assistant for …"      // assistant sender line, Sparkles icon
  *               media={<img src alt width height />}   // photo above the text
+ *               avatar={<Avatar size="sm" …/>}    // who sent it (see Sender identity)
+ *               senderName="Ravi"                 // name above the first bubble of a run
  *               groupPosition="single|first|middle|last">text</ChatBubble>
- *   <ChatChoice time="10:41 am">Interested</ChatChoice>   candidate quick reply
+ *   <ChatChoice time="10:41 am" avatar senderName>Interested</ChatChoice>   candidate quick reply
  *   <ChatUnreadDivider>2 unread messages</ChatUnreadDivider>   full-width band
  *   <ChatStatusTicks status="read" />       the same ticks, for the inbox row
  *   <ChatNotice icon={<ShieldAlert />} tone="default|warning">…</ChatNotice>
@@ -27,6 +29,21 @@
  * ≥ 4.5:1 on its own surface; the bubble stands apart from the wallpaper).
  * Consecutive bubbles from one sender pass groupPosition: the corner on the
  * sender's side tightens to `rounded-field` where it touches a neighbour.
+ *
+ * Sender identity (WhatsApp group, Intercom): pass `avatar` and/or `senderName`.
+ * Incoming puts the avatar column on the start side, outgoing and assistant on
+ * the end side. The avatar shows only on the LAST bubble of a run (groupPosition
+ * "last" or "single"), bottom-aligned, and that bubble's corner next to it
+ * tightens to `rounded-field` (its tail). The other bubbles of the run keep an
+ * empty size-7 spacer so the text lines up. Pass a small avatar sized to the
+ * slot: `<Avatar size="sm" className="size-7 ring-2 ring-card">`; the ring keeps
+ * its edge on the wallpaper (the image or tint alone can melt into it).
+ * `senderName` shows above the FIRST bubble of a run ("first" or "single"), in
+ * text-caption font-medium text-foreground: the foreground role is far above
+ * 4.5:1 on the wallpaper in light and dark, where muted text would be marginal.
+ * An assistant bubble with a `label` never shows the name too (the label is its
+ * sender line). The slot is size-7 (28px): the sm avatar (24px) is too small to
+ * read a face, size-8 pushes the column wide on a phone.
  *
  * Wallpaper: the list is meant to sit on `chat-wallpaper` (doodle canvas). So
  * the pieces lift off it like WhatsApp's: bubbles, ChatChoice, ChatDayDivider
@@ -119,6 +136,13 @@ const groupCorners: Record<ChatBubbleVariant, Record<ChatGroupPosition, string>>
   },
 }
 
+/* The tail: the bottom corner on the sender's side, tightened where the avatar sits. */
+const avatarTail: Record<ChatBubbleVariant, string> = {
+  incoming: "rounded-es-field",
+  outgoing: "rounded-ee-field",
+  assistant: "rounded-ee-field",
+}
+
 const STATUS_LABEL: Record<ChatMessageStatus, string> = {
   sending: "Sending",
   sent: "Sent",
@@ -156,12 +180,62 @@ function ChatStatusTicks({
   )
 }
 
+/** Wraps a bubble or choice with its sender's avatar column and name. Without
+ *  an avatar or a name it renders the child as is. The avatar slot is size-7;
+ *  it holds the avatar on the last bubble of a run and stays empty (a spacer)
+ *  on the others, so the text lines up. */
+function ChatSender({
+  side,
+  avatar,
+  senderName,
+  showAvatar,
+  showName,
+  children,
+}: {
+  side: "start" | "end"
+  avatar?: React.ReactNode
+  senderName?: string
+  showAvatar: boolean
+  showName: boolean
+  children: React.ReactNode
+}) {
+  const name = showName ? senderName : undefined
+  if (!avatar && !name) return <>{children}</>
+  const slot = avatar ? (
+    <div data-slot="chat-bubble-avatar" className="flex size-7 shrink-0 items-end">
+      {showAvatar && avatar}
+    </div>
+  ) : null
+  return (
+    <div
+      data-slot="chat-sender-row"
+      className={cn("flex w-fit max-w-full items-end gap-2", side === "start" ? "self-start" : "self-end")}
+    >
+      {side === "start" && slot}
+      <div className="flex min-w-0 flex-col gap-1">
+        {name && (
+          <span
+            data-slot="chat-bubble-sender"
+            className={cn("text-caption font-medium text-foreground", side === "start" ? "self-start" : "self-end")}
+          >
+            {name}
+          </span>
+        )}
+        {children}
+      </div>
+      {side === "end" && slot}
+    </div>
+  )
+}
+
 function ChatBubble({
   variant,
   time,
   status,
   label,
   media,
+  avatar,
+  senderName,
   groupPosition = "single",
   className,
   children,
@@ -175,17 +249,28 @@ function ChatBubble({
   label?: React.ReactNode
   /** A photo above the text: an <img> with width, height and alt. */
   media?: React.ReactNode
+  /** The sender's avatar, a size-7 `Avatar`. Shown on the last bubble of a run only. */
+  avatar?: React.ReactNode
+  /** The sender's name, above the first bubble of a run. Ignored when `label` is set. */
+  senderName?: string
   groupPosition?: ChatGroupPosition
   children?: React.ReactNode
 }) {
+  const lastOfRun = groupPosition === "last" || groupPosition === "single"
+  const firstOfRun = groupPosition === "first" || groupPosition === "single"
   const showStatus = status && variant !== "incoming"
   // The label and time read on the bubble's own surface.
   const metaTone = variant === "assistant" ? "text-info-subtle-foreground" : "text-muted-foreground"
-  return (
+  const bubble = (
     <div
       data-slot="chat-bubble"
       data-variant={variant}
-      className={cn(bubbleVariants({ variant }), groupCorners[variant][groupPosition], className)}
+      className={cn(
+        bubbleVariants({ variant }),
+        groupCorners[variant][groupPosition],
+        avatar && lastOfRun && avatarTail[variant],
+        className
+      )}
       {...props}
     >
       {label && (
@@ -217,18 +302,35 @@ function ChatBubble({
       )}
     </div>
   )
+  return (
+    <ChatSender
+      side={variant === "incoming" ? "start" : "end"}
+      avatar={avatar}
+      senderName={label ? undefined : senderName}
+      showAvatar={lastOfRun}
+      showName={firstOfRun}
+    >
+      {bubble}
+    </ChatSender>
+  )
 }
 
 function ChatChoice({
   time,
+  avatar,
+  senderName,
   className,
   children,
   ...props
 }: Omit<React.ComponentProps<"div">, "children"> & {
   time?: string
+  /** The candidate's avatar, a size-7 `Avatar`, beside the chip. */
+  avatar?: React.ReactNode
+  /** The candidate's name, above the chip. */
+  senderName?: string
   children?: React.ReactNode
 }) {
-  return (
+  const choice = (
     <div
       data-slot="chat-choice"
       className={cn(
@@ -240,6 +342,11 @@ function ChatChoice({
       <span>{children}</span>
       {time && <time className="text-caption font-normal text-muted-foreground">{time}</time>}
     </div>
+  )
+  return (
+    <ChatSender side="start" avatar={avatar} senderName={senderName} showAvatar showName>
+      {choice}
+    </ChatSender>
   )
 }
 

@@ -159,6 +159,8 @@ export interface ChatThread {
   }
   status: ThreadStatus
   closedReason?: ClosedReason
+  /** The status before the recruiter closed the thread: "Reopen chat" goes back to it. */
+  statusBeforeClose?: Exclude<ThreadStatus, "closed">
   unread: boolean
   /** Urgent threads: the AI's summary of the candidate's replies (FR-6). */
   summary?: string
