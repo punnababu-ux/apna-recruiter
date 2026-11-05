@@ -59,7 +59,7 @@ const FOLDERS: [string, string][] = [
   ["src/lib", "Pure logic: bill maths, prompt parsing, nav, formatting, API helpers"],
   ["src/types", "Shared domain types (job draft, OnlyRounds)"],
   ["scripts", "lint-tokens.sh (token contract), check-alignment.js (run in the page)"],
-  ["docs", "PROJECT-MAP, TOKENS, COMPONENTS, PRICING, AI-HANDOFF, TODO"],
+  ["docs", "Index docs/README.md; folders start-here, reference, status, history (see Working rules)"],
 ]
 
 const STATE_KEYS: [string, string][] = [

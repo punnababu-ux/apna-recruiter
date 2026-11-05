@@ -39,6 +39,7 @@ move or retire a doc.
 | `history/PONEGLYPH-ROLLOUT-PLAN.md` / `.html` | Plan to roll the design system into the recruiter dashboard |
 
 ## Elsewhere
+- **On the docs site:** `/design-system/engineering/working-rules` shows these rules for people; update it when this index or the AGENTS.md working rules change.
 - **Skills** (`.claude/skills/`): `design-variants` — Sumit's review lenses and version comparisons; `figma-code-sync` — Figma ↔ code audits.
 - **API notes:** `src/app/api/onlyrounds/{extract-jd,generate-jd}/INTEGRATION.md`.
 - **Knowledge graph:** `graphify-out/` in the main checkout (`/graphify query "…"`); refresh with `graphify update .`.
