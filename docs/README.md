@@ -35,6 +35,7 @@ move or retire a doc.
 | `status/REVIEW-BOARDS.md` | Links to the screenshot review boards (private artifacts) |
 | `history/SESSION-2026-10-30-CHECKOUT.md` | Phone checkouts + version switch (express V11, self V14) |
 | `history/SESSION-2026-11-03-CHECKOUT.md` | Switch removed; one design; Buy now on every phone card |
+| `history/AUDIT-2026-11-05-CHAT-JOB-POSTING.md` | Chat + job posting vs DS: fixes and new-primitive candidates |
 | `history/AUDIT-2026-10.md` | October 2026 code + layout audit findings |
 | `history/PONEGLYPH-ROLLOUT-PLAN.md` / `.html` | Plan to roll the design system into the recruiter dashboard |
 
