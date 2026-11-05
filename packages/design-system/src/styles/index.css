@@ -1754,6 +1754,12 @@ a[href] > [data-slot="card"] {
 @utility bg-gradient-banner-destructive {
   background-image: var(--gradient-banner-destructive);
 }
+@utility bg-gradient-result-success {
+  background-image: var(--gradient-result-success);
+}
+@utility bg-gradient-result-failure {
+  background-image: var(--gradient-result-failure);
+}
 /* Frosted dark glass (--surface-glass-dark): the smoked counterpart of the
  * white glass — an 8% black pane, blurred, with a hairline light edge, for a
  * recess that holds white cards (the pricing tab bar, the plan panels). */
