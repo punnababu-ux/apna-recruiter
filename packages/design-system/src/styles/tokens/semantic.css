@@ -312,6 +312,9 @@
    * set by the marketing layout; rule below). A serif headline can't leak
    * into the dashboard, checkout or any workflow, whatever classes it has. */
   --font-editorial: var(--font-body);
+  /* Hero headline (text-editorial-display): Inter by default, Fraunces only
+   * inside [data-voice="editorial"]. Same no-serif-in-product rule as above. */
+  --font-hero: var(--font-editorial);
 
   /* Quote voice — pull quotes and testimonials: the editorial serif, the
    * same face as the marketing headlines (one serif in the system, not a
@@ -630,7 +633,10 @@
   /* Brand words set in a moving green (animate-text-gradient — the hero's
    * "AI-Native"): only the apna-green ramp, deep → bright → deep, so the
    * word stays the brand colour while the light travels across it. */
-  --gradient-text-brand: linear-gradient(90deg, var(--color-apna-green-700) 0%, var(--color-apna-green-500) 35%, var(--color-apna-green-400) 50%, var(--color-apna-green-500) 65%, var(--color-apna-green-700) 100%);
+  /* Hero accent word on the mesh: plum only, light plum to near-black
+   * (user call, 2026-11-05). Not green: it vibrates against the pink blob.
+   * Rule: .claude/skills/design-variants/SKILL.md "Colour on the mesh". */
+  --gradient-text-brand: linear-gradient(90deg, var(--color-apna-plum-950) 0%, var(--color-apna-plum-400) 50%, var(--color-apna-plum-950) 100%);
   /* The "apna" of the logo: brand plum on light, near-white on dark (the
      wordmark would vanish on a dark sidebar). `-deep` is the marketing
      header's darkest plum; on dark it is the same near-white. */
@@ -953,7 +959,7 @@
   --gradient-illustration-gold:  linear-gradient(160deg, color-mix(in srgb, var(--color-apna-gold-800) 45%, transparent) 0%, transparent 100%);
   --attention-ring-stops: transparent 0deg, transparent 200deg, var(--color-apna-gold-300) 250deg, var(--color-apna-green-400) 290deg, var(--color-apna-sky-400) 335deg, transparent 360deg;
   --attention-ring-still: linear-gradient(90deg, var(--color-apna-gold-300), var(--color-apna-green-400), var(--color-apna-sky-400));
-  --gradient-text-brand: linear-gradient(90deg, var(--color-apna-green-500) 0%, var(--color-apna-green-300) 35%, var(--color-apna-green-200) 50%, var(--color-apna-green-300) 65%, var(--color-apna-green-500) 100%);
+  --gradient-text-brand: linear-gradient(90deg, var(--color-apna-plum-50) 0%, var(--color-apna-plum-300) 50%, var(--color-apna-plum-50) 100%);
   --surface-checkout-hero-fg:       var(--color-gray-50);
   --surface-checkout-hero-fg-muted: var(--color-gray-400);
   /* Sits between the two, as it does in light. No dark design exists to

@@ -18,6 +18,7 @@ export {
   ArrowRight, ArrowUp, ArrowUpDown, ArrowUpRight, AtSign, AudioLines,
   Award, Ban, BarChart2, Bell, Bike, Bold, BookOpen,
   Calculator, ChefHat, DoorOpen, HandCoins, Headset, Package, Route, Store, Truck,
+  Factory, HardHat, Plane, ShoppingCart, Stethoscope, UtensilsCrossed,
   Bookmark, BookmarkPlus, Bot, Brain, Briefcase,
   BriefcaseBusiness,
   Building, Building2, Calendar, CalendarCheck, CalendarClock,

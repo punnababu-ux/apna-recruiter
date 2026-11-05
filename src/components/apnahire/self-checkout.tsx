@@ -290,7 +290,13 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   // unrelated re-renders — useHeaderSlot re-publishes whenever it changes.
   const compactTabSwitcher = React.useMemo(
     () => (
-      <DockedPlanTabs value={activeTab} onValueChange={changeTab} />
+      // Chips, centred, from md; the underline tabs are a phone-only pattern.
+      <>
+        <CompactPlanTabs className="mx-auto shrink-0 max-md:hidden" value={activeTab} onValueChange={changeTab} />
+        <div className="md:hidden">
+          <DockedPlanTabs value={activeTab} onValueChange={changeTab} />
+        </div>
+      </>
     ),
     [activeTab, changeTab]
   )

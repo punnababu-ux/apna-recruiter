@@ -403,12 +403,29 @@
  * SectionHeading applies display/h2 by itself on marketing pages (see its
  * JSDoc); reach for these directly only for a hand-built h1/h2. */
 @utility text-editorial-display {
-  font-family:     var(--font-editorial);
+  font-family:     var(--font-hero);
   font-size:       var(--text-display-hero-fluid);
   line-height:     var(--line-height-tight);
-  font-weight:     var(--font-weight-bold);
+  font-weight:     var(--font-weight-medium); /* Fraunces is heavy; 500 reads like Inter's 700 */
   letter-spacing:  var(--letter-spacing-tight);
   & em { font-style: italic; }
+}
+
+/* The hero face (Fraunces on marketing) at h1/h2 size: closing lines like
+ * the contact band's "Your next hire could apply today." */
+@utility text-hero-h1 {
+  font-family:     var(--font-hero);
+  font-size:       var(--text-5xl);
+  line-height:     var(--line-height-tight);
+  font-weight:     var(--font-weight-medium);
+  letter-spacing:  var(--letter-spacing-tight);
+}
+@utility text-hero-h2 {
+  font-family:     var(--font-hero);
+  font-size:       var(--text-4xl);
+  line-height:     var(--line-height-tight);
+  font-weight:     var(--font-weight-medium);
+  letter-spacing:  var(--letter-spacing-tight);
 }
 
 @utility text-editorial-h1 {
@@ -1412,7 +1429,7 @@
 
 /* The editorial serif is switched on here and only here: the marketing
    site's voice. Everywhere else --font-editorial stays Inter (semantic.css). */
-[data-voice="editorial"] { --font-editorial: var(--font-family-editorial); }
+[data-voice="editorial"] { --font-editorial: var(--font-family-editorial); --font-hero: var(--font-family-hero); }
 
 /* RULE: a card on a gradient is frosted glass (--surface-glass + blur).
    Automatic on marketing pages, like the serif: any plain Card (tone

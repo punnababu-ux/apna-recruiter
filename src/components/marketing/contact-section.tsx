@@ -103,7 +103,7 @@ export function ContactSection({
             the hero owns the h1). One line on desktop; on phones the h3 size
             (at 36px it broke into five lines on a 375px screen). */}
         <div className="flex flex-col gap-3">
-          <h2 className="text-editorial-h2 text-balance text-foreground sm:text-editorial-h1">{title ?? CONTACT.title}</h2>
+          <h2 className="text-hero-h2 text-balance text-foreground sm:text-hero-h1">{title ?? CONTACT.title}</h2>
           {shown && <p className="text-lg text-pretty text-muted-foreground">{shown}</p>}
         </div>
         {/* The shared band: Post a job (dark emphasis — green stays with each
