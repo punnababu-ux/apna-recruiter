@@ -909,6 +909,40 @@
   }
 }
 
+/* A truck arriving (relocation card): a full-width layer holds the truck
+ * at its right end and slides it left until it stops just short of the
+ * destination dot at the left, once, and parks there. Unhurried, so it
+ * reads as a journey. Reduced motion: the truck waits at the dot. */
+@keyframes relocate-arrive {
+  0%   { translate: 0 0; opacity: 0; }
+  10%  { opacity: 1; }
+  100% { translate: calc(-100% + 2.5rem) 0; opacity: 1; }
+}
+
+@utility animate-relocate-arrive {
+  animation: relocate-arrive 3s var(--ease-out-ui) 300ms both;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    translate: calc(-100% + 2.5rem) 0;
+  }
+}
+
+/* The truck on the road (job posting, ?road=1 preview): enters from past
+ * the right edge and eases to its stop (the element's own left). */
+@keyframes road-drive {
+  from { translate: 100vw 0; }
+  to   { translate: 0 0; }
+}
+
+@utility animate-road-drive {
+  animation: road-drive 2.4s var(--ease-out-ui) 200ms both;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
 /* A logo strip gliding left forever (LogoWall `marquee`). The track holds
  * the logos twice, so sliding it by half lands the second copy exactly where
  * the first began: a seamless loop. Slow enough to read every logo; it
@@ -1246,6 +1280,80 @@
       animation: none;
     }
   }
+}
+
+/* ai-backdrop — the AI's working state, after Gemini: the top of the
+   screen fills with a soft wash that slowly shifts sky → gold → green and
+   fades out lower down. Three stacked layers cross-fade, so the colour
+   changes without a hard edge. Markup: an empty
+   `<span aria-hidden className="ai-backdrop" />`. Reduced motion: a still
+   sky wash. */
+@utility ai-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(140% 90% at 50% 0%, var(--ai-wash-1), transparent 80%);
+  mask-image: linear-gradient(black 0%, black 50%, transparent 95%);
+  animation: attention-ring-fade-in var(--duration-enter) var(--ease-out-ui) both;
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    animation: ai-wash 9s ease-in-out infinite;
+  }
+  &::before {
+    background: radial-gradient(130% 85% at 70% 0%, var(--ai-wash-2), transparent 80%);
+  }
+  &::after {
+    background: radial-gradient(130% 85% at 30% 0%, var(--ai-wash-3), transparent 80%);
+    animation-delay: 4.5s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::before,
+    &::after {
+      animation: none;
+    }
+  }
+}
+
+@keyframes ai-wash {
+  0%, 100% { opacity: 0; }
+  30%, 55% { opacity: 1; }
+}
+
+/* ai-idle — the resting hint behind an AI prompt: a faint sky halo around
+   the input, as Gemini's sits behind its box. Place it first inside the
+   prompt's `relative` wrapper. Still. */
+@utility ai-idle {
+  position: absolute;
+  inset: -3rem -1.5rem -4rem;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(75% 65% at 50% 65%, var(--ai-wash-idle) 30%, transparent 100%);
+  filter: blur(20px);
+}
+
+/* ai-voice — the talk control while listening: a pill of moving light in
+   the AI wash colours (Gemini's live pill). Text sits on top. Reduced
+   motion: a still gradient. */
+@utility ai-voice {
+  background-image: linear-gradient(100deg, var(--ai-wash-1), var(--ai-wash-3), var(--ai-wash-2), var(--ai-wash-1));
+  background-size: 300% 100%;
+  animation: ai-voice-flow 4s linear infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes ai-voice-flow {
+  from { background-position: 0% 50%; }
+  to   { background-position: 100% 50%; }
 }
 
 @keyframes attention-ring-fade-in {

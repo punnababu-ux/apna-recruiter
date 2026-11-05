@@ -9,7 +9,7 @@
  *
  *   describe →
  *   Job details:   title · job role · industry · job type · workplace ·
- *                  location · pay type · salary · perks · joining fee
+ *                  location · pay type · salary · perks (+ joining fee)
  *   Who can apply: education · English · experience · preferences ·
  *                  screening · description
  *   Hiring setup:  interview · contact · review → /apnahire/jobs/new/plans
@@ -25,6 +25,7 @@
  * recruiters don't check AI answers they aren't shown.
  */
 
+import { RelocationRoad } from "@/components/apnahire/post-job/relocation-road"
 import * as React from "react"
 import {
   Accordion,
@@ -77,6 +78,11 @@ import {
   Smartphone,
   Sparkle,
   Sparkles,
+  Timer,
+  Gift,
+  Bus,
+  HeartPulse,
+  PiggyBank,
   Store,
   Switch,
   Target,
@@ -89,6 +95,9 @@ import {
   Wrench,
   WizardQuestion,
 } from "@apna/design-system"
+import { PlanPopup, PopupBody, PopupFooter, PopupHeader } from "@/components/apnahire/plan-popup"
+import { AreaMap } from "@/components/apnahire/post-job/area-map"
+import { isClayReady } from "@/components/marketing/value-art"
 import { CandidateJobPreview, type PreviewSection } from "@/components/apnahire/post-job/candidate-job-preview"
 import { DescribeStep } from "@/components/apnahire/post-job/describe-step"
 import {
@@ -147,13 +156,9 @@ export type ScreenId =
   | "job-type"
   | "workplace"
   | "location"
-  | "pay-type"
   | "salary"
   | "perks"
-  | "joining-fee"
   | "education"
-  | "english"
-  | "experience"
   | "preferences"
   | "screening"
   | "description"
@@ -180,6 +185,7 @@ export interface ScreenCtx {
   refining: boolean
   writeDescription: (instruction?: string) => Promise<void>
   writing: boolean
+  stopWriting: () => void
   /** The answers the description was written from have changed since. */
   descriptionStale: boolean
 }
@@ -255,31 +261,6 @@ function Group({ label, children }: { label: string; children: React.ReactNode }
       <h2 className="text-base font-semibold text-foreground">{label}</h2>
       {children}
     </div>
-  )
-}
-
-function SwitchRow({
-  icon,
-  title,
-  description,
-  checked,
-  onCheckedChange,
-}: {
-  icon?: React.ReactNode
-  title: string
-  description: string
-  checked: boolean
-  onCheckedChange: (v: boolean) => void
-}) {
-  return (
-    <label className="flex items-center gap-3 rounded-xl border border-border p-4">
-      {icon}
-      <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <span className="text-sm font-semibold text-foreground">{title}</span>
-        <span className="text-xs text-muted-foreground">{description}</span>
-      </span>
-      <Switch checked={checked} onCheckedChange={onCheckedChange} />
-    </label>
   )
 }
 
@@ -376,7 +357,7 @@ function ManualIntro(ctx: ScreenCtx) {
     <>
       <WizardQuestion
         eyebrow={<span className="text-overline text-primary">Hiring for {companyName(ctx.draft)}</span>}
-        title="Post a job in four short steps"
+        title="Post a job in 4 steps"
         description="One question at a time. Review before posting."
       />
       <ol className="flex flex-col">
@@ -410,41 +391,38 @@ function Title(ctx: ScreenCtx) {
   )
   return (
     <>
-      <WizardQuestion
-        eyebrow={<AiTag ctx={ctx} keys={["title"]} />}
-        title="What’s the job title?"
-        description="Words candidates search for."
-      />
+      <WizardQuestion eyebrow={<AiTag ctx={ctx} keys={["title"]} />} title="What’s the job title?" />
       <Checks ctx={ctx} ids={["multi-role", "generic-title"]} />
+      {/* The title is the answer of this screen: set it large, like a heading. */}
       <Input
         aria-label="Job title"
         inputSize="lg"
+        className="h-14 text-xl font-semibold md:text-xl"
         value={draft.title}
         onChange={(e) => update("title", e.target.value)}
         placeholder="e.g. Telecaller"
         maxLength={60}
       />
       {variants && variants.length > 0 && (
-        <div className="flex flex-col gap-2">
-          <span className="text-xs font-medium text-muted-foreground">Similar titles</span>
-          <div className="flex flex-wrap gap-2">
-            {variants.map((t) => (
-              <Button
-                key={t}
-                type="button"
-                size="sm"
-                variant="outline"
-                className="rounded-full"
-                onClick={() => update("title", t)}
-              >
-                {t}
-              </Button>
-            ))}
-          </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
+            <Sparkles className="size-3.5 text-primary" aria-hidden />
+            AI suggestions
+          </span>
+          {variants.map((t) => (
+            <Button
+              key={t}
+              type="button"
+              size="sm"
+              variant="outline"
+              className="rounded-full"
+              onClick={() => update("title", t)}
+            >
+              {t}
+            </Button>
+          ))}
         </div>
       )}
-      <LockNote>Only small edits after posting.</LockNote>
-
       {/* Who's hiring: almost always the recruiter's own company, so it's a
           line, not a screen. */}
       <Separator />
@@ -511,7 +489,6 @@ function Category(ctx: ScreenCtx) {
       />
       <Checks ctx={ctx} ids={["category-mismatch"]} />
       {/* Above the tiles, so it's read before the choice — not below 13 of them. */}
-      <LockNote>Can&apos;t be changed after posting.</LockNote>
       <OptionCardGroup aria-label="Job role" columns={2}>
         {categories.map((c) => (
           <OptionCard
@@ -532,15 +509,17 @@ function Category(ctx: ScreenCtx) {
 function Industry(ctx: ScreenCtx) {
   const { draft, update } = ctx
   const industries = usePickedFirst(INDUSTRIES, draft.industry)
+  // Six first (picked one leads); the rest on "More" (audit 2026-11-05).
+  const [all, setAll] = React.useState(false)
+  const shown = all ? industries : industries.slice(0, 6)
   return (
     <>
       <WizardQuestion
         eyebrow={<AiTag ctx={ctx} keys={["industry"]} />}
         title="Which industry is it in?"
-        description="Decides who sees your job."
       />
       <OptionCardGroup aria-label="Industry" columns={2}>
-        {industries.map((i) => (
+        {shown.map((i) => (
           <OptionCard
             key={i}
             layout="tile"
@@ -551,6 +530,11 @@ function Industry(ctx: ScreenCtx) {
           />
         ))}
       </OptionCardGroup>
+      {!all && (
+        <Button type="button" variant="outline" size="lg" onClick={() => setAll(true)}>
+          More industries
+        </Button>
+      )}
     </>
   )
 }
@@ -658,6 +642,49 @@ function NightShiftCard({ checked, onCheckedChange }: { checked: boolean; onChec
         >
           Mostly after 9 PM
         </span>
+      </span>
+      <Switch checked={checked} onCheckedChange={onCheckedChange} />
+    </label>
+  )
+}
+
+/** Relocation: switching it on sets the card on the move, in the night
+ *  shift card's spirit. A green tint, a blinking dot under the pin (the
+ *  job's place), and a truck driving in from the far right along a dashed
+ *  road towards it, once, and parks. Off, an ordinary switch card. */
+function RelocationCard({ checked, onCheckedChange }: { checked: boolean; onCheckedChange: (v: boolean) => void }) {
+  // Preview (?road=1): the truck drives on the bottom bar's line instead.
+  const [road, setRoad] = React.useState(false)
+  React.useEffect(() => setRoad(new URLSearchParams(window.location.search).has("road")), [])
+  return (
+    <label
+      className={cn(
+        "relative isolate flex items-center gap-3 overflow-hidden rounded-card-nested border p-4 transition-colors duration-500",
+        checked ? cn("border-primary bg-primary/10", !road && "pb-10") : "border-border bg-card",
+      )}
+    >
+      {checked && road && <RelocationRoad />}
+      {checked && !road && (
+        <span aria-hidden className="pointer-events-none absolute inset-x-4 bottom-3 h-5 animate-in fade-in duration-500">
+          {/* The road, from the dot to the right edge. */}
+          <span className="absolute inset-y-1/2 right-0 left-2.5 border-t-2 border-dashed border-primary/30" />
+          {/* The job's place: under the pin icon. */}
+          <span className="absolute top-1/2 left-2.5 size-2.5 -translate-1/2 rounded-full bg-primary animate-pulse" />
+          <span className="absolute inset-0 flex items-end justify-end animate-relocate-arrive">
+            {/* The clay truck once installed (it already faces left); the line truck until then. */}
+            {isClayReady("relocation-truck") ? (
+              // eslint-disable-next-line @next/next/no-img-element -- served as-is, like ValueArt
+              <img src="/images/company/values/relocation-truck.png" alt="" className="size-8 object-contain" />
+            ) : (
+              <Truck className="size-5 -scale-x-100 text-primary" />
+            )}
+          </span>
+        </span>
+      )}
+      <MapPin aria-hidden className={cn("size-5 shrink-0 transition-colors duration-500", checked && "text-primary")} />
+      <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+        <span className="text-sm font-semibold text-foreground">Accept candidates willing to relocate</span>
+        <span className="text-xs text-muted-foreground">From anywhere in India</span>
       </span>
       <Switch checked={checked} onCheckedChange={onCheckedChange} />
     </label>
@@ -780,7 +807,10 @@ function Location(ctx: ScreenCtx) {
   const searching = q.length > 0 && q !== picked.trim().toLowerCase()
   const confirmed = !manual && !!picked && picked === draft.area && !!draft.city
   const matches = searching
-    ? ALL_AREAS.filter((a) => (!locked || a.city === locked) && `${a.area} ${a.city}`.toLowerCase().includes(q)).slice(0, 6)
+    ? ALL_AREAS.filter((a) => (!locked || a.city === locked) && `${a.area} ${a.city}`.toLowerCase().includes(q)).slice(
+        0,
+        6,
+      )
     : draft.city
       ? (POPULAR_AREAS[draft.city] ?? []).slice(0, 4).map((area) => ({ area, city: draft.city }))
       : POPULAR_PLACES
@@ -814,7 +844,13 @@ function Location(ctx: ScreenCtx) {
     locked ? null : (
       <Field>
         <FieldLabel htmlFor={id}>{label}</FieldLabel>
-        <ListSelect id={id} value={draft.city} options={CITIES} placeholder="Select city" onChange={(v) => update("city", v)} />
+        <ListSelect
+          id={id}
+          value={draft.city}
+          options={CITIES}
+          placeholder="Select city"
+          onChange={(v) => update("city", v)}
+        />
       </Field>
     )
   return (
@@ -873,26 +909,29 @@ function Location(ctx: ScreenCtx) {
         <>
           {/* Picked: one confirmed card; Change goes back to the search. */}
           {confirmed ? (
-            <div className="flex items-start gap-3 rounded-card-nested border border-primary bg-card p-4 ring-1 ring-primary">
-              <MapPin className="mt-0.5 size-5 shrink-0 text-foreground" aria-hidden />
-              <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                <span className="text-base font-semibold text-foreground">{draft.area}</span>
-                <span className="text-sm text-muted-foreground">
-                  {draft.area}, {draft.city}
-                  {draft.pincode ? ` ${draft.pincode}` : ""}
+            <>
+              <div className="flex items-start gap-3 rounded-card-nested border border-primary bg-card p-4 ring-1 ring-primary">
+                <MapPin className="mt-0.5 size-5 shrink-0 text-foreground" aria-hidden />
+                <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                  <span className="text-base font-semibold text-foreground">{draft.area}</span>
+                  <span className="text-sm text-muted-foreground">
+                    {draft.area}, {draft.city}
+                    {draft.pincode ? ` ${draft.pincode}` : ""}
+                  </span>
                 </span>
-              </span>
-              <button
-                type="button"
-                className="shrink-0 text-sm font-semibold text-primary underline-offset-4 hover:underline"
-                onClick={() => {
-                  setPicked("")
-                  setQuery("")
-                }}
-              >
-                Change
-              </button>
-            </div>
+                <button
+                  type="button"
+                  className="shrink-0 text-sm font-semibold text-primary underline-offset-4 hover:underline"
+                  onClick={() => {
+                    setPicked("")
+                    setQuery("")
+                  }}
+                >
+                  Change
+                </button>
+              </div>
+              <AreaMap area={draft.area} city={draft.city} />
+            </>
           ) : (
             <>
               <div className="relative">
@@ -964,12 +1003,7 @@ function Location(ctx: ScreenCtx) {
         </>
       )}
       {draft.locationType === "office" && draft.city && (
-        <SwitchRow
-          title="Accept candidates willing to relocate"
-          description="From anywhere in India"
-          checked={draft.relocation}
-          onCheckedChange={(v) => update("relocation", v)}
-        />
+        <RelocationCard checked={draft.relocation} onCheckedChange={(v) => update("relocation", v)} />
       )}
     </>
   )
@@ -979,7 +1013,14 @@ function Location(ctx: ScreenCtx) {
  *  wide enough to grab. Higher salaries are typed — up to the live form's
  *  ₹1,49,999 cap. */
 const SALARY = { sliderMin: 5000, sliderMax: 60000, step: 500, cap: 149999 }
-const onSlider = (n: number) => Math.min(SALARY.sliderMax, Math.max(SALARY.sliderMin, n))
+const onSlider = (n: number, top = SALARY.sliderMax) => Math.min(top, Math.max(SALARY.sliderMin, n))
+/** The slider zooms to the range picked (user call, 2026-11-05): its top
+ *  sits ~60% above the max, at least ₹30k, so a small range is precise and
+ *  dragging to the end keeps opening more room, up to the cap. It rescales
+ *  on release only: mid-drag the thumb would chase its own scale. */
+const GROW = 10000
+const sliderTop = (max: number | null) =>
+  Math.min(SALARY.cap + 1, Math.max(30000, Math.ceil(((max ?? 25000) * 1.6) / GROW) * GROW))
 
 function salaryError(d: JobPostDraft): string | null {
   const fixed = d.payType === "fixed" || d.payType === "fixed_incentive"
@@ -995,15 +1036,79 @@ const PAY_TYPE_HELP: Record<PayType, [React.ReactNode, string]> = {
   incentive: [<Target key="i" />, "Pay depends entirely on performance"],
 }
 
-function PayType(ctx: ScreenCtx) {
+
+/** "What candidates see": the monthly numbers the post will show, so the
+ *  recruiter sees the result of the inputs as they type. */
+/** What candidates see, tailored to the pay type (user call, 2026-11-05):
+ *  fixed shows the salary alone; incentive only, the average incentive
+ *  alone; only fixed + incentive adds the two up as earning potential. */
+function CandidatesSee({ draft }: { draft: JobPostDraft }) {
+  const range = (lo: number | null, hi: number | null) =>
+    lo == null && hi == null
+      ? "—"
+      : lo == null || lo === hi
+        ? inr(hi ?? 0)
+        : hi == null
+          ? inr(lo)
+          : `${inr(lo)} – ${inr(hi)}`
+  const inc = draft.incentive
+  const rows: [string, string][] =
+    draft.payType === "fixed_incentive"
+      ? [
+          ["Fixed salary", range(draft.salaryMin, draft.salaryMax)],
+          ["Average incentive", inc == null ? "—" : inr(inc)],
+        ]
+      : []
+  const total: [string, string] =
+    draft.payType === "incentive"
+      ? ["Average incentive", inc == null ? "—" : inr(inc)]
+      : draft.payType === "fixed_incentive"
+        ? [
+            "Earning potential",
+            (draft.salaryMin == null && draft.salaryMax == null) || inc == null
+              ? "—"
+              : range(
+                  draft.salaryMin == null ? null : draft.salaryMin + inc,
+                  draft.salaryMax == null ? null : draft.salaryMax + inc,
+                ),
+          ]
+        : ["Salary", range(draft.salaryMin, draft.salaryMax)]
+  return (
+    <div className="flex flex-col gap-2 rounded-card-nested bg-muted p-4 text-sm">
+      <span className="text-overline text-muted-foreground">What candidates see</span>
+      {rows.map(([k, v]) => (
+        <div key={k} className="flex justify-between gap-3">
+          <span className="text-muted-foreground">{k} / month</span>
+          <span className="shrink-0 whitespace-nowrap text-foreground">{v}</span>
+        </div>
+      ))}
+      {rows.length > 0 && <Separator />}
+      <div className="flex justify-between gap-3 font-semibold text-foreground">
+        <span>{total[0]} / month</span>
+        <span className="shrink-0 whitespace-nowrap">{total[1]}</span>
+      </div>
+    </div>
+  )
+}
+
+function Salary(ctx: ScreenCtx) {
   const { draft, update } = ctx
+  const fixed = draft.payType === "fixed" || draft.payType === "fixed_incentive"
+  const incentive = draft.payType === "incentive" || draft.payType === "fixed_incentive"
+  const [top, setTop] = React.useState(() => sliderTop(draft.salaryMax))
+  const lo = onSlider(draft.salaryMin ?? 15000, top)
+  const hi = onSlider(Math.max(draft.salaryMax ?? 25000, lo), top)
+  const third = Math.round(top / 3 / 5000) * 5000
+  const err = salaryError(draft)
   return (
     <>
       <WizardQuestion
-        eyebrow={<AiTag ctx={ctx} keys={["payType"]} />}
+        eyebrow={<AiTag ctx={ctx} keys={["payType", "salaryMin", "salaryMax", "incentive"]} />}
         title="How will you pay?"
         description="Clear pay gets better applicants."
       />
+      {/* Pay type sits on the salary screen: one decision, one screen (audit
+          2026-11-05). The fields below follow the choice. */}
       <OptionCardGroup aria-label="Pay type">
         {(Object.keys(PAY_TYPE_LABELS) as PayType[]).map((t) => (
           <OptionCard
@@ -1016,79 +1121,6 @@ function PayType(ctx: ScreenCtx) {
           />
         ))}
       </OptionCardGroup>
-    </>
-  )
-}
-
-/** "What candidates see": the monthly numbers the post will show, so the
- *  recruiter sees the result of the inputs as they type. */
-function CandidatesSee({ draft }: { draft: JobPostDraft }) {
-  const fixed = draft.payType !== "incentive"
-  const incentive = draft.payType !== "fixed"
-  const range = (lo: number | null, hi: number | null) =>
-    lo == null && hi == null
-      ? "—"
-      : lo === hi || hi == null
-        ? inr(lo ?? 0)
-        : lo == null
-          ? inr(hi)
-          : `${inr(lo)} – ${inr(hi)}`
-  const inc = incentive ? (draft.incentive ?? 0) : 0
-  const lo = fixed ? draft.salaryMin : 0
-  const hi = fixed ? draft.salaryMax : 0
-  const potential =
-    (fixed && lo == null && hi == null) || (!fixed && !inc)
-      ? "—"
-      : range(lo == null ? null : lo + inc, hi == null ? null : hi + inc)
-  return (
-    <div className="flex flex-col gap-2 rounded-card-nested bg-muted p-4 text-sm">
-      <span className="text-overline text-muted-foreground">What candidates see</span>
-      {fixed && (
-        <div className="flex justify-between gap-3">
-          <span className="text-muted-foreground">Fixed salary / month</span>
-          <span className="shrink-0 whitespace-nowrap text-foreground">{range(draft.salaryMin, draft.salaryMax)}</span>
-        </div>
-      )}
-      {incentive && (
-        <div className="flex justify-between gap-3">
-          <span className="text-muted-foreground">Average incentive / month</span>
-          <span className="shrink-0 whitespace-nowrap text-foreground">{inr(inc)}</span>
-        </div>
-      )}
-      <Separator />
-      <div className="flex justify-between gap-3 font-semibold text-foreground">
-        <span>Earning potential / month</span>
-        <span className="shrink-0 whitespace-nowrap">{potential}</span>
-      </div>
-    </div>
-  )
-}
-
-function Salary(ctx: ScreenCtx) {
-  const { draft, update } = ctx
-  const fixed = draft.payType === "fixed" || draft.payType === "fixed_incentive"
-  const incentive = draft.payType === "incentive" || draft.payType === "fixed_incentive"
-  const lo = onSlider(draft.salaryMin ?? 15000)
-  const hi = onSlider(Math.max(draft.salaryMax ?? 25000, lo))
-  const err = salaryError(draft)
-  return (
-    <>
-      <WizardQuestion
-        eyebrow={<AiTag ctx={ctx} keys={["salaryMin", "salaryMax", "incentive"]} />}
-        title="What’s the monthly salary?"
-        description={
-          <>
-            Pay type: {draft.payType ? PAY_TYPE_LABELS[draft.payType] : "—"} ·{" "}
-            <button
-              type="button"
-              className="font-medium text-primary underline-offset-4 hover:underline"
-              onClick={() => ctx.edit("pay-type")}
-            >
-              Change
-            </button>
-          </>
-        }
-      />
       {fixed && (
         <div className="flex flex-col gap-5">
           <div className="flex items-end gap-3">
@@ -1111,23 +1143,25 @@ function Salary(ctx: ScreenCtx) {
                 placeholder="₹"
                 value={draft.salaryMax == null ? "" : num(draft.salaryMax)}
                 onChange={(e) => update("salaryMax", toNumber(e.target.value))}
+                onBlur={() => setTop(sliderTop(draft.salaryMax))}
                 aria-invalid={err ? true : undefined}
               />
             </Field>
           </div>
           <RangeSlider
             min={SALARY.sliderMin}
-            max={SALARY.sliderMax}
+            max={top}
             step={SALARY.step}
             value={[lo, hi]}
             onValueChange={([a, b]) => {
               update("salaryMin", a)
               update("salaryMax", b)
             }}
+            onValueCommitted={([, b]) => setTop(sliderTop(b))}
             ticks={{ minor: 2500, major: 10000 }}
-            scale={[SALARY.sliderMin, 20000, 40000, SALARY.sliderMax]}
+            scale={[SALARY.sliderMin, third, third * 2, top]}
             formatValue={inr}
-            formatScale={(n) => (n === SALARY.sliderMax ? `₹${n / 1000}k+` : `₹${n / 1000}k`)}
+            formatScale={(n) => (n === top && top <= SALARY.cap ? `₹${n / 1000}k+` : `₹${n / 1000}k`)}
             thumbLabels={["Minimum salary", "Maximum salary"]}
             unset={draft.salaryMin == null && draft.salaryMax == null}
             invalid={err ? "max" : null}
@@ -1151,36 +1185,46 @@ function Salary(ctx: ScreenCtx) {
           />
         </Field>
       )}
-      <CandidatesSee draft={draft} />
+      {draft.payType && <CandidatesSee draft={draft} />}
     </>
   )
 }
 
-/** An emoji per perk, so each is found at a glance (the prototype's pattern). */
-const PERK_EMOJI: Record<string, string> = {
-  "Flexible working hours": "🕒",
-  "Weekly payout": "💸",
-  "Overtime pay": "⏱️",
-  "Joining bonus": "🎉",
-  "Annual bonus": "🎁",
-  PF: "🏦",
-  "ESI (ESIC)": "🩺",
-  "Travel allowance": "🚌",
-  "Petrol allowance": "⛽",
-  "Mobile allowance": "📱",
-  "Internet allowance": "📶",
-  Laptop: "💻",
-  "Health insurance": "🏥",
-  "Food/Meals": "🍱",
-  Accommodation: "🏠",
-  "5 working days": "📅",
-  "One-way cab": "🚕",
-  "Two-way cab": "🚖",
+/** A line icon per perk, matching the flow's other icons (audit 2026-11-05). */
+const PERK_ICONS: Record<string, React.ReactNode> = {
+  "Flexible working hours": <Clock />,
+  "Overtime pay": <Timer />,
+  "Annual bonus": <Gift />,
+  "Travel allowance": <Bus />,
+  "Mobile allowance": <Smartphone />,
+  "Health insurance": <HeartPulse />,
+  PF: <PiggyBank />,
 }
 
 function Perks(ctx: ScreenCtx) {
   const { draft, update } = ctx
   const perks = usePickedFirst(PERKS, draft.perks)
+  const [feeOpen, setFeeOpen] = React.useState(false)
+  // The fee defaults to "none" (user call, 2026-11-05): most jobs charge
+  // nothing, so it's a line with Change, like "Hiring for", not a question.
+  React.useEffect(() => {
+    if (!draft.joiningFeeAnswered) update("joiningFeeAnswered", true)
+  }, [draft.joiningFeeAnswered, update])
+  const fee = draft.joiningFee
+  // The pop-up edits a copy; only Submit / Done saves it. Closing it any
+  // other way leaves the saved answer (user call, 2026-11-05).
+  const [local, setLocal] = React.useState<Pick<JobPostDraft, "joiningFee" | "joiningFeeDetails">>({
+    joiningFee: draft.joiningFee,
+    joiningFeeDetails: draft.joiningFeeDetails,
+  })
+  const pd = { ...draft, ...local }
+  const pUpdate = ((k: "joiningFee" | "joiningFeeDetails", v: unknown) =>
+    setLocal((l) => ({ ...l, [k]: v }))) as unknown as UpdateDraft
+  const incomplete = pd.joiningFee && (pd.joiningFeeDetails.amount == null || !pd.joiningFeeDetails.reason.trim())
+  const openFee = () => {
+    setLocal({ joiningFee: draft.joiningFee, joiningFeeDetails: draft.joiningFeeDetails })
+    setFeeOpen(true)
+  }
   return (
     <>
       <WizardQuestion
@@ -1193,92 +1237,125 @@ function Perks(ctx: ScreenCtx) {
         options={perks}
         value={draft.perks}
         onChange={(v) => update("perks", v)}
-        emoji={PERK_EMOJI}
+        icons={PERK_ICONS}
         size="lg"
       />
       <AddCustom
         placeholder="Add another perk"
         onAdd={(v) => update("perks", Array.from(new Set([...draft.perks, v])))}
       />
-    </>
-  )
-}
 
-function JoiningFee(ctx: ScreenCtx) {
-  const { draft, update } = ctx
-  const answered = draft.joiningFeeAnswered
-  const answer = (fee: boolean) => {
-    update("joiningFee", fee)
-    update("joiningFeeAnswered", true)
-  }
-  return (
-    <>
-      <WizardQuestion title="Do candidates pay any joining fee?" description="Fees, deposits or kit charges." />
-      {/* Never pre-answered: a candidate-safety question needs a real answer. */}
-      <OptionCardGroup aria-label="Joining fee">
-        <OptionCard
-          icon={<ShieldCheck />}
-          title="No"
-          description="Candidates pay nothing"
-          selected={answered && !draft.joiningFee}
-          onSelect={() => answer(false)}
-        />
-        <OptionCard
-          icon={<IndianRupee />}
-          title="Yes"
-          description="A fee or deposit applies"
-          selected={answered && draft.joiningFee}
-          onSelect={() => answer(true)}
-        />
-      </OptionCardGroup>
-      {answered && draft.joiningFee && (
-        <>
-          <Alert variant="warning">
-            <AlertDescription>Fee jobs are reviewed before going live.</AlertDescription>
-          </Alert>
-          <JoiningFeeDetailsFields draft={draft} update={update} />
-        </>
-      )}
+      <Separator />
+      <p className="flex items-center gap-2 text-sm text-muted-foreground">
+        {fee ? (
+          <IndianRupee className="size-4 shrink-0" aria-hidden />
+        ) : (
+          <ShieldCheck className="size-4 shrink-0" aria-hidden />
+        )}
+        <span>
+          {fee ? (
+            <>
+              Joining fee{" "}
+              <span className="font-medium text-foreground">
+                {draft.joiningFeeDetails.amount != null ? inr(draft.joiningFeeDetails.amount) : "details missing"}
+              </span>
+            </>
+          ) : (
+            <>
+              <span className="font-medium text-foreground">No joining fee</span> for candidates
+            </>
+          )}
+        </span>
+        <Button type="button" variant="link-inline" className="text-foreground" onClick={openFee}>
+          Change
+        </Button>
+      </p>
+
+      <PlanPopup open={feeOpen} onOpenChange={setFeeOpen}>
+        <PopupHeader title="Do candidates pay any joining fee?" description="Fees, deposits or kit charges." />
+        <PopupBody>
+          <form
+            id="joining-fee-form"
+            className="flex flex-col gap-4"
+            onSubmit={(e) => {
+              e.preventDefault()
+              if (incomplete) return
+              update("joiningFee", local.joiningFee)
+              update("joiningFeeDetails", local.joiningFeeDetails)
+              setFeeOpen(false)
+            }}
+          >
+            <OptionCardGroup aria-label="Joining fee">
+              <OptionCard
+                icon={<ShieldCheck />}
+                title="No"
+                description="Candidates pay nothing"
+                selected={!pd.joiningFee}
+                onSelect={() => pUpdate("joiningFee", false)}
+              />
+              <OptionCard
+                icon={<IndianRupee />}
+                title="Yes"
+                description="A fee or deposit applies"
+                selected={pd.joiningFee}
+                onSelect={() => pUpdate("joiningFee", true)}
+              />
+            </OptionCardGroup>
+            {pd.joiningFee && (
+              <>
+                <Alert variant="warning">
+                  <AlertDescription>Fee jobs are reviewed before going live.</AlertDescription>
+                </Alert>
+                <JoiningFeeDetailsFields draft={pd} update={pUpdate} />
+              </>
+            )}
+          </form>
+        </PopupBody>
+        <PopupFooter>
+          {/* Yes needs both answers before it can be submitted; No just closes. */}
+          <Button
+            type="submit"
+            form="joining-fee-form"
+            size="lg"
+            disabled={incomplete}
+          >
+            {pd.joiningFee ? "Submit" : "Done"}
+          </Button>
+        </PopupFooter>
+      </PlanPopup>
     </>
   )
 }
 
 // ── Who can apply ──────────────────────────────────────────────────────────
 
+/** Who can apply: education, English and experience on one screen, each
+ *  its own group (audit 2026-11-05: three single-choice screens were one
+ *  decision). */
 function Education(ctx: ScreenCtx) {
   return (
     <>
       <WizardQuestion
-        eyebrow={<AiTag ctx={ctx} keys={["education"]} />}
-        title="What’s the minimum education?"
-        description="This level or higher."
-      />
-      <EducationField draft={ctx.draft} update={ctx.update} />
-    </>
-  )
-}
-
-function English(ctx: ScreenCtx) {
-  return (
-    <>
-      <WizardQuestion
-        eyebrow={<AiTag ctx={ctx} keys={["english"]} />}
-        title="How much English is needed?"
+        eyebrow={
+          <AiTag
+            ctx={ctx}
+            keys={["education", "english", "experienceType", "minExperienceYears", "maxExperienceYears"]}
+          />
+        }
+        title="Who can apply?"
         description="Ask only what the job needs."
       />
-      <EnglishField draft={ctx.draft} update={ctx.update} />
-    </>
-  )
-}
-
-function Experience(ctx: ScreenCtx) {
-  return (
-    <>
-      <WizardQuestion
-        eyebrow={<AiTag ctx={ctx} keys={["experienceType", "minExperienceYears"]} />}
-        title="How much experience do they need?"
-      />
-      <ExperienceField draft={ctx.draft} update={ctx.update} />
+      <Group label="Minimum education">
+        <EducationField draft={ctx.draft} update={ctx.update} />
+      </Group>
+      <Separator />
+      <Group label="English">
+        <EnglishField draft={ctx.draft} update={ctx.update} />
+      </Group>
+      <Separator />
+      <Group label="Experience">
+        <ExperienceField draft={ctx.draft} update={ctx.update} />
+      </Group>
     </>
   )
 }
@@ -1307,6 +1384,8 @@ function Preferences(ctx: ScreenCtx) {
         (draft.gender !== "any" || draft.ageMin != null || draft.ageMax != null) && "gender-age",
       ].filter(Boolean) as string[],
   )
+  // Languages and skills up front; the rarer ones on "More" unless filled.
+  const [more, setMore] = React.useState(() => open.some((v) => v !== "languages" && v !== "skills"))
   return (
     <>
       <WizardQuestion
@@ -1342,6 +1421,8 @@ function Preferences(ctx: ScreenCtx) {
             />
           </AccordionContent>
         </AccordionItem>
+        {more && (
+          <>
         <AccordionItem value="assets" className="rounded-xl border border-border px-4">
           <AccordionTrigger>Must own · {count(draft.assets.length)}</AccordionTrigger>
           <AccordionContent>
@@ -1406,7 +1487,14 @@ function Preferences(ctx: ScreenCtx) {
             </div>
           </AccordionContent>
         </AccordionItem>
+          </>
+        )}
       </Accordion>
+      {!more && (
+        <Button type="button" variant="outline" size="lg" onClick={() => setMore(true)}>
+          More preferences
+        </Button>
+      )}
     </>
   )
 }
@@ -1429,13 +1517,16 @@ function Description(ctx: ScreenCtx) {
   // Written at the start, from the first draft. If the answers it was
   // written from have changed and the recruiter hasn't edited it, rewrite
   // it on arrival so it never contradicts the job.
+  // Empty on arrival: start writing at once, no button to press (user call,
+  // 2026-11-05); Stop cancels it.
   const autoRewrote = React.useRef(false)
   React.useEffect(() => {
-    if (descriptionStale && untouched && !autoRewrote.current) {
+    if (autoRewrote.current) return
+    if (n === 0 || (descriptionStale && untouched)) {
       autoRewrote.current = true
       void writeDescription()
     }
-  }, [descriptionStale, untouched, writeDescription])
+  }, [n, descriptionStale, untouched, writeDescription])
 
   const rewrite = async () => {
     await writeDescription(instruction.trim() || undefined)
@@ -1446,7 +1537,9 @@ function Description(ctx: ScreenCtx) {
       <WizardQuestion
         eyebrow={<AiTag ctx={ctx} keys={["description"]} />}
         title="How does the description read?"
-        description={n ? "Written from your answers. Edit freely." : "We can write it for you."}
+        description={
+          ctx.writing ? "Writing it from your answers…" : n ? "Written from your answers. Edit freely." : "Type it, or let us write it."
+        }
       />
       {descriptionStale && !untouched && n > 0 && (
         <Alert variant="warning">
@@ -1465,10 +1558,16 @@ function Description(ctx: ScreenCtx) {
           </AlertDescription>
         </Alert>
       )}
-      {n === 0 && (
-        <Button type="button" variant="outline" size="lg" loading={ctx.writing} onClick={() => void writeDescription()}>
-          <Wand2 aria-hidden /> Write it for me
+      {ctx.writing ? (
+        <Button type="button" variant="outline" size="lg" onClick={ctx.stopWriting}>
+          Stop
         </Button>
+      ) : (
+        n === 0 && (
+          <Button type="button" variant="outline" size="lg" onClick={() => void writeDescription()}>
+            <Wand2 aria-hidden /> Write it for me
+          </Button>
+        )
       )}
       <Field>
         <FieldLabel htmlFor="job-description">Description</FieldLabel>
@@ -1631,7 +1730,7 @@ function Review(ctx: ScreenCtx) {
   ].filter(Boolean)
   return (
     <>
-      <WizardQuestion title="Review" description="This is what candidates see." />
+      <WizardQuestion title="Review" description="Check everything before posting." />
       <Checks ctx={ctx} ids={["unserved-city", "category-mismatch", "multi-role", "generic-title"]} />
 
       {/* Phones get the preview here; wider screens have it beside the questions. */}
@@ -1775,17 +1874,11 @@ export const SCREENS: ScreenDef[] = [
     Render: Location,
   },
   {
-    id: "pay-type",
-    stage: "job",
-    preview: "top",
-    check: (d) => (!d.payType ? "Choose a pay type" : null),
-    Render: PayType,
-  },
-  {
     id: "salary",
     stage: "job",
     preview: "top",
     check: (d) => {
+      if (!d.payType) return "Choose a pay type"
       const err = salaryError(d)
       if (err) return err
       // Name whichever part is actually missing — with "Fixed + incentive",
@@ -1803,41 +1896,22 @@ export const SCREENS: ScreenDef[] = [
     stage: "job",
     preview: "top",
     isEmpty: (d) => d.perks.length === 0,
+    check: (d) => (missingRequired(d).includes("joiningFee") ? "Add the joining fee details" : null),
     Render: Perks,
-  },
-  {
-    id: "joining-fee",
-    stage: "job",
-    preview: "interview",
-    check: (d) =>
-      !d.joiningFeeAnswered
-        ? "Answer the fee question"
-        : missingRequired(d).includes("joiningFee")
-          ? "Add the fee details"
-          : null,
-    Render: JoiningFee,
   },
 
   {
     id: "education",
     stage: "candidates",
     preview: "requirements",
-    check: (d) => (missingRequired(d).includes("education") ? "Choose education" : null),
+    check: (d) => {
+      const m = missingRequired(d)
+      if (m.includes("education")) return "Choose education"
+      if (m.includes("english")) return "Choose English level"
+      if (m.includes("experience")) return "Choose experience"
+      return null
+    },
     Render: Education,
-  },
-  {
-    id: "english",
-    stage: "candidates",
-    preview: "requirements",
-    check: (d) => (missingRequired(d).includes("english") ? "Choose English level" : null),
-    Render: English,
-  },
-  {
-    id: "experience",
-    stage: "candidates",
-    preview: "requirements",
-    check: (d) => (missingRequired(d).includes("experience") ? "Choose experience" : null),
-    Render: Experience,
   },
   {
     id: "preferences",
@@ -1910,13 +1984,9 @@ export const SCREEN_NAMES: Record<ScreenId, string> = {
   "job-type": "Job type",
   workplace: "Workplace",
   location: "Location",
-  "pay-type": "Pay type",
   salary: "Salary",
   perks: "Perks",
-  "joining-fee": "Joining fee",
-  education: "Education",
-  english: "English",
-  experience: "Experience",
+  education: "Who can apply",
   preferences: "Preferences",
   screening: "Screening questions",
   description: "Job description",

@@ -43,7 +43,22 @@ import {
   AlertDialogHeader,
   AlertDialogMedia,
   AlertDialogTitle,
+  Award,
+  BriefcaseBusiness,
+  Building2,
   Button,
+  CalendarClock,
+  CircleCheck,
+  FileText,
+  IndianRupee,
+  ListChecks,
+  MapPin,
+  Phone,
+  SlidersHorizontal,
+  Store,
+  Tag,
+  Type,
+  Users,
   WizardFooter,
   WizardTypingProvider,
 } from "@apna/design-system"
@@ -58,6 +73,7 @@ import {
 import type { UpdateDraft } from "@/components/apnahire/post-job/job-fields"
 import {
   SCREENS,
+  SCREEN_NAMES,
   STAGE_LABELS,
   screenIndex,
   type ScreenCtx,
@@ -101,6 +117,25 @@ export const JOB_DRAFT_STORAGE_KEY = "apnahire:job-draft"
 
 const STAGES: StageId[] = ["job", "candidates", "setup"]
 
+/** One icon per question, for the step menu. */
+const SCREEN_ICONS: Partial<Record<ScreenId, React.ReactNode>> = {
+  title: <Type />,
+  category: <Tag />,
+  industry: <Store />,
+  "job-type": <BriefcaseBusiness />,
+  workplace: <Building2 />,
+  location: <MapPin />,
+  salary: <IndianRupee />,
+  perks: <Award />,
+  education: <Users />,
+  preferences: <SlidersHorizontal />,
+  screening: <ListChecks />,
+  description: <FileText />,
+  interview: <CalendarClock />,
+  contact: <Phone />,
+  review: <CircleCheck />,
+}
+
 /** The question screens' content area: the question column + the candidate
  *  preview (from `lg`), together. The footer spans the same area, so Back
  *  sits on its left edge and Next on its right — under the preview on
@@ -127,13 +162,15 @@ const descriptionBasisOf = (d: JobPostDraft) =>
     d.english,
     d.experienceType,
     d.minExperienceYears,
+    d.maxExperienceYears,
     d.languages,
     d.skills,
   ])
 
-async function callDraftApi(body: object): Promise<Partial<JobPostDraft>> {
+async function callDraftApi(body: object, signal?: AbortSignal): Promise<Partial<JobPostDraft>> {
   const res = await fetch("/api/apnahire/draft-job", {
     method: "POST",
+    signal,
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   })
@@ -152,7 +189,10 @@ const RENAMED: Record<string, ScreenId> = {
   "intro-job": "title",
   company: "title",
   "job-basics": "job-type",
-  pay: "pay-type",
+  pay: "salary",
+  "pay-type": "salary",
+  english: "education",
+  experience: "education",
   requirements: "education",
   "intro-candidates": "education",
   "intro-setup": "interview",
@@ -356,8 +396,19 @@ export function PostJobFlow() {
     draftRef.current = state.draft
   }, [state.draft])
 
+  // Stop: cancels the request, so a stopped write costs nothing more.
+  const writeAbort = React.useRef<AbortController | null>(null)
+  const stopWriting = React.useCallback(() => {
+    writeAbort.current?.abort()
+    writeAbort.current = null
+    setWriting(false)
+  }, [])
+
   const writeDescription = React.useCallback(
     async (instruction?: string) => {
+      writeAbort.current?.abort()
+      const ctrl = new AbortController()
+      writeAbort.current = ctrl
       setWriting(true)
       try {
         const d = draftRef.current
@@ -374,8 +425,8 @@ export function PostJobFlow() {
         ]
           .filter(Boolean)
           .join(", ")
-        const result = await callDraftApi({ prompt: summary }).catch(() => ({}) as Partial<JobPostDraft>)
-        if (result.description) {
+        const result = await callDraftApi({ prompt: summary }, ctrl.signal).catch(() => ({}) as Partial<JobPostDraft>)
+        if (result.description && !ctrl.signal.aborted) {
           setFlashKey((n) => n + 1)
           setState((s) => ({
             ...s,
@@ -388,7 +439,10 @@ export function PostJobFlow() {
           }))
         }
       } finally {
-        setWriting(false)
+        if (writeAbort.current === ctrl) {
+          writeAbort.current = null
+          setWriting(false)
+        }
       }
     },
     [setState],
@@ -420,9 +474,7 @@ export function PostJobFlow() {
     // The job-live screen, not a toast: nothing was paid, so no payment details.
     setLive({
       title,
-      note: expired
-        ? `${expired.title} expired to free its slot`
-        : `${kept.length + 1} of ${slots.total} jobs live`,
+      note: expired ? `${expired.title} expired to free its slot` : `${kept.length + 1} of ${slots.total} jobs live`,
     })
     setSlotsFullOpen(false)
     try {
@@ -478,8 +530,11 @@ export function PostJobFlow() {
   }
 
   const back = () => {
-    if (state.returnTo) return goTo(state.returnTo, "back")
+    // From review's Edit, Back cancels the edit; after a jump from the step
+    // menu it steps back as usual and still remembers the furthest question.
+    if (state.returnTo === "review") return goTo(state.returnTo, "back")
     const previous = SCREENS[screenIndex(state.screen) - 1]
+    if (state.returnTo && previous?.stage) return goTo(previous.id, "back", state.returnTo)
     // The manual intro is only on the way in by hand; an AI draft's first
     // question goes back to its description.
     if (previous?.id === "manual-intro" && state.draftedPrompt) return goTo("describe", "back")
@@ -505,6 +560,7 @@ export function PostJobFlow() {
     refining,
     writeDescription,
     writing,
+    stopWriting,
     descriptionStale:
       !!state.draft.description.trim() &&
       !!state.descriptionBasis &&
@@ -521,16 +577,34 @@ export function PostJobFlow() {
     const first = SCREENS.find((s) => s.stage === to)
     if (first && STAGES.indexOf(to) <= (stage ? STAGES.indexOf(stage) : -1)) goTo(first.id, "back")
   }
+  // The furthest question reached: a jump back keeps it as returnTo, so Next
+  // goes straight back there (user call, 2026-11-05).
+  const furthest = state.returnTo ?? state.screen
+  const reach = screenIndex(furthest)
+  const jumpToScreen = (id: ScreenId) => {
+    const i = screenIndex(id)
+    if (i > reach) return
+    goTo(id, i < screenIndex(state.screen) ? "back" : "forward", id === furthest ? null : furthest)
+  }
+  const menuScreens = SCREENS.filter((s) => s.stage).map((s, i, all) => ({
+    id: s.id,
+    icon: SCREEN_ICONS[s.id],
+    label: SCREEN_NAMES[s.id],
+    stage: s.stage!,
+    current: s.id === state.screen,
+    disabled: screenIndex(s.id) > reach && all[i].id !== state.screen,
+  }))
   const firstOfStage = stage !== null && SCREENS.find((s) => s.stage === stage)?.id === state.screen
   // Subscribers' last step commits: "Post job", the flow's one green CTA.
   const postsNow = state.screen === "review" && !state.returnTo && !!slots
-  const nextLabel = state.returnTo
-    ? "Done"
-    : postsNow
-      ? "Post job"
-      : def.isEmpty?.(state.draft)
-        ? "Skip"
-        : (def.cta ?? "Next")
+  const nextLabel =
+    state.returnTo === "review"
+      ? "Done"
+      : postsNow
+        ? "Post job"
+        : def.isEmpty?.(state.draft)
+          ? "Skip"
+          : (def.cta ?? "Next")
 
   // Wait for the saved draft before rendering, so a resumed flow doesn't
   // flash the first screen.
@@ -558,7 +632,7 @@ export function PostJobFlow() {
         onSaveExit={() => persistDraft(state)}
       />
 
-      <main className="flex-1 px-4 py-8 sm:px-6 sm:py-10">
+      <main className="relative z-10 flex-1 px-4 py-8 sm:px-6 sm:py-10">
         <div className={solo ? SOLO_WIDTH : WIZARD_LAYOUT}>
           <div
             key={state.screen}
@@ -603,13 +677,18 @@ export function PostJobFlow() {
         progressClassName="sm:hidden"
         innerClassName={solo ? SOLO_WIDTH : CONTENT_WIDTH}
         onBack={back}
-        backLabel={state.returnTo ? "Cancel" : "Back"}
+        backLabel={state.returnTo === "review" ? "Cancel" : "Back"}
         loading={drafting}
         status={
           stage ? (
             // Phones: the step and its menu live in the bottom bar, by the
             // thumb. From sm the header stepper shows the step instead.
-            <JobPostingStepMenu current={stage} onJump={(s) => s !== "plan" && jumpToStage(s)} />
+            <JobPostingStepMenu
+              current={stage}
+              onJump={(s) => s !== "plan" && jumpToStage(s)}
+              screens={menuScreens}
+              onPickScreen={(id) => jumpToScreen(id as ScreenId)}
+            />
           ) : undefined
         }
         secondary={
@@ -678,9 +757,7 @@ export function PostJobFlow() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={discard}>Start new</AlertDialogCancel>
-            <AlertDialogAction onClick={resume}>
-              Continue draft
-            </AlertDialogAction>
+            <AlertDialogAction onClick={resume}>Continue draft</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

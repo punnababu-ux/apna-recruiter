@@ -172,11 +172,13 @@ export function parsePrompt(source: string): Partial<JobPostDraft> {
   else if (/no english/.test(text)) out.english = "none"
   else if (/english/.test(text)) out.english = "basic"
 
+  const range = text.match(/(\d+(?:\.\d+)?)\s*(?:-|–|to)\s*(\d+(?:\.\d+)?)\s*(?:years?|yrs?)/)
   const years = text.match(/(\d+(?:\.\d+)?)\s*\+?\s*(?:years?|yrs?)/)
   if (/fresher/.test(text)) out.experienceType = "fresher"
   else if (years) {
     out.experienceType = "experienced"
-    out.minExperienceYears = parseFloat(years[1])
+    out.minExperienceYears = parseFloat(range ? range[1] : years[1])
+    if (range) out.maxExperienceYears = parseFloat(range[2])
   } else if (/any experience|experience not required/.test(text)) out.experienceType = "any"
 
   const langs = LANGS.filter((l) => text.includes(l)).map(titleCase)

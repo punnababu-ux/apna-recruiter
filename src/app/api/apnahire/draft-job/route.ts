@@ -61,6 +61,7 @@ export const JobDraftSchema = z.object({
   english: z.enum(["none", "basic", "good"]).optional(),
   experienceType: z.enum(["any", "experienced", "fresher"]).optional(),
   minExperienceYears: z.number().optional().describe("Minimum years when experienceType is 'experienced'."),
+  maxExperienceYears: z.number().optional().describe("Maximum years when experienceType is 'experienced', if stated."),
   languages: z.array(z.string()).optional().describe("Regional languages required, e.g. ['Hindi']."),
   skills: z.array(z.string()).optional().describe("3-6 short skills relevant to the role."),
   gender: z.enum(["any", "male", "female"]).optional(),
@@ -97,7 +98,9 @@ function buildDummyDraft(source: string): Partial<JobPostDraft> {
     "Requirements:",
     out.education ? `- ${out.education === "graduate" ? "Graduate" : "Minimum " + out.education} education` : "- Willingness to learn",
     out.experienceType === "experienced" && out.minExperienceYears
-      ? `- ${out.minExperienceYears}+ year(s) of relevant experience`
+      ? out.maxExperienceYears && out.maxExperienceYears > out.minExperienceYears
+        ? `- ${out.minExperienceYears}–${out.maxExperienceYears} years of relevant experience`
+        : `- ${out.minExperienceYears}+ year(s) of relevant experience`
       : "- Freshers and experienced candidates can apply",
     out.languages?.length ? `- Comfortable speaking ${out.languages.join(", ")}` : "- Clear communication skills",
   ].join("\n")

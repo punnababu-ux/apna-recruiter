@@ -42,6 +42,7 @@ import {
   TrendingUp,
   UserPlus,
   Users,
+  Truck,
   Wrench,
   Zap,
 } from "@apna/design-system"
@@ -99,9 +100,12 @@ export type ValueName =
   | "alert"
   | "info"
   | "expired"
+  // Job posting: the relocation card's truck (side view, faces left)
+  | "relocation-truck"
 
 const ICON: Record<ValueName, ComponentType<{ className?: string; "aria-hidden"?: boolean }>> = {
   ownership: KeyRound,
+  "relocation-truck": Truck,
   "customer-obsession": Target,
   empathy: HeartHandshake,
   transparency: Scale,
@@ -145,6 +149,7 @@ const ICON: Record<ValueName, ComponentType<{ className?: string; "aria-hidden"?
 
 /** Values whose clay image is in public/images/company/values. */
 const READY = new Set<ValueName>([
+  "relocation-truck",
   "enterprise",
   "ownership",
   "customer-obsession",
@@ -192,6 +197,10 @@ const READY = new Set<ValueName>([
 /** sm: a picture at the top of a grid card (Enterprise's features).
  *  xs: beside a heading (the contact pop-up's title).
  *  2xs: beside a heading in a phone sheet with a long title (48px). */
+/** Whether a clay picture is installed (its PNG exists), for places that
+ *  draw it at their own size and fall back to a line icon. */
+export const isClayReady = (name: ValueName) => READY.has(name)
+
 export function ValueArt({ name, size = "lg" }: { name: ValueName; size?: "2xs" | "xs" | "sm" | "md" | "lg" }) {
   if (READY.has(name)) {
     return (
