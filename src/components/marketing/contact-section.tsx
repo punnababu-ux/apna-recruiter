@@ -53,7 +53,7 @@ type Errors = Partial<Record<keyof Values, string>>
 
 const EMPTY: Values = { name: "", email: "", phone: "", role: "", company: "", size: "" }
 const TERMS_HREF = LEGAL_LINKS.find((l) => l.label === "Terms of service")!.href
-const PRIVACY_HREF = LEGAL_LINKS.find((l) => l.label === "Privacy Policy")!.href
+const PRIVACY_HREF = LEGAL_LINKS.find((l) => l.label === "Privacy policy")!.href
 
 function validate(v: Values): Errors {
   const e: Errors = {}

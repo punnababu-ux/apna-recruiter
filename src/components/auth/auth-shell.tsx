@@ -22,7 +22,7 @@ import { Stat } from "@/components/marketing/page-blocks"
 import { cn } from "@/lib/utils"
 
 const TERMS_HREF = LEGAL_LINKS.find((l) => l.label === "Terms of service")!.href
-const PRIVACY_HREF = LEGAL_LINKS.find((l) => l.label === "Privacy Policy")!.href
+const PRIVACY_HREF = LEGAL_LINKS.find((l) => l.label === "Privacy policy")!.href
 
 function LookingForJob() {
   return (

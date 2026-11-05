@@ -20,32 +20,56 @@ export const FOOTER_COLUMNS: FooterColumn[] = [
       { label: "Database", href: "/products/database" },
       { label: "Enterprise", href: "/enterprise" },
       { label: "Pricing", href: "/pricing" },
+      { label: "AI Interview Preparation Lounge", href: "/interview-prep-lounge" },
+    ],
+  },
+  {
+    heading: "About us",
+    links: [
+      { label: "Overview", href: "/about" },
+      { label: "Our culture and values", href: "/about/culture" },
+      { label: "Apna by the numbers", href: "/about/numbers" },
+      { label: "Our leadership", href: "/about/leadership" },
+      { label: "Management team", href: "/about/management" },
+      { label: "Join us", href: "/careers" },
     ],
   },
   {
     heading: "Get to know us",
     links: [
-      { label: "About us", href: "/about" },
       { label: "Careers", href: "/careers" },
-      { label: "Newsroom", href: "/newsroom" },
-      { label: "Contact us", href: "/#contact-us" },
-      { label: "Looking for a job?", href: "https://apna.co", external: true },
+      {
+        label: "Contact support",
+        href: "https://apna.co/contact-us",
+        external: true,
+      },
+      { label: "Contact sales", href: "https://employer.apna.co/contact-us", external: true },
+      { label: "Looking for a job", href: "https://apna.co", external: true },
     ],
   },
   {
     heading: "Resources",
     links: [
       {
-        label: "apna Help Center",
+        label: "Apna help center",
         href: "https://employer-help-centre.apna.co/support/home",
         external: true,
       },
       // External, as on employer.apna.co — we don't build a blog.
       { label: "Blog", href: "https://apna.co/career-central/category/hiring-platform/", external: true },
-      { label: "Trust & safety", href: "/trust-and-safety" },
+      { label: "Press releases", href: "/newsroom" },
+      { label: "Awards and certifications", href: "/newsroom/awards" },
     ],
   },
 ]
+
+/** One smart link for both stores: it opens the right store for the device. */
+const RECRUITER_APP_LINK = "https://apna-emp.app.link/vRKt90Ne36b"
+
+export const APP_STORE_LINKS = [
+  { label: "Download on the App Store", href: RECRUITER_APP_LINK, external: true, icon: "apple" },
+  { label: "Get it on Google Play", href: RECRUITER_APP_LINK, external: true, icon: "google-play" },
+] as const
 
 export const SOCIAL_LINKS = [
   { label: "apna on Facebook", href: "https://www.facebook.com/apnahq", icon: "facebook" },
@@ -62,11 +86,11 @@ export const SOCIAL_LINKS = [
 export type SocialIconName = (typeof SOCIAL_LINKS)[number]["icon"]
 
 export const LEGAL_LINKS: NavLink[] = [
-  { label: "Privacy Policy", href: "https://apna.co/privacy", external: true },
+  { label: "Privacy policy", href: "https://apna.co/privacy", external: true },
   { label: "Terms & Conditions", href: "https://apna.co/user-agreement", external: true },
   { label: "Terms of service", href: "https://apna.co/terms-of-service", external: true },
   {
-    label: "Disclosure Policy",
+    label: "Disclosure policy",
     href: "https://apna.co/vulnerability-disclosure-policy",
     external: true,
   },

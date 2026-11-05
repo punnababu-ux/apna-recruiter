@@ -44,10 +44,17 @@ import {
   Briefcase,
   Building2,
   Button,
-  FileText,
-  GraduationCap,
-  Headset,
   Award,
+  BarChart2,
+  BookOpen,
+  Bot,
+  Building,
+  Crown,
+  Heart,
+  InfinityIcon,
+  LifeBuoy,
+  Mic,
+  Newspaper,
   Menu,
   NavigationMenu,
   NavigationMenuContent,
@@ -85,14 +92,23 @@ interface SiteHeaderProps {
   variant?: "default" | "minimal"
 }
 
-const SECTION_ICONS: Record<NavIcon, IconComponent> = {
-  building: Building2,
-  people: Users,
-  recruiters: Briefcase,
-  universities: GraduationCap,
-  newsroom: FileText,
-  recognition: Award,
-  support: Headset,
+const ITEM_ICONS: Record<NavIcon, IconComponent> = {
+  overview: Building2,
+  culture: Heart,
+  numbers: BarChart2,
+  leadership: Crown,
+  management: Users,
+  join: Briefcase,
+  unlimited: InfinityIcon,
+  "ai-calling": Bot,
+  jobs: Briefcase,
+  database: Users,
+  enterprise: Building,
+  lounge: Mic,
+  press: Newspaper,
+  awards: Award,
+  help: LifeBuoy,
+  blog: BookOpen,
 }
 
 const groupLinks = (group: NavGroup) => (group.sections ?? []).flatMap((s) => s.items)
@@ -116,13 +132,30 @@ function useIsCurrent() {
 /** One menu link: internal via next/link, outbound in a new tab with ↗.
  *  `inMenu`: inside the desktop NavigationMenu card, where it's a
  *  NavigationMenuLink (part of the menu's keyboard order, closes the card). */
-function MenuLink({ link, onNavigate, inMenu }: { link: NavLink; onNavigate?: () => void; inMenu?: boolean }) {
+function MenuLink({
+  link,
+  onNavigate,
+  inMenu,
+}: {
+  link: NavSection["items"][number]
+  onNavigate?: () => void
+  inMenu?: boolean
+}) {
+  const Icon = ITEM_ICONS[link.icon]
   const className =
-    "ink relative -mx-2 flex items-center gap-1 rounded-md px-2 py-1.5 text-sm text-muted-foreground transition-interactive hover:bg-muted hover:text-foreground"
+    "group ink relative -mx-3 flex items-start gap-3 rounded-lg p-3 transition-interactive hover:bg-muted"
   const content = (
     <>
-      {link.label}
-      {link.external && <ArrowUpRight className="size-3.5 shrink-0" aria-hidden />}
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-foreground transition-interactive group-hover:bg-card">
+        <Icon className="size-5" aria-hidden />
+      </span>
+      <span className="flex min-w-0 flex-col gap-0.5">
+        <span className="flex items-center gap-1 text-sm font-semibold text-foreground">
+          {link.label}
+          {link.external && <ArrowUpRight className="size-3.5 shrink-0 text-muted-foreground" aria-hidden />}
+        </span>
+        <span className="text-sm text-muted-foreground">{link.description}</span>
+      </span>
     </>
   )
   const element = link.external ? (
@@ -140,7 +173,7 @@ function MenuLink({ link, onNavigate, inMenu }: { link: NavLink; onNavigate?: ()
   return React.cloneElement(element, { className }, content)
 }
 
-/** A labelled column: icon + heading, then its links. */
+/** A labelled column: an overline heading, then its links. */
 function MenuSection({
   section,
   onNavigate,
@@ -150,13 +183,9 @@ function MenuSection({
   onNavigate?: () => void
   inMenu?: boolean
 }) {
-  const Icon = SECTION_ICONS[section.icon]
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-        <Icon className="size-4 text-primary" aria-hidden />
-        {section.heading}
-      </div>
+    <div className="flex flex-col gap-2">
+      <div className="text-overline text-muted-foreground">{section.heading}</div>
       <ul className="flex flex-col">
         {section.items.map((link) => (
           <li key={link.label}>
@@ -346,7 +375,7 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
                         <NavigationMenuContent>
                           <div className="flex divide-x divide-border p-6">
                             {group.sections.map((section) => (
-                              <div key={section.heading} className="min-w-48 px-6 first:pl-0 last:pr-0">
+                              <div key={section.heading} className="w-80 px-6 first:pl-0 last:pr-0">
                                 <MenuSection section={section} inMenu />
                               </div>
                             ))}

@@ -16,7 +16,7 @@ export {
   BadgePercent, CircleAlert,
   Activity, AlertCircle, AlertTriangle, ArrowDown, ArrowLeft,
   ArrowRight, ArrowUp, ArrowUpDown, ArrowUpRight, AtSign, AudioLines,
-  Award, Ban, BarChart2, Bell, Bike, Bold, BookOpen,
+  Award, Ban, BarChart2, Bell, Bike, Bold, BookOpen, Crown, LifeBuoy,
   Calculator, ChefHat, DoorOpen, HandCoins, Headset, Package, Route, Store, Truck,
   Factory, HardHat, Plane, ShoppingCart, Stethoscope, UtensilsCrossed,
   Bookmark, BookmarkPlus, Bot, Brain, Briefcase,
