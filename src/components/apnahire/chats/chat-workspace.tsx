@@ -13,7 +13,7 @@
  *                  from xl) and the page (the thread, or the "Pick a chat"
  *                  Empty). From xl a third pane, the candidate profile
  *                  (CandidateProfilePanel, w-80), sits at the right for the
- *                  open chat, under a "Candidate" band; below xl the thread header's Profile button
+ *                  open chat, under a "Candidate 360" band; below xl the thread header's Profile button
  *                  opens it in a side panel. The root is
  *                  absolutely placed in the shell's inset (`top-16 bottom-0`),
  *                  so it is exactly the viewport minus the top bar with no
@@ -51,11 +51,11 @@ export function ChatWorkspace({ children }: { children: React.ReactNode }) {
       </div>
       {active && (
         <aside
-          aria-label="Candidate profile"
+          aria-label="Candidate 360"
           className="hidden min-h-0 flex-col border-l border-border bg-card xl:flex xl:w-80 xl:shrink-0"
         >
           <div className={cn("flex items-center", BAND)}>
-            <h2 className="text-h5">Candidate</h2>
+            <h2 className="text-h5">Candidate 360</h2>
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto">
             <CandidateProfilePanel key={active.id} thread={active} />

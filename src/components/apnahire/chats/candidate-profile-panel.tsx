@@ -1,28 +1,35 @@
 "use client"
 
 /**
- * CandidateProfilePanel — the right pane of the chats screen (HR-CRM style):
- * who the candidate is and how well they fit the job, beside the thread.
- * From xl (1280px) it is the third pane of ChatWorkspace; below xl the
- * thread header's Profile button opens the same panel in CandidateProfileSheet
- * (the app's right side panel, full screen on phones).
+ * CandidateProfilePanel — "Candidate 360", the right pane of the chats screen
+ * (HR-CRM style): who the candidate is and why they fit the job, beside the
+ * thread. From xl (1280px) it is the third pane of ChatWorkspace; below xl
+ * the thread header's Profile button opens the same panel in
+ * CandidateProfileSheet (the app's right side panel, full screen on phones).
+ * Built to scan and act on: actions first, the answer ("why a match") next,
+ * the rest one tap away.
  *
- *   Match line    The sub-row under the pane's band: match Badge (icon +
- *                 label, never colour alone) + score. The one place the match
- *                 level and score are written
- *   Profile row   Avatar · name · meta (below xl only: from xl the thread
- *                 header beside the pane shows them) · Call and Add note. Call is a masked call
+ *   Actions       The sub-row under the pane's band (h-14, as the list's and
+ *                 the thread's): Call and Add note. Call is a masked call
  *                 (PRD FR-10): a toast, no tel: link, so neither side sees
  *                 the other's number. Add note opens a Textarea under the
- *                 card; saved notes list newest first
- *   Sections      Flat on bg-card, split by Separator as the candidate
- *                 drawer does: Job match (the Meter, "Why a good match" with
- *                 check icons, "Gaps" with alert icons; no title or score, the
- *                 match line says them), Skills,
- *                 Profile (IconLabel rows), Resume
- *   Resume        Locked: an explainer and the panel's one primary button,
- *                 "Unlock resume · 1 credit" (the cost is only on the button).
- *                 Unlocked: a "View resume" outline button
+ *                 profile card
+ *   Profile card  Avatar · name · meta, at the list rows' inset (px-4 py-3,
+ *                 Avatar lg) so its photo lines up with the list's first row.
+ *                 A deleted or blocked candidate's reason shows here and Call
+ *                 is disabled
+ *   Sections      An Accordion (several open at once), one heading style
+ *                 (text-h6), one divider between items:
+ *                 Why a match (open): the top 3 strengths (check icons) then
+ *                 the top 2 gaps (alert icons); the rest behind "Show all N".
+ *                 The score and the level are in the thread header, tied to
+ *                 the job, so there is no meter or badge here.
+ *                 Key facts (open): a two-column grid, label over value
+ *                 Skills: Badges, 6 visible and "+N more"
+ *                 Resume: locked = an explainer and the panel's one primary
+ *                 button, "Unlock resume · 1 credit" (the cost is only on the
+ *                 button); unlocked = a "View resume" outline button
+ *                 Notes: newest first with their times; Add note opens it
  *
  * Scripted mock data: unlocking flips a flag in useChats; nothing leaves the
  * prototype.
@@ -31,53 +38,41 @@
 import * as React from "react"
 import { toast } from "sonner"
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
   AlertTriangle,
-  ArrowDown,
-  ArrowUp,
   Avatar,
   AvatarFallback,
   AvatarImage,
   Badge,
   Button,
-  CalendarClock,
   CircleCheck,
   FileText,
-  GraduationCap,
-  IndianRupee,
-  Languages,
-  MapPin,
-  Minus,
   Phone,
   Plus,
-  Briefcase,
-  Separator,
   Sheet,
   SheetPanel,
   SheetPanelHeader,
   StickyNote,
   Textarea,
   Unlock,
-  Meter,
 } from "@apna/design-system"
-import { IconLabel } from "@/components/onlyrounds/shared"
 import { useChats } from "@/hooks/apnahire/use-chats"
-import { cn } from "@/lib/utils"
-import { MATCH_LABEL, UNAVAILABLE_COPY, type ChatThread, type MatchLevel } from "@/content/chats"
+import { UNAVAILABLE_COPY, type ChatThread } from "@/content/chats"
 
-/** Level → badge colour, meter colour and icon. The label always shows too. */
-const LEVEL = {
-  high: { badge: "success", tone: "default", icon: ArrowUp },
-  medium: { badge: "warning", tone: "warning", icon: Minus },
-  low: { badge: "destructive", tone: "destructive", icon: ArrowDown },
-} as const satisfies Record<MatchLevel, { badge: string; tone: string; icon: unknown }>
+/** Strengths and gaps shown before "Show all", and skills before "+N more". */
+const TOP_STRENGTHS = 3
+const TOP_GAPS = 2
+const TOP_SKILLS = 6
 
-function SectionTitle({ children }: { children: React.ReactNode }) {
-  return <h3 className="text-h6 text-foreground">{children}</h3>
-}
+/** One heading style for every section. */
+const TRIGGER = "items-center py-3 text-h6 text-foreground hover:no-underline"
 
 function PointList({ icon: Icon, items, iconClass }: { icon: typeof CircleCheck; items: string[]; iconClass: string }) {
   return (
-    <ul className="flex flex-col gap-1.5">
+    <ul className="flex flex-col gap-2">
       {items.map((text) => (
         <li key={text} className="flex items-start gap-2 text-body-sm text-foreground">
           <Icon className={`mt-0.5 size-4 shrink-0 ${iconClass}`} aria-hidden />
@@ -91,47 +86,64 @@ function PointList({ icon: Icon, items, iconClass }: { icon: typeof CircleCheck;
 export function CandidateProfilePanel({ thread }: { thread: ChatThread }) {
   const { addNote, unlockResume } = useChats()
   const { candidate, profile, match, notes, resumeUnlocked } = thread
-  const level = LEVEL[match.level]
   // Deleted or blocked: no call and no unlock; the reason shows under the buttons.
   const unavailable = candidate.availability ? UNAVAILABLE_COPY[candidate.availability] : undefined
   const [noting, setNoting] = React.useState(false)
   const [draft, setDraft] = React.useState("")
+  const [open, setOpen] = React.useState<string[]>(["match", "facts", "resume"])
+  const [allPoints, setAllPoints] = React.useState(false)
+  const [allSkills, setAllSkills] = React.useState(false)
 
   const saveNote = () => {
     if (!draft.trim()) return
     addNote(thread.id, draft)
     setDraft("")
     setNoting(false)
+    // The saved note shows in Notes: open it.
+    setOpen((v) => (v.includes("notes") ? v : [...v, "notes"]))
   }
 
+  const strengths = allPoints ? match.strengths : match.strengths.slice(0, TOP_STRENGTHS)
+  const gaps = allPoints ? match.gaps : match.gaps.slice(0, TOP_GAPS)
+  const hiddenPoints = match.strengths.length + match.gaps.length - strengths.length - gaps.length
+  const skills = allSkills ? profile.skills : profile.skills.slice(0, TOP_SKILLS)
+  const hiddenSkills = profile.skills.length - skills.length
+
   const facts = [
-    { icon: MapPin, label: "Location", value: profile.location },
-    { icon: Briefcase, label: "Experience", value: profile.experience },
-    { icon: GraduationCap, label: "Education", value: profile.education },
-    { icon: Languages, label: "Languages", value: profile.languages.join(", ") },
-    profile.currentSalary && { icon: IndianRupee, label: "Current salary", value: profile.currentSalary },
-    profile.expectedSalary && { icon: IndianRupee, label: "Expected salary", value: profile.expectedSalary },
-    { icon: CalendarClock, label: "Availability", value: profile.availability },
-    { icon: Phone, label: "Phone", value: profile.phoneMasked },
-  ].filter((f): f is { icon: typeof MapPin; label: string; value: string } => !!f)
+    { label: "Location", value: profile.location },
+    { label: "Experience", value: profile.experience },
+    profile.expectedSalary && { label: "Expected salary", value: profile.expectedSalary },
+    profile.currentSalary && { label: "Current salary", value: profile.currentSalary },
+    { label: "Availability", value: profile.availability },
+    { label: "Languages", value: profile.languages.join(", ") },
+    { label: "Education", value: profile.education },
+    { label: "Phone", value: profile.phoneMasked },
+  ].filter((f): f is { label: string; value: string } => !!f)
 
   return (
     <div data-slot="candidate-profile-panel" className="flex flex-col bg-card">
-      {/* The match line: the sub-row under the pane's band (h-14, as the list's
-          and the thread's). The level is a label with an icon, never colour alone. */}
-      <div className={cn("flex h-14 shrink-0 items-center gap-2 border-b border-border px-4")}>
-        <Badge variant={level.badge}>
-          <level.icon aria-hidden />
-          {MATCH_LABEL[match.level]}
-        </Badge>
-        <span className="text-caption text-muted-foreground">{match.score}%</span>
+      {/* The actions: the sub-row under the pane's band (h-14, as the list's and the thread's). */}
+      <div className="flex h-14 shrink-0 items-center gap-2 border-b border-border px-4">
+        <Button
+          variant="outline"
+          size="sm"
+          className="flex-1"
+          disabled={!!unavailable}
+          aria-describedby={unavailable ? "call-unavailable" : undefined}
+          onClick={() => toast.info("Connecting a masked call. Neither of you sees the other's number.")}
+        >
+          <Phone aria-hidden />
+          Call
+        </Button>
+        <Button variant="outline" size="sm" className="flex-1" aria-expanded={noting} onClick={() => setNoting((v) => !v)}>
+          <StickyNote aria-hidden />
+          Add note
+        </Button>
       </div>
 
-      {/* The profile row: the avatar sits at the same inset and size as the
+      {/* The profile card: the avatar sits at the same inset and size as the
           list rows' (px-4 py-3, Avatar lg), so the photos line up. */}
       <div className="flex flex-col gap-3 border-b border-border px-4 py-3">
-        {/* Kept at every width (user call, 2026-11-04): the profile card at the
-            top of the pane, with Call and Add note, lines up with the list. */}
         <div className="flex items-center gap-3">
           <Avatar size="lg">
             {candidate.photo && <AvatarImage src={candidate.photo} alt="" />}
@@ -142,138 +154,149 @@ export function CandidateProfilePanel({ thread }: { thread: ChatThread }) {
             <span className="text-caption text-muted-foreground">{candidate.meta}</span>
           </div>
         </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="flex-1"
-            disabled={!!unavailable}
-            aria-describedby={unavailable ? "call-unavailable" : undefined}
-            onClick={() => toast.info("Connecting a masked call. Neither of you sees the other's number.")}
-          >
-            <Phone aria-hidden />
-            Call
-          </Button>
-          <Button variant="outline" size="sm" className="flex-1" aria-expanded={noting} onClick={() => setNoting((v) => !v)}>
-            <StickyNote aria-hidden />
-            Add note
-          </Button>
-        </div>
         {unavailable && (
           <p className="text-caption text-muted-foreground" id="call-unavailable">
             {`${unavailable.reason} You can't call.`}
           </p>
         )}
-      </div>
-
-      {(noting || notes.length > 0) && (
-        <div className="flex flex-col gap-3 border-b border-border px-4 py-3">
-          {noting && (
-            <div className="flex flex-col gap-2">
-              <Textarea
-                aria-label="Note about this candidate"
-                placeholder="Write a note. Only you can see it."
-                value={draft}
-                onChange={(e) => setDraft(e.target.value)}
-              />
-              <div className="flex justify-end gap-2">
-                <Button variant="ghost" size="sm" onClick={() => setNoting(false)}>
-                  Cancel
-                </Button>
-                <Button variant="outline" size="sm" disabled={!draft.trim()} onClick={saveNote}>
-                  <Plus aria-hidden />
-                  Save note
-                </Button>
-              </div>
-            </div>
-          )}
-          {notes.length > 0 && (
-            <ul className="flex flex-col gap-3" aria-label="Notes">
-              {notes.map((n) => (
-                <li key={n.id} className="flex flex-col gap-0.5">
-                  <span className="text-caption text-muted-foreground">{n.at}</span>
-                  <span className="text-body-sm text-foreground">{n.text}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
-
-      <div className="flex flex-col gap-4 p-4">
-        <section className="flex flex-col gap-3" aria-label="Job match">
-          <Meter label={`Match score for ${thread.job.title}`} value={match.score} tone={level.tone} />
+        {noting && (
           <div className="flex flex-col gap-2">
-            <span className="text-caption font-semibold text-foreground">Why a good match</span>
-            <PointList icon={CircleCheck} items={match.strengths} iconClass="text-success" />
-          </div>
-          <div className="flex flex-col gap-2">
-            <span className="text-caption font-semibold text-foreground">Gaps</span>
-            <PointList icon={AlertTriangle} items={match.gaps} iconClass="text-destructive" />
-          </div>
-        </section>
-
-        <Separator />
-
-        <section className="flex flex-col gap-3" aria-label="Skills">
-          <SectionTitle>Skills</SectionTitle>
-          <div className="flex flex-wrap gap-1.5">
-            {profile.skills.map((s) => (
-              <Badge key={s} variant="secondary">
-                {s}
-              </Badge>
-            ))}
-          </div>
-        </section>
-
-        <Separator />
-
-        <section className="flex flex-col gap-3" aria-label="Profile">
-          <SectionTitle>Profile</SectionTitle>
-          <dl className="flex flex-col gap-2.5">
-            {facts.map(({ icon, label, value }) => (
-              <div key={label} className="flex flex-col gap-0.5">
-                <dt className="text-caption text-muted-foreground">
-                  <IconLabel icon={icon}>{label}</IconLabel>
-                </dt>
-                <dd className="text-body-sm text-foreground">{value}</dd>
-              </div>
-            ))}
-          </dl>
-        </section>
-
-        <Separator />
-
-        <section className="flex flex-col gap-3" aria-label="Resume">
-          <SectionTitle>Resume</SectionTitle>
-          {resumeUnlocked ? (
-            <Button variant="outline" onClick={() => toast.info("Opening the resume.")}>
-              <FileText aria-hidden />
-              View resume
-            </Button>
-          ) : (
-            <>
-              <p className="text-body-sm text-muted-foreground">Unlock the resume to see the full work history.</p>
-              {unavailable && (
-                <p className="text-caption text-muted-foreground" id="unlock-unavailable">
-                  {`${unavailable.reason} You can't unlock the resume.`}
-                </p>
-              )}
-              <Button
-                disabled={!!unavailable}
-                aria-describedby={unavailable ? "unlock-unavailable" : undefined}
-                onClick={() => {
-                  unlockResume(thread.id)
-                  toast.success("Resume unlocked. 1 database credit used.")
-                }}
-              >
-                <Unlock aria-hidden />
-                Unlock resume · 1 credit
+            <Textarea
+              aria-label="Note about this candidate"
+              placeholder="Write a note. Only you can see it."
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+            />
+            <div className="flex justify-end gap-2">
+              <Button variant="ghost" size="sm" onClick={() => setNoting(false)}>
+                Cancel
               </Button>
-            </>
-          )}
-        </section>
+              <Button variant="outline" size="sm" disabled={!draft.trim()} onClick={saveNote}>
+                <Plus aria-hidden />
+                Save note
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
+
+      <Accordion multiple value={open} onValueChange={setOpen} className="px-4">
+        <AccordionItem value="match">
+          <AccordionTrigger className={TRIGGER}>Why a match</AccordionTrigger>
+          <AccordionContent className="pb-4">
+            <div className="flex flex-col gap-3">
+              <PointList icon={CircleCheck} items={strengths} iconClass="text-success" />
+              {gaps.length > 0 && (
+                <>
+                  <span className="text-caption font-semibold text-foreground">Gaps</span>
+                  <PointList icon={AlertTriangle} items={gaps} iconClass="text-destructive" />
+                </>
+              )}
+              {(hiddenPoints > 0 || allPoints) && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="self-start"
+                  aria-expanded={allPoints}
+                  onClick={() => setAllPoints((v) => !v)}
+                >
+                  {allPoints ? "Show fewer" : `Show all ${match.strengths.length + match.gaps.length}`}
+                </Button>
+              )}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="facts">
+          <AccordionTrigger className={TRIGGER}>Key facts</AccordionTrigger>
+          <AccordionContent className="pb-4">
+            <dl className="grid grid-cols-2 gap-x-4 gap-y-3">
+              {facts.map(({ label, value }) => (
+                <div key={label} className="flex min-w-0 flex-col gap-0.5">
+                  <dt className="text-caption text-muted-foreground">{label}</dt>
+                  <dd className="text-body-sm font-medium break-words text-foreground">{value}</dd>
+                </div>
+              ))}
+            </dl>
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="skills">
+          <AccordionTrigger className={TRIGGER}>Skills</AccordionTrigger>
+          <AccordionContent className="pb-4">
+            <div className="flex flex-wrap items-center gap-1.5">
+              {skills.map((s) => (
+                <Badge key={s} variant="secondary">
+                  {s}
+                </Badge>
+              ))}
+              {(hiddenSkills > 0 || allSkills) && (
+                <Button variant="ghost" size="sm" aria-expanded={allSkills} onClick={() => setAllSkills((v) => !v)}>
+                  {allSkills ? "Show fewer" : `+${hiddenSkills} more`}
+                </Button>
+              )}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="resume">
+          <AccordionTrigger className={TRIGGER}>
+            <span>Resume</span>
+            {!resumeUnlocked && <span className="ml-2 text-caption font-normal text-muted-foreground">Locked</span>}
+          </AccordionTrigger>
+          <AccordionContent className="pb-4">
+            <div className="flex flex-col gap-3">
+              {resumeUnlocked ? (
+                <Button variant="outline" onClick={() => toast.info("Opening the resume.")}>
+                  <FileText aria-hidden />
+                  View resume
+                </Button>
+              ) : (
+                <>
+                  <p className="text-body-sm text-muted-foreground">Unlock the resume to see the full work history.</p>
+                  {unavailable && (
+                    <p className="text-caption text-muted-foreground" id="unlock-unavailable">
+                      {`${unavailable.reason} You can't unlock the resume.`}
+                    </p>
+                  )}
+                  <Button
+                    disabled={!!unavailable}
+                    aria-describedby={unavailable ? "unlock-unavailable" : undefined}
+                    onClick={() => {
+                      unlockResume(thread.id)
+                      toast.success("Resume unlocked. 1 database credit used.")
+                    }}
+                  >
+                    <Unlock aria-hidden />
+                    Unlock resume · 1 credit
+                  </Button>
+                </>
+              )}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="notes">
+          <AccordionTrigger className={TRIGGER}>
+            <span>Notes</span>
+            <span className="ml-2 text-caption font-normal text-muted-foreground">{notes.length}</span>
+          </AccordionTrigger>
+          <AccordionContent className="pb-4">
+            {notes.length > 0 ? (
+              <ul className="flex flex-col gap-3" aria-label="Notes">
+                {notes.map((n) => (
+                  <li key={n.id} className="flex flex-col gap-0.5">
+                    <span className="text-caption text-muted-foreground">{n.at}</span>
+                    <span className="text-body-sm text-foreground">{n.text}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-body-sm text-muted-foreground">No notes yet. Add note saves one only you can see.</p>
+            )}
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </div>
   )
 }
@@ -292,7 +315,7 @@ export function CandidateProfileSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetPanel>
         <div className="bg-card py-4">
-          <SheetPanelHeader title="Candidate profile" />
+          <SheetPanelHeader title="Candidate 360" />
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto bg-card">
           <CandidateProfilePanel thread={thread} />

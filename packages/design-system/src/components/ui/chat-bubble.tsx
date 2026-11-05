@@ -45,6 +45,12 @@
  * sender line). The slot is size-7 (28px): the sm avatar (24px) is too small to
  * read a face, size-8 pushes the column wide on a phone.
  *
+ * Width: every bubble and choice sits in a row (`chat-sender-row`) capped at
+ * `max-w-2/3` of the list (WhatsApp keeps 65-75%), so the opposite side always
+ * keeps a clear third; the avatar column counts inside that cap. The bubble
+ * itself keeps `max-w-xs` / `md:max-w-md`, so on a wide pane the px cap wins
+ * (the effective width is the smaller of the two).
+ *
  * Wallpaper: the list is meant to sit on `chat-wallpaper` (doodle canvas). So
  * the pieces lift off it like WhatsApp's: bubbles, ChatChoice, ChatDayDivider
  * and ChatNotice all carry `shadow-control`, the smallest elevation role (a
@@ -102,7 +108,7 @@ type ChatMessageStatus = "sending" | "sent" | "delivered" | "read"
 type ChatGroupPosition = "single" | "first" | "middle" | "last"
 
 const bubbleVariants = cva(
-  "relative flex w-fit max-w-xs flex-col rounded-bubble px-3 py-2 text-body-sm shadow-control md:max-w-md",
+  "relative flex w-fit max-w-xs min-w-0 flex-col rounded-bubble px-3 py-2 text-body-sm shadow-control md:max-w-md",
   {
     variants: {
       variant: {
@@ -180,8 +186,9 @@ function ChatStatusTicks({
   )
 }
 
-/** Wraps a bubble or choice with its sender's avatar column and name. Without
- *  an avatar or a name it renders the child as is. The avatar slot is size-7;
+/** Wraps a bubble or choice in its row: the row carries the width cap (max-w-2/3
+ *  of the message area, so the far side always keeps a clear third) and, when
+ *  given, the sender's avatar column and name. The avatar slot is size-7;
  *  it holds the avatar on the last bubble of a run and stays empty (a spacer)
  *  on the others, so the text lines up. */
 function ChatSender({
@@ -200,7 +207,6 @@ function ChatSender({
   children: React.ReactNode
 }) {
   const name = showName ? senderName : undefined
-  if (!avatar && !name) return <>{children}</>
   const slot = avatar ? (
     <div data-slot="chat-bubble-avatar" className="flex size-7 shrink-0 items-end">
       {showAvatar && avatar}
@@ -209,7 +215,7 @@ function ChatSender({
   return (
     <div
       data-slot="chat-sender-row"
-      className={cn("flex w-fit max-w-full items-end gap-2", side === "start" ? "self-start" : "self-end")}
+      className={cn("flex w-fit max-w-2/3 items-end gap-2", side === "start" ? "self-start" : "self-end")}
     >
       {side === "start" && slot}
       <div className="flex min-w-0 flex-col gap-1">
@@ -334,7 +340,7 @@ function ChatChoice({
     <div
       data-slot="chat-choice"
       className={cn(
-        "inline-flex w-fit max-w-xs items-center gap-2 self-start rounded-full border border-border bg-card px-4 py-1.5 text-body-sm font-medium text-card-foreground shadow-control md:max-w-md",
+        "inline-flex w-fit max-w-xs items-center gap-2 rounded-full border border-border bg-card px-4 py-1.5 text-body-sm font-medium text-card-foreground shadow-control md:max-w-md",
         className
       )}
       {...props}

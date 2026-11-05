@@ -11,7 +11,9 @@
  * beside it).
  *
  *   Header    Back · avatar (lg) · name and facts (both open the profile panel
- *             below xl) · Profile button (below xl) · ⋮ (Not interested / Reopen chat), then
+ *             below xl; the meta line ends with the match tied to the job,
+ *             "64% match · Telecaller", a level icon and the level as sr-only
+ *             text and tooltip) · Candidate 360 button (below xl) · ⋮ (Not interested / Reopen chat), then
  *             the job's nested card (rounded-card-nested, press-subtle)
  *   Wallpaper The whole area under the header (messages and composer) is
  *             `chat-wallpaper`: the doodle canvas, so the bubbles, dividers
@@ -57,6 +59,7 @@ import {
   AvatarFallback,
   AvatarImage,
   BackButton,
+  AlertCircle,
   AlertTriangle,
   Badge,
   Ban,
@@ -73,11 +76,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   MapPin,
+  Minus,
   MoreVertical,
   UserRound,
   ShieldCheck,
   Sparkles,
   SuggestionChips,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  TrendingUp,
 } from "@apna/design-system"
 import { CandidateProfileSheet } from "@/components/apnahire/chats/candidate-profile-panel"
 import { BAND, SUBROW } from "@/components/apnahire/chats/chat-bands"
@@ -90,13 +98,18 @@ import {
   AI_LABEL,
   CLOSED_LABEL,
   EXPIRED_NOTICE,
+  MATCH_LABEL,
   RECRUITER_NAME,
   MONEY_WARNING,
   TIER_LABEL,
   UNAVAILABLE_COPY,
   type ChatMessage,
   type ChatThread as Thread,
+  type MatchLevel,
 } from "@/content/chats"
+
+/** Match level → icon for the header's match chip. The sr-only level text carries the meaning, not the icon. */
+const MATCH_ICON = { high: TrendingUp, medium: Minus, low: AlertCircle } as const satisfies Record<MatchLevel, unknown>
 
 /** The "AI summary" chip's value: not a reply, so it never lands in the draft. */
 const SUMMARY = "ai-summary"
@@ -143,6 +156,32 @@ function SenderAvatar({ from, candidate }: { from: ChatMessage["from"]; candidat
     <Avatar className={ring}>
       <AvatarFallback className="bg-accent text-xs text-accent-foreground">{RECRUITER_NAME.charAt(0)}</AvatarFallback>
     </Avatar>
+  )
+}
+
+/** The match, tied to the job: "64% match · Telecaller" with a level icon. The level is spoken (sr-only) and in the tooltip. */
+function MatchChip({ thread }: { thread: Thread }) {
+  const { level, score } = thread.match
+  const Icon = MATCH_ICON[level]
+  return (
+    <Tooltip>
+      <TooltipTrigger
+        render={<span className="flex shrink-0 items-center gap-1 whitespace-nowrap xl:pointer-events-auto" />}
+      >
+        <Icon aria-hidden className="size-3.5 shrink-0" />
+        <span>{score}% match</span>
+        <span aria-hidden className="max-sm:hidden">
+          ·
+        </span>
+        <span className="max-w-24 truncate max-sm:hidden">{thread.job.title}</span>
+        <span className="sr-only">
+          {MATCH_LABEL[level]} for {thread.job.title}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent>
+        {MATCH_LABEL[level]} for {thread.job.title}
+      </TooltipContent>
+    </Tooltip>
   )
 }
 
@@ -296,14 +335,18 @@ export function ChatThread({ thread }: { thread: Thread }) {
             </Avatar>
             <span className="flex min-w-0 flex-1 flex-col">
               <span className="text-h6 truncate">{thread.candidate.name}</span>
-              <span className="text-caption truncate text-muted-foreground">{thread.candidate.meta}</span>
+              <span className="flex min-w-0 items-center gap-1.5 text-caption text-muted-foreground">
+                <span className="truncate">{thread.candidate.meta}</span>
+                <span aria-hidden>·</span>
+                <MatchChip thread={thread} />
+              </span>
             </span>
           </button>
           <Button
             type="button"
             variant="outline"
             size="icon-sm"
-            aria-label="Candidate profile"
+            aria-label="Candidate 360"
             className="shrink-0 xl:hidden"
             onClick={() => setProfileOpen(true)}
           >
