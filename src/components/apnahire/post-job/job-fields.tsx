@@ -209,7 +209,7 @@ export function JoiningFeeDetailsFields({ draft, update }: FieldEditorProps) {
  *  only matching candidates can apply; off: it only ranks them). Those
  *  controls sit beside the card's button, not in it (no control inside a
  *  control), so the frame moves to a wrapper around both. */
-function ChoiceCards<V extends string>({
+export function ChoiceCards<V extends string>({
   label,
   labels,
   help,
@@ -250,10 +250,12 @@ function ChoiceCards<V extends string>({
         return (
           <div key={v} className="overflow-hidden rounded-xl border border-primary bg-accent ring-1 ring-primary">
             {card}
-            <div className="flex flex-col gap-3 px-4 pb-4">
-              {extra && <div className="border-t border-primary/20 pt-3">{extra}</div>}
-              {withSwitch && (
-                <label className="flex items-center gap-3 border-t border-primary/20 pt-3">
+            {/* Fields sit on white, so inputs and sliders keep their normal
+                look; only the picked answer's header carries the tint. */}
+            {extra && <div className="border-t border-primary/20 bg-card p-4">{extra}</div>}
+            {withSwitch && (
+              <div className="px-4 py-3">
+                <label className="flex items-center gap-3">
                   <span className="flex min-w-0 flex-1 flex-col">
                     <span className="text-xs font-semibold text-accent-foreground">Must-have</span>
                     <span className="text-xs text-accent-foreground/80">
@@ -266,8 +268,8 @@ function ChoiceCards<V extends string>({
                     aria-label={`${label} is a must-have`}
                   />
                 </label>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         )
       })}

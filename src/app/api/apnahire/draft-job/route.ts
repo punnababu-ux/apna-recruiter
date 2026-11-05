@@ -52,7 +52,10 @@ export const JobDraftSchema = z.object({
     .describe("office = work from office, home = work from home, field = on-the-road job."),
   city: z.string().optional().describe("Indian city in canonical spelling, e.g. 'Bengaluru'."),
   area: z.string().optional().describe("Locality / office area, e.g. 'Koramangala'."),
-  payType: z.enum(["fixed", "fixed_incentive", "incentive"]).optional(),
+  payType: z
+    .enum(["fixed", "fixed_incentive", "incentive"])
+    .optional()
+    .describe("Only if the recruiter says how pay works (e.g. mentions incentives). Never infer it from a salary alone."),
   salaryMin: z.number().optional().describe("Monthly fixed salary lower bound in INR."),
   salaryMax: z.number().optional().describe("Monthly fixed salary upper bound in INR."),
   incentive: z.number().optional().describe("Average monthly incentive in INR."),

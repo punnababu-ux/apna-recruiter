@@ -66,7 +66,7 @@ function PromptCoverage({ prompt }: { prompt: string }) {
           <Badge
             key={s.key}
             variant={on ? "success" : "outline"}
-            className={on ? "gap-1 animate-in zoom-in-95 duration-200" : "gap-1 border-dashed text-muted-foreground"}
+            className={on ? "gap-1 animate-in zoom-in-95 duration-200" : "gap-1 border-dashed bg-card text-muted-foreground"}
           >
             {on ? <Check aria-hidden /> : <Plus aria-hidden />}
             {s.label}

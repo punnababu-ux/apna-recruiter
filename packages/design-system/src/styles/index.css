@@ -909,39 +909,6 @@
   }
 }
 
-/* A truck arriving (relocation card): a full-width layer holds the truck
- * at its right end and slides it left until it stops just short of the
- * destination dot at the left, once, and parks there. Unhurried, so it
- * reads as a journey. Reduced motion: the truck waits at the dot. */
-@keyframes relocate-arrive {
-  0%   { translate: 0 0; opacity: 0; }
-  10%  { opacity: 1; }
-  100% { translate: calc(-100% + 2.5rem) 0; opacity: 1; }
-}
-
-@utility animate-relocate-arrive {
-  animation: relocate-arrive 3s var(--ease-out-ui) 300ms both;
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-    translate: calc(-100% + 2.5rem) 0;
-  }
-}
-
-/* The truck on the road (job posting, ?road=1 preview): enters from past
- * the right edge and eases to its stop (the element's own left). */
-@keyframes road-drive {
-  from { translate: 100vw 0; }
-  to   { translate: 0 0; }
-}
-
-@utility animate-road-drive {
-  animation: road-drive 2.4s var(--ease-out-ui) 200ms both;
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-  }
-}
 
 /* A logo strip gliding left forever (LogoWall `marquee`). The track holds
  * the logos twice, so sliding it by half lands the second copy exactly where
@@ -1328,13 +1295,14 @@
 
 /* ai-idle — the resting hint behind an AI prompt: a faint sky halo around
    the input, as Gemini's sits behind its box. Place it first inside the
-   prompt's `relative` wrapper. Still. */
+   prompt's `relative` wrapper. Still. It stops just under the box, so
+   the chips below stay on a plain background and keep their contrast. */
 @utility ai-idle {
   position: absolute;
-  inset: -3rem -1.5rem -4rem;
+  inset: -3rem -1.5rem -1rem;
   z-index: -1;
   pointer-events: none;
-  background: radial-gradient(75% 65% at 50% 65%, var(--ai-wash-idle) 30%, transparent 100%);
+  background: radial-gradient(75% 65% at 50% 55%, var(--ai-wash-idle) 30%, transparent 100%);
   filter: blur(20px);
 }
 

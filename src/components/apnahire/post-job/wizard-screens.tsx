@@ -25,7 +25,6 @@
  * recruiters don't check AI answers they aren't shown.
  */
 
-import { RelocationRoad } from "@/components/apnahire/post-job/relocation-road"
 import * as React from "react"
 import {
   Accordion,
@@ -89,6 +88,7 @@ import {
   Textarea,
   TrendingUp,
   Truck,
+  ChevronDown,
   Users,
   Wallet,
   Wand2,
@@ -97,7 +97,6 @@ import {
 } from "@apna/design-system"
 import { PlanPopup, PopupBody, PopupFooter, PopupHeader } from "@/components/apnahire/plan-popup"
 import { AreaMap } from "@/components/apnahire/post-job/area-map"
-import { isClayReady } from "@/components/marketing/value-art"
 import { CandidateJobPreview, type PreviewSection } from "@/components/apnahire/post-job/candidate-job-preview"
 import { DescribeStep } from "@/components/apnahire/post-job/describe-step"
 import {
@@ -114,6 +113,7 @@ import {
   WhoCanContactField,
   toNumber,
   type UpdateDraft,
+  ChoiceCards,
 } from "@/components/apnahire/post-job/job-fields"
 import {
   ACCOUNT_PHONE,
@@ -531,8 +531,9 @@ function Industry(ctx: ScreenCtx) {
         ))}
       </OptionCardGroup>
       {!all && (
-        <Button type="button" variant="outline" size="lg" onClick={() => setAll(true)}>
+        <Button type="button" variant="link" className="self-start" onClick={() => setAll(true)}>
           More industries
+          <ChevronDown aria-hidden />
         </Button>
       )}
     </>
@@ -648,40 +649,10 @@ function NightShiftCard({ checked, onCheckedChange }: { checked: boolean; onChec
   )
 }
 
-/** Relocation: switching it on sets the card on the move, in the night
- *  shift card's spirit. A green tint, a blinking dot under the pin (the
- *  job's place), and a truck driving in from the far right along a dashed
- *  road towards it, once, and parks. Off, an ordinary switch card. */
 function RelocationCard({ checked, onCheckedChange }: { checked: boolean; onCheckedChange: (v: boolean) => void }) {
-  // Preview (?road=1): the truck drives on the bottom bar's line instead.
-  const [road, setRoad] = React.useState(false)
-  React.useEffect(() => setRoad(new URLSearchParams(window.location.search).has("road")), [])
   return (
-    <label
-      className={cn(
-        "relative isolate flex items-center gap-3 overflow-hidden rounded-card-nested border p-4 transition-colors duration-500",
-        checked ? cn("border-primary bg-primary/10", !road && "pb-10") : "border-border bg-card",
-      )}
-    >
-      {checked && road && <RelocationRoad />}
-      {checked && !road && (
-        <span aria-hidden className="pointer-events-none absolute inset-x-4 bottom-3 h-5 animate-in fade-in duration-500">
-          {/* The road, from the dot to the right edge. */}
-          <span className="absolute inset-y-1/2 right-0 left-2.5 border-t-2 border-dashed border-primary/30" />
-          {/* The job's place: under the pin icon. */}
-          <span className="absolute top-1/2 left-2.5 size-2.5 -translate-1/2 rounded-full bg-primary animate-pulse" />
-          <span className="absolute inset-0 flex items-end justify-end animate-relocate-arrive">
-            {/* The clay truck once installed (it already faces left); the line truck until then. */}
-            {isClayReady("relocation-truck") ? (
-              // eslint-disable-next-line @next/next/no-img-element -- served as-is, like ValueArt
-              <img src="/images/company/values/relocation-truck.png" alt="" className="size-8 object-contain" />
-            ) : (
-              <Truck className="size-5 -scale-x-100 text-primary" />
-            )}
-          </span>
-        </span>
-      )}
-      <MapPin aria-hidden className={cn("size-5 shrink-0 transition-colors duration-500", checked && "text-primary")} />
+    <label className="flex items-center gap-3 rounded-card-nested border border-border bg-card p-4">
+      <MapPin aria-hidden className="size-5 shrink-0" />
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
         <span className="text-sm font-semibold text-foreground">Accept candidates willing to relocate</span>
         <span className="text-xs text-muted-foreground">From anywhere in India</span>
@@ -1035,6 +1006,8 @@ const PAY_TYPE_HELP: Record<PayType, [React.ReactNode, string]> = {
   fixed_incentive: [<TrendingUp key="i" />, "Salary plus performance-based pay"],
   incentive: [<Target key="i" />, "Pay depends entirely on performance"],
 }
+const PAY_ICONS = Object.fromEntries(Object.entries(PAY_TYPE_HELP).map(([k, v]) => [k, v[0]])) as Record<PayType, React.ReactNode>
+const PAY_HELP = Object.fromEntries(Object.entries(PAY_TYPE_HELP).map(([k, v]) => [k, v[1]])) as Record<PayType, string>
 
 
 /** "What candidates see": the monthly numbers the post will show, so the
@@ -1044,24 +1017,29 @@ const PAY_TYPE_HELP: Record<PayType, [React.ReactNode, string]> = {
  *  alone; only fixed + incentive adds the two up as earning potential. */
 function CandidatesSee({ draft }: { draft: JobPostDraft }) {
   const range = (lo: number | null, hi: number | null) =>
-    lo == null && hi == null
-      ? "—"
-      : lo == null || lo === hi
-        ? inr(hi ?? 0)
-        : hi == null
-          ? inr(lo)
-          : `${inr(lo)} – ${inr(hi)}`
+    lo == null && hi == null ? (
+      "—"
+    ) : lo == null || lo === hi ? (
+      <CountUpInr value={hi ?? 0} />
+    ) : hi == null ? (
+      <CountUpInr value={lo} />
+    ) : (
+      <>
+        <CountUpInr value={lo} /> – <CountUpInr value={hi} />
+      </>
+    )
   const inc = draft.incentive
-  const rows: [string, string][] =
+  const incentive = inc == null ? "—" : <CountUpInr value={inc} />
+  const rows: [string, React.ReactNode][] =
     draft.payType === "fixed_incentive"
       ? [
           ["Fixed salary", range(draft.salaryMin, draft.salaryMax)],
-          ["Average incentive", inc == null ? "—" : inr(inc)],
+          ["Average incentive", incentive],
         ]
       : []
-  const total: [string, string] =
+  const total: [string, React.ReactNode] =
     draft.payType === "incentive"
-      ? ["Average incentive", inc == null ? "—" : inr(inc)]
+      ? ["Average incentive", incentive]
       : draft.payType === "fixed_incentive"
         ? [
             "Earning potential",
@@ -1074,21 +1052,48 @@ function CandidatesSee({ draft }: { draft: JobPostDraft }) {
           ]
         : ["Salary", range(draft.salaryMin, draft.salaryMax)]
   return (
-    <div className="flex flex-col gap-2 rounded-card-nested bg-muted p-4 text-sm">
+    <div className="flex flex-col gap-2 rounded-card-nested bg-muted p-4 text-sm animate-in fade-in slide-in-from-bottom-4 duration-500">
       <span className="text-overline text-muted-foreground">What candidates see</span>
       {rows.map(([k, v]) => (
         <div key={k} className="flex justify-between gap-3">
           <span className="text-muted-foreground">{k} / month</span>
-          <span className="shrink-0 whitespace-nowrap text-foreground">{v}</span>
+          <span className="shrink-0 whitespace-nowrap text-foreground tabular-nums">{v}</span>
         </div>
       ))}
       {rows.length > 0 && <Separator />}
       <div className="flex justify-between gap-3 font-semibold text-foreground">
         <span>{total[0]} / month</span>
-        <span className="shrink-0 whitespace-nowrap">{total[1]}</span>
+        <span className="shrink-0 whitespace-nowrap tabular-nums">{total[1]}</span>
       </div>
     </div>
   )
+}
+
+/** A rupee amount that counts to its value: from 0 when it first shows,
+ *  then from the last value as it changes. Reduced motion: it just shows. */
+function CountUpInr({ value }: { value: number }) {
+  const [shown, setShown] = React.useState(0)
+  const from = React.useRef(0)
+  React.useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      from.current = value
+      setShown(value)
+      return
+    }
+    const start = from.current
+    const t0 = performance.now()
+    let raf = 0
+    const tick = (now: number) => {
+      const p = Math.min(1, (now - t0) / 700)
+      const v = Math.round(start + (value - start) * (1 - (1 - p) ** 3))
+      from.current = v
+      setShown(v)
+      if (p < 1) raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [value])
+  return <>{inr(shown)}</>
 }
 
 function Salary(ctx: ScreenCtx) {
@@ -1100,27 +1105,8 @@ function Salary(ctx: ScreenCtx) {
   const hi = onSlider(Math.max(draft.salaryMax ?? 25000, lo), top)
   const third = Math.round(top / 3 / 5000) * 5000
   const err = salaryError(draft)
-  return (
-    <>
-      <WizardQuestion
-        eyebrow={<AiTag ctx={ctx} keys={["payType", "salaryMin", "salaryMax", "incentive"]} />}
-        title="How will you pay?"
-        description="Clear pay gets better applicants."
-      />
-      {/* Pay type sits on the salary screen: one decision, one screen (audit
-          2026-11-05). The fields below follow the choice. */}
-      <OptionCardGroup aria-label="Pay type">
-        {(Object.keys(PAY_TYPE_LABELS) as PayType[]).map((t) => (
-          <OptionCard
-            key={t}
-            icon={PAY_TYPE_HELP[t][0]}
-            title={PAY_TYPE_LABELS[t]}
-            description={PAY_TYPE_HELP[t][1]}
-            selected={draft.payType === t}
-            onSelect={() => update("payType", t)}
-          />
-        ))}
-      </OptionCardGroup>
+  const payFields = (
+          <div className="flex flex-col gap-5">
       {fixed && (
         <div className="flex flex-col gap-5">
           <div className="flex items-end gap-3">
@@ -1185,7 +1171,30 @@ function Salary(ctx: ScreenCtx) {
           />
         </Field>
       )}
-      {draft.payType && <CandidatesSee draft={draft} />}
+          </div>
+  )
+  return (
+    <>
+      <WizardQuestion
+        eyebrow={<AiTag ctx={ctx} keys={["payType", "salaryMin", "salaryMax", "incentive"]} />}
+        title="How will you pay?"
+        description="Clear pay gets better applicants."
+      />
+      {/* Pay type and its amounts in one card, as experience does (user
+          call, 2026-11-05): the picked type opens its fields inside it. */}
+      <ChoiceCards
+        label="Pay type"
+        labels={PAY_TYPE_LABELS}
+        help={PAY_HELP}
+        icons={PAY_ICONS}
+        value={draft.payType}
+        onChange={(t) => update("payType", t)}
+        details={Object.fromEntries((Object.keys(PAY_TYPE_LABELS) as PayType[]).map((t) => [t, payFields]))}
+      />
+      {/* Only once there's a number to show (user call, 2026-11-05). */}
+      {(draft.payType === "incentive"
+        ? draft.incentive != null
+        : !!draft.payType && (draft.salaryMin != null || draft.salaryMax != null)) && <CandidatesSee draft={draft} />}
     </>
   )
 }
