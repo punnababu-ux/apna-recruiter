@@ -157,8 +157,15 @@ export function DescribeStep({
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Page-level, so no transformed parent clips it; main sits above it. */}
-      {drafting && typeof document !== "undefined" && createPortal(<span aria-hidden className="ai-backdrop" />, document.body)}
+      {/* Portaled to the page root (data-ai-backdrop-host, an isolated stacking
+          context), so no transformed parent clips it and it sits BEHIND the
+          page's content, never over the field (it was over it on phones). */}
+      {drafting &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <span aria-hidden className="ai-backdrop" />,
+          document.querySelector("[data-ai-backdrop-host]") ?? document.body,
+        )}
       <WizardQuestion
         {...rise(0)}
         title="Describe the job"
