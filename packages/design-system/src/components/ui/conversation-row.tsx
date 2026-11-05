@@ -1,7 +1,8 @@
 /**
  * ConversationRow — one chat in the list: avatar, name, time, last message,
- * unread count and an optional status badge. WhatsApp's row, with an
- * Intercom-style status under the preview.
+ * unread count and an optional status. WhatsApp's row; the status is an icon
+ * beside the time (`statusIcon`) so it costs no line, or a Badge line under
+ * the preview (`status`, Intercom-style) for callers that want the words.
  *
  * API
  *   <ConversationList label="Conversations">
@@ -12,7 +13,9 @@
  *       preview="Can I join from Monday?" time="10:42 am"
  *       previewStatus="read"                 // ticks before the preview (your last message)
  *       unread unreadCount={2}
- *       status={<Badge variant="warning">Awaiting reply</Badge>}
+ *       statusIcon={<StatusIcon />}          // beside the time; needs its own accessible name
+ *       previewIcon={<Sparkles aria-hidden />} // before the preview text, e.g. who wrote it
+ *       status={<Badge variant="warning">Awaiting reply</Badge>} // optional line under the preview
  *       render={<Link href="/chat/42" />}   // Next Link, or any element
  *       active                              // the open chat on desktop panes
  *     />
@@ -61,7 +64,13 @@ interface ConversationRowProps extends useRender.ComponentProps<"a"> {
   /** Ticks before the preview, when the last message is the recruiter's or the AI's. */
   previewStatus?: ChatMessageStatus
   unreadCount?: number
-  /** Status slot under the preview, usually a Badge. */
+  /** Small mark before the preview text (after the ticks), e.g. a Sparkles icon for the AI. Give it an
+   *  accessible name (sr-only text). */
+  previewIcon?: React.ReactNode
+  /** Status icon beside the time (top-end). The caller gives it an accessible name and a tooltip; the row
+   *  adds no line for it. */
+  statusIcon?: React.ReactNode
+  /** Status line under the preview, usually a Badge. Prefer `statusIcon`: this costs a row line. */
   status?: React.ReactNode
   /** The selected row in a two-pane desktop layout. */
   active?: boolean
@@ -77,7 +86,9 @@ function ConversationRow({
   preview,
   time,
   previewStatus,
+  previewIcon,
   unreadCount,
+  statusIcon,
   status,
   active = false,
   unread,
@@ -106,14 +117,16 @@ function ConversationRow({
             <div className="flex min-w-0 flex-1 flex-col gap-0.5">
               <div className="flex items-baseline justify-between gap-2">
                 <span className="text-h6 min-w-0 truncate">{name}</span>
-                <span className={cn("text-caption shrink-0", isUnread ? "text-primary" : "text-muted-foreground")}>
-                  {time}
+                <span className="flex shrink-0 items-center gap-1.5">
+                  {statusIcon && <span className="flex items-center text-muted-foreground">{statusIcon}</span>}
+                  <span className={cn("text-caption", isUnread ? "text-primary" : "text-muted-foreground")}>{time}</span>
                 </span>
               </div>
               {subtitle && <span className="text-caption truncate text-muted-foreground">{subtitle}</span>}
               <div className="flex items-center justify-between gap-2">
                 <span className="flex min-w-0 items-center gap-1">
                   {previewStatus && <ChatStatusTicks status={previewStatus} />}
+                  {previewIcon && <span className="flex shrink-0 items-center text-muted-foreground [&>svg]:size-3.5">{previewIcon}</span>}
                   <span className={cn("text-body-sm min-w-0 truncate", isUnread ? "text-foreground" : "text-muted-foreground")}>
                     {preview}
                   </span>

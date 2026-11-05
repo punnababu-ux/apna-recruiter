@@ -7,19 +7,22 @@
  * thread header's Profile button opens the same panel in CandidateProfileSheet
  * (the app's right side panel, full screen on phones).
  *
- *   Match line    The sub-row under the pane's band: match Badge + score
- *   Profile row   Avatar · name · meta · match Badge (icon + label, never
- *                 colour alone) · Call and Add note. Call is a masked call
+ *   Match line    The sub-row under the pane's band: match Badge (icon +
+ *                 label, never colour alone) + score. The one place the match
+ *                 level and score are written
+ *   Profile row   Avatar · name · meta (below xl only: from xl the thread
+ *                 header beside the pane shows them) · Call and Add note. Call is a masked call
  *                 (PRD FR-10): a toast, no tel: link, so neither side sees
  *                 the other's number. Add note opens a Textarea under the
  *                 card; saved notes list newest first
  *   Sections      Flat on bg-card, split by Separator as the candidate
- *                 drawer does: Job match (Meter + score + level, "Why a good
- *                 match" with check icons, "Gaps" with alert icons), Skills,
+ *                 drawer does: Job match (the Meter, "Why a good match" with
+ *                 check icons, "Gaps" with alert icons; no title or score, the
+ *                 match line says them), Skills,
  *                 Profile (IconLabel rows), Resume
  *   Resume        Locked: an explainer and the panel's one primary button,
- *                 "Unlock resume" with its database-credit cost. Unlocked:
- *                 an "Unlocked" Badge and a "View resume" outline button
+ *                 "Unlock resume · 1 credit" (the cost is only on the button).
+ *                 Unlocked: a "View resume" outline button
  *
  * Scripted mock data: unlocking flips a flag in useChats; nothing leaves the
  * prototype.
@@ -37,13 +40,11 @@ import {
   Badge,
   Button,
   CalendarClock,
-  Check,
   CircleCheck,
   FileText,
   GraduationCap,
   IndianRupee,
   Languages,
-  Lock,
   MapPin,
   Minus,
   Phone,
@@ -74,7 +75,7 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   return <h3 className="text-h6 text-foreground">{children}</h3>
 }
 
-function PointList({ icon: Icon, items, iconClass }: { icon: typeof Check; items: string[]; iconClass: string }) {
+function PointList({ icon: Icon, items, iconClass }: { icon: typeof CircleCheck; items: string[]; iconClass: string }) {
   return (
     <ul className="flex flex-col gap-1.5">
       {items.map((text) => (
@@ -123,12 +124,14 @@ export function CandidateProfilePanel({ thread }: { thread: ChatThread }) {
           <level.icon aria-hidden />
           {MATCH_LABEL[match.level]}
         </Badge>
-        <span className="text-caption truncate text-muted-foreground">{match.score}% for {thread.job.title}</span>
+        <span className="text-caption text-muted-foreground">{match.score}%</span>
       </div>
 
       {/* The profile row: the avatar sits at the same inset and size as the
           list rows' (px-4 py-3, Avatar lg), so the photos line up. */}
       <div className="flex flex-col gap-3 border-b border-border px-4 py-3">
+        {/* Kept at every width (user call, 2026-11-04): the profile card at the
+            top of the pane, with Call and Add note, lines up with the list. */}
         <div className="flex items-center gap-3">
           <Avatar size="lg">
             {candidate.photo && <AvatarImage src={candidate.photo} alt="" />}
@@ -199,14 +202,6 @@ export function CandidateProfilePanel({ thread }: { thread: ChatThread }) {
 
       <div className="flex flex-col gap-4 p-4">
         <section className="flex flex-col gap-3" aria-label="Job match">
-          <SectionTitle>Job match</SectionTitle>
-          <div className="flex items-baseline justify-between gap-2">
-            <span className="text-h4">{match.score}%</span>
-            <span className="text-caption inline-flex items-center gap-1 text-foreground">
-              <level.icon className="size-3.5" aria-hidden />
-              {MATCH_LABEL[match.level]}
-            </span>
-          </div>
           <Meter label={`Match score for ${thread.job.title}`} value={match.score} tone={level.tone} />
           <div className="flex flex-col gap-2">
             <span className="text-caption font-semibold text-foreground">Why a good match</span>
@@ -250,15 +245,7 @@ export function CandidateProfilePanel({ thread }: { thread: ChatThread }) {
         <Separator />
 
         <section className="flex flex-col gap-3" aria-label="Resume">
-          <div className="flex items-center justify-between gap-2">
-            <SectionTitle>Resume</SectionTitle>
-            {resumeUnlocked && (
-              <Badge variant="success">
-                <Check aria-hidden />
-                Unlocked
-              </Badge>
-            )}
-          </div>
+          <SectionTitle>Resume</SectionTitle>
           {resumeUnlocked ? (
             <Button variant="outline" onClick={() => toast.info("Opening the resume.")}>
               <FileText aria-hidden />
@@ -266,10 +253,7 @@ export function CandidateProfilePanel({ thread }: { thread: ChatThread }) {
             </Button>
           ) : (
             <>
-              <p className="text-body-sm text-muted-foreground">
-                <Lock className="mr-1 inline size-3.5 align-text-bottom" aria-hidden />
-                Unlock the resume to see the full work history. It uses 1 database credit.
-              </p>
+              <p className="text-body-sm text-muted-foreground">Unlock the resume to see the full work history.</p>
               {unavailable && (
                 <p className="text-caption text-muted-foreground" id="unlock-unavailable">
                   {`${unavailable.reason} You can't unlock the resume.`}

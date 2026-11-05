@@ -25,18 +25,22 @@
  *            search). One scrolling line, so the row keeps its height. From
  *            md the open search field takes the band's title slot.
  *   Rows     ConversationRow in a ConversationList: avatar · name · time ·
- *            job and tier · last message (with status ticks when it is the
- *            recruiter's or the AI's) · unread count · status, linking to
- *            Row time follows WhatsApp's list: the clock time for today, then
+ *            job · last message (status ticks when it is the
+ *            recruiter's or the AI's; the AI's also has a Sparkles mark, the
+ *            recruiter's no "You:", the ticks say it) · unread count. The
+ *            status is an icon beside the time (the Filters glyphs, with a
+ *            tooltip and a screen-reader name), so a row is three lines, not
+ *            four. Row time follows WhatsApp's list: the clock time for today, then
  *            "Yesterday", the weekday, or a date. A deleted or blocked
  *            candidate keeps the name; the preview says "Candidate not
- *            available" or "Chat not available" and the badge "Not available".
- *            /apnahire/chats/[id] (no scroll reset, so the list keeps its
+ *            available" or "Chat not available" and there is no status icon.
+ *            Rows link to /apnahire/chats/[id] (no scroll reset, so the list keeps its
  *            place). No chats: an Empty with an icon
  *
- * Only "Urgent: needs reply" is coloured: it is the one thing the
- * recruiter must act on (Von Restorff, AGENTS.md "Choice and emphasis");
- * every other status is a quiet secondary badge.
+ * Only the Urgent icon is coloured (text-destructive): it is the one thing
+ * the recruiter must act on (Von Restorff, AGENTS.md "Choice and emphasis");
+ * every other status icon is muted. Shape differs per status, so colour is
+ * never the only cue.
  */
 
 import * as React from "react"
@@ -71,6 +75,9 @@ import {
   Search,
   Sparkles,
   Star,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from "@apna/design-system"
 import { ChatAppliedRow, type AppliedChip } from "@/components/apnahire/chats/chat-applied-row"
 import { BAND, SUBROW } from "@/components/apnahire/chats/chat-bands"
@@ -81,7 +88,6 @@ import {
   AI_NAME,
   CLOSED_LABEL,
   STATUS_FILTERS,
-  TIER_LABEL,
   UNAVAILABLE_COPY,
   type ChatThread,
   type ThreadStatus,
@@ -119,6 +125,7 @@ function matchesQuery(t: ChatThread, q: string) {
   )
 }
 
+/** The words behind each status icon: the accessible name and the tooltip. */
 const STATUS_LABEL: Record<Exclude<ThreadStatus, "active" | "closed">, string> = {
   urgent: "Urgent: needs reply",
   "ai-screening": "AI screening",
@@ -126,22 +133,44 @@ const STATUS_LABEL: Record<Exclude<ThreadStatus, "active" | "closed">, string> =
   interview: "Interview",
 }
 
-function statusBadge(t: ChatThread) {
-  if (t.candidate.availability) return <Badge variant="secondary">Not available</Badge>
-  if (t.status === "active") return null
-  // A closed thread with no reason says "Closed", never a reason it doesn't have.
-  const label = t.status === "closed" ? (t.closedReason ? CLOSED_LABEL[t.closedReason] : "Closed") : STATUS_LABEL[t.status]
-  return <Badge variant={t.status === "urgent" ? "destructive" : "secondary"}>{label}</Badge>
+/**
+ * The row's status as an icon beside the time: the same glyph as the Filters menu, so one icon means one
+ * thing. Urgent is the only coloured one (Von Restorff). No icon for an "active" thread, and none for an
+ * unavailable candidate: the preview already says "Candidate not available". A closed thread keeps the one
+ * Closed tick; its reason is in the tooltip and the accessible name (detail on demand).
+ */
+function statusIcon(t: ChatThread) {
+  if (t.candidate.availability || t.status === "active") return undefined
+  const label =
+    t.status === "closed" ? (t.closedReason ? `Closed: ${CLOSED_LABEL[t.closedReason].toLowerCase()}` : "Closed") : STATUS_LABEL[t.status]
+  const Icon = STATUS_ICON[t.status]
+  return (
+    <Tooltip>
+      <TooltipTrigger render={<span className="flex items-center" />}>
+        <Icon className={cn("size-3.5", t.status === "urgent" && "text-destructive")} aria-hidden />
+        <span className="sr-only">{label}</span>
+      </TooltipTrigger>
+      <TooltipContent>{label}</TooltipContent>
+    </Tooltip>
+  )
 }
 
-/** The last message, with who sent it when it wasn't the candidate. An unavailable candidate gets a notice instead. */
+/** The last message's text. An unavailable candidate gets a notice instead. */
 function preview(t: ChatThread) {
   if (t.candidate.availability) return UNAVAILABLE_COPY[t.candidate.availability].preview
+  return t.messages[t.messages.length - 1]?.text ?? ""
+}
+
+/** The AI's mark before its preview: who wrote it, in a Sparkles icon (the AI's glyph everywhere). */
+function previewIcon(t: ChatThread) {
   const last = t.messages[t.messages.length - 1]
-  if (!last) return ""
-  if (last.from === "ai") return `${AI_NAME}: ${last.text}`
-  if (last.from === "recruiter") return `You: ${last.text}`
-  return last.text
+  if (t.candidate.availability || last?.from !== "ai") return undefined
+  return (
+    <>
+      <Sparkles aria-hidden />
+      <span className="sr-only">{AI_NAME}:</span>
+    </>
+  )
 }
 
 /** The row's time: the clock time for today, else the day (Yesterday, a weekday or a date). */
@@ -427,13 +456,14 @@ export function ChatInbox({ activeId = null, className }: { activeId?: string | 
                 name={t.candidate.name}
                 initial={t.candidate.initial}
                 avatarSrc={t.candidate.photo}
-                subtitle={`${t.job.title} · ${TIER_LABEL[t.job.tier]}`}
+                subtitle={t.job.title}
                 preview={preview(t)}
                 time={rowTime(t)}
+                previewIcon={previewIcon(t)}
                 previewStatus={previewStatus(t)}
                 unread={t.unread}
                 unreadCount={unreadCount(t) || undefined}
-                status={statusBadge(t)}
+                statusIcon={statusIcon(t)}
                 active={t.id === activeId}
                 // The open row: the accent fill plus a primary bar at its start.
                 className={cn(t.id === activeId && "before:absolute before:inset-y-0 before:left-0 before:w-1 before:bg-primary")}

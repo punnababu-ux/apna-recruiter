@@ -27,8 +27,8 @@
  *             recruiter's or AI's last one, and opens scrolled to it (else to
  *             the newest message), again after photos load. Candidate quick replies are ChatChoice
  *             (FR-4). Consecutive messages from one sender are grouped
- *   Expired   A job that expired (ChatJob.expired): an "Expired" Badge on the
- *             job card and a warning ChatNotice above the messages. The thread
+ *   Expired   A job that expired (ChatJob.expired): a warning ChatNotice above the
+ *             messages (no badge on the job card, it would repeat it). The thread
  *             stays open; the AI sends nothing new
  *   Unavailable  A deleted or blocked candidate: the composer and the chips
  *             give way to one ChatNotice bar (UNAVAILABLE_COPY); history stays
@@ -291,10 +291,9 @@ export function ChatThread({ thread }: { thread: Thread }) {
                 </IconLabel>
               </span>
             </span>
-            <span className="flex shrink-0 items-center gap-1.5">
-              {thread.job.expired && <Badge variant="secondary">Expired</Badge>}
-              <Badge variant="secondary">{TIER_LABEL[thread.job.tier]}</Badge>
-            </span>
+            <Badge variant="secondary" className="shrink-0">
+              {TIER_LABEL[thread.job.tier]}
+            </Badge>
           </Link>
         </div>
       </header>

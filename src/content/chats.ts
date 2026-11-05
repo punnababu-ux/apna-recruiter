@@ -70,7 +70,7 @@ export const UNAVAILABLE_COPY: Record<Unavailable, { preview: string; notice: st
 
 /** Shown on a job that expired (PRD): the thread stays open, the AI sends nothing new. */
 export const EXPIRED_NOTICE =
-  "This job expired. You can still reply, set up the interview and record the outcome. Apna Assistant sends no new messages."
+  "This job expired. You can still reply. Apna Assistant sends no new messages."
 
 export type Sender = "ai" | "recruiter" | "candidate"
 
