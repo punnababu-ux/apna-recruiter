@@ -6,18 +6,17 @@
  * thread. From xl (1280px) it is the third pane of ChatWorkspace; below xl
  * the thread header's Profile button opens the same panel in
  * CandidateProfileSheet (the app's right side panel, full screen on phones).
- * Built to scan and act on: actions first, the answer ("why a match") next,
- * the rest one tap away.
+ * Built to scan and act on, top-down: who, what to do, why, the rest.
  *
- *   Actions       The sub-row under the pane's band (h-14, as the list's and
- *                 the thread's): Call and Add note. Call is a masked call
- *                 (PRD FR-10): a toast, no tel: link, so neither side sees
- *                 the other's number. Add note opens a Textarea under the
- *                 profile card
- *   Profile card  Avatar · name · meta, at the list rows' inset (px-4 py-3,
- *                 Avatar lg) so its photo lines up with the list's first row.
- *                 A deleted or blocked candidate's reason shows here and Call
- *                 is disabled
+ *   Who           Avatar · name · meta in the sub-row under the pane's band
+ *                 (h-14). The three panes' second bar is one context strip
+ *                 (user call, 2026-11-05): the list's count and filters, the
+ *                 thread's job, this candidate
+ *   Actions       Directly under the person: Call and Add note. Call is a
+ *                 masked call (PRD FR-10): a toast, no tel: link, so neither
+ *                 side sees the other's number. Add note opens a Textarea
+ *                 here. A deleted or blocked candidate's reason shows here
+ *                 and Call is disabled
  *   Sections      An Accordion (several open at once), one heading style
  *                 (text-h6), one divider between items:
  *                 Why a match (open): the top 3 strengths (check icons) then
@@ -122,12 +121,28 @@ export function CandidateProfilePanel({ thread }: { thread: ChatThread }) {
 
   return (
     <div data-slot="candidate-profile-panel" className="flex flex-col bg-card">
-      {/* The actions: the sub-row under the pane's band (h-14, as the list's and the thread's). */}
-      <div className="flex h-14 shrink-0 items-center gap-2 border-b border-border px-4">
-        <Button
-          variant="outline"
-          size="sm"
-          className="flex-1"
+      {/* Who: the pane's sub-row (h-14, as the list's and the thread's), so
+          the three panes' second bar reads as one context strip: the
+          list's count and filters, the thread's job, this candidate. */}
+      <div className="flex h-14 shrink-0 items-center gap-3 border-b border-border px-4">
+        <Avatar size="lg">
+          {candidate.photo && <AvatarImage src={candidate.photo} alt="" />}
+          <AvatarFallback className="bg-accent text-accent-foreground">{candidate.initial}</AvatarFallback>
+        </Avatar>
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <span className="text-h6 truncate">{candidate.name}</span>
+          <span className="text-caption truncate text-muted-foreground">{candidate.meta}</span>
+        </div>
+      </div>
+
+      {/* What to do: Call and Add note right under the person, then the
+          reason they're off (deleted or blocked) and the note being written. */}
+      <div className="flex flex-col gap-3 border-b border-border px-4 py-3">
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1"
           disabled={!!unavailable}
           aria-describedby={unavailable ? "call-unavailable" : undefined}
           onClick={() => toast.info("Connecting a masked call. Neither of you sees the other's number.")}
@@ -139,20 +154,6 @@ export function CandidateProfilePanel({ thread }: { thread: ChatThread }) {
           <StickyNote aria-hidden />
           Add note
         </Button>
-      </div>
-
-      {/* The profile card: the avatar sits at the same inset and size as the
-          list rows' (px-4 py-3, Avatar lg), so the photos line up. */}
-      <div className="flex flex-col gap-3 border-b border-border px-4 py-3">
-        <div className="flex items-center gap-3">
-          <Avatar size="lg">
-            {candidate.photo && <AvatarImage src={candidate.photo} alt="" />}
-            <AvatarFallback className="bg-accent text-accent-foreground">{candidate.initial}</AvatarFallback>
-          </Avatar>
-          <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-            <span className="text-h6 truncate">{candidate.name}</span>
-            <span className="text-caption text-muted-foreground">{candidate.meta}</span>
-          </div>
         </div>
         {unavailable && (
           <p className="text-caption text-muted-foreground" id="call-unavailable">
