@@ -113,7 +113,6 @@ import {
   WhoCanContactField,
   toNumber,
   type UpdateDraft,
-  ChoiceCards,
 } from "@/components/apnahire/post-job/job-fields"
 import {
   ACCOUNT_PHONE,
@@ -156,9 +155,12 @@ export type ScreenId =
   | "job-type"
   | "workplace"
   | "location"
+  | "pay-type"
   | "salary"
   | "perks"
   | "education"
+  | "english"
+  | "experience"
   | "preferences"
   | "screening"
   | "description"
@@ -1006,8 +1008,6 @@ const PAY_TYPE_HELP: Record<PayType, [React.ReactNode, string]> = {
   fixed_incentive: [<TrendingUp key="i" />, "Salary plus performance-based pay"],
   incentive: [<Target key="i" />, "Pay depends entirely on performance"],
 }
-const PAY_ICONS = Object.fromEntries(Object.entries(PAY_TYPE_HELP).map(([k, v]) => [k, v[0]])) as Record<PayType, React.ReactNode>
-const PAY_HELP = Object.fromEntries(Object.entries(PAY_TYPE_HELP).map(([k, v]) => [k, v[1]])) as Record<PayType, string>
 
 
 /** "What candidates see": the monthly numbers the post will show, so the
@@ -1096,6 +1096,31 @@ function CountUpInr({ value }: { value: number }) {
   return <>{inr(shown)}</>
 }
 
+function PayType(ctx: ScreenCtx) {
+  const { draft, update } = ctx
+  return (
+    <>
+      <WizardQuestion
+        eyebrow={<AiTag ctx={ctx} keys={["payType"]} />}
+        title="How will you pay?"
+        description="Clear pay gets better applicants."
+      />
+      <OptionCardGroup aria-label="Pay type">
+        {(Object.keys(PAY_TYPE_LABELS) as PayType[]).map((t) => (
+          <OptionCard
+            key={t}
+            icon={PAY_TYPE_HELP[t][0]}
+            title={PAY_TYPE_LABELS[t]}
+            description={PAY_TYPE_HELP[t][1]}
+            selected={draft.payType === t}
+            onSelect={() => update("payType", t)}
+          />
+        ))}
+      </OptionCardGroup>
+    </>
+  )
+}
+
 function Salary(ctx: ScreenCtx) {
   const { draft, update } = ctx
   const fixed = draft.payType === "fixed" || draft.payType === "fixed_incentive"
@@ -1176,21 +1201,22 @@ function Salary(ctx: ScreenCtx) {
   return (
     <>
       <WizardQuestion
-        eyebrow={<AiTag ctx={ctx} keys={["payType", "salaryMin", "salaryMax", "incentive"]} />}
-        title="How will you pay?"
-        description="Clear pay gets better applicants."
+        eyebrow={<AiTag ctx={ctx} keys={["salaryMin", "salaryMax", "incentive"]} />}
+        title="What’s the monthly salary?"
+        description={
+          <>
+            Pay type: {draft.payType ? PAY_TYPE_LABELS[draft.payType] : "—"} ·{" "}
+            <button
+              type="button"
+              className="font-medium text-primary underline-offset-4 hover:underline"
+              onClick={() => ctx.edit("pay-type")}
+            >
+              Change
+            </button>
+          </>
+        }
       />
-      {/* Pay type and its amounts in one card, as experience does (user
-          call, 2026-11-05): the picked type opens its fields inside it. */}
-      <ChoiceCards
-        label="Pay type"
-        labels={PAY_TYPE_LABELS}
-        help={PAY_HELP}
-        icons={PAY_ICONS}
-        value={draft.payType}
-        onChange={(t) => update("payType", t)}
-        details={Object.fromEntries((Object.keys(PAY_TYPE_LABELS) as PayType[]).map((t) => [t, payFields]))}
-      />
+      {payFields}
       {/* Only once there's a number to show (user call, 2026-11-05). */}
       {(draft.payType === "incentive"
         ? draft.incentive != null
@@ -1338,33 +1364,40 @@ function Perks(ctx: ScreenCtx) {
 
 // ── Who can apply ──────────────────────────────────────────────────────────
 
-/** Who can apply: education, English and experience on one screen, each
- *  its own group (audit 2026-11-05: three single-choice screens were one
- *  decision). */
 function Education(ctx: ScreenCtx) {
   return (
     <>
       <WizardQuestion
-        eyebrow={
-          <AiTag
-            ctx={ctx}
-            keys={["education", "english", "experienceType", "minExperienceYears", "maxExperienceYears"]}
-          />
-        }
-        title="Who can apply?"
+        eyebrow={<AiTag ctx={ctx} keys={["education"]} />}
+        title="What’s the minimum education?"
+        description="This level or higher."
+      />
+      <EducationField draft={ctx.draft} update={ctx.update} />
+    </>
+  )
+}
+
+function English(ctx: ScreenCtx) {
+  return (
+    <>
+      <WizardQuestion
+        eyebrow={<AiTag ctx={ctx} keys={["english"]} />}
+        title="How much English is needed?"
         description="Ask only what the job needs."
       />
-      <Group label="Minimum education">
-        <EducationField draft={ctx.draft} update={ctx.update} />
-      </Group>
-      <Separator />
-      <Group label="English">
-        <EnglishField draft={ctx.draft} update={ctx.update} />
-      </Group>
-      <Separator />
-      <Group label="Experience">
-        <ExperienceField draft={ctx.draft} update={ctx.update} />
-      </Group>
+      <EnglishField draft={ctx.draft} update={ctx.update} />
+    </>
+  )
+}
+
+function Experience(ctx: ScreenCtx) {
+  return (
+    <>
+      <WizardQuestion
+        eyebrow={<AiTag ctx={ctx} keys={["experienceType", "minExperienceYears", "maxExperienceYears"]} />}
+        title="How much experience do they need?"
+      />
+      <ExperienceField draft={ctx.draft} update={ctx.update} />
     </>
   )
 }
@@ -1883,11 +1916,17 @@ export const SCREENS: ScreenDef[] = [
     Render: Location,
   },
   {
+    id: "pay-type",
+    stage: "job",
+    preview: "top",
+    check: (d) => (d.payType ? null : "Choose a pay type"),
+    Render: PayType,
+  },
+  {
     id: "salary",
     stage: "job",
     preview: "top",
     check: (d) => {
-      if (!d.payType) return "Choose a pay type"
       const err = salaryError(d)
       if (err) return err
       // Name whichever part is actually missing — with "Fixed + incentive",
@@ -1913,14 +1952,22 @@ export const SCREENS: ScreenDef[] = [
     id: "education",
     stage: "candidates",
     preview: "requirements",
-    check: (d) => {
-      const m = missingRequired(d)
-      if (m.includes("education")) return "Choose education"
-      if (m.includes("english")) return "Choose English level"
-      if (m.includes("experience")) return "Choose experience"
-      return null
-    },
+    check: (d) => (missingRequired(d).includes("education") ? "Choose education" : null),
     Render: Education,
+  },
+  {
+    id: "english",
+    stage: "candidates",
+    preview: "requirements",
+    check: (d) => (missingRequired(d).includes("english") ? "Choose English level" : null),
+    Render: English,
+  },
+  {
+    id: "experience",
+    stage: "candidates",
+    preview: "requirements",
+    check: (d) => (missingRequired(d).includes("experience") ? "Choose experience" : null),
+    Render: Experience,
   },
   {
     id: "preferences",
@@ -1993,9 +2040,12 @@ export const SCREEN_NAMES: Record<ScreenId, string> = {
   "job-type": "Job type",
   workplace: "Workplace",
   location: "Location",
+  "pay-type": "Pay type",
   salary: "Salary",
   perks: "Perks",
-  education: "Who can apply",
+  education: "Education",
+  english: "English",
+  experience: "Experience",
   preferences: "Preferences",
   screening: "Screening questions",
   description: "Job description",
