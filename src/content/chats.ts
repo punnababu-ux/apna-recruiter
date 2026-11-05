@@ -50,16 +50,24 @@ export const CLOSED_LABEL: Record<ClosedReason, string> = {
 
 export type Sender = "ai" | "recruiter" | "candidate"
 
+/** Delivery state of a recruiter or AI message (WhatsApp's clock, one tick,
+ *  two ticks, two blue ticks). Candidate messages have none. */
+export type MessageStatus = "sending" | "sent" | "delivered" | "read"
+
 export interface ChatMessage {
   id: string
   from: Sender
   text: string
-  /** As shown: "10:42 am". */
+  /** The day it was sent, as the divider shows it: "Today", "Yesterday", a
+   *  weekday ("Mon") or a date ("2 Nov"). The prototype's today is Wednesday
+   *  4 Nov. */
+  day: string
+  /** The clock time, as shown: "10:42 am". */
   time: string
   /** A candidate quick reply ("Interested", "Call me"), shown as a chip. */
   quickReply?: boolean
-  /** Recruiter messages: the candidate has read it. */
-  read?: boolean
+  /** Recruiter and AI messages only: where it is on its way to the candidate. */
+  status?: MessageStatus
   /** A photo sent in the message, shown above the text. */
   image?: { src: string; alt: string; width: number; height: number }
 }
@@ -118,7 +126,8 @@ export interface ChatThread {
   candidate: { name: string; initial: string; meta: string; photo?: string }
   status: ThreadStatus
   closedReason?: ClosedReason
-  /** Relative, as shown in the inbox: "2m". */
+  /** Relative age of the newest message ("2m", "Yesterday", "Mon"). Sorting
+   *  reads it; the inbox row shows the newest message's own day and time. */
   lastAt: string
   unread: boolean
   /** Urgent threads: the AI's summary of the candidate's replies (FR-6). */
@@ -193,14 +202,17 @@ const BASE_THREADS: ThreadBase[] = [
         id: "m1",
         from: "ai",
         text: "Hi Ravi, thanks for applying for Delivery Executive in Andheri East. The salary is ₹18,000 to ₹22,000 each month. Are you interested? Do you have a bike and a driving licence?",
+        day: "Today",
         time: "10:31 am",
+        status: "read",
       },
-      { id: "m2", from: "candidate", text: "Interested", time: "10:40 am", quickReply: true },
-      { id: "m3", from: "candidate", text: "Yes, I have both. Is there a petrol allowance?", time: "10:41 am" },
+      { id: "m2", from: "candidate", text: "Interested", day: "Today", time: "10:40 am", quickReply: true },
+      { id: "m3", from: "candidate", text: "Yes, I have both. Is there a petrol allowance?", day: "Today", time: "10:41 am" },
       {
         id: "m3b",
         from: "candidate",
         text: "This is my bike.",
+        day: "Today",
         time: "10:42 am",
         image: { src: "/images/chats/bike.jpg", alt: "Ravi's motorbike, parked on a street", width: 600, height: 900 },
       },
@@ -220,10 +232,11 @@ const BASE_THREADS: ThreadBase[] = [
         id: "m1",
         from: "recruiter",
         text: "Hi Amit, thanks for applying for Back Office Executive in Hinjewadi. Can you tell me about your data entry experience?",
+        day: "Today",
         time: "9:15 am",
-        read: true,
+        status: "read",
       },
-      { id: "m2", from: "candidate", text: "Call me", time: "10:24 am", quickReply: true },
+      { id: "m2", from: "candidate", text: "Call me", day: "Today", time: "10:26 am", quickReply: true },
     ],
   },
   {
@@ -238,15 +251,19 @@ const BASE_THREADS: ThreadBase[] = [
         id: "m1",
         from: "ai",
         text: "Hi Sana, thanks for applying for Telecaller in Koramangala. The shift is 9 am to 6 pm. Are you interested? Can you speak Kannada and English?",
-        time: "9:02 am",
+        day: "Today",
+        time: "9:30 am",
+        status: "read",
       },
-      { id: "m2", from: "candidate", text: "Interested", time: "9:20 am", quickReply: true },
-      { id: "m3", from: "candidate", text: "I speak Kannada, English and Hindi.", time: "9:21 am" },
+      { id: "m2", from: "candidate", text: "Interested", day: "Today", time: "9:58 am", quickReply: true },
+      { id: "m3", from: "candidate", text: "I speak Kannada, English and Hindi.", day: "Today", time: "10:08 am" },
       {
         id: "m4",
         from: "ai",
         text: "Thank you. When can you start? And are you comfortable with a target of 80 calls each day?",
-        time: "9:21 am",
+        day: "Today",
+        time: "10:09 am",
+        status: "delivered",
       },
     ],
   },
@@ -263,11 +280,13 @@ const BASE_THREADS: ThreadBase[] = [
         id: "m1",
         from: "ai",
         text: "Hi Meera, thanks for applying for Telecaller in Koramangala. The shift is 9 am to 6 pm. Are you interested? Can you speak Kannada and English?",
+        day: "Today",
         time: "8:10 am",
+        status: "read",
       },
-      { id: "m2", from: "candidate", text: "Yes, I speak both. I did sales calls for one year.", time: "8:30 am" },
-      { id: "m3", from: "ai", text: "Thank you. When can you start?", time: "8:30 am" },
-      { id: "m4", from: "candidate", text: "From Monday.", time: "8:44 am" },
+      { id: "m2", from: "candidate", text: "Yes, I speak both. I did sales calls for one year.", day: "Today", time: "8:30 am" },
+      { id: "m3", from: "ai", text: "Thank you. When can you start?", day: "Today", time: "8:31 am", status: "read" },
+      { id: "m4", from: "candidate", text: "From Monday.", day: "Today", time: "9:44 am" },
     ],
   },
   {
@@ -278,15 +297,16 @@ const BASE_THREADS: ThreadBase[] = [
     lastAt: "Yesterday",
     unread: false,
     messages: [
-      { id: "m1", from: "candidate", text: "Interested", time: "Yesterday", quickReply: true },
+      { id: "m1", from: "candidate", text: "Interested", day: "Yesterday", time: "4:10 pm", quickReply: true },
       {
         id: "m2",
         from: "recruiter",
         text: "Thanks Kiran. Please come for an interview on Thursday at 11 am.",
-        time: "Yesterday",
-        read: true,
+        day: "Yesterday",
+        time: "4:25 pm",
+        status: "read",
       },
-      { id: "m3", from: "candidate", text: "Okay sir, I will come.", time: "Yesterday" },
+      { id: "m3", from: "candidate", text: "Okay sir, I will come.", day: "Yesterday", time: "4:31 pm" },
     ],
   },
   {
@@ -302,10 +322,11 @@ const BASE_THREADS: ThreadBase[] = [
         id: "m1",
         from: "recruiter",
         text: "Hi Imran, thanks for applying for Back Office Executive in Hinjewadi. Are you available for an interview this week?",
-        time: "Mon",
-        read: true,
+        day: "Mon",
+        time: "11:05 am",
+        status: "read",
       },
-      { id: "m2", from: "candidate", text: "Not interested", time: "Mon", quickReply: true },
+      { id: "m2", from: "candidate", text: "Not interested", day: "Mon", time: "2:40 pm", quickReply: true },
     ],
   },
   {
@@ -321,10 +342,26 @@ const BASE_THREADS: ThreadBase[] = [
         id: "m1",
         from: "ai",
         text: "Hi Pooja, thanks for applying for Telecaller in Koramangala. The shift is 9 am to 6 pm. Are you interested?",
-        time: "Fri",
+        day: "Fri",
+        time: "10:00 am",
+        status: "read",
       },
-      { id: "m2", from: "ai", text: "Hi Pooja, are you still interested in the Telecaller job?", time: "Sat" },
-      { id: "m3", from: "ai", text: "Hi Pooja, this is the last message about the Telecaller job. Reply any time.", time: "Sun" },
+      {
+        id: "m2",
+        from: "ai",
+        text: "Hi Pooja, are you still interested in the Telecaller job?",
+        day: "Sat",
+        time: "10:00 am",
+        status: "read",
+      },
+      {
+        id: "m3",
+        from: "ai",
+        text: "Hi Pooja, this is the last message about the Telecaller job. Reply any time.",
+        day: "Sun",
+        time: "10:00 am",
+        status: "delivered",
+      },
     ],
   },
 ]

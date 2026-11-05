@@ -9,11 +9,14 @@
  *   <ChatMessageList>                       role="log" column; gap between groups
  *   <ChatDayDivider>Today</ChatDayDivider>  centred card pill
  *   <ChatBubble variant="incoming|outgoing|assistant"
- *               time="10:42" status="sent|read"   // status: outgoing/assistant
+ *               time="10:42 am"                   // every bubble shows its time
+ *               status="sending|sent|delivered|read"   // outgoing/assistant only
  *               label="Apna Assistant for …"      // assistant sender line, Sparkles icon
  *               media={<img src alt width height />}   // photo above the text
  *               groupPosition="single|first|middle|last">text</ChatBubble>
- *   <ChatChoice time="10:41">Interested</ChatChoice>   candidate quick reply
+ *   <ChatChoice time="10:41 am">Interested</ChatChoice>   candidate quick reply
+ *   <ChatUnreadDivider>2 unread messages</ChatUnreadDivider>   full-width band
+ *   <ChatStatusTicks status="read" />       the same ticks, for the inbox row
  *   <ChatNotice icon={<ShieldAlert />} tone="default|warning">…</ChatNotice>
  *
  * Variants: incoming = bg-card + border, start side. outgoing = bg-accent,
@@ -47,8 +50,21 @@
  * image bubble stays visible on the wallpaper; the time stays under the photo,
  * at the end, on the bubble's own surface. Give the <img> a meaningful alt.
  *
+ * Status (WhatsApp): sending = Clock, sent = one tick, delivered = two ticks
+ * in the bubble's muted tone, read = two ticks in `--chat-tick-read` (sky).
+ * Time and ticks sit inline at the bottom-end of the bubble. Contrast rule:
+ * the icons are ≥ 3:1 on their bubble, light and dark (read tick 6.0:1 on
+ * the outgoing and 5.5:1 on the assistant bubble in light, 8.2:1 and 5.1:1 in
+ * dark; delivered uses the bubble's own meta text colour, ≥ 4.5:1 outgoing).
+ * Colour is not the only cue: each status has a visually-hidden label and a
+ * `title` tooltip ("Sending", "Sent", "Delivered", "Read").
+ *
+ * ChatUnreadDivider: a band across the thread (bg-info-subtle) with a centred
+ * card pill, placed above the first unread message. Pass -mx-* to run it
+ * edge to edge of a padded list.
+ *
  * A11y: ChatMessageList is role="log" aria-live="polite". Ticks are
- * decorative; the status is announced via a visually-hidden "Sent"/"Read".
+ * decorative; the status is announced via a visually-hidden label.
  * ChatChoice and ChatDayDivider are plain text, not interactive.
  *
  * Usage
@@ -62,9 +78,10 @@ import * as React from "react"
 import { cva } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
-import { Check, Sparkles } from "@/icons/icons"
+import { Check, Clock, Sparkles } from "@/icons/icons"
 
 type ChatBubbleVariant = "incoming" | "outgoing" | "assistant"
+type ChatMessageStatus = "sending" | "sent" | "delivered" | "read"
 type ChatGroupPosition = "single" | "first" | "middle" | "last"
 
 const bubbleVariants = cva(
@@ -102,15 +119,39 @@ const groupCorners: Record<ChatBubbleVariant, Record<ChatGroupPosition, string>>
   },
 }
 
-function ChatTicks({ status }: { status: "sent" | "read" }) {
+const STATUS_LABEL: Record<ChatMessageStatus, string> = {
+  sending: "Sending",
+  sent: "Sent",
+  delivered: "Delivered",
+  read: "Read",
+}
+
+/** The message status glyphs. `tone` is the text colour for every state but
+ *  read (default: muted text); read always uses the read-tick role. */
+function ChatStatusTicks({
+  status,
+  tone = "text-muted-foreground",
+  className,
+}: {
+  status: ChatMessageStatus
+  tone?: string
+  className?: string
+}) {
+  const double = status === "delivered" || status === "read"
   return (
     <span
       data-slot="chat-bubble-status"
-      className={cn("inline-flex items-center", status === "read" && "text-info")}
+      data-status={status}
+      title={STATUS_LABEL[status]}
+      className={cn("inline-flex shrink-0 items-center", status === "read" ? "text-chat-tick-read" : tone, className)}
     >
-      <Check aria-hidden className="size-3.5" />
-      {status === "read" && <Check aria-hidden className="-ml-2 size-3.5" />}
-      <span className="sr-only">{status === "read" ? "Read" : "Sent"}</span>
+      {status === "sending" ? (
+        <Clock aria-hidden className="size-3" />
+      ) : (
+        <Check aria-hidden className="size-3.5" />
+      )}
+      {double && <Check aria-hidden className="-ml-2 size-3.5" />}
+      <span className="sr-only">{STATUS_LABEL[status]}</span>
     </span>
   )
 }
@@ -129,7 +170,7 @@ function ChatBubble({
   variant: ChatBubbleVariant
   time?: string
   /** Outgoing and assistant only. */
-  status?: "sent" | "read"
+  status?: ChatMessageStatus
   /** Assistant sender line, shown above the text with a Sparkles icon. */
   label?: React.ReactNode
   /** A photo above the text: an <img> with width, height and alt. */
@@ -171,7 +212,7 @@ function ChatBubble({
           className={cn("mt-0.5 flex items-center gap-1 self-end text-caption", metaTone)}
         >
           {time && <time>{time}</time>}
-          {showStatus && <ChatTicks status={status} />}
+          {showStatus && <ChatStatusTicks status={status} tone={metaTone} />}
         </span>
       )}
     </div>
@@ -212,6 +253,20 @@ function ChatDayDivider({ className, ...props }: React.ComponentProps<"div">) {
       )}
       {...props}
     />
+  )
+}
+
+function ChatUnreadDivider({ className, children, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="chat-unread-divider"
+      className={cn("flex items-center justify-center self-stretch bg-info-subtle px-4 py-1.5", className)}
+      {...props}
+    >
+      <span className="rounded-full bg-card px-3 py-1 text-caption font-medium text-info-subtle-foreground shadow-control">
+        {children}
+      </span>
+    </div>
   )
 }
 
@@ -257,4 +312,5 @@ function ChatMessageList({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
-export { ChatBubble, ChatChoice, ChatDayDivider, ChatNotice, ChatMessageList }
+export { ChatBubble, ChatChoice, ChatDayDivider, ChatUnreadDivider, ChatStatusTicks, ChatNotice, ChatMessageList }
+export type { ChatMessageStatus }

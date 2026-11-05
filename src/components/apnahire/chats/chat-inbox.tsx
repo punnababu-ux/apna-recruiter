@@ -18,7 +18,10 @@
  *   Sort     A radio group (chat-sort.ts): Urgent first (default), Newest,
  *            Unread first, Name (A-Z).
  *   Rows     ConversationRow in a ConversationList: avatar · name · time ·
- *            job and tier · last message · unread count · status, linking to
+ *            job and tier · last message (with status ticks when it is the
+ *            recruiter's or the AI's) · unread count · status, linking to
+ *            Row time follows WhatsApp's list: the clock time for today, then
+ *            "Yesterday", the weekday, or a date.
  *            /apnahire/chats/[id] (no scroll reset, so the list keeps its
  *            place). No chats: an Empty with an icon
  *
@@ -117,6 +120,19 @@ function preview(t: ChatThread) {
   if (last.from === "ai") return `${AI_NAME}: ${last.text}`
   if (last.from === "recruiter") return `You: ${last.text}`
   return last.text
+}
+
+/** The row's time: the clock time for today, else the day (Yesterday, a weekday or a date). */
+function rowTime(t: ChatThread) {
+  const last = t.messages[t.messages.length - 1]
+  if (!last) return t.lastAt
+  return last.day === "Today" ? last.time : last.day
+}
+
+/** Ticks before the preview, when the last message is the recruiter's or the AI's. */
+function previewStatus(t: ChatThread) {
+  const last = t.messages[t.messages.length - 1]
+  return last && last.from !== "candidate" ? (last.status ?? "sent") : undefined
 }
 
 /** The candidate's messages after the recruiter's or the AI's last one. */
@@ -367,7 +383,8 @@ export function ChatInbox({ activeId = null, className }: { activeId?: string | 
                 avatarSrc={t.candidate.photo}
                 subtitle={`${t.job.title} · ${TIER_LABEL[t.job.tier]}`}
                 preview={preview(t)}
-                time={t.lastAt}
+                time={rowTime(t)}
+                previewStatus={previewStatus(t)}
                 unread={t.unread}
                 unreadCount={unreadCount(t) || undefined}
                 status={statusBadge(t)}

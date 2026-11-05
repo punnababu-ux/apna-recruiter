@@ -9,7 +9,8 @@
  *       name="Ravi Kumar" initial="R"
  *       avatarSrc="/images/chats/ravi-kumar.jpg"   // optional photo; the initial is the fallback
  *       subtitle="Delivery Executive · Super premium"
- *       preview="Can I join from Monday?" time="10:42"
+ *       preview="Can I join from Monday?" time="10:42 am"
+ *       previewStatus="read"                 // ticks before the preview (your last message)
  *       unread unreadCount={2}
  *       status={<Badge variant="warning">Awaiting reply</Badge>}
  *       render={<Link href="/chat/42" />}   // Next Link, or any element
@@ -24,6 +25,13 @@
  * Separators: each row has `border-b`; ConversationList removes the last
  * one, so rows in a list need no extra handling.
  *
+ * Time (WhatsApp's list rules): a clock time for today ("10:42 am"), then
+ * "Yesterday", the weekday within the last week, else a date ("2 Nov").
+ *
+ * previewStatus: when the last message is yours (recruiter or AI), the same
+ * ticks as in the thread (ChatStatusTicks, with a visually-hidden label)
+ * lead the preview. Leave it off when the last message is the candidate's.
+ *
  * Unread: the time turns primary, the preview turns foreground, and the
  * count shows as a green pill. Badge's `count` variant is red, so the pill
  * is drawn here with semantic tokens.
@@ -36,6 +44,7 @@ import { useRender } from "@base-ui/react/use-render"
 import { cn } from "@/lib/utils"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
+import { ChatStatusTicks, type ChatMessageStatus } from "@/components/ui/chat-bubble"
 
 interface ConversationRowProps extends useRender.ComponentProps<"a"> {
   name: string
@@ -47,7 +56,10 @@ interface ConversationRowProps extends useRender.ComponentProps<"a"> {
   subtitle?: string
   /** Last message, clamped to one line. */
   preview: string
+  /** "10:42 am" today, "Yesterday", a weekday, or a date: "2 Nov". */
   time: string
+  /** Ticks before the preview, when the last message is the recruiter's or the AI's. */
+  previewStatus?: ChatMessageStatus
   unreadCount?: number
   /** Status slot under the preview, usually a Badge. */
   status?: React.ReactNode
@@ -64,6 +76,7 @@ function ConversationRow({
   subtitle,
   preview,
   time,
+  previewStatus,
   unreadCount,
   status,
   active = false,
@@ -99,8 +112,11 @@ function ConversationRow({
               </div>
               {subtitle && <span className="text-caption truncate text-muted-foreground">{subtitle}</span>}
               <div className="flex items-center justify-between gap-2">
-                <span className={cn("text-body-sm min-w-0 truncate", isUnread ? "text-foreground" : "text-muted-foreground")}>
-                  {preview}
+                <span className="flex min-w-0 items-center gap-1">
+                  {previewStatus && <ChatStatusTicks status={previewStatus} />}
+                  <span className={cn("text-body-sm min-w-0 truncate", isUnread ? "text-foreground" : "text-muted-foreground")}>
+                    {preview}
+                  </span>
                 </span>
                 {unreadCount ? (
                   <Badge variant="count-positive" size="count" className="shrink-0">

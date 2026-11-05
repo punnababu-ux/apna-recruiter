@@ -75,6 +75,7 @@
   --color-info-foreground:         var(--info-foreground);
   --color-info-subtle:             var(--info-subtle);
   --color-info-subtle-foreground:  var(--info-subtle-fg);
+  --color-chat-tick-read:          var(--chat-tick-read);
 
   /* Inverted surfaces */
   --color-surface-inverted:    var(--surface-inverted);

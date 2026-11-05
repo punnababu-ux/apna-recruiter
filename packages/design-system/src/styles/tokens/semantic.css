@@ -142,6 +142,11 @@
   --chat-wallpaper:         var(--color-gray-200);
   --chat-wallpaper-pattern: var(--color-gray-300);
 
+  /* Chat read tick — the "read" double tick on a recruiter's bubble. Sits on
+   * the outgoing (green-50) and assistant (sky-100) bubbles: 6.0:1 and 5.5:1
+   * (≥ 3:1 icon rule). Delivered uses the bubble's own muted text colour. */
+  --chat-tick-read:         var(--color-apna-sky-700);
+
   /* --------------------------------------------------------------------------
    * Sidebar — a self-contained sub-surface with its own role tokens.
    * ------------------------------------------------------------------------ */
@@ -875,6 +880,10 @@
   /* Chat wallpaper — darker than the dark card; the doodles are a faint white. */
   --chat-wallpaper:         var(--color-apna-plum-950);
   --chat-wallpaper-pattern: var(--color-alpha-white-10);
+
+  /* Chat read tick on dark: 8.2:1 on the outgoing plum-800 bubble, 5.1:1 on
+   * the assistant sky-900 bubble. */
+  --chat-tick-read:         var(--color-apna-sky-300);
 
   /* Sidebar — card 1 / card 2 on the same elevation ladder as above. */
   --sidebar:                    var(--color-apna-plum-900);

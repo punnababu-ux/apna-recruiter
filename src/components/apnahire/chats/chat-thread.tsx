@@ -19,8 +19,13 @@
  *   Messages  ChatMessageList: a ChatNotice for "Apna never asks for money…"
  *             (PRD guardrails), then ChatDayDividers and ChatBubbles. The
  *             candidate is incoming; the recruiter outgoing with Sent or
- *             Read (FR-15); the AI an assistant bubble with its "Apna
- *             Assistant for…" label. Candidate quick replies are ChatChoice
+ *             status ticks (clock, sent, delivered, read; FR-15); the AI an
+ *             assistant bubble with its "Apna Assistant for…" label and the
+ *             same ticks. Every bubble shows its clock time; a ChatDayDivider
+ *             opens each day. A thread that was unread when opened gets a
+ *             ChatUnreadDivider above the candidate's first message since the
+ *             recruiter's or AI's last one, and opens scrolled to it (else to
+ *             the newest message), again after photos load. Candidate quick replies are ChatChoice
  *             (FR-4). Consecutive messages from one sender are grouped
  *   Composer  ChatComposer, floating (transparent, pill input, round Mic or
  *             Send beside it). On urgent threads with a summary its top slot
@@ -51,6 +56,7 @@ import {
   ChatDayDivider,
   ChatMessageList,
   ChatNotice,
+  ChatUnreadDivider,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -82,42 +88,67 @@ const SUMMARY = "ai-summary"
 
 type Position = "single" | "first" | "middle" | "last"
 
-/** "10:42 am" is today; "Yesterday", "Mon" are their own day. */
-const dayOf = (m: ChatMessage) => (m.time.includes(":") ? "Today" : m.time)
-
 /** Where a message sits in a run from one sender on one day. */
 function positionOf(messages: ChatMessage[], i: number): Position {
   const m = messages[i]
-  const same = (o?: ChatMessage) => !!o && o.from === m.from && !o.quickReply && dayOf(o) === dayOf(m)
+  const same = (o?: ChatMessage) => !!o && o.from === m.from && !o.quickReply && o.day === m.day
   const prev = same(messages[i - 1])
   const next = same(messages[i + 1])
   return prev && next ? "middle" : prev ? "last" : next ? "first" : "single"
 }
 
-function Messages({ messages }: { messages: ChatMessage[] }) {
+/** How many candidate messages sit after the recruiter's or the AI's last one. */
+function trailingCandidateCount(messages: ChatMessage[]) {
+  let n = 0
+  for (let i = messages.length - 1; i >= 0 && messages[i].from === "candidate"; i--) n++
+  return n
+}
+
+function Messages({
+  messages,
+  unreadCount,
+  unreadRef,
+  onImageLoad,
+}: {
+  messages: ChatMessage[]
+  /** Candidate messages to flag as unread (0: no divider). They are the last `unreadCount` messages. */
+  unreadCount: number
+  unreadRef: React.Ref<HTMLDivElement>
+  onImageLoad: () => void
+}) {
+  const unreadFrom = unreadCount > 0 ? messages.length - unreadCount : -1
   return (
     <>
       {messages.map((m, i) => {
-        const day = dayOf(m)
-        const divider = i === 0 || dayOf(messages[i - 1]) !== day
-        // Older days show the day in the divider, so the bubble has no time.
-        const time = m.time.includes(":") ? m.time : undefined
+        const dayDivider = i === 0 || messages[i - 1].day !== m.day
         return (
           <React.Fragment key={m.id}>
-            {divider && <ChatDayDivider>{day}</ChatDayDivider>}
+            {dayDivider && <ChatDayDivider>{m.day}</ChatDayDivider>}
+            {i === unreadFrom && (
+              <ChatUnreadDivider ref={unreadRef} className="-mx-4 scroll-mt-40">
+                {unreadCount} unread {unreadCount === 1 ? "message" : "messages"}
+              </ChatUnreadDivider>
+            )}
             {m.quickReply ? (
-              <ChatChoice time={time}>{m.text}</ChatChoice>
+              <ChatChoice time={m.time}>{m.text}</ChatChoice>
             ) : (
               <ChatBubble
                 variant={m.from === "candidate" ? "incoming" : m.from === "ai" ? "assistant" : "outgoing"}
-                time={time}
-                status={m.from === "candidate" ? undefined : m.read ? "read" : "sent"}
+                time={m.time}
+                status={m.from === "candidate" ? undefined : (m.status ?? "sent")}
                 label={m.from === "ai" ? AI_LABEL : undefined}
                 groupPosition={positionOf(messages, i)}
                 media={
                   m.image && (
                     // eslint-disable-next-line @next/next/no-img-element -- mock photo, size known
-                    <img src={m.image.src} alt={m.image.alt} width={m.image.width} height={m.image.height} loading="lazy" />
+                    <img
+                      src={m.image.src}
+                      alt={m.image.alt}
+                      width={m.image.width}
+                      height={m.image.height}
+                      loading="lazy"
+                      onLoad={onImageLoad}
+                    />
                   )
                 }
               >
@@ -138,14 +169,41 @@ export function ChatThread({ thread }: { thread: Thread }) {
   const [summaryOpen, setSummaryOpen] = React.useState(false)
   const [profileOpen, setProfileOpen] = React.useState(false)
   const end = React.useRef<HTMLDivElement>(null)
+  const unreadDivider = React.useRef<HTMLDivElement>(null)
+  // True for a moment after opening: photos that load then re-scroll to the open position.
+  const opening = React.useRef(false)
   const urgent = thread.status === "urgent"
+
+  // Whether the thread was unread when opened: captured before markRead clears
+  // it, and again when the pane switches to another thread.
+  const [opened, setOpened] = React.useState({ id: thread.id, unread: thread.unread })
+  if (opened.id !== thread.id) setOpened({ id: thread.id, unread: thread.unread })
+  const unreadCount = opened.unread ? trailingCandidateCount(thread.messages) : 0
+
+  /** The unread divider at the top, else the newest message at the bottom. */
+  const scrollToOpenPosition = React.useCallback(() => {
+    if (unreadDivider.current) unreadDivider.current.scrollIntoView({ block: "start" })
+    else end.current?.scrollIntoView({ block: "end" })
+  }, [])
 
   React.useEffect(() => {
     markRead(thread.id)
   }, [markRead, thread.id])
   React.useEffect(() => {
-    end.current?.scrollIntoView({ block: "end" })
-  }, [thread.messages.length])
+    opening.current = true
+    scrollToOpenPosition()
+    const timer = window.setTimeout(() => {
+      opening.current = false
+    }, 2000)
+    return () => window.clearTimeout(timer)
+  }, [thread.id, unreadCount, scrollToOpenPosition])
+  // A new message while the thread is open: follow it.
+  const count = thread.messages.length
+  const seen = React.useRef(count)
+  React.useEffect(() => {
+    if (count > seen.current) end.current?.scrollIntoView({ block: "end" })
+    seen.current = count
+  }, [count])
 
   const send = (text: string) => {
     reply(thread.id, text)
@@ -231,7 +289,14 @@ export function ChatThread({ thread }: { thread: Thread }) {
 
       <ChatMessageList className="flex-1 px-4 py-4 md:py-3">
         <ChatNotice icon={<ShieldCheck aria-hidden />}>{MONEY_WARNING}</ChatNotice>
-        <Messages messages={thread.messages} />
+        <Messages
+          messages={thread.messages}
+          unreadCount={unreadCount}
+          unreadRef={unreadDivider}
+          onImageLoad={() => {
+            if (opening.current) scrollToOpenPosition()
+          }}
+        />
         <div ref={end} />
       </ChatMessageList>
 

@@ -17,6 +17,7 @@ import {
   ChatChoice,
   ChatDayDivider,
   ChatNotice,
+  ChatUnreadDivider,
   ChatMessageList,
   ConversationRow,
   ConversationList,
@@ -189,21 +190,21 @@ export default function DisplayComponentsPage() {
           <ChatBubble
             variant="assistant"
             label="Apna Assistant for Alok Singh, PixelVeda Studios"
-            time="10:40"
-            status="sent"
+            time="10:40 am"
+            status="read"
           >
             Hi! Alok at PixelVeda Studios is hiring a Delivery Executive. Are you interested?
           </ChatBubble>
-          <ChatChoice time="10:41">Interested</ChatChoice>
-          <ChatBubble variant="incoming" groupPosition="first">
+          <ChatChoice time="10:41 am">Interested</ChatChoice>
+          <ChatBubble variant="incoming" groupPosition="first" time="10:41 am">
             Is the job in Pune?
           </ChatBubble>
-          <ChatBubble variant="incoming" groupPosition="last" time="10:42">
+          <ChatBubble variant="incoming" groupPosition="last" time="10:42 am">
             And what are the shift timings?
           </ChatBubble>
           <ChatBubble
             variant="incoming"
-            time="10:43"
+            time="10:43 am"
             media={
               // eslint-disable-next-line @next/next/no-img-element -- demo photo, size known
               <img src="/images/chats/bike.jpg" alt="An orange motorbike parked on a street" width={600} height={900} loading="lazy" />
@@ -211,8 +212,37 @@ export default function DisplayComponentsPage() {
           >
             This is my bike.
           </ChatBubble>
-          <ChatBubble variant="outgoing" time="10:44" status="read">
+          <ChatBubble variant="outgoing" time="10:44 am" status="read">
             Yes, Pune. Shifts are 9am to 6pm.
+          </ChatBubble>
+          <ChatUnreadDivider className="-mx-4">2 unread messages</ChatUnreadDivider>
+          <ChatBubble variant="incoming" time="10:45 am">
+            Great, I can start Monday.
+          </ChatBubble>
+          <ChatDayDivider>Status ticks</ChatDayDivider>
+          <ChatBubble variant="outgoing" time="10:46 am" status="sending">
+            Sending: clock
+          </ChatBubble>
+          <ChatBubble variant="outgoing" time="10:46 am" status="sent">
+            Sent: one tick
+          </ChatBubble>
+          <ChatBubble variant="outgoing" time="10:46 am" status="delivered">
+            Delivered: two ticks
+          </ChatBubble>
+          <ChatBubble variant="outgoing" time="10:46 am" status="read">
+            Read: two blue ticks
+          </ChatBubble>
+          <ChatBubble variant="assistant" label="Apna Assistant" time="10:47 am" status="sending">
+            Sending
+          </ChatBubble>
+          <ChatBubble variant="assistant" label="Apna Assistant" time="10:47 am" status="sent">
+            Sent
+          </ChatBubble>
+          <ChatBubble variant="assistant" label="Apna Assistant" time="10:47 am" status="delivered">
+            Delivered
+          </ChatBubble>
+          <ChatBubble variant="assistant" label="Apna Assistant" time="10:47 am" status="read">
+            Read
           </ChatBubble>
         </ChatMessageList>
       </div>
@@ -229,7 +259,7 @@ export default function DisplayComponentsPage() {
             avatarSrc="/images/chats/ravi-kumar.jpg"
             subtitle="Delivery Executive · Super premium"
             preview="Can you share the joining date?"
-            time="10:42"
+            time="10:42 am"
             unreadCount={2}
             status={<Badge variant="destructive">Urgent: needs reply</Badge>}
           />
@@ -237,14 +267,16 @@ export default function DisplayComponentsPage() {
             name="Meena Shah"
             initial="M"
             subtitle="Delivery Executive"
-            preview="Thanks, I will be there at 11."
+            preview="You: Thanks, I will be there at 11."
+            previewStatus="read"
             time="Yesterday"
           />
           <ConversationRow
             name="Imran Khan"
             initial="I"
             subtitle="Delivery Executive"
-            preview="Interested"
+            preview="You: Are you free this week?"
+            previewStatus="delivered"
             time="Mon"
             active
           />
