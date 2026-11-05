@@ -271,7 +271,9 @@ Progress: page "Checkout — coverage" 346:2.
   346:222 paytm, 346:234 phonepe). Screens C1 desktop 347:466 (536 panel), C1 phone 347:634.
 - [x] 2. InlineActionInput 348:282, CouponsPanel 348:285, CouponApplied 348:312, GstinCard
   348:329 (page OrderSummary). Screens C2 coupon applied + GSTIN open 348:689, C3 coupons
-  panel 348:971 (phone; desktop uses the same parts in the 448 panel).
+  panel 348:971 (phone). Desktop added 2026-11-05 (cloned from D-E6, 448 panel, phone parts
+  swapped in, add-on section dropped): D-C2 492:15432, D-C3 492:16000, beside the phone
+  frames in "8 · Order summary details" (441:11284).
 - [x] 3. Pop-ups (phone sheets; desktop = same content in a centred dialog): P1 exit offer
   350:900, P2 Go annual 350:1139, P3 credits or a plan 350:1210, P4 stay 351:1087 (stacked
   footer), P5 leave reasons 351:1173, P6 coupon expired 351:1246, P7 city lock 351:1303.
