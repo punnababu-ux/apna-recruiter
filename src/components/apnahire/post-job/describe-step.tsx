@@ -149,6 +149,7 @@ export function DescribeStep({
             ref={inputRef}
             size="lg"
             hideSubmit
+            submitWhileTyping={!speech.listening}
             value={prompt}
             onValueChange={onPromptChange}
             onSubmit={() => {
