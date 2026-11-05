@@ -488,6 +488,12 @@
   --ambient-blob-4: color-mix(in srgb, var(--color-atmosphere-mist) 90%, transparent);
   --ambient-glow:   color-mix(in srgb, var(--color-gray-0) 85%, transparent);
   --ambient-grain-opacity: 0.06;
+  /* AI hues (voice-glow, ai-wash): the job prompt's halo while the mic
+   * listens, and the drafting wash that drifts sky → plum → green. */
+  --gradient-voice-glow: linear-gradient(90deg, var(--color-apna-sky-300), var(--color-apna-plum-300), var(--color-apna-green-300));
+  --gradient-ai-wash-1: radial-gradient(ellipse 130% 100% at 30% 0%, var(--color-apna-sky-200) 0%, color-mix(in srgb, var(--color-apna-sky-100) 60%, transparent) 55%, transparent 100%);
+  --gradient-ai-wash-2: radial-gradient(ellipse 130% 100% at 80% 0%, var(--color-apna-plum-200) 0%, color-mix(in srgb, var(--color-apna-plum-100) 60%, transparent) 55%, transparent 100%);
+  --gradient-ai-wash-3: radial-gradient(ellipse 130% 100% at 20% 0%, var(--color-apna-green-200) 0%, color-mix(in srgb, var(--color-apna-green-100) 60%, transparent) 55%, transparent 100%);
   --surface-checkout-hero-fg:       var(--color-gray-900);
   --surface-checkout-hero-fg-muted: var(--color-gray-500);
   /* A third, darker secondary step between fg (900) and fg-muted (500).
@@ -950,6 +956,11 @@
   --ambient-blob-4: color-mix(in srgb, var(--color-apna-sky-700) 55%, transparent);
   --ambient-glow:   transparent;
   --ambient-grain-opacity: 0.08;
+  /* AI hues on dark: deep steps that glow on the dark page. */
+  --gradient-voice-glow: linear-gradient(90deg, var(--color-apna-sky-600), var(--color-apna-plum-500), var(--color-apna-green-600));
+  --gradient-ai-wash-1: radial-gradient(ellipse 130% 100% at 30% 0%, color-mix(in srgb, var(--color-apna-sky-800) 80%, transparent) 0%, color-mix(in srgb, var(--color-apna-sky-900) 50%, transparent) 55%, transparent 100%);
+  --gradient-ai-wash-2: radial-gradient(ellipse 130% 100% at 80% 0%, color-mix(in srgb, var(--color-apna-plum-700) 80%, transparent) 0%, color-mix(in srgb, var(--color-apna-plum-900) 50%, transparent) 55%, transparent 100%);
+  --gradient-ai-wash-3: radial-gradient(ellipse 130% 100% at 20% 0%, color-mix(in srgb, var(--color-apna-green-800) 80%, transparent) 0%, color-mix(in srgb, var(--color-apna-green-900) 50%, transparent) 55%, transparent 100%);
   /* Product tints on dark: each hue a few steps lighter than the card it
      sits on (stack cards are now solid card plum), so a deck keeps its four
      product colours instead of one flat plum. */
