@@ -50,11 +50,14 @@ export function ChipTabs<V extends string = string>({
    *   surface, inactive chips text-only. Use for view-switching tabs.
    * - "choice" — single-select form field: inactive chips are filled
    *   grey, the selected chip gets a green (brand) tint + green border.
+   * - "choice-on-tint" — "choice" on a tinted card (the order summary's
+   *   database add-on), where grey chips vanish: inactive chips are white
+   *   with no border (user call, 2026-11-04).
    * - "solid" — high-contrast ink chip on a translucent track, for a
    *   compact switcher sitting on a tinted surface rather than on the page
    *   background. Inactive chips are text-only and un-bolded.
    */
-  variant?: "default" | "choice" | "solid"
+  variant?: "default" | "choice" | "choice-on-tint" | "solid"
   /** Layout-only overrides for each chip (padding, width). Not for colour —
    *  that belongs to `variant`. */
   itemClassName?: string
@@ -66,7 +69,8 @@ export function ChipTabs<V extends string = string>({
   // Segmented variants share one pill that slides to the selection. "choice"
   // is a form field where every chip is filled, so it keeps per-chip
   // highlighting.
-  const slides = variant !== "choice"
+  const choice = variant === "choice" || variant === "choice-on-tint"
+  const slides = !choice
   const { containerRef, indicatorRef } = useSlidingIndicator(value)
 
   return (
@@ -93,12 +97,14 @@ export function ChipTabs<V extends string = string>({
             ? active
               ? "border-transparent font-semibold text-chip-solid-foreground"
               : "border-transparent font-regular text-muted-foreground hover:text-foreground"
-            : variant === "choice"
+            : choice
             ? active
               ? "border-primary bg-accent text-accent-foreground"
               : ariaInvalid
                 ? "border-destructive/60 bg-destructive/5 text-destructive hover:bg-destructive/10"
-                : "border-border bg-muted text-muted-foreground hover:text-foreground"
+                : variant === "choice-on-tint"
+                  ? "border-transparent bg-background text-muted-foreground hover:text-foreground"
+                  : "border-border bg-muted text-muted-foreground hover:text-foreground"
             : active
               ? "border-transparent text-secondary-foreground"
               : ariaInvalid

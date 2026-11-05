@@ -1,23 +1,80 @@
-# AI handoff — marketing site & design system (as of 2026-10-17)
+# AI handoff — working context (updated 2026-11-04)
 
-Read `AGENTS.md` first (the contract). This file is the working context a
-new session needs to pick up where the last one stopped.
+Read `AGENTS.md` first (the contract), then this file, then
+`docs/PROJECT-MAP.md` for "where is X". Any AI (Claude, Codex, Cursor,
+Gemini…) can pick up from here.
 
-> **Latest (2026-11-02):** express V11 and self-checkout V14 are final and
-> the version switch is removed; the V1–V14 history is in
-> `docs/SESSION-2026-10-30-CHECKOUT.md`.
+> **Latest (2026-11-04):** the checkout is the focus. Express V11 and
+> self-checkout V14 are final (version switch removed; history in
+> `docs/SESSION-2026-10-30-CHECKOUT.md`, later calls in
+> `docs/SESSION-2026-11-03-CHECKOUT.md`). The design rules for it are all in
+> AGENTS.md → "Prices, offers and validity". Figma sync progress is in
+> `docs/FIGMA-SYNC-STATUS.md`. The developer hand-off is below.
+>
+> **Stale below this line, from 2026-10-17:** the marketing notes still
+> mention a serif and the old product colours. AGENTS.md wins: Inter only,
+> no serif; Smart Jobs green, AI Calling Agent sky.
+
+## Checkout dev hand-off (for developers)
+
+- **The page:** artifact "Checkout Dev Handoff",
+  https://claude.ai/artifact/LobdxBURySP1XXuSLQNytc (shared by link; version
+  8 on 2026-11-04). One section per screen, phone and desktop, with the
+  rules that matter. Its images are at `handoff/<name>-phone|desktop.jpg`.
+  A "(Copy)" version (`SVLoiza7JPGf11A3CrY3Vd`) belongs to another account
+  and is not kept in sync.
+- **Figma:** the same screens, same order, on the page "Checkout — dev hand-off" of
+  https://www.figma.com/design/f8O8wKTD4EdBvFj7h5ilev (sections 0–10, phone left, desktop
+  right; see docs/FIGMA-SYNC-STATUS.md).
+- **Live prototype:** poneglyphag.vercel.app (rebuilt from `main`).
+  Express `/apnahire/jobs/new/plans`, self-checkout `/apnahire/credits`.
+  States (credit balance, plan layout, offer, returning recruiter, pricing
+  phase) are set from the hidden prototype panel: a silent tap on
+  "*GST applicable". Remove the panel before production.
+- **Screens on it (20 states × phone + desktop = 40 images):**
+  - Express: plans (no credits), 10% offer claimed, all three credits held,
+    1 job credit, "Pay less when you buy 3", order summary (paying, AI calling
+    added, paid by credits).
+  - Self-checkout: Jobs, Jobs with offer, apna Unlimited, Database,
+    Enterprise, bigger job pack upsell, bigger database pack upsell, order
+    summary, "How job credits work".
+  - Exit pop-ups for a **returning recruiter** (already had the 10% offer,
+    so no discount): express Back → "Just one step to make your job live";
+    express order summary closed → "Are you sure?" (once per visit; only when
+    the job needs payment); self-checkout Back → "Sorry to see you go"
+    (reasons; Skip / Submit both leave). Code:
+    `src/components/apnahire/offers/exit-stay-dialogs.tsx`. A first-time
+    recruiter gets the 10% exit offer instead (`exit-offer-dialog.tsx`).
+- **Open points listed on the page:** remove the prototype panel; the AI
+  calling add-on keeps ₹1,699 under the coupon; "112+ recruiters have
+  recently hired for…" is a fixed number and needs the real count.
+- **Updating the screens after a design change:**
+  1. Start the dev server on :3000 (`npm run dev`, or `preview_start
+     {name: "apna-recruiter-dev"}` in Claude Code).
+  2. `node scripts/capture-handoff.mjs <outDir> [nameFilter]` — signs in,
+     sets pricing phase "today", drives the prototype panel and writes
+     `<name>-phone.jpg` / `<name>-desktop.jpg`. Needs Playwright (path in
+     `PLAYWRIGHT`, default the npx cache) and Google Chrome.
+  3. Look at every shot before publishing (a hovered card turns its CTA
+     green; the script parks the mouse in a corner to avoid it).
+  4. Republish the artifact to the same URL with the changed images, and
+     update its text if a rule changed. A new screen needs a block in the
+     page and an entry in the script's `screens`.
+- The white space above "Bill details" in the order summary is on purpose
+  (`checkout-drawer.tsx`: the bill sits at the bottom, as in Figma).
 
 ## Who and how
 
 - **Punna** (product designer, apna) drives; you design and build. Work in
-  small steps, verify in the browser, push each verified change.
-- **Repo / branch:** worktree `.claude/worktrees/rebuy-banner-design-461cc8`,
-  branch `claude/cloud-account-token-issue-f898f5`. Push straight to main by
-  fast-forward:
-  `git fetch -q origin && git rebase -q origin/main && git push -q origin HEAD:claude/cloud-account-token-issue-f898f5 --force-with-lease && git push -q origin HEAD:main`
+  small steps, verify in the browser, push each verified change. Never ask
+  Punna to commit or push; Punna says when.
+- **Repo / branch:** each session works in its own worktree under
+  `.claude/worktrees/` on its own branch; `main` is the base and what the
+  prototype deploys from.
 - **Before every commit:** `npm run check` (lint + lint:tokens + build).
   Commit trailer: `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
-- **Dev server:** `preview_start {name: "apna-recruiter-dev"}` → port 3002.
+- **Dev server:** `preview_start {name: "apna-recruiter-dev"}` → port 3000
+  (auto-picks another if taken).
   The browser pane often doesn't paint transitions — verify with
   `javascript_tool` (computed styles, `getAnimations()`), screenshot after
   a wait; jump to sections with `scrollIntoView`, not wheel scroll.

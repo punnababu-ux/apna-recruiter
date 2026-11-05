@@ -326,6 +326,9 @@
    * set by the marketing layout; rule below). A serif headline can't leak
    * into the dashboard, checkout or any workflow, whatever classes it has. */
   --font-editorial: var(--font-body);
+  /* Hero headline (text-editorial-display): Inter by default, Fraunces only
+   * inside [data-voice="editorial"]. Same no-serif-in-product rule as above. */
+  --font-hero: var(--font-editorial);
 
   /* Quote voice — pull quotes and testimonials: the editorial serif, the
    * same face as the marketing headlines (one serif in the system, not a
@@ -499,6 +502,12 @@
   --ambient-blob-4: color-mix(in srgb, var(--color-atmosphere-mist) 90%, transparent);
   --ambient-glow:   color-mix(in srgb, var(--color-gray-0) 85%, transparent);
   --ambient-grain-opacity: 0.06;
+  /* AI hues (voice-glow, ai-wash): the job prompt's halo while the mic
+   * listens, and the drafting wash that drifts sky → plum → green. */
+  --gradient-voice-glow: linear-gradient(90deg, var(--color-apna-sky-300), var(--color-apna-plum-300), var(--color-apna-green-300));
+  --gradient-ai-wash-1: radial-gradient(ellipse 130% 100% at 30% 0%, var(--color-apna-sky-200) 0%, color-mix(in srgb, var(--color-apna-sky-100) 60%, transparent) 55%, transparent 100%);
+  --gradient-ai-wash-2: radial-gradient(ellipse 130% 100% at 80% 0%, var(--color-apna-plum-200) 0%, color-mix(in srgb, var(--color-apna-plum-100) 60%, transparent) 55%, transparent 100%);
+  --gradient-ai-wash-3: radial-gradient(ellipse 130% 100% at 20% 0%, var(--color-apna-green-200) 0%, color-mix(in srgb, var(--color-apna-green-100) 60%, transparent) 55%, transparent 100%);
   --surface-checkout-hero-fg:       var(--color-gray-900);
   --surface-checkout-hero-fg-muted: var(--color-gray-500);
   /* A third, darker secondary step between fg (900) and fg-muted (500).
@@ -644,7 +653,10 @@
   /* Brand words set in a moving green (animate-text-gradient — the hero's
    * "AI-Native"): only the apna-green ramp, deep → bright → deep, so the
    * word stays the brand colour while the light travels across it. */
-  --gradient-text-brand: linear-gradient(90deg, var(--color-apna-green-700) 0%, var(--color-apna-green-500) 35%, var(--color-apna-green-400) 50%, var(--color-apna-green-500) 65%, var(--color-apna-green-700) 100%);
+  /* Hero accent word on the mesh: plum only, light plum to near-black
+   * (user call, 2026-11-05). Not green: it vibrates against the pink blob.
+   * Rule: .claude/skills/design-variants/SKILL.md "Colour on the mesh". */
+  --gradient-text-brand: linear-gradient(90deg, var(--color-apna-plum-950) 0%, var(--color-apna-plum-400) 50%, var(--color-apna-plum-950) 100%);
   /* The "apna" of the logo: brand plum on light, near-white on dark (the
      wordmark would vanish on a dark sidebar). `-deep` is the marketing
      header's darkest plum; on dark it is the same near-white. */
@@ -706,6 +718,12 @@
   /* AI add-on wash — plum → sky → green, the soft "AI" tint behind the
    * AI calling upsell in the order summary. Quiet enough for body text. */
   --gradient-ai-subtle: linear-gradient(100deg, var(--color-apna-plum-50) 0%, var(--color-apna-sky-50) 55%, var(--color-apna-green-50) 100%);
+  /* AI wash (ai-backdrop, ai-voice): the three hues the AI's working state
+     cycles through, Gemini-style but in brand colours (2026-11-05). */
+  --ai-wash-1: var(--color-apna-sky-300);
+  --ai-wash-2: var(--color-apna-gold-200);
+  --ai-wash-3: var(--color-apna-green-200);
+  --ai-wash-idle: var(--color-apna-sky-200);
   /* AI demo card — violet → mint, a step stronger than the wash above: the
    * "AI calling agent in action" demo player in the How AI calling works
    * pop-up (Figma 3025:52815, #F0E6FF → #B7F5DD). */
@@ -953,6 +971,10 @@
     radial-gradient(circle at 90% 75%, color-mix(in srgb, var(--color-apna-gold-900) 60%, transparent) 0%, transparent 60%),
     var(--gradient-checkout-hero);
   --gradient-ai-subtle: linear-gradient(100deg, color-mix(in srgb, var(--color-apna-plum-950) 70%, transparent) 0%, color-mix(in srgb, var(--color-apna-sky-950) 45%, transparent) 55%, color-mix(in srgb, var(--color-apna-green-950) 60%, transparent) 100%);
+  --ai-wash-1: color-mix(in srgb, var(--color-apna-sky-800) 70%, transparent);
+  --ai-wash-2: color-mix(in srgb, var(--color-apna-gold-800) 55%, transparent);
+  --ai-wash-3: color-mix(in srgb, var(--color-apna-green-800) 65%, transparent);
+  --ai-wash-idle: color-mix(in srgb, var(--color-apna-sky-900) 60%, transparent);
   --gradient-ai-demo: linear-gradient(90deg, color-mix(in srgb, var(--color-apna-navy-950) 70%, transparent) 0%, color-mix(in srgb, var(--color-apna-green-950) 70%, transparent) 100%);
   /* The card's dark sky (sky 800 wash), a step stronger. */
   --gradient-ai-demo-strong: linear-gradient(115deg, color-mix(in srgb, var(--color-apna-sky-800) 85%, transparent) 0%, color-mix(in srgb, var(--color-apna-sky-800) 45%, transparent) 100%);
@@ -966,6 +988,11 @@
   --ambient-blob-4: color-mix(in srgb, var(--color-apna-sky-700) 55%, transparent);
   --ambient-glow:   transparent;
   --ambient-grain-opacity: 0.08;
+  /* AI hues on dark: deep steps that glow on the dark page. */
+  --gradient-voice-glow: linear-gradient(90deg, var(--color-apna-sky-600), var(--color-apna-plum-500), var(--color-apna-green-600));
+  --gradient-ai-wash-1: radial-gradient(ellipse 130% 100% at 30% 0%, color-mix(in srgb, var(--color-apna-sky-800) 80%, transparent) 0%, color-mix(in srgb, var(--color-apna-sky-900) 50%, transparent) 55%, transparent 100%);
+  --gradient-ai-wash-2: radial-gradient(ellipse 130% 100% at 80% 0%, color-mix(in srgb, var(--color-apna-plum-700) 80%, transparent) 0%, color-mix(in srgb, var(--color-apna-plum-900) 50%, transparent) 55%, transparent 100%);
+  --gradient-ai-wash-3: radial-gradient(ellipse 130% 100% at 20% 0%, color-mix(in srgb, var(--color-apna-green-800) 80%, transparent) 0%, color-mix(in srgb, var(--color-apna-green-900) 50%, transparent) 55%, transparent 100%);
   /* Product tints on dark: each hue a few steps lighter than the card it
      sits on (stack cards are now solid card plum), so a deck keeps its four
      product colours instead of one flat plum. */
@@ -975,7 +1002,7 @@
   --gradient-illustration-gold:  linear-gradient(160deg, color-mix(in srgb, var(--color-apna-gold-800) 45%, transparent) 0%, transparent 100%);
   --attention-ring-stops: transparent 0deg, transparent 200deg, var(--color-apna-gold-300) 250deg, var(--color-apna-green-400) 290deg, var(--color-apna-sky-400) 335deg, transparent 360deg;
   --attention-ring-still: linear-gradient(90deg, var(--color-apna-gold-300), var(--color-apna-green-400), var(--color-apna-sky-400));
-  --gradient-text-brand: linear-gradient(90deg, var(--color-apna-green-500) 0%, var(--color-apna-green-300) 35%, var(--color-apna-green-200) 50%, var(--color-apna-green-300) 65%, var(--color-apna-green-500) 100%);
+  --gradient-text-brand: linear-gradient(90deg, var(--color-apna-plum-50) 0%, var(--color-apna-plum-300) 50%, var(--color-apna-plum-50) 100%);
   --surface-checkout-hero-fg:       var(--color-gray-50);
   --surface-checkout-hero-fg-muted: var(--color-gray-400);
   /* Sits between the two, as it does in light. No dark design exists to

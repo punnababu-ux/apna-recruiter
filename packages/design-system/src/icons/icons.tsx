@@ -16,8 +16,9 @@ export {
   BadgePercent, CircleAlert,
   Activity, AlertCircle, AlertTriangle, ArrowDown, ArrowLeft,
   ArrowRight, ArrowUp, ArrowUpDown, ArrowUpRight, AtSign, AudioLines,
-  Award, Ban, BarChart2, Bell, Bike, Bold, BookOpen,
+  Award, Ban, BarChart2, Bell, Bike, Bold, BookOpen, Crown, LifeBuoy,
   Calculator, ChefHat, DoorOpen, HandCoins, Headset, Package, Route, Store, Truck,
+  Factory, HardHat, Plane, ShoppingCart, Stethoscope, UtensilsCrossed,
   Bookmark, BookmarkPlus, Bot, Brain, Briefcase,
   BriefcaseBusiness,
   Building, Building2, Calendar, CalendarCheck, CalendarClock,
@@ -53,6 +54,7 @@ export {
   Voicemail, Wallet, Wand2, Wrench, X, ReceiptText,
   XCircle, XIcon, Zap,
   Backpack, Hammer, School, ScrollText, University,
+  Timer, Gift, Bus, HeartPulse, PiggyBank,
   Tag as Sell,
 } from "lucide-react"
 

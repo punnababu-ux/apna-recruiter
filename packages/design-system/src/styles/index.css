@@ -406,12 +406,29 @@
  * SectionHeading applies display/h2 by itself on marketing pages (see its
  * JSDoc); reach for these directly only for a hand-built h1/h2. */
 @utility text-editorial-display {
-  font-family:     var(--font-editorial);
+  font-family:     var(--font-hero);
   font-size:       var(--text-display-hero-fluid);
   line-height:     var(--line-height-tight);
-  font-weight:     var(--font-weight-bold);
+  font-weight:     var(--font-weight-medium); /* Fraunces is heavy; 500 reads like Inter's 700 */
   letter-spacing:  var(--letter-spacing-tight);
   & em { font-style: italic; }
+}
+
+/* The hero face (Fraunces on marketing) at h1/h2 size: closing lines like
+ * the contact band's "Your next hire could apply today." */
+@utility text-hero-h1 {
+  font-family:     var(--font-hero);
+  font-size:       var(--text-5xl);
+  line-height:     var(--line-height-tight);
+  font-weight:     var(--font-weight-medium);
+  letter-spacing:  var(--letter-spacing-tight);
+}
+@utility text-hero-h2 {
+  font-family:     var(--font-hero);
+  font-size:       var(--text-4xl);
+  line-height:     var(--line-height-tight);
+  font-weight:     var(--font-weight-medium);
+  letter-spacing:  var(--letter-spacing-tight);
 }
 
 @utility text-editorial-h1 {
@@ -912,6 +929,7 @@
   }
 }
 
+
 /* A logo strip gliding left forever (LogoWall `marquee`). The track holds
  * the logos twice, so sliding it by half lands the second copy exactly where
  * the first began: a seamless loop. Slow enough to read every logo; it
@@ -1251,9 +1269,159 @@
   }
 }
 
+/* ai-backdrop — the AI's working state, after Gemini: the top of the
+   screen fills with a soft wash that slowly shifts sky → gold → green and
+   fades out lower down. Three stacked layers cross-fade, so the colour
+   changes without a hard edge. Markup: an empty
+   `<span aria-hidden className="ai-backdrop" />`. Reduced motion: a still
+   sky wash. */
+@utility ai-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(140% 90% at 50% 0%, var(--ai-wash-1), transparent 80%);
+  mask-image: linear-gradient(black 0%, black 50%, transparent 95%);
+  animation: attention-ring-fade-in var(--duration-enter) var(--ease-out-ui) both;
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    animation: ai-wash 9s ease-in-out infinite;
+  }
+  &::before {
+    background: radial-gradient(130% 85% at 70% 0%, var(--ai-wash-2), transparent 80%);
+  }
+  &::after {
+    background: radial-gradient(130% 85% at 30% 0%, var(--ai-wash-3), transparent 80%);
+    animation-delay: 4.5s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::before,
+    &::after {
+      animation: none;
+    }
+  }
+}
+
+@keyframes ai-wash {
+  0%, 100% { opacity: 0; }
+  30%, 55% { opacity: 1; }
+}
+
+/* ai-idle — the resting hint behind an AI prompt: a faint sky halo around
+   the input, as Gemini's sits behind its box. Place it first inside the
+   prompt's `relative` wrapper. Still. It stops just under the box, so
+   the chips below stay on a plain background and keep their contrast. */
+@utility ai-idle {
+  position: absolute;
+  inset: -3rem -1.5rem -1rem;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(75% 65% at 50% 55%, var(--ai-wash-idle) 30%, transparent 100%);
+  filter: blur(20px);
+}
+
+/* ai-voice — the talk control while listening: a pill of moving light in
+   the AI wash colours (Gemini's live pill). Text sits on top. Reduced
+   motion: a still gradient. */
+@utility ai-voice {
+  background-image: linear-gradient(100deg, var(--ai-wash-1), var(--ai-wash-3), var(--ai-wash-2), var(--ai-wash-1));
+  background-size: 300% 100%;
+  animation: ai-voice-flow 4s linear infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes ai-voice-flow {
+  from { background-position: 0% 50%; }
+  to   { background-position: 100% 50%; }
+}
+
 @keyframes attention-ring-fade-in {
   from { opacity: 0; }
   to   { opacity: 1; }
+}
+
+/* voice-glow — a soft halo of the AI hues behind the job prompt while the
+   mic listens, breathing slowly, so speaking reads as the screen's one
+   live thing. An empty `<span aria-hidden>` first in a `relative` box.
+   Reduced motion: a still halo. */
+@utility voice-glow {
+  position: absolute;
+  inset: -6px;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background: var(--gradient-voice-glow);
+  filter: blur(14px);
+  animation: voice-glow-breathe 1.6s ease-in-out infinite alternate;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
+@keyframes voice-glow-breathe {
+  from { opacity: 0.6; transform: scale(0.98); }
+  to   { opacity: 1;   transform: scale(1.03); }
+}
+
+/* ai-wash — the drafting backdrop: a wash of colour from the top of the
+   screen that drifts sky → plum → green on a loop while the AI works, then
+   fades out as the next screen arrives. Cross-fades only (opacity), so it
+   stays on the compositor. Fixed, behind the page (`z-index: -1`): the
+   page root needs `isolate`. Toggle with `data-active`. Reduced motion:
+   the sky wash alone, still. */
+@utility ai-wash {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 75svh;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--gradient-ai-wash-1);
+  mask-image: linear-gradient(to bottom, black 30%, transparent);
+  opacity: 0;
+  transition: opacity var(--duration-carousel) var(--ease-standard);
+
+  &[data-active] { opacity: 1; }
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    animation: ai-wash-plum 6s ease-in-out infinite paused;
+  }
+  &::before { background: var(--gradient-ai-wash-2); }
+  &::after  { background: var(--gradient-ai-wash-3); animation-name: ai-wash-green; }
+  &[data-active]::before,
+  &[data-active]::after { animation-play-state: running; }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::before,
+    &::after { animation: none; }
+  }
+}
+
+@keyframes ai-wash-plum {
+  0%, 10%   { opacity: 0; }
+  35%       { opacity: 1; }
+  60%, 100% { opacity: 0; }
+}
+
+@keyframes ai-wash-green {
+  0%, 35%   { opacity: 0; }
+  60%       { opacity: 1; }
+  90%, 100% { opacity: 0; }
 }
 
 /* flip-in — a control turns over into its next state, like a split-flap
@@ -1442,7 +1610,7 @@
 
 /* The editorial serif is switched on here and only here: the marketing
    site's voice. Everywhere else --font-editorial stays Inter (semantic.css). */
-[data-voice="editorial"] { --font-editorial: var(--font-family-editorial); }
+[data-voice="editorial"] { --font-editorial: var(--font-family-editorial); --font-hero: var(--font-family-hero); }
 
 /* RULE: a card on a gradient is frosted glass (--surface-glass + blur).
    Automatic on marketing pages, like the serif: any plain Card (tone
@@ -1994,4 +2162,23 @@ a[href] > [data-slot="card"] {
   display: inline-block;
   transition: translate 120ms linear;
   @media (prefers-reduced-motion: reduce) { transition: none; }
+}
+
+/* Scroll-linked parallax (2026-11-05). A frame carries `--parallax-p`, its
+   scroll progress from 0 (just entering view) to 1 (fully shown; for the
+   footer watermark, the page's end), set by a small scroll listener. Two
+   layers move at different rates: `parallax-rise` (the back layer rises and
+   grows to full size) and `parallax-drift` (what moves inside it). At 1 both
+   sit at rest; reduced motion keeps them at rest. */
+@utility parallax-rise {
+  @media (prefers-reduced-motion: no-preference) {
+    translate: 0 calc((1 - var(--parallax-p, 1)) * 45%);
+    scale: calc(0.7 + 0.3 * var(--parallax-p, 1));
+  }
+}
+@utility parallax-drift {
+  @media (prefers-reduced-motion: no-preference) {
+    translate: 0 calc((1 - var(--parallax-p, 1)) * -12%);
+    scale: calc(1.05 + 0.2 * (1 - var(--parallax-p, 1)));
+  }
 }

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist_Mono, Inter } from "next/font/google";
+import { Fraunces, Geist_Mono, Inter } from "next/font/google";
 
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { InkProvider } from "@/components/ui/ink-provider";
@@ -17,6 +17,16 @@ import "./globals.css";
 const sans = Inter({
   variable: "--font-sans-face",
   subsets: ["latin"],
+  display: "swap",
+});
+
+// Fraunces · the marketing hero headline only (text-editorial-display, inside
+// [data-voice=editorial]). Exposed as `--font-hero-face`; the product never reads it.
+const hero = Fraunces({
+  variable: "--font-hero-face",
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+  axes: ["opsz"],
   display: "swap",
 });
 
@@ -68,7 +78,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${sans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${sans.variable} ${hero.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full">

@@ -904,6 +904,8 @@ cards) and every upsell tile (`OfferChoice`), both checkouts, light and dark
    | Inline in a banner or row (Renew now, the add-on's Add) | `default` | 36 |
    | Phone plan cards, top bars, toolbars | `sm` | 32 |
    Never stretch a size with `h-*`; pick the one for the place.
+   **One weight for every button** (user call, 2026-11-04): all sizes and variants,
+   `link` and `link-inline` included, are semibold. Never set a button weight by hand.
 
 ## Tax disclaimer — one wording, one component
 
@@ -1023,6 +1025,26 @@ Before you `git commit`:
 A PR that uses a raw colour, introduces a component not listed in
 `docs/COMPONENTS.md`, breaks `npm run lint:tokens`, or adds a template
 without also adding its new components, is a reject.
+
+---
+
+## Working rules for AI agents (Punna, 2026-11-04)
+
+**Models and agents — save tokens.**
+- Split work across subagents. Low-end tasks (searching, reading files, screenshots and
+  captures, bulk renames or copy sweeps, simple checks) run on **Haiku or Sonnet**.
+- **Opus at default effort** is the main session: plans, decides, reviews the subagents' work.
+- Before using **Opus at medium or high effort**, ask Punna first and say why.
+- Keep progress in a file (e.g. `docs/FIGMA-SYNC-STATUS.md`) so a new chat can resume from it.
+
+**Inputs — structure multi-part requests first.**
+- When Punna's message holds several asks (or arrives in pieces mid-task), first restate it as
+  a numbered list of parts, each one task with what "done" means. Work through the parts and
+  report back against the same numbers. Ask only where a part is genuinely unclear.
+
+**Replies — summarize, then organize.**
+- Every reply is summarized and organized before it is sent: the outcome first, then grouped
+  points (short headings, tables or lists), then what is left or not verified.
 
 ---
 

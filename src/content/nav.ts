@@ -32,19 +32,27 @@ export interface NavLink {
 
 /** Icon names, mapped to glyphs in SiteHeader (content stays icon-free). */
 export type NavIcon =
-  | "building"
-  | "people"
-  | "recruiters"
-  | "universities"
-  | "newsroom"
-  | "recognition"
-  | "support"
+  | "overview"
+  | "culture"
+  | "numbers"
+  | "leadership"
+  | "management"
+  | "join"
+  | "unlimited"
+  | "ai-calling"
+  | "jobs"
+  | "database"
+  | "enterprise"
+  | "lounge"
+  | "press"
+  | "awards"
+  | "help"
+  | "blog"
 
-/** One labelled column of a menu: "For Recruiters", "Support", … */
+/** One labelled column of a menu: "Company", "Newsroom", … */
 export interface NavSection {
   heading: string
-  icon: NavIcon
-  items: NavLink[]
+  items: (NavLink & { icon: NavIcon; description: string })[]
 }
 
 export interface NavGroup {
@@ -88,24 +96,17 @@ export const HELP_CENTRE = "https://employer-help-centre.apna.co/support/home"
 
 export const MAIN_NAV: NavGroup[] = [
   {
-    label: "About Us",
+    label: "About us",
     sections: [
       {
         heading: "Company",
-        icon: "building",
         items: [
-          { label: "Overview", href: "/about" },
-          { label: "Our Cultures and Values", href: "/about/culture" },
-          { label: "apna By The Numbers", href: "/about/numbers" },
-        ],
-      },
-      {
-        heading: "People",
-        icon: "people",
-        items: [
-          { label: "Our Leadership", href: "/about/leadership" },
-          { label: "Management Team", href: "/about/management" },
-          { label: "Join Us", href: "/careers" },
+          { label: "Overview", href: "/about", icon: "overview", description: "Who we are and why we exist" },
+          { label: "Our culture and values", href: "/about/culture", icon: "culture", description: "The values that shape how we build" },
+          { label: "Apna by the numbers", href: "/about/numbers", icon: "numbers", description: "Our impact on India's workforce, in numbers" },
+          { label: "Our leadership", href: "/about/leadership", icon: "leadership", description: "The board guiding apna" },
+          { label: "Management team", href: "/about/management", icon: "management", description: "The people running apna every day" },
+          { label: "Join us", href: "/careers", icon: "join", description: "Build what millions run on" },
         ],
       },
     ],
@@ -114,37 +115,15 @@ export const MAIN_NAV: NavGroup[] = [
     label: "Product",
     sections: [
       {
-        heading: "For Recruiters",
-        icon: "recruiters",
+        heading: "Solutions",
         items: [
-          { label: "Smart Job Posting", href: productHref("Smart Jobs") },
-          { label: "apna Database", href: productHref("Hyperlocal Database") },
-          { label: "AI Calling Agent", href: productHref("AI Calling Agent") },
-          { label: "apna Unlimited", href: productHref("apna Unlimited") },
-          { label: "apna Enterprise", href: "/enterprise" },
+          { label: "Apna unlimited", href: productHref("apna Unlimited"), icon: "unlimited", description: "Post unlimited jobs in one plan" },
+          { label: "Job with AI calling agent", href: productHref("AI Calling Agent"), icon: "ai-calling", description: "AI calling agent interviews and shortlists candidates 24/7" },
+          { label: "Smart jobs", href: productHref("Smart Jobs"), icon: "jobs", description: "Post your job and get qualified candidates" },
+          { label: "Hyperlocal database", href: productHref("Hyperlocal Database"), icon: "database", description: "Instantly match and connect with verified candidates" },
+          { label: "Apna enterprise", href: "/enterprise", icon: "enterprise", description: "Hiring at scale, with a team behind you" },
+          { label: "AI Interview Preparation Lounge", href: "/interview-prep-lounge", icon: "lounge", description: "AI mock interviews for campuses and students" },
         ],
-      },
-      {
-        heading: "For Universities",
-        icon: "universities",
-        items: [{ label: "AI Interview Preparation Lounge", href: "/interview-prep-lounge" }],
-      },
-    ],
-  },
-  {
-    label: "News",
-    sections: [
-      {
-        heading: "Newsroom",
-        icon: "newsroom",
-        items: [
-          { label: "Press Releases", href: "/newsroom" },
-        ],
-      },
-      {
-        heading: "Recognition",
-        icon: "recognition",
-        items: [{ label: "Awards and Certifications", href: "/newsroom/awards" }],
       },
     ],
   },
@@ -152,25 +131,23 @@ export const MAIN_NAV: NavGroup[] = [
     label: "Resources",
     sections: [
       {
-        heading: "For Recruiters",
-        icon: "recruiters",
+        heading: "Newsroom",
         items: [
-          {
-            label: "Blogs",
-            href: "https://apna.co/career-central/category/hiring-platform/",
-            external: true,
-          },
-          { label: "Product Guides", href: "/resources/product-guides" },
-          { label: "Reports and Insights", href: "/resources/reports" },
+          { label: "Press releases", href: "/newsroom", icon: "press", description: "News and media coverage of apna" },
+          { label: "Awards and certifications", href: "/newsroom/awards", icon: "awards", description: "Recognition for how we hire and build" },
         ],
       },
       {
-        heading: "Support",
-        icon: "support",
+        heading: "Help and insights",
         items: [
-          { label: "Help Center", href: HELP_CENTRE, external: true },
-          { label: "FAQs", href: HELP_CENTRE, external: true },
-          { label: "Trust & Safety", href: "/trust-and-safety" },
+          { label: "Help center", href: HELP_CENTRE, external: true, icon: "help", description: "Guides and answers for recruiters" },
+          {
+            label: "Blog",
+            href: "https://apna.co/career-central/category/hiring-platform/",
+            external: true,
+            icon: "blog",
+            description: "Hiring tips and insights",
+          },
         ],
       },
     ],

@@ -55,6 +55,10 @@ interface PromptInputProps
   /** Hide the submit button when the page has its own CTA for it (a wizard
    *  footer's "Draft my job"). Enter still submits. */
   hideSubmit?: boolean
+  /** With `hideSubmit`: on phones, show the arrow while the box is being
+   *  typed in — the keyboard covers the page's own CTA then, so only one of
+   *  the two is ever on screen. */
+  submitWhileTyping?: boolean
 }
 
 function PromptInput({
@@ -69,13 +73,17 @@ function PromptInput({
   submitText,
   active = false,
   hideSubmit = false,
+  submitWhileTyping = false,
   disabled,
+  onFocus,
+  onBlur,
   placeholder,
   className,
   ...props
 }: PromptInputProps) {
   const lg = size === "lg"
   const canSubmit = value.trim().length > 0 && !loading && !disabled
+  const [typing, setTyping] = React.useState(false)
 
   return (
     <div
@@ -103,6 +111,14 @@ function PromptInput({
         // placeholder only when there's no id to label it by.
         aria-label={props["aria-label"] ?? (props.id ? undefined : placeholder)}
         disabled={disabled}
+        onFocus={(e) => {
+          setTyping(true)
+          onFocus?.(e)
+        }}
+        onBlur={(e) => {
+          setTyping(false)
+          onBlur?.(e)
+        }}
         rows={lg ? 3 : 1}
         className={cn(
           "field-sizing-content w-full resize-none bg-transparent text-foreground outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed",
@@ -114,7 +130,24 @@ function PromptInput({
         <div className="flex min-w-0 flex-1 items-center gap-2">{footerStart}</div>
         <div className="flex shrink-0 items-center gap-1.5">
           {actions}
-          {hideSubmit ? null : submitText ? (
+          {hideSubmit ? (
+            submitWhileTyping &&
+            typing &&
+            canSubmit && (
+              <Button
+                type="button"
+                variant="emphasis"
+                size={lg ? "icon" : "icon-sm"}
+                className="rounded-full animate-in fade-in zoom-in-95 duration-enter sm:hidden"
+                // Keep focus in the box, so the tap lands before the keyboard closes.
+                onPointerDown={(e) => e.preventDefault()}
+                onClick={onSubmit}
+                aria-label={submitLabel}
+              >
+                <ArrowUp />
+              </Button>
+            )
+          ) : submitText ? (
             <Button type="button" variant="emphasis" size={lg ? "default" : "sm"} className="rounded-full" disabled={!canSubmit} onClick={onSubmit}>
               {loading ? <Spinner /> : <Sparkles />}
               {submitText}

@@ -34,14 +34,11 @@ import {
   Toggle,
   University,
   X,
-  type ChipTabItem,
 } from "@apna/design-system"
 import {
   EDUCATION_LABELS,
   ENGLISH_LABELS,
   EXPERIENCE_LABELS,
-  JOINING_FEE_REASON_LABELS,
-  JOINING_FEE_WHEN_LABELS,
   newQuestion,
   suggestedQuestions,
 } from "@/lib/apnahire/job-draft"
@@ -50,8 +47,6 @@ import type {
   EnglishLevel,
   ExperienceType,
   JobPostDraft,
-  JoiningFeeReason,
-  JoiningFeeWhen,
   Strictness,
 } from "@/types/apnahire-job"
 
@@ -61,12 +56,6 @@ export interface FieldEditorProps {
   draft: JobPostDraft
   update: UpdateDraft
 }
-
-const items = <V extends string>(labels: Record<V, string>): ChipTabItem<V | "">[] =>
-  (Object.keys(labels) as V[]).map((value) => ({
-    value,
-    label: labels[value],
-  }))
 
 export const toNumber = (v: string) => {
   const n = parseInt(v.replace(/[^\d]/g, ""), 10)
@@ -113,7 +102,7 @@ export function ChipMultiSelect({
   value,
   onChange,
   label,
-  emoji,
+  icons,
   size = "sm",
   display,
 }: {
@@ -121,8 +110,8 @@ export function ChipMultiSelect({
   value: string[]
   onChange: (next: string[]) => void
   label: string
-  /** An emoji before each option (perks), to find one at a glance. */
-  emoji?: Record<string, string>
+  /** A line icon before each option (perks), to find one at a glance. */
+  icons?: Record<string, React.ReactNode>
   /** "lg" where the chips are the whole screen (perks). */
   size?: "sm" | "lg"
   /** Shown text per option (e.g. a language in its own script). */
@@ -140,7 +129,7 @@ export function ChipMultiSelect({
           pressed={value.includes(o)}
           onPressedChange={() => onChange(value.includes(o) ? value.filter((v) => v !== o) : [...value, o])}
         >
-          {emoji?.[o] && <span aria-hidden>{emoji[o]}</span>}
+          {icons?.[o] && <span aria-hidden className="flex [&_svg]:size-4">{icons[o]}</span>}
           {display?.[o] ? <span aria-label={o}>{display[o]}</span> : o}
         </Toggle>
       ))}
@@ -198,25 +187,14 @@ export function JoiningFeeDetailsFields({ draft, update }: FieldEditorProps) {
         />
       </Field>
       <Field>
-        <FieldLabel>For</FieldLabel>
-        <ChipTabs
-          variant="choice"
-          size="sm"
-          aria-label="Fee reason"
-          items={items<JoiningFeeReason>(JOINING_FEE_REASON_LABELS)}
+        <FieldLabel htmlFor="fee-reason">Why is the fee charged?</FieldLabel>
+        <Input
+          id="fee-reason"
+          className="text-base md:text-sm"
+          placeholder="e.g. Refundable deposit for the uniform"
           value={f.reason}
-          onValueChange={(v) => set({ reason: v })}
-        />
-      </Field>
-      <Field>
-        <FieldLabel>Paid when</FieldLabel>
-        <ChipTabs
-          variant="choice"
-          size="sm"
-          aria-label="When the fee is paid"
-          items={items<JoiningFeeWhen>(JOINING_FEE_WHEN_LABELS)}
-          value={f.when}
-          onValueChange={(v) => set({ when: v })}
+          maxLength={120}
+          onChange={(e) => set({ reason: e.target.value })}
         />
       </Field>
     </div>
@@ -231,7 +209,7 @@ export function JoiningFeeDetailsFields({ draft, update }: FieldEditorProps) {
  *  only matching candidates can apply; off: it only ranks them). Those
  *  controls sit beside the card's button, not in it (no control inside a
  *  control), so the frame moves to a wrapper around both. */
-function ChoiceCards<V extends string>({
+export function ChoiceCards<V extends string>({
   label,
   labels,
   help,
@@ -272,10 +250,12 @@ function ChoiceCards<V extends string>({
         return (
           <div key={v} className="overflow-hidden rounded-xl border border-primary bg-accent ring-1 ring-primary">
             {card}
-            <div className="flex flex-col gap-3 px-4 pb-4">
-              {extra && <div className="border-t border-primary/20 pt-3">{extra}</div>}
-              {withSwitch && (
-                <label className="flex items-center gap-3 border-t border-primary/20 pt-3">
+            {/* Fields sit on white, so inputs and sliders keep their normal
+                look; only the picked answer's header carries the tint. */}
+            {extra && <div className="border-t border-primary/20 bg-card p-4">{extra}</div>}
+            {withSwitch && (
+              <div className="px-4 py-3">
+                <label className="flex items-center gap-3">
                   <span className="flex min-w-0 flex-1 flex-col">
                     <span className="text-xs font-semibold text-accent-foreground">Must-have</span>
                     <span className="text-xs text-accent-foreground/80">
@@ -288,8 +268,8 @@ function ChoiceCards<V extends string>({
                     aria-label={`${label} is a must-have`}
                   />
                 </label>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         )
       })}
@@ -369,6 +349,12 @@ export function EnglishField({ draft, update }: FieldEditorProps) {
 }
 
 export function ExperienceField({ draft, update }: FieldEditorProps) {
+  const minYears = Math.max(1, Math.round(draft.minExperienceYears ?? 1))
+  const maxYears = Math.max(minYears, Math.round(draft.maxExperienceYears ?? minYears + 2))
+  // An AI draft may give only the minimum: fill the maximum it shows.
+  React.useEffect(() => {
+    if (draft.experienceType === "experienced" && draft.maxExperienceYears == null) update("maxExperienceYears", maxYears)
+  }, [draft.experienceType, draft.maxExperienceYears, maxYears, update])
   return (
     <div className="flex flex-col gap-4">
       <ChoiceCards
@@ -379,6 +365,8 @@ export function ExperienceField({ draft, update }: FieldEditorProps) {
         onChange={(v) => {
           update("experienceType", v)
           if (v === "experienced" && draft.minExperienceYears == null) update("minExperienceYears", 1)
+          if (v === "experienced" && draft.maxExperienceYears == null)
+            update("maxExperienceYears", Math.round(draft.minExperienceYears ?? 1) + 2)
         }}
         mustHave={{
           value: draft.strictness.experience,
@@ -387,15 +375,30 @@ export function ExperienceField({ draft, update }: FieldEditorProps) {
         }}
         details={{
           experienced: (
-            <NumberStepper
-              label="At least"
-              name="minimum experience"
-              value={Math.max(1, Math.round(draft.minExperienceYears ?? 1))}
-              onValueChange={(n) => update("minExperienceYears", n)}
-              min={1}
-              max={30}
-              format={(n) => `${n} yr${n === 1 ? "" : "s"}`}
-            />
+            // Both ends of the range (user call, 2026-11-05); max never below min.
+            <div className="flex flex-col gap-3">
+              <NumberStepper
+                label="Minimum"
+                name="minimum experience"
+                value={minYears}
+                onValueChange={(n) => {
+                  update("minExperienceYears", n)
+                  if (n > maxYears) update("maxExperienceYears", n)
+                }}
+                min={1}
+                max={30}
+                format={(n) => `${n} yr${n === 1 ? "" : "s"}`}
+              />
+              <NumberStepper
+                label="Maximum"
+                name="maximum experience"
+                value={maxYears}
+                onValueChange={(n) => update("maxExperienceYears", n)}
+                min={minYears}
+                max={30}
+                format={(n) => `${n} yr${n === 1 ? "" : "s"}`}
+              />
+            </div>
           ),
         }}
       />
