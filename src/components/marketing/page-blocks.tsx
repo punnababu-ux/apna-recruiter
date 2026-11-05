@@ -40,7 +40,7 @@ import {
 } from "@apna/design-system"
 import { HeroBackdrop } from "@/components/marketing/hero-backdrop"
 import type { Person } from "@/content/company"
-import { CLIENT_LOGOS } from "@/content/logos"
+import { CLIENT_LOGOS, STORY_LOGOS } from "@/content/logos"
 import { ILLUSTRATION_TONE, type IllustrationTone } from "@/components/marketing/product-illustrations"
 import { cn } from "@/lib/utils"
 
@@ -189,7 +189,7 @@ const STAT_COLUMNS: Record<number, string> = {
   2: "sm:grid-cols-2",
   3: "sm:grid-cols-3",
   4: "sm:grid-cols-4",
-  5: "sm:grid-cols-3 sm:[&>*:nth-child(n+4)]:border-t sm:[&>*:nth-child(3)]:border-r-0 lg:grid-cols-5 lg:[&>*]:border-t-0 lg:[&>*:nth-child(3)]:border-r",
+  5: "sm:grid-cols-3 sm:[&>*:nth-child(n+4)]:border-t sm:[&>*:nth-child(3)]:border-r-0 lg:grid-cols-5 lg:[&>*:nth-child(n+4)]:border-t-0 lg:[&>*:nth-child(3)]:border-r",
 }
 
 export function StatGrid({
@@ -442,11 +442,50 @@ export function PersonCard({
 }
 
 /** A company's logo where we have one (content/logos.ts), else its name. */
+/** Equal visual weight: every logo gets about the same area (a 4:1 wordmark
+ *  at 26px tall), so wide wordmarks don't shout and square marks don't vanish. */
+const LOGO_AREA = 26 * 26 * 4
+export function logoHeight(width36: number) {
+  const aspect = width36 / 36
+  return Math.round(Math.min(40, Math.max(18, Math.sqrt(LOGO_AREA / aspect))))
+}
+
 export function CompanyMark({ company }: { company: string }) {
-  const logo = CLIENT_LOGOS.find((l) => l.name === company)
+  const logo = CLIENT_LOGOS.find((l) => l.name === company) ?? STORY_LOGOS.find((l) => l.name === company)
   if (!logo) return <span className="text-h5 text-foreground">{company}</span>
-  // eslint-disable-next-line @next/next/no-img-element
-  return <img src={logo.src} alt={company} height={28} width={logo.width} className="brand-logo h-7 w-auto self-start" />
+  const height = logoHeight(logo.width)
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={logo.src} alt={company} height={height} width={Math.round((logo.width / 36) * height)} style={{ height }} className="brand-logo w-auto self-start" />
+  )
+}
+
+/** A customer story's photo: the real event or the people hired. Until one
+ *  is supplied, the company's logo on a suite gradient — never stock. */
+export function StoryMedia({
+  company,
+  image,
+  tone = "sky",
+  priority,
+  className,
+}: {
+  company: string
+  image?: string
+  tone?: IllustrationTone
+  priority?: boolean
+  className?: string
+}) {
+  return (
+    <div className={cn("relative aspect-video w-full overflow-hidden", className)}>
+      {image ? (
+        <Image src={image} alt="" fill priority={priority} sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover" />
+      ) : (
+        <div className={cn("flex size-full items-center justify-center p-6", ILLUSTRATION_TONE[tone])}>
+          <CompanyMark company={company} />
+        </div>
+      )}
+    </div>
+  )
 }
 
 /** A page's own closing card, in the shared contact band's place and look —

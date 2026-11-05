@@ -293,35 +293,27 @@ export const HOME_PROOF = {
     ],
   },
   testimonials: {
+    // No portraits (user call, 2026-11-05): name, role and the company's logo.
     items: [
       {
         quote:
           "We are closely working with apna for talent discovery and hiring across job families. Their quickest turn-around time is enabling us to uninterruptedly continue our daily functions and services.",
         name: "Dr Varun",
-        /** PLACEHOLDER (Pexels, free licence) — replace with their real photo
-         *  before this goes live; a stranger's face must not sit beside a
-         *  real customer's name. */
-        photo: "/images/testimonials/dr-varun.jpg",
+        company: "Tata 1mg",
         role: "SVP, Medical Affairs · Tata 1mg",
       },
       {
         quote:
           "Team apna has provided us with great support. 75% of our job fulfillment for delivery personnel has been through apna. I love the skill tag feature as we don't have to manually type requirements.",
         name: "Neraj Gupta",
-        /** PLACEHOLDER (Pexels, free licence) — replace with their real photo
-         *  before this goes live; a stranger's face must not sit beside a
-         *  real customer's name. */
-        photo: "/images/testimonials/neraj-gupta.jpg",
+        company: "Shadowfox",
         role: "City Head of Supply, Mumbai · Shadowfox",
       },
       {
         quote:
           "Before hearing about apna from a friend, I had doubts about tech solutions, but it proved to be beneficial to me. I added a listing, received 30-40 candidates, and was able to hire 3 people. These folks will now be trained and ramp up!",
         name: "Kabir Chugh",
-        /** PLACEHOLDER (Pexels, free licence) — replace with their real photo
-         *  before this goes live; a stranger's face must not sit beside a
-         *  real customer's name. */
-        photo: "/images/testimonials/kabir-chugh.jpg",
+        company: "Nizams",
         role: "Restaurateur, Owner Nizams",
       },
     ],

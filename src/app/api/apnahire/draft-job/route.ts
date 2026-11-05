@@ -52,7 +52,10 @@ export const JobDraftSchema = z.object({
     .describe("office = work from office, home = work from home, field = on-the-road job."),
   city: z.string().optional().describe("Indian city in canonical spelling, e.g. 'Bengaluru'."),
   area: z.string().optional().describe("Locality / office area, e.g. 'Koramangala'."),
-  payType: z.enum(["fixed", "fixed_incentive", "incentive"]).optional(),
+  payType: z
+    .enum(["fixed", "fixed_incentive", "incentive"])
+    .optional()
+    .describe("Only if the recruiter says how pay works (e.g. mentions incentives). Never infer it from a salary alone."),
   salaryMin: z.number().optional().describe("Monthly fixed salary lower bound in INR."),
   salaryMax: z.number().optional().describe("Monthly fixed salary upper bound in INR."),
   incentive: z.number().optional().describe("Average monthly incentive in INR."),
@@ -61,6 +64,7 @@ export const JobDraftSchema = z.object({
   english: z.enum(["none", "basic", "good"]).optional(),
   experienceType: z.enum(["any", "experienced", "fresher"]).optional(),
   minExperienceYears: z.number().optional().describe("Minimum years when experienceType is 'experienced'."),
+  maxExperienceYears: z.number().optional().describe("Maximum years when experienceType is 'experienced', if stated."),
   languages: z.array(z.string()).optional().describe("Regional languages required, e.g. ['Hindi']."),
   skills: z.array(z.string()).optional().describe("3-6 short skills relevant to the role."),
   gender: z.enum(["any", "male", "female"]).optional(),
@@ -97,7 +101,9 @@ function buildDummyDraft(source: string): Partial<JobPostDraft> {
     "Requirements:",
     out.education ? `- ${out.education === "graduate" ? "Graduate" : "Minimum " + out.education} education` : "- Willingness to learn",
     out.experienceType === "experienced" && out.minExperienceYears
-      ? `- ${out.minExperienceYears}+ year(s) of relevant experience`
+      ? out.maxExperienceYears && out.maxExperienceYears > out.minExperienceYears
+        ? `- ${out.minExperienceYears}–${out.maxExperienceYears} years of relevant experience`
+        : `- ${out.minExperienceYears}+ year(s) of relevant experience`
       : "- Freshers and experienced candidates can apply",
     out.languages?.length ? `- Comfortable speaking ${out.languages.join(", ")}` : "- Clear communication skills",
   ].join("\n")

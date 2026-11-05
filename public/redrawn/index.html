@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <base href="/redrawn/">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="apna, redrawn: the new website, brand and Poneglyph design system.">
+<meta name="description" content="apna, redrawn: the new website, brand and Dhī design system.">
 <title>apna, redrawn</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,7 +12,7 @@
 <!-- The design system's tokens (src/app/redrawn/tokens.css): brand colours,
      fonts, the mother gradient and the hero blobs follow the system. -->
 <link rel="stylesheet" href="/redrawn/tokens.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Inter:wght@400;500;600;700&family=Noto+Serif+Devanagari:wght@500&display=swap">
 <style>
 /* Layout: a keynote stage. One idea per full-screen slide, dark plum
    ground, the brand's own colours as the only light on stage. */
@@ -38,11 +38,13 @@
   --plum: var(--color-apna-plum-400);         /* logo plum (the wordmark) */
   --plum-soft: var(--color-apna-plum-300);
   --paper: #FFFFFF;
-  /* One typeface: Inter (back from Google Sans Flex, 2026-10-29). The "before"
-     examples differ by case and accents, not by face. */
+  /* Inter for everything; Fraunces for hero titles only (2026-11-05), as on
+     the website. The "before" examples stay in Inter. */
   --font-display: "Inter", var(--font-family-sans);
   --font-body: "Inter", var(--font-family-sans);
   --font-old: "Inter", var(--font-family-sans);
+  /* Slide h1s: Fraunces, matching the marketing hero headline (2026-11-05). */
+  --font-hero: "Fraunces", Georgia, serif;
   --slide-pad: clamp(24px, 6vw, 96px);
 }
 :root[data-mode="dark"] {
@@ -89,7 +91,7 @@ body {
 
 .kicker { font-size: clamp(15px, 1.2vw, 18px); font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-dim); }
 h1, h2 { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.015em; text-wrap: balance; margin: 0; line-height: 1.04; }
-h1 { font-size: clamp(56px, 11vw, 168px); }
+h1 { font-family: var(--font-hero); font-weight: 500; font-size: clamp(56px, 11vw, 168px); }
 /* The real wordmark in the title, sized to the headline's lowercase and
    sitting on the same baseline. */
 .title-wordmark { height: 0.8em; width: auto; vertical-align: -0.257em; color: currentColor; margin-right: -0.03em; }
@@ -119,7 +121,7 @@ em { font-style: normal; }
 .glow i:nth-child(3) { background: var(--gold); left: 30%; bottom: -6%; opacity: 0.7; animation-duration: 26s; }
 @keyframes drift { to { transform: translate(6vmax, -4vmax) scale(1.12); } }
 @media (prefers-reduced-motion: reduce) { .glow i { animation: none; } }
-.title-mark { font-family: var(--font-display); }
+.title-mark { font-family: var(--font-hero); }
 
 /* ── 2. The legacy tile ───────────────────────────────── */
 .tile {
@@ -465,6 +467,13 @@ em { font-style: normal; }
 .type-eyebrow { margin: 0; align-self: flex-start; font-size: clamp(15px, 1.2vw, 18px); font-weight: 600; padding: 4px 10px; border-radius: 99px; border: 1px solid var(--ink-faint); color: var(--ink-dim); }
 .type-head { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(28px, 3.6vw, 48px); line-height: 1.05; letter-spacing: -0.015em; text-wrap: balance; color: var(--ink); transition: letter-spacing 500ms ease; }
 .type-demo.before .type-head { font-family: var(--font-old); letter-spacing: -0.03em; }
+.type-demo:not(.before) .type-head { font-family: var(--font-hero); font-weight: 500; }
+/* The hero's accent word: light plum to near-black, as on the site. */
+.accent-word { background: linear-gradient(90deg, var(--color-apna-plum-950), var(--color-apna-plum-400) 50%, var(--color-apna-plum-950)); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; padding-inline: 0.15em; margin-inline: -0.15em; animation: accent-flow 4s ease-in-out infinite alternate; }
+[data-mode="dark"] .accent-word { background-image: linear-gradient(90deg, var(--color-apna-plum-50), var(--color-apna-plum-300) 50%, var(--color-apna-plum-50)); }
+@keyframes accent-flow { from { background-position: 0% 50%; } to { background-position: 100% 50%; } }
+@media (prefers-reduced-motion: reduce) { .accent-word { animation: none; } }
+.living .lv-a { font-family: var(--font-hero); font-weight: 500; }
 .type-demo:not(.before) .rx-b, .type-demo.before .rx-a { display: none; }
 .type-body { margin: 0; font-size: clamp(15px, 1.4vw, 18px); line-height: 1.5; color: var(--ink-dim); max-width: 56ch; }
 .type-stats { display: flex; flex-wrap: wrap; gap: 28px; padding-top: 8px; }
@@ -475,6 +484,7 @@ em { font-style: normal; }
 .type-rules > div { display: flex; flex-direction: column; gap: 4px; padding: 16px 20px; border-radius: 18px; border: 1px solid var(--ink-faint); text-align: left; }
 .type-rules strong { font-size: 22px; font-weight: 500; color: var(--ink); }
 .tr-sans { font-family: var(--font-body); font-weight: 600 !important; }
+.tr-hero { font-family: var(--font-hero); font-weight: 500; }
 .type-rules span { font-size: 15px; line-height: 1.5; color: var(--ink-dim); }
 [aria-label="Typography"] .inner { gap: clamp(14px, 2.4vh, 28px); }
 .type-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
@@ -582,7 +592,10 @@ em { font-style: normal; }
 @media (max-width: 760px) { .facts { grid-template-columns: repeat(2, 1fr); row-gap: 24px; } }
 
 /* ── 9. Rules ────────────────────────────────────────── */
-/* Introducing Poneglyph — a carved tablet of its tokens beside the laws. */
+/* Introducing Dhī — a carved tablet of its tokens beside the laws. */
+.dhi { font-family: "Noto Serif Devanagari", var(--font-hero); font-weight: 500; }
+.dhi-say { color: var(--ink-dim); font-size: clamp(16px, 1.3vw, 19px); margin: 0; }
+.pg-copy p em { font-style: italic; color: var(--ink); }
 .pg { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 72px); align-items: center; }
 .pg-copy { display: flex; flex-direction: column; gap: clamp(16px, 2.6vh, 28px); min-width: 0; }
 .pg-copy .lede { max-width: 46ch; }
@@ -595,7 +608,7 @@ em { font-style: normal; }
   background: radial-gradient(80% 60% at 75% 0%, rgba(62, 186, 141, 0.28) 0%, transparent 60%), radial-gradient(70% 60% at 0% 100%, rgba(131, 189, 228, 0.22) 0%, transparent 60%), linear-gradient(160deg, #4E3A52 0%, #2E2231 60%, #241B26 100%);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 30px 60px -30px var(--shadow); }
 .pg-tablet::after { content: ""; position: absolute; inset: 0; opacity: 0.1; mix-blend-mode: overlay; background-size: 140px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); pointer-events: none; }
-.pg-mark { position: absolute; top: 2%; right: 8%; font-family: var(--font-display); font-weight: 700; font-size: clamp(110px, 14vw, 180px); line-height: 1; color: transparent; -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.22); }
+.pg-mark { position: absolute; top: 2%; right: 8%; font-family: "Noto Serif Devanagari", var(--font-hero); font-weight: 500; font-size: clamp(110px, 14vw, 180px); line-height: 1; color: transparent; -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.22); }
 .pg-carved { position: relative; margin: 0 0 6px; font-family: var(--font-display); font-size: clamp(18px, 1.8vw, 22px); line-height: 1.2; color: #F8F6F9; max-width: 22ch; text-wrap: balance; }
 .pg-carved em { color: #9DE2C9; white-space: nowrap; }
 .pg-tok { position: relative; display: flex; align-items: center; gap: 8px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.1); font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: clamp(14px, 1.15vw, 16px); opacity: 0; translate: 0 8px; transition: opacity 600ms ease, translate 600ms cubic-bezier(0.22, 1, 0.36, 1); }
@@ -804,11 +817,11 @@ em { font-style: normal; }
 
   <section class="slide" aria-label="Typography">
     <div class="inner">
-      <p class="kicker rise">Type · Inter, everywhere</p>
-      <h2 class="rise">One typeface. One voice.</h2>
+      <p class="kicker rise">Type · Fraunces and Inter</p>
+      <h2 class="rise">A face for the story. One for the work.</h2>
       <div class="type-demo rise" id="typedemo">
         <p class="type-eyebrow">India's #1 hiring platform</p>
-        <p class="type-head"><span class="rx-b">India's Largest <em>AI-Native</em> Early Talent Platform</span><span class="rx-a">India's largest AI-native early talent platform</span></p>
+        <p class="type-head"><span class="rx-b">India's Largest <em>AI-Native</em> Early Talent Platform</span><span class="rx-a">India's largest <span class="accent-word">AI-native</span> early talent platform</span></p>
         <p class="type-body">Streamlining end-to-end hiring process. Building Bharat's workforce in the AI economy.</p>
         <div class="type-stats"><span><b>6 Cr+</b>Candidates</span><span><b>7 L+</b>Businesses &amp; enterprises</span><span><b>7,200+</b>Towns &amp; cities covered</span></div>
       </div>
@@ -817,11 +830,11 @@ em { font-style: normal; }
           <button type="button" id="type-before" aria-pressed="false">Before</button>
           <button type="button" id="type-after" aria-pressed="true">After</button>
         </div>
-        <p class="type-product">The website and the product now speak in one typeface. Weight and size carry the hierarchy, not a second font or an italic word.</p>
+        <p class="type-product">The website opens in Fraunces, a soft display serif, and works in Inter. The accent word is a slow sweep of plum, the logo&rsquo;s wordmark colour. The product stays all Inter.</p>
       </div>
       <div class="type-rules rise">
-        <div><strong class="tr-sans">Headlines</strong><span>Bold and plain, in sentence case. 64px heroes on a desktop, 32px on a phone, from one token.</span></div>
-        <div><strong class="tr-sans">Everything else</strong><span>Body, buttons, forms, quotes and every number: the same family, so the website and the product read as one.</span></div>
+        <div><strong class="tr-hero">Hero titles</strong><span>Fraunces, medium weight, sentence case, on the website only. 64px heroes on a desktop, 32px on a phone; 48px for a page&rsquo;s closing line.</span></div>
+        <div><strong class="tr-sans">Everything else</strong><span>Section titles, body, buttons, forms, quotes and every number, and the whole product: Inter.</span></div>
       </div>
     </div>
   </section>
@@ -854,7 +867,7 @@ em { font-style: normal; }
       <h2 class="rise">A page that feels <em>alive.</em></h2>
       <div class="living rise" id="living">
         <div class="blobs" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><b class="wander"></b></div>
-        <p><span class="lv-b">Hire top talent in 48<br>hours with apna.</span><span class="lv-a">India's largest AI-native<br>early talent platform</span></p>
+        <p><span class="lv-b">Hire top talent in 48<br>hours with apna.</span><span class="lv-a">India's largest <span class="accent-word">AI-native</span><br>early talent platform</span></p>
       </div>
       <div class="toggle rise" role="group" aria-label="Compare">
         <button type="button" id="flat-btn" aria-pressed="false">Before: flat</button>
@@ -864,21 +877,22 @@ em { font-style: normal; }
     </div>
   </section>
 
-  <section class="slide" aria-label="Introducing Poneglyph">
+  <section class="slide" aria-label="Introducing Dhī">
     <div class="inner pg">
       <div class="pg-copy">
         <p class="kicker rise">Introducing</p>
-        <h2 class="rise"><em>Poneglyph.</em></h2>
-        <p class="lede rise">apna&rsquo;s design system. Named after the stone tablets in One Piece that hold the true record: written once, in one script, and read by everyone who comes after.</p>
+        <h2 class="rise"><span class="dhi" lang="sa">धी</span> <em class="dhi">Dhī.</em></h2>
+        <p class="dhi-say rise">/dhee/ · Sanskrit for insight. Say it out loud: <em>the</em> design system.</p>
+        <p class="lede rise">Not a design system. <em>The</em> design system: one source every apna screen is drawn from. Which green, how round, how fast, decided once with insight, so no screen has to think twice.</p>
         <ol class="pg-laws rise">
           <li><strong>Written once, read everywhere</strong><span>Every colour, size and motion is a named token. Change it in one place and every screen follows.</span></li>
           <li><strong>Compose, never re-style</strong><span>Pages are built from existing parts. A new need becomes a new part first, so nothing is drawn twice.</span></li>
-          <li><strong>Subtract the obvious, add the meaningful</strong><span>After Maeda&rsquo;s laws of simplicity: one green action, one typeface, and the warmth kept in.</span></li>
+          <li><strong>Subtract the obvious, add the meaningful</strong><span>After Maeda&rsquo;s laws of simplicity: one green action, one product typeface, and the warmth kept in.</span></li>
         </ol>
       </div>
       <div class="pg-tablet rise" aria-hidden="true">
-        <span class="pg-mark">P</span>
-        <p class="pg-carved">The principles are carved. <em>The values are not.</em></p>
+        <span class="pg-mark" lang="sa">धी</span>
+        <p class="pg-carved">One source of thinking. <em>The values keep learning.</em></p>
         <div class="pg-tok"><code>--primary</code><i class="pg-sw"></i><b data-v='["#1F8268"]'>#1F8268</b></div>
         <div class="pg-tok"><code>--radius-card</code><i class="pg-rad"></i><b data-v='["20px"]'>20px</b></div>
         <div class="pg-tok"><code>--surface-glass</code><b data-v='["card 90%","card 80%"]'>card 90%</b></div>
@@ -892,12 +906,12 @@ em { font-style: normal; }
 
   <section class="slide" aria-label="The design system">
     <div class="inner">
-      <p class="kicker rise">Poneglyph, in numbers</p>
+      <p class="kicker rise">Dhī, in numbers</p>
       <h2 class="rise">One system.<br>Every <em>screen.</em></h2>
       <div class="facts rise">
         <div class="fact"><b data-count="41">41</b><span>components in 8 categories, from a button to a pricing card</span></div>
         <div class="fact"><b data-count="4">4</b><span>product colours, all from the logo</span></div>
-        <div class="fact"><b data-count="1">1</b><span>typeface, Inter, for the website and the product</span></div>
+        <div class="fact"><b data-count="2">2</b><span>typefaces: Fraunces for website heroes, Inter for everything else</span></div>
         <div class="fact"><b data-count="1">1</b><span>green action per screen</span></div>
       </div>
       <p class="lede rise">Designers and engineers build from the same parts. A change made once shows up everywhere.</p>
@@ -1056,13 +1070,13 @@ em { font-style: normal; }
       <h2 class="rise">Built for the <em>daily work.</em></h2>
       <div class="toggle rise" role="group" aria-label="Choose a screen">
         <button type="button" class="screen-btn" data-screen="dashboard" aria-pressed="true">Recruiter dashboard</button>
-        <button type="button" class="screen-btn" data-screen="pricing" aria-pressed="false">Pricing</button>
+        <button type="button" class="screen-btn" data-screen="home" aria-pressed="false">Homepage</button>
       </div>
       <figure class="browser rise">
         <div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span id="browser-url">employer.apna.co/jobs</span></div>
         <div class="browser-view">
           <img src="img/dashboard.jpg" data-dark="img/dashboard-dark.jpg" alt="The recruiter dashboard: jobs list with applied, active leads and database matches" class="screen on" data-screen="dashboard" loading="lazy">
-          <img src="img/pricing.jpg" data-dark="img/pricing-dark.jpg" alt="The pricing page: job credit bundles, apna Unlimited and the plan tabs" class="screen" data-screen="pricing" loading="lazy">
+          <img src="img/home.jpg" data-dark="img/home-dark.jpg" alt="The homepage: Fraunces headline with AI-native in a plum sweep, and the sign-up card" class="screen" data-screen="home" loading="lazy">
         </div>
       </figure>
     </div>
@@ -1599,7 +1613,7 @@ em { font-style: normal; }
     }, { threshold: 0.6 }).observe(root);
   })();
 
-  // Poneglyph: the names stay carved, the values keep changing.
+  // Dhī: the names stay settled, the values keep changing.
   (function () {
     var tab = document.querySelector(".pg-tablet");
     if (!tab || matchMedia("(prefers-reduced-motion: reduce)").matches) return;

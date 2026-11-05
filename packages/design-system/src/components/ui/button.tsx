@@ -105,7 +105,7 @@ const buttonVariants = cva(
         // A text link has no surface to fill — no ink, no compression.
         link: "font-semibold text-info underline-offset-4 hover:underline before:hidden active:scale-100",
         "link-inline":
-          "font-medium text-inherit underline underline-offset-2 hover:opacity-80 before:hidden active:scale-100",
+          "font-semibold text-inherit underline underline-offset-2 hover:opacity-80 before:hidden active:scale-100",
         /* Self-checkout CTAs. `--checkout-primary` is fixed across themes
          * (--primary brightens a step in dark), matching a surface that is
          * deliberately light in both. */
@@ -145,7 +145,7 @@ const buttonVariants = cva(
           "h-9 min-h-9 gap-1.5 px-3 text-sm font-semibold font-heading has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5",
         xs: "h-6 min-h-6 gap-1 px-2 text-xs font-semibold font-heading in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
         sm: "h-8 min-h-8 gap-1.5 px-2.5 text-xs font-semibold font-heading in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&_svg:not([class*='size-'])]:size-3.5",
-        lg: "h-10 min-h-10 gap-2 px-4 text-base font-medium font-heading has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3 [&_svg:not([class*='size-'])]:size-4.5",
+        lg: "h-10 min-h-10 gap-2 px-4 text-base font-semibold font-heading has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3 [&_svg:not([class*='size-'])]:size-4.5",
         xl: "h-12 min-h-12 gap-2 px-6 text-base font-semibold font-heading [&_svg:not([class*='size-'])]:size-5",
         // Desktop plan / pricing card CTA: lg's height with the default
         // label (14 semibold), so every card CTA is one size (2026-11-04).
@@ -171,7 +171,7 @@ const buttonVariants = cva(
       // text-[length:inherit] so tailwind-merge reads it as a font size and
       // drops the size variant's text-sm — a custom utility name was read
       // as a colour and knocked out text-inherit instead.
-      { variant: "link-inline", className: "font-medium text-[length:inherit] leading-[inherit]" },
+      { variant: "link-inline", className: "font-semibold text-[length:inherit] leading-[inherit]" },
     ],
     defaultVariants: {
       variant: "default",

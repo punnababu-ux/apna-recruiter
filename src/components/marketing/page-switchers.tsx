@@ -21,6 +21,10 @@ import {
   SelectValue,
 } from "@apna/design-system"
 import { CompanyMark } from "@/components/marketing/page-blocks"
+import {
+  Building2, Factory, HardHat, Headset, Landmark, Laptop, Plane, ShoppingCart, Stethoscope, Store, Truck, Users, UtensilsCrossed,
+  type IconComponent,
+} from "@apna/design-system"
 import { CUSTOMER_STORIES } from "@/content/company"
 import { PRESS } from "@/content/press"
 
@@ -106,6 +110,23 @@ const PAGE_SIZE = 9
 
 /** Customer story library: an industry filter and a search over the
  *  companies, nine to a page. */
+/** One glyph per industry: the thing you'd picture first. */
+const INDUSTRY_ICON: Record<string, IconComponent> = {
+  Staffing: Users,
+  BPO: Headset,
+  BFSI: Landmark,
+  "Logistics & Delivery": Truck,
+  "E-commerce": ShoppingCart,
+  Manufacturing: Factory,
+  Retail: Store,
+  "Food & QSR": UtensilsCrossed,
+  "Travel & Hospitality": Plane,
+  Healthcare: Stethoscope,
+  Construction: HardHat,
+  "IT/Tech": Laptop,
+  Others: Building2,
+}
+
 export function StoryLibrary() {
   const [industry, setIndustry] = React.useState<string>("")
   const [query, setQuery] = React.useState("")
@@ -157,7 +178,7 @@ export function StoryLibrary() {
             <li key={c.company}>
               <Card padding="md" className="surface-frosted h-full gap-3">
                 <CompanyMark company={c.company} />
-                <span className="text-sm text-muted-foreground">{c.industry}</span>
+                <IndustryLabel industry={c.industry} />
               </Card>
             </li>
           ))}
@@ -182,5 +203,15 @@ export function StoryLibrary() {
         </nav>
       )}
     </div>
+  )
+}
+
+function IndustryLabel({ industry }: { industry: string }) {
+  const Icon = INDUSTRY_ICON[industry] ?? Building2
+  return (
+    <span className="flex items-center gap-2 text-sm text-muted-foreground">
+      <Icon className="size-4 shrink-0" aria-hidden />
+      {industry}
+    </span>
   )
 }

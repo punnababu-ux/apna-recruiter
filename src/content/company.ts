@@ -443,25 +443,29 @@ export const CUSTOMER_STORIES = {
   ],
   featured: {
     title: "Featured stories",
+    // Each item may add `image` (a real photo in public/images/stories — the
+    // event or the people hired, never stock). Without one the card shows the
+    // company logo on a gradient. Current images are TEMPORARY Pexels stand-ins
+    // (2026-11-05), not the clients' own photos: replace before launch.
     items: [
-      { company: "PwC", href: "/customer-stories/pwc", result: "43% more quality campus registrations by turning Campus Contender into an employer branding moment." },
-      { company: "HDFC Bank", result: "Reduced cost-per-hire by 40% for frontline sales roles." },
-      { company: "Zomato", result: "Scaled fleet operations simultaneously in 50+ new pin codes." },
-      { company: "Flipkart", result: "Staffed festive season warehouses with 8,000+ hires in 3 weeks." },
-      { company: "Tata Motors", result: "Built a shop-floor talent pipeline across 6 manufacturing plants." },
-      { company: "Swiggy", result: "Cut time-to-onboard for city fleet partners from 9 days to 2." },
-      { company: "Licious", result: "Hired trained store and delivery staff across 14 cities." },
-      { company: "BigBasket", result: "Ran always-on hiring for dark stores with 30% lower attrition." },
-      { company: "Teamlease", result: "Sourced 25,000+ verified candidates for client mandates in a quarter." },
-    ],
+      { company: "PwC", image: "/images/stories/pwc.jpg", href: "/customer-stories/pwc", result: "43% more quality campus registrations by turning Campus Contender into an employer branding moment." },
+      { company: "HDFC Bank", image: "/images/stories/hdfc.jpg", result: "Reduced cost-per-hire by 40% for frontline sales roles." },
+      { company: "Zomato", image: "/images/stories/zomato.jpg", result: "Scaled fleet operations simultaneously in 50+ new pin codes." },
+      { company: "Flipkart", image: "/images/stories/flipkart.jpg", result: "Staffed festive season warehouses with 8,000+ hires in 3 weeks." },
+      { company: "Tata Motors", image: "/images/stories/tata-motors.jpg", result: "Built a shop-floor talent pipeline across 6 manufacturing plants." },
+      { company: "Swiggy", image: "/images/stories/swiggy.jpg", result: "Cut time-to-onboard for city fleet partners from 9 days to 2." },
+      { company: "Licious", image: "/images/stories/licious.jpg", result: "Hired trained store and delivery staff across 14 cities." },
+      { company: "BigBasket", image: "/images/stories/bigbasket.jpg", result: "Ran always-on hiring for dark stores with 30% lower attrition." },
+      { company: "Teamlease", image: "/images/stories/teamlease.jpg", result: "Sourced 25,000+ verified candidates for client mandates in a quarter." },
+    ] as { company: string; result: string; href?: string; image?: string }[],
   },
   talent: {
     title: "Talent stories",
     items: [
-      { tag: "Work & career", title: "How Meera Nair went from tele-caller to branch sales lead in 18 months" },
-      { tag: "Logistics", title: "How Arjun Sharma switched from retail floor to warehouse operations" },
-      { tag: "Work & career", title: "How Priya Deshmukh restarted her career after a five-year break" },
-      { tag: "BPO", title: "How Imran Qureshi turned a night-shift job into a team-lead role" },
+      { tag: "Work & career", image: "/images/stories/talent-meera.jpg", title: "How Meera Nair went from tele-caller to branch sales lead in 18 months" },
+      { tag: "Logistics", image: "/images/stories/talent-arjun.jpg", title: "How Arjun Sharma switched from retail floor to warehouse operations" },
+      { tag: "Work & career", image: "/images/stories/talent-priya.jpg", title: "How Priya Deshmukh restarted her career after a five-year break" },
+      { tag: "BPO", image: "/images/stories/talent-imran.jpg", title: "How Imran Qureshi turned a night-shift job into a team-lead role" },
     ],
   },
   library: {
@@ -469,8 +473,8 @@ export const CUSTOMER_STORIES = {
     allIndustries: "All industries",
     search: "Search companies",
     empty: "No customer stories match your filters yet.",
-    industries: ["Staffing", "BPO", "BFSI", "Logistics & Delivery", "Manufacturing", "Retail", "Food & QSR", "Travel & Hospitality", "Healthcare", "Construction", "IT/Tech", "Others"],
-    companies: ([["Delhivery","Logistics & Delivery"],["HDFC Bank","BFSI"],["Zomato","Food & QSR"],["Amazon","Logistics & Delivery"],["Flipkart","Retail"],["Reliance Retail","Retail"],["Swiggy","Food & QSR"],["Tata Motors","Manufacturing"],["ICICI Bank","BFSI"],["Licious","Food & QSR"],["BigBasket","Retail"],["Teamlease","Staffing"],["Quess Corp","Staffing"],["Randstad India","Staffing"],["Adecco India","Staffing"],["Concentrix","BPO"],["Teleperformance","BPO"],["WNS Global","BPO"],["Firstsource","BPO"],["Axis Bank","BFSI"],["Bajaj Finserv","BFSI"],["Paytm","BFSI"],["PolicyBazaar","BFSI"],["Blue Dart","Logistics & Delivery"],["Ecom Express","Logistics & Delivery"],["Porter","Logistics & Delivery"],["Zepto","Logistics & Delivery"],["Mahindra & Mahindra","Manufacturing"],["Havells","Manufacturing"],["Foxconn India","Manufacturing"],["DMart","Retail"],["Lenskart","Retail"],["Titan","Retail"],["Domino's India","Food & QSR"],["Rebel Foods","Food & QSR"],["Cafe Coffee Day","Food & QSR"],["OYO","Travel & Hospitality"],["MakeMyTrip","Travel & Hospitality"],["IndiGo","Travel & Hospitality"],["Taj Hotels","Travel & Hospitality"],["Apollo Hospitals","Healthcare"],["PharmEasy","Healthcare"],["Practo","Healthcare"],["L&T Construction","Construction"],["Godrej Properties","Construction"],["Shapoorji Pallonji","Construction"],["TCS","IT/Tech"],["Infosys BPM","IT/Tech"],["Wipro","IT/Tech"],["Byju's","Others"],["Urban Company","Others"],["Vodafone Idea","Others"]] as const).map(([company, industry]) => ({ company, industry })),
+    industries: ["Staffing", "BPO", "BFSI", "Logistics & Delivery", "E-commerce", "Manufacturing", "Retail", "Food & QSR", "Travel & Hospitality", "Healthcare", "Construction", "IT/Tech", "Others"],
+    companies: ([["Delhivery","Logistics & Delivery"],["HDFC Bank","BFSI"],["Zomato","Food & QSR"],["Amazon","E-commerce"],["Flipkart","E-commerce"],["Reliance Retail","Retail"],["Swiggy","Food & QSR"],["Tata Motors","Manufacturing"],["ICICI Bank","BFSI"],["Licious","Food & QSR"],["BigBasket","Retail"],["Teamlease","Staffing"],["Quess Corp","Staffing"],["Randstad India","Staffing"],["Adecco India","Staffing"],["Concentrix","BPO"],["Teleperformance","BPO"],["WNS Global","BPO"],["Firstsource","BPO"],["Axis Bank","BFSI"],["Bajaj Finserv","BFSI"],["Paytm","BFSI"],["PolicyBazaar","BFSI"],["Blue Dart","Logistics & Delivery"],["Ecom Express","Logistics & Delivery"],["Porter","Logistics & Delivery"],["Zepto","Logistics & Delivery"],["Mahindra & Mahindra","Manufacturing"],["Havells","Manufacturing"],["Foxconn India","Manufacturing"],["DMart","Retail"],["Lenskart","Retail"],["Titan","Retail"],["Domino's India","Food & QSR"],["Rebel Foods","Food & QSR"],["Cafe Coffee Day","Food & QSR"],["OYO","Travel & Hospitality"],["MakeMyTrip","Travel & Hospitality"],["IndiGo","Travel & Hospitality"],["Taj Hotels","Travel & Hospitality"],["Apollo Hospitals","Healthcare"],["PharmEasy","Healthcare"],["Practo","Healthcare"],["L&T Construction","Construction"],["Godrej Properties","Construction"],["Shapoorji Pallonji","Construction"],["TCS","IT/Tech"],["Infosys BPM","IT/Tech"],["Wipro","IT/Tech"],["Byju's","Others"],["Urban Company","Others"],["Vodafone Idea","Others"]] as const).map(([company, industry]) => ({ company, industry })),
   },
 } as const
 

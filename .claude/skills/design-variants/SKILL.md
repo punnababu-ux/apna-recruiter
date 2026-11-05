@@ -180,6 +180,35 @@ fix. Turn the fixes into proposed versions; never apply them silently.
     row keeps its padding inside the scroll (starts 16px in, can scroll
     off the edge, every tab reachable at 320px).
 
+## 1b. Colour on the mesh (2026-11-05)
+
+Any coloured type, gradient text or accent sitting on the ambient mesh
+(hero, pricing, checkout backdrops) is checked against the mesh first.
+The mesh is peach 18°, pink 342°, periwinkle 226°, mist 214°: one arc
+from blue round to pink.
+
+1. **Plum only, light to near-black (Punna's call, 2026-11-05).** Gradient
+   text on the mesh sweeps plum-950 → plum-400 → plum-950 (dark mode:
+   plum-50 → plum-300). Simple beats clever: tried sky+plum and deepened
+   mesh hues first; both were dropped for this.
+2. **No complement of a blob.** Brand green (~160°) sits opposite the pink
+   blob (342°); side by side they vibrate. Keep green for buttons and
+   solid surfaces, not for type floating on the mesh.
+3. **Darken, don't saturate.** The mesh is light and soft; mesh type uses
+   the deep end of the ramp (600–700, plum-400), which is where the
+   contrast comes from.
+4. **Contrast on the worst blob.** Measure every stop against the
+   darkest blob it can cross (pink #F4C4D2, periwinkle-tinted ~#C9D3EC),
+   not the white page: ≥3:1 for display type, ≥4.5:1 for body.
+   Green-500 and sky-500 fail (~2:1) there; sky-600+ and plum-400 pass.
+5. **Plum is the accent, not the base.** It's low-saturation (17%), so
+   alone it reads grey; use it as one stop between blues.
+6. **Loop back.** An animated gradient ends on its first colour so the
+   sweep has no seam.
+
+Check with a quick script: hue (HLS) of each stop and blob, and WCAG
+contrast of each stop on each blob, before showing the result.
+
 ## 1a. Audit: the current version
 
 Run this to confirm a screen is on the approved version, or to rebuild it

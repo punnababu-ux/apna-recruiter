@@ -55,7 +55,7 @@ import { UpcomingPricesProvider } from "@/components/apnahire/upcoming-price-lin
 import { PriceChangeBanner } from "@/components/apnahire/price-change-banner"
 import { clearPostIntent, wantsAiCalling } from "@/lib/apnahire/post-intent"
 import { GstNote } from "@/components/apnahire/gst-note"
-import { PaymentSuccess } from "@/components/apnahire/payment-success"
+import { PaymentFailed, PaymentSuccess } from "@/components/apnahire/payment-success"
 import { addPurchasedJobCredits } from "@/hooks/use-plans-ingress"
 import { JobPlanPreviewSwitcher } from "@/components/apnahire/job-plan-preview-switcher"
 import { usePlans } from "@/hooks/apnahire/use-plans"
@@ -394,9 +394,21 @@ export function JobPlanSelection() {
     setOrder({ lines: cartLines.length ? cartLines : checkoutItem ? [checkoutItem] : [], total: paymentAmount, id: randomOrderId() })
   }
 
+  const [paymentFailed, setPaymentFailed] = React.useState(false)
   const handlePaymentFailure = () => {
     setPaymentOpen(false)
-    setDrawerOpen(true)
+    setPaymentFailed(true)
+  }
+
+  if (paymentFailed) {
+    return (
+      <PaymentFailed
+        lines={cartLines.length ? cartLines : checkoutItem ? [checkoutItem] : []}
+        total={paymentAmount}
+        onRetry={() => { setPaymentFailed(false); setPaymentOpen(true) }}
+        onChangeMethod={() => { setPaymentFailed(false); setDrawerOpen(true) }}
+      />
+    )
   }
 
   if (order) {

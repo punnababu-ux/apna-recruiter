@@ -31,7 +31,6 @@ import {
   Check,
   Button,
   ClockFading,
-  Database,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -107,7 +106,8 @@ const TIER_BOOST_FOR: Partial<Record<JobPlanTierId, string>> = {
   classic: "1x visibility, for regular roles",
   premium: "2x visibility, for faster hiring",
   "premium-ai": "2x visibility, with AI calling",
-  "super-premium": "4x visibility, for hard-to-fill roles",
+  // Non-breaking hyphens (U+2011): "hard‑to‑fill" never splits when the line wraps.
+  "super-premium": "4x visibility, for hard‑to‑fill roles",
 }
 
 function VisibilityLine({ tier }: { tier: JobPlanTier }) {
@@ -688,7 +688,7 @@ function MobileJobPlanRadioGroup({
                       )}
                     </span>
                     <span className="flex items-center gap-1.5 text-muted-foreground">
-                      <Database className="size-3.5 shrink-0" aria-hidden />
+                      <UserSearch className="size-3.5 shrink-0" aria-hidden />
                       {dbWorth(tier.dbCredits)}
                     </span>
                   </div>
@@ -715,7 +715,7 @@ function MobileJobPlanRadioGroup({
                       </li>
                     )}
                     <li className="flex items-center gap-2 border-t border-dashed border-border pt-2 text-foreground">
-                      <Database className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+                      <UserSearch className="size-4 shrink-0 text-muted-foreground" aria-hidden />
                       <span>{dbWorth(tier.dbCredits)}</span>
                     </li>
                   </ul>
@@ -801,7 +801,7 @@ function MobileSubscriptionCard({
         // The slot sits above as meta ("Expand on select" layout).
         [<WhatsApp key="i" className="text-success" aria-hidden />, "Smart alerts to candidates"],
         [<InfinityIcon key="i" className="text-warning" aria-hidden />, "Free job reposts and swapping"],
-        [<Database key="i" className="text-muted-foreground" aria-hidden />, dbCreditsLabel(plan)],
+        [<UserSearch key="i" className="text-muted-foreground" aria-hidden />, dbCreditsLabel(plan)],
       ]}
       // Said in full (user call, 2026-10-31).
       note={CITY_NOTE}

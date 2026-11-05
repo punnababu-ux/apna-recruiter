@@ -4,8 +4,6 @@ import type {
   ExperienceType,
   JobPostDraft,
   JobType,
-  JoiningFeeReason,
-  JoiningFeeWhen,
   LocationType,
   PayType,
   RequiredField,
@@ -37,11 +35,12 @@ export const EMPTY_JOB_DRAFT: JobPostDraft = {
   perks: [],
   joiningFee: false,
   joiningFeeAnswered: false,
-  joiningFeeDetails: { amount: null, reason: "", when: "" },
+  joiningFeeDetails: { amount: null, reason: "" },
   education: "",
   english: "",
   experienceType: "",
   minExperienceYears: null,
+  maxExperienceYears: null,
   strictness: { education: "must", english: "must", experience: "must" },
   languages: [],
   skills: [],
@@ -113,20 +112,6 @@ export const EXPERIENCE_LABELS: Record<ExperienceType, string> = {
   fresher: "Freshers only",
 }
 export const EXPERIENCE_YEARS = [0.5, 1, 2, 3, 5, 10] as const
-
-export const JOINING_FEE_REASON_LABELS: Record<JoiningFeeReason, string> = {
-  asset: "Asset / inventory charge",
-  deposit: "Security deposit (refundable)",
-  training: "Registration / training fee",
-  commission: "Commission",
-  irda: "IRDA exam",
-  other: "Other reason",
-}
-export const JOINING_FEE_WHEN_LABELS: Record<JoiningFeeWhen, string> = {
-  before_interview: "Before the interview",
-  after_confirmation: "After job confirmation",
-  from_salary: "Deducted from salary",
-}
 
 /** Cities apna serves. A job anywhere else is blocked at review — an employer
  *  once paid ₹1,500 before learning "Apna is not in Deoria yet". */
@@ -206,25 +191,15 @@ export const INDUSTRIES = [
   "Other",
 ]
 
+// Kept short on purpose (user call, 2026-11-05); add a perk back when customers ask.
 export const PERKS = [
   "Flexible working hours",
-  "Weekly payout",
   "Overtime pay",
-  "Joining bonus",
   "Annual bonus",
-  "PF",
-  "ESI (ESIC)",
   "Travel allowance",
-  "Petrol allowance",
   "Mobile allowance",
-  "Internet allowance",
-  "Laptop",
   "Health insurance",
-  "Food/Meals",
-  "Accommodation",
-  "5 working days",
-  "One-way cab",
-  "Two-way cab",
+  "PF",
 ]
 
 export const LANGUAGES = [
@@ -317,8 +292,12 @@ export function salaryLabel(d: JobPostDraft): string | null {
 export function experienceLabel(d: JobPostDraft): string | null {
   if (!d.experienceType) return null
   if (d.experienceType !== "experienced") return EXPERIENCE_LABELS[d.experienceType]
-  if (d.minExperienceYears == null) return EXPERIENCE_LABELS.experienced
-  return d.minExperienceYears < 1 ? "6+ months" : `${d.minExperienceYears}+ years`
+  const lo = d.minExperienceYears
+  const hi = d.maxExperienceYears
+  if (lo == null) return EXPERIENCE_LABELS.experienced
+  const yrs = (n: number) => (n < 1 ? "6 months" : `${n}`)
+  if (hi == null || hi <= lo) return lo < 1 ? "6+ months" : `${lo}+ years`
+  return `${yrs(lo)}–${hi} years`
 }
 
 export function locationLabel(d: JobPostDraft): string | null {
@@ -349,11 +328,11 @@ export function missingRequired(d: JobPostDraft): RequiredField[] {
     missing.push("pay")
   if (d.joiningFee) {
     const f = d.joiningFeeDetails
-    if (f.amount == null || !f.reason || !f.when) missing.push("joiningFee")
+    if (f.amount == null || !f.reason.trim()) missing.push("joiningFee")
   }
   if (!d.education) missing.push("education")
   if (!d.english) missing.push("english")
-  if (!d.experienceType || (d.experienceType === "experienced" && d.minExperienceYears == null))
+  if (!d.experienceType || (d.experienceType === "experienced" && (d.minExperienceYears == null || d.maxExperienceYears == null)))
     missing.push("experience")
   if (d.walkIn) {
     const w = d.walkInDetails

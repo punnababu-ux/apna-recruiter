@@ -231,7 +231,8 @@ export function MobilePlanRow({
                     the meta no longer sits under that row. */}
                 <div className="flex min-w-0 flex-col gap-2">
                   <span className="text-plan-name text-foreground">{title}</span>
-                  {showLine && line && meta && <div className="flex flex-col items-start gap-2 [&>*]:whitespace-nowrap">{meta}</div>}
+                  {/* May wrap to a second line beside a wide price column (the Jan 1 line), never run under it. */}
+                  {showLine && line && meta && <div className="flex flex-col items-start gap-2">{meta}</div>}
                 </div>
                 <div className="shrink-0">{priceBlock}</div>
               </div>

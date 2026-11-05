@@ -765,7 +765,7 @@ export function CheckoutDrawer({
                 <div className="flex items-center justify-between gap-2">
                   <ChipTabs
                     aria-label="Database credit pack size"
-                    variant="choice"
+                    variant="choice-on-tint"
                     itemClassName="h-9 px-4"
                     value={packValue}
                     onValueChange={setPackValue}

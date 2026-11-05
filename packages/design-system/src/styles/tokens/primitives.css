@@ -175,7 +175,7 @@
   --color-atmosphere-haze: #F0F9FF;       /* top-right wash edge */
   --color-atmosphere-cloud: #F8FAFC;      /* base, light */
   --color-atmosphere-fog: #F1F5F9;        /* base, mid */
-  --color-atmosphere-slate: #E2E8F0;      /* base, deep */
+  --color-atmosphere-slate: #E2E8F0;
 
   --color-apna-plum-50:  #F8F6F9;
   --color-apna-plum-100: #F0ECF1;
@@ -285,6 +285,8 @@
   /* The editorial voice is the sans too (2026-10-23, replacing Source
    * Serif 4): marketing headlines and quotes set in Google Sans Flex. */
   --font-family-editorial: var(--font-family-sans);
+  /* Marketing hero headline face (Fraunces, 2026-11-05), via next/font. */
+  --font-family-hero: var(--font-hero-face, "Fraunces"), Georgia, serif;
   --font-family-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 
   /* --------------------------------------------------------------------------

@@ -100,7 +100,7 @@ export function LeaveReasonsDialog({
   return (
     <PlanPopup open={open} onOpenChange={(next) => !next && onStay()}>
       <PopupHeader
-        art="contact"
+        art="restricted"
         title="Sorry to see you go"
         description="What's your reason for leaving? It helps us improve."
       />

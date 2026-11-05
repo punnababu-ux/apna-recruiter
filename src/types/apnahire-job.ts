@@ -14,8 +14,6 @@ export type ContactPreference = "self" | "other" | "none"
 export type GenderPreference = "any" | "male" | "female"
 export type WhoCanContact = "all" | "matched"
 export type Strictness = "must" | "preferred"
-export type JoiningFeeReason = "asset" | "deposit" | "training" | "commission" | "irda" | "other"
-export type JoiningFeeWhen = "before_interview" | "after_confirmation" | "from_salary"
 
 export interface WalkInDetails {
   address: string
@@ -36,8 +34,8 @@ export interface OtherRecruiter {
 
 export interface JoiningFeeDetails {
   amount: number | null
-  reason: JoiningFeeReason | ""
-  when: JoiningFeeWhen | ""
+  /** In the recruiter's own words (user call, 2026-11-05). */
+  reason: string
 }
 
 export interface ScreeningQuestion {
@@ -80,6 +78,7 @@ export interface JobPostDraft {
   english: EnglishLevel | ""
   experienceType: ExperienceType | ""
   minExperienceYears: number | null
+  maxExperienceYears: number | null
   /** Must-have (only matching candidates can apply) vs preferred (others can
    *  still apply) — the live form's Eligible vs Preferred split, per field. */
   strictness: Record<"education" | "english" | "experience", Strictness>

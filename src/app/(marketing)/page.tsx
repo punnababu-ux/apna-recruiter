@@ -111,7 +111,7 @@ export default function HomePage() {
                 }
                 title={
                   <>
-                    India&apos;s largest <span className="whitespace-nowrap">AI-native</span> early talent platform
+                    India&apos;s largest <span className="whitespace-nowrap animate-text-gradient">AI-native</span> early talent platform
                   </>
                 }
                 description={

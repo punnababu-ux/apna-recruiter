@@ -158,7 +158,9 @@ export function parsePrompt(source: string): Partial<JobPostDraft> {
   if (salary.min != null) {
     out.salaryMin = salary.min
     out.salaryMax = salary.max
-    out.payType = /incentive/.test(text) ? "fixed_incentive" : "fixed"
+    // Pay type only when the prompt says it; a salary alone doesn't pick
+    // "Fixed only" (user call, 2026-11-05: nothing pre-selected).
+    if (/incentive/.test(text)) out.payType = "fixed_incentive"
   } else if (/incentive only/.test(text)) out.payType = "incentive"
 
   if (/post ?graduate|\bpg\b|\bmba\b/.test(text)) out.education = "post_graduate"
@@ -172,11 +174,13 @@ export function parsePrompt(source: string): Partial<JobPostDraft> {
   else if (/no english/.test(text)) out.english = "none"
   else if (/english/.test(text)) out.english = "basic"
 
+  const range = text.match(/(\d+(?:\.\d+)?)\s*(?:-|–|to)\s*(\d+(?:\.\d+)?)\s*(?:years?|yrs?)/)
   const years = text.match(/(\d+(?:\.\d+)?)\s*\+?\s*(?:years?|yrs?)/)
   if (/fresher/.test(text)) out.experienceType = "fresher"
   else if (years) {
     out.experienceType = "experienced"
-    out.minExperienceYears = parseFloat(years[1])
+    out.minExperienceYears = parseFloat(range ? range[1] : years[1])
+    if (range) out.maxExperienceYears = parseFloat(range[2])
   } else if (/any experience|experience not required/.test(text)) out.experienceType = "any"
 
   const langs = LANGS.filter((l) => text.includes(l)).map(titleCase)

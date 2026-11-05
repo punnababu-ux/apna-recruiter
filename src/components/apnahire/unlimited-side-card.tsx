@@ -19,7 +19,7 @@
  */
 
 import * as React from "react"
-import { BriefcaseBusiness, InfinityIcon, Database, LogoApnaUnlimited, UserSearch, WhatsApp } from "@apna/design-system"
+import { BriefcaseBusiness, InfinityIcon, LogoApnaUnlimited, UserSearch, WhatsApp } from "@apna/design-system"
 import { Badge, Button, PricingCard } from "@apna/design-system"
 import { withExtraOff } from "@/content/offers"
 import { cn } from "@/lib/utils"
@@ -103,7 +103,7 @@ export function UnlimitedSideCard({
           // The slot shows above, as meta.
           [<WhatsApp key="i" className="text-success" aria-hidden />, "Smart alerts to candidates"],
           [<InfinityIcon key="i" className="text-warning" aria-hidden />, "Free job reposts and swapping"],
-          [<Database key="i" className="text-muted-foreground" aria-hidden />, dbCreditsLabel(plan)],
+          [<UserSearch key="i" className="text-muted-foreground" aria-hidden />, dbCreditsLabel(plan)],
         ]}
         line={<MobileUnlimitedLine db={dbCreditsLabel(plan)} reposts={false} />}
         note="Valid in a single city"
