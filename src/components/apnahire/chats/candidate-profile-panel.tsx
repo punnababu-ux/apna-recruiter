@@ -61,7 +61,7 @@ import {
 import { IconLabel } from "@/components/onlyrounds/shared"
 import { useChats } from "@/hooks/apnahire/use-chats"
 import { cn } from "@/lib/utils"
-import { MATCH_LABEL, type ChatThread, type MatchLevel } from "@/content/chats"
+import { MATCH_LABEL, UNAVAILABLE_COPY, type ChatThread, type MatchLevel } from "@/content/chats"
 
 /** Level → badge colour, meter colour and icon. The label always shows too. */
 const LEVEL = {
@@ -91,6 +91,8 @@ export function CandidateProfilePanel({ thread }: { thread: ChatThread }) {
   const { addNote, unlockResume } = useChats()
   const { candidate, profile, match, notes, resumeUnlocked } = thread
   const level = LEVEL[match.level]
+  // Deleted or blocked: no call and no unlock; the reason shows under the buttons.
+  const unavailable = candidate.availability ? UNAVAILABLE_COPY[candidate.availability] : undefined
   const [noting, setNoting] = React.useState(false)
   const [draft, setDraft] = React.useState("")
 
@@ -142,6 +144,8 @@ export function CandidateProfilePanel({ thread }: { thread: ChatThread }) {
             variant="outline"
             size="sm"
             className="flex-1"
+            disabled={!!unavailable}
+            aria-describedby={unavailable ? "call-unavailable" : undefined}
             onClick={() => toast.info("Connecting a masked call. Neither of you sees the other's number.")}
           >
             <Phone aria-hidden />
@@ -152,6 +156,11 @@ export function CandidateProfilePanel({ thread }: { thread: ChatThread }) {
             Add note
           </Button>
         </div>
+        {unavailable && (
+          <p className="text-caption text-muted-foreground" id="call-unavailable">
+            {`${unavailable.reason} You can't call.`}
+          </p>
+        )}
       </div>
 
       {(noting || notes.length > 0) && (
@@ -261,7 +270,14 @@ export function CandidateProfilePanel({ thread }: { thread: ChatThread }) {
                 <Lock className="mr-1 inline size-3.5 align-text-bottom" aria-hidden />
                 Unlock the resume to see the full work history. It uses 1 database credit.
               </p>
+              {unavailable && (
+                <p className="text-caption text-muted-foreground" id="unlock-unavailable">
+                  {`${unavailable.reason} You can't unlock the resume.`}
+                </p>
+              )}
               <Button
+                disabled={!!unavailable}
+                aria-describedby={unavailable ? "unlock-unavailable" : undefined}
                 onClick={() => {
                   unlockResume(thread.id)
                   toast.success("Resume unlocked. 1 database credit used.")

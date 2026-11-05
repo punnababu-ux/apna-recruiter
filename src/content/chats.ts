@@ -8,6 +8,7 @@
  */
 
 import { COMPANY_NAME } from "@/lib/apnahire/job-draft"
+import { generateThreads } from "@/content/chats-generated"
 
 export type JobTier = "classic" | "premium" | "super-premium" | "subscription"
 
@@ -48,6 +49,29 @@ export const CLOSED_LABEL: Record<ClosedReason, string> = {
   "not-a-fit": "Not a fit",
 }
 
+/** A candidate who can't be reached: "deleted" (account deleted) or "blocked" (the candidate blocked this
+ *  recruiter). The PRD's words for a deleted account are "Candidate not available". For a block the copy stays
+ *  neutral ("Chat not available"): it does not tell the recruiter who blocked whom. History stays readable;
+ *  messages and calls stop. */
+export type Unavailable = "deleted" | "blocked"
+
+export const UNAVAILABLE_COPY: Record<Unavailable, { preview: string; notice: string; reason: string }> = {
+  deleted: {
+    preview: "Candidate not available",
+    notice: "This candidate deleted their account. You can't send messages.",
+    reason: "This candidate deleted their account.",
+  },
+  blocked: {
+    preview: "Chat not available",
+    notice: "This chat is not available. You can't send messages.",
+    reason: "This chat is not available.",
+  },
+}
+
+/** Shown on a job that expired (PRD): the thread stays open, the AI sends nothing new. */
+export const EXPIRED_NOTICE =
+  "This job expired. You can still reply, set up the interview and record the outcome. Apna Assistant sends no new messages."
+
 export type Sender = "ai" | "recruiter" | "candidate"
 
 /** Delivery state of a recruiter or AI message (WhatsApp's clock, one tick,
@@ -80,6 +104,8 @@ export interface ChatJob {
   city: string
   /** The paid AI screening add-on (not on Classic). */
   aiAddOn: boolean
+  /** The job has expired: threads stay open, the AI sends nothing new. */
+  expired?: boolean
 }
 
 export interface CandidateProfile {
@@ -123,12 +149,16 @@ export interface ChatNote {
 export interface ChatThread {
   id: string
   job: ChatJob
-  candidate: { name: string; initial: string; meta: string; photo?: string }
+  candidate: {
+    name: string
+    initial: string
+    meta: string
+    photo?: string
+    /** "deleted": account deleted (Candidate not available). "blocked": the candidate blocked the recruiter. */
+    availability?: Unavailable
+  }
   status: ThreadStatus
   closedReason?: ClosedReason
-  /** Relative age of the newest message ("2m", "Yesterday", "Mon"). Sorting
-   *  reads it; the inbox row shows the newest message's own day and time. */
-  lastAt: string
   unread: boolean
   /** Urgent threads: the AI's summary of the candidate's replies (FR-6). */
   summary?: string
@@ -143,6 +173,11 @@ export interface ChatThread {
   resumeUnlocked: boolean
   /** The recruiter's private notes on this candidate, newest first. */
   notes: ChatNote[]
+  /** "application": the candidate applied (the default). "database": the recruiter found the profile and wrote
+   *  first; there is no AI opener. */
+  source?: "application" | "database"
+  /** A closed thread the candidate wrote to again: it is urgent. */
+  reopened?: boolean
 }
 
 export const RECRUITER_NAME = "Alok Singh"
@@ -193,7 +228,6 @@ const BASE_THREADS: ThreadBase[] = [
     job: DELIVERY,
     candidate: { name: "Ravi Kumar", initial: "R", meta: "M, 24 yrs · 2 yrs experience", photo: "/images/chats/ravi-kumar.jpg" },
     status: "urgent",
-    lastAt: "2m",
     unread: true,
     summary: "Ravi is interested. He has a bike (he sent a photo) and a driving licence and asks about the petrol allowance.",
     suggestedReplies: ["Yes, we pay ₹2,000 each month for petrol.", "Can you come for an interview tomorrow?"],
@@ -223,7 +257,6 @@ const BASE_THREADS: ThreadBase[] = [
     job: BACK_OFFICE,
     candidate: { name: "Amit Patil", initial: "A", meta: "M, 27 yrs · 3 yrs experience", photo: "/images/chats/amit-patil.jpg" },
     status: "urgent",
-    lastAt: "18m",
     unread: true,
     summary: "Amit wants a call. He has done data entry for 3 years.",
     suggestedReplies: ["I will call you at 4 pm today.", "What time can I call you?"],
@@ -244,7 +277,6 @@ const BASE_THREADS: ThreadBase[] = [
     job: TELECALLER,
     candidate: { name: "Sana Mirza", initial: "S", meta: "F, 22 yrs · Fresher", photo: "/images/chats/sana-mirza.jpg" },
     status: "ai-screening",
-    lastAt: "35m",
     unread: false,
     messages: [
       {
@@ -272,7 +304,6 @@ const BASE_THREADS: ThreadBase[] = [
     job: TELECALLER,
     candidate: { name: "Meera Nair", initial: "M", meta: "F, 25 yrs · 1 yr experience", photo: "/images/chats/meera-nair.jpg" },
     status: "shortlisted",
-    lastAt: "1h",
     unread: true,
     summary: "Good fit. Meera speaks Kannada and English, can start on Monday and has done sales calls for a year.",
     messages: [
@@ -294,7 +325,6 @@ const BASE_THREADS: ThreadBase[] = [
     job: DELIVERY,
     candidate: { name: "Kiran Shinde", initial: "K", meta: "M, 29 yrs · 4 yrs experience", photo: "/images/chats/kiran-shinde.jpg" },
     status: "interview",
-    lastAt: "Yesterday",
     unread: false,
     messages: [
       { id: "m1", from: "candidate", text: "Interested", day: "Yesterday", time: "4:10 pm", quickReply: true },
@@ -315,7 +345,6 @@ const BASE_THREADS: ThreadBase[] = [
     candidate: { name: "Imran Shaikh", initial: "I", meta: "M, 31 yrs · 6 yrs experience", photo: "/images/chats/imran-shaikh.jpg" },
     status: "closed",
     closedReason: "not-interested",
-    lastAt: "Mon",
     unread: false,
     messages: [
       {
@@ -335,7 +364,6 @@ const BASE_THREADS: ThreadBase[] = [
     candidate: { name: "Pooja Rao", initial: "P", meta: "F, 23 yrs · Fresher", photo: "/images/chats/pooja-rao.jpg" },
     status: "closed",
     closedReason: "no-reply",
-    lastAt: "Sun",
     unread: false,
     messages: [
       {
@@ -532,4 +560,10 @@ const DETAILS: Record<string, ThreadDetails> = {
   },
 }
 
-export const MOCK_THREADS: ChatThread[] = BASE_THREADS.map((t) => ({ ...t, ...DETAILS[t.id] }))
+const HAND_WRITTEN_THREADS: ChatThread[] = BASE_THREADS.map((t) => ({ ...t, ...DETAILS[t.id] }))
+
+/** The 7 hand-written threads, then the generated ones (see chats-generated.ts). */
+export const MOCK_THREADS: ChatThread[] = [
+  ...HAND_WRITTEN_THREADS,
+  ...generateThreads([DELIVERY, TELECALLER, BACK_OFFICE], AI_MESSAGE_LIMIT),
+]

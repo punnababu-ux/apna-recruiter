@@ -95,7 +95,6 @@ export function useChats() {
             ? {
                 ...t,
                 status: t.status === "urgent" || t.status === "ai-screening" ? "active" : t.status,
-                lastAt: "Now",
                 messages: [
                   ...t.messages,
                   { id: messageId, from: "recruiter", text, day: "Today", time: clockTime(), status: "sending" },

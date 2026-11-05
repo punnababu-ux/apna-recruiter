@@ -21,7 +21,9 @@
  *            job and tier · last message (with status ticks when it is the
  *            recruiter's or the AI's) · unread count · status, linking to
  *            Row time follows WhatsApp's list: the clock time for today, then
- *            "Yesterday", the weekday, or a date.
+ *            "Yesterday", the weekday, or a date. A deleted or blocked
+ *            candidate keeps the name; the preview says "Candidate not
+ *            available" or "Chat not available" and the badge "Not available".
  *            /apnahire/chats/[id] (no scroll reset, so the list keeps its
  *            place). No chats: an Empty with an icon
  *
@@ -72,6 +74,7 @@ import {
   CLOSED_LABEL,
   STATUS_FILTERS,
   TIER_LABEL,
+  UNAVAILABLE_COPY,
   type ChatThread,
   type ThreadStatus,
 } from "@/content/chats"
@@ -108,13 +111,16 @@ const STATUS_LABEL: Record<Exclude<ThreadStatus, "active" | "closed">, string> =
 }
 
 function statusBadge(t: ChatThread) {
+  if (t.candidate.availability) return <Badge variant="secondary">Not available</Badge>
   if (t.status === "active") return null
-  const label = t.status === "closed" ? CLOSED_LABEL[t.closedReason ?? "not-a-fit"] : STATUS_LABEL[t.status]
+  // A closed thread with no reason says "Closed", never a reason it doesn't have.
+  const label = t.status === "closed" ? (t.closedReason ? CLOSED_LABEL[t.closedReason] : "Closed") : STATUS_LABEL[t.status]
   return <Badge variant={t.status === "urgent" ? "destructive" : "secondary"}>{label}</Badge>
 }
 
-/** The last message, with who sent it when it wasn't the candidate. */
+/** The last message, with who sent it when it wasn't the candidate. An unavailable candidate gets a notice instead. */
 function preview(t: ChatThread) {
+  if (t.candidate.availability) return UNAVAILABLE_COPY[t.candidate.availability].preview
   const last = t.messages[t.messages.length - 1]
   if (!last) return ""
   if (last.from === "ai") return `${AI_NAME}: ${last.text}`
@@ -125,12 +131,13 @@ function preview(t: ChatThread) {
 /** The row's time: the clock time for today, else the day (Yesterday, a weekday or a date). */
 function rowTime(t: ChatThread) {
   const last = t.messages[t.messages.length - 1]
-  if (!last) return t.lastAt
+  if (!last) return ""
   return last.day === "Today" ? last.time : last.day
 }
 
 /** Ticks before the preview, when the last message is the recruiter's or the AI's. */
 function previewStatus(t: ChatThread) {
+  if (t.candidate.availability) return undefined
   const last = t.messages[t.messages.length - 1]
   return last && last.from !== "candidate" ? (last.status ?? "sent") : undefined
 }
@@ -186,6 +193,7 @@ export function ChatInbox({ activeId = null, className }: { activeId?: string | 
   // The status counts follow the search and the job filter.
   const forJob = threads.filter((t) => (!jobIds.length || jobIds.includes(t.job.id)) && matchesQuery(t, q))
   const count = (s: StatusFilter) => forJob.filter((t) => t.status === s).length
+  const chatNoun = (n: number) => (n === 1 ? "chat" : "chats")
   const shown = sortThreads(statuses.length ? forJob.filter((t) => statuses.includes(t.status as StatusFilter)) : forJob, sort)
 
   const clearFilters = () => {
@@ -345,7 +353,7 @@ export function ChatInbox({ activeId = null, className }: { activeId?: string | 
         ) : (
           <>
             <span className="text-body-sm text-foreground">
-              {shown.length} {shown.length === 1 ? "candidate" : "candidates"}
+              {shown.length} {chatNoun(shown.length)}
             </span>
             <span className="text-caption ml-auto text-muted-foreground">
               {SORT_OPTIONS.find((o) => o.value === sort)?.label}
@@ -374,7 +382,7 @@ export function ChatInbox({ activeId = null, className }: { activeId?: string | 
             </EmptyHeader>
           </Empty>
         ) : (
-          <ConversationList label="Express">
+          <ConversationList label={`Express, ${shown.length} ${chatNoun(shown.length)}`}>
             {shown.map((t) => (
               <ConversationRow
                 key={t.id}

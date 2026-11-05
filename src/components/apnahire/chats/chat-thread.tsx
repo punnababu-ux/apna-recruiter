@@ -27,6 +27,11 @@
  *             recruiter's or AI's last one, and opens scrolled to it (else to
  *             the newest message), again after photos load. Candidate quick replies are ChatChoice
  *             (FR-4). Consecutive messages from one sender are grouped
+ *   Expired   A job that expired (ChatJob.expired): an "Expired" Badge on the
+ *             job card and a warning ChatNotice above the messages. The thread
+ *             stays open; the AI sends nothing new
+ *   Unavailable  A deleted or blocked candidate: the composer and the chips
+ *             give way to one ChatNotice bar (UNAVAILABLE_COPY); history stays
  *   Composer  ChatComposer, floating (transparent, pill input, round Mic or
  *             Send beside it). On urgent threads with a summary its top slot
  *             is one scrolling chip row: "AI summary" (Sparkles) first, then
@@ -48,7 +53,9 @@ import {
   AvatarFallback,
   AvatarImage,
   BackButton,
+  AlertTriangle,
   Badge,
+  Ban,
   Button,
   ChatBubble,
   ChatChoice,
@@ -77,8 +84,10 @@ import { cn } from "@/lib/utils"
 import { useAppBack } from "@/lib/apnahire/nav"
 import {
   AI_LABEL,
+  EXPIRED_NOTICE,
   MONEY_WARNING,
   TIER_LABEL,
+  UNAVAILABLE_COPY,
   type ChatMessage,
   type ChatThread as Thread,
 } from "@/content/chats"
@@ -123,6 +132,7 @@ function Messages({
         const dayDivider = i === 0 || messages[i - 1].day !== m.day
         return (
           <React.Fragment key={m.id}>
+            {/* Order: the message's day divider, then the unread divider, then the message. */}
             {dayDivider && <ChatDayDivider>{m.day}</ChatDayDivider>}
             {i === unreadFrom && (
               <ChatUnreadDivider ref={unreadRef} className="-mx-4 scroll-mt-40">
@@ -172,7 +182,8 @@ export function ChatThread({ thread }: { thread: Thread }) {
   const unreadDivider = React.useRef<HTMLDivElement>(null)
   // True for a moment after opening: photos that load then re-scroll to the open position.
   const opening = React.useRef(false)
-  const urgent = thread.status === "urgent"
+  const unavailable = thread.candidate.availability
+  const urgent = thread.status === "urgent" && !unavailable
 
   // Whether the thread was unread when opened: captured before markRead clears
   // it, and again when the pane switches to another thread.
@@ -258,7 +269,9 @@ export function ChatThread({ thread }: { thread: Thread }) {
             <DropdownMenuContent align="end">
               {/* PRD: the recruiter's "Not interested" closes the thread as
                   "Not a fit" and stops the AI. Not wired in this spike. */}
-              <DropdownMenuItem className="whitespace-nowrap">Not interested</DropdownMenuItem>
+              <DropdownMenuItem className="whitespace-nowrap" disabled={!!unavailable}>
+                Not interested
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -278,9 +291,10 @@ export function ChatThread({ thread }: { thread: Thread }) {
                 </IconLabel>
               </span>
             </span>
-            <Badge variant="secondary" className="shrink-0">
-              {TIER_LABEL[thread.job.tier]}
-            </Badge>
+            <span className="flex shrink-0 items-center gap-1.5">
+              {thread.job.expired && <Badge variant="secondary">Expired</Badge>}
+              <Badge variant="secondary">{TIER_LABEL[thread.job.tier]}</Badge>
+            </span>
           </Link>
         </div>
       </header>
@@ -289,6 +303,11 @@ export function ChatThread({ thread }: { thread: Thread }) {
 
       <ChatMessageList className="flex-1 px-4 py-4 md:py-3">
         <ChatNotice icon={<ShieldCheck aria-hidden />}>{MONEY_WARNING}</ChatNotice>
+        {thread.job.expired && (
+          <ChatNotice tone="warning" icon={<AlertTriangle aria-hidden />}>
+            {EXPIRED_NOTICE}
+          </ChatNotice>
+        )}
         <Messages
           messages={thread.messages}
           unreadCount={unreadCount}
@@ -300,25 +319,34 @@ export function ChatThread({ thread }: { thread: Thread }) {
         <div ref={end} />
       </ChatMessageList>
 
-      <ChatComposer
-        variant="floating"
-        value={draft}
-        onValueChange={setDraft}
-        onSend={send}
-        top={
-          urgent && thread.summary ? (
-            <SuggestionChips
-              layout="scroll"
-              label="AI summary and suggested replies"
-              items={[
-                { label: "AI summary", icon: <Sparkles aria-hidden />, value: SUMMARY },
-                ...(thread.suggestedReplies ?? []),
-              ]}
-              onSelect={(item) => (item === SUMMARY ? setSummaryOpen(true) : setDraft(item))}
-            />
-          ) : undefined
-        }
-      />
+      {unavailable ? (
+        // No composer and no AI chips: the history stays readable, nothing can be sent.
+        <div className="sticky bottom-0 z-sticky flex justify-center px-3 pt-2 pb-safe-3">
+          <ChatNotice icon={<Ban aria-hidden />} className="max-w-none">
+            {UNAVAILABLE_COPY[unavailable].notice}
+          </ChatNotice>
+        </div>
+      ) : (
+        <ChatComposer
+          variant="floating"
+          value={draft}
+          onValueChange={setDraft}
+          onSend={send}
+          top={
+            urgent && thread.summary ? (
+              <SuggestionChips
+                layout="scroll"
+                label="AI summary and suggested replies"
+                items={[
+                  { label: "AI summary", icon: <Sparkles aria-hidden />, value: SUMMARY },
+                  ...(thread.suggestedReplies ?? []),
+                ]}
+                onSelect={(item) => (item === SUMMARY ? setSummaryOpen(true) : setDraft(item))}
+              />
+            ) : undefined
+          }
+        />
+      )}
 
       {thread.summary && (
         <PlanPopup open={summaryOpen} onOpenChange={setSummaryOpen}>
