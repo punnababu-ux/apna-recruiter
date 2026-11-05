@@ -75,11 +75,19 @@ export interface ApnaJob {
   activeLeads: number
   activeLeadsNew?: number
   dbMatches: number
+  /** Job details page facts (meta line and the ⋮ panel). */
+  salary?: string
+  education?: string
+  experience?: string
+  /** Job type the credit bought; none on a draft. */
+  plan?: "Classic" | "Premium" | "Super premium"
+  /** The day it stops (or stopped) taking applications. */
+  endsOn?: string
   /** Server-decided nudge for an active job that's short of applications. */
   nudge?: "active-leads" | "improve-reach"
 }
 
-const STATUS: Record<ApnaJobStatus, { label: string; variant: "warning" | "success" | "secondary" | "destructive" }> = {
+export const STATUS: Record<ApnaJobStatus, { label: string; variant: "warning" | "success" | "secondary" | "destructive" }> = {
   under_review: { label: "Under review", variant: "warning" },
   active: { label: "Active", variant: "success" },
   draft: { label: "Draft", variant: "secondary" },

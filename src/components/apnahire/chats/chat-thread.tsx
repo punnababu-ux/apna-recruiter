@@ -65,6 +65,7 @@
  * uploaded: they stay in the browser as object URLs and in the session store.
  */
 
+import { MatchBars } from "@/components/apnahire/match-bars"
 import * as React from "react"
 import Link from "next/link"
 import { toast } from "sonner"
@@ -73,7 +74,6 @@ import {
   AvatarFallback,
   AvatarImage,
   BackButton,
-  AlertCircle,
   AlertTriangle,
   Badge,
   Ban,
@@ -93,7 +93,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   MapPin,
-  Minus,
   MoreVertical,
   Paperclip,
   UserRound,
@@ -103,7 +102,6 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-  TrendingUp,
 } from "@apna/design-system"
 import { CandidateProfileSheet } from "@/components/apnahire/chats/candidate-profile-panel"
 import { BAND, SUBROW } from "@/components/apnahire/chats/chat-bands"
@@ -128,11 +126,8 @@ import {
   UNAVAILABLE_COPY,
   type ChatMessage,
   type ChatThread as Thread,
-  type MatchLevel,
 } from "@/content/chats"
 
-/** Match level → icon for the header's match chip. The sr-only level text carries the meaning, not the icon. */
-const MATCH_ICON = { high: TrendingUp, medium: Minus, low: AlertCircle } as const satisfies Record<MatchLevel, unknown>
 
 /** What the file picker offers (the same set is checked for a paste or a drop). */
 const ACCEPT = "image/*,.pdf,.doc,.docx,.xls,.xlsx,.csv,.txt"
@@ -196,13 +191,12 @@ function SenderAvatar({ from, candidate }: { from: ChatMessage["from"]; candidat
 /** The match, tied to the job: "64% match · Telecaller" with a level icon. The level is spoken (sr-only) and in the tooltip. */
 function MatchChip({ thread }: { thread: Thread }) {
   const { level, score } = thread.match
-  const Icon = MATCH_ICON[level]
   return (
     <Tooltip>
       <TooltipTrigger
         render={<span className="flex shrink-0 items-center gap-1 whitespace-nowrap xl:pointer-events-auto" />}
       >
-        <Icon aria-hidden className="size-3.5 shrink-0" />
+        <MatchBars level={level} />
         <span>{score}% match</span>
         <span aria-hidden className="max-sm:hidden">
           ·

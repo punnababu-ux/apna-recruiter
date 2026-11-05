@@ -32,6 +32,11 @@
  *
  * Scripted mock data: unlocking flips a flag in useChats; nothing leaves the
  * prototype.
+ *
+ * Also the job's leads profile (ECC, /apnahire/jobs/[id]): one profile for a
+ * candidate in chats and in a job's list. That page passes `actions` (View
+ * number · WhatsApp · Reject · Shortlist, in place of Call) and its own note
+ * and unlock handlers, since its candidates aren't chat threads.
  */
 
 import * as React from "react"
@@ -82,8 +87,21 @@ function PointList({ icon: Icon, items, iconClass }: { icon: typeof CircleCheck;
   )
 }
 
-export function CandidateProfilePanel({ thread }: { thread: ChatThread }) {
-  const { addNote, unlockResume } = useChats()
+export function CandidateProfilePanel({
+  thread,
+  actions,
+  onAddNote,
+  onUnlockResume,
+}: {
+  thread: ChatThread
+  /** Replaces Call: the host's own actions for this candidate. */
+  actions?: React.ReactNode
+  onAddNote?: (text: string) => void
+  onUnlockResume?: () => void
+}) {
+  const chats = useChats()
+  const addNote = (id: string, text: string) => (onAddNote ? onAddNote(text) : chats.addNote(id, text))
+  const unlockResume = (id: string) => (onUnlockResume ? onUnlockResume() : chats.unlockResume(id))
   const { candidate, profile, match, notes, resumeUnlocked } = thread
   // Deleted or blocked: no call and no unlock; the reason shows under the buttons.
   const unavailable = candidate.availability ? UNAVAILABLE_COPY[candidate.availability] : undefined
@@ -138,7 +156,9 @@ export function CandidateProfilePanel({ thread }: { thread: ChatThread }) {
       {/* What to do: Call and Add note right under the person, then the
           reason they're off (deleted or blocked) and the note being written. */}
       <div className="flex flex-col gap-3 border-b border-border px-4 py-3">
+        {actions}
         <div className="flex gap-2">
+          {!actions && (
           <Button
             variant="outline"
             size="sm"
@@ -150,6 +170,7 @@ export function CandidateProfilePanel({ thread }: { thread: ChatThread }) {
           <Phone aria-hidden />
           Call
         </Button>
+          )}
         <Button variant="outline" size="sm" className="flex-1" aria-expanded={noting} onClick={() => setNoting((v) => !v)}>
           <StickyNote aria-hidden />
           Add note
@@ -307,19 +328,22 @@ export function CandidateProfileSheet({
   thread,
   open,
   onOpenChange,
+  title = "Candidate 360",
+  ...panel
 }: {
   thread: ChatThread
   open: boolean
   onOpenChange: (open: boolean) => void
-}) {
+  title?: string
+} & Omit<React.ComponentProps<typeof CandidateProfilePanel>, "thread">) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetPanel>
         <div className="bg-card py-4">
-          <SheetPanelHeader title="Candidate 360" />
+          <SheetPanelHeader title={title} />
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto bg-card">
-          <CandidateProfilePanel thread={thread} />
+          <CandidateProfilePanel thread={thread} {...panel} />
         </div>
       </SheetPanel>
     </Sheet>

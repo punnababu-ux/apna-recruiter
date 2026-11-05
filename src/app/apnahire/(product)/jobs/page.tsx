@@ -30,7 +30,7 @@ import {
 } from "@apna/design-system"
 import { ValueArt } from "@/components/marketing/value-art"
 import { MobileChipRow } from "@/components/apnahire/mobile-chip-row"
-import { JobList, STATUS_LABELS, type ApnaJob, type ApnaJobStatus } from "@/components/apnahire/jobs/job-list"
+import { JobList, STATUS_LABELS, type ApnaJobStatus } from "@/components/apnahire/jobs/job-list"
 import { PageHeader } from "@/components/onlyrounds/page-header"
 import { PlanEndedBanner } from "@/components/apnahire/plan-ended"
 import { PriceChangeBanner } from "@/components/apnahire/price-change-banner"
@@ -38,95 +38,9 @@ import { JobSlotsControls, PrototypeSettings } from "@/components/apnahire/proto
 import { OfferBarPreviewControls, SubscriberPlanCard, useOfferBarPreview } from "@/components/apnahire/subscriber-plan-card"
 import { useJobSlots } from "@/hooks/use-job-slots"
 import { recentlyEnded, usePreviousPlan } from "@/hooks/use-previous-plan"
-import { COMPANY_NAME } from "@/lib/apnahire/job-draft"
+import { MOCK_JOBS as MOCK } from "@/content/apnahire-jobs"
 import { useFlushHeader } from "@/hooks/use-flush-header"
 import { cn } from "@/lib/utils"
-
-/** Sample jobs — one per state and per banner, so every case shows. */
-const MOCK: ApnaJob[] = [
-  {
-    id: "field-sales-pune-review",
-    title: "Field Sales Executive",
-    status: "under_review",
-    company: COMPANY_NAME,
-    area: "Salunkhe Vihar",
-    city: "Pune",
-    postedAt: "14 Oct 2026",
-    postedBy: "Alok Singh",
-    applied: 0,
-    activeLeads: 0,
-    dbMatches: 82312,
-  },
-  {
-    id: "telecaller-koramangala",
-    title: "Telecaller",
-    status: "active",
-    company: COMPANY_NAME,
-    area: "Koramangala",
-    city: "Bengaluru",
-    postedAt: "12 Oct 2026",
-    postedBy: "Alok Singh",
-    applied: 0,
-    activeLeads: 5,
-    activeLeadsNew: 4,
-    dbMatches: 4325,
-  },
-  {
-    id: "delivery-andheri",
-    title: "Delivery Executive",
-    status: "active",
-    company: COMPANY_NAME,
-    area: "Andheri East",
-    city: "Mumbai",
-    postedAt: "8 Oct 2026",
-    postedBy: "Priya Shah",
-    applied: 6,
-    activeLeads: 15,
-    dbMatches: 72312,
-    nudge: "active-leads",
-  },
-  {
-    id: "back-office-pune",
-    title: "Back Office Executive",
-    status: "active",
-    company: COMPANY_NAME,
-    area: "Hinjewadi",
-    city: "Pune",
-    postedAt: "2 Oct 2026",
-    postedBy: "Alok Singh",
-    applied: 12,
-    appliedPending: 5,
-    activeLeads: 8,
-    dbMatches: 82312,
-    nudge: "improve-reach",
-  },
-  {
-    id: "customer-support-draft",
-    title: "Customer Support Executive",
-    status: "draft",
-    company: COMPANY_NAME,
-    area: "HSR Layout",
-    city: "Bengaluru",
-    postedAt: "1 Oct 2026",
-    postedBy: "Alok Singh",
-    applied: 0,
-    activeLeads: 0,
-    dbMatches: 0,
-  },
-  {
-    id: "field-sales-expired",
-    title: "Field Sales Executive",
-    status: "expired",
-    company: COMPANY_NAME,
-    area: "Salunkhe Vihar",
-    city: "Pune",
-    postedAt: "30 Aug 2026",
-    postedBy: "Alok Singh",
-    applied: 12,
-    activeLeads: 8,
-    dbMatches: 82312,
-  },
-]
 
 type JobTab = ApnaJobStatus | "all"
 const TAB_ORDER: JobTab[] = ["all", "active", "under_review", "draft", "expired"]

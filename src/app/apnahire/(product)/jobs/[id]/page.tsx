@@ -12,31 +12,40 @@
  *   CandidateDrawer (right-side panel; URL-driven via ?leadId=)
  */
 
-import { Building2, Clock, Copy, Download, Globe, LayoutList, Languages, ListChecks, MapPin, MoreVertical, PhoneCall, PowerOff, Share2, Table2, Upload, User, UserPlus } from "@apna/design-system"
+import {
+  Card,
+  Check,
+  ConversationList,
+  ConversationRow,
+  LayoutList,
+  Menu,
+  MoreVertical,
+  Pencil,
+  Table2,
+  ToggleGroup,
+  ToggleGroupItem,
+} from "@apna/design-system"
+import * as React from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Suspense, use, useMemo, useState } from "react"
 import confetti from "canvas-confetti"
 import { AddCandidateDialog, type NewCandidateData } from "@/components/onlyrounds/add-candidate-dialog"
 
-import {
-  CandidateCard,
-  type Candidate,
-} from "@/components/onlyrounds/candidate-card"
-import {
-  CandidateDrawer,
-  type DrawerCandidate,
-} from "@/components/onlyrounds/candidate-drawer"
+import type { Candidate } from "@/components/onlyrounds/candidate-card"
 
 import { SearchFilterBar } from "@apna/design-system"
 import { PageHeader } from "@/components/onlyrounds/page-header"
-import { CandidateTable } from "@/components/onlyrounds/candidate-table"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import { MobileChipRow } from "@/components/apnahire/mobile-chip-row"
+import { ApplicantTable } from "@/components/apnahire/jobs/applicant-table"
+import { ApplicantActions, ApplicantCard, type ApplicantProfile } from "@/components/apnahire/jobs/applicant-card"
+import { CandidateProfilePanel, CandidateProfileSheet } from "@/components/apnahire/chats/candidate-profile-panel"
+import { MatchBars, matchLevel } from "@/components/apnahire/match-bars"
+import type { ApnaJob } from "@/components/apnahire/jobs/job-list"
+import { MATCH_LABEL, type ChatNote, type ChatThread } from "@/content/chats"
+import { toast } from "sonner"
+import { STATUS } from "@/components/apnahire/jobs/job-list"
+import { JobInfoPanel, JobStatusBanner } from "@/components/apnahire/jobs/job-info-panel"
+import { jobById } from "@/content/apnahire-jobs"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -47,47 +56,197 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { IconLabel } from "@/components/onlyrounds/shared"
 import { Badge } from "@/components/ui/badge"
 import { BackButton } from "@/components/ui/back-button"
-import { useIsMobile } from "@/hooks/use-mobile"
 import { useAppBack } from "@/lib/apnahire/nav"
 import { Button } from "@/components/ui/button"
-import { ButtonGroup } from "@/components/ui/button-group"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { cn } from "@/lib/utils"
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyTitle,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@apna/design-system"
 
 // ── Mock data ─────────────────────────────────────────────────────────────
 
+/** Applied tab filters, as on live (docs/live-employer-kb §3 "Applied tab"). */
 const FILTERS = [
   {
-    id: "ai-status",
-    label: "AI Evaluation Status",
+    id: "show",
+    label: "Show candidates who",
     options: [
-      { id: "fit", label: "Fit", count: 1 },
-      { id: "in-progress", label: "Evaluation In-progress", count: 0 },
-      { id: "not-interested", label: "Not Interested", count: 0 },
-      { id: "no-response", label: "No Response", count: 1 },
-      { id: "rejected", label: "Rejected / Not fit", count: 0 },
-      { id: "pending", label: "Interview pending", count: 1 },
-      { id: "incomplete", label: "Incomplete call", count: 1 },
+      { id: "matched", label: "Match the job requirements" },
+      { id: "resume", label: "Have a resume" },
+      { id: "contacted", label: "Tried to contact you" },
+      { id: "featured", label: "Are featured" },
     ],
   },
   {
-    id: "cefr",
-    label: "CEFR Score",
+    id: "applied-in",
+    label: "Applied in",
     options: [
-      { id: "a1", label: "A1 - Beginner", count: 0 },
-      { id: "a2", label: "A2 - Elementary", count: 0 },
-      { id: "b1", label: "B1 - Intermediate", count: 0 },
-      { id: "b2", label: "B2 - Upper Intermediate", count: 0 },
-      { id: "c1", label: "C1 - Advanced", count: 1 },
-      { id: "c2", label: "C2 - Proficient", count: 0 },
-      { id: "na", label: "Not available", count: 3 },
+      { id: "3", label: "Last 3 days" },
+      { id: "7", label: "Last 7 days" },
+      { id: "15", label: "Last 15 days" },
+      { id: "30", label: "Last 30 days" },
     ],
   },
-  // Note: "source" filter is computed dynamically from candidates state
+  {
+    id: "english",
+    label: "English level",
+    options: [
+      { id: "basic", label: "Basic" },
+      { id: "good", label: "Good" },
+      { id: "fluent", label: "Fluent" },
+    ],
+  },
+] as const
+
+/** apna hire facts per applicant (mock): what the filters and groups read. */
+type ApplyMeta = ApplicantProfile & {
+  /** 0 to 100: how well they fit (level from matchLevel). */
+  score: number
+  resume?: boolean
+  contacted?: boolean
+  featured?: boolean
+  viewed?: boolean
+  appliedDays: number
+  english: "basic" | "good" | "fluent"
+}
+const P = (gender: string, age: number, experience: string, salary: string, location: string) => ({ gender, age, experience, salary, location })
+const APPLY_META: Record<string, ApplyMeta> = {
+  aditi: {
+    ...P("Female", 26, "3 years", "₹22,000 /month", "Hinjewadi, Pune"),
+    matching: ["Education", "English", "Location", "Languages"],
+    current: "Back office executive · Infosys BPM · Jan 2023 – now",
+    education: "B.Com · Savitribai Phule Pune University · 2022",
+    skills: ["MS Excel", "Data entry", "Email drafting"],
+    languages: "English (fluent) | Hindi | Marathi",
+    activeAgo: "today",
+    score: 92, resume: true, featured: true, appliedDays: 2, english: "fluent",
+  },
+  sadanand: {
+    ...P("Male", 23, "Fresher", "₹15,000 /month", "Wakad, Pune"),
+    matching: ["Location"],
+    education: "12th pass · Maharashtra State Board · 2021",
+    skills: ["Typing"],
+    languages: "English (basic) | Marathi",
+    activeAgo: "3 days ago",
+    score: 38, appliedDays: 5, english: "basic",
+  },
+  demo1: {
+    ...P("Male", 25, "2 years", "₹19,000 /month", "Baner, Pune"),
+    matching: ["Education", "English", "Location", "Languages"],
+    current: "Data entry operator · Tech Mahindra · 2023 – now",
+    education: "BBA · MIT World Peace University · 2022",
+    skills: ["MS Excel", "Tally", "Data entry"],
+    languages: "English (good) | Hindi",
+    activeAgo: "2 hours ago",
+    score: 86, resume: true, contacted: true, appliedDays: 1, english: "good",
+  },
+  chaitra: {
+    ...P("Female", 24, "1 year", "₹17,000 /month", "Aundh, Pune"),
+    matching: ["Education", "English"],
+    current: "Office assistant · Kotak Mahindra Bank · 2024 – now",
+    education: "B.A. · Fergusson College · 2023",
+    skills: ["Filing", "MS Word"],
+    languages: "English (good) | Kannada | Hindi",
+    activeAgo: "yesterday",
+    score: 64, resume: true, viewed: true, appliedDays: 9, english: "good",
+  },
+  "rohit-notfit": {
+    ...P("Male", 31, "6 years", "₹32,000 /month", "Mumbai"),
+    matching: [],
+    current: "Sales manager · Reliance Retail · 2019 – now",
+    education: "12th pass · CBSE · 2011",
+    skills: ["Field sales"],
+    languages: "English (basic) | Hindi",
+    activeAgo: "a week ago",
+    score: 22, appliedDays: 20, english: "basic",
+  },
+  "anjali-interview": {
+    ...P("Female", 27, "4 years", "₹21,000 /month", "Kothrud, Pune"),
+    matching: ["Education", "English", "Location", "Languages"],
+    current: "MIS executive · Bajaj Finserv · 2022 – now",
+    education: "B.Com · Symbiosis · 2020",
+    skills: ["MS Excel", "Reports", "SAP"],
+    languages: "English (fluent) | Hindi | Marathi",
+    activeAgo: "today",
+    score: 88, resume: true, appliedDays: 12, english: "fluent",
+  },
+  "karthik-review": {
+    ...P("Male", 29, "5 years", "₹24,000 /month", "Viman Nagar, Pune"),
+    matching: ["Education", "English"],
+    current: "Customer support · Teleperformance · 2021 – now",
+    education: "B.Sc · Pune University · 2018",
+    skills: ["CRM", "Email support"],
+    languages: "English (good) | Tamil | Hindi",
+    activeAgo: "4 days ago",
+    score: 58, resume: true, appliedDays: 26, english: "good",
+  },
+}
+const metaOf = (id: string): ApplyMeta =>
+  APPLY_META[id] ?? { ...P("—", 0, "—", "—", "—"), matching: [], languages: "—", activeAgo: "—", score: 0, appliedDays: 0, english: "basic" }
+
+/** The job's key requirements: matching ones are strengths, the rest gaps. */
+const REQUIREMENTS = ["Education", "English", "Location", "Languages"]
+/** As written mid-sentence (English stays capitalised). */
+const inSentence = (r: string) => (r === "English" ? r : r.toLowerCase())
+
+/** A lead in the shape of a chat thread, so the chats profile panel (Candidate 360) shows it. */
+function toThread(c: CandidateRow, m: ApplyMeta, job: ApnaJob | undefined, notes: ChatNote[], resumeUnlocked: boolean): ChatThread {
+  const level = matchLevel(m.score)
+  return {
+    id: c.id,
+    job: { id: job?.id ?? "job", title: job?.title ?? "", tier: "premium", area: job?.area ?? "", city: job?.city ?? "", aiAddOn: false },
+    candidate: { name: c.name, initial: c.name.charAt(0).toUpperCase(), meta: `${m.gender}, ${m.age} · ${MATCH_LABEL[level]}` },
+    status: "active",
+    unread: false,
+    messages: [],
+    profile: {
+      location: m.location,
+      experience: m.experience,
+      education: m.education ?? "—",
+      languages: m.languages.split(" | "),
+      skills: m.skills ?? [],
+      expectedSalary: m.salary,
+      availability: "Can join in 15 days",
+      phoneMasked: "Hidden until you view the number",
+    },
+    match: {
+      level,
+      score: m.score,
+      strengths: m.matching.map((r) => `Meets your ${inSentence(r)} requirement`),
+      gaps: REQUIREMENTS.filter((r) => !m.matching.includes(r)).map((r) => `Does not meet your ${inSentence(r)} requirement`),
+    },
+    resumeUnlocked,
+    notes,
+  }
+}
+
+type Pipeline = "all" | "pending" | "viewed" | "shortlisted" | "rejected"
+const PIPELINE: { value: Pipeline; label: string }[] = [
+  { value: "all", label: "All candidates" },
+  { value: "pending", label: "Action pending" },
+  { value: "viewed", label: "Viewed number" },
+  { value: "shortlisted", label: "Shortlisted" },
+  { value: "rejected", label: "Rejected" },
 ]
+function pipelineOf(c: CandidateRow, viewed: Set<string>): Exclude<Pipeline, "all"> {
+  if (c.state.kind === "completed" && c.state.verdict === "not-fit") return "rejected"
+  if (c.stage !== "screening") return "shortlisted"
+  if (metaOf(c.id).viewed || viewed.has(c.id)) return "viewed"
+  return "pending"
+}
+
+const SORTS = ["Relevance", "Recently applied"] as const
 
 type Stage = "screening" | "interview" | "selected"
 
@@ -260,781 +419,6 @@ const CANDIDATES: CandidateRow[] = [
   },
 ]
 
-/**
- * Map a candidate's state to the AI Evaluation Status filter option id.
- * Keep this in sync with the option ids in FILTERS["ai-status"].
- */
-type RoundMeta = {
-  name: string
-  mode: "ai" | "human"
-  meta: { icon: typeof Clock; label: string }[]
-}
-
-const ROUNDS: Record<Stage, RoundMeta> = {
-  screening: {
-    name: "Screening",
-    mode: "ai",
-    meta: [
-      { icon: Clock, label: "30 mins" },
-      { icon: User, label: "Isha (Senior AI recruiter)" },
-      { icon: Globe, label: "Web" },
-      { icon: Languages, label: "English" },
-      { icon: ListChecks, label: "30 criteria" },
-    ],
-  },
-  interview: {
-    name: "Tech interview",
-    mode: "human",
-    meta: [
-      { icon: Clock, label: "45 mins" },
-      { icon: User, label: "Hiring manager" },
-      { icon: Globe, label: "Video" },
-      { icon: ListChecks, label: "12 criteria" },
-    ],
-  },
-  selected: {
-    name: "Selected",
-    mode: "human",
-    meta: [{ icon: User, label: "Ready for offer" }],
-  },
-}
-
-function aiStatusKey(c: Candidate): string {
-  if (c.state.kind === "completed") {
-    return c.state.verdict === "fit" ? "fit" : "rejected"
-  }
-  if (c.state.kind === "pending") return "pending"
-  if (c.state.kind === "incomplete") return "incomplete"
-  if (c.state.kind === "no-response") return "no-response"
-  if (c.state.kind === "not-interested") return "not-interested"
-  return "in-progress"
-}
-
-const DRAWER_DATA: Record<string, DrawerCandidate> = {
-  aditi: {
-    id: "aditi",
-    name: "Aditi Sharma",
-    role: "Se Engineer",
-    company: "Apna",
-    email: "aditi@apna.co",
-    phone: "+917003393362",
-    score: 100,
-    verdict: "fit",
-    source: "applied",
-    cefrLevel: "C1",
-    insights: [
-      { tone: "miss", label: "Employment history not discussed" },
-      { tone: "ok", label: "Three years experience", atSecond: 32 },
-      { tone: "ok", label: "Agreed to salary budget", atSecond: 78 },
-      { tone: "ok", label: "Agreed to location and shifts", atSecond: 102 },
-      { tone: "ok", label: "15-day notice period", atSecond: 124 },
-      { tone: "ok", label: "Expert in test case design", atSecond: 156 },
-      { tone: "ok", label: "Articulate and clear communicator", atSecond: 178 },
-      { tone: "ok", label: "Exceeds minimum English level", atSecond: 203 },
-      { tone: "ok", label: "Can join in 15 days", atSecond: 220 },
-      { tone: "ok", label: "Experienced in API testing", atSecond: 245 },
-      { tone: "ok", label: "Exceeds preferred English level", atSecond: 268 },
-      { tone: "miss", label: "Industry domain not discussed" },
-    ],
-    callDuration: 347,
-    mediaType: "audio",
-    recommendations: [
-      "Candidate is a strong technical and cultural fit; recommend proceeding to the technical interview round.",
-      "Probe further on her experience with specific defect tracking tools like Jira, as she described the process well but didn't name a tool.",
-      "Her detailed answers on API testing with Postman and CI/CD integration are a significant plus.",
-    ],
-    criteriaGroups: [
-      {
-        id: "must",
-        label: "Must-have criteria",
-        items: [
-          {
-            id: "m1",
-            text: "Must have the minimum required years of total professional experience in manual testing.",
-            score: 10,
-            reasoning:
-              "The candidate confirmed she has about three years of professional experience in manual testing, exceeding the minimum.",
-            dealbreaker: true,
-            atSecond: 32,
-          },
-          {
-            id: "m2",
-            text: "Must be comfortable with the specified salary budget and compensation structure.",
-            score: 10,
-            reasoning:
-              "When asked about comfort with the specified salary budget and compensation structure, the candidate explicitly confirmed.",
-            dealbreaker: true,
-            atSecond: 78,
-          },
-          {
-            id: "m3",
-            text: "Must be willing to work from the designated office location and accept required shift timings.",
-            score: 10,
-            reasoning:
-              "The candidate confirmed she is comfortable traveling daily to the Hubli location and accepts the shift timings.",
-            dealbreaker: true,
-            atSecond: 102,
-          },
-          {
-            id: "m4",
-            text: "Must possess clear communication skills to interact with developers and stakeholders.",
-            score: 9,
-            reasoning:
-              "The candidate communicated complex technical concepts clearly and logically; minor accent influence did not impede understanding.",
-            dealbreaker: true,
-            atSecond: 178,
-          },
-        ],
-      },
-      {
-        id: "preferred",
-        label: "Preferred criteria",
-        items: [
-          {
-            id: "p1",
-            text: "Immediate joiner or serving a notice period of 30 days or less.",
-            score: 10,
-            reasoning:
-              "The candidate stated she can join within 15 days, which is well within the preferred range.",
-          },
-          {
-            id: "p2",
-            text: "Prior experience in the specific industry domain of the hiring company.",
-            score: 0,
-            reasoning:
-              "The specific industry domain of the hiring company was not mentioned during the conversation.",
-          },
-          {
-            id: "p3",
-            text: "Basic awareness of API or Database testing alongside manual testing.",
-            score: 10,
-            reasoning:
-              "The candidate demonstrated more than basic awareness, detailing experience with Postman and CI/CD integration.",
-          },
-        ],
-      },
-      {
-        id: "red-flag",
-        label: "Red-flag criteria",
-        description: "High score = flag NOT triggered (positive).",
-        items: [
-          {
-            id: "r1",
-            text: "Notice period is too long (e.g. 60–90 days) and non-negotiable.",
-            score: 10,
-            reasoning:
-              "The red flag was not triggered. The candidate's notice period is only 15 days.",
-            dealbreaker: true,
-          },
-          {
-            id: "r2",
-            text: "Salary expectations exceed the maximum budget for the role.",
-            score: 10,
-            reasoning:
-              "The red flag was not triggered. The candidate explicitly confirmed comfort with the salary budget.",
-            dealbreaker: true,
-          },
-          {
-            id: "r3",
-            text: "Unexplained employment gaps or frequent job hopping (e.g. multiple short stints).",
-            score: 0,
-            reasoning:
-              "This topic was not covered during the conversation, so there is no signal to assess.",
-            dealbreaker: true,
-          },
-        ],
-      },
-    ],
-    cefr: {
-      overall: 7.22,
-      level: "C1",
-      recommendedFor: "Fit for voice process",
-      dimensions: [
-        {
-          label: "Pronunciation",
-          score: 7,
-          description:
-            "Pronunciation is clear and easily understandable. While there is a regional accent, it does not impede comprehension.",
-        },
-        {
-          label: "Fluency",
-          score: 7,
-          description:
-            "The candidate speaks with good fluency and a consistent pace. There are some natural pauses but she maintains flow.",
-        },
-        {
-          label: "Grammar",
-          score: 6.5,
-          description:
-            "Grammar is generally good, and meaning is always clear. There are some minor, common errors.",
-        },
-        {
-          label: "Vocabulary",
-          score: 8,
-          description:
-            "Strong and contextually appropriate vocabulary, especially for the technical domain.",
-        },
-        {
-          label: "Coherence",
-          score: 8,
-          description:
-            "Responses are exceptionally coherent and well-structured. Presents information logically.",
-        },
-        {
-          label: "Mother Tongue Influence",
-          score: 5,
-          description:
-            "A noticeable mother tongue influence is present, but it is consistent and does not make speech difficult to follow.",
-        },
-      ],
-      areasOfImprovement: [
-        "Focus on fine-tuning grammar, particularly verb tenses and articles.",
-        "Continue practicing pronunciation to further enhance clarity and reduce accent influence.",
-        "Build confidence in conversational English to match her high technical proficiency.",
-      ],
-    },
-    profile: {
-      about:
-        "Manual + API testing engineer with 3 years at Apna. Strong on test-case design, defect tracking, and Postman/CI-CD workflows. Looking for a mid-level QA role in Bengaluru.",
-      location: "Hubli, KA",
-      experienceYears: 3,
-      currentRole: "Software Engineer at Apna",
-      experience: [
-        {
-          role: "Software Engineer (QA)",
-          company: "Apna",
-          period: "Mar 2024 – Present",
-          description:
-            "Owned the API test suite for the candidate-matching service; introduced contract tests via Postman; integrated with GitHub Actions for pre-merge runs.",
-        },
-        {
-          role: "Junior QA Engineer",
-          company: "Simplilearn",
-          period: "Jan 2022 – Feb 2024",
-          description:
-            "Manual + exploratory testing for the LMS portal. Authored 400+ test cases; ran weekly defect triage with eng leads.",
-        },
-      ],
-      education: [
-        {
-          degree: "B.E. Computer Science",
-          institution: "VTU, Karnataka",
-          period: "2018 – 2022",
-        },
-      ],
-      skills: [
-        "Manual testing",
-        "Postman",
-        "API testing",
-        "Test case design",
-        "Defect tracking",
-        "CI/CD",
-        "GitHub Actions",
-        "Jira",
-      ],
-      resumeUrl: "#",
-    },
-    violations: [
-      {
-        id: "v1",
-        severity: "info",
-        title: "Brief background noise",
-        detail:
-          "Light traffic noise detected around 02:14. Did not affect comprehension.",
-        timestamp: "02:14",
-      },
-      {
-        id: "v2",
-        severity: "warning",
-        title: "Microphone muted mid-response",
-        detail:
-          "Candidate's mic was muted for 8 seconds at 03:42. Resumed without prompting.",
-        timestamp: "03:42",
-      },
-    ],
-    communication: [
-      {
-        id: "c1",
-        channel: "call",
-        direction: "out",
-        title: "Outbound call attempted",
-        detail: "Auto-dialler · no answer · voicemail not enabled.",
-        timestamp: "Mon, 3 Jun · 10:02",
-      },
-      {
-        id: "c2",
-        channel: "sms",
-        direction: "out",
-        title: "SMS reminder sent",
-        detail:
-          "Hi Aditi! We tried calling — please share a slot to retake the screening.",
-        timestamp: "Mon, 3 Jun · 10:15",
-      },
-      {
-        id: "c3",
-        channel: "whatsapp",
-        direction: "in",
-        title: "Replied on WhatsApp",
-        detail: "\"Sorry, was in a meeting. Free after 4pm today.\"",
-        timestamp: "Mon, 3 Jun · 14:08",
-      },
-      {
-        id: "c4",
-        channel: "call",
-        direction: "out",
-        title: "AI call completed",
-        detail: "Screening conducted by Isha. Verdict: Fit (100/100).",
-        timestamp: "Mon, 3 Jun · 16:23",
-        duration: "5:47",
-      },
-      {
-        id: "c5",
-        channel: "email",
-        direction: "out",
-        title: "Result summary emailed",
-        detail: "Recruiter recap + scored criteria sent to recruiter@apna.co.",
-        timestamp: "Mon, 3 Jun · 16:24",
-      },
-    ],
-  },
-  sadanand: {
-    id: "sadanand",
-    name: "Sadanand",
-    role: "Se Engineer",
-    company: "Apna",
-    email: "buruds@gmail.com",
-    phone: "+919164862614",
-    score: 0,
-    verdict: "fit",
-    source: "sourced",
-    sourceDetail: "manually added",
-    cefrLevel: "na",
-    insights: [],
-    callDuration: 0,
-    mediaType: "audio",
-    recommendations: [
-      "No calls successfully completed yet.",
-      "The candidate missed two call attempts. Rescheduled for a third attempt.",
-    ],
-    criteriaGroups: [],
-    profile: {
-      about: "Sourced candidate. Resume details and work history will populate once automated screening is completed.",
-      location: "Bengaluru, KA",
-      resumeUrl: undefined,
-    },
-    communication: [
-      {
-        id: "s1",
-        channel: "call",
-        direction: "out",
-        title: "Outbound call attempted",
-        detail: "Auto-dialler · busy tone.",
-        timestamp: "May 14, 2026 · 11:30",
-      },
-      {
-        id: "s2",
-        channel: "call",
-        direction: "out",
-        title: "Outbound call attempted",
-        detail: "Auto-dialler · ringing, no answer.",
-        timestamp: "Jun 8, 2026 · 14:22",
-      },
-    ],
-  },
-  demo1: {
-    id: "demo1",
-    name: "Karan",
-    role: "Se Engineer",
-    company: "Apna",
-    email: "karan.jain@apna.co",
-    phone: "+918601250243",
-    score: 0,
-    verdict: "fit",
-    source: "sourced",
-    sourceDetail: "candidates_export.csv",
-    cefrLevel: "na",
-    insights: [],
-    callDuration: 18,
-    mediaType: "audio",
-    recommendations: [],
-    criteriaGroups: [
-      {
-        id: "must-partial",
-        label: "Must-have criteria (partial)",
-        items: [
-          {
-            id: "exp-partial",
-            text: "Minimum 2 years of relevant engineering experience",
-            score: 6,
-            reasoning:
-              "Candidate briefly mentioned working at Apna for over a year before the call dropped. Could not confirm full duration or role depth.",
-            dealbreaker: true,
-            atSecond: 5,
-          },
-          {
-            id: "notice-partial",
-            text: "Notice period of 30 days or less",
-            score: 0,
-            reasoning:
-              "Call ended before this was discussed. Could not assess.",
-            dealbreaker: true,
-          },
-        ],
-      },
-    ],
-    cefr: {
-      overall: 5.2,
-      level: "B1",
-      recommendedFor: "Inconclusive — call ended too early for full assessment",
-      dimensions: [
-        {
-          label: "Pronunciation",
-          score: 5.5,
-          description:
-            "Speech was clear in the brief window captured. Accent mild.",
-        },
-        {
-          label: "Fluency",
-          score: 5,
-          description:
-            "Limited sample — only a short greeting and partial answer were recorded.",
-        },
-        {
-          label: "Grammar",
-          score: 5,
-          description:
-            "No grammatical errors in the fragment captured, but sample is too small to conclude.",
-        },
-      ],
-      areasOfImprovement: [
-        "Insufficient data — complete the full interview for a reliable assessment.",
-      ],
-    },
-    profile: {
-      about: "Sourced candidate. Work history and technical details are pending successful completion of the screening call.",
-      location: "Mumbai, MH",
-      resumeUrl: undefined,
-    },
-    communication: [
-      {
-        id: "d1",
-        channel: "call",
-        direction: "out",
-        title: "AI Call Started (First Attempt)",
-        detail: "Call connected. Audio started.",
-        timestamp: "Apr 08, 2026 · 19:21",
-      },
-      {
-        id: "d2",
-        channel: "call",
-        direction: "out",
-        title: "AI Call Ended Early (First Attempt)",
-        detail: "Dropped off after 15 seconds. Reason: Connection reset.",
-        timestamp: "Apr 08, 2026 · 19:21",
-        duration: "0:15",
-      },
-      {
-        id: "d3",
-        channel: "call",
-        direction: "out",
-        title: "AI Call Started (Second Attempt)",
-        detail: "Call connected. Audio started.",
-        timestamp: "Apr 09, 2026 · 08:02",
-      },
-      {
-        id: "d4",
-        channel: "call",
-        direction: "out",
-        title: "AI Call Ended Early (Second Attempt)",
-        detail: "Dropped off after 3 seconds. Reason: Candidate hung up.",
-        timestamp: "Apr 09, 2026 · 12:32",
-        duration: "0:03",
-      },
-    ],
-  },
-  chaitra: {
-    id: "chaitra",
-    name: "chaitra",
-    role: "QA Engineer",
-    company: "Independent",
-    email: "chaitra.b.ext@apna.co",
-    phone: "+918971981508",
-    score: 0,
-    verdict: "fit",
-    source: "applied",
-    cefrLevel: "na",
-    insights: [],
-    callDuration: 0,
-    mediaType: "audio",
-    recommendations: [
-      "All 5 call attempts exhausted. Candidate failed to connect or answer any screening requests.",
-      "Status is locked as No Response. Reach out manually if you wish to extend more attempts.",
-    ],
-    criteriaGroups: [],
-    profile: {
-      about: "Applied via job board. Profile details pending completion of screening round.",
-      location: "Bengaluru, KA",
-      resumeUrl: undefined,
-    },
-    communication: [
-      {
-        id: "ch1",
-        channel: "call",
-        direction: "out",
-        title: "First Attempt: No Answer",
-        timestamp: "Apr 08, 2026 · 09:01",
-      },
-      {
-        id: "ch2",
-        channel: "call",
-        direction: "out",
-        title: "Second Attempt: No Answer",
-        timestamp: "Apr 08, 2026 · 15:15",
-      },
-      {
-        id: "ch3",
-        channel: "call",
-        direction: "out",
-        title: "Third Attempt: No Answer",
-        timestamp: "Apr 09, 2026 · 10:31",
-      },
-      {
-        id: "ch4",
-        channel: "call",
-        direction: "out",
-        title: "Fourth Attempt: No Answer",
-        timestamp: "Apr 09, 2026 · 17:46",
-      },
-      {
-        id: "ch5",
-        channel: "call",
-        direction: "out",
-        title: "Fifth Attempt: No Answer",
-        timestamp: "Apr 10, 2026 · 11:01",
-      },
-    ],
-  },
-  "rohit-notfit": {
-    id: "rohit-notfit",
-    name: "Rohit Verma",
-    role: "QA Trainee",
-    company: "Independent",
-    email: "rohit.verma@test.co",
-    phone: "+919812345678",
-    score: 32,
-    verdict: "not-fit",
-    source: "applied",
-    cefrLevel: "B1",
-    insights: [
-      { tone: "miss", label: "Below required experience", atSecond: 45 },
-      { tone: "miss", label: "Salary expectation too high", atSecond: 95 },
-      { tone: "ok", label: "Open to office work", atSecond: 135 },
-    ],
-    callDuration: 210,
-    mediaType: "audio",
-    recommendations: [
-      "Candidate does not meet the minimum experience requirements (has <1 year, requirement is 3+ years).",
-      "Salary expectations (exceeds budget by 40%) act as a direct dealbreaker.",
-      "Recommend rejecting this candidate.",
-    ],
-    criteriaGroups: [
-      {
-        id: "must",
-        label: "Must-have criteria",
-        items: [
-          {
-            id: "rm1",
-            text: "Must have the minimum required years of total professional experience in manual testing.",
-            score: 2,
-            reasoning: "Candidate only has 6 months of internship experience, failing the 3-year minimum bar.",
-            dealbreaker: true,
-            atSecond: 45,
-          },
-          {
-            id: "rm2",
-            text: "Must be comfortable with the specified salary budget and compensation structure.",
-            score: 3,
-            reasoning: "Candidate expects a package significantly above our budget ceiling.",
-            dealbreaker: true,
-            atSecond: 95,
-          },
-        ],
-      },
-    ],
-    cefr: {
-      overall: 4.8,
-      level: "B1",
-      recommendedFor: "Not recommended for voice process",
-      dimensions: [
-        { label: "Pronunciation", score: 5, description: "Accent is strong; some words require close listening." },
-        { label: "Fluency", score: 4.5, description: "Frequent pauses and hesitations while searching for words." },
-        { label: "Grammar", score: 5, description: "Grammatical errors are frequent but basic meaning is conveyed." },
-      ],
-      areasOfImprovement: [
-        "Work on structural vocabulary and sentence flow.",
-        "Practice speaking continuously without long pauses.",
-      ],
-    },
-    profile: {
-      about: "Recent QA Intern looking for entry level software testing positions.",
-      location: "Noida, UP",
-      experienceYears: 0.5,
-      currentRole: "QA Intern at Freelancer",
-      experience: [
-        {
-          role: "QA Intern",
-          company: "Independent Solutions",
-          period: "Nov 2025 – Present",
-          description: "Assisted in writing manual test cases and logging basic UI defects.",
-        },
-      ],
-    },
-  },
-  "anjali-interview": {
-    id: "anjali-interview",
-    name: "Anjali Mehra",
-    role: "Senior QA Engineer",
-    company: "Zomato",
-    email: "anjali@test.co",
-    phone: "+919800000111",
-    score: 86,
-    verdict: "fit",
-    source: "sourced",
-    sourceDetail: "manually added",
-    cefrLevel: "C2",
-    insights: [
-      { tone: "ok", label: "5+ years QA experience", atSecond: 30 },
-      { tone: "ok", label: "Strong on test automation", atSecond: 120 },
-      { tone: "ok", label: "Excellent English fluency", atSecond: 180 },
-    ],
-    callDuration: 320,
-    mediaType: "video",
-    recommendations: [
-      "Highly experienced candidate with solid automation background. Passed screening with 86/100.",
-      "Moved to Technical Interview stage. Hiring manager should focus on her system architectural understanding and leadership skills.",
-    ],
-    criteriaGroups: [
-      {
-        id: "must",
-        label: "Must-have criteria",
-        items: [
-          {
-            id: "am1",
-            text: "Must have the minimum required years of total professional experience in manual testing.",
-            score: 9,
-            reasoning: "Anjali has over 5 years of professional testing experience, mostly in automated and manual settings.",
-            dealbreaker: true,
-            atSecond: 30,
-          },
-        ],
-      },
-    ],
-    cefr: {
-      overall: 9.1,
-      level: "C2",
-      recommendedFor: "Strong fit for voice processes and lead client facing roles",
-      dimensions: [
-        { label: "Pronunciation", score: 9.5, description: "Extremely clear and articulate." },
-        { label: "Fluency", score: 9, description: "Smooth speech delivery with minimal pauses." },
-      ],
-      areasOfImprovement: [
-        "None identified. English communication is near-native.",
-      ],
-    },
-    profile: {
-      about: "QA Specialist with 5 years of experience building automated testing pipelines. Proficient in Playwright, Cypress, Selenium, and CI/CD setups.",
-      location: "Gurugram, HR",
-      experienceYears: 5,
-      currentRole: "Senior QA Engineer at Zomato",
-      experience: [
-        {
-          role: "Senior QA Engineer",
-          company: "Zomato",
-          period: "Jan 2021 – Present",
-          description: "Led QA efforts for the core delivery tracking system. Wrote and maintained 1200+ integration and regression tests.",
-        },
-      ],
-    },
-  },
-  "karthik-review": {
-    id: "karthik-review",
-    name: "Karthik Nair",
-    role: "QA Engineer",
-    company: "TCS",
-    email: "karthik.nair@tcs.com",
-    phone: "+919845012345",
-    score: 74,
-    verdict: "review",
-    source: "sourced",
-    sourceDetail: "manually added",
-    cefrLevel: "B2",
-    insights: [
-      { tone: "ok", label: "2 years manual testing experience", atSecond: 42 },
-      { tone: "miss", label: "Notice period is 60 days (preferred <=30)", atSecond: 110 },
-      { tone: "ok", label: "Good API testing knowledge", atSecond: 165 },
-    ],
-    callDuration: 280,
-    mediaType: "video",
-    recommendations: [
-      "Overall solid technical answers, but notice period is 60 days which violates preferred threshold.",
-      "Check if his notice period is negotiable down to 30 days before proceeding to tech rounds.",
-    ],
-    criteriaGroups: [
-      {
-        id: "must",
-        label: "Must-have criteria",
-        items: [
-          {
-            id: "km1",
-            text: "Must have the minimum required years of total professional experience in manual testing.",
-            score: 8,
-            reasoning: "Candidate has 2 years of manual testing experience, satisfying the requirement.",
-            dealbreaker: true,
-            atSecond: 42,
-          },
-        ],
-      },
-      {
-        id: "preferred",
-        label: "Preferred criteria",
-        items: [
-          {
-            id: "kp1",
-            text: "Immediate joiner or serving a notice period of 30 days or less.",
-            score: 4,
-            reasoning: "Notice period is 60 days, exceeding the preferred window.",
-          },
-        ],
-      },
-    ],
-    cefr: {
-      overall: 6.8,
-      level: "B2",
-      recommendedFor: "Satisfactory for basic client communication",
-      dimensions: [
-        { label: "Pronunciation", score: 6.5, description: "Accent is minor, clarity is good." },
-        { label: "Fluency", score: 7, description: "Flow is natural with minor interruptions." },
-      ],
-      areasOfImprovement: [
-        "Practice phrasing technical jargon to explain structures more simply.",
-      ],
-    },
-    profile: {
-      about: "QA Professional with 2 years of experience at TCS in retail banking QA. Hands on experience with SQL databases and manual regression testing.",
-      location: "Chennai, TN",
-      experienceYears: 2,
-      currentRole: "QA Analyst at TCS",
-      experience: [
-        {
-          role: "QA Analyst",
-          company: "TCS",
-          period: "Jun 2024 – Present",
-          description: "Executed monthly regression test cycles. Validated API payloads and verified database integrity via SQL queries.",
-        },
-      ],
-    },
-  },
-}
 
 // ── Page ──────────────────────────────────────────────────────────────────
 
@@ -1057,21 +441,33 @@ function JobDetailPageInner({ id }: { id: string }) {
   const searchParams = useSearchParams()
   const leadId = searchParams.get("leadId")
 
-  const jobTitle = decodeURIComponent(id).replace(/-/g, " ")
+  const job = jobById(id)
+  const jobTitle = job?.title ?? decodeURIComponent(id).replace(/-/g, " ")
+  const status = STATUS[job?.status ?? "active"]
+  const meta = [job ? `${job.area}, ${job.city}` : null, job?.salary, job?.education, job?.experience].filter(Boolean)
+  const [infoOpen, setInfoOpen] = useState(false)
   const [candidates, setCandidates] = useState<CandidateRow[]>(CANDIDATES)
   const [addDialogOpen, setAddDialogOpen] = useState(false)
 
-  const [mainTab, setMainTab] = useState<
-    "screening" | "interview" | "selected"
-  >("screening")
+  const [mainTab, setMainTab] = useState<"applied" | "database">(
+    searchParams.get("tab") === "database" ? "database" : "applied",
+  )
+  const [pipeline, setPipeline] = useState<Pipeline>("all")
+  const [viewed, setViewed] = useState<Set<string>>(() => new Set())
+  const [sort, setSort] = useState<(typeof SORTS)[number]>("Relevance")
 
   const [filters, setFilters] = useState<Record<string, Set<string>>>({})
   const [searchQuery, setSearchQuery] = useState("")
-  const [viewMode, setViewMode] = useState<"card" | "table">("card")
+  // Detailed cards (default), a compact list that drills into the profile,
+  // or a table ("list", tablet and up). Phones show the table's pick as compact.
+  const [pickedView, setListView] = useState<"detailed" | "compact" | "list">("detailed")
+  const [notes, setNotes] = useState<Record<string, ChatNote[]>>({})
+  const [unlocked, setUnlocked] = useState<Set<string>>(() => new Set())
+  const wide = useMinWidth(1024)
+  const tablet = useMinWidth(768)
+  const listView = pickedView === "list" && !tablet ? "compact" : pickedView
   // Phones: card view only (a table doesn't fit), and Back falls back to Jobs
   // when there's no in-app history (src/lib/apnahire/nav.ts).
-  const isMobile = useIsMobile()
-  const view = isMobile ? "card" : viewMode
   const back = useAppBack()
   const [candidateToMove, setCandidateToMove] = useState<string | null>(null)
 
@@ -1080,7 +476,7 @@ function JobDetailPageInner({ id }: { id: string }) {
     return candidates.find((c) => c.id === candidateToMove)
   }, [candidateToMove, candidates])
 
-  const moveDialogText = useMemo(() => {
+  const moveDialogText = (() => {
     if (!candidateObjectToMove) return null
     const name = candidateObjectToMove.name
     const isMovingToSelected = candidateObjectToMove.stage === "interview"
@@ -1098,7 +494,7 @@ function JobDetailPageInner({ id }: { id: string }) {
         actionLabel: "Move to Interview",
       }
     }
-  }, [candidateObjectToMove, jobTitle])
+  })()
 
   const triggerConfetti = () => {
     // Center pop
@@ -1158,23 +554,6 @@ function JobDetailPageInner({ id }: { id: string }) {
     setCandidates((prev) => [...prev, ...newRows])
   }
 
-  const handleReTake = (id: string) => {
-    setCandidates((prev) =>
-      prev.map((c) =>
-        c.id === id
-          ? {
-              ...c,
-              state: {
-                kind: "pending" as const,
-                attempted: 0,
-                total: 5,
-              },
-            }
-          : c
-      )
-    )
-  }
-
   const handleReject = (id: string) => {
     setCandidates((prev) =>
       prev.map((c) => {
@@ -1208,76 +587,38 @@ function JobDetailPageInner({ id }: { id: string }) {
     )
   }
 
-  const handleUpdateNote = (id: string, note: string) => {
-    setCandidates((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, note } : c))
-    )
-  }
-
-  const candidatesForStage = useMemo(
-    () => candidates.filter((c) => c.stage === mainTab),
-    [mainTab, candidates],
-  )
+  const pipelineCounts = useMemo(() => {
+    const counts: Record<Pipeline, number> = { all: candidates.length, pending: 0, viewed: 0, shortlisted: 0, rejected: 0 }
+    for (const c of candidates) counts[pipelineOf(c, viewed)]++
+    return counts
+  }, [candidates, viewed])
 
   const filteredCandidates = useMemo(() => {
     const q = searchQuery.trim().toLowerCase()
-    const aiPicked = filters["ai-status"]
-    const cefrPicked = filters["cefr"]
-    const sourcePicked = filters["source"]
-    return candidatesForStage.filter((c) => {
+    const show = filters["show"]
+    const days = filters["applied-in"]
+    const english = filters["english"]
+    const maxDays = days?.size ? Math.max(...[...days].map(Number)) : Infinity
+    const rows = candidates.filter((c) => {
+      const m = metaOf(c.id)
+      if (pipeline !== "all" && pipelineOf(c, viewed) !== pipeline) return false
       if (q && !c.name.toLowerCase().includes(q)) return false
-      if (aiPicked && aiPicked.size > 0 && !aiPicked.has(aiStatusKey(c))) {
-        return false
-      }
-      if (cefrPicked && cefrPicked.size > 0) {
-        if (!c.cefrLevel || !cefrPicked.has(c.cefrLevel)) return false
-      }
-      if (sourcePicked && sourcePicked.size > 0) {
-        // Each option key is either "applied" (for applied candidates) or
-        // the sourceDetail string (e.g. "manually added", "candidates_export.csv").
-        const candKey =
-          c.source === "sourced"
-            ? (c.sourceDetail ?? "sourced")
-            : "applied"
-        if (!sourcePicked.has(candKey)) return false
-      }
+      if (show?.has("matched") && matchLevel(m.score) !== "high") return false
+      if (show?.has("resume") && !m.resume) return false
+      if (show?.has("contacted") && !m.contacted) return false
+      if (show?.has("featured") && !m.featured) return false
+      if (m.appliedDays > maxDays) return false
+      if (english?.size && !english.has(m.english)) return false
       return true
     })
-  }, [searchQuery, filters, candidatesForStage])
+    return sort === "Recently applied"
+      ? [...rows].sort((a, b) => metaOf(a.id).appliedDays - metaOf(b.id).appliedDays)
+      : [...rows].sort((a, b) => metaOf(b.id).score - metaOf(a.id).score)
+  }, [searchQuery, filters, candidates, pipeline, sort, viewed])
 
-  // Compute the source filter options dynamically from the current candidates list.
-  // Each applied candidate contributes an "applied" key; each sourced candidate
-  // contributes its sourceDetail string (or "sourced" as fallback) as a unique key.
-  const sourceFilterGroup = useMemo(() => {
-    const optionMap = new Map<string, { id: string; label: string }>()
-    for (const c of candidates) {
-      if (c.source === "sourced") {
-        const key = c.sourceDetail ?? "sourced"
-        // Capitalise "manually added" for display, keep file names as-is
-        const label =
-          key === "manually added" ? "Manually added" : key
-        if (!optionMap.has(key)) optionMap.set(key, { id: key, label })
-      } else {
-        if (!optionMap.has("applied"))
-          optionMap.set("applied", { id: "applied", label: "Applied directly" })
-      }
-    }
-    const opts = Array.from(optionMap.values())
-    return {
-      label: "Candidate Source",
-      options: opts.map((o) => o.label),
-      selected: opts
-        .filter((o) => filters["source"]?.has(o.id))
-        .map((o) => o.label),
-      onToggle: (label: string) => {
-        const opt = opts.find((o) => o.label === label)
-        if (opt) toggleFilter("source", opt.id)
-      },
-    }
-  }, [candidates, filters])
 
-  const filterGroups = useMemo(() => {
-    const staticGroups = FILTERS.map((group) => ({
+  const filterGroups = (() => {
+    return FILTERS.map((group) => ({
       label: group.label,
       options: group.options.map((o) => o.label),
       selected: group.options
@@ -1288,8 +629,7 @@ function JobDetailPageInner({ id }: { id: string }) {
         if (opt) toggleFilter(group.id, opt.id)
       },
     }))
-    return [...staticGroups, sourceFilterGroup]
-  }, [filters, sourceFilterGroup])
+  })()
 
   const handleClearFilters = () => {
     setFilters({})
@@ -1303,55 +643,46 @@ function JobDetailPageInner({ id }: { id: string }) {
     router.replace(`${pathname}?${params.toString()}`, { scroll: false })
   }
 
-  const drawerCandidate = useMemo(() => {
-    if (!leadId) return null
-    const cand = candidates.find((c) => c.id === leadId)
-    if (!cand) return null
+  // Relevance runs high → low; one divider marks where low matches start.
+  const firstLow = sort === "Relevance" ? filteredCandidates.findIndex((c) => matchLevel(metaOf(c.id).score) === "low") : -1
+  const lowDivider = (
+    <div className="flex items-center gap-3 text-caption text-muted-foreground">
+      <span className="h-px flex-1 bg-border" />
+      Low matches
+      <span className="h-px flex-1 bg-border" />
+    </div>
+  )
 
-    const baseDrawer = DRAWER_DATA[leadId] || {
-      id: cand.id,
-      name: cand.name,
-      role: cand.role || jobTitle,
-      company: cand.company || "Independent",
-      email: cand.email || "",
-      phone: cand.phone || "",
-      score: 0,
-      verdict: "fit" as const,
-      state: cand.state,
-      source: cand.source || "applied",
-      cefrLevel: cand.cefrLevel || "na",
-      insights: [],
-      callDuration: 0,
-      recommendations: [
-        "No calls placed yet. Sourced lead awaiting initial contact.",
-        "Candidate is ready to receive an automated AI screening call.",
-      ],
-      criteriaGroups: [],
-      profile: {
-        about: "Sourced candidate. Resume details and work history will populate once automated screening is completed.",
-        location: "Sourced",
-        resumeUrl: cand.resumeFile ? URL.createObjectURL(cand.resumeFile) : undefined,
-      },
-    }
-
-    return {
-      ...baseDrawer,
-      notes: cand.note || baseDrawer.notes || "",
-      state: cand.state,
-      stage: cand.stage,
-      score: cand.state.kind === "completed" ? cand.state.score : baseDrawer.score,
-      verdict: cand.state.kind === "completed" ? cand.state.verdict : baseDrawer.verdict,
-      retakeHistory: cand.retakeHistory || baseDrawer.retakeHistory,
-    }
-  }, [leadId, candidates, jobTitle])
-  const drawerIndex = leadId
-    ? filteredCandidates.findIndex((c) => c.id === leadId)
-    : -1
-  const prev = drawerIndex > 0 ? filteredCandidates[drawerIndex - 1] : null
-  const next =
-    drawerIndex >= 0 && drawerIndex < filteredCandidates.length - 1
-      ? filteredCandidates[drawerIndex + 1]
-      : null
+  // Compact on wide screens: list + profile side by side, the first lead open.
+  const split = listView === "compact" && wide
+  const selectedId = leadId ?? (split ? filteredCandidates[0]?.id : undefined)
+  const selected = candidates.find((c) => c.id === selectedId)
+  const selectedThread = selected
+    ? toThread(selected, metaOf(selected.id), job, notes[selected.id] ?? [], unlocked.has(selected.id))
+    : undefined
+  const viewNumber = (id: string) => {
+    setViewed((v) => new Set(v).add(id))
+    toast("1 database credit used")
+  }
+  const actionsFor = (c: CandidateRow) => (
+    <ApplicantActions
+      name={c.name}
+      phone={c.phone}
+      status={pipelineOf(c, viewed)}
+      onViewNumber={() => viewNumber(c.id)}
+      onReject={() => handleReject(c.id)}
+      onShortlist={() => handleMoveToNextRound(c.id)}
+    />
+  )
+  const panelProps = (c: CandidateRow) => ({
+    actions: actionsFor(c),
+    onAddNote: (text: string) =>
+      setNotes((n) => ({ ...n, [c.id]: [{ id: `n${Date.now()}`, text, at: "Today" }, ...(n[c.id] ?? [])] })),
+    onUnlockResume: () => {
+      setUnlocked((u) => new Set(u).add(c.id))
+      toast("1 database credit used")
+    },
+  })
 
   return (
     <div className="flex min-h-svh flex-col">
@@ -1367,54 +698,22 @@ function JobDetailPageInner({ id }: { id: string }) {
             <div className="flex min-w-0 flex-1 flex-col gap-1.5">
               <div className="flex items-center gap-2">
                 <span className="line-clamp-2 text-lg leading-tight font-semibold capitalize md:text-xl">{jobTitle}</span>
-                <Badge variant="success" className="hidden md:inline-flex">Active</Badge>
+                <Badge variant={status.variant} className="hidden md:inline-flex">{status.label}</Badge>
               </div>
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
-                <Badge variant="success" className="md:hidden">Active</Badge>
-                <IconLabel icon={Building2}>Simplilearn</IconLabel>
-                <span aria-hidden className="hidden md:inline">·</span>
-                <IconLabel icon={MapPin}>Hubli</IconLabel>
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
+                <Badge variant={status.variant} className="md:hidden">{status.label}</Badge>
+                {/* The • travels with the fact after it, so a wrapped line never ends on one. */}
+                {meta.map((m, i) => (
+                  <span key={m} className="whitespace-nowrap">
+                    {i > 0 && <span aria-hidden className="pr-2">•</span>}
+                    {m}
+                  </span>
+                ))}
               </div>
             </div>
-            {/* Phones: every job action in one menu (desktop shows them as
-                buttons beside the title). */}
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                render={
-                  <Button variant="ghost" size="icon-sm" aria-label="Job actions" className="shrink-0 text-muted-foreground md:hidden" />
-                }
-              >
-                <MoreVertical className="size-5" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setAddDialogOpen(true)}>
-                  <UserPlus className="size-3.5" />
-                  Add candidates
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Download className="size-3.5" />
-                  Download data
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Share2 className="size-3.5" />
-                  Share job
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Upload className="size-3.5" />
-                  Publish
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Copy className="size-3.5" />
-                  Duplicate
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-destructive">
-                  <PowerOff className="size-3.5" />
-                  Deactivate
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Button variant="ghost" size="icon-sm" aria-label="About this job" className="shrink-0 text-muted-foreground md:hidden" onClick={() => setInfoOpen(true)}>
+              <MoreVertical className="size-5" />
+            </Button>
           </div>
         }
         description={null}
@@ -1422,160 +721,217 @@ function JobDetailPageInner({ id }: { id: string }) {
           <div className="flex items-center justify-between gap-3">
             {/* min-w-0 lets the tab strip scroll on narrow screens instead of
              * pushing the view toggle (and the page) past the viewport. */}
-            <Tabs className="min-w-0" value={mainTab} onValueChange={(v) => { setMainTab(v as Stage); setFilters({}); setSearchQuery("") }}>
+            <Tabs className="min-w-0" value={mainTab} onValueChange={(v) => { setMainTab(v as "applied" | "database"); setFilters({}); setSearchQuery("") }}>
               <TabsList variant="line">
-                {(["screening", "interview", "selected"] as Stage[]).map((s) => {
-                  const count = candidates.filter((c) => c.stage === s).length
-                  return (
-                    <TabsTrigger key={s} value={s}>
-                      {s === "screening" && <PhoneCall className="size-3.5" />}
-                      {s === "interview" && <User className="size-3.5" />}
-                      {ROUNDS[s].name} ({count})
-                    </TabsTrigger>
-                  )
-                })}
+                <TabsTrigger value="applied">Applied to job ({candidates.length})</TabsTrigger>
+                <TabsTrigger value="database">Database ({(job?.dbMatches ?? 0).toLocaleString("en-IN")})</TabsTrigger>
               </TabsList>
             </Tabs>
 
-            {/* View toggle — far right of the tab row; desktop only (phones
-                are card view). */}
-            <div className="hidden shrink-0 items-center gap-1.5 pb-1 md:flex">
-              <ButtonGroup>
-                <Button
-                  variant="outline"
-                  size="icon-sm"
-                  onClick={() => setViewMode("card")}
-                  className={cn(viewMode === "card" && "bg-muted")}
-                  aria-label="Card view"
-                >
-                  <LayoutList className="size-3.5" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon-sm"
-                  onClick={() => setViewMode("table")}
-                  className={cn(viewMode === "table" && "bg-muted")}
-                  aria-label="Table view"
-                >
-                  <Table2 className="size-3.5" />
-                </Button>
-              </ButtonGroup>
-            </div>
           </div>
         }
         actions={
-          // Desktop only; phones have them in the ⋮ beside the title.
+          // Desktop only; phones have ⋮ beside the title.
           <div className="hidden items-center gap-2 md:flex">
-            <Button variant="outline" size="sm" onClick={() => setAddDialogOpen(true)}>
-              <UserPlus className="size-4" /> Add candidates
+            <Button variant="outline" size="sm" onClick={() => router.push("/apnahire/jobs/new?resume=1")}>
+              <Pencil className="size-4" /> Edit
             </Button>
-            <Button variant="outline" size="icon" aria-label="Download data">
-              <Download className="size-4" />
+            <Button variant="outline" size="icon-sm" aria-label="About this job" onClick={() => setInfoOpen(true)}>
+              <MoreVertical className="size-4" />
             </Button>
-            <Button variant="outline" size="icon" aria-label="Share job">
-              <Share2 className="size-4" />
-            </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                render={
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    aria-label="More job actions"
-                  >
-                    <MoreVertical className="size-4" />
-                  </Button>
-                }
-              />
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>
-                  <Upload className="size-3.5" />
-                  Publish
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Copy className="size-3.5" />
-                  Duplicate
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-destructive">
-                  <PowerOff className="size-3.5" />
-                  Deactivate
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
         }
       />
 
       <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-4 px-4 py-4 md:px-6">
-        {/* ── Search + filters ── */}
-        <SearchFilterBar
-          placeholder="Search by candidate name, email, or phone…"
-          value={searchQuery}
-          onChange={setSearchQuery}
-          filterGroups={filterGroups}
-          onClearFilters={handleClearFilters}
-        />
+        {job && <JobStatusBanner job={job} />}
+        {job && <JobInfoPanel job={job} open={infoOpen} onOpenChange={setInfoOpen} />}
 
-        {filteredCandidates.length === 0 ? (
-          <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-muted/30 px-6 py-12 text-center">
-            <p className="text-sm font-medium">
-              No candidates match your filters
-            </p>
-            <p className="text-xs text-muted-foreground">
-              Try clearing some filters or adjusting your search.
-            </p>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                setFilters({})
-                setSearchQuery("")
-              }}
-              className="mt-1"
-            >
-              Clear all filters
-            </Button>
-          </div>
-        ) : view === "card" ? (
-          <div className="flex flex-col gap-3">
-            {filteredCandidates.map((c) => (
-              <CandidateCard
-                key={c.id}
-                candidate={c}
-                onOpen={() => setLeadId(c.id)}
-                onViewInsights={() => setLeadId(c.id)}
-                onReTake={() => handleReTake(c.id)}
-                onReject={() => handleReject(c.id)}
-                onMoveToNextRound={() => setCandidateToMove(c.id)}
-                onAddNote={(note) => handleUpdateNote(c.id, note)}
-              />
-            ))}
-          </div>
+        {mainTab === "database" ? (
+          // Step 5 builds the AI-suggested database list.
+          <Empty className="border border-dashed border-border">
+            <EmptyHeader>
+              <EmptyTitle>Candidates from our database</EmptyTitle>
+              <EmptyDescription>People who did not apply but match this job. Coming next.</EmptyDescription>
+            </EmptyHeader>
+          </Empty>
         ) : (
-          <CandidateTable
-            candidates={filteredCandidates}
-            onOpen={(id) => setLeadId(id)}
-            onReTake={handleReTake}
-            onReject={handleReject}
-            onMoveToNextRound={setCandidateToMove}
-          />
+          <>
+            {/* ── Search + filters ── */}
+            <SearchFilterBar
+              placeholder="Search by candidate name"
+              value={searchQuery}
+              onChange={setSearchQuery}
+              filterGroups={filterGroups}
+              onClearFilters={handleClearFilters}
+            />
+
+            {/* ── Pipeline counters + sort ── */}
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+              {/* Phones: the house chip row (as on the jobs list). */}
+              <MobileChipRow
+                items={PIPELINE.map((p) => ({ value: p.value, label: `${p.label} (${pipelineCounts[p.value]})` }))}
+                value={pipeline}
+                onValueChange={setPipeline}
+              />
+              {/* Desktop: the jobs list's status filter control, so both pages behave alike. */}
+              <Tabs value={pipeline} onValueChange={(v) => setPipeline(v as Pipeline)} className="max-md:hidden">
+                <TabsList variant="inverted" aria-label="Candidate status">
+                  {PIPELINE.map((p) => (
+                    <TabsTrigger key={p.value} value={p.value}>
+                      {p.label} ({pipelineCounts[p.value]})
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              </Tabs>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <span className="whitespace-nowrap">Sort by</span>
+                <Select value={sort} onValueChange={(v) => v && setSort(v as (typeof SORTS)[number])}>
+                  <SelectTrigger size="sm" className="w-44">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SORTS.map((o) => (
+                      <SelectItem key={o} value={o}>{o}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <ToggleGroup
+                  aria-label="List view"
+                  value={[listView]}
+                  onValueChange={(v) => v[0] && setListView(v[0] as "detailed" | "compact" | "list")}
+                  className="ml-auto lg:ml-0"
+                >
+                  <ToggleGroupItem value="detailed" aria-label="Detailed cards">
+                    <LayoutList />
+                  </ToggleGroupItem>
+                  <ToggleGroupItem value="compact" aria-label="Compact list">
+                    <Menu />
+                  </ToggleGroupItem>
+                  <ToggleGroupItem value="list" aria-label="Table" className="max-md:hidden">
+                    <Table2 />
+                  </ToggleGroupItem>
+                </ToggleGroup>
+              </div>
+            </div>
+
+            {filteredCandidates.length === 0 ? (
+              <Empty className="border border-dashed border-border">
+                <EmptyHeader>
+                  <EmptyTitle>No candidates match your filters</EmptyTitle>
+                  <EmptyDescription>Clear some filters or change your search.</EmptyDescription>
+                </EmptyHeader>
+                <EmptyContent>
+                  <Button variant="outline" size="sm" onClick={() => { setFilters({}); setSearchQuery(""); setPipeline("all") }}>
+                    Clear all filters
+                  </Button>
+                </EmptyContent>
+              </Empty>
+            ) : listView === "detailed" ? (
+              <div className="flex flex-col gap-3">
+                {filteredCandidates.map((c, i) => {
+                  const m = metaOf(c.id)
+                  return (
+                    <React.Fragment key={c.id}>
+                      {i === firstLow && lowDivider}
+                      <ApplicantCard
+                        name={c.name}
+                        phone={c.phone}
+                        profile={m}
+                        match={{ level: matchLevel(m.score), score: m.score }}
+                        resume={m.resume}
+                        appliedDays={m.appliedDays}
+                        status={pipelineOf(c, viewed)}
+                        onOpen={() => setLeadId(c.id)}
+                        onViewNumber={() => viewNumber(c.id)}
+                        onReject={() => handleReject(c.id)}
+                        onShortlist={() => handleMoveToNextRound(c.id)}
+                      />
+                    </React.Fragment>
+                  )
+                })}
+              </div>
+            ) : listView === "list" ? (
+              <ApplicantTable
+                rows={filteredCandidates.map((c) => {
+                  const m = metaOf(c.id)
+                  return {
+                    id: c.id,
+                    name: c.name,
+                    phone: c.phone,
+                    profile: m,
+                    match: { level: matchLevel(m.score), score: m.score },
+                    requirements: `${m.matching.length} of ${REQUIREMENTS.length}`,
+                    applied: m.appliedDays <= 1 ? "Today" : `${m.appliedDays} days ago`,
+                    status: pipelineOf(c, viewed),
+                  }
+                })}
+                dividerBefore={firstLow >= 0 ? filteredCandidates[firstLow]?.id : undefined}
+                onOpen={setLeadId}
+                onViewNumber={viewNumber}
+                onReject={handleReject}
+                onShortlist={handleMoveToNextRound}
+              />
+            ) : (
+              // Compact: the chats list's row. Wide screens show the profile beside it.
+              <div className="flex items-start gap-4">
+                <Card padding="none" className="min-w-0 flex-1 overflow-hidden lg:max-w-sm">
+                  <ConversationList label="Candidates">
+                    {filteredCandidates.map((c, i) => {
+                      const m = metaOf(c.id)
+                      const level = matchLevel(m.score)
+                      const status = pipelineOf(c, viewed)
+                      return (
+                        <React.Fragment key={c.id}>
+                          {i === firstLow && <div className="bg-muted px-4 py-2">{lowDivider}</div>}
+                          <ConversationRow
+                            name={c.name}
+                            initial={c.name.charAt(0).toUpperCase()}
+                            subtitle={`${m.experience} • ${m.salary} • ${m.location}`}
+                            previewIcon={<Check />}
+                            preview={
+                              m.matching.length
+                                ? `Meets ${m.matching.length} of ${REQUIREMENTS.length}: ${m.matching.join(", ")}`
+                                : "Meets none of your key requirements"
+                            }
+                            time={m.appliedDays <= 1 ? "Today" : `${m.appliedDays}d ago`}
+                            statusIcon={<MatchBars level={level} score={m.score} />}
+                            status={
+                              status !== "pending" ? (
+                                <Badge variant={status === "rejected" ? "destructive" : status === "shortlisted" ? "success" : "secondary"}>
+                                  {PIPELINE.find((p) => p.value === status)?.label}
+                                </Badge>
+                              ) : undefined
+                            }
+                            active={split && c.id === selectedId}
+                            render={<button type="button" onClick={() => setLeadId(c.id)} />}
+                          />
+                        </React.Fragment>
+                      )
+                    })}
+                  </ConversationList>
+                </Card>
+                {split && selected && selectedThread && (
+                  <Card padding="none" className="sticky top-48 hidden max-h-svh min-w-0 flex-1 overflow-y-auto lg:block">
+                    <CandidateProfilePanel key={selected.id} thread={selectedThread} {...panelProps(selected)} />
+                  </Card>
+                )}
+              </div>
+            )}
+          </>
         )}
       </main>
 
-      <CandidateDrawer
-        open={!!drawerCandidate}
-        onOpenChange={(o) => !o && setLeadId(null)}
-        candidate={drawerCandidate}
-        hasPrev={!!prev}
-        hasNext={!!next}
-        onPrev={() => prev && setLeadId(prev.id)}
-        onNext={() => next && setLeadId(next.id)}
-        onReTake={() => drawerCandidate && handleReTake(drawerCandidate.id)}
-        onReject={() => drawerCandidate && handleReject(drawerCandidate.id)}
-        onMoveToNextRound={() => drawerCandidate && setCandidateToMove(drawerCandidate.id)}
-        onAddNote={(note) => drawerCandidate && handleUpdateNote(drawerCandidate.id, note)}
-      />
+      {/* Detailed view and phones: the profile opens as the side panel. */}
+      {selected && selectedThread && (
+        <CandidateProfileSheet
+          title="Candidate profile"
+          open={!!leadId && !split}
+          onOpenChange={(o) => !o && setLeadId(null)}
+          thread={selectedThread}
+          {...panelProps(selected)}
+        />
+      )}
 
       <AddCandidateDialog
         open={addDialogOpen}
@@ -1611,5 +967,18 @@ function JobDetailPageInner({ id }: { id: string }) {
         </AlertDialogContent>
       </AlertDialog>
     </div>
+  )
+}
+
+/** True while the viewport is at least `px` wide (false on the server). */
+function useMinWidth(px: number) {
+  return React.useSyncExternalStore(
+    (cb) => {
+      const mq = window.matchMedia(`(min-width: ${px}px)`)
+      mq.addEventListener("change", cb)
+      return () => mq.removeEventListener("change", cb)
+    },
+    () => window.matchMedia(`(min-width: ${px}px)`).matches,
+    () => false,
   )
 }

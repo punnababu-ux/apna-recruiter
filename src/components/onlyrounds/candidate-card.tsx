@@ -422,7 +422,7 @@ function CandidateNote({
 // ── Contact actions (WhatsApp · QR) ───────────────────────────────────────
 
 /** WhatsApp brand glyph (lucide has no official WhatsApp icon). */
-function WhatsAppIcon({ className }: { className?: string }) {
+export function WhatsAppIcon({ className }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 24 24"

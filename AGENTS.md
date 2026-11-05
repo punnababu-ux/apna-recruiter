@@ -437,6 +437,13 @@ component's JSDoc), not left as a one-off.
 "Same thing, same styling" holds across the two checkouts on one platform
 (express phone ↔ self-checkout phone), not across platforms.
 
+**Full screen for tasks, sidebar for workspaces** (2026-11-05, leaning;
+see `docs/DECISIONS.md`). A flow with an end (posting a job, checkout,
+onboarding) opens without the sidebar. A place recruiters work in and leave
+from (a job's candidates, chats, database) keeps it on desktop; phones show
+it full screen with a back button. Read `docs/DECISIONS.md` before
+reopening a question that is logged there.
+
 ---
 
 ## Card corners — one radius, every page
@@ -1041,6 +1048,14 @@ without also adding its new components, is a reject.
 - When Punna's message holds several asks (or arrives in pieces mid-task), first restate it as
   a numbered list of parts, each one task with what "done" means. Work through the parts and
   report back against the same numbers. Ask only where a part is genuinely unclear.
+
+**Decisions — log the why** (Punna, 2026-11-05).
+- Every design or product decision made in a session (chose X over Y, kept
+  or dropped a pattern, picked a threshold) goes into `docs/DECISIONS.md`
+  the same turn: the question, the decision, the reason, what would change
+  it, and its status (Decided / Leaning / Open). Newest first.
+- Before proposing a change, check `docs/DECISIONS.md`. If the idea is
+  already logged, start from that entry and say so.
 
 **Replies — summarize, then organize.**
 - Every reply is summarized and organized before it is sent: the outcome first, then grouped
