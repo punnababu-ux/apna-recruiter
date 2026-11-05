@@ -775,6 +775,9 @@ export function PostJobFlow() {
       <AlertDialog open={confirmRedraft} onOpenChange={setConfirmRedraft}>
         <AlertDialogContent>
           <AlertDialogHeader>
+            <AlertDialogMedia>
+              <ValueArt name="draft" size="xs" />
+            </AlertDialogMedia>
             <AlertDialogTitle>Redraft the job?</AlertDialogTitle>
             <AlertDialogDescription>This replaces your current answers.</AlertDialogDescription>
           </AlertDialogHeader>
@@ -787,7 +790,7 @@ export function PostJobFlow() {
             >
               Keep answers
             </AlertDialogCancel>
-            <AlertDialogAction variant="emphasis" onClick={() => void runDraft()}>
+            <AlertDialogAction onClick={() => void runDraft()}>
               Redraft
             </AlertDialogAction>
           </AlertDialogFooter>

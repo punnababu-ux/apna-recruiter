@@ -6,15 +6,15 @@ Catalog entries for every component used by a page are now in `src/app/design-sy
 ## Clean
 No raw colours, arbitrary values, `transition-all`, hand-made tooltips or close buttons, or two green CTAs. BackButton and WizardFooter used correctly.
 
-## To fix (not yet done)
-- **Card radius:** `rounded-xl`/`rounded-lg` on nested cards → `rounded-card-nested` (NightShiftCard, 5 Preferences accordion items, Review card, ChoiceCards wrapper, screening rows, jobs empty state).
-- **Sheet corners:** `rounded-t-2xl` → overlay radius (help-menu.tsx:102, job-posting-chrome.tsx:217).
-- **Raw Change buttons** → `Button variant="link-inline"` (wizard-screens.tsx:895, :934, :1209).
-- **Button-as-chip** → `SuggestionChips` (wizard-screens.tsx:415, job-fields.tsx:569).
-- **"Redraft the job?" dialog:** no clay, primary is dark `emphasis` instead of green (post-job-flow.tsx:775, :790).
-- **Joining-fee PopupHeader** has no `art` (wizard-screens.tsx:1310).
-- **ConversationRow** open-row bar uses `::before`, which `ink` also paints (chat-inbox.tsx).
-- **Title-case** category/industry tile titles ("Customer Support") from `lib/apnahire/job-draft`.
+## Fixes (applied 2026-11-05 unless marked)
+- ✅ **Card radius:** `rounded-xl`/`rounded-lg` on nested cards → `rounded-card-nested` (NightShiftCard, 5 Preferences accordion items, Review card, ChoiceCards wrapper, screening rows, jobs empty state).
+- ⏸ **Sheet corners (kept):** 10 bottom sheets use `rounded-t-2xl`; changing two would split them. Better: give `SheetContent side=bottom` its own corner once, for all. `rounded-t-2xl` → overlay radius (help-menu.tsx:102, job-posting-chrome.tsx:217).
+- ✅ **Raw Change buttons** → `Button variant="link-inline"` (wizard-screens.tsx:895, :934, :1209).
+- ✅ **Screening suggestions** → `SuggestionChips` (job-fields.tsx). ⏸ Title variants (wizard-screens.tsx:415) kept as pill Buttons: short one-line labels.
+- ✅ **"Redraft the job?" dialog:** now `draft` clay + green primary.
+- ✅ **Joining-fee PopupHeader:** `art="wallet"`.
+- ✅ **ConversationRow:** the open-row bar moved into the primitive (`active`), on `::after`.
+- ⏸ **Title case (needs Punna):** category/industry tile titles ("Customer Support") from `lib/apnahire/job-draft`. They are taxonomy keys (maps, saved drafts); renaming needs a migration and may mirror apna's real taxonomy.
 
 ## Candidates for new design-system components
 - **OptionCard details slot (expanded picked card)** — Wrapper re-implements the card frame with rounded-xl and overrides OptionCard; a footer/details slot removes it (job-fields.tsx:246-273 ChoiceCards wrapper (details + Must-have))

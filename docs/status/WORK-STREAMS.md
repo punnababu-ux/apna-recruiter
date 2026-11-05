@@ -20,7 +20,7 @@ No other branch is ahead of `origin/main`. No stashes.
 | Figma ↔ code sync | Dev hand-off page complete; nothing blocking (`status/FIGMA-SYNC-STATUS.md`) | Re-audit after the next code change to checkout (skill `figma-code-sync`) | Claude |
 | Docs + knowledge base | Organized 2026-11-05 (`docs/README.md`) | Keep the index current | Claude |
 | Knowledge graph (graphify) | Rebuilt 2026-11-05 in this worktree: code + 21 docs | See "Recurring" below | Claude, with reminders |
-| DS audit: chat + job posting | Catalog updated; 8 fix groups + 13 primitive candidates open (`history/AUDIT-2026-11-05-CHAT-JOB-POSTING.md`) | Punna OKs the fixes / which primitives to build | Punna, then Claude |
+| DS audit: chat + job posting | Catalog updated; fixes applied; 3 kept for a decision + 13 primitive candidates (`history/AUDIT-2026-11-05-CHAT-JOB-POSTING.md`) | Punna OKs the fixes / which primitives to build | Punna, then Claude |
 | Product backlog | 23 open items (`status/TODO.md`) | Punna picks the next one | Punna |
 | Pricing gaps | 5 open questions (`reference/PRICING.md` → "Still open") | Punna supplies numbers | Punna |
 | Marketing pages without Lovable source | Parked (`start-here/AI-HANDOFF.md` → Pending) | Punna's call | Punna |
@@ -33,7 +33,8 @@ No other branch is ahead of `origin/main`. No stashes.
 5. **Clay assets:** approve the 8 plan pop-up objects once generated (review flow: raw first, cutout after approval).
 6. **Live employer.apna.co onboarding capture:** needs Punna's OTP (the signed-in app is already captured: `reference/LIVE-EMPLOYER-KB.md`).
 7. **Graph labels:** `graphify label .` needs an LLM key (none set). Optional.
-8. **Copy the graph to the main checkout** after this branch merges (`cp -R graphify-out ../../../`), so queries from main see the new doc paths.
+8. **Job taxonomy case:** "Customer Support" → "Customer support"? (keys in `lib/apnahire/job-draft.ts`, needs a draft migration).
+9. **Copy the graph to the main checkout** after this branch merges (`cp -R graphify-out ../../../`), so queries from main see the new doc paths.
 
 ## 🔁 Recurring — Claude reminds Punna
 - **Rebuild the graph** when docs or many files changed, or 7+ days since the last build (last: 2026-11-05).

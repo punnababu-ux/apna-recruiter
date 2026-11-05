@@ -581,7 +581,7 @@ function NightShiftCard({ checked, onCheckedChange }: { checked: boolean; onChec
   return (
     <label
       className={cn(
-        "relative isolate flex items-center gap-3 overflow-hidden rounded-xl border p-4 transition-colors duration-500",
+        "relative isolate flex items-center gap-3 overflow-hidden rounded-card-nested border p-4 transition-colors duration-500",
         checked ? "border-night-sky-border text-night-sky-fg" : "border-border bg-card text-foreground",
       )}
     >
@@ -892,16 +892,17 @@ function Location(ctx: ScreenCtx) {
                     {draft.pincode ? ` ${draft.pincode}` : ""}
                   </span>
                 </span>
-                <button
+                <Button
                   type="button"
-                  className="shrink-0 text-sm font-semibold text-primary underline-offset-4 hover:underline"
+                  variant="link-inline"
+                  className="shrink-0"
                   onClick={() => {
                     setPicked("")
                     setQuery("")
                   }}
                 >
                   Change
-                </button>
+                </Button>
               </div>
               <AreaMap area={draft.area} city={draft.city} />
             </>
@@ -931,13 +932,9 @@ function Location(ctx: ScreenCtx) {
                       {searching ? "Matching places" : draft.city ? `Popular in ${draft.city}` : "Popular places"}
                     </span>
                     {!searching && draft.city && !locked && (
-                      <button
-                        type="button"
-                        className="text-xs font-medium text-primary underline-offset-4 hover:underline"
-                        onClick={() => pickCity("")}
-                      >
+                      <Button type="button" variant="link-inline" size="sm" onClick={() => pickCity("")}>
                         Change city
-                      </button>
+                      </Button>
                     )}
                   </div>
                   {cityMatches.map((c) => (
@@ -1206,13 +1203,9 @@ function Salary(ctx: ScreenCtx) {
         description={
           <>
             Pay type: {draft.payType ? PAY_TYPE_LABELS[draft.payType] : "—"} ·{" "}
-            <button
-              type="button"
-              className="font-medium text-primary underline-offset-4 hover:underline"
-              onClick={() => ctx.edit("pay-type")}
-            >
+            <Button type="button" variant="link-inline" onClick={() => ctx.edit("pay-type")}>
               Change
-            </button>
+            </Button>
           </>
         }
       />
@@ -1307,7 +1300,7 @@ function Perks(ctx: ScreenCtx) {
       </p>
 
       <PlanPopup open={feeOpen} onOpenChange={setFeeOpen}>
-        <PopupHeader title="Do candidates pay any joining fee?" description="Fees, deposits or kit charges." />
+        <PopupHeader art="wallet" title="Do candidates pay any joining fee?" description="Fees, deposits or kit charges." />
         <PopupBody>
           <form
             id="joining-fee-form"
@@ -1436,7 +1429,7 @@ function Preferences(ctx: ScreenCtx) {
         description="Optional. Matches show first."
       />
       <Accordion multiple defaultValue={open} className="flex flex-col gap-2">
-        <AccordionItem value="languages" className="rounded-xl border border-border px-4">
+        <AccordionItem value="languages" className="rounded-card-nested border border-border px-4">
           <AccordionTrigger>Languages · {count(draft.languages.length)}</AccordionTrigger>
           <AccordionContent>
             <ChipMultiSelect
@@ -1448,7 +1441,7 @@ function Preferences(ctx: ScreenCtx) {
             />
           </AccordionContent>
         </AccordionItem>
-        <AccordionItem value="skills" className="rounded-xl border border-border px-4">
+        <AccordionItem value="skills" className="rounded-card-nested border border-border px-4">
           <AccordionTrigger>Skills · {count(draft.skills.length)}</AccordionTrigger>
           <AccordionContent className="flex flex-col gap-3">
             <ChipMultiSelect
@@ -1465,7 +1458,7 @@ function Preferences(ctx: ScreenCtx) {
         </AccordionItem>
         {more && (
           <>
-        <AccordionItem value="assets" className="rounded-xl border border-border px-4">
+        <AccordionItem value="assets" className="rounded-card-nested border border-border px-4">
           <AccordionTrigger>Must own · {count(draft.assets.length)}</AccordionTrigger>
           <AccordionContent>
             <ChipMultiSelect
@@ -1476,7 +1469,7 @@ function Preferences(ctx: ScreenCtx) {
             />
           </AccordionContent>
         </AccordionItem>
-        <AccordionItem value="degrees" className="rounded-xl border border-border px-4">
+        <AccordionItem value="degrees" className="rounded-card-nested border border-border px-4">
           <AccordionTrigger>Degree · {count(draft.degrees.length)}</AccordionTrigger>
           <AccordionContent>
             <ChipMultiSelect
@@ -1487,7 +1480,7 @@ function Preferences(ctx: ScreenCtx) {
             />
           </AccordionContent>
         </AccordionItem>
-        <AccordionItem value="gender-age" className="rounded-xl border border-border px-4">
+        <AccordionItem value="gender-age" className="rounded-card-nested border border-border px-4">
           <AccordionTrigger>
             Gender &amp; age ·{" "}
             {draft.gender === "any" && draft.ageMin == null && draft.ageMax == null ? "Anyone" : "Set"}
@@ -1782,7 +1775,7 @@ function Review(ctx: ScreenCtx) {
         </div>
       </div>
 
-      <div className="flex flex-col rounded-xl border border-border bg-card p-4">
+      <div className="flex flex-col rounded-card-nested border border-border bg-card p-4">
         <ReviewSection title="Job" onEdit={() => ctx.edit("title")}>
           {draft.title || "—"} · {companyName(draft)}
           <br />
