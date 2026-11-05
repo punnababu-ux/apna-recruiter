@@ -1,7 +1,7 @@
 /**
  * /design-system/foundations/clay — the 3D clay illustrations: the set,
  * when to use them, the generation prompt (from content/clay-style.ts) and
- * how a new one gets into the product. Long form: docs/CLAY-ILLUSTRATIONS.md.
+ * how a new one gets into the product. Long form: docs/reference/CLAY-ILLUSTRATIONS.md.
  */
 
 import { readdirSync } from "node:fs"

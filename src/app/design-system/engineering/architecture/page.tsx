@@ -2,7 +2,7 @@
  * Engineering › Architecture — how the project is built, for developers:
  * the stack, the layers, where each kind of code lives, how state and the
  * AI routes work, and the quality gates. Keep it in step with
- * docs/PROJECT-MAP.md when a route or area is added.
+ * docs/start-here/PROJECT-MAP.md when a route or area is added.
  */
 
 import * as React from "react"
@@ -177,7 +177,7 @@ export default function ArchitecturePage() {
           rules={[
             "computeBill: items − proration credit − capped coupon = sub total; GST (GST_RATE, 18%) on the sub total.",
             "withGst: the renewal amount — the plan's own price plus GST; coupons are first-cycle only.",
-            "Prices and plans come from src/content (job-plans, credit-bundles, subscriptions); keep docs/PRICING.md in sync.",
+            "Prices and plans come from src/content (job-plans, credit-bundles, subscriptions); keep docs/reference/PRICING.md in sync.",
             "Covered by npm test (src/lib/apnahire/bill.test.ts).",
           ]}
         />
@@ -199,9 +199,9 @@ export default function ArchitecturePage() {
       <ShowcaseEntry title="Adding something">
         <RuleList
           rules={[
-            "A primitive: packages/design-system/src/components/ui/<name>.tsx, export from index.ts, add to docs/COMPONENTS.md and its category page here.",
+            "A primitive: packages/design-system/src/components/ui/<name>.tsx, export from index.ts, add to docs/reference/COMPONENTS.md and its category page here.",
             "A product component: src/components/<product>/, plus an entry in src/app/design-system/product/catalog.ts.",
-            "A page: src/app/<area>/, composing existing components; add the route to docs/PROJECT-MAP.md.",
+            "A page: src/app/<area>/, composing existing components; add the route to docs/start-here/PROJECT-MAP.md.",
             "Copy or prices: src/content/*.ts only.",
             "Logic with a branch, money or parsing: src/lib, with a test.",
           ]}

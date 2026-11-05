@@ -21,6 +21,6 @@ npm test        # bill and plan-change maths
 ## Read first
 
 - `AGENTS.md` — the rules: tokens only, compose from the design system, copy and layout rules.
-- `docs/PROJECT-MAP.md` — where everything lives (what's called what → route → files).
-- `docs/AI-HANDOFF.md` and `docs/TODO.md` — current context and what's pending.
+- `docs/start-here/PROJECT-MAP.md` — where everything lives (what's called what → route → files).
+- `docs/start-here/AI-HANDOFF.md` and `docs/status/TODO.md` — current context and what's pending.
 - `CONTRIBUTING.md` — branch and pull request workflow.

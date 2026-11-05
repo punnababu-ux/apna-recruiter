@@ -3,8 +3,8 @@
 Poneglyph exposes two tiers. **Components consume Tier 2 only.**
 
 ```
-Tier 1 — Primitives   raw atoms          src/styles/tokens/primitives.css
-Tier 2 — Semantics    intent aliases     src/styles/tokens/semantic.css
+Tier 1 — Primitives   raw atoms          packages/design-system/src/styles/tokens/primitives.css
+Tier 2 — Semantics    intent aliases     packages/design-system/src/styles/tokens/semantic.css
 ```
 
 ---

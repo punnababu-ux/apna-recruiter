@@ -1,6 +1,6 @@
 # Checkout, 2026-11-02 → 11-03: one version, Buy now on every phone card
 
-Follows `docs/SESSION-2026-10-30-CHECKOUT.md` (express V11, self-checkout
+Follows `docs/history/SESSION-2026-10-30-CHECKOUT.md` (express V11, self-checkout
 V14). This round ended every remaining variant: the checkouts now have one
 design, in code, with no switch. Use this file with the design-variants
 skill's "Audit: the current version" checklist to get back here quickly.

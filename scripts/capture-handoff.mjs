@@ -1,5 +1,5 @@
 // Re-captures the Checkout Dev Handoff screens (phone 430 and desktop 1440, @2x)
-// from the local dev server on :3000. See docs/AI-HANDOFF.md → "Checkout dev hand-off".
+// from the local dev server on :3000. See docs/start-here/AI-HANDOFF.md → "Checkout dev hand-off".
 // usage: PLAYWRIGHT=<path to playwright/index.mjs> node scripts/capture-handoff.mjs <outDir> [nameFilter]
 // shortcut: Playwright isn't a repo dependency; it is loaded from the npx cache and drives the
 // system Chrome. Add it as a devDependency if this becomes a regular task.

@@ -92,7 +92,7 @@ If a rule blocks you, it's working as intended — open a PR.
 
 ## Code conventions
 
-The design-system and codebase rules live in [AGENTS.md](./AGENTS.md) and the token files under `src/styles/tokens/`. Highlights:
+The design-system and codebase rules live in [AGENTS.md](./AGENTS.md) and the token files under `packages/design-system/src/styles/tokens/`. Highlights:
 
 - **Atomic order.** Add/edit tokens → atoms (`src/components/ui/*`) → organisms (`src/components/onlyrounds/*`) → compose on pages. No shortcutting.
 - **No arbitrary Tailwind values** in `className` (e.g. `p-[13px]`, `text-[10px]`, `max-h-[60vh]`). Use tokens or standard scale. The `lint:tokens` script blocks violations.

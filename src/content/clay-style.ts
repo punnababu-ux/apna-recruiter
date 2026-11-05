@@ -1,7 +1,7 @@
 /**
  * The 3D clay illustration style — the one source for the prompt every clay
  * picture is generated from. Shown on /design-system/foundations/clay and
- * described in docs/CLAY-ILLUSTRATIONS.md. Change the style here, once.
+ * described in docs/reference/CLAY-ILLUSTRATIONS.md. Change the style here, once.
  *
  * A prompt = the opening line + SUBJECT (one or two sentences: the object
  * and its colours) + CLAY_STYLE (unchanged). Taken from the prompts the

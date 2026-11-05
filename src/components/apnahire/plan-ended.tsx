@@ -1,7 +1,7 @@
 "use client"
 
 /**
- * After a plan ends (rules: docs/PRICING.md → "When a plan ends"). The
+ * After a plan ends (rules: docs/reference/PRICING.md → "When a plan ends"). The
  * account is back on job credits with nothing held back; these only make
  * coming back easy. None shows while a plan is active.
  *

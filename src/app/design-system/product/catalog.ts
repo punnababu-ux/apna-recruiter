@@ -250,7 +250,7 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
         what: "Jobs tab: credit bundle cards in the dark glass panel.",
         live: "/pricing",
         where: "Self-checkout Jobs tab",
-        rules: ["Plan cards: solid, borderless, in surface-glass-dark. See Surfaces.", "Prices from the pricing sheet (docs/PRICING.md); never hard-code a new one."],
+        rules: ["Plan cards: solid, borderless, in surface-glass-dark. See Surfaces.", "Prices from the pricing sheet (docs/reference/PRICING.md); never hard-code a new one."],
       },
       {
         name: "UnlimitedSideCard",

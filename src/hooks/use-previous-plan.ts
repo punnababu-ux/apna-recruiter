@@ -2,7 +2,7 @@
 
 /**
  * usePreviousPlan — the subscription that just ended, for the "Plan ended"
- * banner and the renew card (rules: docs/PRICING.md → "When a plan ends").
+ * banner and the renew card (rules: docs/reference/PRICING.md → "When a plan ends").
  *
  * A plan ends when a cancelled plan reaches its end date, or a renewal
  * payment fails (`endSubscription`). The account is then back on job
