@@ -39,6 +39,13 @@ export type ClayExample = { name: string; file: string; subject: string; note?: 
 /** Subjects the set was generated from (Enterprise, Resources). */
 export const CLAY_EXAMPLES: ClayExample[] = [
   {
+    name: "Relocation truck",
+    file: "relocation-truck",
+    subject:
+      "a small rounded clay moving truck seen exactly side-on, facing left, with a boxy cargo body and two stacked moving boxes peeking over the top. Warm off-white cargo body, warm yellow cab, mint boxes, deep plum wheels.",
+    note: "Job posting, the relocation card: drives in from the right. Exact side view, so it reads as moving.",
+  },
+  {
     name: "Employer branding",
     file: "employer-branding",
     subject:

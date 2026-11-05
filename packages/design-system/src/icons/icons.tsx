@@ -54,6 +54,7 @@ export {
   Voicemail, Wallet, Wand2, Wrench, X, ReceiptText,
   XCircle, XIcon, Zap,
   Backpack, Hammer, School, ScrollText, University,
+  Timer, Gift, Bus, HeartPulse, PiggyBank,
   Tag as Sell,
 } from "lucide-react"
 

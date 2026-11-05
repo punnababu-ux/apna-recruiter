@@ -11,27 +11,13 @@
  */
 
 import * as React from "react"
-import { Badge, Button, Check, Mic, Plus, PromptInput, WizardQuestion } from "@apna/design-system"
+import { createPortal } from "react-dom"
+import { AudioLines, Badge, Button, Check, Plus, PromptInput, WizardQuestion } from "@apna/design-system"
+import { cn } from "@/lib/utils"
 import { promptSignals, type PromptSignals } from "@/lib/apnahire/prompt-parse"
 import { useSpeechRecognition } from "@/hooks/use-speech-recognition"
 import { DraftingState } from "@/components/apnahire/post-job/drafting-state"
-import { cn } from "@/lib/utils"
 import type { JobPostDraft } from "@/types/apnahire-job"
-
-const EXAMPLES = [
-  {
-    label: "Telecaller · Bengaluru",
-    text: "Telecaller for my real estate office in Koramangala, Bengaluru. ₹15–20k, graduate, Hindi, 1 year calling experience",
-  },
-  {
-    label: "Delivery · Mumbai",
-    text: "Delivery executive for our e-commerce hub in Andheri, Mumbai. ₹18k + incentive, 10th pass, freshers welcome",
-  },
-  {
-    label: "Back office · Pune",
-    text: "Back office executive at our insurance office in Pune. ₹14–16k, 12th pass, basic English",
-  },
-]
 
 interface DescribeStepProps {
   prompt: string
@@ -79,7 +65,7 @@ function PromptCoverage({ prompt, listening }: { prompt: string; listening: bool
   const next = listening ? missing[0] : undefined
   const done = prompt.trim() && missing.length === 0
   return (
-    <div className="flex flex-col gap-2" aria-live="polite">
+    <div className="relative z-20 flex flex-col gap-2" aria-live="polite">
       <div className="flex flex-wrap items-center gap-2">
         {SIGNALS.map((s) => {
           const on = signals[s.key]
@@ -90,7 +76,7 @@ function PromptCoverage({ prompt, listening }: { prompt: string; listening: bool
               className={cn(
                 "gap-1",
                 on && "animate-in zoom-in-95 duration-200",
-                !on && s !== next && "border-dashed text-muted-foreground",
+                !on && s !== next && "border-dashed bg-card text-muted-foreground",
                 s === next && "animate-pulse border-primary text-primary",
               )}
             >
@@ -148,25 +134,21 @@ export function DescribeStep({
     speech.start()
   }
 
-  const applyExample = (text: string) => {
-    onPromptChange(text)
-    requestAnimationFrame(() => {
-      const el = inputRef.current
-      if (!el) return
-      el.focus()
-      el.setSelectionRange(text.length, text.length)
-    })
-  }
-
+  // Talk, after Gemini: a tinted round-ended control with sound bars; while
+  // listening it turns into a pill of moving light (ai-voice).
   const voiceControl = speech.supported ? (
     <Button
       type="button"
-      variant="outline"
-      className={cn("rounded-full", speech.listening && "border-primary text-primary")}
+      size="sm"
+      variant="ghost"
+      className={cn(
+        "rounded-full text-foreground",
+        speech.listening ? "ai-voice px-4" : "bg-info/10 text-info hover:bg-info/15",
+      )}
       aria-pressed={speech.listening}
       onClick={toggleMic}
     >
-      {speech.listening ? <VoiceWave /> : <Mic className="size-4" aria-hidden />}
+      {speech.listening ? <VoiceWave /> : <AudioLines className="size-4" aria-hidden />}
       {speech.listening ? "Listening · Stop" : "Speak"}
     </Button>
   ) : (
@@ -175,23 +157,23 @@ export function DescribeStep({
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Page-level, so no transformed parent clips it; main sits above it. */}
+      {drafting && typeof document !== "undefined" && createPortal(<span aria-hidden className="ai-backdrop" />, document.body)}
       <WizardQuestion
         {...rise(0)}
         title="Describe the job"
-        description="Type or speak. We fill in the rest."
+        description="Type or speak. We’ll fill in the rest."
       />
 
       <div {...rise(1)} className={`${rise(1).className} flex w-full flex-col gap-2`}>
-        <label htmlFor="job-prompt" className="text-sm font-medium text-foreground">
-          About the job
-        </label>
         {/* While drafting, the prompt is read-only and wears the loading ring;
             the steps appear in a gray card under it instead of a new screen.
             While listening, it glows. */}
         <div className="relative z-10 rounded-2xl">
-          {speech.listening && <span aria-hidden className="voice-glow" />}
+          {speech.listening ? <span aria-hidden className="voice-glow" /> : !drafting && <span aria-hidden className="ai-idle" />}
           <PromptInput
             id="job-prompt"
+            aria-label="About the job"
             ref={inputRef}
             size="lg"
             hideSubmit
@@ -221,24 +203,6 @@ export function DescribeStep({
         {speech.error && <p className="text-xs text-destructive">{speech.error}</p>}
       </div>
 
-      {!drafting && (
-        <div {...rise(2)} className={`${rise(2).className} flex flex-wrap items-center gap-2`}>
-          <span className="text-xs font-medium text-muted-foreground">Try:</span>
-          {EXAMPLES.map((ex) => (
-            <Button
-              key={ex.label}
-              type="button"
-              size="sm"
-              variant="outline"
-              className="rounded-full"
-              title={ex.text}
-              onClick={() => applyExample(ex.text)}
-            >
-              {ex.label}
-            </Button>
-          ))}
-        </div>
-      )}
     </div>
   )
 }

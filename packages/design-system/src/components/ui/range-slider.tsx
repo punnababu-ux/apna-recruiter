@@ -43,6 +43,8 @@ interface RangeSliderProps {
   step?: number
   value: [number, number]
   onValueChange: (value: [number, number]) => void
+  /** On release (pointer up / key up): the place to rescale `max`, never mid-drag. */
+  onValueCommitted?: (value: [number, number]) => void
   /** Tick spacing in value units. */
   ticks?: { minor: number; major: number }
   /** Values labelled under the track. */
@@ -64,6 +66,7 @@ function RangeSlider({
   step = 1,
   value,
   onValueChange,
+  onValueCommitted,
   ticks,
   scale,
   formatValue = (n) => String(n),
@@ -109,6 +112,10 @@ function RangeSlider({
           const next = v as number[]
           haptic(next)
           onValueChange([next[0], next[1]])
+        }}
+        onValueCommitted={(v) => {
+          const next = v as number[]
+          onValueCommitted?.([next[0], next[1]])
         }}
         className="relative w-full touch-none select-none pt-9"
       >
