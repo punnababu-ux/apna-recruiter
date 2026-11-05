@@ -14,6 +14,8 @@ import {
   Button,
   MetricCard,
   ChatBubble,
+  ChatFileCard,
+  ChatAttachmentTray,
   ChatChoice,
   ChatDayDivider,
   ChatNotice,
@@ -228,6 +230,20 @@ export default function DisplayComponentsPage() {
           <ChatBubble variant="incoming" time="10:45 am">
             Great, I can start Monday.
           </ChatBubble>
+          <ChatDayDivider>File cards</ChatDayDivider>
+          <ChatBubble variant="incoming" time="10:45 am" media={<ChatFileCard name="Ravi Kumar resume.pdf" size={245760} href="#" />}>
+            My resume.
+          </ChatBubble>
+          <ChatBubble variant="outgoing" time="10:46 am" status="read" media={<ChatFileCard name="Job description.docx" size={89000} onAction={() => {}} />}>
+            The role details.
+          </ChatBubble>
+          <ChatBubble
+            variant="assistant"
+            label="Apna Assistant"
+            time="10:47 am"
+            status="sent"
+            media={<ChatFileCard name="Salary-bands-for-delivery-executives-2026.xlsx" size={1572864} />}
+          />
           <ChatDayDivider>Status ticks</ChatDayDivider>
           <ChatBubble variant="outgoing" time="10:46 am" status="sending">
             Sending: clock
@@ -254,6 +270,26 @@ export default function DisplayComponentsPage() {
             Read
           </ChatBubble>
         </ChatMessageList>
+      </div>
+
+      {/* Chat attachments */}
+      <div className="rounded-xl border border-border bg-card p-6 space-y-4">
+        <h2 className="text-base font-semibold text-foreground font-heading border-b border-border/60 pb-2">
+          Chat Attachments
+        </h2>
+        <div className="grid max-w-xl gap-3">
+          <ChatFileCard variant="standalone" name="Interview schedule.pdf" size={245760} actionLabel="Open" onAction={() => {}} />
+          <ChatFileCard variant="standalone" name="Candidates.csv" size={512} />
+          <ChatFileCard variant="standalone" name="Notes" />
+          <ChatAttachmentTray
+            items={[
+              { id: "a", name: "Photo.jpg", size: 1200000, type: "image/jpeg", url: "/images/chats/bike.jpg" },
+              { id: "b", name: "Job description.pdf", size: 245760, type: "application/pdf" },
+              { id: "c", name: "Pay slip sheet with a very long name.xlsx", size: 90000, type: "" },
+            ]}
+            onRemove={() => {}}
+          />
+        </div>
       </div>
 
       {/* Conversation list */}

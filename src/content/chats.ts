@@ -94,7 +94,24 @@ export interface ChatMessage {
   status?: MessageStatus
   /** A photo sent in the message, shown above the text. */
   image?: { src: string; alt: string; width: number; height: number }
+  /** Files the recruiter attached (images included) in this message, sent with the text as the caption.
+   *  Images the recruiter picks are kept here (not in `image`, which is for the mock photos): an image with a
+   *  `url` shows as media, any other file as a ChatFileCard. Prototype: nothing is uploaded; `url` is a
+   *  browser object URL that lives until the page closes. */
+  files?: ChatFile[]
 }
+
+/** A file attached to a message. `size` is in bytes, `type` the MIME type. */
+export interface ChatFile {
+  name: string
+  size: number
+  type: string
+  url?: string
+}
+
+/** Attachment limits (the recruiter's side; nothing is uploaded in the prototype). */
+export const MAX_FILE_BYTES = 25 * 1024 * 1024
+export const MAX_FILES_PER_MESSAGE = 10
 
 export interface ChatJob {
   id: string
@@ -569,3 +586,87 @@ export const MOCK_THREADS: ChatThread[] = [
   ...HAND_WRITTEN_THREADS,
   ...generateThreads([DELIVERY, TELECALLER, BACK_OFFICE], AI_MESSAGE_LIMIT),
 ]
+
+/** The groups of canned responses, in picker order. "Mine" holds the ones the recruiter saved. */
+export const TEMPLATE_GROUPS = ["Greeting", "Interview", "Follow-up", "Closing", "Mine"] as const
+export type TemplateGroup = (typeof TEMPLATE_GROUPS)[number]
+
+export interface ChatTemplate {
+  id: string
+  group: TemplateGroup
+  /** The short name in the picker. */
+  label: string
+  /** The message. Placeholders: {name} (candidate first name), {job}, {company}, {area}. */
+  text: string
+}
+
+/** Canned responses (PRD FR-3 "Templates"). None asks for documents: that is out of the MVP (PRD). */
+export const TEMPLATES: ChatTemplate[] = [
+  {
+    id: "greet-intro",
+    group: "Greeting",
+    label: "Say hello",
+    text: "Hi {name}, this is " + RECRUITER_NAME + " from {company}. Thank you for applying for {job}.",
+  },
+  {
+    id: "greet-role",
+    group: "Greeting",
+    label: "About the role",
+    text: "Hi {name}, we have an opening for {job} in {area}. Are you still looking for work?",
+  },
+  {
+    id: "int-invite",
+    group: "Interview",
+    label: "Invite to interview",
+    text: "Hi {name}, we would like to meet you for {job}. Can you come to our office in {area} this week?",
+  },
+  {
+    id: "int-time",
+    group: "Interview",
+    label: "Ask for a time",
+    text: "Which day and time suit you best for the interview? We are free from 10 am to 5 pm.",
+  },
+  {
+    id: "int-confirm",
+    group: "Interview",
+    label: "Confirm the slot",
+    text: "Your interview for {job} is confirmed. We will see you at {company}, {area}. Please reply to confirm.",
+  },
+  {
+    id: "follow-nudge",
+    group: "Follow-up",
+    label: "Nudge for a reply",
+    text: "Hi {name}, just checking in. Are you still interested in the {job} role at {company}?",
+  },
+  {
+    id: "follow-call",
+    group: "Follow-up",
+    label: "Ask for a call",
+    text: "Hi {name}, when can we call you to talk about {job}? A time today or tomorrow works.",
+  },
+  {
+    id: "close-thanks",
+    group: "Closing",
+    label: "Thank and close",
+    text: "Thank you for your time, {name}. We will get back to you soon about {job}.",
+  },
+  {
+    id: "close-nofit",
+    group: "Closing",
+    label: "Not a fit",
+    text: "Thank you for your interest, {name}. We will not move ahead for {job} this time. We wish you the best.",
+  },
+]
+
+/** What a thread fills into a template. */
+export interface TemplateContext {
+  name: string
+  job: string
+  company: string
+  area: string
+}
+
+/** Fills {name} {job} {company} {area} in a template for one thread. Unknown placeholders stay as written. */
+export function fillTemplate(text: string, ctx: TemplateContext) {
+  return text.replace(/\{(name|job|company|area)\}/g, (_, key: keyof TemplateContext) => ctx[key])
+}

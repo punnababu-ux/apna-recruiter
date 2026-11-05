@@ -21,7 +21,7 @@
  */
 
 import * as React from "react"
-import { MOCK_THREADS, type ChatThread, type ClosedReason, type MessageStatus } from "@/content/chats"
+import { MOCK_THREADS, type ChatFile, type ChatThread, type ClosedReason, type MessageStatus } from "@/content/chats"
 
 let state: ChatThread[] = MOCK_THREADS
 const listeners = new Set<() => void>()
@@ -113,8 +113,10 @@ export function useChats() {
       )
     }, []),
     /** The recruiter replies: the thread is no longer urgent, and the AI
-     *  stops (PRD: the recruiter takes over). */
-    reply: React.useCallback((id: string, text: string) => {
+     *  stops (PRD: the recruiter takes over). One message carries the text
+     *  (the caption) and all `files`. Prototype: nothing is uploaded; the files
+     *  stay as metadata and object URLs. */
+    reply: React.useCallback((id: string, text: string, files?: ChatFile[]) => {
       const messageId = `r${nextMessage++}`
       set(
         state.map((t) =>
@@ -124,7 +126,15 @@ export function useChats() {
                 status: t.status === "urgent" || t.status === "ai-screening" ? "active" : t.status,
                 messages: [
                   ...t.messages,
-                  { id: messageId, from: "recruiter", text, day: "Today", time: clockTime(), status: "sending" },
+                  {
+                    id: messageId,
+                    from: "recruiter",
+                    text,
+                    day: "Today",
+                    time: clockTime(),
+                    status: "sending",
+                    ...(files?.length ? { files } : {}),
+                  },
                 ],
               }
             : t

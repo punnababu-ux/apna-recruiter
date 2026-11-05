@@ -16,8 +16,24 @@
  *     onSend={(t) => post(t)}
  *     onMic={startRecording}      // optional; Mic is disabled without it
  *     top={<SuggestionChips … />} // optional slot above the input row
+ *     leading={<Button … />}      // optional buttons left of the input (attach, templates)
+ *     attachments={<ChatAttachmentTray … />}  // optional, above the input row
+ *     canSend={text !== "" || files.length > 0}  // optional override (see Attachments)
+ *     onPasteFiles={add} onDropFiles={add}    // optional; files pasted or dropped
  *     variant="docked | floating" // default docked
  *   />
+ *
+ * Attachments: the composer holds no files, the parent does. `attachments`
+ * (a ChatAttachmentTray) sits above the input row, inside the pill (floating)
+ * or the field block (docked). `canSend` overrides "there is text": pass true
+ * when files are pending, so Send is on with an empty caption. Mic shows only
+ * with no text AND `canSend` not true. `onSend` gets the trimmed text, which
+ * may be "". `onPasteFiles(files)` fires when the clipboard holds files (a
+ * pasted image; pasted text still goes into the box). `onDropFiles(files)`
+ * fires on a file dropped on the input area, which shows a drop state (a
+ * primary ring and "Drop files to attach"). Both are inert when not given.
+ * `leading` sits left of the text, inside the pill (floating) or before the
+ * textarea (docked); give it ghost icon buttons, each with an aria-label.
  *
  * Variants
  *   docked    sticky bottom-0 bar on the StickyCtaBar surface (frosted card
@@ -55,7 +71,17 @@ interface ChatComposerProps {
   variant?: "docked" | "floating"
   /** Docked variant only: false gives a plain block, not a sticky bar. */
   docked?: boolean
-  /** Voice-note tap, shown while the box is empty. */
+  /** Buttons left of the input (attach, templates): ghost icon buttons with aria-labels. */
+  leading?: React.ReactNode
+  /** Above the input row, inside the pill: a ChatAttachmentTray. */
+  attachments?: React.ReactNode
+  /** Overrides "there is text" for Send and the Mic swap: true with pending attachments. */
+  canSend?: boolean
+  /** Files pasted into the box (an image from the clipboard). */
+  onPasteFiles?: (files: File[]) => void
+  /** Files dropped on the input area. Shows a drop state while dragging over it. */
+  onDropFiles?: (files: File[]) => void
+  /** Voice-note tap, shown while the box is empty and nothing is attached. */
   onMic?: () => void
   disabled?: boolean
   className?: string
@@ -69,16 +95,45 @@ function ChatComposer({
   top,
   variant = "docked",
   docked = true,
+  leading,
+  attachments,
+  canSend: canSendProp,
+  onPasteFiles,
+  onDropFiles,
   onMic,
   disabled = false,
   className,
 }: ChatComposerProps) {
   const text = value.trim()
   const floating = variant === "floating"
-  const canSend = text.length > 0 && !disabled
+  const ready = canSendProp ?? text.length > 0
+  const canSend = ready && !disabled
+  // Drag depth: dragenter and dragleave also fire for the children.
+  const [dragDepth, setDragDepth] = React.useState(0)
+  const dragging = dragDepth > 0
 
   function send() {
     if (canSend) onSend(text)
+  }
+
+  const isFileDrag = (e: React.DragEvent) => !!onDropFiles && !disabled && e.dataTransfer.types.includes("Files")
+  const dropProps = {
+    onDragEnter: (e: React.DragEvent) => {
+      if (isFileDrag(e)) setDragDepth((d) => d + 1)
+    },
+    onDragOver: (e: React.DragEvent) => {
+      if (isFileDrag(e)) e.preventDefault()
+    },
+    onDragLeave: (e: React.DragEvent) => {
+      if (isFileDrag(e)) setDragDepth((d) => Math.max(0, d - 1))
+    },
+    onDrop: (e: React.DragEvent) => {
+      if (!isFileDrag(e)) return
+      e.preventDefault()
+      setDragDepth(0)
+      const files = Array.from(e.dataTransfer.files)
+      if (files.length > 0) onDropFiles?.(files)
+    },
   }
 
   const textarea = (
@@ -90,6 +145,13 @@ function ChatComposer({
           e.preventDefault()
           send()
         }
+      }}
+      onPaste={(e) => {
+        const files = Array.from(e.clipboardData.files)
+        if (!onPasteFiles || files.length === 0) return
+        onPasteFiles(files)
+        // Text copied from a document can carry a preview image too: keep the text.
+        if (!e.clipboardData.getData("text/plain")) e.preventDefault()
       }}
       placeholder={placeholder}
       aria-label={placeholder}
@@ -103,8 +165,16 @@ function ChatComposer({
       )}
     />
   )
+  const dropOverlay = dragging && (
+    <span
+      aria-hidden
+      className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center rounded-[inherit] bg-card/90 text-body-sm font-medium text-foreground"
+    >
+      Drop files to attach
+    </span>
+  )
   const action =
-    text.length > 0 ? (
+    ready ? (
       <Button
         type="button"
         size="icon-lg"
@@ -141,8 +211,19 @@ function ChatComposer({
       >
         {top}
         <div className="flex items-end gap-2">
-          <div className="flex min-w-0 flex-1 items-end rounded-composer bg-card shadow-popover transition-interactive focus-within:ring-3 focus-within:ring-ring/50">
-            {textarea}
+          <div
+            {...dropProps}
+            className={cn(
+              "relative flex min-w-0 flex-1 flex-col rounded-composer bg-card shadow-popover transition-interactive focus-within:ring-3 focus-within:ring-ring/50",
+              dragging && "ring-2 ring-primary"
+            )}
+          >
+            {attachments}
+            <div className="flex items-end">
+              {leading && <div className="flex shrink-0 items-center gap-0.5 pb-1 pl-1">{leading}</div>}
+              {textarea}
+            </div>
+            {dropOverlay}
           </div>
           {action}
         </div>
@@ -162,7 +243,14 @@ function ChatComposer({
     >
       {top}
       <div className="flex items-end gap-2">
-        {textarea}
+        <div {...dropProps} className={cn("relative flex min-w-0 flex-1 flex-col gap-1 rounded-lg", dragging && "ring-2 ring-primary")}>
+          {attachments}
+          <div className="flex items-end gap-1">
+            {leading && <div className="flex shrink-0 items-center gap-0.5">{leading}</div>}
+            {textarea}
+          </div>
+          {dropOverlay}
+        </div>
         {action}
       </div>
     </div>

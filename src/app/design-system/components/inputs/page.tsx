@@ -33,6 +33,10 @@ import {
   SearchFilterBar,
   PromptInput,
   ChatComposer,
+  ChatAttachmentTray,
+  type ChatAttachmentItem,
+  Paperclip,
+  Zap,
   SuggestionChips,
   Sparkles,
   Button,
@@ -110,6 +114,51 @@ function ChatComposerDemo() {
             }
           />
         </div>
+      </div>
+    </div>
+  )
+}
+
+/** Floating composer with `leading` buttons, an `attachments` tray, `canSend` and a paste or drop target. */
+function ChatComposerAttachDemo() {
+  const [value, setValue] = React.useState("")
+  const [files, setFiles] = React.useState<ChatAttachmentItem[]>([
+    { id: "1", name: "Job description.pdf", size: 245760, type: "application/pdf" },
+  ])
+  const add = (list: File[]) =>
+    setFiles((prev) => [
+      ...prev,
+      ...list.map((f, i) => ({ id: `${Date.now()}-${i}`, name: f.name, size: f.size, type: f.type })),
+    ])
+  return (
+    <div className="space-y-3">
+      <p className="text-sm text-muted-foreground">
+        Leading buttons, attachment tray, Send on with no text (canSend), drop or paste files
+      </p>
+      <div className="chat-wallpaper flex min-h-64 flex-col justify-end overflow-hidden rounded-lg border border-border">
+        <ChatComposer
+          variant="floating"
+          value={value}
+          onValueChange={setValue}
+          onSend={() => {
+            setValue("")
+            setFiles([])
+          }}
+          canSend={value.trim() !== "" || files.length > 0}
+          onPasteFiles={add}
+          onDropFiles={add}
+          attachments={<ChatAttachmentTray items={files} onRemove={(id) => setFiles((p) => p.filter((f) => f.id !== id))} />}
+          leading={
+            <>
+              <Button type="button" variant="ghost" size="icon-sm" aria-label="Attach files" className="rounded-full text-muted-foreground">
+                <Paperclip aria-hidden className="size-5" />
+              </Button>
+              <Button type="button" variant="ghost" size="icon-sm" aria-label="Templates" className="rounded-full text-muted-foreground">
+                <Zap aria-hidden className="size-5" />
+              </Button>
+            </>
+          }
+        />
       </div>
     </div>
   )
@@ -471,6 +520,7 @@ export default function InputsComponentsPage() {
           Chat Composer & Suggestion Chips
         </h2>
         <ChatComposerDemo />
+        <ChatComposerAttachDemo />
       </div>
     </div>
   )

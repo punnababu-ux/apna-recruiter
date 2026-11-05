@@ -45,3 +45,4 @@ ship, and keep one line per item. Open price questions live in
 - [ ] Confirm the resume unlock cost and copy ("Unlock resume · 1 credit" was written for the prototype)
 - [ ] Search within one chat's messages
 - [ ] Open a thread at its newest message (scroll after photos load); full-contrast mic button
+- [ ] Requests for documents (ID, certificates) are out of the MVP (PRD); no template asks for them. Decide if/when

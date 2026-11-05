@@ -47,8 +47,22 @@
  *             object in ValueArt), the summary text and the same replies as
  *             actions; picking one fills the composer and closes the pop-up.
  *             Sending takes the thread off Urgent and stops the AI (useChats)
+ *   Leading   Two ghost icon buttons inside the pill: Paperclip ("Attach
+ *             files") and Zap ("Templates", TemplatePicker; typing "/" into an
+ *             empty box opens it too). A template fills the draft with the
+ *             thread's name, job, company and area; it never sends
+ *   Attach    Files come from the picker, a paste or a drop. Limits: 25 MB a
+ *             file, 10 a message; a file over a limit is skipped with a toast
+ *             that says why. Pending files show in a ChatAttachmentTray above
+ *             the input (images as thumbnails from object URLs, revoked on
+ *             remove and on leaving the thread). Send sends ONE message: the
+ *             files plus the text as the caption; Send is on with no text. In
+ *             the bubble images are media, other files ChatFileCards. Sent
+ *             images keep their object URL (the bubble shows them) until the
+ *             page closes
  *
- * Scripted mock data: nothing leaves the prototype.
+ * Scripted mock data: nothing leaves the prototype. Attached files are NOT
+ * uploaded: they stay in the browser as object URLs and in the session store.
  */
 
 import * as React from "react"
@@ -66,7 +80,10 @@ import {
   Button,
   ChatBubble,
   ChatChoice,
+  ChatAttachmentTray,
   ChatComposer,
+  ChatFileCard,
+  type ChatAttachmentItem,
   ChatDayDivider,
   ChatMessageList,
   ChatNotice,
@@ -78,6 +95,7 @@ import {
   MapPin,
   Minus,
   MoreVertical,
+  Paperclip,
   UserRound,
   ShieldCheck,
   Sparkles,
@@ -91,7 +109,10 @@ import { CandidateProfileSheet } from "@/components/apnahire/chats/candidate-pro
 import { BAND, SUBROW } from "@/components/apnahire/chats/chat-bands"
 import { PlanPopup, PopupBody, PopupHeader } from "@/components/apnahire/plan-popup"
 import { IconLabel } from "@/components/onlyrounds/shared"
+import { TemplatePicker } from "@/components/apnahire/chats/template-picker"
 import { useChats } from "@/hooks/apnahire/use-chats"
+import { useTemplates } from "@/hooks/apnahire/use-templates"
+import { COMPANY_NAME } from "@/lib/apnahire/job-draft"
 import { cn } from "@/lib/utils"
 import { useAppBack } from "@/lib/apnahire/nav"
 import {
@@ -99,6 +120,8 @@ import {
   CLOSED_LABEL,
   EXPIRED_NOTICE,
   MATCH_LABEL,
+  MAX_FILES_PER_MESSAGE,
+  MAX_FILE_BYTES,
   RECRUITER_NAME,
   MONEY_WARNING,
   TIER_LABEL,
@@ -110,6 +133,17 @@ import {
 
 /** Match level → icon for the header's match chip. The sr-only level text carries the meaning, not the icon. */
 const MATCH_ICON = { high: TrendingUp, medium: Minus, low: AlertCircle } as const satisfies Record<MatchLevel, unknown>
+
+/** What the file picker offers (the same set is checked for a paste or a drop). */
+const ACCEPT = "image/*,.pdf,.doc,.docx,.xls,.xlsx,.csv,.txt"
+const ALLOWED_EXTENSIONS = ["pdf", "doc", "docx", "xls", "xlsx", "csv", "txt"]
+
+function isAllowedFile(file: File) {
+  const ext = file.name.split(".").pop()?.toLowerCase() ?? ""
+  return file.type.startsWith("image/") || ALLOWED_EXTENSIONS.includes(ext)
+}
+
+const isImageFile = (f: { type: string }) => f.type.startsWith("image/")
 
 /** The "AI summary" chip's value: not a reply, so it never lands in the draft. */
 const SUMMARY = "ai-summary"
@@ -185,6 +219,33 @@ function MatchChip({ thread }: { thread: Thread }) {
   )
 }
 
+/** The files of one message, in the bubble's media slot: images first (a grid when several), then a card per file. */
+function FileMedia({ files, onImageLoad }: { files: NonNullable<ChatMessage["files"]>; onImageLoad: () => void }) {
+  const images = files.filter((f) => f.url && isImageFile(f))
+  const others = files.filter((f) => !(f.url && isImageFile(f)))
+  return (
+    <div className="flex flex-col gap-1">
+      {images.length > 0 && (
+        <div className={cn("grid gap-1", images.length > 1 && "grid-cols-2")}>
+          {images.map((f, i) => (
+            // eslint-disable-next-line @next/next/no-img-element -- local object URL
+            <img
+              key={`${f.url}-${i}`}
+              src={f.url}
+              alt={f.name}
+              onLoad={onImageLoad}
+              className={cn("block w-full rounded-field object-cover", images.length > 1 ? "aspect-square" : "max-h-80")}
+            />
+          ))}
+        </div>
+      )}
+      {others.map((f, i) => (
+        <ChatFileCard key={`${f.name}-${i}`} name={f.name} size={f.size} type={f.type} />
+      ))}
+    </div>
+  )
+}
+
 function Messages({
   messages,
   candidate,
@@ -231,7 +292,7 @@ function Messages({
                 senderName={m.from === "candidate" ? candidate.name.split(" ")[0] : m.from === "recruiter" ? "You" : undefined}
                 groupPosition={positionOf(messages, i)}
                 media={
-                  m.image && (
+                  m.image ? (
                     // eslint-disable-next-line @next/next/no-img-element -- mock photo, size known
                     <img
                       src={m.image.src}
@@ -241,7 +302,9 @@ function Messages({
                       loading="lazy"
                       onLoad={onImageLoad}
                     />
-                  )
+                  ) : m.files?.length ? (
+                    <FileMedia files={m.files} onImageLoad={onImageLoad} />
+                  ) : undefined
                 }
               >
                 {m.text}
@@ -257,7 +320,17 @@ function Messages({
 export function ChatThread({ thread }: { thread: Thread }) {
   const back = useAppBack("/apnahire/chats")
   const { markRead, reply, closeThread, reopenThread } = useChats()
+  const { templates, save: saveTemplate } = useTemplates()
   const [draft, setDraft] = React.useState("")
+  const [templatesOpen, setTemplatesOpen] = React.useState(false)
+  const [pending, setPending] = React.useState<ChatAttachmentItem[]>([])
+  // The latest pending list, for the unmount cleanup and for counting before state settles.
+  const pendingRef = React.useRef(pending)
+  React.useEffect(() => {
+    pendingRef.current = pending
+  }, [pending])
+  const fileInput = React.useRef<HTMLInputElement>(null)
+  const nextFile = React.useRef(1)
   const [summaryOpen, setSummaryOpen] = React.useState(false)
   const [profileOpen, setProfileOpen] = React.useState(false)
   const end = React.useRef<HTMLDivElement>(null)
@@ -299,9 +372,69 @@ export function ChatThread({ thread }: { thread: Thread }) {
     seen.current = count
   }, [count])
 
+  // Leaving the thread: release the previews that were never sent. Sent images keep their URL (the bubble uses it).
+  React.useEffect(
+    () => () => {
+      pendingRef.current.forEach((f) => f.url && URL.revokeObjectURL(f.url))
+    },
+    []
+  )
+
+  /** Adds files to the tray. Over 25 MB, an unsupported type or past 10: skipped, with a toast that says why. */
+  const addFiles = (files: File[]) => {
+    const added: ChatAttachmentItem[] = []
+    let overCount = 0
+    for (const file of files) {
+      if (!isAllowedFile(file)) {
+        toast(`${file.name} was not added: this file type is not supported.`)
+      } else if (file.size > MAX_FILE_BYTES) {
+        toast(`${file.name} was not added: it is over ${MAX_FILE_BYTES / (1024 * 1024)} MB.`)
+      } else if (pendingRef.current.length + added.length >= MAX_FILES_PER_MESSAGE) {
+        overCount++
+      } else {
+        added.push({
+          id: `f${nextFile.current++}`,
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          url: isImageFile(file) ? URL.createObjectURL(file) : undefined,
+        })
+      }
+    }
+    if (overCount > 0) {
+      toast(`You can attach up to ${MAX_FILES_PER_MESSAGE} files to a message. ${overCount} not added.`)
+    }
+    if (added.length > 0) setPending((prev) => [...prev, ...added])
+  }
+
+  const removeFile = (id: string) => {
+    const file = pending.find((f) => f.id === id)
+    if (file?.url) URL.revokeObjectURL(file.url)
+    setPending((prev) => prev.filter((f) => f.id !== id))
+  }
+
+  /** One message: the files and the text as the caption. The object URLs go with the message, so they stay. */
   const send = (text: string) => {
-    reply(thread.id, text)
+    reply(
+      thread.id,
+      text,
+      pending.map(({ name, size, type, url }) => ({ name, size, type, url }))
+    )
     setDraft("")
+    setPending([])
+  }
+
+  /** "/" at the start of an empty box opens the templates instead of typing. */
+  const changeDraft = (value: string) => {
+    if (value === "/" && draft === "") setTemplatesOpen(true)
+    else setDraft(value)
+  }
+
+  const templateContext = {
+    name: thread.candidate.name.split(" ")[0],
+    job: thread.job.title,
+    company: COMPANY_NAME,
+    area: thread.job.area,
   }
 
   /** No confirmation: the toast's Undo is the way back (undo over confirmation). */
@@ -440,8 +573,56 @@ export function ChatThread({ thread }: { thread: Thread }) {
         <ChatComposer
           variant="floating"
           value={draft}
-          onValueChange={setDraft}
+          onValueChange={changeDraft}
           onSend={send}
+          canSend={draft.trim() !== "" || pending.length > 0}
+          onPasteFiles={addFiles}
+          onDropFiles={addFiles}
+          attachments={<ChatAttachmentTray items={pending} onRemove={removeFile} />}
+          leading={
+            <>
+              {/* Prototype: the files are not uploaded anywhere. */}
+              <input
+                ref={fileInput}
+                type="file"
+                multiple
+                accept={ACCEPT}
+                hidden
+                onChange={(e) => {
+                  addFiles(Array.from(e.target.files ?? []))
+                  e.target.value = ""
+                }}
+              />
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-sm"
+                      aria-label="Attach files"
+                      onClick={() => fileInput.current?.click()}
+                      className="rounded-full text-muted-foreground"
+                    />
+                  }
+                >
+                  <Paperclip aria-hidden className="size-5" />
+                </TooltipTrigger>
+                <TooltipContent>Attach files</TooltipContent>
+              </Tooltip>
+              <TemplatePicker
+                templates={templates}
+                context={templateContext}
+                canSave={draft.trim() !== ""}
+                open={templatesOpen}
+                onOpenChange={setTemplatesOpen}
+                onPick={setDraft}
+                onSave={() => {
+                  if (saveTemplate(draft)) toast("Saved under Mine")
+                }}
+              />
+            </>
+          }
           top={
             urgent && thread.summary ? (
               <SuggestionChips
