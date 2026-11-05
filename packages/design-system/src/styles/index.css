@@ -1231,12 +1231,14 @@
 /* loading-ring — attention-ring's strip of light, looping while the AI
    works on what's inside the card (the job prompt as "Draft my job" runs).
    Steady, no fade: here the loop is meant to read as "loading". Same markup:
-   an empty `<span aria-hidden>` last in a `relative` card. Reduced motion: a
-   still gradient edge. */
+   an empty `<span aria-hidden>` last in a `relative` box that sets a
+   stacking context (`z-10` / `isolate`). It sits BEHIND the card, 2px out,
+   so its glow lights the background and never washes over the field
+   (user call, 2026-11-05). Reduced motion: a still gradient edge. */
 @utility loading-ring {
   position: absolute;
-  inset: 0;
-  z-index: 1;
+  inset: -2px;
+  z-index: -1;
   border-radius: inherit;
   pointer-events: none;
   filter:

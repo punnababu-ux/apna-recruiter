@@ -251,9 +251,8 @@ export function ChoiceCards<V extends string>({
         return (
           <div key={v} className="overflow-hidden rounded-card-nested border border-primary bg-accent ring-1 ring-primary">
             {card}
-            {/* Fields sit on white, so inputs and sliders keep their normal
-                look; only the picked answer's header carries the tint. */}
-            {extra && <div className="border-t border-primary/20 bg-card p-4">{extra}</div>}
+            {/* The fields sit on the picked card's tint, one green card (user call, 2026-11-05). */}
+            {extra && <div className="border-t border-primary/20 p-4">{extra}</div>}
             {withSwitch && (
               <div className="px-4 py-3">
                 <label className="flex items-center gap-3">
