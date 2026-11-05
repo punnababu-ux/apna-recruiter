@@ -1754,11 +1754,23 @@ a[href] > [data-slot="card"] {
 @utility bg-gradient-banner-destructive {
   background-image: var(--gradient-banner-destructive);
 }
+/* Result washes drift slowly (same colours, the fade edge eases up and
+ * down) so the page feels live. Still under reduced motion. */
+@keyframes result-wash-drift {
+  from { background-position: 50% 0%; }
+  to { background-position: 50% 100%; }
+}
 @utility bg-gradient-result-success {
   background-image: var(--gradient-result-success);
+  background-size: 100% 140%;
+  animation: result-wash-drift 6s ease-in-out infinite alternate;
+  @media (prefers-reduced-motion: reduce) { animation: none; }
 }
 @utility bg-gradient-result-failure {
   background-image: var(--gradient-result-failure);
+  background-size: 100% 140%;
+  animation: result-wash-drift 6s ease-in-out infinite alternate;
+  @media (prefers-reduced-motion: reduce) { animation: none; }
 }
 /* Frosted dark glass (--surface-glass-dark): the smoked counterpart of the
  * white glass — an 8% black pane, blurred, with a hairline light edge, for a
