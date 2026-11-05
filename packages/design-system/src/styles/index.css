@@ -1654,6 +1654,12 @@ a[href] > [data-slot="card"] {
 @utility mask-fade-b {
   mask-image: linear-gradient(to bottom, black 60%, transparent);
 }
+/* Fades a sideways-scrolling row out at its end, so a chip cut by the edge
+ * reads as "more this way" instead of a broken label (Express's applied
+ * filters). The fade is the last 24px. */
+@utility mask-fade-e {
+  mask-image: linear-gradient(to right, black calc(100% - 1.5rem), transparent);
+}
 @utility bg-gradient-illustration-gold {
   background-image: var(--gradient-illustration-gold);
 }

@@ -16,7 +16,14 @@
  *            group means all. A count Badge on the button and a "Clear
  *            filters" item show once any filter is on.
  *   Sort     A radio group (chat-sort.ts): Urgent first (default), Newest,
- *            Unread first, Name (A-Z).
+ *            Unread first, Name (A-Z). From xl the button shows the current
+ *            sort's short label; phones and md keep the icon, with the sort
+ *            in the aria-label and title.
+ *   Applied  The sub-row (md+) and a row under the search on phones: the
+ *            count ("307 chats", or "34 of 307 chats") and one removable chip
+ *            per status, job and search query, then "Clear all" (filters and
+ *            search). One scrolling line, so the row keeps its height. From
+ *            md the open search field takes the band's title slot.
  *   Rows     ConversationRow in a ConversationList: avatar · name · time ·
  *            job and tier · last message (with status ticks when it is the
  *            recruiter's or the AI's) · unread count · status, linking to
@@ -65,6 +72,7 @@ import {
   Sparkles,
   Star,
 } from "@apna/design-system"
+import { ChatAppliedRow, type AppliedChip } from "@/components/apnahire/chats/chat-applied-row"
 import { BAND, SUBROW } from "@/components/apnahire/chats/chat-bands"
 import { SORT_OPTIONS, sortThreads, type ChatSort } from "@/components/apnahire/chats/chat-sort"
 import { useFlushHeader } from "@/hooks/use-flush-header"
@@ -90,6 +98,14 @@ const STATUS_ICON: Record<StatusFilter, React.ComponentType<{ className?: string
   shortlisted: Star,
   interview: CalendarCheck,
   closed: CheckCircle2,
+}
+
+/** Short sort names for the button. */
+const SORT_SHORT: Record<ChatSort, string> = {
+  "urgent-first": "Urgent first",
+  newest: "Newest",
+  "unread-first": "Unread first",
+  name: "Name A–Z",
 }
 
 /** True when the query (already trimmed, lower-case) is in the candidate's
@@ -200,6 +216,26 @@ export function ChatInbox({ activeId = null, className }: { activeId?: string | 
     setStatuses([])
     setJobIds([])
   }
+  const clearAll = () => {
+    clearFilters()
+    setSearchQuery("")
+  }
+
+  const chips: AppliedChip[] = [
+    ...statuses.map((s) => ({
+      key: `status-${s}`,
+      label: STATUS_FILTERS.find((f) => f.value === s)?.label ?? s,
+      icon: STATUS_ICON[s],
+      onRemove: () => setStatuses((list) => list.filter((v) => v !== s)),
+    })),
+    ...jobIds.map((id) => ({
+      key: `job-${id}`,
+      label: jobs.find((j) => j.id === id)?.title ?? id,
+      onRemove: () => setJobIds((list) => list.filter((v) => v !== id)),
+    })),
+    ...(query ? [{ key: "query", label: `\u201c${query}\u201d`, icon: Search, onRemove: () => setSearchQuery("") }] : []),
+  ]
+  const sortLabel = SORT_SHORT[sort]
 
   const filtersMenu = (
     <DropdownMenu>
@@ -209,19 +245,13 @@ export function ChatInbox({ activeId = null, className }: { activeId?: string | 
             variant="outline"
             size="icon"
             aria-label={filterCount ? `Filters, ${filterCount} on` : "Filters"}
-            className="relative shrink-0 xl:w-auto xl:px-3"
+            className="relative shrink-0"
           />
         }
       >
         <Filter aria-hidden />
-        <span className="hidden xl:inline">Filters</span>
         {filterCount > 0 && (
-          <>
-            <Badge variant="default" className="hidden h-5 min-w-5 px-1.5 text-2xs font-semibold xl:inline-flex">
-              {filterCount}
-            </Badge>
-            <Badge variant="count" size="dot" className="absolute top-1 right-1 ring-2 ring-card xl:hidden" />
-          </>
+          <Badge variant="count" size="dot" className="absolute top-1 right-1 ring-2 ring-card" />
         )}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-64">
@@ -267,8 +297,19 @@ export function ChatInbox({ activeId = null, className }: { activeId?: string | 
 
   const sortMenu = (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button variant="outline" size="icon" aria-label="Sort chats" className="shrink-0" />}>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            variant="outline"
+            size="icon"
+            aria-label={`Sort chats, ${sortLabel}`}
+            title={`Sort: ${sortLabel}`}
+            className={cn("shrink-0", !searchOpen && "xl:w-auto xl:px-3")}
+          />
+        }
+      >
         <ArrowUpDown aria-hidden />
+        {!searchOpen && <span className="hidden whitespace-nowrap xl:inline">{sortLabel}</span>}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuGroup>
@@ -303,7 +344,7 @@ export function ChatInbox({ activeId = null, className }: { activeId?: string | 
           scrolled ? "border-border" : "border-transparent"
         )}
       >
-        <h2 className="text-h5 mr-auto hidden shrink-0 md:block">Express</h2>
+        <h2 className={cn("text-h5 mr-auto hidden shrink-0", searchOpen ? "" : "md:block")}>Express</h2>
         <div className="relative min-w-0 flex-1 md:hidden">
           <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
           <Input
@@ -316,6 +357,21 @@ export function ChatInbox({ activeId = null, className }: { activeId?: string | 
             className="bg-card pl-9"
           />
         </div>
+        {searchOpen && (
+          <div className="relative hidden min-w-0 flex-1 md:block">
+            <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
+            <Input
+              type="search"
+              aria-label="Search chats"
+              placeholder="Search"
+              title="Search by name, job or message"
+              autoFocus
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="bg-card pl-9"
+            />
+          </div>
+        )}
         <Button
           variant="outline"
           size="icon"
@@ -333,34 +389,16 @@ export function ChatInbox({ activeId = null, className }: { activeId?: string | 
         {sortMenu}
       </section>
 
-      {/* The sub-row under the band (md+): the search field when open, else
-          how many are shown and the sort. Same height as the thread's job
-          row and the profile's match row. */}
-      <div className={cn("hidden gap-2", SUBROW)}>
-        {searchOpen ? (
-          <div className="relative min-w-0 flex-1">
-            <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
-            <Input
-              type="search"
-              aria-label="Search chats"
-              placeholder="Search by name, job or message"
-              autoFocus
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-card pl-9"
-            />
-          </div>
-        ) : (
-          <>
-            <span className="text-body-sm text-foreground">
-              {shown.length} {chatNoun(shown.length)}
-            </span>
-            <span className="text-caption ml-auto text-muted-foreground">
-              {SORT_OPTIONS.find((o) => o.value === sort)?.label}
-            </span>
-          </>
-        )}
-      </div>
+      {/* The applied row: the count and one chip per applied filter or search,
+          then "Clear all". Under the band on md+ (same height as the thread's
+          job row and the profile's match row), under the search on phones. */}
+      <ChatAppliedRow
+        shown={shown.length}
+        total={threads.length}
+        chips={chips}
+        onClearAll={clearAll}
+        className={cn("px-4 py-2 md:py-0", SUBROW)}
+      />
 
       <section className="bg-card md:min-h-0 md:flex-1 md:overflow-y-auto">
         {shown.length === 0 ? (
