@@ -179,6 +179,11 @@ export function MobilePlanRow({
       <div
         {...(readOnly
           ? {}
+          : cta
+          ? // A card with a Buy now button is not a radio (a radio may not hold
+            // a button). The tap still selects; the button is the keyboard
+            // route, and its click reaches onSelect by bubbling.
+            { onClick: onSelect }
           : {
               onClick: onSelect,
               onKeyDown: (e: React.KeyboardEvent) => {
@@ -548,7 +553,10 @@ export function MobileUnlimitedCard({
             }
           : undefined
       }
-      {...(radioMode && {
+      // A card with a CTA is not a radio (nested interactive): the CTA is the
+      // keyboard route and the choice is announced as the current item.
+      {...(radioMode && cardCta && { "aria-current": selected || undefined })}
+      {...(radioMode && !cardCta && {
         role: "radio",
         "aria-checked": selected,
         tabIndex: onSelect ? 0 : -1,

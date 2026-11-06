@@ -125,7 +125,6 @@ export function JobMetricPill({
     // says so. 32px tall — an easy tap.
     <Link
       href={href}
-      aria-label={[label, shown, unread].filter(Boolean).join(", ")}
       className="ink press-subtle inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md bg-secondary px-3 text-xs text-secondary-foreground transition-interactive outline-none hover:bg-secondary/80 focus-visible:ring-3 focus-visible:ring-ring/50"
     >
       <Icon className="size-3.5 text-muted-foreground" aria-hidden />
@@ -133,6 +132,8 @@ export function JobMetricPill({
       {/* Same box as a default Badge (20px, px-2, text-xs, medium, pill). */}
       <span className="relative inline-flex h-5 min-w-5 items-center justify-center rounded-4xl bg-muted-foreground/25 px-2 text-xs leading-none font-medium tabular-nums text-foreground">
         {shown}
+        {/* The name is the visible text; the unread note is added for screen readers. */}
+        {unread && <span className="sr-only">, {unread}</span>}
         {/* Unread: a dot on the count's corner, ringed in the pill's colour
             so it reads against the count, with a ping that plays three
             times and stops (animate-unread-ping). One colour for every

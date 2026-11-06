@@ -12,12 +12,6 @@ type Known = { rule: string; match: RegExp; nodes: string; what: string }
 
 const KNOWN: Known[] = [
   {
-    rule: "aria-hidden-focus",
-    match: /data-base-ui-click-trigger/,
-    nodes: "1 per page",
-    what: "Base UI click-trigger shim (<span aria-hidden role=button tabindex=0>) that a Select/Popover trigger renders; on every page with one (express/self checkout, jobs list, pricing).",
-  },
-  {
     rule: "color-contrast",
     match: /data-variant="ribbon"/,
     nodes: "1",
@@ -40,36 +34,6 @@ const KNOWN: Known[] = [
     match: /text-(success|info)\.underline/,
     nodes: "2",
     what: "Jobs list underlined link-buttons: text-success (3.77:1) and text-info (4.23:1) on their tinted pill backgrounds.",
-  },
-  {
-    rule: "nested-interactive",
-    match: /role="radio"/,
-    nodes: "3 (phone only)",
-    what: "Phone plan cards (mobile-plan-row.tsx) are role=radio with a Buy now button inside; a radio may not contain focusable children.",
-  },
-  {
-    rule: "scrollable-region-focusable",
-    match: /data-slot="logo-wall"/,
-    nodes: "1",
-    what: "LogoWall marquee (design-system logo-wall.tsx) is overflow-hidden but scrollable and has nothing focusable in it.",
-  },
-  {
-    rule: "aria-allowed-attr",
-    match: /data-slot="toggle-group"/,
-    nodes: "1",
-    what: "ToggleGroup (design-system toggle-group.tsx) puts aria-orientation on a role=group, which does not allow it.",
-  },
-  {
-    rule: "link-name",
-    match: /data-slot="sidebar-menu-button"/,
-    nodes: "1 (desktop only)",
-    what: "AppSidebar brand link (app-sidebar.tsx) holds only the wordmark artwork: no text, no aria-label.",
-  },
-  {
-    rule: "label-content-name-mismatch",
-    match: /<a aria-label="[^"]*"|aria-label="Switch workspace"/,
-    nodes: "13-14 on the jobs list, 1 on the job page",
-    what: "Job metric pills (aria-label \"Applied, 6\" over visible \"6 applied\") and the sidebar's Switch workspace button: the aria-label does not contain the visible text.",
   },
 ]
 

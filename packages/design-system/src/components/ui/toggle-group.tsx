@@ -36,6 +36,9 @@ function ToggleGroup({
   return (
     <ToggleGroupPrimitive
       data-slot="toggle-group"
+      // role=group does not allow aria-orientation (Base UI adds it for its
+      // arrow-key navigation, which still follows `orientation`).
+      aria-orientation={undefined}
       data-variant={variant}
       data-size={size}
       data-spacing={spacing}

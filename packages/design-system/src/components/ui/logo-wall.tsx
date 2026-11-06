@@ -36,7 +36,7 @@ export interface LogoWallProps extends React.ComponentProps<"div"> {
   /** Grayscale at rest, full colour on hover — for a quieter wall. */
   muted?: boolean
   /** Glide the logos left in an endless loop (pauses on hover, edges fade).
-   *  Reduced motion: the plain scrollable row. */
+   *  Reduced motion: the same row, still and clipped at the edge. */
   marquee?: boolean
   /** The still row: centred (default), or from the start edge, under a
    *  left-aligned heading (express checkout's "Trusted by"). */
@@ -87,11 +87,14 @@ function LogoWall({
         data-slot="logo-wall"
         data-marquee
         className={cn(
-          "no-scrollbar w-full overflow-hidden mask-x-from-90% mask-x-to-100% motion-reduce:overflow-x-auto",
+          "no-scrollbar w-full overflow-clip mask-x-from-90% mask-x-to-100%",
           className
         )}
         {...props}
       >
+        {/* Clipped, never scrolled: a scroller with nothing focusable in it
+            fails axe. Don't wrap the row under reduced motion either; it
+            added up to 520px to phone checkout pages (Punna, 2026-11-06). */}
         <div className="flex w-max items-center animate-marquee">
           {renderItems(0)}
           {renderItems(1)}
@@ -106,7 +109,15 @@ function LogoWall({
       // No negative-margin bleed: with w-full it shifted the wall 16px left
       // of its column. The row centres itself (mx-auto) when it fits and
       // scrolls from its start when it doesn't.
-      className={cn("no-scrollbar w-full overflow-x-auto", className)}
+      // A scroller with nothing focusable inside must take focus itself, or
+      // keyboard users can't reach the clipped logos.
+      tabIndex={0}
+      role="region"
+      aria-label="Client logos"
+      className={cn(
+        "no-scrollbar w-full overflow-x-auto outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+        className
+      )}
       {...props}
     >
       <div className={cn("flex w-max items-center gap-14", align === "center" && "mx-auto")}>

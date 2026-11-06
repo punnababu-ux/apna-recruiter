@@ -58,8 +58,8 @@ export function PrototypeSettings({ label, children }: { label: string; children
     <div className="fixed bottom-6 left-6 z-overlay print:hidden">
       <Popover open={open} onOpenChange={setOpen}>
         {/* An invisible anchor where the gear was, so the pop-up opens in
-            the same place. */}
-        <PopoverTrigger nativeButton={false} render={<span aria-hidden className="block size-0" />} />
+            the same place. Not focusable: it is aria-hidden. */}
+        <PopoverTrigger nativeButton={false} render={<span aria-hidden tabIndex={-1} className="block size-0" />} />
         <PopoverContent side="top" align="start" aria-label={label} className="flex max-h-(--available-height) w-64 flex-col gap-2 divide-y divide-border overflow-y-auto overscroll-contain p-3">
           {children}
         </PopoverContent>

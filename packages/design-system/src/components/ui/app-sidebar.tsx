@@ -70,6 +70,9 @@ export type SidebarAlertBanner = {
 
 export type SidebarBrand = {
   name: string
+  /** Accessible name of the brand link when it shows only artwork
+   *  (`wordmark`); defaults to `name`. */
+  label?: string
   logo: React.ReactNode
   href?: string
   /** A full wordmark (e.g. "apna Hire"): shown alone in the expanded
@@ -156,6 +159,7 @@ export function ReusableSidebar({
             <SidebarMenuButton
               render={brand.href ? <Link href={brand.href} /> : undefined}
               tooltip={brand.name}
+              aria-label={brand.wordmark ? (brand.label ?? brand.name) : undefined}
               size="lg"
               className="px-0 hover:bg-transparent focus-visible:ring-0 active:bg-transparent group-data-[collapsible=icon]:w-10"
               onClick={() => setOpenMobile(false)}
@@ -191,7 +195,6 @@ export function ReusableSidebar({
               render={
                 <button
                   type="button"
-                  aria-label="Switch workspace"
                   className="flex h-12 w-full items-center gap-3 rounded-lg border border-sidebar-border bg-background px-2.5 text-left text-sm font-medium text-foreground shadow-card ring-sidebar-ring outline-hidden transition-interactive hover:bg-accent/50 focus-visible:ring-2 cursor-pointer group-data-[collapsible=icon]:w-10"
                 >
                   {activeWorkspace.logoUrl ? (
@@ -219,6 +222,9 @@ export function ReusableSidebar({
                     )}
                   </span>
                   <ChevronsUpDown className="size-4 shrink-0 text-muted-foreground group-data-[collapsible=icon]:hidden" />
+                  {/* No aria-label: the name is the visible text (WCAG 2.5.3), and in
+                      the collapsed rail, where that text is hidden, this is the name. */}
+                  <span className="sr-only">Switch workspace</span>
                 </button>
               }
             />

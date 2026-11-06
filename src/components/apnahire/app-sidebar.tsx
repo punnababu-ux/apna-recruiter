@@ -136,6 +136,7 @@ export function ApnaHireSidebar({
     <ReusableSidebar
       brand={{
         name: "Hire",
+        label: "apna Hire home",
         logo: <ApnaLogo className="size-10 shrink-0" />,
         // The apna Hire wordmark expanded, "apna" alone collapsed.
         wordmark: <LogoApnaRecruiter className="h-6 w-auto" />,
