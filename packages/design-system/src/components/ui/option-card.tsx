@@ -41,8 +41,9 @@ const OptionCardGroupContext = React.createContext<GroupType>("single")
 
 interface OptionCardGroupProps extends React.ComponentProps<"div"> {
   type?: GroupType
-  /** 1 = stacked rows; 2 = a tile grid (two columns from phone width up). */
-  columns?: 1 | 2
+  /** 1 = stacked rows; 2 = a tile grid (two columns from phone width up);
+   *  3 = three short tiles in one row (pay type), labels only, no description. */
+  columns?: 1 | 2 | 3
 }
 
 function OptionCardGroup({ type = "single", columns = 1, className, ...props }: OptionCardGroupProps) {
@@ -51,7 +52,7 @@ function OptionCardGroup({ type = "single", columns = 1, className, ...props }: 
       <div
         data-slot="option-card-group"
         role={type === "single" ? "radiogroup" : "group"}
-        className={cn("grid gap-3", columns === 2 ? "grid-cols-2" : "grid-cols-1", className)}
+        className={cn("grid gap-3", columns === 3 ? "grid-cols-3 gap-2" : columns === 2 ? "grid-cols-2" : "grid-cols-1", className)}
         {...props}
       />
     </OptionCardGroupContext.Provider>

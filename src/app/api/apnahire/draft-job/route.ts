@@ -59,7 +59,7 @@ export const JobDraftSchema = z.object({
   payType: z
     .enum(["fixed", "fixed_incentive", "incentive"])
     .optional()
-    .describe("Only if the recruiter says how pay works (e.g. mentions incentives). Never infer it from a salary alone."),
+    .describe("'fixed' when a salary is given and incentives are not mentioned; 'fixed_incentive' when both are; 'incentive' for incentive-only pay."),
   salaryMin: z.number().optional().describe("Monthly fixed salary lower bound in INR."),
   salaryMax: z.number().optional().describe("Monthly fixed salary upper bound in INR."),
   incentive: z.number().optional().describe("Average monthly incentive in INR."),
