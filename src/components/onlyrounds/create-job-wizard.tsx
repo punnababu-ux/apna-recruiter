@@ -13,19 +13,14 @@
  * the right, sticky footer with Back / Save & exit / Next.
  */
 
-import { Briefcase, ChevronLeft, ChevronRight, FileText, Save, Sparkles, X, Paperclip, RotateCcw, ArrowRight } from "@apna/design-system"
+import { Sparkles, X } from "@apna/design-system"
 import { useRouter } from "next/navigation"
 import * as React from "react"
 import { useRef, useState } from "react"
 import { useDraftPersistence } from "@/hooks/onlyrounds/use-draft-persistence"
 import { useCriteriaGeneration } from "@/hooks/onlyrounds/use-criteria-generation"
-
 import { InterviewRoundsStep } from "@/components/onlyrounds/interview-rounds-step"
-import {
-  JobDetailsStep,
-  validateJobDetails,
-  validateSection,
-} from "@/components/onlyrounds/job-details-step"
+import { JobDetailsStep, validateJobDetails, validateSection } from "@/components/onlyrounds/job-details-step"
 import {
   CALL_TASK_TYPES,
   REQUIRED_SECTION_IDS,
@@ -39,81 +34,20 @@ import type {
   InterviewRoundsForm,
   JobDetailsForm,
   SectionId,
-  Criterion,
-  TaskType,
-  AgentId,
-  InterviewLanguage,
-  WorkType,
-  WorkMode,
 } from "@/types/onlyrounds"
 import { ReviewStep } from "@/components/onlyrounds/review-step"
-import { Stepper, type Step } from "@apna/design-system"
+import type { Step } from "@apna/design-system"
 import { toast } from "sonner"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-import { BackButton } from "@/components/ui/back-button"
-import { Button } from "@/components/ui/button"
-import {
-  Field as UIField,
-  FieldDescription,
-  FieldError,
-  FieldLabel,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Skeleton } from "@/components/ui/skeleton"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
+import type { FormShape, GenerationData } from "@/components/onlyrounds/create-job-wizard/types"
+import { STEPS, type StepId } from "@/components/onlyrounds/create-job-wizard/steps"
+import { populateFromGeneration } from "@/components/onlyrounds/create-job-wizard/populate-from-generation"
+import { WizardTopBar } from "@/components/onlyrounds/create-job-wizard/wizard-top-bar"
+import { WizardFooter } from "@/components/onlyrounds/create-job-wizard/wizard-footer"
+import { ExitDialog } from "@/components/onlyrounds/create-job-wizard/exit-dialog"
+import { DescriptionStep } from "@/components/onlyrounds/create-job-wizard/description-step"
 
-// ── Form shape ────────────────────────────────────────────────────────────
-
-type FormShape = {
-  title: string
-  jd: string
-  details: JobDetailsForm
-  rounds: InterviewRoundsForm
-  promptText?: string
-  attachedFileName?: string
-}
-
-export type GenerationData = {
-  title?: string
-  jobDescription?: string
-  clientId?: string
-  city?: string
-  area?: string
-  experienceType?: "any" | "experienced" | "freshers"
-  experiencedPersona?: string
-  fresherPersona?: string
-  workType?: "part-time" | "full-time" | "both"
-  workMode?: "wfh" | "wfo" | "field" | "store"
-  scheduleDetails?: string
-  compExperienced?: string
-  compFresher?: string
-  suggestedPresets?: Array<{
-    title: string
-    target: "freshers" | "experienced"
-    questions: Array<{ question: string; answer: string }>
-  }>
-  suggestedRounds?: Array<{
-    type: "screening" | "interview"
-    title: string
-    mustHave: string[]
-    goodToHave: string[]
-    redFlag: string[]
-  }>
-}
+export type { GenerationData } from "@/components/onlyrounds/create-job-wizard/types"
 
 // ── App routes ────────────────────────────────────────────────────────────
 
@@ -122,15 +56,6 @@ export const ROUTES = {
   jobsNew: "/apnahire/jobs/new",
   aiTest: "/apnahire/test",
 } as const
-
-// ── Wizard constants ──────────────────────────────────────────────────────
-
-/** Maximum JD file size accepted by the upload flow. */
-const MAX_JD_FILE_SIZE_BYTES = 5 * 1024 * 1024
-/** Simulated parse delay for plain-text / markdown uploads. */
-const MOCK_PARSE_DELAY_TXT_MS = 900
-/** Simulated parse delay for binary uploads (PDF, DOCX). */
-const MOCK_PARSE_DELAY_BINARY_MS = 1400
 
 // ── Draft persistence ─────────────────────────────────────────────────────
 // Prototype-level: persist to localStorage so the user can come back to a
@@ -146,32 +71,6 @@ const emptyForm: FormShape = {
   promptText: "",
   attachedFileName: "",
 }
-
-
-type StepId = "description" | "details" | "rounds" | "review"
-
-const STEPS: { id: StepId; label: string; description: string }[] = [
-  {
-    id: "description",
-    label: "Job Description",
-    description: "Write, generate, or upload the JD",
-  },
-  {
-    id: "details",
-    label: "Job Details",
-    description: "Experience, pay, and location",
-  },
-  {
-    id: "rounds",
-    label: "Interview Rounds",
-    description: "Set up the screening pipeline",
-  },
-  {
-    id: "review",
-    label: "Review & Publish",
-    description: "Review everything and publish",
-  },
-]
 
 export function CreateJobWizard() {
   const router = useRouter()
@@ -208,117 +107,8 @@ export function CreateJobWizard() {
   const [showRoundErrors, setShowRoundErrors] = useState(false)
   const [lastCriteriaSnapshot, setLastCriteriaSnapshot] = useState<string>("")
 
-
-
-  const populateFormFromGeneration = (data: GenerationData, promptValToSet?: string) => {
-    // 1. Prepare job details
-    const details: JobDetailsForm = {
-      ...defaultJobDetails,
-      clientId: data.clientId ?? "",
-      city: data.city ?? "",
-      area: data.area ?? "",
-      experienceType: data.experienceType ?? "any",
-      experiencedPersona: data.experiencedPersona ?? "",
-      fresherPersona: data.fresherPersona ?? "",
-      workType: (data.workType ?? "") as "" | WorkType,
-      workMode: (data.workMode ?? "") as "" | WorkMode,
-      scheduleDetails: data.scheduleDetails ?? "",
-      compExperienced: data.compExperienced ?? "",
-      compFresher: data.compFresher ?? "",
-      additionalDetails: "",
-      questionSections: [],
-      suggestedPresets: [],
-    }
-
-    details.questionSections = []
-    details.suggestedPresets = data.suggestedPresets?.map((p) => ({
-      title: p.title,
-      target: p.target,
-      questions: p.questions,
-    })) ?? []
-
-    // Map suggestedRounds to form tasks structure
-    let roundCounter = 0
-    const tasks = data.suggestedRounds?.map((r) => {
-      roundCounter++
-      const taskId = `task-${roundCounter}`
-      
-      const criteria: Criterion[] = []
-      let critCounter = 0
-      
-      r.mustHave?.forEach((text: string) => {
-        critCounter++
-        criteria.push({
-          id: `crit-${taskId}-${critCounter}`,
-          category: "must-have",
-          text: text.trim(),
-        })
-      })
-      r.goodToHave?.forEach((text: string) => {
-        critCounter++
-        criteria.push({
-          id: `crit-${taskId}-${critCounter}`,
-          category: "good-to-have",
-          text: text.trim(),
-        })
-      })
-      r.redFlag?.forEach((text: string) => {
-        critCounter++
-        criteria.push({
-          id: `crit-${taskId}-${critCounter}`,
-          category: "red-flag",
-          text: text.trim(),
-        })
-      })
-
-      return {
-        id: taskId,
-        type: r.type as TaskType,
-        title: r.title,
-        notes: "",
-        screening: {
-          mode: "ai" as const,
-          direction: "inbound" as const,
-          format: "audio" as const,
-          humanNotes: "",
-          cefrEnabled: false,
-          cefrMinLevel: "" as const,
-          cefrPreferredLevel: "" as const,
-          cefrQuestions: "",
-        },
-        criteria,
-        agentId: "isha" as AgentId,
-        language: "english" as InterviewLanguage,
-      }
-    }) ?? []
-
-    const titleVal = data.title || deriveTitleFromJd(data.jobDescription || "") || ""
-
-    setForm((prev) => {
-      const next = {
-        ...prev,
-        jd: data.jobDescription || prev.jd || "",
-        title: titleVal || prev.title || "",
-        details,
-        rounds: {
-          tasks,
-        },
-      }
-      if (promptValToSet !== undefined) {
-        next.promptText = promptValToSet
-      }
-      return next
-    })
-
-    // Initialize snapshot states to avoid immediate regeneration
-    const currentSnapshot = JSON.stringify({
-      title: titleVal,
-      jd: data.jobDescription || "",
-      detailsSummary: summarizeDetails(details),
-      tasksSummary: summarizeTasks(tasks),
-    })
-    setLastCriteriaSnapshot(currentSnapshot)
-  }
+  const populateFormFromGeneration = (data: GenerationData, promptValToSet?: string) =>
+    populateFromGeneration(data, promptValToSet, setForm, setLastCriteriaSnapshot)
 
   // On-the-fly criteria regeneration when entering Step 3 (Rounds)
   React.useEffect(() => {
@@ -368,7 +158,6 @@ export function CreateJobWizard() {
       }
     }
   }, [activeId, form.title, form.jd, form.details, form.rounds.tasks, lastCriteriaSnapshot, generateAllCriteria, setForm])
-
 
   /** Top-bar "Create new job" back link click. If there's nothing to
    *  lose, navigate immediately; otherwise open the 3-option confirm. */
@@ -525,7 +314,6 @@ export function CreateJobWizard() {
   function update<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
     setForm((prev) => ({ ...prev, [key]: value }))
   }
-
 
   const goNext = async () => {
     // ── Step 4 (Review & Publish) — publish and navigate to jobs list ─────
@@ -735,44 +523,13 @@ export function CreateJobWizard() {
   return (
     <div className="flex min-h-svh flex-col bg-muted">
       {/* Sticky top — title row + step-progress rail */}
-      <div className="sticky top-0 z-sticky border-b border-border bg-card">
-        {/* Title row — back/title on the left, Save & exit on the right */}
-        <div className="border-b border-border px-6 py-3">
-          <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <BackButton
-                onClick={handleExitAttempt}
-                aria-label="Back to jobs"
-              />
-              <span className="text-base font-semibold text-foreground">
-                Create new job
-              </span>
-            </div>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={handleSaveAndExit}
-            >
-              <Save className="size-4" />
-              Save &amp; exit
-            </Button>
-          </div>
-        </div>
-        {/* Stepper row */}
-        <div className="px-6 py-3">
-          <div className="mx-auto w-full max-w-5xl">
-            <Stepper
-              orientation="horizontal"
-              steps={stepsForRail}
-              onStepClick={(id) => {
-                setShowErrors(false)
-                setActiveId(id as StepId)
-              }}
-            />
-          </div>
-        </div>
-      </div>
+      <WizardTopBar
+        handleExitAttempt={handleExitAttempt}
+        handleSaveAndExit={handleSaveAndExit}
+        stepsForRail={stepsForRail}
+        setShowErrors={setShowErrors}
+        setActiveId={setActiveId}
+      />
 
       {/* Scrollable body — between sticky top and sticky bottom */}
       <div className={cn(
@@ -841,560 +598,29 @@ export function CreateJobWizard() {
 
       {/* Sticky bottom — consistent across all steps */}
       {!(activeId === "description" && (!form.title.trim() || !form.jd.trim())) && (
-        <div className="sticky bottom-0 z-sticky border-t border-border bg-card px-6">
-          <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 py-3">
-            {/* Left — Previous (chevron; the back arrow lives in the top
-                bar, so the footer uses a chevron to stay distinct). base-ui's
-                TooltipTrigger uses `render={...}` (not Radix's `asChild`). */}
-            <div className="flex items-center gap-1">
-              {activeId !== "description" && (
-                <Tooltip>
-                  <TooltipTrigger
-                    render={
-                      <Button
-                        variant="outline"
-                        onClick={goPrev}
-                        disabled={!canGoPrev}
-                      >
-                        <ChevronLeft className="size-4" />
-                        Previous
-                      </Button>
-                    }
-                  />
-                  <TooltipContent>
-                    {activeId === "details" &&
-                    step2OpenSection &&
-                    step2OpenSection !== SECTION_IDS[0]
-                      ? "Previous section"
-                      : "Previous step"}
-                  </TooltipContent>
-                </Tooltip>
-              )}
-            </div>
-
-            {/* Right — adaptive primary CTA. Soft-disabled when blocked:
-                the button LOOKS disabled (opacity + not-allowed cursor +
-                aria-disabled) but stays clickable so a click reveals the
-                field-level errors. The tooltip explains what's blocking. */}
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <span className={cn(ctaBlocked && "cursor-not-allowed")}>
-                    <Button
-                      size="lg"
-                      onClick={goNext}
-                      loading={extracting || Object.values(generatingTasks).some(Boolean)}
-                      loadingText={Object.values(generatingTasks).some(Boolean) ? "Generating criteria…" : "Filling from JD…"}
-                      aria-disabled={ctaBlocked || undefined}
-                      className={cn(ctaBlocked && "opacity-50")}
-                    >
-                      {ctaLabel}
-                      {!(extracting || Object.values(generatingTasks).some(Boolean)) ? <ChevronRight className="size-4" /> : null}
-                    </Button>
-                  </span>
-                }
-              />
-              {ctaDisabledReason ? (
-                <TooltipContent>{ctaDisabledReason}</TooltipContent>
-              ) : null}
-            </Tooltip>
-          </div>
-        </div>
+        <WizardFooter
+          activeId={activeId}
+          step2OpenSection={step2OpenSection}
+          canGoPrev={canGoPrev}
+          goPrev={goPrev}
+          goNext={goNext}
+          ctaBlocked={ctaBlocked}
+          ctaLabel={ctaLabel}
+          ctaDisabledReason={ctaDisabledReason}
+          extracting={extracting}
+          generatingTasks={generatingTasks}
+        />
       )}
 
       {/* Exit-confirmation dialog — fires when the user clicks the
           top-bar "Create new job" link with unsaved changes. */}
-      <AlertDialog
-        open={exitDialogOpen}
-        onOpenChange={setExitDialogOpen}
-      >
-        {/* A forced choice: no close X (pop-ups never carry their own). */}
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Leave without saving?</AlertDialogTitle>
-            <AlertDialogDescription>
-              You have unsaved changes. Save them as a draft to pick up
-              later, or exit without saving to discard.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction
-              variant="outline"
-              onClick={handleDiscardAndExit}
-            >
-              Exit without saving
-            </AlertDialogAction>
-            <AlertDialogAction onClick={handleSaveAndExit}>
-              Save &amp; exit
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ExitDialog
+        exitDialogOpen={exitDialogOpen}
+        setExitDialogOpen={setExitDialogOpen}
+        handleDiscardAndExit={handleDiscardAndExit}
+        handleSaveAndExit={handleSaveAndExit}
+      />
     </div>
   )
 }
 
-const PLACEHOLDERS = [
-  "e.g. 'Senior React Developer with 3+ years experience, remotely from India' or paste description...",
-  "e.g. 'Customer Support Associate (English & Hindi speaking)' or paste description...",
-  "e.g. 'Field Sales Executive with own bike in Bengaluru' or paste description...",
-  "e.g. 'Manual Tester with experience in UI and API testing' or paste description...",
-  "e.g. 'Product Manager to own roadmap and ship features' or paste description...",
-]
-
-function DescriptionStep({
-  form,
-  update,
-  showErrors,
-  populateFormFromGeneration,
-}: {
-  form: FormShape
-  update: <K extends keyof FormShape>(key: K, value: FormShape[K]) => void
-  showErrors: boolean
-  populateFormFromGeneration: (data: GenerationData, promptValToSet?: string) => void
-}) {
-  const fileRef = React.useRef<HTMLInputElement>(null)
-  const [promptVal, setPromptVal] = React.useState(form.promptText || "")
-  const [attachedFile, setAttachedFile] = React.useState<File | null>(null)
-  const [generating, setGenerating] = React.useState(false)
-  const [processing, setProcessing] = React.useState(false)
-  const [error, setError] = React.useState<string | null>(null)
-  const [showAllPrompt, setShowAllPrompt] = React.useState(false)
-
-  const [displayedPlaceholder, setDisplayedPlaceholder] = React.useState("")
-  const [placeholderIndex, setPlaceholderIndex] = React.useState(0)
-
-  React.useEffect(() => {
-    if (generating || processing || promptVal.trim() !== "") {
-      setDisplayedPlaceholder("")
-      return
-    }
-
-    let charIdx = 0
-    let currentText = ""
-    const fullText = PLACEHOLDERS[placeholderIndex]
-    
-    const typingInterval = setInterval(() => {
-      if (charIdx < fullText.length) {
-        currentText += fullText[charIdx]
-        setDisplayedPlaceholder(currentText)
-        charIdx++
-      } else {
-        clearInterval(typingInterval)
-        
-        const delayTimeout = setTimeout(() => {
-          setPlaceholderIndex((prev) => (prev + 1) % PLACEHOLDERS.length)
-        }, 4000)
-        
-        return () => clearTimeout(delayTimeout)
-      }
-    }, 35)
-
-    return () => {
-      clearInterval(typingInterval)
-    }
-  }, [placeholderIndex, generating, processing, promptVal])
-
-  const hasResults = form.title.trim().length > 0 && form.jd.trim().length > 0
-
-  const SUGGESTIONS = [
-    "React Frontend Engineer with 3+ years experience, Remote",
-    "Customer Support Associate (English & Hindi speaking)",
-    "Field Sales Executive with own bike in Bengaluru",
-  ]
-
-  const unusedSuggestions = SUGGESTIONS.filter(
-    (s) => s.toLowerCase() !== promptVal.toLowerCase(),
-  )
-
-  const handleReset = () => {
-    setError(null)
-    setPromptVal("")
-    setAttachedFile(null)
-    update("title", "")
-    update("jd", "")
-    update("promptText", "")
-    update("attachedFileName", "")
-    setShowAllPrompt(false)
-  }
-
-
-
-  const handleGenerate = async (seedText?: string) => {
-    const textToSubmit = seedText || promptVal.trim()
-    if (!textToSubmit) return
-    setError(null)
-    setGenerating(true)
-    try {
-      const res = await fetch("/api/onlyrounds/generate-jd", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ jd: textToSubmit }),
-      })
-      if (!res.ok) {
-        setError("Could not generate. Try again in a moment.")
-        return
-      }
-      const data = await res.json()
-      if (!data.jobDescription) {
-        setError(data.error ?? "Add more details, then try again.")
-        return
-      }
-      populateFormFromGeneration(data, textToSubmit)
-    } catch {
-      setError("Could not reach the generator. Try again.")
-    } finally {
-      setGenerating(false)
-    }
-  }
-
-  const handlePolish = async () => {
-    setError(null)
-    setGenerating(true)
-    try {
-      const res = await fetch("/api/onlyrounds/generate-jd", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ title: form.title, jd: form.jd }),
-      })
-      if (!res.ok) {
-        setError("Could not generate. Try again in a moment.")
-        return
-      }
-      const data = await res.json()
-      if (!data.jobDescription) {
-        setError(data.error ?? "Could not refine the description.")
-        return
-      }
-      populateFormFromGeneration(data)
-    } catch {
-      setError("Could not reach the generator. Try again.")
-    } finally {
-      setGenerating(false)
-    }
-  }
-
-  const handleFileUpload = async (file: File) => {
-    setError(null)
-    if (!/\.(txt|md|pdf|docx?)$/i.test(file.name)) {
-      setError("Upload a .txt, .md, .pdf, .doc, or .docx file.")
-      return
-    }
-    if (file.size > MAX_JD_FILE_SIZE_BYTES) {
-      setError("File must be under 5 MB.")
-      return
-    }
-    setProcessing(true)
-    try {
-      let parsed = ""
-      if (/\.(txt|md)$/i.test(file.name)) {
-        parsed = await file.text()
-        await new Promise((r) => setTimeout(r, MOCK_PARSE_DELAY_TXT_MS))
-      } else {
-        await new Promise((r) => setTimeout(r, MOCK_PARSE_DELAY_BINARY_MS))
-        const stem = file.name
-          .replace(/\.(pdf|docx?|txt|md)$/i, "")
-          .replace(/[_\-]+/g, " ")
-          .trim()
-        const role = stem.length > 0 ? stem : "this role"
-        parsed =
-          `About ${role}\n\n` +
-          `We're hiring a ${role} to own end-to-end outcomes, partner ` +
-          `with cross-functional stakeholders, and ship with craft.\n\n` +
-          `Responsibilities\n` +
-          `• Drive day-to-day execution for your scope\n` +
-          `• Partner with product, design, and data peers\n` +
-          `• Communicate trade-offs and raise risks early\n\n` +
-          `What we're looking for\n` +
-          `• Relevant domain experience\n` +
-          `• Strong written communication\n` +
-          `• Comfort working through ambiguity`
-      }
-      update("promptText", `Uploaded file: ${file.name}`)
-      update("attachedFileName", file.name)
-      update("jd", parsed)
-      const derived = deriveTitleFromJd(parsed)
-      if (derived) update("title", derived)
-    } finally {
-      setProcessing(false)
-    }
-  }
-
-  const jdMissing = showErrors && !form.jd.trim()
-  const titleMissing = showErrors && !form.title.trim()
-
-  return (
-    <div className="flex flex-col gap-4">
-      {hasResults ? (
-        /* Result State: Sliding Split View (2-column layout) */
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
-          {/* Left Column: Prompt / File Summary */}
-          <div className="md:col-span-1">
-            <div className="rounded-lg border border-border bg-card p-4 flex flex-col gap-4 h-fit shadow-card">
-              <div>
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
-                  Your Input
-                </h4>
-                {form.attachedFileName ? (
-                  <div className="flex items-center gap-1.5 text-sm font-medium text-foreground p-2 rounded-md bg-muted/30 border border-border">
-                    <Paperclip className="size-3.5 text-primary shrink-0" />
-                    <span className="truncate flex-1">{form.attachedFileName}</span>
-                  </div>
-                ) : form.promptText ? (
-                  <div className="flex flex-col gap-1.5">
-                    <div className={cn(
-                      "text-sm font-medium text-foreground italic whitespace-pre-wrap leading-relaxed",
-                      showAllPrompt && "max-h-60 overflow-y-auto pr-1"
-                    )}>
-                      &ldquo;
-                      {form.promptText.length > 180 && !showAllPrompt
-                        ? `${form.promptText.slice(0, 180)}...`
-                        : form.promptText}
-                      &rdquo;
-                    </div>
-                    {form.promptText.length > 180 ? (
-                      <Button type="button" variant="link" size="sm" className="self-start" onClick={() => setShowAllPrompt(!showAllPrompt)}>
-                        {showAllPrompt ? "See less" : "See more"}
-                      </Button>
-                    ) : null}
-                  </div>
-                ) : (
-                  <p className="text-xs text-muted-foreground italic">
-                    Custom details entered manually.
-                  </p>
-                )}
-              </div>
-              
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleReset}
-                className="w-full text-xs gap-1.5 cursor-pointer"
-              >
-                <RotateCcw className="size-3.5" />
-                Rewrite Prompt
-              </Button>
-            </div>
-          </div>
-
-          {/* Right Column: Editable Fields */}
-          <div className="md:col-span-2 rounded-lg border border-border bg-card p-6 shadow-card flex flex-col gap-4">
-            <UIField>
-              <FieldLabel htmlFor="title" icon={Briefcase}>Job title</FieldLabel>
-              <Input
-                id="title"
-                value={form.title}
-                onChange={(e) => update("title", e.target.value)}
-                placeholder="e.g. Customer Support Associate"
-                aria-invalid={titleMissing ? true : undefined}
-              />
-              {titleMissing ? (
-                <FieldError>Required</FieldError>
-              ) : (
-                <FieldDescription>Shown on candidate landing page.</FieldDescription>
-              )}
-            </UIField>
-
-            <UIField>
-              <div className="flex items-center justify-between">
-                <FieldLabel htmlFor="jd" icon={FileText}>Job description</FieldLabel>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={handlePolish}
-                  loading={generating}
-                  disabled={generating || !form.jd.trim()}
-                  className="h-7 text-xs gap-1 cursor-pointer"
-                >
-                  {!generating && <Sparkles className="size-3 text-primary" />}
-                  Polish with AI
-                </Button>
-              </div>
-              <div className="relative">
-                <Textarea
-                  id="jd"
-                  value={form.jd}
-                  onChange={(e) => update("jd", e.target.value)}
-                  placeholder="Paste or write the JD details here..."
-                  rows={12}
-                  aria-invalid={jdMissing ? true : undefined}
-                  readOnly={generating}
-                />
-                {generating ? (
-                  <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-md bg-background z-docked">
-                    <Skeleton variant="ai" className="absolute inset-0 rounded-none" aria-hidden="true" />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium shadow-card">
-                        <Sparkles className="size-4 animate-pulse text-primary" />
-                        <span>Polishing with AI…</span>
-                      </div>
-                    </div>
-                  </div>
-                ) : null}
-              </div>
-              {jdMissing ? (
-                <FieldError>Required</FieldError>
-              ) : error ? (
-                <p className="text-xs text-destructive mt-1">{error}</p>
-              ) : (
-                <FieldDescription>Editable. We&apos;ll auto-extract skills from this text.</FieldDescription>
-              )}
-            </UIField>
-          </div>
-        </div>
-      ) : (
-        /* Initial State: Unified AI Command Bar Card */
-        <div className="rounded-lg border border-border bg-card p-6 shadow-card w-full animate-in fade-in zoom-in-95 duration-200">
-          <div className="flex flex-col items-center text-center gap-2 mb-6">
-            <div className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary">
-              <Sparkles className="size-5" />
-            </div>
-            <h3 className="text-lg font-semibold">What is your hiring requirement?</h3>
-          </div>
-
-          <div className="relative rounded-lg border border-border bg-background shadow-control focus-within:ring-2 focus-within:ring-ring focus-within:border-transparent transition-interactive flex flex-col">
-            {/* token-lint-ignore: Need fixed field-sizing and fixed height to prevent prompt input card auto-expansion */}
-            <Textarea
-              value={promptVal}
-              onChange={(e) => setPromptVal(e.target.value)}
-              placeholder={generating || processing ? "" : displayedPlaceholder}
-              className="w-full h-28 max-h-28 [field-sizing:fixed] resize-none border-0 bg-transparent p-4 pb-2 text-sm focus-visible:ring-0 focus-visible:outline-hidden overflow-y-auto"
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault()
-                  handleGenerate()
-                }
-              }}
-              readOnly={generating || processing}
-            />
-            
-            {generating || processing ? (
-              <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-md bg-background z-docked">
-                <Skeleton variant="ai" className="absolute inset-0 rounded-none" aria-hidden="true" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                    <Sparkles className="size-4 animate-pulse text-primary" />
-                    <span>
-                      {processing ? "Processing document…" : "Writing with AI…"}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ) : null}
-
-            {!(generating || processing) ? (
-              <div className="flex items-center justify-between px-4 py-3">
-                <div className="flex items-center gap-2">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon-xs"
-                    onClick={() => fileRef.current?.click()}
-                    title="Attach file"
-                    disabled={generating || processing}
-                    className="text-muted-foreground hover:text-foreground cursor-pointer"
-                  >
-                    <Paperclip className="size-4" />
-                  </Button>
-                  
-                  {attachedFile ? (
-                    <span className="inline-flex items-center gap-1.5 rounded-md bg-muted px-2 py-1 text-xs text-muted-foreground border border-border max-w-48">
-                      <FileText className="size-3.5 shrink-0 text-primary" />
-                      <span className="truncate flex-1">{attachedFile.name}</span>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon-xs"
-                        className="shrink-0 hover:text-destructive"
-                        onClick={() => setAttachedFile(null)}
-                        aria-label="Remove attachment"
-                      >
-                        <X />
-                      </Button>
-                    </span>
-                  ) : null}
-
-                  <input
-                    ref={fileRef}
-                    type="file"
-                    accept=".txt,.md,.pdf,.doc,.docx"
-                    className="sr-only"
-                    onChange={(e) => {
-                      const f = e.target.files?.[0]
-                      if (f) {
-                        setAttachedFile(f)
-                        handleFileUpload(f)
-                      }
-                      e.currentTarget.value = ""
-                    }}
-                  />
-                </div>
-
-                <Button
-                  type="button"
-                  size="icon-sm"
-                  disabled={(!promptVal.trim() && !attachedFile) || generating || processing}
-                  onClick={() => handleGenerate()}
-                  title="Generate JD"
-                  className="cursor-pointer"
-                >
-                  <ArrowRight className="size-4" />
-                </Button>
-              </div>
-            ) : null}
-          </div>
-
-          {error ? (
-            <p className="text-xs text-destructive mt-2 text-center">{error}</p>
-          ) : null}
-
-          {unusedSuggestions.length > 0 && !generating && !processing ? (
-            <div className="mt-5 flex flex-wrap items-center gap-1.5 justify-center">
-              <span className="text-xs text-muted-foreground flex items-center gap-1">
-                <Sparkles className="size-3 text-primary" />
-                Suggestions:
-              </span>
-              {unusedSuggestions.map((suggestion) => (
-                <button
-                  key={suggestion}
-                  type="button"
-                  onClick={() => {
-                    setPromptVal(suggestion)
-                    setError(null)
-                  }}
-                  className="rounded-full border border-border bg-background px-2.5 py-0.5 text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-interactive cursor-pointer"
-                >
-                  {suggestion}
-                </button>
-              ))}
-            </div>
-          ) : null}
-        </div>
-      )}
-    </div>
-  )
-}
-
-/**
- * Pull a plausible job title out of a free-text JD snippet. Mocked heuristic
- * for the prototype: scan for common role phrasings, then fall back to the
- * first short line of text.
- */
-function deriveTitleFromJd(jd: string): string {
-  const text = jd.trim()
-  if (!text) return ""
-  const patterns = [
-    /looking for (?:an?\s+)?([A-Z][A-Za-z0-9/\-\s]{2,40}?)(?=\s+(?:to|who|with|and|\.|,|$))/,
-    /hiring (?:an?\s+)?([A-Z][A-Za-z0-9/\-\s]{2,40}?)(?=\s+(?:to|who|with|and|\.|,|$))/,
-    /(?:^|\n)\s*(?:Role|Position|Title)\s*[:\-]\s*([^\n]{2,60})/i,
-  ]
-  for (const re of patterns) {
-    const m = text.match(re)
-    if (m?.[1]) return m[1].trim().replace(/\s+/g, " ")
-  }
-  const firstLine = text.split(/\n/)[0].trim()
-  if (firstLine.length > 0 && firstLine.length <= 60) return firstLine
-  return firstLine.split(/\s+/).slice(0, 6).join(" ")
-}
