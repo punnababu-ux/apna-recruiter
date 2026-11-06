@@ -1093,28 +1093,43 @@ function CountUpInr({ value }: { value: number }) {
   return <>{inr(shown)}</>
 }
 
-function PayType(ctx: ScreenCtx) {
-  const { draft, update } = ctx
+/** Pay type and amount on one screen (user call, 2026-11-06): the three
+ *  cards first; a pick folds them into one card, and the amount fields slide
+ *  in under it. Tapping the folded card opens the choice again. */
+function PayTypePicker({
+  draft,
+  update,
+  open,
+  setOpen,
+}: Pick<ScreenCtx, "draft" | "update"> & { open: boolean; setOpen: (v: boolean) => void }) {
+  // Picked: the quiet "answer · Change" line, like "Hiring for" and the
+  // joining fee (user call, 2026-11-06).
+  if (!open && draft.payType)
+    return (
+      <p className="flex items-center gap-2 text-sm text-muted-foreground [&_svg]:size-4 [&_svg]:shrink-0">
+        {PAY_TYPE_HELP[draft.payType][0]}
+        <span className="font-medium text-foreground">{PAY_TYPE_LABELS[draft.payType]}</span>
+        <Button type="button" variant="link-inline" className="text-foreground" onClick={() => setOpen(true)}>
+          Change
+        </Button>
+      </p>
+    )
   return (
-    <>
-      <WizardQuestion
-        eyebrow={<AiTag ctx={ctx} keys={["payType"]} />}
-        title="How will you pay?"
-        description="Clear pay gets better applicants."
-      />
-      <OptionCardGroup aria-label="Pay type">
-        {(Object.keys(PAY_TYPE_LABELS) as PayType[]).map((t) => (
-          <OptionCard
-            key={t}
-            icon={PAY_TYPE_HELP[t][0]}
-            title={PAY_TYPE_LABELS[t]}
-            description={PAY_TYPE_HELP[t][1]}
-            selected={draft.payType === t}
-            onSelect={() => update("payType", t)}
-          />
-        ))}
-      </OptionCardGroup>
-    </>
+    <OptionCardGroup aria-label="Pay type">
+      {(Object.keys(PAY_TYPE_LABELS) as PayType[]).map((t) => (
+        <OptionCard
+          key={t}
+          icon={PAY_TYPE_HELP[t][0]}
+          title={PAY_TYPE_LABELS[t]}
+          description={PAY_TYPE_HELP[t][1]}
+          selected={draft.payType === t}
+          onSelect={() => {
+            update("payType", t)
+            setOpen(false)
+          }}
+        />
+      ))}
+    </OptionCardGroup>
   )
 }
 
@@ -1127,6 +1142,7 @@ function Salary(ctx: ScreenCtx) {
   const hi = onSlider(Math.max(draft.salaryMax ?? 25000, lo), top)
   const third = Math.round(top / 3 / 5000) * 5000
   const err = salaryError(draft)
+  const [pickOpen, setPickOpen] = React.useState(!draft.payType)
   const payFields = (
           <div className="flex flex-col gap-5">
       {fixed && (
@@ -1195,23 +1211,22 @@ function Salary(ctx: ScreenCtx) {
       )}
           </div>
   )
+  const shown = !!draft.payType && !pickOpen
   return (
     <>
       <WizardQuestion
-        eyebrow={<AiTag ctx={ctx} keys={["salaryMin", "salaryMax", "incentive"]} />}
-        title="What’s the monthly salary?"
-        description={
-          <>
-            Pay type: {draft.payType ? PAY_TYPE_LABELS[draft.payType] : "—"} ·{" "}
-            <Button type="button" variant="link-inline" onClick={() => ctx.edit("pay-type")}>
-              Change
-            </Button>
-          </>
-        }
+        eyebrow={<AiTag ctx={ctx} keys={["payType", "salaryMin", "salaryMax", "incentive"]} />}
+        title="How will you pay?"
+        description="Clear pay gets better applicants."
       />
-      {payFields}
+      <PayTypePicker draft={draft} update={update} open={pickOpen} setOpen={setPickOpen} />
+      {draft.payType && !pickOpen && (
+        <div key={draft.payType} className="animate-in fade-in-0 slide-in-from-bottom-4 duration-enter">
+          {payFields}
+        </div>
+      )}
       {/* Only once there's a number to show (user call, 2026-11-05). */}
-      {(draft.payType === "incentive"
+      {shown && (draft.payType === "incentive"
         ? draft.incentive != null
         : !!draft.payType && (draft.salaryMin != null || draft.salaryMax != null)) && <CandidatesSee draft={draft} />}
     </>
@@ -1909,17 +1924,11 @@ export const SCREENS: ScreenDef[] = [
     Render: Location,
   },
   {
-    id: "pay-type",
-    stage: "job",
-    preview: "top",
-    check: (d) => (d.payType ? null : "Choose a pay type"),
-    Render: PayType,
-  },
-  {
     id: "salary",
     stage: "job",
     preview: "top",
     check: (d) => {
+      if (!d.payType) return "Choose a pay type"
       const err = salaryError(d)
       if (err) return err
       // Name whichever part is actually missing — with "Fixed + incentive",

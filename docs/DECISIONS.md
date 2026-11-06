@@ -160,3 +160,18 @@ switching.
 
 **Where.** `src/app/apnahire/(product)/jobs/[id]/page.tsx` (the job page),
 `src/app/apnahire/(wizard)/` (job posting, full screen).
+
+## Job posting: pay type and salary on one screen (2026-11-06)
+
+**Decision.** The three pay-type cards show first. A pick turns them into the
+quiet "icon · Fixed + incentive · Change" line (the joining fee's style) and
+the amount fields slide in under it. Change opens the cards again and hides
+the fields. The separate pay-type screen is gone.
+
+**Why.** One less step, and the answer you just gave stays in view. A quiet
+line is enough because the recruiter tapped it a moment ago; the amount is
+the open question.
+
+**Where.** `PayTypePicker` and `Salary` in
+`src/components/apnahire/post-job/wizard-screens.tsx`; old drafts on
+`pay-type` open on `salary` (`post-job-flow.tsx`, RENAMED).
