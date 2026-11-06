@@ -242,3 +242,39 @@ to the entry. No importer changed.
   the candidate drawer (only used by `src/app/onlyrounds/(product)/jobs/[id]/page.tsx`)
   has no live route. It was tested through a temporary page, since deleted.
   The wizard is live at `/apnahire/jobs/rounds/new`.
+
+### 9. Dark-mode pricing and order-summary colours (committed, not pushed)
+Punna's dark-mode review of the plans pages and the order summary. Dark mode
+only; light mode resolves to the same values as before. Decisions and the
+trade-off: `docs/DECISIONS.md` → "Dark mode pricing coherence".
+
+- **Plan area (option 2):** plan panels and tracks (tab bar, Job credits and
+  Unlimited panels, the 1/2/3 switch) take the page glass (`--surface-glass`);
+  plan cards go one step lighter, plum-700 (`--surface-plan-card`), and stay
+  solid. Two readers were pinned so they don't move with it:
+  `--app-chip-pill` and `--checkout-discount-bg`.
+- **Recommended label:** `--ribbon-fg` sky-300. 5.3:1 on its fill (was 4.2:1).
+- **Phone pricing chips** keep their earlier look through two new tokens,
+  `--checkout-chip` (card at 40%) and `--checkout-chip-pill` (plum-800), used
+  by `SegmentedTabSwitcher`'s phone row in the checkout look (also the app's
+  `MobileChipRow`). Sticky tabs and desktop tabs unchanged.
+- **Order summary:** the coupon field drops the Input's `dark:bg-input/30` (a
+  box behind the hint; hint now 7.0:1). The database add-on's unselected chips
+  use the new `--chip-on-tint` (plum-800; `--background` read as holes),
+  labels 6.5:1.
+- **Emphasis button** on dark: lavender plum-300, hover plum-200, plum-950
+  label (9.3:1; 7.3–9.3:1 against the surfaces). Gray-700 was ~1.5:1 on the
+  plum cards. The `data-surface="dark"` white inversion is unchanged.
+- **Files:** `semantic.css`, `index.css`, `button.tsx` (JSDoc), `chip-tabs.tsx`,
+  `segmented-tab-switcher.tsx`, `checkout-drawer.tsx`, `TOKENS.md`,
+  `DECISIONS.md`.
+- **Baselines re-taken:** four dark component shots (`actions`, `data-layout`,
+  `inputs`, `navigation`). They still passed before (each change is under the
+  1% pixel tolerance), so they were re-taken with `--update-snapshots=all` and
+  diffed old against new: only the lavender emphasis buttons, the chip fills,
+  the lighter Recommended label and the plan panel's edge changed. No light
+  baseline changed. No axe KNOWN entry was fixed or added by this batch.
+- **Verified:** full Playwright run (403 passed, 93 skipped), the dark set
+  re-run stable, tsc, lint:tokens, unit tests. `npm run lint` reports 133
+  errors, all in the git-ignored `playwright-report/` folder (a local HTML
+  report); the source has 0 errors and 31 warnings.

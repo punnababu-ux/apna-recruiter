@@ -40,9 +40,10 @@
  * above: still one green primary per screen.
  *
  * In dark mode (the whole page dark, not a dark section) `emphasis` is a
- * raised solid gray (`--cta-emphasis`, gray-700) with a white label: solid,
- * so it never reads as `outline` beside it, and not white, so it doesn't
- * outshine the green primary (2026-10-23; it used to copy outline's look).
+ * solid lavender (`--cta-emphasis`, plum-300) with a plum label: solid, so
+ * it never reads as `outline` beside it, and light enough to stand off the
+ * plum cards (2026-11-06; gray-700 faded on them). It is brighter than the
+ * green primary; keep it to one per section so it doesn't take the eye.
  *
  * Links — two, and only two:
  *   `link`         a standalone action link: blue, semibold, underlined on

@@ -130,6 +130,9 @@
   --color-plan-card-line:              var(--plan-card-line);
   --color-plan-pill-ring:              var(--plan-pill-ring);
   --color-app-chip-pill:               var(--app-chip-pill);
+  --color-chip-on-tint:                var(--chip-on-tint);
+  --color-checkout-chip:               var(--checkout-chip);
+  --color-checkout-chip-pill:          var(--checkout-chip-pill);
   --color-checkout-cta-hover:          var(--checkout-cta-hover);
   --color-checkout-inset-cta:          var(--checkout-inset-cta);
   --color-checkout-inset-cta-border:   var(--checkout-inset-cta-border);

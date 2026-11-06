@@ -8,6 +8,21 @@ or **Open**.
 
 ---
 
+## Dark mode pricing coherence (2026-11-06)
+
+- **Question:** on dark, the plan area used three plums (a 40% panel, a solid Unlimited panel, plum-800 cards) on a page whose other cards (login, FAQ) are one frosted glass; the selected tab washed out, the Recommended label failed contrast, and order-summary details looked off.
+- **Decision (dark mode only; light untouched):**
+  - Plan panels and tracks (tab bar, Job credits and Unlimited panels, the 1/2/3 switch) take the page glass (`--surface-glass`). Plan cards go one step lighter, plum-700 (`--surface-plan-card`), and stay solid: plan cards are never frosted (2026-10-19 rule).
+  - The Recommended label is a lighter blue, sky-300 (`--ribbon-fg`): 5.3:1 on its fill (sky-400 was 4.2:1).
+  - Phone pricing chips (`/pricing` below md) keep their earlier look: `--checkout-chip` (card at 40%) and `--checkout-chip-pill` (plum-800), apart from the glass track. The app's phone chip rows follow them. Sticky tabs and desktop tabs are unchanged.
+  - Order summary: the coupon field has no fill of its own on dark (the Input's `dark:bg-input/30` showed as a box behind the hint). The database chips' unselected fill is `--chip-on-tint` (plum-800), not `--background`, which read as holes.
+  - `Button variant="emphasis"` on dark is lavender: plum-300 fill, plum-200 hover, plum-950 label (9.3:1). Gray-700 sat at about 1.5:1 on the plum cards, so an add-on's "Add" faded. The `data-surface="dark"` white inversion is unchanged.
+- **Why:** one surface for the whole plan area, cards lifted off it by one step; every label at 4.5:1 or more; the companion CTA visible on plum.
+- **Trade-off accepted:** lavender is brighter than the green primary, so an emphasis button can draw the eye before "Proceed to pay" (the AI calling "Add" beside it; the phone header's "Login / Sign up" above the hero's green one). This bends the one-standout rule (Hick / Von Restorff in AGENTS.md).
+- **Header:** Punna accepted the header's lavender "Login / Sign up" sitting above the hero's green one on the phone homepage and pricing page in dark mode; it stays lavender like every other emphasis button (2026-11-06).
+- **Would change it:** if users pick the add-on or header CTA over the primary more than expected, or reviews say the green no longer leads, move emphasis to a dimmer lavender (plum-400/500 with a light label) or back to a raised gray.
+- **Status:** Decided (Punna, 2026-11-06).
+
 ## Splitting a large file: keep the entry, add a sibling folder (2026-11-06)
 
 - **Decision:** a file over ~600 lines is split by moving code only. The original `foo.tsx` stays at its path with the same exports; its parts go in a sibling `foo/` folder (no `index.tsx`, so old imports still resolve). Applied to the four OnlyRounds files (`candidate-drawer`, `job-details-step`, `interview-rounds-step`, `create-job-wizard`).

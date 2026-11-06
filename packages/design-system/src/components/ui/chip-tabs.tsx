@@ -103,7 +103,7 @@ export function ChipTabs<V extends string = string>({
               : ariaInvalid
                 ? "border-destructive/60 bg-destructive/5 text-destructive hover:bg-destructive/10"
                 : variant === "choice-on-tint"
-                  ? "border-transparent bg-background text-muted-foreground hover:text-foreground"
+                  ? "border-transparent bg-chip-on-tint text-muted-foreground hover:text-foreground"
                   : "border-border bg-muted text-muted-foreground hover:text-foreground"
             : active
               ? "border-transparent text-secondary-foreground"

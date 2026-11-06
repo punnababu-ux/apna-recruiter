@@ -312,7 +312,7 @@ function InlineActionInput({
           }
         }}
         placeholder={placeholder}
-        className="h-auto min-w-0 flex-1 rounded-none border-0 bg-transparent px-0 py-0 text-foreground caret-checkout-primary focus-visible:ring-0"
+        className="h-auto min-w-0 flex-1 rounded-none border-0 bg-transparent dark:bg-transparent px-0 py-0 text-foreground caret-checkout-primary focus-visible:ring-0"
       />
       <button
         type="button"

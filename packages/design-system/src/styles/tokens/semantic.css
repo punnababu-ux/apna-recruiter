@@ -707,6 +707,13 @@
   /* The selected pill of an app phone chip row (MobileChipRow). On dark the
      app page is the pill's own plum, so it lifts one step. */
   --app-chip-pill: var(--surface-plan-card);
+  /* Unselected chip of ChipTabs "choice-on-tint" (the order summary's
+     database add-on): lifts off the tinted card. */
+  --chip-on-tint: var(--background);
+  /* Phone chip row of SegmentedTabSwitcher's checkout look: unselected chip
+     and selected pill. Same as the desktop track and pill on light. */
+  --checkout-chip:      var(--surface-checkout-track);
+  --checkout-chip-pill: var(--surface-plan-card);
   /* The plan pages' green button hover: one step darker on light (as the
      checkout CTA always was); on dark the shared --cta-primary-hover. */
   --checkout-cta-hover: var(--color-apna-green-700);
@@ -789,7 +796,9 @@
  * in-site navigation, pop-ups included (they render inside <body>). */
 .dark, body:has([data-hall]) {
   --logo-hire:         var(--cta-primary); /* "Recruiter": the CTA green, as on light */
-  --surface-plan-card: var(--muted);
+  /* One step above the page glass the plan panels use, so a card reads as
+   * lifted (light: white on a tinted panel). Not --muted: that's shared. */
+  --surface-plan-card: var(--color-apna-plum-700);
   --surface-glass: color-mix(in srgb, var(--card) 80%, transparent);
   /* A sheer glass (40%): a panel that only hints at itself over a
    * coloured canvas — the product page's illustration tile. */
@@ -797,10 +806,19 @@
   --cta-primary:       var(--color-apna-green-500);
   --cta-primary-hover: var(--color-apna-green-600);
   --ribbon-fill: color-mix(in srgb, var(--info) 20%, var(--surface-plan-card));
-  --ribbon-fg:   var(--info);
+  /* A step lighter than --info: on the blue-tinted fill, sky-400 reads 4.2:1;
+   * sky-300 clears 4.5:1. */
+  --ribbon-fg:   var(--color-apna-sky-300);
   --plan-card-line: transparent;
   --plan-pill-ring: transparent;
-  --app-chip-pill: color-mix(in srgb, var(--foreground) 16%, var(--surface-plan-card));
+  --app-chip-pill: color-mix(in srgb, var(--foreground) 16%, var(--muted));
+  /* Not --background: on dark that's the darkest plum, so the chips read as
+     holes in the card. The "choice" chip's own fill instead. */
+  --chip-on-tint: var(--muted);
+  /* Phone chips keep their own plum on dark (Punna, 2026-11-06): the plan
+     panels took the page glass, the chips stayed as they were. */
+  --checkout-chip:      color-mix(in srgb, var(--card) 40%, transparent);
+  --checkout-chip-pill: var(--muted);
   --checkout-cta-hover: var(--cta-primary-hover);
   --checkout-inset-cta:        color-mix(in srgb, var(--input) 30%, transparent);
   --checkout-inset-cta-border: var(--input);
@@ -1037,9 +1055,12 @@
    * port — this is an original value, like the dark hero gradient above. */
   --surface-checkout-hero-fg-secondary: var(--color-gray-300);
   /* Mirrors the light track's alpha-black overlay, inverted for a dark hero. */
-  --surface-checkout-track: color-mix(in srgb, var(--card) 40%, transparent); /* tab bar + Job credits panel: the Unlimited outer plum at 40% */
-  --surface-glass-dark: color-mix(in srgb, var(--card) 40%, transparent);
-  --surface-glass-dark-edge: color-mix(in srgb, var(--color-gray-0) 8%, transparent);
+  /* Plan panels and tracks (tab bar, Job credits panel, 1/2/3 switch) on
+   * dark: the page's own glass, as the login card and FAQ cards, so the plan
+   * area reads as one surface with the rest of the page. */
+  --surface-checkout-track: var(--surface-glass);
+  --surface-glass-dark: var(--surface-glass);
+  --surface-glass-dark-edge: color-mix(in srgb, var(--card) 60%, transparent);
 
   /* Chip — inverted so the solid chip still reads against the dark track. */
   --chip-solid:            var(--color-gray-100);
@@ -1073,10 +1094,13 @@
   --surface-checkout-inset-fg-muted: var(--muted-foreground);
   --surface-checkout-inset-hover:  var(--color-alpha-black-40);
 
-  /* Emphasis CTA: gray-800 vanishes on a dark card, so it steps up to a
-   * raised gray-700 — still dark gray, still clearly not the green primary. */
-  --cta-emphasis:       var(--color-gray-700);
-  --cta-emphasis-hover: var(--color-gray-600);
+  /* Emphasis CTA: lavender with a plum label (Punna, 2026-11-06). Gray-700
+   * sat at ~1.5:1 on the plum cards, so an add-on's "Add" faded; lavender
+   * separates at 7–9:1. It is brighter than the green primary, a trade-off
+   * accepted for now (docs/DECISIONS.md). */
+  --cta-emphasis:            var(--color-apna-plum-300);
+  --cta-emphasis-hover:      var(--color-apna-plum-200);
+  --cta-emphasis-foreground: var(--color-apna-plum-950);
 
   /* Dark mode for the plan surfaces (2026-10-17, Punna's dark audit). These
    * used to be "fixed across themes", which left a white discount chip, a
@@ -1087,7 +1111,7 @@
    *   offer        the green pop-up header: green glows on dark plum, like
    *                the product pages' dark canvases
    *   unlimited    a black tint, the mirror of the Job credits white tint */
-  --checkout-discount-bg: var(--surface-glass-dark);
+  --checkout-discount-bg: color-mix(in srgb, var(--card) 40%, transparent);
   --checkout-discount-fg: var(--color-apna-green-300);
   /* Green offer header on dark: the product pages' dark canvas treatment
      (--gradient-canvas-ai-calling): green glows over the dark plum base,
@@ -1096,9 +1120,9 @@
     radial-gradient(circle at 8% 12%, color-mix(in srgb, var(--color-apna-green-700) 75%, transparent) 0%, transparent 60%),
     radial-gradient(circle at 92% 90%, color-mix(in srgb, var(--color-apna-green-900) 80%, transparent) 0%, transparent 65%),
     linear-gradient(var(--color-apna-plum-900), var(--color-apna-plum-900));
-  /* Unlimited on dark: a black tint over the page, the mirror of the Job
-     credits strip's white tint (--surface-checkout-track). Plum read muddy. */
-  --gradient-checkout-unlimited: linear-gradient(var(--card), var(--card)); /* the FAQ band's colour */
+  /* Unlimited on dark: the same page glass as the Job credits panel beside
+     it, so the two plan panels match. */
+  --gradient-checkout-unlimited: linear-gradient(var(--surface-glass), var(--surface-glass));
   /* Ribbon one step quieter on dark (sky-500 was the loudest mark on the
    * dark cards). --checkout-primary is the plan pages' green TEXT and
    * icons (labels, ticks, savings lines): bright green-500 on dark so it

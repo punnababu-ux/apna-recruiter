@@ -271,7 +271,7 @@ export function SegmentedTabSwitcher<V extends string = string>({
             // The ring (--border) keeps the white selected chip
             // visible on a white surface (a card, a panel), not just on a
             // grey one; the shadow alone vanished there.
-            className={cn("sliding-indicator rounded-full shadow-control ring-1", appearance === "checkout" ? "bg-plan-card ring-plan-pill-ring" : "bg-card ring-border", mobileActiveItemClassName)}
+            className={cn("sliding-indicator rounded-full shadow-control ring-1", appearance === "checkout" ? "bg-checkout-chip-pill ring-plan-pill-ring" : "bg-card ring-border", mobileActiveItemClassName)}
           />
           {items.map(({ value: v, label, shortLabel, icon, accent, compactLogo }) => {
             const active = v === value
@@ -292,8 +292,9 @@ export function SegmentedTabSwitcher<V extends string = string>({
                     ? cn("border-transparent font-semibold", mobileActiveClassName ?? activeClassName)
                     : cn("border-transparent bg-muted hover:bg-muted", inactiveClassName,
                         // The track's tint only: the glass edge would outline
-                        // every unselected chip.
-                        trackClassName?.replace("surface-glass-dark", "")),
+                        // every unselected chip. The checkout look has its own
+                        // chip fill, which on dark stays apart from the track.
+                        trackProp?.replace("surface-glass-dark", "") ?? (appearance === "checkout" ? "bg-checkout-chip" : undefined)),
                   accent && "text-product-accent"
                 )}
               >
