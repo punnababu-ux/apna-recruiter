@@ -89,10 +89,32 @@ const LANGS = [
   "assamese",
 ]
 
+const ASSET_RULES: [RegExp, string][] = [
+  [/\b(bike|two[- ]?wheeler|scooty|scooter)\b/, "Bike / two-wheeler"],
+  [/smart ?phone|android phone/, "Smartphone"],
+  [/laptop/, "Laptop"],
+  [/driving licen[cs]e|\bdl\b/, "Driving licence"],
+  [/\bnism\b/, "NISM certificate"],
+  [/\bdra\b/, "DRA certificate"],
+]
+
+// Names match PERKS / ASSETS in job-draft.ts so the form's chips show them picked.
+const PERK_RULES: [RegExp, string][] = [
+  [/flexible (working )?hours|flexi timing/, "Flexible working hours"],
+  [/overtime|\bot pay/, "Overtime pay"],
+  [/bonus/, "Annual bonus"],
+  [/travel allowance|petrol allowance|fuel allowance|\bta\b/, "Travel allowance"],
+  [/mobile allowance|phone allowance|mobile recharge/, "Mobile allowance"],
+  [/health insurance|medical insurance|mediclaim/, "Health insurance"],
+  [/\bpf\b|provident fund/, "PF"],
+]
+
 const titleCase = (s: string) => s.replace(/\b\w/g, (c) => c.toUpperCase())
 
 /** "15-20k", "15000 - 20000", "₹15k to 20k", "₹18k" → monthly INR. */
 export function parseSalary(text: string): { min?: number; max?: number } {
+  // Speech-to-text writes "15 to 20 thousand" / "20,000 rupees".
+  text = text.replace(/\s*(thousand|hazaa?r)\b/gi, "k").replace(/\s*(rupees|rs\.?)\s*/gi, " ")
   const n = (v: string, k: string) => Math.round(parseFloat(v.replace(/,/g, "")) * (k ? 1000 : 1))
   const range = text.match(/₹?\s*(\d[\d,]*(?:\.\d+)?)\s*(k)?\s*(?:-|–|to)\s*₹?\s*(\d[\d,]*(?:\.\d+)?)\s*(k)?/i)
   if (range) {
@@ -119,6 +141,8 @@ export function parseTitle(text: string): string | undefined {
     .replace(/^(i\s+)?(want|need|am looking|looking|would like)\s+(to\s+)?(hire|for)?\s*/i, "")
     .replace(/^hire\s+/i, "")
     .replace(/^(a|an|\d+)\s+/i, "")
+    // "5 female telecallers": the gender is a preference, not part of the title.
+    .replace(/^(female|male|women|men|lady|ladies)\s+/i, "")
   const head = cleaned.split(/[,.\n]|\s+in\s+|\s+at\s+|\s+for\s+|\s+with\s+/i)[0]?.trim()
   if (!head || head.length > 40) return undefined
   return titleCase(head.replace(/s$/i, "").toLowerCase())
@@ -174,8 +198,15 @@ export function parsePrompt(source: string): Partial<JobPostDraft> {
   else if (/no english/.test(text)) out.english = "none"
   else if (/english/.test(text)) out.english = "basic"
 
-  const range = text.match(/(\d+(?:\.\d+)?)\s*(?:-|–|to)\s*(\d+(?:\.\d+)?)\s*(?:years?|yrs?)/)
-  const years = text.match(/(\d+(?:\.\d+)?)\s*\+?\s*(?:years?|yrs?)/)
+  // Age first, then take it out so "age 21 to 30 years" isn't read as experience.
+  const age = text.match(/age[^\d]{0,12}(\d{2})\s*(?:-|–|to)\s*(\d{2})|(\d{2})\s*(?:-|–|to)\s*(\d{2})\s*(?:years?|yrs?)\s*(?:of\s*)?(?:age|old)/)
+  if (age) {
+    out.ageMin = Number(age[1] ?? age[3])
+    out.ageMax = Number(age[2] ?? age[4])
+  }
+  const expText = age ? text.replace(age[0], " ") : text
+  const range = expText.match(/(\d+(?:\.\d+)?)\s*(?:-|–|to)\s*(\d+(?:\.\d+)?)\s*(?:years?|yrs?)/)
+  const years = expText.match(/(\d+(?:\.\d+)?)\s*\+?\s*(?:years?|yrs?)/)
   if (/fresher/.test(text)) out.experienceType = "fresher"
   else if (years) {
     out.experienceType = "experienced"
@@ -185,8 +216,19 @@ export function parsePrompt(source: string): Partial<JobPostDraft> {
 
   const langs = LANGS.filter((l) => text.includes(l)).map(titleCase)
   if (langs.length) out.languages = langs
-  if (/walk[- ]?in/.test(text)) out.walkIn = true
-  if (/joining fee|deposit/.test(text)) out.joiningFee = true
+  // "No walk-in", "no joining fee": a negation is an answer too.
+  if (/\b(no|without)\s+walk[- ]?ins?/.test(text)) out.walkIn = false
+  else if (/walk[- ]?in/.test(text)) out.walkIn = true
+  if (/\b(no|without|zero)\s+(joining fee|deposit|fee)|free of cost/.test(text)) out.joiningFee = false
+  else if (/joining fee|deposit/.test(text)) out.joiningFee = true
+
+  if (/\b(female|women|ladies|girls?)\b/.test(text)) out.gender = "female"
+  else if (/\b(male|men|boys?)\b/.test(text)) out.gender = "male"
+
+  const assets = ASSET_RULES.filter(([re]) => re.test(text)).map(([, a]) => a)
+  if (assets.length) out.assets = assets
+  const perks = PERK_RULES.filter(([re]) => re.test(text)).map(([, p]) => p)
+  if (perks.length) out.perks = perks
 
   return out
 }
