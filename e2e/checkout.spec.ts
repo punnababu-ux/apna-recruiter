@@ -111,11 +111,6 @@ test.describe("express checkout", () => {
 
   test("plans at 320px", async ({ page }) => {
     test.skip(isDesktop(), "phone width only")
-    test.fixme(
-      true,
-      "Express plans at 320px: a plan card's whitespace-nowrap validity line ('Active for 15 days') ends past the " +
-        "screen edge, so the page scrolls sideways. Same bug as job-posting.spec.ts 'the plans step at 320px'.",
-    )
     await page.setViewportSize({ width: 320, height: 640 })
     await open(page, EXPRESS)
     await expressPlans(page)

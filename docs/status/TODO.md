@@ -80,8 +80,8 @@ Open before ECC: keep "View number" as the green action, or make Shortlist prima
 - [ ] Clay icon for the city-lock pop-up (`city-lock-dialog.tsx`, stand-in: "access")
 
 ## Layout bugs (found by the browser tests, 2026-11-06; each is a `test.fixme` — remove it when fixed)
-- [ ] Plan cards at 320px scroll the page sideways: the no-wrap "Active for 15 days" line ends ~12px past the edge (express plans, the job-posting plans step)
-- [ ] Job posting "Describe" screen, phones: the `ai-idle` halo is inset -1.5rem but the page padding is 1rem, so it pokes 8px past the screen edge at every phone width
+- [x] Plan cards at 320px scroll the page sideways: "Active for 15 days" now moves under the title when the panel is narrow
+- [x] Job posting "Describe" screen, phones: the `ai-idle` halo now stays inside the 1rem page padding
 
 ## Accessibility (found by `e2e/a11y.spec.ts`, 2026-11-06)
 Each is in the spec's `KNOWN` list, matched per element; delete the entry when it is fixed.

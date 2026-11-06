@@ -100,8 +100,7 @@ async function startFresh(page: Page) {
 
 /** Every screen has to pass these. */
 async function expectScreenLayout(page: Page, id: string) {
-  // Describe has its own check below (a known bug, see the fixme).
-  if (id !== "describe") await expectNoHorizontalOverflow(page, id)
+  await expectNoHorizontalOverflow(page, id)
   await expectNoCollapsedButtons(page)
   const button = primary(page)
   await expect(button, `${id}: primary button`).toBeVisible()
@@ -153,23 +152,19 @@ test.describe("job posting: walk-through", () => {
     for (const step of STEPS) {
       await expect(page.getByRole("heading", { level: 1, name: step.heading }), `${step.id}: heading`).toBeVisible()
       await settle(page, 450)
-      if (step.id !== "describe") await expectNoHorizontalOverflow(page, step.id)
+      await expectNoHorizontalOverflow(page, step.id)
       await expectNoCollapsedButtons(page)
       await step.answer(page)
       if (step.id === "describe") await page.getByRole("button", { name: "Fill manually" }).click()
       else await primary(page).click()
     }
-    // The plans step at 320px has its own test (a known bug, see the fixme).
     await expect(page).toHaveURL(new RegExp(`${PLANS}$`))
+    await settle(page, 600)
+    await expectNoHorizontalOverflow(page, "plans")
   })
 
   test("320px phone: the plans step does not scroll sideways", async ({ page }) => {
     test.skip(test.info().project.name !== "phone", "320px is a phone width")
-    test.fixme(
-      true,
-      "Plans step at 320px: the whitespace-nowrap 'Active for 15 days' line (a plan card's validity) ends 12px past " +
-        "the screen edge, so the page scrolls sideways. Fine at 360px and up.",
-    )
     await page.setViewportSize({ width: 320, height: 640 })
     await open(page, PLANS)
     await settle(page, 800)
@@ -178,11 +173,6 @@ test.describe("job posting: walk-through", () => {
 
   test("describe screen: the idle halo does not widen the page", async ({ page }) => {
     test.skip(test.info().project.name !== "phone", "the halo only pokes out past the phone's screen edge")
-    test.fixme(
-      true,
-      "`ai-idle` (design-system styles/index.css) is inset -1.5rem on both sides, but the page padding is 1rem, " +
-        "so the halo ends 8px past the screen edge and the page scrolls sideways (or zooms out on a phone) at every width.",
-    )
     await startFresh(page)
     await expect(page.getByRole("heading", { level: 1, name: /^Describe the job$/ })).toBeVisible()
     await settle(page, 450)
@@ -202,7 +192,7 @@ test.describe("job posting: drafts", () => {
     const [a, b] = [(await start.boundingBox())!, (await keep.boundingBox())!]
     expect(Math.abs(a.y - b.y), "buttons share a row").toBeLessThanOrEqual(1)
     expect(a.x, "Start new comes first").toBeLessThan(b.x)
-    // No overflow check: the prompt opens over the describe screen, whose halo bug has its own fixme test.
+    await expectNoHorizontalOverflow(page)
     await expectNoCollapsedButtons(page)
 
     await keep.click()

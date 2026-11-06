@@ -602,11 +602,13 @@ function MobileJobPlanRadioGroup({
             frame (PlanFrame), so they read as one choice apart from the
             subscription: 12px at the sides, bottom and between cards, 16px
             above the title, a corner concentric with the nested cards. */}
-        <div className={cn("flex flex-col gap-3", !frameless && "rounded-frame surface-glass-dark px-3 pt-4 pb-3")}>
+        <div className={cn("@container flex flex-col gap-3", !frameless && "rounded-frame surface-glass-dark px-3 pt-4 pb-3")}>
           {(
             // The name left, how long it runs right, small, with the clock
             // the old line above the cards had (user call, 2026-10-30).
-            <div className="flex items-center justify-between gap-2 px-1.5">
+            // Too narrow for both on one line (a 320px phone): the duration
+            // moves under the name, whole, rather than running off the edge.
+            <div className="flex flex-col items-start gap-1 px-1.5 @2xs:flex-row @2xs:items-center @2xs:justify-between @2xs:gap-2">
               <h2 className="flex items-center gap-2 text-h6 leading-6 whitespace-nowrap text-foreground [&_svg]:size-5 [&_svg]:shrink-0">
                 <BriefcaseBusiness aria-hidden />
                 Single job posting

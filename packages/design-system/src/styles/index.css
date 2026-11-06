@@ -1326,10 +1326,12 @@
 /* ai-idle — the resting hint behind an AI prompt: a faint sky halo around
    the input, as Gemini's sits behind its box. Place it first inside the
    prompt's `relative` wrapper. Still. It stops just under the box, so
-   the chips below stay on a plain background and keep their contrast. */
+   the chips below stay on a plain background and keep their contrast.
+   Sideways it reaches 1rem, the phone page padding: any wider and it runs
+   past the screen edge and the page scrolls sideways. */
 @utility ai-idle {
   position: absolute;
-  inset: -3rem -1.5rem -1rem;
+  inset: -3rem -1rem -1rem;
   z-index: -1;
   pointer-events: none;
   background: radial-gradient(75% 65% at 50% 55%, var(--ai-wash-idle) 30%, transparent 100%);

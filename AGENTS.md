@@ -748,6 +748,25 @@ every line may break; never let the width of a string decide it.**
    375px, a six-digit price (₹12,99,999) and the longest plan name. If
    anything splits, overflows or misaligns, the layout is wrong, not the
    copy.
+9. **Every `whitespace-nowrap` has a narrow fallback** (RCA, 2026-11-06).
+   A no-wrap group in a row ("Active for 15 days" beside "Single job
+   posting") ran 12px past a 320px screen and the page scrolled sideways.
+   When you add `whitespace-nowrap` to something that shares a line, say
+   where it goes when the line is too short: under the other side
+   (`@container` + `flex-col @2xs:flex-row`, rule 3) or a short label (rule 4).
+10. **Decorative layers stay inside the page padding** (RCA, 2026-11-06).
+    A glow, halo or ring drawn with a negative inset (`ai-idle`,
+    `voice-glow`, `attention-ring`) may reach out at most the page's side
+    padding on phones (1rem). The `ai-idle` halo reached 1.5rem, ran 8px
+    past every phone screen and zoomed the page out. Nothing shows the
+    edge, so you only find it by measuring.
+11. **Measure it; don't eyeball it.** `npm run test:e2e` checks every
+    checkout and job-posting screen at 375px, 320px and desktop for
+    sideways scroll, squashed buttons, level card rows and accessibility.
+    Run it before calling a layout change done; when you add a screen or
+    state, add it to `e2e/`. A real bug you can't fix yet is a
+    `test.fixme("what, where")` plus a line in `docs/status/TODO.md`, never
+    a weaker check.
 
 ---
 
@@ -1019,13 +1038,20 @@ npm run lint         # ESLint (syntax, React rules)
 npm run lint:tokens  # Token contract (arbitrary values, raw literals)
 npm run build        # Next.js production build (type check + compile)
 npm run check        # All three. Run this before every commit.
+npm test             # Unit tests (bill, credit plan, rate limit)
+npm run test:e2e     # Browser tests: layout + accessibility, phone and desktop (starts its own server on :3100)
+npm run test:visual  # Screenshot comparisons, local only (macOS baselines); --update-snapshots after an intended change
 ```
+
+GitHub runs all of these except `test:visual` on every push to main and
+every PR (`.github/workflows/check.yml`).
 
 ### Pre-commit checklist
 
 Before you `git commit`:
 
 - [ ] `npm run check` is green.
+- [ ] A UI change: `npm run test:e2e` is green (and `test:visual`, with baselines updated only for intended changes).
 - [ ] New components are listed in `docs/reference/COMPONENTS.md`.
 - [ ] New semantic tokens are documented in `docs/reference/TOKENS.md`.
 - [ ] Any `token-lint-ignore` exception is justified in the PR description.
