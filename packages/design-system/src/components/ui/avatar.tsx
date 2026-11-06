@@ -38,15 +38,35 @@ function AvatarImage({ className, ...props }: AvatarPrimitive.Image.Props) {
   )
 }
 
+/** Initials tints. `muted` is the default; the three hues sit apart from
+ *  green / amber / red, which carry meaning on the cards avatars sit in. */
+const FALLBACK_TONE = {
+  muted: "bg-muted text-muted-foreground",
+  sky: "bg-avatar-sky text-avatar-sky-foreground",
+  violet: "bg-avatar-violet text-avatar-violet-foreground",
+  plum: "bg-avatar-plum text-avatar-plum-foreground",
+} as const
+export type AvatarTone = keyof typeof FALLBACK_TONE
+
+/** A stable tone per person, so a name keeps its colour across lists. */
+function avatarTone(name: string): AvatarTone {
+  const tones: AvatarTone[] = ["sky", "violet", "plum"]
+  let h = 0
+  for (const ch of name) h = (h * 31 + ch.charCodeAt(0)) >>> 0
+  return tones[h % tones.length]
+}
+
 function AvatarFallback({
   className,
+  tone = "muted",
   ...props
-}: AvatarPrimitive.Fallback.Props) {
+}: AvatarPrimitive.Fallback.Props & { tone?: AvatarTone }) {
   return (
     <AvatarPrimitive.Fallback
       data-slot="avatar-fallback"
       className={cn(
-        "flex size-full items-center justify-center rounded-full bg-muted text-sm text-muted-foreground group-data-[size=sm]/avatar:text-xs",
+        "flex size-full items-center justify-center rounded-full text-sm group-data-[size=sm]/avatar:text-xs",
+        FALLBACK_TONE[tone],
         className
       )}
       {...props}
@@ -106,4 +126,5 @@ export {
   AvatarGroup,
   AvatarGroupCount,
   AvatarBadge,
+  avatarTone,
 }

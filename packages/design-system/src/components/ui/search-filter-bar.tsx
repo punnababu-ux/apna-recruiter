@@ -31,6 +31,8 @@ export type FilterGroup = {
   options: string[]
   selected: string[]
   onToggle: (value: string) => void
+  /** A short note after an option, keyed by option ("From your job"). */
+  tags?: Record<string, string>
 }
 
 export interface SearchFilterBarProps {
@@ -246,7 +248,9 @@ export function SearchFilterBar({
 
 /** The groups and their options. `touch`: the bottom sheet's full-width,
  *  44px rows with 14px labels; otherwise the popover's compact list. */
-function FilterGroups({ groups, touch = false }: { groups: FilterGroup[]; touch?: boolean }) {
+/** The filter checklist the popover and sheet draw; also exported for an
+ *  inline filter panel (a job's leads, `?filters=side`), so all three match. */
+export function FilterGroups({ groups, touch = false }: { groups: FilterGroup[]; touch?: boolean }) {
   return groups.map((group, i) => (
     <div key={group.label}>
       {i > 0 && <div className="border-t border-border" />}
@@ -274,6 +278,9 @@ function FilterGroups({ groups, touch = false }: { groups: FilterGroup[]; touch?
                   onCheckedChange={() => group.onToggle(opt)}
                 />
                 <span className="truncate">{opt}</span>
+                {group.tags?.[opt] && (
+                  <span className="ml-auto shrink-0 text-xs whitespace-nowrap text-muted-foreground">{group.tags[opt]}</span>
+                )}
               </label>
             )
           })}

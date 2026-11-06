@@ -45,7 +45,7 @@ import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 
 import { cn } from "@/lib/utils"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage, avatarTone } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { ChatStatusTicks, type ChatMessageStatus } from "@/components/ui/chat-bubble"
 
@@ -113,7 +113,7 @@ function ConversationRow({
           <>
             <Avatar size="lg">
               {avatarSrc && <AvatarImage src={avatarSrc} alt={name} />}
-              <AvatarFallback className="bg-accent text-accent-foreground">{initial}</AvatarFallback>
+              <AvatarFallback tone={avatarTone(name)}>{initial}</AvatarFallback>
             </Avatar>
             <div className="flex min-w-0 flex-1 flex-col gap-0.5">
               <div className="flex items-baseline justify-between gap-2">

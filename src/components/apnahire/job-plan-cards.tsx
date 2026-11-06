@@ -304,7 +304,7 @@ function RollingLabel() {
  *  same wherever it is sold. */
 function AiAgentBlock() {
   return (
-    <span className="flex w-full flex-col gap-3 rounded-card-nested bg-gradient-product-ai-calling p-3">
+    <span className="flex w-full flex-col gap-3 rounded-card-nested bg-gradient-ai p-3">
       <span className="flex items-center gap-2 text-sm font-semibold text-foreground">
         <AiSparkle className="size-5 shrink-0" />
         AI calling agent

@@ -128,6 +128,10 @@ export interface ChatJob {
 export interface CandidateProfile {
   location: string
   experience: string
+  /** Latest role: "Back office executive · Infosys BPM · Jan 2023 – now". */
+  current?: string
+  /** Last seen on apna: "today", "2 days ago". */
+  activeAgo?: string
   education: string
   languages: string[]
   skills: string[]

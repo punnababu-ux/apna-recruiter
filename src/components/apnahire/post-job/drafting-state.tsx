@@ -130,7 +130,7 @@ export function DraftingState({
         {ready ? (
           <Check className="size-4 shrink-0 text-primary" aria-hidden />
         ) : (
-          <Sparkles className="size-4 shrink-0 animate-pulse text-primary" aria-hidden />
+          <Sparkles className="size-4 shrink-0 animate-pulse text-info" aria-hidden />
         )}
         <span className={cn("truncate", ready && "font-medium text-foreground")}>{lines[at]}</span>
       </p>

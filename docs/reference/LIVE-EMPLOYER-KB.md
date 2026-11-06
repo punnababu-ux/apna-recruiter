@@ -215,3 +215,36 @@ Open questions
 - Is the Personal ↔ company workspace switch in scope?
 - Live makes "View number" the green action on every card. Keep it, or make Shortlist primary?
 - One jobs list (cards) or two (cards for Personal, rows for Company)?
+
+## Job page: left filter pane, Applied tab (checked 2026-11-06)
+
+17 collapsible groups; the first few show, "See more" opens the rest.
+Counts sit beside most options. Nothing shows which filters are on: no
+applied chips, no total count, no Clear all.
+
+| # | Group | Control | Options |
+|---|---|---|---|
+| 1 | Show candidates who | Checkboxes | Matched to job requirements (407) · Have resume attached (511) · Tried contacting you (1, NEW tag) · Featured candidate |
+| 2 | WhatsApp Connect | — | Greyed out (expired job) |
+| 3 | Applied in | Single-choice chips | Last 3 / 7 / 15 / 30 days |
+| 4 | Location | Single-choice chips | Within 5 km (17) · 10 km (181) · 15 km (282) · 25 km (458) · More than 25 km (61); note "Distance calculated from Kailasipalyam, Bengaluru" |
+| 5 | Gender | Chips | Female (182) · Male (327) |
+| 6 | Age | Min – Max dropdowns | |
+| 7 | Industry | Search select "Select a job industry" | Note: "Showing candidates from industries similar to your preference" |
+| 8 | Keywords (including name) | Search field "Search in profile / resume" | |
+| 9 | Monthly salary | Min – Max dropdowns | + checkbox "Include those who have not disclosed salary" |
+| 10 | Experience (years) | Min – Max dropdowns | |
+| 11 | Education | Chips | Diploma (2) · Graduate (424) · Post graduate (93) |
+| 12 | Degree / specialization | Search select | |
+| 13 | English level | Checkboxes | Basic English (6) · Good English (512) |
+| 14 | Languages known | Search select "Select languages" | Note: "Showing candidates who know your preferred languages" |
+| 15 | Job title | Search select | |
+| 16 | Departments | Search select | Note: similar to your preference |
+| 17 | Role / category | Search select | Note: similar to your preference |
+| 18 | Notice period | Chips | Immediately available · Up to 15 days · 1 month · 2 months · 3 months |
+
+(18 rows: WhatsApp Connect counted though disabled.)
+
+**Database tab** on this account shows no list or filters: a "Verification
+required to access apnaDatabase" card (Start verification · Contact
+support). Its filters are unknown until an account is verified.

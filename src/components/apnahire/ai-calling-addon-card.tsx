@@ -16,7 +16,7 @@
  * shown on every job type but Premium + AI (which has the agent built in).
  *
  * Composition only: Button from the design system, token gradients
- * (`bg-gradient-product-ai-calling`, the AI Calling Agent's own sky). No
+ * (`bg-gradient-ai`, the one AI surface). No
  * palette of its own.
  */
 
@@ -45,7 +45,7 @@ export function AiCallingAddonCard({
       {/* The ring sits on a wrapper: the card clips its corners, which would clip the glow. */}
       <div className="relative rounded-card-nested">
         <div className="overflow-hidden rounded-card-nested border border-border">
-          <div className="flex flex-col gap-2 bg-gradient-product-ai-calling px-3 py-4">
+          <div className="flex flex-col gap-2 bg-gradient-ai px-3 py-4">
             <div className="flex items-start gap-2">
               <AiSparkle className="size-5 shrink-0" />
               <p className="text-sm font-semibold text-foreground">{AI_CALLING_ADDON.headline}</p>

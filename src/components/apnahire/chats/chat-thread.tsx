@@ -175,7 +175,7 @@ function SenderAvatar({ from, candidate }: { from: ChatMessage["from"]; candidat
   if (from === "ai") {
     return (
       <Avatar className={ring}>
-        <AvatarFallback className="bg-info-subtle text-info-subtle-foreground">
+        <AvatarFallback className="bg-gradient-ai text-info">
           <Sparkles aria-hidden className="size-4" />
         </AvatarFallback>
       </Avatar>
@@ -623,7 +623,7 @@ export function ChatThread({ thread }: { thread: Thread }) {
                 layout="scroll"
                 label="AI summary and suggested replies"
                 items={[
-                  { label: "AI summary", icon: <Sparkles aria-hidden />, value: SUMMARY },
+                  { label: "AI summary", icon: <Sparkles aria-hidden className="text-info" />, value: SUMMARY },
                   ...(thread.suggestedReplies ?? []),
                 ]}
                 onSelect={(item) => (item === SUMMARY ? setSummaryOpen(true) : setDraft(item))}
@@ -637,13 +637,13 @@ export function ChatThread({ thread }: { thread: Thread }) {
         <PlanPopup open={summaryOpen} onOpenChange={setSummaryOpen}>
           <PopupHeader art="ai-calling" title="AI summary" description="Apna Assistant, from this chat" />
           <PopupBody>
-            <p className="text-body-sm text-foreground">{thread.summary}</p>
+            <p className="rounded-card-nested bg-gradient-ai p-3 text-body-sm text-foreground">{thread.summary}</p>
             {thread.suggestedReplies && (
               <div className="flex flex-col gap-2">
                 <span className="text-caption text-muted-foreground">Suggested replies</span>
                 <SuggestionChips
                   items={thread.suggestedReplies}
-                  icon={<Sparkles aria-hidden />}
+                  icon={<Sparkles aria-hidden className="text-info" />}
                   onSelect={pickReply}
                 />
               </div>

@@ -50,6 +50,7 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
+  avatarTone,
   Badge,
   Button,
   CircleCheck,
@@ -59,6 +60,7 @@ import {
   Sheet,
   SheetPanel,
   SheetPanelHeader,
+  Sparkles,
   StickyNote,
   Textarea,
   Unlock,
@@ -127,6 +129,7 @@ export function CandidateProfilePanel({
   const hiddenSkills = profile.skills.length - skills.length
 
   const facts = [
+    profile.current && { label: "Current / latest", value: profile.current },
     { label: "Location", value: profile.location },
     { label: "Experience", value: profile.experience },
     profile.expectedSalary && { label: "Expected salary", value: profile.expectedSalary },
@@ -134,7 +137,9 @@ export function CandidateProfilePanel({
     { label: "Availability", value: profile.availability },
     { label: "Languages", value: profile.languages.join(", ") },
     { label: "Education", value: profile.education },
-    { label: "Phone", value: profile.phoneMasked },
+    // Leads pass their own actions, which show the number once viewed.
+    !actions && { label: "Phone", value: profile.phoneMasked },
+    profile.activeAgo && { label: "Active", value: profile.activeAgo },
   ].filter((f): f is { label: string; value: string } => !!f)
 
   return (
@@ -145,7 +150,7 @@ export function CandidateProfilePanel({
       <div className="flex h-14 shrink-0 items-center gap-3 border-b border-border px-4">
         <Avatar size="lg">
           {candidate.photo && <AvatarImage src={candidate.photo} alt="" />}
-          <AvatarFallback className="bg-accent text-accent-foreground">{candidate.initial}</AvatarFallback>
+          <AvatarFallback tone={avatarTone(candidate.name)}>{candidate.initial}</AvatarFallback>
         </Avatar>
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="text-h6 truncate">{candidate.name}</span>
@@ -204,7 +209,12 @@ export function CandidateProfilePanel({
 
       <Accordion multiple value={open} onValueChange={setOpen} className="px-4">
         <AccordionItem value="match">
-          <AccordionTrigger className={TRIGGER}>Why a match</AccordionTrigger>
+          <AccordionTrigger className={TRIGGER}>
+            <span className="flex items-center gap-1.5">
+              <Sparkles aria-hidden className="size-4 text-info" />
+              AI match
+            </span>
+          </AccordionTrigger>
           <AccordionContent className="pb-4">
             <div className="flex flex-col gap-3">
               <PointList icon={CircleCheck} items={strengths} iconClass="text-success" />

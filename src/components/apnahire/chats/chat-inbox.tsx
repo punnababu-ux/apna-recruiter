@@ -147,7 +147,10 @@ function statusIcon(t: ChatThread) {
   return (
     <Tooltip>
       <TooltipTrigger render={<span className="flex items-center" />}>
-        <Icon className={cn("size-3.5", t.status === "urgent" && "text-destructive")} aria-hidden />
+        <Icon
+          className={cn("size-3.5", t.status === "urgent" && "text-destructive", t.status === "ai-screening" && "text-info")}
+          aria-hidden
+        />
         <span className="sr-only">{label}</span>
       </TooltipTrigger>
       <TooltipContent>{label}</TooltipContent>
@@ -167,7 +170,7 @@ function previewIcon(t: ChatThread) {
   if (t.candidate.availability || last?.from !== "ai") return undefined
   return (
     <>
-      <Sparkles aria-hidden />
+      <Sparkles aria-hidden className="text-info" />
       <span className="sr-only">{AI_NAME}:</span>
     </>
   )

@@ -75,6 +75,12 @@
   --color-info-foreground:         var(--info-foreground);
   --color-info-subtle:             var(--info-subtle);
   --color-info-subtle-foreground:  var(--info-subtle-fg);
+  --color-avatar-sky:              var(--avatar-sky);
+  --color-avatar-sky-foreground:   var(--avatar-sky-fg);
+  --color-avatar-violet:           var(--avatar-violet);
+  --color-avatar-violet-foreground: var(--avatar-violet-fg);
+  --color-avatar-plum:             var(--avatar-plum);
+  --color-avatar-plum-foreground:  var(--avatar-plum-fg);
   --color-chat-tick-read:          var(--chat-tick-read);
 
   /* Inverted surfaces */
@@ -1800,6 +1806,10 @@ a[href] > [data-slot="card"] {
 @utility bg-gradient-ai-tag {
   background-image: var(--gradient-ai-tag);
 }
+@utility bg-gradient-ai {
+  background-image: var(--gradient-ai);
+}
+
 @utility bg-gradient-product-ai-calling {
   background-image: var(--gradient-product-ai-calling);
 }

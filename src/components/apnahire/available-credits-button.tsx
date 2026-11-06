@@ -319,12 +319,17 @@ export function AvailableCreditsButton({
   balance,
   plansCta = false,
   chip = false,
+  kinds,
 }: {
   balance?: Partial<CreditsBalance>
   /** "View plans" under the balance; off on the checkout pages. */
   plansCta?: boolean
   /** Show the balance as a chip (the express plan step). */
   chip?: boolean
+  /** chip only: which credits it names, always shown (even at 0). Default:
+   *  the job kinds held. ["database"] on a job's active leads, where the
+   *  recruiter spends database credits (user call, 2026-11-06). */
+  kinds?: (keyof CreditsBalance)[]
 }) {
   const isMobile = useIsMobile()
   const plans = usePlansIngress()
@@ -356,7 +361,14 @@ export function AvailableCreditsButton({
     { n: full.aiCalling, Icon: Bot, label: plural(full.aiCalling, "Premium + AI calling credit") },
     { n: full.aiAddon ?? 0, Icon: PhoneCall, label: plural(full.aiAddon ?? 0, "AI calling add-on credit") },
   ].filter((p) => p.n > 0)
-  const parts = slots ? [] : held.length ? held : [{ n: 0, Icon: Briefcase, label: plural(0, "job credit") }]
+  const KIND: Record<keyof CreditsBalance, { Icon: React.ComponentType<{ className?: string }>; what: string }> = {
+    job: { Icon: Briefcase, what: "job credit" },
+    database: { Icon: UserSearch, what: "database credit" },
+    aiCalling: { Icon: Bot, what: "Premium + AI calling credit" },
+    aiAddon: { Icon: PhoneCall, what: "AI calling add-on credit" },
+  }
+  const named = kinds?.map((k) => ({ n: full[k] ?? 0, Icon: KIND[k].Icon, label: plural(full[k] ?? 0, KIND[k].what) }))
+  const parts = named ?? (slots ? [] : held.length ? held : [{ n: 0, Icon: Briefcase, label: plural(0, "job credit") }])
   const Icon = slots ? Layers : Wallet
   const trigger = !chip ? (
     // Phones: an icon-only 32px circle (the desktop bell's size and shape);
@@ -370,10 +382,10 @@ export function AvailableCreditsButton({
       type="button"
       variant="outline"
       size="sm"
-      aria-label={slots ? title : `${title}: ${parts.map((p) => p.label).join(", ")}`}
+      aria-label={slots && !named ? title : `${title}: ${parts.map((p) => p.label).join(", ")}`}
       className="rounded-full bg-card"
     >
-      {slots ? (
+      {slots && !named ? (
         <>
           <Layers className="size-4" aria-hidden />
           <span className="hidden sm:inline">{title}</span>

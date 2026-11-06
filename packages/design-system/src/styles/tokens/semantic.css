@@ -121,6 +121,14 @@
   --info-foreground:        var(--color-gray-50);
   --info-subtle:            var(--color-apna-sky-100);
   --info-subtle-fg:         var(--color-apna-sky-900);
+  /* Initials avatars: three hues apart from green / amber / red, which mean
+     match and actions on the same cards (user call, 2026-11-06). */
+  --avatar-sky:             var(--color-apna-sky-100);
+  --avatar-sky-fg:          var(--color-apna-sky-900);
+  --avatar-violet:          var(--color-apna-navy-100);
+  --avatar-violet-fg:       var(--color-apna-navy-800);
+  --avatar-plum:            var(--color-apna-plum-200);
+  --avatar-plum-fg:         var(--color-apna-plum-800);
   /* A feature icon that needs a hue of its own, apart from green, gold and
      sky (the plan cards' "Dynamic visibility" pulse, V13). Icons only. */
   --feature-violet:         var(--color-apna-navy-600);
@@ -643,6 +651,13 @@
   /* Jobs wears the brand green, AI Calling the sky (2026-10-18). */
   --gradient-product-smart-jobs: var(--gradient-illustration-green);
   --gradient-product-ai-calling: var(--gradient-illustration-sky);
+  /* AI surfaces: anything the AI made or judged (AI match, AI summaries)
+     wears the AI calling sky, so every AI element reads as one family
+     (user call, 2026-11-06). Its own token, so it can change apart from
+     the AI Calling product. Dark follows illustration-sky's dark value. */
+  /* More vivid than illustration-sky (user call, 2026-11-06): sky 200 into
+     a touch of violet, so AI reads at a glance. Dark text stays readable. */
+  --gradient-ai: linear-gradient(135deg, var(--color-apna-sky-200) 0%, var(--color-apna-navy-100) 100%);
   /* The "+AI" tag: AI calling's sky into brand green, vivid so a small
      tag reads (the attention ring's blue and green). White text on it. */
   --gradient-ai-tag: linear-gradient(110deg, var(--color-apna-sky-500), var(--color-apna-green-500));
@@ -891,6 +906,12 @@
   --info-foreground:        var(--color-gray-950);
   --info-subtle:            var(--color-apna-sky-900);
   --info-subtle-fg:         var(--color-apna-sky-200);
+  --avatar-sky:             var(--color-apna-sky-900);
+  --avatar-sky-fg:          var(--color-apna-sky-200);
+  --avatar-violet:          var(--color-apna-navy-900);
+  --avatar-violet-fg:       var(--color-apna-navy-200);
+  --avatar-plum:            var(--color-apna-plum-800);
+  --avatar-plum-fg:         var(--color-apna-plum-200);
   --feature-violet:         var(--color-apna-navy-400);
 
   /* Lines — translucent on dark for softer hairlines */
@@ -995,6 +1016,7 @@
   --ambient-glow:   transparent;
   --ambient-grain-opacity: 0.08;
   /* AI hues on dark: deep steps that glow on the dark page. */
+  --gradient-ai: linear-gradient(135deg, color-mix(in srgb, var(--color-apna-sky-700) 70%, transparent) 0%, color-mix(in srgb, var(--color-apna-navy-800) 60%, transparent) 100%);
   --gradient-voice-glow: linear-gradient(90deg, var(--color-apna-sky-600), var(--color-apna-plum-500), var(--color-apna-green-600));
   --gradient-ai-wash-1: radial-gradient(ellipse 130% 100% at 30% 0%, color-mix(in srgb, var(--color-apna-sky-800) 80%, transparent) 0%, color-mix(in srgb, var(--color-apna-sky-900) 50%, transparent) 55%, transparent 100%);
   --gradient-ai-wash-2: radial-gradient(ellipse 130% 100% at 80% 0%, color-mix(in srgb, var(--color-apna-plum-700) 80%, transparent) 0%, color-mix(in srgb, var(--color-apna-plum-900) 50%, transparent) 55%, transparent 100%);

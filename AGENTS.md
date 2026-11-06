@@ -1166,3 +1166,12 @@ Hold every output — interface, copy, flow, document — to one standard: **sub
 - [ ] Did I keep the warmth that makes it worth using?
 - [ ] Is any remaining complexity genuinely irreducible — and acknowledged?
 
+
+### AI elements share one look (user call, 2026-11-06)
+
+Anything the AI made or judged (AI match, AI summaries, AI screening, AI
+suggestions) wears the AI look: a `Sparkles` icon in sky (`text-info`) and,
+for a panel or avatar, the AI gradient (`bg-gradient-ai`, the AI calling
+sky). Never violet, green or a product gradient for AI. Keep it small (a
+panel, a tag, an icon): on every card a large gradient stops standing out.
+A sparkle that means "Recommended" is not AI and keeps its own style.

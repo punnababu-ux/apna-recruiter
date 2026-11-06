@@ -559,3 +559,22 @@ wrong token, which is why `text-caption` — which does bake colour in — can't
 be reused there.
 
 | `--feature-violet` | `apna-navy-600`; dark: `apna-navy-400` | `text-feature-violet` | A feature icon needing its own hue apart from green, gold, sky (the "Dynamic visibility" pulse). Icons only |
+
+### Avatar tints (2026-11-06)
+
+`--avatar-sky`, `--avatar-violet`, `--avatar-plum` (+ `-fg` each; utilities
+`bg-avatar-*` / `text-avatar-*-foreground`). Initials avatars only, through
+`AvatarFallback tone` and `avatarTone(name)` (a stable hue per name). Kept
+apart from green / amber / red, which mean match and actions on candidate
+cards.
+
+### AI surface (2026-11-06)
+
+`--gradient-ai` (utility `bg-gradient-ai`): the background of anything the
+AI made or judged (AI match panel, AI summaries). Same sky as the AI calling
+add-on, as its own token so AI surfaces can change apart from the product.
+Made more vivid 2026-11-06: sky 200 → navy 100 at 135° (dark: sky 700 →
+navy 800, translucent). The AI calling add-on and the Premium + AI plan
+card's AI block use it too; the AI Calling product's homepage tile keeps
+its product gradient.
+Pair with a `Sparkles` icon in `text-info`.

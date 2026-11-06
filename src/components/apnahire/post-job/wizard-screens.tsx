@@ -408,7 +408,7 @@ function Title(ctx: ScreenCtx) {
       {variants && variants.length > 0 && (
         <div className="flex flex-wrap items-center gap-2">
           <span className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
-            <Sparkles className="size-3.5 text-primary" aria-hidden />
+            <Sparkles className="size-3.5 text-info" aria-hidden />
             AI suggestions
           </span>
           {variants.map((t) => (
@@ -1820,7 +1820,7 @@ function Review(ctx: ScreenCtx) {
 
       <div className="flex flex-col gap-2">
         <span className="flex items-center gap-2 text-sm font-medium text-foreground">
-          <Sparkles className="size-4" aria-hidden /> Ask AI to change something
+          <Sparkles className="size-4 text-info" aria-hidden /> Ask AI to change something
         </span>
         <PromptInput
           aria-label="What should we change?"

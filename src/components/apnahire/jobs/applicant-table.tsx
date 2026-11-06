@@ -10,14 +10,15 @@
  *
  * A row opens the shared profile (onOpen). Actions mirror the card's:
  * View number, then Reject / Shortlist, or the status once decided.
- * Rows come in the page's order; `dividerBefore` draws the "Low matches"
- * line above that row.
+ * Rows come in the page's order; `sections` draws a section title
+ * ("High matches · 3") above the first row of each level.
  */
 
 import * as React from "react"
 import {
   Badge,
   Button,
+  Check,
   Phone,
   Table,
   TableBody,
@@ -27,6 +28,7 @@ import {
   TableRow,
   X,
 } from "@apna/design-system"
+import { ContactNumber } from "@/components/apnahire/jobs/contact-number"
 import { MatchBars } from "@/components/apnahire/match-bars"
 import type { ApplicantProfile, ApplicantStatus } from "@/components/apnahire/jobs/applicant-card"
 import type { MatchLevel } from "@/content/chats"
@@ -45,14 +47,15 @@ export type ApplicantTableRow = {
 
 export function ApplicantTable({
   rows,
-  dividerBefore,
+  sections,
   onOpen,
   onViewNumber,
   onReject,
   onShortlist,
 }: {
   rows: ApplicantTableRow[]
-  dividerBefore?: string
+  /** Row id → a section title drawn above it ("High matches · 3"). */
+  sections?: Record<string, string>
   onOpen: (id: string) => void
   onViewNumber: (id: string) => void
   onReject: (id: string) => void
@@ -81,10 +84,10 @@ export function ApplicantTable({
         <TableBody>
           {rows.map((r) => (
             <React.Fragment key={r.id}>
-              {r.id === dividerBefore && (
+              {sections?.[r.id] && (
                 <TableRow className="hover:bg-transparent">
-                  <TableCell colSpan={8} className="bg-muted py-2 text-center text-caption text-muted-foreground">
-                    Low matches
+                  <TableCell colSpan={8} className="bg-muted py-2 pl-4 text-sm font-semibold text-foreground">
+                    {sections[r.id]}
                   </TableCell>
                 </TableRow>
               )}
@@ -98,7 +101,7 @@ export function ApplicantTable({
                   </div>
                 </TableCell>
                 <TableCell>
-                  <MatchBars level={r.match.level} score={r.match.score} className="text-sm text-muted-foreground" />
+                  <MatchBars level={r.match.level} label className="text-sm text-muted-foreground" />
                 </TableCell>
                 <TableCell className="text-sm">{r.profile.experience}</TableCell>
                 <TableCell className="text-sm whitespace-nowrap">{r.profile.salary}</TableCell>
@@ -112,7 +115,7 @@ export function ApplicantTable({
                         <Phone /> View number
                       </Button>
                     ) : (
-                      r.phone && <span className="text-sm whitespace-nowrap text-foreground">{r.phone}</span>
+                      r.phone && <ContactNumber name={r.name} phone={r.phone} />
                     )}
                     {r.status === "shortlisted" || r.status === "rejected" ? (
                       <Badge variant={r.status === "shortlisted" ? "success" : "destructive"}>
@@ -120,11 +123,11 @@ export function ApplicantTable({
                       </Badge>
                     ) : (
                       <>
-                        <Button variant="destructive" size="icon-sm" aria-label={`Reject ${r.name}`} onClick={act(onReject, r.id)}>
-                          <X />
+                        <Button variant="outline" size="icon-sm" aria-label={`Reject ${r.name}`} onClick={act(onReject, r.id)}>
+                          <X className="text-destructive" />
                         </Button>
-                        <Button variant="success" size="sm" onClick={act(onShortlist, r.id)}>
-                          Shortlist
+                        <Button variant="outline" size="sm" onClick={act(onShortlist, r.id)}>
+                          <Check aria-hidden className="text-success" /> Shortlist
                         </Button>
                       </>
                     )}
