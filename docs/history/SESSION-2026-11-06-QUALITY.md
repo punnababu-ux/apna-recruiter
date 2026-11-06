@@ -278,3 +278,47 @@ trade-off: `docs/DECISIONS.md` → "Dark mode pricing coherence".
   re-run stable, tsc, lint:tokens, unit tests. `npm run lint` reports 133
   errors, all in the git-ignored `playwright-report/` folder (a local HTML
   report); the source has 0 errors and 31 warnings.
+
+### 10. Layout bugs at 320/375px (done locally, not committed)
+
+Three of the four `test.fixme` layout bugs. The ECC job page one is left on
+purpose: ECC is still a work in progress (Punna, 2026-11-06), so its fixme in
+`e2e/app.spec.ts` and the ECC files are untouched.
+
+- **Homepage, 320px (Database and Enterprise cards):** the card grid had no
+  column template, so its one implicit `auto` column grew to the photo
+  snippet's unscaled width (`w-72` inside a `scale-35` / `scale-50` tile;
+  a transform doesn't shrink layout width) and ran 17px past the screen.
+  Both `ScrollStackItem`s now use `grid-cols-1`, one column no wider than the
+  card. File: `src/app/(marketing)/page.tsx`.
+- **Interview prep lounge, 375px and 320px:** two causes. The no-wrap hero CTA
+  "Bring the Lounge to your campus" is one 312px line, so phones get a short
+  label, "Bring it to your campus" (`ctaShort`, AGENTS.md text rule 4). And
+  the moment carousel's dimmed neighbour cards (translated and scaled) poked
+  past the screen edge; the hero wrapper is now `overflow-x-clip` (clips
+  without making a scroll container, so sticky still works). Files:
+  `src/content/interview-lounge.ts`,
+  `src/app/(marketing)/interview-prep-lounge/page.tsx`.
+- **Super premium phone plan card, 320px:** "Top placement on job listing"
+  (a no-wrap benefit) ran under Buy now. In this card each benefit has its
+  own line, so the no-wrap is lifted there (`[&_li]:whitespace-normal`) and a
+  long benefit wraps beside the button, as the database credits line already
+  did. The button keeps its place on every card. Tried first and dropped: the
+  button under the lines below a container width (stacked at 360/375 too, or
+  left an overlap at 344–349px), and a wrapping row (cards in one list laid
+  out differently, against text rule 2). File:
+  `src/components/apnahire/mobile-plan-row.tsx` (also a
+  `data-slot="mobile-plan-row"` hook for the test).
+- **New check:** `expectNoTextUnderButtons` in `e2e/helpers.ts`. No text node
+  inside a phone plan card meets its button's box. It runs on every phone
+  checkout screen (`expectLayout`) and in both 320px checkout tests. Checked
+  that it fails on the old layout ("Top placement on job listing" under
+  "Buy now") and passes on the fix.
+- **Fixmes removed:** the homepage and lounge entries in
+  `e2e/marketing.spec.ts` (the map is empty now). ECC kept.
+- **Verified** on a production build at :3100 (no `CI=1`): marketing, checkout
+  and app specs, 232 passed / 69 skipped. That first run caught one screenshot change
+  (phone Unlimited tab) from an earlier version of the plan card fix; with
+  the final fix, checkout + app ran 175 passed / 51 skipped and no screenshot
+  changed. Plan card measured at 320–375px (no overlap at any width); tsc,
+  lint:tokens and eslint on the touched files clean.

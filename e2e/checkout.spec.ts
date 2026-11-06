@@ -9,6 +9,7 @@ import {
   expectCardsAligned,
   expectNoCollapsedButtons,
   expectNoHorizontalOverflow,
+  expectNoTextUnderButtons,
 } from "./helpers"
 
 const CREDITS_HELD = "4 job + 1 Premium + AI + 1 add-on credit"
@@ -51,6 +52,7 @@ async function continueToSummary(page: Page) {
 async function expectLayout(page: Page, { cards = true }: { cards?: boolean } = {}) {
   await expectNoHorizontalOverflow(page)
   await expectNoCollapsedButtons(page)
+  if (!isDesktop()) await expectNoTextUnderButtons(page)
   if (cards && isDesktop()) await expectCardsAligned(page)
 }
 
@@ -115,6 +117,7 @@ test.describe("express checkout", () => {
     await open(page, EXPRESS)
     await expressPlans(page)
     await expectNoHorizontalOverflow(page)
+    await expectNoTextUnderButtons(page)
   })
 
   test("@visual plans, no credits", async ({ page }) => {
@@ -199,6 +202,7 @@ test.describe("self checkout", () => {
     await page.setViewportSize({ width: 320, height: 640 })
     await open(page, SELF)
     await expectNoHorizontalOverflow(page)
+    await expectNoTextUnderButtons(page)
   })
 
   test("@visual Jobs tab", async ({ page }) => {

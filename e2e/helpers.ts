@@ -110,6 +110,36 @@ export async function expectNoCollapsedButtons(page: Page, min = 24) {
   expect(collapsed, "buttons shorter than their size allows").toEqual([])
 }
 
+/**
+ * Inside each phone plan card, no line of text runs under its button
+ * (a no-wrap benefit once sat under Super premium's Buy now at 320px).
+ */
+export async function expectNoTextUnderButtons(page: Page) {
+  const hits = await page.evaluate(() => {
+    const meets = (a: DOMRect, b: DOMRect) =>
+      a.left < b.right - 0.5 && b.left < a.right - 0.5 && a.top < b.bottom - 0.5 && b.top < a.bottom - 0.5
+    const out: string[] = []
+    for (const card of document.querySelectorAll<HTMLElement>("[data-slot=mobile-plan-row]")) {
+      const buttons = [...card.querySelectorAll<HTMLElement>("[data-slot=button]")].filter((b) => b.offsetParent)
+      const range = document.createRange()
+      const walker = document.createTreeWalker(card, NodeFilter.SHOW_TEXT)
+      for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+        if (!n.textContent?.trim()) continue
+        range.selectNodeContents(n)
+        const text = range.getBoundingClientRect()
+        if (!text.width) continue
+        for (const b of buttons) {
+          if (!b.contains(n) && meets(text, b.getBoundingClientRect())) {
+            out.push(`"${n.textContent.trim().slice(0, 30)}" under "${b.textContent?.trim()}"`)
+          }
+        }
+      }
+    }
+    return out
+  })
+  expect(hits, "text under a plan card's button").toEqual([])
+}
+
 const alignmentScript = readFileSync(join(__dirname, "../scripts/check-alignment.js"), "utf8")
 
 /** AGENTS.md "Side-by-side choices compare one to one": prices, notes and CTAs level across a row. */

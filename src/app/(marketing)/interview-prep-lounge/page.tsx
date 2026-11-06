@@ -106,10 +106,12 @@ export default function InterviewPrepLoungePage() {
 
   return (
     <>
-      <div className="relative isolate">
+      {/* overflow-x-clip: the carousel's dimmed neighbours peek out past the
+          screen edge on phones; clipped there instead of scrolling the page. */}
+      <div className="relative isolate overflow-x-clip">
         <HeroBackdrop />
         <Section size="lg" className="relative max-md:pt-8">
-          <div className="grid items-center gap-12 lg:grid-cols-2">
+          <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
             <div className="flex flex-col items-start gap-8">
               <SectionHeading
                 level={1}
@@ -121,7 +123,8 @@ export default function InterviewPrepLoungePage() {
                 size="lg"
                 trailingIcon={<ArrowRight aria-hidden />}
               >
-                {hero.cta}
+                <span className="sm:hidden">{hero.ctaShort}</span>
+                <span className="hidden sm:inline">{hero.cta}</span>
               </ContactButton>
             </div>
             <MomentCarousel moments={hero.moments} label="Lounge demo recordings" />

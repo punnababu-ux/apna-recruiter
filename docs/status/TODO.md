@@ -81,14 +81,14 @@ Open before ECC: keep "View number" as the green action, or make Shortlist prima
 
 ## Lint debt (2026-11-06)
 - [ ] 31 `react-hooks/set-state-in-effect` warnings (new in eslint-config-next 16.4; set to warn in `eslint.config.mjs`). Most are "reset state when a prop changes" — derive it during render or key the component instead. Run `npx eslint` for the list. Set the rule back to error when done
-- [ ] Phone Super premium card: "Top placement on job listing" runs under the Buy now button (`job-plan-cards.tsx`); add an overlap check to `e2e/helpers.ts` when fixing
+- [x] Phone Super premium card: "Top placement on job listing" ran under the Buy now button; benefits now wrap beside it, and `expectNoTextUnderButtons` (`e2e/helpers.ts`) checks every phone plan card
 
 ## Layout bugs (found by the browser tests, 2026-11-06; each is a `test.fixme` — remove it when fixed)
 - [x] Plan cards at 320px scroll the page sideways: "Active for 15 days" now moves under the title when the panel is narrow
 - [x] Job posting "Describe" screen, phones: the `ai-idle` halo now stays inside the 1rem page padding
-- [ ] ECC job page, filter applied, 320px: the results bar's "· 1 filter Clear" runs 16px off screen (`e2e/app.spec.ts`)
-- [ ] Homepage, 320px: the apna Database / Enterprise cards' 3-tile stat row runs 17px off screen (`e2e/marketing.spec.ts`)
-- [ ] Interview prep lounge, 375px and 320px: the "Prepare for 25,000+ top roles" title and role chips overflow (`e2e/marketing.spec.ts`)
+- [ ] ECC job page, filter applied, 320px: the results bar's "· 1 filter Clear" runs 16px off screen (`e2e/app.spec.ts`). Left: ECC is a work in progress (Punna, 2026-11-06); fix it with the ECC phone layout
+- [x] Homepage, 320px: the apna Database / Enterprise cards ran 17px off screen; the card grid is now `grid-cols-1`
+- [x] Interview prep lounge, 375px and 320px: overflow fixed (short hero CTA on phones; the carousel's neighbour cards clipped)
 
 ## Accessibility (found by `e2e/a11y.spec.ts`, 2026-11-06)
 Each is in the spec's `KNOWN` list, matched per element; delete the entry when it is fixed.

@@ -8,6 +8,14 @@ or **Open**.
 
 ---
 
+## Phone plan card: a long benefit beside Buy now (2026-11-06)
+
+- **Question:** at 320px Super premium's "Top placement on job listing" (no-wrap) ran under the Buy now button. Move the button under the benefits, or let the benefit wrap?
+- **Decision:** the benefit wraps inside its own line, beside the button (`MobilePlanRow`, `[&_li]:whitespace-normal`); the button stays bottom right on every card, at every width.
+- **Why:** each benefit already has its own line there, so the no-wrap only guarded a dotted row that isn't used in this card; the database credits line wraps the same way. Moving the button under the lines by container width either stacked it at 360/375px too or left an overlap at 344–349px. A wrapping row put Annual's button under its lines while Monthly's sat beside, so cards in one list differed (text rule 2).
+- **Would change it:** a benefit too long for two lines at 320px, or a call to keep every benefit on one line: then shorten the copy for phones (text rule 4).
+- **Status:** Leaning (agent fix, for Punna to confirm).
+
 ## Dark mode pricing coherence (2026-11-06)
 
 - **Question:** on dark, the plan area used three plums (a 40% panel, a solid Unlimited panel, plum-800 cards) on a page whose other cards (login, FAQ) are one frosted glass; the selected tab washed out, the Recommended label failed contrast, and order-summary details looked off.

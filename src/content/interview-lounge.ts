@@ -30,6 +30,8 @@ export const LOUNGE = {
     description:
       "The apna AI Interview Preparation Lounge is an AI-powered interview readiness solution designed for universities, colleges and training institutions, bringing personalised, always-available interview preparation directly to campus.",
     cta: "Bring the Lounge to your campus",
+    /** Phones (below sm): the full label is one 312px line, wider than a 320px screen's column. */
+    ctaShort: "Bring it to your campus",
     /** The hero's demo recordings (onlyround.ai's pattern): the prototype's
      *  product moments, each to open its recording. PROTOTYPE: no files yet
      *  — add `src` (e.g. "/demos/lounge-mock-interview.mp3") when Punna

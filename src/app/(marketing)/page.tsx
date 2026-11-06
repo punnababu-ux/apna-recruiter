@@ -175,10 +175,12 @@ export default function HomePage() {
               // p-2 insets the tile 8px from the card edge on phones. From lg
               // 24px (lg:p-6): stacked cards show a 16px ledge above the one
               // in front, and it should be the white card, not the photo.
+              // grid-cols-1: one column no wider than the card. An auto column
+              // took the photo snippet's unscaled width and ran 17px past 320px.
               <ScrollStackItem
                 key={product.name}
                 data-product={PRODUCT_KEY[product.name as ProductName]}
-                className="group relative grid cursor-pointer gap-2 p-2 lg:grid-cols-2 lg:p-6"
+                className="group relative grid cursor-pointer grid-cols-1 gap-2 p-2 lg:grid-cols-2 lg:p-6"
               >
                 {/* The whole card opens the product's page (in place of a
                     "Learn more" button); the action button stays on top. */}
@@ -277,7 +279,7 @@ export default function HomePage() {
                 </div>
               </ScrollStackItem>
             ))}
-            <ScrollStackItem className="group relative grid cursor-pointer gap-2 p-2 lg:grid-cols-2 lg:p-6">
+            <ScrollStackItem className="group relative grid cursor-pointer grid-cols-1 gap-2 p-2 lg:grid-cols-2 lg:p-6">
               <Link
                 href={HOME_ENTERPRISE.secondary.href}
                 aria-label={HOME_ENTERPRISE.secondary.label}

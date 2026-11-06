@@ -60,21 +60,7 @@ async function rest(page: Page, ms = 1200) {
 }
 
 /** Real product bugs, not yet fixed: route name -> what, where, by how many px. `phone` = 375px, `narrow` = 320px. */
-const FIXME: Record<string, { phone?: string; narrow?: string }> = {
-  home: {
-    narrow:
-      "Home, the apna Database and apna Enterprise product cards: their stat-tile row (grid-cols-3, e.g. '22+ " +
-      "Precision filters') ends at x=337 on a 320px screen, 17px past the edge, and the page scrolls sideways",
-  },
-  "interview prep lounge": {
-    phone:
-      "Interview prep lounge, the 'Prepare for 25,000+ top roles' card: its title and the role-chip row " +
-      "(Sales, BPO, IT, Finance, Retail) end 7px past the 375px screen and the page scrolls 37px sideways",
-    narrow:
-      "Interview prep lounge, the same card: at 320px the page content is 390px wide (the hero, buttons and " +
-      "cards all stretch to x=328-360), 70px of sideways scroll",
-  },
-}
+const FIXME: Record<string, { phone?: string; narrow?: string }> = {}
 
 test.describe("marketing pages", () => {
   for (const route of ROUTES) {

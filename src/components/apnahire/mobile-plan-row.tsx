@@ -177,6 +177,7 @@ export function MobilePlanRow({
       )}
       {selected && <CornerTick />}
       <div
+        data-slot="mobile-plan-row"
         {...(readOnly
           ? {}
           : cta
@@ -252,8 +253,11 @@ export function MobilePlanRow({
               // Benefits start 12px under the rule on every card. The 32px
               // button takes only a text line's height (-my-1.5), centred on
               // the last line, so Classic's single line isn't pushed down.
+              // One benefit per line here, so a long one wraps inside its line
+              // (whitespace-normal) beside the button, as the database
+              // credits line does, rather than running under it at 320px.
               <div className="flex items-start justify-between gap-3 border-t border-border pt-3">
-                <div className="min-w-0 [&>div]:border-0 [&>div]:pt-0 [&_li>span[aria-hidden]]:hidden [&_ul]:flex-col [&_ul]:items-start">
+                <div className="min-w-0 [&>div]:border-0 [&>div]:pt-0 [&_li>span[aria-hidden]]:hidden [&_li]:whitespace-normal [&_ul]:flex-col [&_ul]:items-start">
                   {line}
                 </div>
                 <div className="-my-1.5 shrink-0 self-end">{cta}</div>
