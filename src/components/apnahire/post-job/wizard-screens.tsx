@@ -543,8 +543,9 @@ function Industry(ctx: ScreenCtx) {
 }
 
 const WORKPLACE_HELP: Record<keyof typeof LOCATION_TYPE_LABELS, [React.ReactNode, string]> = {
-  office: [<Building2 key="i" />, "At your office or store every day"],
-  home: [<Home key="i" />, "Fully remote"],
+  // Only "Field job" needs a hint; the other labels say it.
+  office: [<Building2 key="i" />, ""],
+  home: [<Home key="i" />, ""],
   field: [<Route key="i" />, "Mostly travelling, e.g. sales or delivery"],
 }
 
@@ -667,9 +668,10 @@ function RelocationCard({ checked, onCheckedChange }: { checked: boolean; onChec
 /** As in the reference prototype: each job type is a full card with a line
  *  saying what it means, not a bare chip. */
 const JOB_TYPE_HELP: Record<JobType, [React.ReactNode, string]> = {
-  full_time: [<BriefcaseBusiness key="i" />, "Regular hours, 5–6 days a week"],
-  part_time: [<Clock key="i" />, "Fewer hours or days a week"],
-  both: [<Users key="i" />, "Open to full-time and part-time"],
+  // The labels say it; no help line (user call, 2026-11-06).
+  full_time: [<BriefcaseBusiness key="i" />, ""],
+  part_time: [<Clock key="i" />, ""],
+  both: [<Users key="i" />, ""],
 }
 
 function JobType(ctx: ScreenCtx) {
@@ -683,7 +685,7 @@ function JobType(ctx: ScreenCtx) {
             key={t}
             icon={JOB_TYPE_HELP[t][0]}
             title={JOB_TYPE_LABELS[t]}
-            description={JOB_TYPE_HELP[t][1]}
+            description={JOB_TYPE_HELP[t][1] || undefined}
             selected={draft.jobType === t}
             onSelect={() => update("jobType", t)}
           />
@@ -705,7 +707,7 @@ function Workplace(ctx: ScreenCtx) {
             key={t}
             icon={WORKPLACE_HELP[t][0]}
             title={LOCATION_TYPE_LABELS[t]}
-            description={WORKPLACE_HELP[t][1]}
+            description={WORKPLACE_HELP[t][1] || undefined}
             selected={draft.locationType === t}
             onSelect={() => update("locationType", t)}
           />
@@ -1000,10 +1002,10 @@ function salaryError(d: JobPostDraft): string | null {
   return null
 }
 
-const PAY_TYPE_HELP: Record<PayType, [React.ReactNode, string]> = {
-  fixed: [<Wallet key="i" />, "Same salary every month"],
-  fixed_incentive: [<TrendingUp key="i" />, "Salary plus performance-based pay"],
-  incentive: [<Target key="i" />, "Pay depends entirely on performance"],
+const PAY_TYPE_ICON: Record<PayType, React.ReactNode> = {
+  fixed: <Wallet />,
+  fixed_incentive: <TrendingUp />,
+  incentive: <Target />,
 }
 
 
@@ -1093,28 +1095,25 @@ function CountUpInr({ value }: { value: number }) {
   return <>{inr(shown)}</>
 }
 
-function PayType(ctx: ScreenCtx) {
-  const { draft, update } = ctx
+/** Pay type and amount on one screen (user call, 2026-11-06): the three
+ *  cards first; a pick folds them into one card, and the amount fields slide
+ *  in under it. Tapping the folded card opens the choice again. */
+function PayTypePicker({ draft, update }: Pick<ScreenCtx, "draft" | "update">) {
+  // Three short tiles in one row, always shown, so "Fixed + incentive" is seen
+  // even when auto-fill picked Fixed (user call, 2026-11-06).
   return (
-    <>
-      <WizardQuestion
-        eyebrow={<AiTag ctx={ctx} keys={["payType"]} />}
-        title="How will you pay?"
-        description="Clear pay gets better applicants."
-      />
-      <OptionCardGroup aria-label="Pay type">
-        {(Object.keys(PAY_TYPE_LABELS) as PayType[]).map((t) => (
-          <OptionCard
-            key={t}
-            icon={PAY_TYPE_HELP[t][0]}
-            title={PAY_TYPE_LABELS[t]}
-            description={PAY_TYPE_HELP[t][1]}
-            selected={draft.payType === t}
-            onSelect={() => update("payType", t)}
-          />
-        ))}
-      </OptionCardGroup>
-    </>
+    <OptionCardGroup aria-label="Pay type" columns={3}>
+      {(Object.keys(PAY_TYPE_LABELS) as PayType[]).map((t) => (
+        <OptionCard
+          key={t}
+          layout="tile"
+          icon={PAY_TYPE_ICON[t]}
+          title={PAY_TYPE_LABELS[t]}
+          selected={draft.payType === t}
+          onSelect={() => update("payType", t)}
+        />
+      ))}
+    </OptionCardGroup>
   )
 }
 
@@ -1195,23 +1194,22 @@ function Salary(ctx: ScreenCtx) {
       )}
           </div>
   )
+  const shown = !!draft.payType
   return (
     <>
       <WizardQuestion
-        eyebrow={<AiTag ctx={ctx} keys={["salaryMin", "salaryMax", "incentive"]} />}
-        title="What’s the monthly salary?"
-        description={
-          <>
-            Pay type: {draft.payType ? PAY_TYPE_LABELS[draft.payType] : "—"} ·{" "}
-            <Button type="button" variant="link-inline" onClick={() => ctx.edit("pay-type")}>
-              Change
-            </Button>
-          </>
-        }
+        eyebrow={<AiTag ctx={ctx} keys={["payType", "salaryMin", "salaryMax", "incentive"]} />}
+        title="How will you pay?"
+        description="Clear pay gets better applicants."
       />
-      {payFields}
+      <PayTypePicker draft={draft} update={update} />
+      {draft.payType && (
+        <div key={draft.payType} className="animate-in fade-in-0 slide-in-from-bottom-4 duration-enter">
+          {payFields}
+        </div>
+      )}
       {/* Only once there's a number to show (user call, 2026-11-05). */}
-      {(draft.payType === "incentive"
+      {shown && (draft.payType === "incentive"
         ? draft.incentive != null
         : !!draft.payType && (draft.salaryMin != null || draft.salaryMax != null)) && <CandidatesSee draft={draft} />}
     </>
@@ -1652,14 +1650,12 @@ function Interview(ctx: ScreenCtx) {
         <OptionCard
           icon={<CalendarDays />}
           title="No, I’ll schedule interviews"
-          description="You call shortlisted candidates"
           selected={!draft.walkIn}
           onSelect={() => update("walkIn", false)}
         />
         <OptionCard
           icon={<DoorOpen />}
           title="Yes, walk-in"
-          description="Candidates drop in at set times"
           selected={draft.walkIn}
           onSelect={() => {
             update("walkIn", true)
@@ -1909,17 +1905,11 @@ export const SCREENS: ScreenDef[] = [
     Render: Location,
   },
   {
-    id: "pay-type",
-    stage: "job",
-    preview: "top",
-    check: (d) => (d.payType ? null : "Choose a pay type"),
-    Render: PayType,
-  },
-  {
     id: "salary",
     stage: "job",
     preview: "top",
     check: (d) => {
+      if (!d.payType) return "Choose a pay type"
       const err = salaryError(d)
       if (err) return err
       // Name whichever part is actually missing — with "Fixed + incentive",

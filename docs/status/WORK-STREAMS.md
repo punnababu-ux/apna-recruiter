@@ -21,6 +21,7 @@ No other branch is ahead of `origin/main`. No stashes.
 | Docs + knowledge base | Organized 2026-11-05 (`docs/README.md`) | Keep the index current | Claude |
 | Knowledge graph (graphify) | Rebuilt 2026-11-05: code + 21 docs; copied to the main checkout | See "Recurring" below | Claude, with reminders |
 | DS audit: chat + job posting | Catalog updated; fixes applied; 3 kept for a decision + 13 primitive candidates (`history/AUDIT-2026-11-05-CHAT-JOB-POSTING.md`) | Punna OKs the fixes / which primitives to build | Punna, then Claude |
+| Job posting flow | AI fill, voice, pay screen, draft resume fixed 2026-11-06 (`reference/JOB-POSTING.md`) | Device test for voice; live AI test; desktop walk (`status/TODO.md` → Job posting) | Punna tests voice; Claude the rest |
 | Product backlog | 23 open items (`status/TODO.md`) | Punna picks the next one | Punna |
 | Pricing gaps | 5 open questions (`reference/PRICING.md` → "Still open") | Punna supplies numbers | Punna |
 | Marketing pages without Lovable source | Parked (`start-here/AI-HANDOFF.md` → Pending) | Punna's call | Punna |

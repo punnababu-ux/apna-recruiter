@@ -42,6 +42,8 @@ function getCtor(): SpeechRecognitionCtor | null {
   return w.SpeechRecognition ?? w.webkitSpeechRecognition ?? null
 }
 
+const isAndroid = () => typeof navigator !== "undefined" && /android/i.test(navigator.userAgent)
+
 export function useSpeechRecognition({ lang = "en-IN" }: { lang?: string } = {}) {
   const [supported, setSupported] = React.useState(false)
   const [listening, setListening] = React.useState(false)
@@ -79,21 +81,18 @@ export function useSpeechRecognition({ lang = "en-IN" }: { lang?: string } = {})
     const session = () => {
       const rec = new Ctor()
       rec.lang = lang
-      rec.continuous = true
+      // Android Chrome in continuous mode resends each phrase growing
+      // ("hello", "hello there") as separate results, which doubled words.
+      // There we take one phrase per session; onend restarts the next one.
+      rec.continuous = !isAndroid()
       rec.interimResults = true
       let text = ""
       rec.onresult = (e) => {
         if (token !== tokenRef.current) return
-        // Rebuild from every result: Android Chrome resends each phrase
-        // growing ("hello", "hello there"), so a result that extends the one
-        // before replaces it instead of repeating it.
         const parts: string[] = []
         for (let i = 0; i < e.results.length; i++) {
           const t = e.results[i][0].transcript.trim()
-          if (!t) continue
-          const prev = parts[parts.length - 1]
-          if (prev && t.toLowerCase().startsWith(prev.toLowerCase())) parts[parts.length - 1] = t
-          else parts.push(t)
+          if (t) parts.push(t)
         }
         text = parts.join(" ")
         setTranscript([doneRef.current, text].filter(Boolean).join(" "))

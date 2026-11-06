@@ -333,6 +333,15 @@ is noise. Fits "Full screen for tasks, sidebar for workspaces" below.
 **Where.** `src/app/apnahire/(product)/jobs/[id]/page.tsx`; pattern from
 `src/components/apnahire/chats/chat-inbox.tsx` (sortMenu).
 
+## Job posting: a salary without incentives means "Fixed only" (2026-11-06)
+
+- **Question:** When the description gives a salary and doesn't mention incentives, should auto-fill pick a pay type?
+- **Decision:** Yes. Salary only → "Fixed only". Salary plus incentives → "Fixed + incentive". Incentives only → "Incentive only". This replaces the 2026-11-05 call that nothing should be pre-selected.
+- **Why:** Most jobs pay a fixed salary. If the recruiter doesn't mention incentives, there almost never are any. Leaving the field blank just adds a question they have already answered.
+- **What would change it:** Data showing that many recruiters who post a salary only go on to add incentives.
+- **Status:** Decided (Punna).
+- **Follow-up (same day):** pay type is now three tiles in one row: icon and label, no help line, always visible. Recruiters see the incentive options even when Fixed is pre-selected. Help lines that only repeated their card's label were removed (job type, work from office/home, interview type). Lines that add something were kept (the Field job hint, joining fee, contact number).
+
 ---
 
 ## Job candidates: three views — detailed, compact, list (2026-11-05)
@@ -496,3 +505,18 @@ switching.
 
 **Where.** `src/app/apnahire/(product)/jobs/[id]/page.tsx` (the job page),
 `src/app/apnahire/(wizard)/` (job posting, full screen).
+
+## Job posting: pay type and salary on one screen (2026-11-06)
+
+**Decision.** The three pay-type cards show first. A pick turns them into the
+quiet "icon · Fixed + incentive · Change" line (the joining fee's style) and
+the amount fields slide in under it. Change opens the cards again and hides
+the fields. The separate pay-type screen is gone.
+
+**Why.** One less step, and the answer you just gave stays in view. A quiet
+line is enough because the recruiter tapped it a moment ago; the amount is
+the open question.
+
+**Where.** `PayTypePicker` and `Salary` in
+`src/components/apnahire/post-job/wizard-screens.tsx`; old drafts on
+`pay-type` open on `salary` (`post-job-flow.tsx`, RENAMED).

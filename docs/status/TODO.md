@@ -34,6 +34,18 @@ Take one at a time, top down. P0 = now, P1 = next, P2 = after, P3 = later.
 Each live-parity item: compare with live first (`docs/reference/LIVE-EMPLOYER-KB.md`, section per area), then build; done = works at 375px and desktop, `npm run check` green.
 Open before ECC: keep "View number" as the green action, or make Shortlist primary?
 
+## Job posting (context: `reference/JOB-POSTING.md`)
+- [x] AI fill: a detailed description fills every stated field (negations, gender, age, perks, assets, spoken salaries)
+- [x] Voice input stops dropping words (desktop) and repeating them (Android)
+- [x] Pay type and salary on one screen; pay type as three tiles; "Fixed only" when no incentive is mentioned
+- [x] Help lines that only repeat a card's label removed
+- [x] "Continue draft" opens on the saved screen
+- [ ] Test voice on a real Android phone and desktop Chrome
+- [ ] Test the live AI fill (needs the Gemini key; only the keyword fill was tested locally)
+- [ ] Walk every screen on desktop after the help-line removal
+- [ ] Steps menu: two hand-built chips (step number, "you are here") could be `Badge` (`job-posting-chrome.tsx`)
+- [ ] 13 design-system primitive candidates from the 2026-11-05 audit wait for Punna's pick
+
 ## Job details & leads
 - [ ] Job list → job details flow (`/apnahire/jobs` → `/apnahire/jobs/[id]`): candidate leads, Applied | Database matches (Active leads)
 - [ ] Job details journeys: no leads yet · leads arriving · after the job expires (empty states and banners for each)

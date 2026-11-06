@@ -69,7 +69,7 @@ function planPricing(plan: { price: number; mrp?: number }, extraOff?: boolean) 
 
 /* Chips name the count only: "1 job", "2 jobs", "3 jobs" (user call,
    2026-11-04); the cards under them say "live at a time". */
-const jobSlotOptions = (counts: JobSlotCount[], selected: JobSlotCount): ChipTabItem<string>[] =>
+const jobSlotOptions = (counts: JobSlotCount[]): ChipTabItem<string>[] =>
   counts.map((n) => ({
     value: String(n),
     label: `${n} job${n === 1 ? "" : "s"}`,
@@ -363,7 +363,7 @@ export function SubscriptionPlans({
         <ChipTabs
           variant="solid"
           aria-label="Active job slots"
-          items={jobSlotOptions(slotCounts, jobSlots)}
+          items={jobSlotOptions(slotCounts)}
           value={String(jobSlots)}
           onValueChange={setJobSlots}
           className="w-full flex-nowrap gap-1 rounded-full surface-glass-dark p-0.5 sm:w-auto sm:shrink-0 sm:gap-2"

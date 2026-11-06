@@ -198,7 +198,8 @@ const RENAMED: Record<string, ScreenId> = {
   "intro-job": "title",
   company: "title",
   "job-basics": "job-type",
-  pay: "pay-type",
+  pay: "salary",
+  "pay-type": "salary",
   requirements: "education",
   "intro-candidates": "education",
   "intro-setup": "interview",
@@ -282,6 +283,9 @@ export function PostJobFlow() {
     if (!hydrated || pending || stageJumped.current) return
     stageJumped.current = true
     const to = new URLSearchParams(window.location.search).get("stage")
+    // No ?stage: stay put. (A null `to` matched Describe, whose stage is null,
+    // so every resumed draft fell back to the first screen.)
+    if (!to) return
     const first = SCREENS.find((s) => s.stage === to)
     if (first) setState((s) => ({ ...s, screen: first.id, returnTo: null }))
   }, [hydrated, pending, setState])

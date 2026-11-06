@@ -20,15 +20,19 @@ import { NextRequest, NextResponse } from "next/server"
 import { readJsonBody } from "@/lib/read-json-body"
 import { z } from "zod"
 
-import { CATEGORIES, INDUSTRIES } from "@/lib/apnahire/job-draft"
+import { ASSETS, CATEGORIES, DEGREES, INDUSTRIES, PERKS } from "@/lib/apnahire/job-draft"
 import { parsePrompt } from "@/lib/apnahire/prompt-parse"
 import type { JobPostDraft } from "@/types/apnahire-job"
 
 export const SYSTEM_PROMPT =
   "You help small Indian businesses post jobs on apna, a hiring platform for blue- and grey-collar roles " +
   "(telecallers, delivery, sales, support, back office, retail, field staff). " +
-  "From the recruiter's description, fill the structured job fields. Only fill fields the recruiter stated " +
-  "or that are clearly implied — leave the rest absent so the app can ask for them. " +
+  "From the recruiter's description, fill the structured job fields. Fill EVERY field the recruiter stated " +
+  "or clearly implied (gender, age, perks, assets, languages, experience, timings and so on); a long description " +
+  "should leave almost nothing for the app to ask. Leave a field absent only when nothing in the text points to it. " +
+  "A negation is an answer: 'no joining fee' means joiningFee false, 'no walk-in' means walkIn false. " +
+  "Gender words ('female telecallers') set `gender`; never put them in `title`. " +
+  "'Age 21-30' is age, never experience. " +
   "Salaries are monthly INR (\"15-20k\" means 15000-20000). " +
   "Always write `description`: 80-140 words, plain text, a one-line summary, then 'Responsibilities:' and " +
   "'Requirements:' each followed by 3-5 lines starting with '- '. Do not invent salary, perks or company facts " +
@@ -55,11 +59,11 @@ export const JobDraftSchema = z.object({
   payType: z
     .enum(["fixed", "fixed_incentive", "incentive"])
     .optional()
-    .describe("Only if the recruiter says how pay works (e.g. mentions incentives). Never infer it from a salary alone."),
+    .describe("'fixed' when a salary is given and incentives are not mentioned; 'fixed_incentive' when both are; 'incentive' for incentive-only pay."),
   salaryMin: z.number().optional().describe("Monthly fixed salary lower bound in INR."),
   salaryMax: z.number().optional().describe("Monthly fixed salary upper bound in INR."),
   incentive: z.number().optional().describe("Average monthly incentive in INR."),
-  perks: z.array(z.string()).optional(),
+  perks: z.array(z.enum(PERKS as [string, ...string[]])).optional().describe("Only perks the recruiter names."),
   education: z.enum(["10th", "12th", "diploma", "iti", "graduate", "post_graduate"]).optional(),
   english: z.enum(["none", "basic", "good"]).optional(),
   experienceType: z.enum(["any", "experienced", "fresher"]).optional(),
@@ -67,10 +71,15 @@ export const JobDraftSchema = z.object({
   maxExperienceYears: z.number().optional().describe("Maximum years when experienceType is 'experienced', if stated."),
   languages: z.array(z.string()).optional().describe("Regional languages required, e.g. ['Hindi']."),
   skills: z.array(z.string()).optional().describe("3-6 short skills relevant to the role."),
-  gender: z.enum(["any", "male", "female"]).optional(),
-  ageMin: z.number().optional(),
-  ageMax: z.number().optional(),
-  assets: z.array(z.string()).optional().describe("Things the candidate must own, e.g. 'Bike / two-wheeler'."),
+  gender: z.enum(["any", "male", "female"]).optional().describe("From words like 'female', 'women', 'male only'."),
+  ageMin: z.number().optional().describe("Candidate minimum age in years."),
+  ageMax: z.number().optional().describe("Candidate maximum age in years."),
+  assets: z
+    .array(z.enum(ASSETS as [string, ...string[]]))
+    .optional()
+    .describe("Things the candidate must own or hold."),
+  degrees: z.array(z.enum(DEGREES as [string, ...string[]])).optional().describe("Specific degrees, only if named."),
+  relocation: z.boolean().optional().describe("True if candidates willing to relocate may apply."),
   joiningFee: z.boolean().optional().describe("True only if the recruiter says the candidate pays a fee or deposit."),
   walkIn: z.boolean().optional(),
   description: z.string().optional(),

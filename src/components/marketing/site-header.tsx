@@ -79,7 +79,6 @@ import {
   MAIN_NAV,
   type NavGroup,
   type NavIcon,
-  type NavLink,
   type NavSection,
 } from "@/content/nav"
 import { useScrolled } from "@/hooks/use-scrolled"

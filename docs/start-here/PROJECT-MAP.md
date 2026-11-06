@@ -26,7 +26,7 @@ One-page index: what Punna means → where it lives. Rules are in `AGENTS.md`
 | order summary / checkout drawer | — | `apnahire/checkout-drawer.tsx`, `ai-calling-addon-card.tsx`, `use-attention-ring.ts` |
 | payment / success | — | `apnahire/payment-modal.tsx`, `payment-success.tsx` |
 | upsell / exit offer / 10% off / coupon | — | `apnahire/offers/*` (`offer-dialog`, `exit-offer-dialog`, `offer-choice`, `extra-off-line`, `use-extra-off`), `content/offers.ts` |
-| post a job / job wizard | `/apnahire/jobs/new` | `apnahire/post-job/*`, `lib/apnahire/job-draft.ts`, `prompt-parse.ts` |
+| post a job / job wizard | `/apnahire/jobs/new` | `apnahire/post-job/*`, `lib/apnahire/job-draft.ts`, `prompt-parse.ts` (context: `docs/reference/JOB-POSTING.md`) |
 | slots full | — | `apnahire/slots/slots-full-dialog.tsx`, `hooks/use-job-slots.ts` |
 | dashboard / jobs / job details | `/apnahire/dashboard`, `/apnahire/jobs`, `/apnahire/jobs/[id]` | `apnahire/jobs/job-list.tsx` |
 | database (search/saved/unlocked) | `/apnahire/database/*` | — |
