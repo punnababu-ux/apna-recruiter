@@ -92,3 +92,153 @@ Split so no two agents edit the same file:
   (`candidate-drawer`, `job-details-step`, `interview-rounds-step`,
   `create-job-wizard`). Not `wizard-screens.tsx` or the ECC job page: both
   changed today.
+
+### 5. A11y fixes (done locally, not pushed yet)
+Six KNOWN groups removed from `e2e/a11y.spec.ts`; only the four colour-contrast
+entries remain. `a11y.spec` 26/26, `checkout.spec` 24/24.
+
+| Issue | File | Change |
+|---|---|---|
+| `nested-interactive` | `src/components/apnahire/mobile-plan-row.tsx` | A phone plan card that has a Buy now button is no longer `role=radio`: the card still takes the tap (`onClick`), the button is the keyboard route. `MobileUnlimitedCard` the same; a selected card with a CTA gets `aria-current`. Cards without a CTA stay radios. |
+| `aria-hidden-focus` | `prototype-settings.tsx` | Our own invisible popover anchor (`aria-hidden` + `role=button`) is now `tabIndex={-1}`. Not a Base UI bug. |
+| `scrollable-region-focusable` | design-system `logo-wall.tsx` | Marquee is `overflow-clip` and no longer turns into a scroller under reduced motion: it stays one still row, clipped at the edge, exactly as before. (The agent first made it wrap into rows; Punna chose the single row because wrapping added up to 520px to phone checkout pages.) The non-marquee row: see "Reconciling" below. |
+| `aria-allowed-attr` | design-system `toggle-group.tsx` | Passes `aria-orientation={undefined}` to Base UI; arrow keys still follow `orientation`. |
+| `link-name` | design-system `app-sidebar.tsx` + product `app-sidebar.tsx` | New optional `brand.label`, the `aria-label` when only the wordmark shows. Product sets "apna Hire home". |
+| `label-content-name-mismatch` | `job-list-card.tsx` (metric pills), design-system `app-sidebar.tsx` (workspace switcher) | `aria-label` dropped; the name is the visible text plus sr-only extras (", 5 pending"; "Switch workspace", which also names the collapsed button). |
+
+Rule this follows: **an accessible name starts with the visible text.** Add
+context as sr-only text after it, never as an `aria-label` that replaces it.
+
+**Contrast proposals (not applied, need Punna's sign-off):**
+
+| Element | Now | Proposed |
+|---|---|---|
+| Blue "Recommended" ribbon, white text (`--ribbon-fill`, `semantic.css:701`) | sky-500, 3.67:1 | sky-600 (`--color-apna-sky-600`), 5.16:1. Also darkens the recommended card's blue edge. |
+| Struck feature lines (`text-muted-foreground/60`, `job-plan-cards.tsx:382`) | 2.42:1 | drop the `/60` → 5.28:1; the line-through still says "missing". |
+| "−21%" on upsell tiles (`--checkout-primary`, `semantic.css:577`) | green-600 on green-50, 4.25:1 | green-700, 5.94:1. Also darkens the plan pages' green text. |
+| Green link on a success-tinted pill (jobs list) | `text-success`, 3.77:1 | `text-success-subtle-fg`, 9.22:1 |
+| Blue link on an info-tinted pill (jobs list) | `text-info`, 4.23:1 | `text-info-subtle-fg` |
+
+Note: with several agents sharing the dev server, the default worker count hit
+30s timeouts; `--workers=2` passes.
+
+### 6. App and marketing layout tests (done locally, not pushed yet)
+New `e2e/app.spec.ts` and `e2e/marketing.spec.ts`. Every `apnahire` product
+route and all 18 marketing pages: no horizontal overflow and no collapsed
+buttons at 375px, 320px (phone only) and desktop; screens marked "scroll" are
+scrolled to the bottom and back and re-checked.
+
+- **app.spec:** jobs list (each status tab, search hit / no hit, a location
+  filter); ECC job page (default, `?applicants=0`, `?tab=database`,
+  `?leadId=aditi`, Shortlisted, compact view, a filter applied; desktop only:
+  `?filters=side` closed / open and the table view); job states (expired, under
+  review, draft, `delivery-andheri`); chats (inbox, a thread, a missing
+  thread); and the remaining product routes (dashboard, settings, database,
+  invite centre, reports, …).
+- **marketing.spec:** a hard-coded `ROUTES` list (no dynamic routes). **A new
+  marketing page needs a line in `ROUTES`;** a new product route goes in the
+  `screens(...)` lists in `app.spec.ts`.
+- **`@visual`:** 10 baselines (jobs list, ECC default and `?applicants=0`,
+  homepage, pricing; both projects). The homepage and pricing shots mask
+  animated elements (`[class*=animate-]`), which hides a large part of the homepage.
+- **Counts:** app 77 pass on phone / 42 on desktop; marketing 33 / 18. Skips
+  are the 320px tests on desktop, desktop-only screens on phone, and 4 fixmes.
+- Scrolling tests use `test.slow()`. Always pass `--output=/tmp/pw-<name>` when
+  several runs share the machine.
+
+**Bugs found, marked `test.fixme`** (`fixme320` in app.spec, `FIXME` in
+marketing.spec; delete the mark when fixed):
+1. ECC job page, filter applied, phone 320px: the results bar's "· 1 filter
+   Clear" ends 16px past the screen; "Clear" is cut off.
+2. Homepage, phone 320px: the apna Database and Enterprise product cards' 3-tile
+   stat row ("22+ Precision filters") ends 17px past the screen.
+3. Interview prep lounge, phone 375px and 320px: the "Prepare for 25,000+ top
+   roles" title and role-chip row overflow (page scrolls 37px / 70px sideways).
+
+### 7. Component tests (done locally, not pushed yet)
+New `e2e/components.spec.ts`: the 8 design-system category pages (`actions`,
+`data-layout`, `display`, `feedback`, `inputs`, `marketing`, `navigation`,
+`overlays`) plus `product/pop-ups`, each in light and dark, phone and desktop.
+Three checks each: no horizontal overflow / collapsed buttons, axe, and
+`@visual` (desktop only, 18 baselines in `e2e/components.spec.ts-snapshots/`).
+108 tests: 90 pass, 18 skipped (phone visual), none `fixme`.
+
+- **Dark mode:** `next-themes` with `attribute="class"`, key `theme`. The spec
+  seeds `localStorage.theme` in an init script and asserts `<html class="dark">`.
+  It has its own small loader, because `open()` clears localStorage on first
+  load and would wipe the seed. Wanted: a `theme` option on `open()`.
+- **Timeout:** 90s for this file; at 7 workers against `next dev`, first-compile
+  pages time out. Run with `--workers=3` locally.
+- **Updating baselines:** `npx playwright test e2e/components.spec.ts --grep @visual --project=desktop --update-snapshots`.
+- **KNOWN** matches rule + selector/HTML + the `fg>bg` colour pair axe
+  measured, tagged by theme. A KNOWN entry that no longer matches does **not**
+  fail, so delete entries by hand when you fix them. Entries (17), most needing
+  a token decision:
+  - `link-name`: docs header "Back to apna Recruiter"
+    (`src/app/design-system/layout.tsx`), `Button render={<Link>}` drops the text.
+  - `button-name`: inputs-page Select trigger. `label`: Slider thumbs (`slider.tsx`).
+  - `scrollable-region-focusable`: `table.tsx` container (phone); `logo-wall.tsx`
+    (likely stale after §5's fix).
+  - Contrast, dark: white on the dark green primary (2.95–3.08:1, the parked
+    Express item); `text-warning-foreground` on the dark warning tint
+    ("Verify Identity", 2.19:1; should be `text-warning`).
+  - Contrast, light: Button `destructive` soft (4.13), Badge `info` sm (4.42),
+    Badge `ribbon` (3.67, same as §5), navigation link chip (4.43), marketing
+    eyebrow `text-primary` (4.29; AGENTS.md says eyebrows are gray),
+    selectable-card description `/80` (3.92), demo-only `text-warning` on white
+    and a hand-painted `bg-emerald-500/15` avatar on the display page.
+  - Contrast, both: role-coloured links and outline Badges on `-subtle` fills
+    (AlertBanner, RenewalBanner; 3.6–4.2), struck price on tinted fills (3.5–4.5).
+
+### Reconciling the parallel parts (after all four landed)
+- `components.spec`'s LogoWall KNOWN entry was removed. It still failed on the
+  design-system marketing page, because the non-marquee `LogoWall` (an
+  `overflow-x-auto` row) was left alone in §5. Fixed there: the scroller is
+  `tabIndex={0}`, `role="region"`, `aria-label="Client logos"`, with the
+  standard `focus-visible:ring-3 ring-ring/50` ring. No KNOWN entry left for it.
+- **No visual change from this batch.** Proved by reverting only `logo-wall.tsx`
+  and running every checkout and job-posting `@visual` test against the
+  baselines from before today: 64/64 matched. With the single-row logo wall
+  restored, the original checkout baselines pass unchanged; the 4 new
+  homepage/pricing baselines (§6) were re-taken once the wrap was dropped.
+  Interaction changes are keyboard and screen-reader only (§5, plus the new
+  Tab stop on the non-marquee logo row).
+- **Final run** on the production build (`next start -p 3100`): tsc, lint (0
+  errors, 31 known warnings), lint:tokens, 10 unit tests, and **403 Playwright
+  tests passed, 93 skipped** (platform-only checks and the 4 fixmes in §6),
+  visual included.
+- **Gotcha:** `CI=1 npx playwright test` fails every test locally: CI mode
+  uses Playwright's bundled Chromium, which isn't installed here (local runs use
+  installed Chrome). To test the production build locally, run `npm run build`,
+  start `npx next start -p 3100` yourself, then run `npx playwright test`
+  without `CI` (it reuses the server).
+
+### 8. File splits (done locally, not pushed yet)
+Four OnlyRounds files split by moving code, with no behaviour or visual change.
+**Convention:** the original `foo.tsx` stays the entry point (same path, same
+exports); its parts live in a sibling `foo/` folder, imported as
+`@/components/onlyrounds/foo/*`. No `index.tsx`, so old imports still resolve
+to the entry. No importer changed.
+
+| File | Lines before → entry now | Parts in the sibling folder |
+|---|---|---|
+| `candidate-drawer.tsx` | 1771 → 120 | `types`, `contact-actions`, `drawer-body`, `insights-tab`, `media-players`, `profile-tab`, `violations-tab`, `timeline-tab`, `criteria-blocks`, `utils` |
+| `job-details-step.tsx` | 1687 → 383 | `validation`, `section`, `question-shared`, `question-sections-editor`, `question-section-item`, `question-section-body` |
+| `interview-rounds-step.tsx` | 1631 → 207 | `constants`, `use-id-generator`, `task-type-picker`, `task-card`, `screening-summary`, `task-editors`, `cefr-addon`, `criteria-editor`, `interviewer`, `read-only-views`, `skeletons` |
+| `create-job-wizard.tsx` | 1400 → 626 | `types`, `steps`, `utils`, `description-step`, `populate-from-generation`, `wizard-top-bar`, `wizard-footer`, `exit-dialog` |
+
+- Public exports unchanged (`CandidateDrawer` + types, `validateSection`,
+  `getSectionStatus`, `validateJobDetails`, `InterviewRoundsStep`, `ROUTES`,
+  `GenerationData`, `CreateJobWizard`). `ROUTES` stays in `create-job-wizard.tsx`.
+- The wizard's top bar, footer, exit dialog and `populateFromGeneration` were
+  lifted out with props named after the original locals, so the JSX is verbatim.
+- `job-details-step/question-shared.ts` and `interview-rounds-step/constants.tsx`
+  exist only to share values between the parts.
+- **Verified:** tsc, eslint (6 existing set-state-in-effect warnings, now spread
+  over the new files), lint:tokens. 70 before/after screenshots at 1440×900:
+  66 identical; the other 4 vary run to run before the split too (timing-dependent
+  heights, sticky-footer full-page capture, a typing placeholder).
+- **Gotcha:** `next.config.ts` redirects `/onlyrounds/*` to `/apnahire/*`, so
+  the candidate drawer (only used by `src/app/onlyrounds/(product)/jobs/[id]/page.tsx`)
+  has no live route. It was tested through a temporary page, since deleted.
+  The wizard is live at `/apnahire/jobs/rounds/new`.

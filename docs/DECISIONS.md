@@ -8,6 +8,26 @@ or **Open**.
 
 ---
 
+## Splitting a large file: keep the entry, add a sibling folder (2026-11-06)
+
+- **Decision:** a file over ~600 lines is split by moving code only. The original `foo.tsx` stays at its path with the same exports; its parts go in a sibling `foo/` folder (no `index.tsx`, so old imports still resolve). Applied to the four OnlyRounds files (`candidate-drawer`, `job-details-step`, `interview-rounds-step`, `create-job-wizard`).
+- **Why:** no importer changes, so the split can't break callers and its diff is easy to review; before/after screenshots prove no visual change.
+- **Would change it:** if the package grows a public barrel per folder, switch to `foo/index.tsx`.
+- **Status:** Decided.
+
+## Logo marquee under reduced motion: one still row, not wrapped (2026-11-06)
+
+- **Decision:** with reduced motion on, the moving logo strip stops and stays one row, clipped at the edge (as before). It is clipped, not scrollable, so axe has no scroll region to flag.
+- **Why:** wrapping every logo into rows added about 280px (express) to 520px (self-checkout) to phone pages, for a decorative strip.
+- **Would change it:** if the logos ever need to be readable in full for reduced-motion users.
+- **Status:** Decided (Punna, 2026-11-06).
+
+## Accessible names start with the visible text (2026-11-06)
+
+- **Decision:** a control's accessible name is its visible text; extra context is sr-only text after it, never an `aria-label` that replaces it (job metric pills, workspace switcher). A phone plan card with its own Buy now button is not `role=radio` (an interactive inside an interactive); the card keeps the tap, the button is the keyboard route.
+- **Why:** voice-control users say what they see; a different `aria-label` breaks that (axe `label-content-name-mismatch`). Nested interactives confuse screen readers.
+- **Status:** Decided. Colour-contrast shades (ribbon, struck lines, −% on tiles, links on tints) are **Open**, awaiting Punna; proposals in `history/SESSION-2026-11-06-QUALITY.md` §5.
+
 ## How the repo is tested, and what CI blocks on (2026-11-06)
 
 - **Decision:** GitHub Actions runs lint, token lint, unit tests, the build and the Playwright layout + accessibility tests on every push to main and every PR. Screenshot (`@visual`) tests run only locally. Known bugs are `test.fixme` with a reason, known axe violations are matched per element in `e2e/a11y.spec.ts`'s `KNOWN`; a check is never weakened to pass.

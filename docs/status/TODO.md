@@ -86,6 +86,9 @@ Open before ECC: keep "View number" as the green action, or make Shortlist prima
 ## Layout bugs (found by the browser tests, 2026-11-06; each is a `test.fixme` — remove it when fixed)
 - [x] Plan cards at 320px scroll the page sideways: "Active for 15 days" now moves under the title when the panel is narrow
 - [x] Job posting "Describe" screen, phones: the `ai-idle` halo now stays inside the 1rem page padding
+- [ ] ECC job page, filter applied, 320px: the results bar's "· 1 filter Clear" runs 16px off screen (`e2e/app.spec.ts`)
+- [ ] Homepage, 320px: the apna Database / Enterprise cards' 3-tile stat row runs 17px off screen (`e2e/marketing.spec.ts`)
+- [ ] Interview prep lounge, 375px and 320px: the "Prepare for 25,000+ top roles" title and role chips overflow (`e2e/marketing.spec.ts`)
 
 ## Accessibility (found by `e2e/a11y.spec.ts`, 2026-11-06)
 Each is in the spec's `KNOWN` list, matched per element; delete the entry when it is fixed.
@@ -93,12 +96,21 @@ Each is in the spec's `KNOWN` list, matched per element; delete the entry when i
 - [ ] Contrast: struck plan-card feature lines (`job-plan-cards.tsx`, `text-muted-foreground/60`) are 2.42:1
 - [ ] Contrast: the "−21%" saving on upsell tiles (`offer-choice.tsx`) is 4.25:1
 - [ ] Contrast: green / blue link-buttons on tinted pills on the jobs list (3.77:1, 4.23:1)
-- [ ] Phone plan cards (`mobile-plan-row.tsx`): a radio that contains the Buy now button (nested-interactive)
-- [ ] A focusable `aria-hidden` span from Base UI's trigger shim (aria-hidden-focus)
-- [ ] `LogoWall` marquee scrolls with nothing focusable inside
-- [ ] `ToggleGroup` sets `aria-orientation` on `role=group`
-- [ ] Sidebar brand link has no name (`app-sidebar.tsx`)
-- [ ] Job metric pills and "Switch workspace": `aria-label` doesn't start with the visible text
+  (proposed shades for all four: `docs/history/SESSION-2026-11-06-QUALITY.md` §5; awaiting sign-off)
+- [x] Phone plan cards (`mobile-plan-row.tsx`): a radio that contains the Buy now button (nested-interactive)
+- [x] A focusable `aria-hidden` span, our own `PrototypeSettings` anchor (aria-hidden-focus)
+- [x] `LogoWall` marquee scrolls with nothing focusable inside
+- [x] `ToggleGroup` sets `aria-orientation` on `role=group`
+- [x] Sidebar brand link has no name (`app-sidebar.tsx`)
+- [x] Job metric pills and "Switch workspace": `aria-label` doesn't start with the visible text
+
+Design-system pages (`e2e/components.spec.ts` `KNOWN`, full list in
+`docs/history/SESSION-2026-11-06-QUALITY.md` §7):
+- [ ] Docs header "Back to apna Recruiter" link has no name (`src/app/design-system/layout.tsx`)
+- [ ] Select trigger on the inputs page has no name; Slider thumbs have no label (`slider.tsx`)
+- [ ] `table.tsx` scroll container isn't focusable on phones
+- [ ] Contrast: role-coloured text on `-subtle` tints (banner links, outline Badges, struck prices), 3.5–4.5:1. One token decision covers most of these
+- [ ] Contrast: smaller one-offs: Button `destructive` soft, Badge `info` sm, nav link chip, marketing eyebrow in `text-primary` (should be gray), selectable-card description `/80`, "Verify Identity" `text-warning-foreground` on the dark tint
 
 ## Before production
 - [ ] Remove the hidden prototype-settings ingresses: the silent clicks on "*GST applicable" (`GstNote`, both checkouts) and the post-job "Candidate view" caption, the plan card's "Valid till" line (`SubscriberPlanCard`), the expired banner's "Resubscribe at the same price." (`PlanEndedBanner`), plus `PrototypeSettings` itself (grep `openPrototypeSettings`). Current builds are not production.

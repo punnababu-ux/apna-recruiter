@@ -763,8 +763,9 @@ every line may break; never let the width of a string decide it.**
 11. **Measure it; don't eyeball it.** `npm run test:e2e` checks every
     checkout and job-posting screen at 375px, 320px and desktop for
     sideways scroll, squashed buttons, level card rows and accessibility.
-    Run it before calling a layout change done; when you add a screen or
-    state, add it to `e2e/`. A real bug you can't fix yet is a
+ Run it before calling a layout change done; when you add a screen or
+ state, add it to `e2e/` (a product route to the `screens(...)` lists in
+ `app.spec.ts`, a marketing page to `ROUTES` in `marketing.spec.ts`). A real bug you can't fix yet is a
     `test.fixme("what, where")` plus a line in `docs/status/TODO.md`, never
     a weaker check.
 
