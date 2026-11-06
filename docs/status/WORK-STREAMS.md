@@ -38,7 +38,7 @@ No other branch is ahead of `origin/main`. No stashes.
 9. ~~Copy the graph to the main checkout~~ done 2026-11-05 (old copy kept as `graphify-out.bak`).
 
 ## 🔁 Recurring — Claude reminds Punna
-- **Rebuild the graph** when docs or many files changed, or 7+ days since the last build (last: 2026-11-05).
+- **Rebuild the graph** when docs or many files changed, or 7+ days since the last build (last: 2026-11-06, code only).
   - Code only, free: `graphify update .`
   - Docs too (LLM): ask Claude "re-extract docs into graphify" (incremental, only changed docs).
 - **Figma re-audit** after a checkout code change.
