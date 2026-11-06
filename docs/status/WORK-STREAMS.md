@@ -19,6 +19,7 @@ No other branch is ahead of `origin/main`. No stashes.
 | Checkouts (express V11, self V14) | Final, in code, no version switch | Only new feedback from Sumit (skill `design-variants`) | Punna brings feedback |
 | Figma ↔ code sync | Dev hand-off page complete; nothing blocking (`status/FIGMA-SYNC-STATUS.md`) | Re-audit after the next code change to checkout (skill `figma-code-sync`) | Claude |
 | Docs + knowledge base | Organized 2026-11-05 (`docs/README.md`) | Keep the index current | Claude |
+| Code quality | CI + browser tests live (2026-11-06); a11y fixes, more tests, component tests, OnlyRounds splits in progress (`history/SESSION-2026-11-06-QUALITY.md`) | Finish the parallel parts; contrast shades need Punna | Claude, Punna for shades |
 | Knowledge graph (graphify) | Rebuilt 2026-11-05: code + 21 docs; copied to the main checkout | See "Recurring" below | Claude, with reminders |
 | DS audit: chat + job posting | Catalog updated; fixes applied; 3 kept for a decision + 13 primitive candidates (`history/AUDIT-2026-11-05-CHAT-JOB-POSTING.md`) | Punna OKs the fixes / which primitives to build | Punna, then Claude |
 | Job posting flow | AI fill, voice, pay screen, draft resume fixed 2026-11-06 (`reference/JOB-POSTING.md`) | Device test for voice; live AI test; desktop walk (`status/TODO.md` → Job posting) | Punna tests voice; Claude the rest |

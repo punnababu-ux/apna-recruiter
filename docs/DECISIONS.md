@@ -8,6 +8,20 @@ or **Open**.
 
 ---
 
+## How the repo is tested, and what CI blocks on (2026-11-06)
+
+- **Decision:** GitHub Actions runs lint, token lint, unit tests, the build and the Playwright layout + accessibility tests on every push to main and every PR. Screenshot (`@visual`) tests run only locally. Known bugs are `test.fixme` with a reason, known axe violations are matched per element in `e2e/a11y.spec.ts`'s `KNOWN`; a check is never weakened to pass.
+- **Why:** the gates only worked when someone remembered `npm run check`. Layout bugs (a nowrap label, a halo) were invisible to type checks and to the eye; measuring caught them. Screenshot baselines are macOS renders, and Linux font rendering would fail them every run.
+- **Would change it:** a Linux baseline set (Playwright's Docker image) would let CI run `@visual` too.
+- **Status:** Decided (Punna asked for CI and tests, 2026-11-06).
+
+## Dependency upgrades: take minor fixes, skip forced downgrades (2026-11-06)
+
+- **Decision:** Next.js 16.2.3 → 16.4.5 (critical advisory) and `npm audit fix`; not `npm audit fix --force`, which proposes downgrades (eslint-config-next 15, shadcn 1). A dev-only advisory (brace-expansion under eslint) is accepted.
+- **Why:** the minor upgrade passed build, lint and every browser test; the forced ones would break tooling for advisories that never reach users.
+- **New lint rule** `react-hooks/set-state-in-effect` (31 hits) is a warning until fixed (TODO.md → "Lint debt").
+- **Status:** Decided.
+
 ## New job, no applicants: show active leads from the database (2026-11-06)
 
 - **Decision:** the Applied tab of a job with no applications shows "Finding the right candidates" (clay, one line) and an "Active leads for this job" card: the database credit balance, three top database matches (AI-look header strip, active status, role, company, area, experience, salary), a "+N more · View all leads" tile and "1 profile unlock = 1 database credit". A profile opens the Database tab with it highlighted; View all opens the tab with active leads first.

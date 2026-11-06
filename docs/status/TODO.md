@@ -79,6 +79,10 @@ Open before ECC: keep "View number" as the green action, or make Shortlist prima
 - [x] Job posting confirmation pop-ups still missing ("Are you sure?", "Continue?", exit/leave), each with its own clay icon
 - [ ] Clay icon for the city-lock pop-up (`city-lock-dialog.tsx`, stand-in: "access")
 
+## Lint debt (2026-11-06)
+- [ ] 31 `react-hooks/set-state-in-effect` warnings (new in eslint-config-next 16.4; set to warn in `eslint.config.mjs`). Most are "reset state when a prop changes" — derive it during render or key the component instead. Run `npx eslint` for the list. Set the rule back to error when done
+- [ ] Phone Super premium card: "Top placement on job listing" runs under the Buy now button (`job-plan-cards.tsx`); add an overlap check to `e2e/helpers.ts` when fixing
+
 ## Layout bugs (found by the browser tests, 2026-11-06; each is a `test.fixme` — remove it when fixed)
 - [x] Plan cards at 320px scroll the page sideways: "Active for 15 days" now moves under the title when the panel is narrow
 - [x] Job posting "Describe" screen, phones: the `ai-idle` halo now stays inside the 1rem page padding
