@@ -1,6 +1,6 @@
 # Figma sync — status (resume from here)
 
-Last updated: 2026-11-04 (end of day). Keep this file current after every Figma step.
+Last updated: 2026-11-06. Keep this file current after every Figma step.
 How to audit/sync (workflow, scripts, rules learned): skill `.claude/skills/figma-code-sync/`.
 
 ## ▶ Latest state (read this first)
@@ -16,6 +16,14 @@ How to audit/sync (workflow, scripts, rules learned): skill `.claude/skills/figm
 - Active apna Unlimited tab logo: LogoApnaUnlimited/gradient-deep 434:2.
 - Upsell dialogs/tiles measured against the app (D-E5 = 576×436 exactly); rows 10px apart,
   a line reserved only when the partner tile has it.
+- 2026-11-05: section 8 "Order summary details" (441:11284) was missing desktop for C2/C3.
+  Added D-C2 coupon applied + GSTIN 492:15432 and D-C3 coupons panel 492:16000 (x 590, beside
+  the phone rows). Built by cloning D-E6 (343:2686, 448 SheetPanel), dropping its add-on
+  section, and swapping in clones of the phone CouponApplied/CouponsPanel + OrderSummary/Bill
+  (layoutAlign STRETCH). Fixes: the cloned Bill was fixed-height with primaryAxisAlign MAX
+  (empty gap on top) → set to hug (AUTO, MIN); PayBar total/CTA copied from the phone frame
+  (C2 ₹742, C3 ₹825). Checked by Figma screenshot only, not diffed against the code; the
+  backdrop is D-E6's express plans page. Every row in section 8 now has phone + desktop.
 - Open: nothing blocking. Gotcha for writes: one heavy main component per call; on repeated
   "overflow" errors open a new session.
 
