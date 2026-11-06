@@ -46,7 +46,7 @@ export function PaymentSuccess({
 
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center bg-background bg-gradient-result-success px-4 py-12">
-      <div className="flex w-full max-w-md flex-col items-center gap-6 rounded-card border border-border bg-card p-4 sm:p-8 shadow-card">
+      <div className="flex w-full max-w-xl flex-col items-center gap-6 rounded-card border border-border bg-card p-4 sm:p-6 shadow-card">
         <ValueArt name="success" size="xs" />
 
         <div className="flex flex-col items-center gap-1 text-center">
@@ -144,7 +144,7 @@ export function PaymentFailed({
 }) {
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center bg-background bg-gradient-result-failure px-4 py-12">
-      <div className="flex w-full max-w-md flex-col items-center gap-6 rounded-card border border-border bg-card p-4 sm:p-8 shadow-card">
+      <div className="flex w-full max-w-xl flex-col items-center gap-6 rounded-card border border-border bg-card p-4 sm:p-6 shadow-card">
         <ValueArt name="alert" size="xs" />
         <div className="flex flex-col items-center gap-1 text-center">
           <h1 className="text-h3 font-heading font-bold text-foreground">Payment failed</h1>
