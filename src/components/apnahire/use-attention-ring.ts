@@ -20,7 +20,8 @@ export function useAttentionRing(key: string, active = true) {
     } catch {
       // Storage blocked: still run, just not remembered.
     }
-    setOn(true)
+    const id = requestAnimationFrame(() => setOn(true))
+    return () => cancelAnimationFrame(id)
   }, [key, active])
 
   return on

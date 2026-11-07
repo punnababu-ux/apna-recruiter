@@ -351,3 +351,18 @@ Punna accepted the proposed shades (2026-11-06). Logged in `DECISIONS.md`.
   `text-success-subtle-foreground` / `text-info-subtle-foreground`
   (`banner-tone.ts`), the text meant for those tints, in both themes.
 - The four `KNOWN` entries in `e2e/a11y.spec.ts` are removed.
+
+### 13. The 31 set-state-in-effect warnings (not pushed)
+`react-hooks/set-state-in-effect` is an error again (`eslint.config.mjs`
+no longer downgrades it). None of the 31 remain.
+- **Reset when something changes** (a route, a dialog opening, a new
+  candidate, the checkout item): the new value is compared during render
+  and the state is reset there, which is the React way to adjust state
+  when an input changes.
+- **A value that only exists in the browser** (mobile width, speech
+  support, theme mounted, `?frame=off`, the saved offer, a draft, the
+  pricing tab): `useSyncExternalStore`, mostly through
+  `src/hooks/use-client-snapshot.ts`, so the server paint stays the
+  fallback and the browser value arrives without an effect.
+- **Timers and the attention ring** still update from `setInterval` or
+  `requestAnimationFrame`, which is the animation, not a render cascade.

@@ -43,9 +43,12 @@ function getCtor(): SpeechRecognitionCtor | null {
 }
 
 const isAndroid = () => typeof navigator !== "undefined" && /android/i.test(navigator.userAgent)
+function subscribeNothing() {
+  return () => {}
+}
 
 export function useSpeechRecognition({ lang = "en-IN" }: { lang?: string } = {}) {
-  const [supported, setSupported] = React.useState(false)
+  const supported = React.useSyncExternalStore(subscribeNothing, () => getCtor() !== null, () => false)
   const [listening, setListening] = React.useState(false)
   const [transcript, setTranscript] = React.useState("")
   const [error, setError] = React.useState<string | null>(null)
@@ -58,7 +61,6 @@ export function useSpeechRecognition({ lang = "en-IN" }: { lang?: string } = {})
   const tokenRef = React.useRef(0)
 
   React.useEffect(() => {
-    setSupported(getCtor() !== null)
     return () => {
       wantRef.current = false
       recRef.current?.abort()

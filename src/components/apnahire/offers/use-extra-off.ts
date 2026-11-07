@@ -18,11 +18,13 @@
 
 import * as React from "react"
 import { EXTRA_OFF } from "@/content/offers"
+import { useClientSnapshot } from "@/hooks/use-client-snapshot"
 
 const STORAGE_KEY = "apna:extra-off-deadline"
 // Prototype: a returning recruiter (already had the offer) sees the stay /
 // reasons pop-ups on exit instead (exit-stay-dialogs.tsx).
 const RETURNING_KEY = "apna:returning-recruiter"
+const EMPTY_STORED = { returning: false, deadline: null as number | null }
 
 function readDeadline(): number | null {
   try {
@@ -44,12 +46,28 @@ function writeDeadline(value: number | null) {
 }
 
 export function useExtraOff() {
-  const [deadline, setDeadline] = React.useState<number | null>(null)
+  const stored = useClientSnapshot(() => {
+    try {
+      return {
+        returning: window.localStorage.getItem(RETURNING_KEY) === "1",
+        deadline: readDeadline(),
+      }
+    } catch {
+      return EMPTY_STORED
+    }
+  }, EMPTY_STORED)
+  const [deadline, setDeadline] = React.useState<number | null>(stored.deadline)
   const [dismissed, setDismissed] = React.useState(false)
   // Once claimed, never offered again this visit — even after it expires.
-  const [used, setUsed] = React.useState(false)
-
-  const [returning, setReturningState] = React.useState(false)
+  const [used, setUsed] = React.useState(stored.deadline !== null)
+  const [storedSeen, setStoredSeen] = React.useState(stored)
+  const [returning, setReturningState] = React.useState(stored.returning)
+  if (stored !== storedSeen) {
+    setStoredSeen(stored)
+    setDeadline(stored.deadline)
+    setReturningState(stored.returning)
+    if (stored.deadline !== null) setUsed(true)
+  }
   const setReturning = React.useCallback((value: boolean) => {
     setReturningState(value)
     try {
@@ -58,15 +76,6 @@ export function useExtraOff() {
     } catch {
       // Storage blocked — holds for this visit only.
     }
-  }, [])
-
-  React.useEffect(() => {
-    try {
-      setReturningState(window.localStorage.getItem(RETURNING_KEY) === "1")
-    } catch {}
-    const stored = readDeadline()
-    setDeadline(stored)
-    if (stored !== null) setUsed(true)
   }, [])
 
   const claim = React.useCallback((at?: number) => {

@@ -110,54 +110,53 @@ export function CreateJobWizard() {
   const populateFormFromGeneration = (data: GenerationData, promptValToSet?: string) =>
     populateFromGeneration(data, promptValToSet, setForm, setLastCriteriaSnapshot)
 
-  // On-the-fly criteria regeneration when entering Step 3 (Rounds)
-  React.useEffect(() => {
-    if (activeId !== "rounds") return
-
+  // On-the-fly criteria regeneration when entering Step 3 (Rounds).
+  // The snapshot is remembered during render; the generation itself waits
+  // until after, so a render doesn't call the network.
+  const [regen, setRegen] = React.useState(false)
+  if (activeId === "rounds") {
     const currentSnapshot = JSON.stringify({
       title: form.title,
       jd: form.jd,
       detailsSummary: summarizeDetails(form.details),
       tasksSummary: summarizeTasks(form.rounds.tasks),
     })
-
-    if (!lastCriteriaSnapshot) {
-      setLastCriteriaSnapshot(currentSnapshot)
-      return
-    }
-
     if (currentSnapshot !== lastCriteriaSnapshot) {
-      // Clear criteria for AI tasks that have not been manually edited
-      const tasksToRegenerate = form.rounds.tasks.filter(
-        (t) => CALL_TASK_TYPES.has(t.type) && t.screening.mode === "ai" && !t.isCriteriaEdited
-      )
-
-      if (tasksToRegenerate.length > 0) {
-        setForm((prev) => ({
-          ...prev,
-          rounds: {
-            ...prev.rounds,
-            tasks: prev.rounds.tasks.map((t) =>
-              CALL_TASK_TYPES.has(t.type) && t.screening.mode === "ai" && !t.isCriteriaEdited
-                ? { ...t, criteria: [] }
-                : t
-            ),
-          },
-        }))
-        
-        setTimeout(() => {
-          generateAllCriteria().then(() => {
-            setLastCriteriaSnapshot(currentSnapshot)
-            toast.success("Evaluation criteria updated", {
-              description: "AI rounds updated to match your new job details.",
-            })
-          })
-        }, 0)
-      } else {
-        setLastCriteriaSnapshot(currentSnapshot)
+      const previous = lastCriteriaSnapshot
+      setLastCriteriaSnapshot(currentSnapshot)
+      if (previous) {
+        const tasksToRegenerate = form.rounds.tasks.filter(
+          (t) => CALL_TASK_TYPES.has(t.type) && t.screening.mode === "ai" && !t.isCriteriaEdited
+        )
+        if (tasksToRegenerate.length > 0) {
+          setForm((prev) => ({
+            ...prev,
+            rounds: {
+              ...prev.rounds,
+              tasks: prev.rounds.tasks.map((t) =>
+                CALL_TASK_TYPES.has(t.type) && t.screening.mode === "ai" && !t.isCriteriaEdited
+                  ? { ...t, criteria: [] }
+                  : t
+              ),
+            },
+          }))
+          setRegen(true)
+        }
       }
     }
-  }, [activeId, form.title, form.jd, form.details, form.rounds.tasks, lastCriteriaSnapshot, generateAllCriteria, setForm])
+  }
+  React.useEffect(() => {
+    if (!regen) return
+    const t = window.setTimeout(() => {
+      setRegen(false)
+      generateAllCriteria().then(() => {
+        toast.success("Evaluation criteria updated", {
+          description: "AI rounds updated to match your new job details.",
+        })
+      })
+    }, 0)
+    return () => window.clearTimeout(t)
+  }, [regen, generateAllCriteria])
 
   /** Top-bar "Create new job" back link click. If there's nothing to
    *  lose, navigate immediately; otherwise open the 3-option confirm. */

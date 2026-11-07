@@ -5,13 +5,14 @@ import { useTheme } from "next-themes"
 import { Sun, Moon } from "@apna/design-system"
 import { Button } from "@apna/design-system"
 
+function subscribeNothing() {
+  return () => {}
+}
+
 export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme()
-  const [mounted, setMounted] = React.useState(false)
-
-  React.useEffect(() => {
-    setMounted(true)
-  }, [])
+  // False on the server, true in the browser, so the icon doesn't mismatch.
+  const mounted = React.useSyncExternalStore(subscribeNothing, () => true, () => false)
 
   if (!mounted) {
     return (

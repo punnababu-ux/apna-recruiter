@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { toast } from "sonner"
+import { useClientSnapshot } from "@/hooks/use-client-snapshot"
 
 /**
  * Persist a wizard form to localStorage and reload it on mount.
@@ -31,35 +32,42 @@ export function useDraftPersistence<T>(
   resume: () => void
   discard: () => void
 } {
-  const [form, setForm] = React.useState<T>(empty)
-  const [lastSavedJson, setLastSavedJson] = React.useState<string>(
-    () => JSON.stringify(empty),
-  )
-  const [hydrated, setHydrated] = React.useState(false)
-  const [pending, setPending] = React.useState<T | null>(null)
-
-  // Load draft once on the client.
-  React.useEffect(() => {
-    if (typeof window === "undefined") return
-    setHydrated(true)
+  type Loaded = { hydrated: true; form: T; json: string; pending: T | null; hadDraft: boolean }
+  const loaded = useClientSnapshot<Loaded | null>(() => {
+    const blank = JSON.stringify(empty)
     try {
       const raw = window.localStorage.getItem(key)
-      if (!raw) return
+      if (!raw) return { hydrated: true, form: empty, json: blank, pending: null, hadDraft: false }
       const draft = { ...(empty as object), ...(JSON.parse(raw) as Partial<T>) } as T
-      if (ask) return setPending(draft)
-      setForm(draft)
-      setLastSavedJson(JSON.stringify(draft))
-      // A fixed id: the mount effect runs twice in dev (StrictMode) and again
-      // when the page is revisited, but the toast should show once.
-      toast.info("Loaded your saved draft", {
-        id: `draft-loaded:${key}`,
-        description: "Pick up where you left off.",
-      })
+      if (ask) return { hydrated: true, form: empty, json: blank, pending: draft, hadDraft: true }
+      return { hydrated: true, form: draft, json: JSON.stringify(draft), pending: null, hadDraft: true }
     } catch {
-      // Corrupt / missing draft — silent.
+      return { hydrated: true, form: empty, json: blank, pending: null, hadDraft: false }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key])
+  }, null)
+
+  const [form, setForm] = React.useState<T>(empty)
+  const [lastSavedJson, setLastSavedJson] = React.useState<string>(() => JSON.stringify(empty))
+  const [pending, setPending] = React.useState<T | null>(null)
+  const [appliedKey, setAppliedKey] = React.useState<string | null>(null)
+  if (loaded && appliedKey !== key) {
+    setAppliedKey(key)
+    setPending(loaded.pending)
+    if (!loaded.pending) {
+      setForm(loaded.form)
+      setLastSavedJson(loaded.json)
+    }
+  }
+  const hydrated = loaded !== null
+
+  React.useEffect(() => {
+    if (!loaded?.hadDraft || loaded.pending) return
+    // A fixed id: this runs twice in dev (StrictMode), but the toast shows once.
+    toast.info("Loaded your saved draft", {
+      id: `draft-loaded:${key}`,
+      description: "Pick up where you left off.",
+    })
+  }, [loaded, key])
 
   const isDirty = React.useMemo(
     () => JSON.stringify(form) !== lastSavedJson,

@@ -230,21 +230,27 @@ export function SiteHeader({ variant = "default" }: SiteHeaderProps) {
     }
   }, [searchOpen])
   // One overlay at a time: a menu card and the search field never stack.
-  React.useEffect(() => {
+  const [panelSeen, setPanelSeen] = React.useState(openPanel)
+  const [searchSeen, setSearchSeen] = React.useState(searchOpen)
+  if (openPanel !== panelSeen) {
+    setPanelSeen(openPanel)
     if (openPanel) setSearchOpen(false)
-  }, [openPanel])
-  React.useEffect(() => {
+  }
+  if (searchOpen !== searchSeen) {
+    setSearchSeen(searchOpen)
     if (searchOpen) setOpenPanel(null)
-  }, [searchOpen])
+  }
 
   // Close everything on navigation — otherwise a panel stays open behind the
   // new page.
   const pathname = usePathname()
-  React.useEffect(() => {
+  const [route, setRoute] = React.useState(pathname)
+  if (route !== pathname) {
+    setRoute(pathname)
     setOpenPanel(null)
     setMobileOpen(false)
     setSearchOpen(false)
-  }, [pathname])
+  }
 
   const navItemClass = (current: boolean) =>
     cn(

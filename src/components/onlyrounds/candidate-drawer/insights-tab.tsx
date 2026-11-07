@@ -60,12 +60,14 @@ export function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
   // Ref that VideoPopup registers its YouTube seek fn into
   const videoSeekRef = React.useRef<((sec: number) => void) | null>(null)
 
-  // Reset when switching candidates
-  React.useEffect(() => {
+  // Reset when switching candidates.
+  const [seenId, setSeenId] = React.useState(candidate.id)
+  if (candidate.id !== seenId) {
+    setSeenId(candidate.id)
     setElapsed(0)
     setPlaying(false)
     setVideoOpen(false)
-  }, [candidate.id])
+  }
 
   // Advance time when playing.
   React.useEffect(() => {

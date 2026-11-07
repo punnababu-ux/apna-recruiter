@@ -1075,9 +1075,11 @@ function CountUpInr({ value }: { value: number }) {
   const from = React.useRef(0)
   React.useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      from.current = value
-      setShown(value)
-      return
+      const id = requestAnimationFrame(() => {
+        from.current = value
+        setShown(value)
+      })
+      return () => cancelAnimationFrame(id)
     }
     const start = from.current
     const t0 = performance.now()

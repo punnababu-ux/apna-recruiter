@@ -25,6 +25,7 @@
 
 import * as React from "react"
 import { useRouter } from "next/navigation"
+import { useClientSnapshot } from "@/hooks/use-client-snapshot"
 import { cn } from "@/lib/utils"
 import { GstNote } from "@/components/apnahire/gst-note"
 
@@ -108,6 +109,31 @@ type PendingCheckout = {
 
 const ACTIVE_TAB_STORAGE_KEY = "apnahire:active-pricing-tab"
 
+function subscribeNothing() {
+  return () => {}
+}
+
+function usePendingCheckout(isLoggedOut: boolean): PendingCheckout | null {
+  const cache = React.useRef<PendingCheckout | null | undefined>(undefined)
+  return React.useSyncExternalStore(
+    subscribeNothing,
+    () => {
+      if (isLoggedOut) return null
+      if (cache.current === undefined) {
+        try {
+          const raw = window.sessionStorage.getItem(PENDING_CHECKOUT_KEY)
+          window.sessionStorage.removeItem(PENDING_CHECKOUT_KEY)
+          cache.current = raw ? (JSON.parse(raw) as PendingCheckout) : null
+        } catch {
+          cache.current = null
+        }
+      }
+      return cache.current
+    },
+    () => null,
+  )
+}
+
 function parsePricingTab(raw: string | null | undefined): PricingTab | null {
   if (!raw) return null
   const normalized = raw.trim().toLowerCase()
@@ -168,24 +194,46 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
     }
   }, [recommendedDb, recommendedJob])
 
-  // Restore tab on mount (from ?tab= URL param or sessionStorage).
-  React.useEffect(() => {
-    if (typeof window === "undefined") return
-    const params = new URLSearchParams(window.location.search)
-    const urlTab = parsePricingTab(params.get("tab"))
-    if (urlTab) {
-      changeTab(urlTab, false)
-      return
-    }
+  // Restore tab from ?tab= or the last tab this visit. Read once; writing
+  // the URL back happens after render.
+  const restoredTab = useClientSnapshot(() => {
+    const urlTab = parsePricingTab(new URLSearchParams(window.location.search).get("tab"))
+    if (urlTab) return { tab: urlTab, writeUrl: false }
     try {
       const stored = parsePricingTab(window.sessionStorage.getItem(ACTIVE_TAB_STORAGE_KEY))
-      if (stored) {
-        changeTab(stored, true)
-      }
+      if (stored) return { tab: stored, writeUrl: true }
     } catch {
       // Storage blocked
     }
-  }, [changeTab])
+    return null
+  }, null)
+  const [tabApplied, setTabApplied] = React.useState(false)
+  if (restoredTab && !tabApplied) {
+    setTabApplied(true)
+    setActiveTab(restoredTab.tab)
+    setSelectedPackage((current) => {
+      if (restoredTab.tab === "database" && current.kind !== "db") return { kind: "db", bundle: recommendedDb }
+      if (restoredTab.tab === "jobs" && current.kind === "db") return { kind: "job", bundle: recommendedJob }
+      return current
+    })
+  }
+  React.useEffect(() => {
+    if (!restoredTab) return
+    try {
+      window.sessionStorage.setItem(ACTIVE_TAB_STORAGE_KEY, restoredTab.tab)
+    } catch {
+      // Storage blocked
+    }
+    if (!restoredTab.writeUrl) return
+    try {
+      const url = new URL(window.location.href)
+      if (restoredTab.tab === "jobs") url.searchParams.delete("tab")
+      else url.searchParams.set("tab", restoredTab.tab)
+      window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash)
+    } catch {
+      // Ignore invalid URL
+    }
+  }, [restoredTab])
 
   // Sync tab on browser Back/Forward navigation.
   React.useEffect(() => {
@@ -307,24 +355,17 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
   const session = useSession()
 
   // Back from login with an order in hand: reopen it.
-  React.useEffect(() => {
-    if (isLoggedOut) return
-    let pending: PendingCheckout | null = null
-    try {
-      const raw = window.sessionStorage.getItem(PENDING_CHECKOUT_KEY)
-      window.sessionStorage.removeItem(PENDING_CHECKOUT_KEY)
-      pending = raw ? (JSON.parse(raw) as PendingCheckout) : null
-    } catch {
-      pending = null
-    }
-    if (!pending) return
-    setActiveTab(pending.tab)
-    setSelectedPackage(pending.selectedPackage)
-    setSubscriptionPlan(pending.subscriptionPlan)
-    setSubscriptionSlots(pending.subscriptionSlots ?? 1)
-    setCheckoutItem(pending.item)
+  const pendingCheckout = usePendingCheckout(isLoggedOut)
+  const [pendingApplied, setPendingApplied] = React.useState(false)
+  if (pendingCheckout && !pendingApplied) {
+    setPendingApplied(true)
+    setActiveTab(pendingCheckout.tab)
+    setSelectedPackage(pendingCheckout.selectedPackage)
+    setSubscriptionPlan(pendingCheckout.subscriptionPlan)
+    setSubscriptionSlots(pendingCheckout.subscriptionSlots ?? 1)
+    setCheckoutItem(pendingCheckout.item)
     setDrawerOpen(true)
-  }, [isLoggedOut])
+  }
 
   const [paymentOpen, setPaymentOpen] = React.useState(false)
   const [paymentAmount, setPaymentAmount] = React.useState(0)

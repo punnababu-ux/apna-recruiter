@@ -46,14 +46,16 @@ export function QuestionSectionBody({
   const [loadingSuggestions, setLoadingSuggestions] = React.useState(false)
   const [suggestError, setSuggestError] = React.useState<string | null>(null)
 
-  React.useEffect(() => {
-    const matchingPreset = suggestedPresets?.find(
-      (p) => p.title.toLowerCase().trim() === sectionTitle.toLowerCase().trim()
-    )
-    if (matchingPreset && matchingPreset.questions && matchingPreset.questions.length > 0) {
-      setSuggestions(matchingPreset.questions)
-    }
-  }, [suggestedPresets, sectionTitle])
+  const matchingPreset = suggestedPresets?.find(
+    (p) => p.title.toLowerCase().trim() === sectionTitle.toLowerCase().trim()
+  )
+  const presetQuestions =
+    matchingPreset?.questions && matchingPreset.questions.length > 0 ? matchingPreset.questions : null
+  const [seededTitle, setSeededTitle] = React.useState<string | null>(null)
+  if (presetQuestions && seededTitle !== sectionTitle) {
+    setSeededTitle(sectionTitle)
+    setSuggestions(presetQuestions)
+  }
 
   const visibleSuggestions = React.useMemo(() => {
     if (!suggestions) return []

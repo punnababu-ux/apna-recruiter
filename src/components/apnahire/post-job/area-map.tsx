@@ -16,10 +16,15 @@ type Point = { lat: number; lon: number }
 
 export function AreaMap({ area, city }: { area: string; city: string }) {
   const [point, setPoint] = React.useState<Point | null>(null)
+  const query = `${area}, ${city}`
+  const [queried, setQueried] = React.useState(query)
+  if (query !== queried) {
+    setQueried(query)
+    setPoint(null)
+  }
 
   React.useEffect(() => {
     const ctrl = new AbortController()
-    setPoint(null)
     const q = encodeURIComponent(`${area}, ${city}, India`)
     fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${q}`, { signal: ctrl.signal })
       .then((r) => r.json())

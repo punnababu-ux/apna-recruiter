@@ -109,12 +109,14 @@ function InterviewerEditDialog({
   const [draftLang, setDraftLang] = React.useState<InterviewLanguage>(language)
 
   // Reset the drafts to the task's current values each time the dialog opens.
-  React.useEffect(() => {
-    if (open) {
-      setDraftAgent(agentId)
-      setDraftLang(language)
-    }
-  }, [open, agentId, language])
+  const [seen, setSeen] = React.useState({ open, agentId, language })
+  if (open && (seen.open !== open || seen.agentId !== agentId || seen.language !== language)) {
+    setSeen({ open, agentId, language })
+    setDraftAgent(agentId)
+    setDraftLang(language)
+  } else if (!open && seen.open) {
+    setSeen({ open, agentId, language })
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

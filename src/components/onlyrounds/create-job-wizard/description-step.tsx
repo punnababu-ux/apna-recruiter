@@ -50,11 +50,11 @@ export function DescriptionStep({
   const [displayedPlaceholder, setDisplayedPlaceholder] = React.useState("")
   const [placeholderIndex, setPlaceholderIndex] = React.useState(0)
 
+  const placeholderPaused = generating || processing || promptVal.trim() !== ""
+  if (placeholderPaused && displayedPlaceholder !== "") setDisplayedPlaceholder("")
+
   React.useEffect(() => {
-    if (generating || processing || promptVal.trim() !== "") {
-      setDisplayedPlaceholder("")
-      return
-    }
+    if (placeholderPaused) return
 
     let charIdx = 0
     let currentText = ""
@@ -79,7 +79,7 @@ export function DescriptionStep({
     return () => {
       clearInterval(typingInterval)
     }
-  }, [placeholderIndex, generating, processing, promptVal])
+  }, [placeholderIndex, placeholderPaused])
 
   const hasResults = form.title.trim().length > 0 && form.jd.trim().length > 0
 

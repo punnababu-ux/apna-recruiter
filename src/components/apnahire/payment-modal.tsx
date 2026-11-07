@@ -59,12 +59,14 @@ export function PaymentModal({
   const [method, setMethod] = React.useState<PaymentMethod>("upi")
   const [processing, setProcessing] = React.useState<"success" | "failure" | null>(null)
 
-  React.useEffect(() => {
+  const [wasOpen, setWasOpen] = React.useState(open)
+  if (open !== wasOpen) {
+    setWasOpen(open)
     if (open) {
       setMethod("upi")
       setProcessing(null)
     }
-  }, [open])
+  }
 
   const runMockPayment = (outcome: "success" | "failure") => {
     setProcessing(outcome)

@@ -554,12 +554,16 @@ function PlanFrame({ title, className, frameless, children }: { title: string; c
 
 /** PREVIEW: `?frame=off` drops the job-types frame where no subscription
  *  is shown. Remove (keeping the chosen look) once decided. */
+function subscribeNothing() {
+  return () => {}
+}
+
 function useFramelessPreview() {
-  const [on, setOn] = React.useState(false)
-  React.useEffect(() => {
-    setOn(new URLSearchParams(window.location.search).get("frame") === "off")
-  }, [])
-  return on
+  return React.useSyncExternalStore(
+    subscribeNothing,
+    () => new URLSearchParams(window.location.search).get("frame") === "off",
+    () => false,
+  )
 }
 
 interface MobileJobPlanRadioGroupProps {

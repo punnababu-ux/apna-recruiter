@@ -505,8 +505,14 @@ export function CheckoutDrawer({
   const [paymentMethod, setPaymentMethod] =
     React.useState<SubscriptionPaymentMethod>("upi-autopay")
 
-  React.useEffect(() => {
-    if (open) {
+  // Reset when the summary opens, or the item / default add-on changes.
+  // Not when it closes, and not when `aiAddon` is rebuilt (that would undo
+  // a removal).
+  const openKey = open ? `${item?.id ?? ""}:${aiAddedByDefault}` : ""
+  const [resetKey, setResetKey] = React.useState(openKey)
+  if (open) {
+    if (openKey !== resetKey) {
+      setResetKey(openKey)
       setPackValue(DEFAULT_PACK)
       setAddonCredits(null)
       setAiAdded(!!aiAddon && aiAddedByDefault)
@@ -517,25 +523,32 @@ export function CheckoutDrawer({
       setExpanded(null)
       setPaymentMethod("upi-autopay")
     }
-    // Reset on open / a new item only; `aiAddon` is rebuilt by callers on
-    // every render, so it isn't a dependency (it would undo a removal).
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, item?.id, aiAddedByDefault])
+  } else if (resetKey !== "") {
+    setResetKey("")
+  }
 
   // On open, and when claimed while the summary is open (the exit nudge on
-  // close): apply the offer's coupon.
-  React.useEffect(() => {
-    if (open && extraCode && extraDeadline && extraDeadline > Date.now()) setAppliedCoupon(extraCode)
-  }, [open, extraCode, extraDeadline])
+  // close): apply the offer's coupon. A stamp so removing it by hand sticks
+  // until the offer itself changes.
+  const offerOn = !!(open && extraCode && extraDeadline && extraRemaining > 0)
+  const offerStamp = offerOn ? `${extraCode}:${extraDeadline}` : ""
+  const [seenOffer, setSeenOffer] = React.useState("")
+  if (offerStamp && offerStamp !== seenOffer) {
+    setSeenOffer(offerStamp)
+    if (extraCode) setAppliedCoupon(extraCode)
+  }
 
   // Ran out mid-checkout: drop the coupon and say so.
+  const offerEnded = !!(open && extraCode && appliedCoupon === extraCode && extraRemaining === 0)
+  const [ended, setEnded] = React.useState(false)
+  if (offerEnded && !ended) {
+    setEnded(true)
+    setAppliedCoupon(null)
+    setExpiredOpen(true)
+  }
   React.useEffect(() => {
-    if (open && extraCode && appliedCoupon === extraCode && extraRemaining === 0) {
-      setAppliedCoupon(null)
-      setExpiredOpen(true)
-      onExtraOfferExpired?.()
-    }
-  }, [open, extraCode, appliedCoupon, extraRemaining, onExtraOfferExpired])
+    if (ended) onExtraOfferExpired?.()
+  }, [ended, onExtraOfferExpired])
 
   React.useEffect(() => {
     onAiAddedChange?.(aiAdded)

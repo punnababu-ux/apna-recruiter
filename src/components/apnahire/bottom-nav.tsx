@@ -79,7 +79,11 @@ export function ApnaHireBottomNav() {
   const tabActive = (prefix: string) => !menuOpen && isActive(prefix)
 
   // Close the card when the route changes (e.g. browser back).
-  React.useEffect(() => setMenuOpen(false), [pathname])
+  const [route, setRoute] = React.useState(pathname)
+  if (route !== pathname) {
+    setRoute(pathname)
+    setMenuOpen(false)
+  }
 
   const menuItems: BottomNavMenuItem[] = [
     { href: "/apnahire/invite-centre/database-wa-invites", label: "Invite centre", icon: Mail },

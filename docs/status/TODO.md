@@ -80,7 +80,7 @@ Open before ECC: keep "View number" as the green action, or make Shortlist prima
 - [ ] Clay icon for the city-lock pop-up (`city-lock-dialog.tsx`, stand-in: "access")
 
 ## Lint debt (2026-11-06)
-- [ ] 31 `react-hooks/set-state-in-effect` warnings (new in eslint-config-next 16.4; set to warn in `eslint.config.mjs`). Most are "reset state when a prop changes" — derive it during render or key the component instead. Run `npx eslint` for the list. Set the rule back to error when done
+- [x] 31 `react-hooks/set-state-in-effect` warnings. Resets happen during render; browser-only reads use `useSyncExternalStore` (`useClientSnapshot`). The rule is an error again.
 - [x] Phone Super premium card: "Top placement on job listing" ran under the Buy now button; benefits now wrap beside it, and `expectNoTextUnderButtons` (`e2e/helpers.ts`) checks every phone plan card
 
 ## Layout bugs (found by the browser tests, 2026-11-06; each is a `test.fixme` — remove it when fixed)

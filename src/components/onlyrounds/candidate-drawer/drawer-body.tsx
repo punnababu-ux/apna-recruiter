@@ -74,17 +74,17 @@ export function DrawerBody({
   const [isEditing, setIsEditing] = React.useState(false)
   const [noteText, setNoteText] = React.useState(candidate.notes || "")
   const textareaRef = React.useRef<HTMLTextAreaElement>(null)
-  const lastCandidateIdRef = React.useRef(candidate.id)
-
-  React.useEffect(() => {
-    if (lastCandidateIdRef.current !== candidate.id) {
-      lastCandidateIdRef.current = candidate.id
-      setNoteText(candidate.notes || "")
-      setIsEditing(false)
-    } else if (!isEditing) {
-      setNoteText(candidate.notes || "")
-    }
-  }, [candidate.id, candidate.notes, isEditing])
+  const [seen, setSeen] = React.useState({ id: candidate.id, notes: candidate.notes, isEditing })
+  if (candidate.id !== seen.id) {
+    setSeen({ id: candidate.id, notes: candidate.notes, isEditing: false })
+    setNoteText(candidate.notes || "")
+    setIsEditing(false)
+  } else if (!isEditing && candidate.notes !== seen.notes) {
+    setSeen({ id: candidate.id, notes: candidate.notes, isEditing })
+    setNoteText(candidate.notes || "")
+  } else if (isEditing !== seen.isEditing) {
+    setSeen({ id: candidate.id, notes: candidate.notes, isEditing })
+  }
 
   React.useEffect(() => {
     if (isEditing) {

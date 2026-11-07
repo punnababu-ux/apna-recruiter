@@ -39,6 +39,7 @@
  */
 
 import * as React from "react"
+import { useClientSnapshot } from "@/hooks/use-client-snapshot"
 import Link from "next/link"
 import {
   Badge,
@@ -252,19 +253,18 @@ function TopUpCreditsButton() {
   // into Top up; "done" → Top up, still. Starts at "ring" so the first
   // paint is never the end state; a later page in the session (already
   // played) goes straight to "done".
+  const alreadyPlayed = useClientSnapshot(() => {
+    try {
+      return sessionStorage.getItem(PLAYED_KEY) === "1"
+    } catch {
+      return false
+    }
+  }, false)
   const [phase, setPhase] = React.useState<"ring" | "flip" | "done">("ring")
+  const shown = alreadyPlayed ? "done" : phase
 
   React.useEffect(() => {
-    let played = false
-    try {
-      played = sessionStorage.getItem(PLAYED_KEY) === "1"
-    } catch {
-      // Storage blocked: play it.
-    }
-    if (played) {
-      setPhase("done")
-      return
-    }
+    if (alreadyPlayed) return
     // Marked as played only when it flips, not when it starts: an effect
     // that runs twice (React's dev check) or a page left mid-ring would
     // otherwise skip the moment the recruiter never saw.
@@ -277,9 +277,9 @@ function TopUpCreditsButton() {
       setPhase("flip")
     }, FLIP_AFTER_MS)
     return () => window.clearTimeout(t)
-  }, [])
+  }, [alreadyPlayed])
 
-  if (phase === "ring") {
+  if (shown === "ring") {
     return (
       <span className="relative inline-flex rounded-full">
         <Button type="button" variant="outline" size="sm" aria-label="Available credits">
@@ -291,7 +291,7 @@ function TopUpCreditsButton() {
     )
   }
 
-  const firstTime = phase === "flip"
+  const firstTime = shown === "flip"
   return (
     <Tooltip>
       <TooltipTrigger

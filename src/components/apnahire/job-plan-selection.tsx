@@ -54,6 +54,7 @@ import { TrustedByStrip } from "@/components/marketing/proof-bands"
 import { UpcomingPricesProvider } from "@/components/apnahire/upcoming-price-line"
 import { PriceChangeBanner } from "@/components/apnahire/price-change-banner"
 import { clearPostIntent, wantsAiCalling } from "@/lib/apnahire/post-intent"
+import { useClientSnapshot } from "@/hooks/use-client-snapshot"
 import { GstNote } from "@/components/apnahire/gst-note"
 import { PaymentFailed, PaymentSuccess } from "@/components/apnahire/payment-success"
 import { addPurchasedJobCredits } from "@/hooks/use-plans-ingress"
@@ -183,9 +184,15 @@ export function JobPlanSelection() {
   // summary for the plan with one more slot. Paying adds the slot and posts.
   const slots = useJobSlots()
   const [slotUpgrade, setSlotUpgrade] = React.useState(false)
-  React.useEffect(() => {
-    if (!slots || new URLSearchParams(window.location.search).get("upgrade") !== "slot") return
+  // Once, on arrival — not again when the slots change after paying.
+  const slotUpgradeAsked = useClientSnapshot(
+    () => !!slots && new URLSearchParams(window.location.search).get("upgrade") === "slot",
+    false,
+  )
+  const [slotUpgradeOpened, setSlotUpgradeOpened] = React.useState(false)
+  if (slotUpgradeAsked && slots && !slotUpgradeOpened) {
     const total = slots.total + 1
+    setSlotUpgradeOpened(true)
     setSlotUpgrade(true)
     setTookUpsell(false)
     setCheckoutItem({
@@ -202,9 +209,7 @@ export function JobPlanSelection() {
       renewAfterDays: plans.slotUpgrade.validDays,
     })
     setDrawerOpen(true)
-    // Once, on arrival — not again when the slots change after paying.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }
 
   // The exit discount is only for someone about to pay (user call,
   // 2026-10-19). Leaving the page (back, Save & exit) with even one credit
@@ -218,19 +223,25 @@ export function JobPlanSelection() {
   // A work-from-home job can't be posted on the subscription (user call,
   // 2026-10-19): the job's work type comes from the posting draft; the
   // review switcher can override it.
-  const [wfh, setWfh] = React.useState(false)
-  React.useEffect(() => {
-    if (readDraft().locationType === "home") setWfh(true)
-  }, [])
+  const draftIsHome = useClientSnapshot(() => readDraft().locationType === "home", false)
+  const [wfh, setWfh] = React.useState(draftIsHome)
+  const [wfhSeen, setWfhSeen] = React.useState(draftIsHome)
+  if (draftIsHome !== wfhSeen) {
+    setWfhSeen(draftIsHome)
+    if (draftIsHome) setWfh(true)
+  }
   // The order as it stands when the summary closes: a paid job line, or the
   // paid AI calling agent added (a covered classic job + the agent is a
   // paying order).
   const [aiAdded, setAiAdded] = React.useState(false)
   // Came from "Post a job with AI calling": the summary opens with it added.
-  const [aiIntent, setAiIntent] = React.useState(false)
-  React.useEffect(() => {
-    if (wantsAiCalling()) setAiIntent(true)
-  }, [])
+  const aiFromLink = useClientSnapshot(() => wantsAiCalling(), false)
+  const [aiIntent, setAiIntent] = React.useState(aiFromLink)
+  const [aiSeen, setAiSeen] = React.useState(aiFromLink)
+  if (aiFromLink !== aiSeen) {
+    setAiSeen(aiFromLink)
+    if (aiFromLink) setAiIntent(true)
+  }
   // An add-on credit pays for the agent.
   const orderNeedsPayment =
     (checkoutItem?.price ?? 0) > 0 || (aiAdded && !creditBalance["ai-addon"])

@@ -33,7 +33,12 @@ export function ExitOfferDialog({
 }) {
   const [deadline, setDeadline] = React.useState(0)
   React.useEffect(() => {
-    if (open) setDeadline(Date.now() + EXTRA_OFF.validHours * 60 * 60 * 1000)
+    if (!open) return
+    const id = window.setTimeout(
+      () => setDeadline(Date.now() + EXTRA_OFF.validHours * 60 * 60 * 1000),
+      0,
+    )
+    return () => window.clearTimeout(id)
   }, [open])
 
   return (
