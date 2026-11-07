@@ -6,10 +6,9 @@
  * the Jan 1 notices, and from Jan 1. Every plan card, upsell, the order
  * summary's prices, the dashboard banner and the notification follow it.
  *
- * Set from the hidden preview settings (PricingPhaseControls, both
- * checkouts); remembered in this browser, so it holds on the dashboard
- * too. A prototype control: remove with PrototypeSettings before
- * production.
+ * Remembered in this browser, so it holds on the dashboard too. There is
+ * no on-screen switch: tests set the storage key before the page loads.
+ * Production has one catalog and the date.
  */
 
 import * as React from "react"

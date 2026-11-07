@@ -14,7 +14,7 @@ Take one at a time, top down. P0 = now, P1 = next, P2 = after, P3 = later.
 5. **P0** ECC 5 · Database tab: AI-suggested banner, filters, select all, Excel, credit note, pagination
 6. **P0** ECC 6 · journeys: no leads yet · leads arriving · expired (= "Job details journeys" below)
 7. ✅ **Done** Jobs list: status chips, card states (repost, finish posting), three counts, pending actions, empty state
-8. **P1** Before production: remove hidden prototype-settings ingresses
+8. ✅ **Done** Hidden prototype-settings ingresses removed (2026-11-07)
 9. **P1** Banners: one rule for which shows when and how they stack
 10. ✅ **Done** Subscription city lock (edge cases not checked yet)
 11. ✅ **Done** Wire plan end into the jobs list and the next post
@@ -114,7 +114,7 @@ Design-system pages (`e2e/components.spec.ts` `KNOWN`, full list in
 - [x] Contrast: Badge `default`, the green count, and the solid avatar fallback use `--cta-primary` (green-700 in dark), same as buttons. Icons and links stay on `--primary`.
 
 ## Before production
-- [ ] Remove the hidden prototype-settings ingresses: the silent clicks on "*GST applicable" (`GstNote`, both checkouts) and the post-job "Candidate view" caption, the plan card's "Valid till" line (`SubscriberPlanCard`), the expired banner's "Resubscribe at the same price." (`PlanEndedBanner`), plus `PrototypeSettings` itself (grep `openPrototypeSettings`). Current builds are not production.
+- [x] Hidden prototype settings removed (2026-11-07). "*GST applicable", "Valid till", "Candidate view" and "Resubscribe at the same price." are plain text. Express review states are `?layout=subscription` and `?credits=partial|held`.
 
 ## Express (recruiter chat)
 - [x] Dark mode contrast: solid green badges and avatars use the darker button fill. Icons and links stay on green-500. (2026-11-07)

@@ -88,7 +88,6 @@ import { rememberPostIntent } from "@/lib/apnahire/post-intent"
 import { PaymentSuccess } from "@/components/apnahire/payment-success"
 import { CityLockDialog } from "@/components/apnahire/city-lock-dialog"
 import { SlotsFullDialog } from "@/components/apnahire/slots/slots-full-dialog"
-import { JobSlotsControls, PrototypeSettings, openPrototypeSettings } from "@/components/apnahire/prototype-settings"
 import { freeSlots, lockSubscriptionCity, setJobSlots, todayLabel, useJobSlots } from "@/hooks/use-job-slots"
 import { cn } from "@/lib/utils"
 import type { JobPostDraft } from "@/types/apnahire-job"
@@ -674,11 +673,7 @@ export function PostJobFlow() {
           {!solo && (
             <aside className="hidden lg:block">
               <div className="sticky top-36 flex flex-col gap-3">
-                {/* Prototype only: a silent click opens the hidden preview settings
-                      (PrototypeSettings). Remove before production. */}
-                <p onClick={openPrototypeSettings} className="text-center text-xs font-medium text-muted-foreground">
-                  Candidate view
-                </p>
+                <p className="text-center text-xs font-medium text-muted-foreground">Candidate view</p>
                 <CandidateJobPreview draft={state.draft} flashKey={flashKey} focus={def.preview} />
               </div>
             </aside>
@@ -751,11 +746,6 @@ export function PostJobFlow() {
           }}
         />
       )}
-
-      {/* Prototype: preview the subscription states that change how posting ends. */}
-      <PrototypeSettings label="Preview job posting state">
-        <JobSlotsControls />
-      </PrototypeSettings>
 
       {/* A saved draft: continue it or start a new job. */}
       <AlertDialog open={askResume}>

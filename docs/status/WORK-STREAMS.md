@@ -43,7 +43,6 @@ No other branch is ahead of `origin/main`. No stashes.
   - Code only, free: `graphify update .`
   - Docs too (LLM): ask Claude "re-extract docs into graphify" (incremental, only changed docs).
 - **Figma re-audit** after a checkout code change.
-- **Before production:** strip the hidden prototype-settings ingresses (TODO.md → "Before production").
 - **Stale worktrees:** offer to clean up clean, merged ones.
 
 ## What Claude does without asking

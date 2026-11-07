@@ -7,13 +7,12 @@
  *
  * OFFER_BAR_TEMPLATES holds every case the Figma draws, as ready OfferBar
  * props: tenure upgrades, extra slots, a database top-up, auto-pay off and
- * the rebuys. Which one shows is not decided here (no rules yet); the
- * prototype picks one with useOfferBarPreview.
+ * the rebuys. Which one shows is passed in. The jobs page shows none until
+ * a rule picks one.
  *
  * Prices and percentages are the Figma's placeholders.
  */
 
-import * as React from "react"
 import Image from "next/image"
 import {
   ArrowRight,
@@ -32,7 +31,6 @@ import {
   type OfferBarProps,
 } from "@apna/design-system"
 import { useIsMobile } from "@/hooks/use-mobile"
-import { openPrototypeSettings, PrototypeOption, PrototypeSection } from "@/components/apnahire/prototype-settings"
 import { cn } from "@/lib/utils"
 
 const art = (name: string) => (
@@ -218,12 +216,7 @@ export function SubscriberPlanCard({
       <div className="flex flex-col gap-4 p-4 md:p-6">
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
           <LogoApnaUnlimited variant="theme" className="h-4 w-auto text-foreground md:h-5" />
-          {/* Prototype: a silent click opens the preview settings (every
-              offer bar). Remove before production with the other ingresses. */}
-          <span
-            className="flex items-center gap-1.5 text-sm whitespace-nowrap text-muted-foreground"
-            onClick={openPrototypeSettings}
-          >
+          <span className="flex items-center gap-1.5 text-sm whitespace-nowrap text-muted-foreground">
             {ended ? (
               <CircleAlert className="size-4 text-destructive" aria-hidden />
             ) : (
@@ -264,56 +257,3 @@ export function SubscriberPlanCard({
   )
 }
 
-/* ─────────────────────────── Prototype preview ─────────────────────────── */
-
-const STORAGE_KEY = "apnahire:offer-bar-preview"
-const EVENT = "apnahire:offer-bar-preview"
-
-function read(): OfferBarTemplate | null {
-  try {
-    const v = window.localStorage.getItem(STORAGE_KEY)
-    return v && v in OFFER_BAR_TEMPLATES ? (v as OfferBarTemplate) : null
-  } catch {
-    return null
-  }
-}
-
-function subscribe(onChange: () => void) {
-  window.addEventListener("storage", onChange)
-  window.addEventListener(EVENT, onChange)
-  return () => {
-    window.removeEventListener("storage", onChange)
-    window.removeEventListener(EVENT, onChange)
-  }
-}
-
-function setPreview(v: OfferBarTemplate | null) {
-  try {
-    if (v) window.localStorage.setItem(STORAGE_KEY, v)
-    else window.localStorage.removeItem(STORAGE_KEY)
-  } catch {
-    // Storage blocked: lasts until reload.
-  }
-  window.dispatchEvent(new Event(EVENT))
-}
-
-/** Which template the prototype shows on the plan card (none by default). */
-export function useOfferBarPreview() {
-  return React.useSyncExternalStore(subscribe, read, () => null)
-}
-
-export function OfferBarPreviewControls() {
-  const current = useOfferBarPreview()
-  return (
-    <PrototypeSection title="Plan card offer bar">
-      <PrototypeOption active={!current} onClick={() => setPreview(null)}>
-        No bar
-      </PrototypeOption>
-      {(Object.keys(OFFER_BAR_TEMPLATES) as OfferBarTemplate[]).map((key) => (
-        <PrototypeOption key={key} active={current === key} onClick={() => setPreview(key)}>
-          {OFFER_BAR_TEMPLATES[key].label}
-        </PrototypeOption>
-      ))}
-    </PrototypeSection>
-  )
-}

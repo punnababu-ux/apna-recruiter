@@ -119,7 +119,7 @@ export default function WorkingRulesPage() {
             ["Checkout code changed", "Figma re-audit (skill figma-code-sync)"],
             ["A stream moved", "Update docs/status/WORK-STREAMS.md"],
             ["A design was approved", "Add a dated lens to the design-variants skill, same turn"],
-            ["Before production", "Strip the hidden prototype-settings ingresses"],
+            ["Before production", "Swap localStorage hooks for API calls; keep each hook's return shape"],
           ]}
         />
       </ShowcaseEntry>

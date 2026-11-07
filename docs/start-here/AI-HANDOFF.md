@@ -31,9 +31,10 @@ Gemini…) can pick up from here.
   right; see docs/status/FIGMA-SYNC-STATUS.md).
 - **Live prototype:** poneglyphag.vercel.app (rebuilt from `main`).
   Express `/apnahire/jobs/new/plans`, self-checkout `/apnahire/credits`.
-  States (credit balance, plan layout, offer, returning recruiter, pricing
-  phase) are set from the hidden prototype panel: a silent tap on
-  "*GST applicable". Remove the panel before production.
+  Express plan layout and credit balance are query params
+  (`?layout=subscription`, `?credits=partial` or `?credits=held`). The
+  offer, a returning recruiter and the pricing phase are local storage
+  keys set before the page loads. There is no preview panel.
 - **Screens on it (20 states × phone + desktop = 40 images):**
   - Express: plans (no credits), 10% offer claimed, all three credits held,
     1 job credit, "Pay less when you buy 3", order summary (paying, AI calling

@@ -14,9 +14,9 @@
  *   jan       From Jan 1, 2027: the Jan prices are the prices. No banner, no
  *             notification, no indicator.
  *
- * The figures for each phase are in content/plan-catalog.ts; the switch is
- * usePricingPhase (preview settings, both checkouts). A prototype control:
- * production has one catalog and the date.
+ * The figures for each phase are in content/plan-catalog.ts. The phase is
+ * `apnahire:pricing-phase` in local storage (usePricingPhase), default
+ * today. There is no on-screen switch. Production has one catalog and the date.
  */
 
 export type PricingPhase = "today" | "new" | "december" | "jan"

@@ -78,7 +78,6 @@ import { PlanEndedState } from "@/components/apnahire/plan-ended"
 import { recentlyEnded, usePreviousPlan } from "@/hooks/use-previous-plan"
 import { SetCityAction } from "@/components/apnahire/city-lock-dialog"
 import { PlanPopup, PopupFooter, PopupHeader } from "@/components/apnahire/plan-popup"
-import { JobSlotsControls, PricingPhaseControls, PrototypeSettings } from "@/components/apnahire/prototype-settings"
 import {
   SUBSCRIPTION_TERMS,
   planOrderLabel,
@@ -116,11 +115,6 @@ export function ManagePlan() {
       {/* Phones: the top bar carries the title. */}
       <PageHeader variant="transparent" className="px-0 pt-0 max-md:hidden" title="Manage plan" />
       {slots ? <PlanManager slots={slots} /> : <NoPlan />}
-      {/* Prototype: opened from any "*GST applicable" note. */}
-      <PrototypeSettings label="Preview plan state">
-        <JobSlotsControls />
-        <PricingPhaseControls />
-      </PrototypeSettings>
     </div>
   )
 }

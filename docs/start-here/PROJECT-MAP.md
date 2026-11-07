@@ -33,7 +33,7 @@ One-page index: what Punna means → where it lives. Rules are in `AGENTS.md`
 | notifications | `/apnahire/notifications` | `apnahire/notifications/*`, `content/notifications.ts`, `hooks/apnahire/use-notifications.ts` |
 | sidebar / top bar / bottom nav (product) | — | `apnahire/app-sidebar.tsx`, `top-bar.tsx`, `bottom-nav.tsx`, `lib/apnahire/nav.ts` |
 | usage / invoices (parked) | `/apnahire/usage` | — |
-| prototype toggles / preview flags | — | `apnahire/prototype-settings.tsx`, `checkout-preview-settings.tsx`, `job-plan-preview-switcher.tsx` |
+| express review states | `/apnahire/jobs/new/plans?layout=subscription&credits=partial` or `credits=held` | `apnahire/job-plan-selection.tsx` |
 | GST line | — | `apnahire/gst-note.tsx` (never hand-write) |
 | OnlyRounds (separate AI interview tool) | `/onlyrounds/*` | `components/onlyrounds/*`, `lib/onlyrounds`, `hooks/onlyrounds` |
 | design-system docs site | `/design-system/*` | category pages under `src/app/design-system/components/` |

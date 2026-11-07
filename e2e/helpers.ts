@@ -55,19 +55,27 @@ export async function open(page: Page, path: string, { offer = false, returning 
 
 export const settle = (page: Page, ms = 600) => page.waitForTimeout(ms)
 
-/** The hidden prototype panel (a silent tap on the GST note), then pick each option by its label. */
-export async function prototype(page: Page, ...options: string[]) {
-  await page.getByText("*GST applicable", { exact: true }).filter({ visible: true }).first().click()
-  await settle(page)
-  for (const o of options) {
-    await page.getByText(o, { exact: true }).filter({ visible: true }).first().click()
-    await settle(page)
-  }
-  await page.keyboard.press("Escape")
-  await settle(page)
+export const SUBSCRIPTION_LAYOUT = "Subscription (3 plans + monthly)"
+
+/** Express checkout states, as query params. The labels are the old preview
+ *  panel's, so the specs read the same. */
+const PREVIEW_QUERY: Record<string, [string, string]> = {
+  [SUBSCRIPTION_LAYOUT]: ["layout", "subscription"],
+  "1 job credit (top-up for most)": ["credits", "partial"],
+  "4 job + 1 Premium + AI + 1 add-on credit": ["credits", "held"],
 }
 
-export const SUBSCRIPTION_LAYOUT = "Subscription (3 plans + monthly)"
+/** Set express-checkout review state and reload. There is no preview panel. */
+export async function prototype(page: Page, ...options: string[]) {
+  const url = new URL(page.url())
+  for (const option of options) {
+    const pair = PREVIEW_QUERY[option]
+    if (!pair) throw new Error(`Unknown preview option: ${option}`)
+    url.searchParams.set(pair[0], pair[1])
+  }
+  await page.goto(url.toString(), { waitUntil: "networkidle" })
+  await page.waitForTimeout(800)
+}
 
 /** Nothing pokes out sideways: the page never scrolls horizontally. Names the first elements past the edge. */
 export async function expectNoHorizontalOverflow(page: Page, label = "page") {

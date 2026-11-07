@@ -298,7 +298,7 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
         what: "\"*GST applicable\" under prices.",
         live: "/pricing",
         where: "Every pricing section, both checkouts",
-        rules: ["One wording, one component. Never write your own tax line.", "Prototype: a silent click opens the preview settings. Remove before production."],
+        rules: ["One wording, one component. Never write your own tax line."],
       },
       {
         name: "DbCreditsOfferNote",
@@ -326,7 +326,7 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
         what: "\"↗ ₹749 from Jan 1\" on every job and plan card and every upsell tile (OfferChoice `janPrice`) until the Jan 1, 2027 price change; PriceChangeBanner on top explains it.",
         live: "/apnahire/credits",
         where: "Both checkouts and their upsell pop-ups, signed in only (UpcomingPricesProvider enabled)",
-        rules: ["Never on the logged-out pricing page or in the order summary.", "Gray text with a warning-gold rising arrow (TrendingUp, the price-change icon on the banner and the notification too). Never green: the one green line under a price stays the per-unit note or the claimed offer.", "Upsell tiles: the price group's last line, pinned level across both tiles. A tile without a Jan price (the \"Buy 3\" offer, the 47-credit pack) shows none.", "Every card in a row carries it, so prices, notes and CTAs stay level. Not on Database, AI calling or Enterprise (unchanged).", "Only in the December pricing phase (preview settings → Plans and prices; usePricingPhase). Today, New plans and From Jan 1 show none."],
+        rules: ["Never on the logged-out pricing page or in the order summary.", "Gray text with a warning-gold rising arrow (TrendingUp, the price-change icon on the banner and the notification too). Never green: the one green line under a price stays the per-unit note or the claimed offer.", "Upsell tiles: the price group's last line, pinned level across both tiles. A tile without a Jan price (the \"Buy 3\" offer, the 47-credit pack) shows none.", "Every card in a row carries it, so prices, notes and CTAs stay level. Not on Database, AI calling or Enterprise (unchanged).", "Only in the December pricing phase (usePricingPhase). Today, New plans and From Jan 1 show none."],
       },
       {
         name: "MobilePlanRow and friends",
@@ -430,7 +430,7 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
         live: "/apnahire/jobs",
         where: "Jobs dashboard, above the list",
         rules: [
-          "One bar at a time; which one is not decided yet (templates only). The prototype picks one: click \"Valid till\" to open the preview settings.",
+          "One bar at a time; which one is not decided yet (templates only). The jobs page shows none.",
           "The bar's CTA is the dark companion (emphasis, white on the plum), never green.",
           "Plan names and lengths in our words: quarterly / annual plan, days.",
         ],
@@ -544,7 +544,7 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
         what: "The job as a candidate sees it, in a PhoneFrame.",
         live: "/apnahire/jobs/new",
         where: "Beside the wizard questions",
-        rules: ["Prototype: the \"Candidate view\" caption silently opens preview settings. Remove before production."],
+        rules: ["The caption is a label, not a control."],
       },
       {
         name: "JobPlanSelection / TieredJobPlans / SubscriptionJobPlans",
@@ -552,7 +552,7 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
         what: "Choose a job plan (express checkout).",
         live: "/apnahire/jobs/new/plans",
         where: "/apnahire/jobs/new/plans",
-        rules: ["One recommended tier: ribbon and the only green CTA.", "AI calling is an add-on in the order summary, never a tier."],
+        rules: ["One recommended tier: ribbon and the only green CTA.", "AI calling is an add-on in the order summary, never a tier.", "Review states are query params: ?layout=subscription, ?credits=partial, ?credits=held. No preview panel."],
       },
       {
         name: "JobTypesDialog",
@@ -707,13 +707,6 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
         what: "Signed-out visits go to login; signed-in visits to login go on.",
         where: "App and auth layouts",
         rules: ["Never show the logged-out page to a signed-in recruiter."],
-      },
-      {
-        name: "PrototypeSettings",
-        file: "apnahire/prototype-settings.tsx",
-        what: "Hidden preview controls (exit offer, Unlimited tab look, job slots).",
-        where: "Opened silently from GstNote and \"Candidate view\"",
-        rules: ["Not for production: remove it and every openPrototypeSettings call before a production release."],
       },
     ],
   },

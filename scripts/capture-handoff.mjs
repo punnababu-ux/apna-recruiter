@@ -38,11 +38,21 @@ const clickText = async (p, text, { exact = true, nth = 0, role } = {}) => {
   const l = loc.filter({ visible: true }).nth(nth)
   await l.click({ timeout: 5000 }).catch(() => l.click({ force: true })); await settle(p)
 }
-// Hidden prototype panel: a silent click on the GST note opens it.
+// Express checkout review state lives in the query, not a hidden panel.
+const PREVIEW_QUERY = {
+  "Subscription (3 plans + monthly)": ["layout", "subscription"],
+  "1 job credit (top-up for most)": ["credits", "partial"],
+  "4 job + 1 Premium + AI + 1 add-on credit": ["credits", "held"],
+}
 async function prototype(p, ...options) {
-  await clickText(p, "*GST applicable")
-  for (const o of options) await clickText(p, o)
-  await p.keyboard.press("Escape"); await settle(p)
+  const url = new URL(p.url())
+  for (const option of options) {
+    const pair = PREVIEW_QUERY[option]
+    if (!pair) throw new Error(`Unknown preview option: ${option}`)
+    url.searchParams.set(pair[0], pair[1])
+  }
+  await p.goto(url.toString(), { waitUntil: "networkidle" })
+  await settle(p, 800)
 }
 // Card CTA: the nth visible button with this label inside the card holding `title`.
 async function cardCta(p, title, label) {

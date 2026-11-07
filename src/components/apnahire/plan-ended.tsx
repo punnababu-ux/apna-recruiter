@@ -34,7 +34,6 @@ import {
   EmptyTitle,
 } from "@apna/design-system"
 import { SUBSCRIPTION_TERMS, planOrderLabel, slotLabel, slotTermLabel, type JobSlotCount } from "@/content/subscriptions"
-import { openPrototypeSettings } from "@/components/apnahire/prototype-settings"
 import { usePlans } from "@/hooks/apnahire/use-plans"
 import { inr, num } from "@/lib/format"
 import { dayLabel, useJobSlots } from "@/hooks/use-job-slots"
@@ -65,9 +64,7 @@ export function PlanEndedBanner({ className, onRenew }: { className?: string; on
       className={className}
       icon={<RefreshCw />}
       title={`Your Apna unlimited plan expired on ${dayLabel(prev.endedOn)}.`}
-      // Prototype: a silent click opens the preview settings (this state has
-      // no plan card to reach them from). Remove before production.
-      subtitle={<span onClick={openPrototypeSettings}>Resubscribe at the same price.</span>}
+      subtitle="Resubscribe at the same price."
       items={[
         { label: slotTermLabel({ slots: prev.slots, slotDays: SUBSCRIPTION_TERMS[prev.term].slotDays }) },
         ...(db ? [{ label: `${num(db)} database credits` }] : []),

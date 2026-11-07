@@ -401,3 +401,10 @@ circles use `--cta-primary`. The display-page warning trend and "JD"
 avatar use real roles. `/apnahire/jobs/rounds/new` redirects to job
 posting; the rounds editor stays for the AI interview product. The
 design-system `KNOWN` list is empty.
+
+### 18. The hidden preview panel is gone
+"*GST applicable", "Valid till", "Candidate view" and "Resubscribe at
+the same price." are plain text. `PrototypeSettings`, the checkout gear
+and the job-plan switcher are deleted. Express tests set
+`?layout=subscription` and `?credits=partial` or `?credits=held`. The
+pricing phase stays in local storage.

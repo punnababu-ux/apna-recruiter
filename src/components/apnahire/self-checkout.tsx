@@ -77,7 +77,6 @@ import { usePlanChange, useChoosePlan } from "@/components/apnahire/plan-change"
 import { PlanEndedBanner } from "@/components/apnahire/plan-ended"
 import { addPurchasedJobCredits } from "@/hooks/use-plans-ingress"
 import { useHeaderSlot } from "@/components/marketing/header-slot"
-import { CheckoutPreviewSettings } from "@/components/apnahire/checkout-preview-settings"
 import { ExitOfferDialog } from "@/components/apnahire/offers/exit-offer-dialog"
 import { LeaveReasonsDialog } from "@/components/apnahire/offers/exit-stay-dialogs"
 import { useExtraOff } from "@/components/apnahire/offers/use-extra-off"
@@ -996,13 +995,6 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
           onFailure={handlePaymentFailure}
         />
 
-        {/* Prototype-only settings: the exit offer's demo controls (no auth
-            switch — each state has its own route). Shown in every build,
-            deployed ones included, like express checkout's switcher. Remove
-            once real offer rules are wired up. */}
-        <CheckoutPreviewSettings
-          offer={{ claimed: offer.claimed, returning: offer.returning, onReturningChange: offer.setReturning, onExpireSoon: offer.expireSoon, onReset: offer.reset }}
-        />
       </div>
     </UpcomingPricesProvider>
   )

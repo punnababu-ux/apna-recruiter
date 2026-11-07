@@ -25,11 +25,10 @@
  * `handleProceedToPay` → `PaymentModal` → `PaymentSuccess` wiring as
  * `self-checkout.tsx`.
  *
- * `planLayout` and `creditBalance` have no real data source yet (segment
- * rules / account balance, respectively) — both are previewed via
- * `JobPlanPreviewSwitcher`, a floating control like `CheckoutPreviewSettings` —
- * but unlike that one it also shows in deployed builds, so the page's
- * states can be reviewed on Vercel.
+ * `planLayout` and `creditBalance` have no account source yet. Review
+ * states are query params, not a hidden panel: `?layout=subscription`
+ * and `?credits=partial` (1 job credit) or `?credits=held` (4 job
+ * credits, a Premium + AI calling credit, and an add-on credit).
  *
  * Bundle-offer and subscription-upgrade upsell popups (Figma's "Job bundle
  * offer" / "Special upgrade offer" frames) are Phase 2 — the CTAs below go
@@ -58,7 +57,6 @@ import { useClientSnapshot } from "@/hooks/use-client-snapshot"
 import { GstNote } from "@/components/apnahire/gst-note"
 import { PaymentFailed, PaymentSuccess } from "@/components/apnahire/payment-success"
 import { addPurchasedJobCredits } from "@/hooks/use-plans-ingress"
-import { JobPlanPreviewSwitcher } from "@/components/apnahire/job-plan-preview-switcher"
 import { usePlans } from "@/hooks/apnahire/use-plans"
 import { ExitOfferDialog } from "@/components/apnahire/offers/exit-offer-dialog"
 import { StayDialog } from "@/components/apnahire/offers/exit-stay-dialogs"
@@ -90,7 +88,6 @@ import {
   AI_CALLING_ADDON,
   NO_CREDITS,
   creditLabel,
-  type CreditBalance,
   type JobPlanTier,
 } from "@/content/job-plans"
 
@@ -137,10 +134,35 @@ function clearDraft() {
   }
 }
 
+const SERVER_PREVIEW = { layout: "tiered" as JobPlanLayout, balance: NO_CREDITS }
+
+/** Express checkout review states, from the address bar. The design system
+ *  showcase links every one. `partial` and `held` are what the tests use. */
+const CREDIT_PREVIEWS = {
+  partial: { job: 1, "ai-calling": 0 },
+  job4: { job: 4, "ai-calling": 0 },
+  ai: { job: 0, "ai-calling": 1 },
+  "partial-ai": { job: 1, "ai-calling": 1 },
+  "job4-ai": { job: 4, "ai-calling": 1 },
+  addon: { job: 4, "ai-calling": 0, "ai-addon": 1 },
+  held: { job: 4, "ai-calling": 1, "ai-addon": 1 },
+} as const
+
+function readPreview() {
+  const params = new URLSearchParams(window.location.search)
+  const credits = params.get("credits")
+  const balance = credits && credits in CREDIT_PREVIEWS ? CREDIT_PREVIEWS[credits as keyof typeof CREDIT_PREVIEWS] : NO_CREDITS
+  return {
+    layout: (params.get("layout") === "subscription" ? "subscription" : "tiered") as JobPlanLayout,
+    balance,
+  }
+}
+
 export function JobPlanSelection() {
   const router = useRouter()
-  const [layout, setLayout] = React.useState<JobPlanLayout>("tiered")
-  const [creditBalance, setCreditBalance] = React.useState<CreditBalance>(NO_CREDITS)
+  const preview = useClientSnapshot(readPreview, SERVER_PREVIEW)
+  const layout = preview.layout
+  const creditBalance = preview.balance
 
   const [drawerOpen, setDrawerOpen] = React.useState(false)
   const [checkoutItem, setCheckoutItem] = React.useState<CartLine | null>(null)
@@ -221,8 +243,7 @@ export function JobPlanSelection() {
   const holdsCredits = hasAnyCredits(creditBalance)
   const canPostFree = creditBalance.job > 0
   // A work-from-home job can't be posted on the subscription (user call,
-  // 2026-10-19): the job's work type comes from the posting draft; the
-  // review switcher can override it.
+  // 2026-10-19): the job's work type comes from the posting draft.
   const draftIsHome = useClientSnapshot(() => readDraft().locationType === "home", false)
   const [wfh, setWfh] = React.useState(draftIsHome)
   const [wfhSeen, setWfhSeen] = React.useState(draftIsHome)
@@ -618,17 +639,6 @@ export function JobPlanSelection() {
         }}
       />
 
-      {/* Shown in every build, deployed ones included: this page has no real
-          layout or balance data yet, so the switcher is the only way to review
-          its states. Remove once segment rules and balances are wired up. */}
-      <JobPlanPreviewSwitcher
-        layout={layout}
-        onLayoutChange={setLayout}
-        creditBalance={creditBalance}
-        onCreditBalanceChange={setCreditBalance}
-        offer={{ claimed: offer.claimed, returning: offer.returning, onReturningChange: offer.setReturning, onExpireSoon: offer.expireSoon, onReset: offer.reset }}
-        wfh={{ value: wfh, onChange: setWfh }}
-      />
     </div>
   )
 }

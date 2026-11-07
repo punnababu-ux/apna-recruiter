@@ -8,6 +8,13 @@ or **Open**.
 
 ---
 
+## No hidden preview panel (2026-11-07)
+
+- **Decision:** product copy is not a control. "*GST applicable", "Valid till", "Candidate view" and "Resubscribe at the same price." are plain text. The preview panel is gone. Express checkout review states are query params: `?layout=subscription`, `?credits=partial`, `?credits=held`. The pricing phase stays in `apnahire:pricing-phase` (a fresh browser opens on december), with no on-screen switch.
+- **Why:** a silent click on a tax line or a date is how a prototype leaks into the product. Tests and the handoff script set the same states through the address bar.
+- **Would change it:** account data for the plan layout, the credit balance and the pricing phase. Until then the query and the storage key stay.
+- **Status:** Decided (Punna, 2026-11-07: the next score item after CI screenshots).
+
 ## Solid green badges and avatars use the button fill (2026-11-07)
 
 - **Decision:** in dark mode, a solid green surface with a light label uses `--cta-primary` (green-700), not `--primary` (green-500). That is Badge `default`, the green count, the avatar badge, and the stepper's current and completed steps. Icons and links stay on `--primary`.

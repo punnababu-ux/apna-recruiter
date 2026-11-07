@@ -150,7 +150,7 @@ export default function ArchitecturePage() {
         <RuleList
           rules={[
             "These hooks are the seam for production: swap each for an API call, keep its return shape.",
-            "Prototype switches (auth state, pricing phase, preview flags) live in apnahire/prototype-settings.tsx — strip before production.",
+            "The preview panel is gone. Express layout and credit balance are query params on the plans page. The pricing phase is apnahire:pricing-phase.",
           ]}
         />
       </ShowcaseEntry>
