@@ -165,7 +165,7 @@ export default function FeedbackComponentsPage() {
                   variant="outline"
                   className={cn(
                     "bg-transparent font-bold",
-                    appearance === "primary" ? "border-white/40 text-white" : "border-success/30 text-success"
+                    appearance === "primary" ? "border-white/40 text-white" : "border-success/30 text-success-subtle-foreground"
                   )}
                 >
                   <Sparkles /> Special offer for you

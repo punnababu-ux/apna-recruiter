@@ -49,20 +49,6 @@ const KNOWN: Known[] = [
   // ── Light and dark: tinted fills carry role-coloured text that is too faint ──────────────────────────────
   {
     rule: "color-contrast",
-    match: /#dc2626>#fce9e9/,
-    theme: "light",
-    nodes: "3",
-    what: "Button `destructive` (soft: text-destructive on destructive/10) on the actions page: 4.13:1.",
-  },
-  {
-    rule: "color-contrast",
-    match: /#226cca>#e7eef8/,
-    theme: "light",
-    nodes: "1",
-    what: "Badge `info` size sm (10px, text-info on info/10): 4.42:1.",
-  },
-  {
-    rule: "color-contrast",
     match: /#f59e0b>#ffffff/,
     theme: "light",
     nodes: "1",
@@ -74,55 +60,6 @@ const KNOWN: Known[] = [
     theme: "both",
     nodes: "1",
     what: "Display page \"JD\" avatar fallback hand-painted with bg-emerald-500/15 + a raw emerald text (3.17:1 light, 3.92:1 dark). A demo that bypasses the Avatar tones; use the success role.",
-  },
-  {
-    rule: "color-contrast",
-    match: /#1f8268>#f4f4f5/,
-    theme: "light",
-    nodes: "1",
-    what: "Marketing page eyebrow `text-overline text-primary` on the muted band: 4.29:1 (AGENTS.md says eyebrows are gray, not green).",
-  },
-  {
-    rule: "color-contrast",
-    match: /#1f8268>#f4f9f7/,
-    theme: "light",
-    nodes: "1",
-    what: "Navigation page link chip (text-primary on primary/5, to /apnahire/sidebar-specs/interactive): 4.43:1.",
-  },
-  {
-    rule: "color-contrast",
-    match: /#418573>#e6f7f0/,
-    theme: "light",
-    nodes: "1",
-    what: "Inputs page selectable-card description (text-accent-foreground/80 on the accent fill): 3.92:1.",
-  },
-  {
-    rule: "color-contrast",
-    match: /#(dc2626>#fee2e2|f87171>#7f1d1d)/,
-    theme: "both",
-    nodes: "2-3",
-    what: "Outline and banner text in the destructive colour on the destructive tint: 3.95:1 light / 3.62:1 dark.",
-  },
-  {
-    rule: "color-contrast",
-    match: /data-variant="outline"[\s\S]*#(1f8268>#c6efe0|00a86b>#0e4134)/,
-    theme: "both",
-    nodes: "1",
-    what: "Outline Badge `lg` in text-success on the success tint (feedback page): 3.77:1 light / 3.73:1 dark. Banner links on that tint are fixed; this badge is not.",
-  },
-  {
-    rule: "color-contrast",
-    match: /#(6b6b74>#(fee2e2|c6efe0)|a1a1aa>#(7f1d1d|78350f|0e4134))/,
-    theme: "both",
-    nodes: "2-3",
-    what: "Struck-out price (line-through text-muted-foreground) on the destructive / warning / success banner tints, feedback page and the dark warning tint on navigation: 3.5-4.5:1.",
-  },
-  {
-    rule: "color-contrast",
-    match: /#09090b>#78350f/,
-    theme: "dark",
-    nodes: "1",
-    what: "Navigation page \"Verify Identity\" banner: text-warning-foreground (near-black) on the dark warning tint (amber-900) is 2.19:1. The -foreground token is for solid fills (AGENTS.md), not tints.",
   },
 ]
 

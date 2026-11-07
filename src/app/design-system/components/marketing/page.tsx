@@ -127,7 +127,7 @@ export default function MarketingComponentsPage() {
           <SectionHeading
             align="center"
             eyebrow={
-              <span className="text-overline text-primary">
+              <span className="text-overline text-muted-foreground">
                 The apna hiring suite
               </span>
             }

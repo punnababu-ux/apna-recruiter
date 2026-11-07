@@ -358,7 +358,7 @@ function ManualIntro(ctx: ScreenCtx) {
   return (
     <>
       <WizardQuestion
-        eyebrow={<span className="text-overline text-primary">Hiring for {companyName(ctx.draft)}</span>}
+        eyebrow={<span className="text-overline text-muted-foreground">Hiring for {companyName(ctx.draft)}</span>}
         title="Post a job in 4 steps"
         description="One question at a time. Review before posting."
       />

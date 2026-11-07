@@ -109,14 +109,15 @@ Design-system pages (`e2e/components.spec.ts` `KNOWN`, full list in
 - [x] Docs header "Back to apna Recruiter" link has no name (`src/app/design-system/layout.tsx`)
 - [x] Select trigger on the inputs page has no name; Slider thumbs have no label (`slider.tsx`)
 - [x] `table.tsx` scroll container isn't focusable on phones
-- [ ] Contrast: role-coloured text on `-subtle` tints (banner links, outline Badges, struck prices), 3.5–4.5:1. One token decision covers most of these
-- [ ] Contrast: smaller one-offs: Button `destructive` soft, Badge `info` sm, nav link chip, marketing eyebrow in `text-primary` (should be gray), selectable-card description `/80`, "Verify Identity" `text-warning-foreground` on the dark tint
+- [x] Contrast: role-coloured text on `-subtle` tints uses that tint's foreground (banner links, outline badges, struck prices, soft destructive button, info badge, "Verify Identity")
+- [x] Contrast: marketing eyebrow is gray; selectable-card description drops the `/80`
+- [ ] Contrast: white text on dark `--primary` (green-500) still fails on Badge `default` and Avatar fallback. Buttons use `--cta-primary` (green-700 in dark) so their labels pass. Parked for the badge and avatar.
 
 ## Before production
 - [ ] Remove the hidden prototype-settings ingresses: the silent clicks on "*GST applicable" (`GstNote`, both checkouts) and the post-job "Candidate view" caption, the plan card's "Valid till" line (`SubscriberPlanCard`), the expired banner's "Resubscribe at the same price." (`PlanEndedBanner`), plus `PrototypeSettings` itself (grep `openPrototypeSettings`). Current builds are not production.
 
 ## Express (recruiter chat)
-- [ ] Dark mode contrast: white text on dark --primary (green-500) and --destructive (red-400) measures 2.65–2.95:1 (unread counts, green and red buttons), under 4.5:1. Product-wide token decision, parked 2026-11-04
+- [ ] Dark mode contrast: white text on dark --primary (green-500) still fails for Badge `default` and Avatar fallback (about 3:1). Green and red button fills are darker (green-700, red-700) so their labels pass. Parked for the badge and avatar, 2026-11-04
 - [ ] Confirm the resume unlock cost and copy ("Unlock resume · 1 credit" was written for the prototype)
 - [ ] Search within one chat's messages
 - [ ] Open a thread at its newest message (scroll after photos load); full-contrast mic button

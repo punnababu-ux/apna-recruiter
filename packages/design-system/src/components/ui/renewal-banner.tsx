@@ -85,7 +85,7 @@ import * as React from "react"
 import { Alert, AlertTitle } from "./alert"
 import { Check } from "@/icons/icons"
 import { cn } from "@/lib/utils"
-import { bannerAccentColorMap, bannerPrimaryBgMap } from "../../lib/banner-tone"
+import { bannerAccentColorMap, bannerMutedColorMap, bannerPrimaryBgMap } from "../../lib/banner-tone"
 
 export interface RenewalBannerItem {
   label: React.ReactNode
@@ -155,7 +155,7 @@ const RenewalBanner = React.forwardRef<HTMLDivElement, RenewalBannerProps>(
     const safeVariant = variant || "default"
     const accentColor = isPrimary ? "text-white" : bannerAccentColorMap[safeVariant]
     const textColor = isPrimary ? "text-white" : "text-foreground"
-    const mutedTextColor = isPrimary ? "text-white/70" : "text-muted-foreground"
+    const mutedTextColor = isPrimary ? "text-white/70" : bannerMutedColorMap[safeVariant]
     // Mirrors the border colour each Alert variant already uses on its own
     // outer border (see alert.tsx's cva), not the neutral `border-border` —
     // on a tinted secondary card (e.g. destructive-subtle), a plain grey
@@ -251,7 +251,7 @@ const RenewalBanner = React.forwardRef<HTMLDivElement, RenewalBannerProps>(
               <div className="flex flex-col gap-0.5">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className={cn("text-2xl leading-tight font-semibold", textColor)}>{price}</span>
-                  {mrp && <span className={cn("text-sm line-through", mutedTextColor)}>{mrp}</span>}
+                  {mrp && <span className="text-sm text-banner-strike line-through">{mrp}</span>}
                   {badge && <div className="shrink-0">{badge}</div>}
                 </div>
                 {priceCaption && <p className={cn("text-xs", mutedTextColor)}>{priceCaption}</p>}

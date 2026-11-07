@@ -155,6 +155,7 @@ at every step measured. Light mode is completely unaffected.
 | `--secondary-foreground` | gray-900         | gray-50          | text/icon on secondary            |
 | `--muted`                | gray-100         | apna-plum-800    | low-emphasis surface              |
 | `--muted-foreground`     | gray-550         | gray-400         | helper text (AA on white and on --muted) |
+| `--banner-strike`        | gray-600         | gray-300         | struck price on a tinted banner (neutral; gray-550 fails on the pale tints) |
 | `--accent`               | gray-100         | apna-plum-800    | hover / selection                 |
 | `--accent-foreground`    | gray-900         | gray-50          | text on accent                    |
 

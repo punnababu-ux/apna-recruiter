@@ -104,12 +104,12 @@ export default function SidebarSpecsPage() {
 
                   {/* Alert Banner */}
                   <div className="p-3">
-                    <div className="relative rounded-lg border border-warning/20 bg-warning-subtle p-2.5 text-warning-foreground shadow-2xs">
+                    <div className="relative rounded-lg border border-warning/20 bg-warning-subtle p-2.5 text-warning-subtle-foreground shadow-2xs">
                       <div className="flex gap-2">
                         <AlertCircle className="size-3.5 shrink-0 text-warning mt-0.5" />
                         <div className="space-y-0.5 text-2xs leading-tight text-left">
-                          <p className="font-semibold text-warning-foreground">Verify Identity</p>
-                          <p className="text-muted-foreground/80">Verify tax status to post.</p>
+                          <p className="font-semibold">Verify Identity</p>
+                          <p className="text-warning-subtle-foreground">Verify tax status to post.</p>
                         </div>
                       </div>
                     </div>
@@ -336,7 +336,7 @@ export default function SidebarSpecsPage() {
           </div>
           
           {/* Token Contract Callout */}
-          <div className="rounded-xl border border-warning/20 bg-warning-subtle p-5 shadow-xs space-y-2 text-warning-foreground">
+          <div className="rounded-xl border border-warning/20 bg-warning-subtle p-5 shadow-xs space-y-2 text-warning-subtle-foreground">
             <h4 className="text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
               💡 Token Enforcement Rules
             </h4>

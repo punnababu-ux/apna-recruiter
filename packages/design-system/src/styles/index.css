@@ -125,6 +125,9 @@
   --color-checkout-discount-fg:        var(--checkout-discount-fg);
   --color-checkout-discount-bg:        var(--checkout-discount-bg);
   --color-cta-primary:                 var(--cta-primary);
+  --color-banner-strike:               var(--banner-strike);
+  --color-cta-destructive:             var(--cta-destructive);
+  --color-cta-destructive-hover:       var(--cta-destructive-hover);
   --color-ribbon-fill:                 var(--ribbon-fill);
   --color-ribbon-fg:                   var(--ribbon-fg);
   --color-plan-card-line:              var(--plan-card-line);

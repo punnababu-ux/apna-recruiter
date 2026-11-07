@@ -258,7 +258,7 @@ export function ChoiceCards<V extends string>({
                 <label className="flex items-center gap-3">
                   <span className="flex min-w-0 flex-1 flex-col">
                     <span className="text-xs font-semibold text-accent-foreground">Must-have</span>
-                    <span className="text-xs text-accent-foreground/80">
+                    <span className="text-xs text-accent-foreground">
                       {on ? "Only matches can apply" : "All can apply; matches first"}
                     </span>
                   </span>

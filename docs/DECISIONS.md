@@ -8,6 +8,13 @@ or **Open**.
 
 ---
 
+## Tinted text, and darker buttons in dark mode (2026-11-07)
+
+- **Decision:** text on a tinted fill uses that tint's foreground (`-subtle-foreground`), not the solid role colour and not `-foreground`. The marketing eyebrow is gray. The selectable-card description drops its `/80` fade. In dark mode only the button fills get darker: green buttons `--cta-primary` green-700, red buttons `--cta-destructive` red-700. `--primary` and `--destructive` stay the bright colours used for text and icons.
+- **Why:** the solid colour on its own pale tint was under 4.5:1. Darkening the shared green or red would dim every icon and link. White text only fails on the button fill, so only the fill changes.
+- **Left:** Badge `default` and Avatar fallback still use `--primary` (green-500) with white text in dark mode, about 3:1.
+- **Status:** Decided (Punna, 2026-11-07: proceed with the suggestion).
+
 ## Light-mode contrast: the four faint spots (2026-11-06)
 
 - **Decision:** the four light-mode contrast fixes, accepted together. The Recommended ribbon is sky-600 (white text 5.16:1), which also darkens the recommended card's blue edge. Struck-out plan features drop the `/60` fade and keep the line-through. Plan-page green text (`--checkout-primary`) is green-700 on light, so the "−%" on an upsell tile clears 4.5:1; dark stays green-500. Links on green and blue tinted banners use the text colour meant for that tint (`-subtle-foreground`).

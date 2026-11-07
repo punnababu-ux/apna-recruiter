@@ -307,7 +307,7 @@ export default function NavigationComponentsPage() {
               href="/apnahire/sidebar-specs/interactive"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-lg border border-primary/30 bg-primary/5 px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary/10 transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-primary/30 px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary/10 transition-colors"
             >
               Open Full-Screen Playground ↗
             </a>
@@ -384,8 +384,8 @@ export default function NavigationComponentsPage() {
 
               {/* Alert Banner */}
               <div className="rounded-lg border border-warning/30 bg-warning-subtle p-2.5 text-2xs space-y-1">
-                <p className="font-semibold text-warning-foreground">Verify Identity</p>
-                <p className="text-muted-foreground">Complete recruiter verification to post active jobs.</p>
+                <p className="font-semibold text-warning-subtle-foreground">Verify Identity</p>
+                <p className="text-warning-subtle-foreground">Complete recruiter verification to post active jobs.</p>
               </div>
             </div>
 

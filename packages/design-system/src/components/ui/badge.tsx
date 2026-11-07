@@ -18,7 +18,7 @@ const badgeVariants = cva(
         destructive:
           "bg-destructive-subtle text-destructive-subtle-foreground focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 [a]:hover:bg-destructive/20",
         info:
-          "bg-info/10 text-info focus-visible:ring-info/20 dark:bg-info/20 dark:focus-visible:ring-info/40 [a]:hover:bg-info/20",
+          "bg-info-subtle text-info-subtle-foreground focus-visible:ring-info/20 dark:focus-visible:ring-info/40 [a]:hover:bg-info/20",
         success:
           "bg-success-subtle text-success-subtle-foreground focus-visible:ring-success/20 dark:focus-visible:ring-success/40 [a]:hover:bg-success/20",
         warning:

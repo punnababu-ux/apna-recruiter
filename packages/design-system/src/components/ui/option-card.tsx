@@ -109,7 +109,7 @@ function OptionCard({
       <span className="flex min-w-0 flex-1 flex-col gap-1">
         <span className="text-sm font-semibold leading-5">{title}</span>
         {description && (
-          <span className={cn("text-xs leading-4", selected ? "text-accent-foreground/80" : "text-muted-foreground")}>
+          <span className={cn("text-xs leading-4", selected ? "text-accent-foreground" : "text-muted-foreground")}>
             {description}
           </span>
         )}

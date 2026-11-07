@@ -366,3 +366,18 @@ no longer downgrades it). None of the 31 remain.
   fallback and the browser value arrives without an effect.
 - **Timers and the attention ring** still update from `setInterval` or
   `requestAnimationFrame`, which is the animation, not a render cascade.
+
+### 14. Tinted text, and darker buttons in dark mode (not pushed)
+Punna said to proceed with the suggestion (2026-11-07). Logged in `DECISIONS.md`.
+- Text on a tint uses that tint's foreground: destructive banners and the
+  soft red button, the info badge, the success outline badge, and
+  "Verify Identity".
+- Struck prices on a tinted banner stay neutral gray (`--banner-strike`):
+  gray-600 on light, gray-300 on dark. The usual muted gray was about 4.2:1
+  on the pale tints (Punna, 2026-11-07).
+- The marketing eyebrow (and the job-posting "Hiring for" eyebrow) is gray.
+  The selectable-card description drops its `/80`.
+- Dark mode button fills only: `--cta-primary` green-700, new
+  `--cta-destructive` red-700. `--primary` and `--destructive` stay bright
+  for text and icons. Badge `default` and Avatar fallback still have white
+  on green-500.

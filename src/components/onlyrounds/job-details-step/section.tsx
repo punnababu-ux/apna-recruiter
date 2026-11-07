@@ -37,7 +37,7 @@ function StatusPip({ status }: { status: SectionStatus }) {
   }
   if (status === "in-progress") {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-warning-subtle px-2 py-0.5 text-xs font-medium text-warning-foreground">
+      <span className="inline-flex items-center gap-1 rounded-full bg-warning-subtle px-2 py-0.5 text-xs font-medium text-warning-subtle-foreground">
         In progress
       </span>
     )
