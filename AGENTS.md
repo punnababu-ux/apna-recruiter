@@ -1040,12 +1040,15 @@ npm run lint:tokens  # Token contract (arbitrary values, raw literals)
 npm run build        # Next.js production build (type check + compile)
 npm run check        # All three. Run this before every commit.
 npm test             # Unit tests (bill, credit plan, rate limit)
-npm run test:e2e     # Browser tests: layout + accessibility, phone and desktop (starts its own server on :3100)
-npm run test:visual  # Screenshot comparisons, local only (macOS baselines); --update-snapshots after an intended change
+npm run test:e2e     # Browser tests: layout, accessibility, and screenshots (starts its own server on :3100)
+npm run test:visual  # Screenshot comparisons only. Local runs use the macOS baselines (*-darwin.png); CI uses the Linux ones (*-linux.png). --update-snapshots after an intended change, on the platform whose baselines you are updating
 ```
 
-GitHub runs all of these except `test:visual` on every push to main and
-every PR (`.github/workflows/check.yml`).
+GitHub runs all of these on every push to main and every PR
+(`.github/workflows/check.yml`). To refresh the Linux baselines after an
+intended visual change, push a commit whose message contains
+`[update-linux-snapshots]`. CI renders them and pushes the new pictures.
+Don't raise the pixel tolerance to make a real change pass.
 
 ### Pre-commit checklist
 

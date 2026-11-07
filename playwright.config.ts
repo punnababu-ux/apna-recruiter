@@ -3,8 +3,9 @@ import { defineConfig, devices } from "@playwright/test"
 // Browser tests (e2e/). Two kinds:
 //   layout + a11y  run everywhere, CI included: they measure (overflow, level
 //                  rows, axe) so they don't depend on how a machine renders fonts.
-//   @visual        screenshot comparisons. Baselines are rendered on macOS, so
-//                  CI skips them; run them locally before showing a layout change.
+//   @visual        screenshot comparisons. macOS baselines (*-darwin.png) are
+//                  for local runs. Linux baselines (*-linux.png) are what CI
+//                  checks, generated on the Ubuntu runner.
 const PORT = 3100
 const CI = !!process.env.CI
 
@@ -15,7 +16,6 @@ export default defineConfig({
   retries: CI ? 1 : 0,
   workers: CI ? 2 : undefined,
   reporter: CI ? [["github"], ["html", { open: "never" }]] : [["list"]],
-  grepInvert: CI ? /@visual/ : undefined,
   expect: { toHaveScreenshot: { maxDiffPixelRatio: 0.01, animations: "disabled", caret: "hide" } },
   use: {
     baseURL: `http://localhost:${PORT}`,

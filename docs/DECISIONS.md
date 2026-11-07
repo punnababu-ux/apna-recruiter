@@ -67,10 +67,10 @@ or **Open**.
 
 ## How the repo is tested, and what CI blocks on (2026-11-06)
 
-- **Decision:** GitHub Actions runs lint, token lint, unit tests, the build and the Playwright layout + accessibility tests on every push to main and every PR. Screenshot (`@visual`) tests run only locally. Known bugs are `test.fixme` with a reason, known axe violations are matched per element in `e2e/a11y.spec.ts`'s `KNOWN`; a check is never weakened to pass.
-- **Why:** the gates only worked when someone remembered `npm run check`. Layout bugs (a nowrap label, a halo) were invisible to type checks and to the eye; measuring caught them. Screenshot baselines are macOS renders, and Linux font rendering would fail them every run.
-- **Would change it:** a Linux baseline set (Playwright's Docker image) would let CI run `@visual` too.
-- **Status:** Decided (Punna asked for CI and tests, 2026-11-06).
+- **Decision:** GitHub Actions runs lint, token lint, unit tests, the build, and the Playwright tests, screenshots included, on every push to main and every PR. macOS baselines (`*-darwin.png`) are for local runs. Linux baselines (`*-linux.png`) are what CI compares, created on the Ubuntu runner the first time they are missing. Known bugs are `test.fixme` with a reason, known axe violations are matched per element in the specs' `KNOWN`; a check is never weakened to pass.
+- **Why:** the gates only worked when someone remembered `npm run check`. Layout bugs were invisible to type checks. A macOS screenshot would fail on Linux because the fonts differ, so CI keeps its own set.
+- **Would change it:** the runner image changes enough that every screenshot fails. Then regenerate the Linux baselines on that runner with a commit message containing `[update-linux-snapshots]`. Don't raise the pixel tolerance.
+- **Status:** Decided (Punna, 2026-11-07: run screenshot tests in CI).
 
 ## Dependency upgrades: take minor fixes, skip forced downgrades (2026-11-06)
 

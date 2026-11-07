@@ -12,7 +12,9 @@ concurrency:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
@@ -35,13 +37,49 @@ jobs:
       - name: Build
         run: npm run build
 
-      # Layout and accessibility checks against the production build.
-      # Screenshot (@visual) tests are skipped here: their baselines are macOS renders.
+      # Layout, accessibility, and screenshots against the production build.
+      # macOS baselines (*-darwin.png) are for local runs. Linux baselines
+      # (*-linux.png) are what this job compares. The first push with none,
+      # or any push whose message contains [update-linux-snapshots], renders
+      # them on this runner and pushes them. A pull request only compares.
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Browser tests
-        run: npm run test:e2e
+      - name: Decide whether to write Linux baselines
+        id: baselines
+        env:
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+        run: |
+          write=false
+          if ! find e2e -name '*-linux.png' -print -quit | grep -q .; then
+            write=true
+          fi
+          if [[ "$COMMIT_MSG" == *"[update-linux-snapshots]"* ]]; then
+            write=true
+          fi
+          echo "write=$write" >> "$GITHUB_OUTPUT"
+
+      - name: Layout and accessibility tests
+        run: npx playwright test --grep-invert @visual
+
+      - name: Screenshot tests
+        if: success() && (steps.baselines.outputs.write != 'true' || github.event_name != 'push')
+        run: npx playwright test --grep @visual
+
+      - name: Write Linux screenshot baselines
+        if: success() && steps.baselines.outputs.write == 'true' && github.event_name == 'push'
+        run: |
+          npx playwright test --grep @visual --update-snapshots
+          npx playwright test --grep @visual
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          find e2e -name '*-linux.png' -print0 | xargs -0 -r git add
+          if git diff --cached --quiet; then
+            echo "No screenshot changes."
+            exit 0
+          fi
+          git commit -m "Add Linux screenshot baselines so CI can compare screenshots."
+          git push origin HEAD:main
 
       - name: Upload test report
         if: failure()
