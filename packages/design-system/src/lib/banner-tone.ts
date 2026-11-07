@@ -10,10 +10,12 @@ export const bannerAccentColorMap: Record<string, string> = {
   default: "text-foreground",
   muted: "text-foreground",
   destructive: "text-destructive",
-  success: "text-success",
+  // Role colour on the tinted fill fails contrast (success 3.77:1, info
+  // 4.23:1). The -subtle-foreground text is the pairing meant for that fill.
+  success: "text-success-subtle-foreground",
   // gold-500 text on a light card is ~2:1 — use the tint pairing instead.
   warning: "text-warning-subtle-foreground",
-  info: "text-info",
+  info: "text-info-subtle-foreground",
 }
 
 export const bannerPrimaryBgMap: Record<string, string> = {

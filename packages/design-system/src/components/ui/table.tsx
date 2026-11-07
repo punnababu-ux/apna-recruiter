@@ -9,7 +9,10 @@ function Table({ className, ...props }: React.ComponentProps<"table">) {
   return (
     <div
       data-slot="table-container"
-      className="relative w-full overflow-x-auto"
+      // A sideways scroller with nothing focusable inside must take focus
+      // itself, or a keyboard cannot reach the clipped columns.
+      tabIndex={0}
+      className="relative w-full overflow-x-auto outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
     >
       <table
         data-slot="table"

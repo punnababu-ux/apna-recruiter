@@ -379,7 +379,7 @@ function SubPoint({
   children: React.ReactNode
 }) {
   return (
-    <span className={cn("flex items-start gap-2 pl-7 text-xs leading-5", muted && "text-muted-foreground/60")}>
+    <span className={cn("flex items-start gap-2 pl-7 text-xs leading-5", muted && "text-muted-foreground")}>
       {icon}
       <span>{children}</span>
     </span>

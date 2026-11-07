@@ -8,6 +8,13 @@ or **Open**.
 
 ---
 
+## Light-mode contrast: the four faint spots (2026-11-06)
+
+- **Decision:** the four light-mode contrast fixes, accepted together. The Recommended ribbon is sky-600 (white text 5.16:1), which also darkens the recommended card's blue edge. Struck-out plan features drop the `/60` fade and keep the line-through. Plan-page green text (`--checkout-primary`) is green-700 on light, so the "−%" on an upsell tile clears 4.5:1; dark stays green-500. Links on green and blue tinted banners use the text colour meant for that tint (`-subtle-foreground`).
+- **Why:** each was under 4.5:1. Darkening the shared green text, rather than only the "−%", keeps one green for ticks, the selected tab and the saving.
+- **Would change it:** if the darker green text or the darker blue edge reads too heavy next to the cards.
+- **Status:** Decided (Punna, 2026-11-06: go with the proposal).
+
 ## Phone plan card: a long benefit beside Buy now (2026-11-06)
 
 - **Question:** at 320px Super premium's "Top placement on job listing" (no-wrap) ran under the Buy now button. Move the button under the benefits, or let the benefit wrap?

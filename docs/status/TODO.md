@@ -92,10 +92,10 @@ Open before ECC: keep "View number" as the green action, or make Shortlist prima
 
 ## Accessibility (found by `e2e/a11y.spec.ts`, 2026-11-06)
 Each is in the spec's `KNOWN` list, matched per element; delete the entry when it is fixed.
-- [ ] Contrast: the blue "Recommended" ribbon (`Badge` ribbon) is 3.67:1; needs 4.5:1
-- [ ] Contrast: struck plan-card feature lines (`job-plan-cards.tsx`, `text-muted-foreground/60`) are 2.42:1
-- [ ] Contrast: the "−21%" saving on upsell tiles (`offer-choice.tsx`) is 4.25:1
-- [ ] Contrast: green / blue link-buttons on tinted pills on the jobs list (3.77:1, 4.23:1)
+- [x] Contrast: the blue "Recommended" ribbon (`Badge` ribbon) is sky-600, 5.16:1 (also the card's blue edge)
+- [x] Contrast: struck plan-card feature lines (`job-plan-cards.tsx`) use `text-muted-foreground`, the line-through kept
+- [x] Contrast: the "−21%" saving (`--checkout-primary` is green-700 on light; dark stays green-500)
+- [x] Contrast: green / blue links on tinted banners use the `-subtle-foreground` text
   (proposed shades for all four: `docs/history/SESSION-2026-11-06-QUALITY.md` §5; awaiting sign-off)
 - [x] Phone plan cards (`mobile-plan-row.tsx`): a radio that contains the Buy now button (nested-interactive)
 - [x] A focusable `aria-hidden` span, our own `PrototypeSettings` anchor (aria-hidden-focus)
@@ -106,9 +106,9 @@ Each is in the spec's `KNOWN` list, matched per element; delete the entry when i
 
 Design-system pages (`e2e/components.spec.ts` `KNOWN`, full list in
 `docs/history/SESSION-2026-11-06-QUALITY.md` §7):
-- [ ] Docs header "Back to apna Recruiter" link has no name (`src/app/design-system/layout.tsx`)
-- [ ] Select trigger on the inputs page has no name; Slider thumbs have no label (`slider.tsx`)
-- [ ] `table.tsx` scroll container isn't focusable on phones
+- [x] Docs header "Back to apna Recruiter" link has no name (`src/app/design-system/layout.tsx`)
+- [x] Select trigger on the inputs page has no name; Slider thumbs have no label (`slider.tsx`)
+- [x] `table.tsx` scroll container isn't focusable on phones
 - [ ] Contrast: role-coloured text on `-subtle` tints (banner links, outline Badges, struck prices), 3.5–4.5:1. One token decision covers most of these
 - [ ] Contrast: smaller one-offs: Button `destructive` soft, Badge `info` sm, nav link chip, marketing eyebrow in `text-primary` (should be gray), selectable-card description `/80`, "Verify Identity" `text-warning-foreground` on the dark tint
 

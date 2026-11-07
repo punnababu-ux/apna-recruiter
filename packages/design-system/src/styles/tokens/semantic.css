@@ -567,14 +567,12 @@
    * otherwise stays light. */
   --surface-checkout-inset-hover:     var(--color-gray-100);
 
-  /* Checkout primary — the self-checkout surface's CTA/discount/status
-   * green. Now that --color-apna-green itself is anchored at this same
-   * source green (#1F8268 at the 600 step), this points straight at the
-   * primitive rather than a separate duplicate ramp. It stays its own
-   * token (not a plain alias of --primary) because it's FIXED across
-   * themes — a "marketing surface" like the hero gradient — while
-   * --primary/--success brighten one step in dark mode (apna-green-500). */
-  --checkout-primary:            var(--color-apna-green-600);
+  /* Checkout primary — the plan pages' green text and icons (the −%
+   * saving, ticks, the selected tab). Green-700, not green-600: green-600
+   * on the upsell tile's green tint was 4.25:1 (Punna, 2026-11-06). It
+   * stays its own token (not a plain alias of --primary) because dark mode
+   * sets it back to green-500, where green text needs to stay bright. */
+  --checkout-primary:            var(--color-apna-green-700);
   --checkout-primary-foreground: var(--color-gray-0);
 
   /* Emphasis CTA — dark gray. The "push this, but it isn't THE action"
@@ -694,11 +692,13 @@
      bright for green text, links and icons. */
   --cta-primary:       var(--primary);
   --cta-primary-hover: color-mix(in srgb, var(--primary) 90%, transparent);
-  /* The Recommended ribbon's fill. Solid on light (--checkout-info); on
-     dark the sidebar "New" tag's tint, but OPAQUE (info mixed into the plan
-     card plum), because the ribbon straddles a card edge and a see-through
-     tint let that edge show through. */
-  --ribbon-fill: var(--checkout-info);
+  /* The Recommended ribbon's fill. Sky-600 on light, not --checkout-info
+     (sky-500): white on sky-500 was 3.67:1 (Punna, 2026-11-06). This also
+     darkens the recommended card's blue edge, which uses the same token.
+     On dark, the sidebar "New" tag's tint, but OPAQUE (info mixed into the
+     plan card plum), because the ribbon straddles a card edge and a
+     see-through tint let that edge show through. */
+  --ribbon-fill: var(--color-apna-sky-600);
   --ribbon-fg:   var(--checkout-info-foreground);
   /* Plan surfaces' edges: the plan cards' border and the selected tab pill's
      ring. Borders on light; none on dark (they read as noise there). */

@@ -287,14 +287,14 @@ export default function InputsComponentsPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl">
           <Field>
-            <FieldLabel>Experience Level</FieldLabel>
+            <FieldLabel htmlFor="experience-level">Experience Level</FieldLabel>
             {/* `items` maps values to labels so the trigger shows
               * "Mid-level (2-5 yrs)", not the raw value "mid". */}
             <Select
               defaultValue="mid"
               items={{ junior: "Junior (0-2 yrs)", mid: "Mid-level (2-5 yrs)", senior: "Senior (5+ yrs)" }}
             >
-              <SelectTrigger>
+              <SelectTrigger id="experience-level">
                 <SelectValue placeholder="Select level" />
               </SelectTrigger>
               <SelectContent>

@@ -38,14 +38,6 @@ type Theme = (typeof THEMES)[number]
 type Known = { rule: string; match: RegExp; theme: "light" | "dark" | "both"; nodes: string; what: string }
 
 const KNOWN: Known[] = [
-  // ── Docs chrome (not a component) ────────────────────────────────────────────────────────────────────────
-  {
-    rule: "link-name",
-    match: /href="\/apnahire\/jobs"/,
-    theme: "both",
-    nodes: "1 per page",
-    what: "Docs header \"Back to apna Recruiter\" (src/app/design-system/layout.tsx): Button render={<Link>text</Link>} drops the text, so the link is empty for screen readers.",
-  },
   // ── Parked: white text on the dark green (docs/status/TODO.md, \"Express\" > Dark mode contrast) ───────────
   {
     rule: "color-contrast",
@@ -68,13 +60,6 @@ const KNOWN: Known[] = [
     theme: "light",
     nodes: "1",
     what: "Badge `info` size sm (10px, text-info on info/10): 4.42:1.",
-  },
-  {
-    rule: "color-contrast",
-    match: /data-variant="ribbon"/,
-    theme: "light",
-    nodes: "1",
-    what: "Badge `ribbon` (badge.tsx), the blue Recommended ribbon on the data-layout page: white on #2f87e4 is 3.67:1 (same cause as the a11y.spec.ts entry).",
   },
   {
     rule: "color-contrast",
@@ -113,17 +98,17 @@ const KNOWN: Known[] = [
   },
   {
     rule: "color-contrast",
-    match: /#(226cca>#d9ebf9|5da8e9>#204071)/,
+    match: /#(dc2626>#fee2e2|f87171>#7f1d1d)/,
     theme: "both",
-    nodes: "1-2",
-    what: "AlertBanner / RenewalBanner underlined `text-info` action link on the info tint (alert.tsx banners): 4.23:1 light, 4.05:1 dark.",
+    nodes: "2-3",
+    what: "Outline and banner text in the destructive colour on the destructive tint: 3.95:1 light / 3.62:1 dark.",
   },
   {
     rule: "color-contrast",
-    match: /#(dc2626>#fee2e2|f87171>#7f1d1d|1f8268>#c6efe0|00a86b>#0e4134)/,
+    match: /data-variant="outline"[\s\S]*#(1f8268>#c6efe0|00a86b>#0e4134)/,
     theme: "both",
-    nodes: "2-3",
-    what: "Banner action links and outline `lg` Badge in role colour on the -subtle fill: text-destructive 3.95 / 3.62, text-success 3.77 / 3.73 (light / dark). Same cause as the jobs-list entry in a11y.spec.ts.",
+    nodes: "1",
+    what: "Outline Badge `lg` in text-success on the success tint (feedback page): 3.77:1 light / 3.73:1 dark. Banner links on that tint are fixed; this badge is not.",
   },
   {
     rule: "color-contrast",
@@ -138,28 +123,6 @@ const KNOWN: Known[] = [
     theme: "dark",
     nodes: "1",
     what: "Navigation page \"Verify Identity\" banner: text-warning-foreground (near-black) on the dark warning tint (amber-900) is 2.19:1. The -foreground token is for solid fills (AGENTS.md), not tints.",
-  },
-  // ── Structure ──────────────────────────────────────────────────────────────────────────────────────────────
-  {
-    rule: "button-name",
-    match: /role="combobox"/,
-    theme: "both",
-    nodes: "1",
-    what: "Inputs page Select trigger (select.tsx): the demo's FieldLabel is not tied to the trigger, and the trigger has no aria-label.",
-  },
-  {
-    rule: "label",
-    match: /aria-valuenow/,
-    theme: "both",
-    nodes: "2",
-    what: "Slider thumb <input> (slider.tsx, default and disabled demos) has no label or aria-label.",
-  },
-  {
-    rule: "scrollable-region-focusable",
-    match: /data-slot="table-container"/,
-    theme: "both",
-    nodes: "1 (phone only)",
-    what: "Table (table.tsx): the container scrolls sideways on a phone, but has no tabindex, so a keyboard cannot scroll it.",
   },
 ]
 

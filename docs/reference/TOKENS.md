@@ -183,7 +183,7 @@ Composed from primitives only, exposed as `bg-gradient-<name>` utilities
 | `--close-bubble` / `-hover` / `-foreground` | alpha-black-50 / alpha-black-60 / gray-0, same in both themes | the pop-up CloseBubble that sits on the dimmed backdrop outside the card (`bg-close-bubble`, `text-close-bubble-foreground`) |
 | `--gradient-offer` | `linear-gradient(137deg, apna-green-500 → apna-green-800 → apna-green-950)`; dark: green-700 / green-900 glows over plum-900, like the product pages' dark canvases | header of the job bundle, credit-pack and exit-offer pop-ups (`bg-gradient-offer`) |
 | `--surface-plan-card` | `--card`; dark: apna-plum-700 (one step above the page glass) | Plan surfaces: every plan card and Contact sales (`bg-plan-card`) |
-| `--ribbon-fill` | `--checkout-info`; dark: info 20% mixed into `--surface-plan-card` (opaque) | The Recommended corner ribbon (`Badge variant="ribbon"`) |
+| `--ribbon-fill` | sky-600; dark: info 20% mixed into `--surface-plan-card` (opaque) | The Recommended corner ribbon (`Badge variant="ribbon"`) and the recommended card's blue edge |
 | `--ribbon-fg` | `--checkout-info-foreground`; dark: apna-sky-300 (5.3:1 on the fill; `--info` was 4.2:1) | The Recommended ribbon's label |
 | `--plan-card-line` / `--plan-pill-ring` | `--border`; dark: transparent | Plan cards' border (Contact sales) and the selected plan-tab pill's ring (`border-plan-card-line`, `ring-plan-pill-ring`) |
 | `--app-chip-pill` | `--surface-plan-card`; dark: foreground 16% over `--muted` | The selected pill of an app phone chip row (`MobileChipRow`) |
@@ -212,7 +212,7 @@ while `--primary`/`--success` brighten one step in dark mode
 
 | Token                          | Light                  | Dark                    | Intent                                    |
 |---------------------------------|-------------------------|--------------------------|--------------------------------------------|
-| `--checkout-primary`           | apna-green-600 (#1F8268) | apna-green-500 | the plan pages' green text and icons (selected tab labels, ticks, savings lines); their buttons fill from `--cta-primary` |
+| `--checkout-primary`           | apna-green-700 (#186954) | apna-green-500 | the plan pages' green text and icons (selected tab labels, ticks, savings lines); their buttons fill from `--cta-primary` |
 | `--checkout-primary-foreground`| gray-0                 | gray-0                   | text/icon on checkout-primary             |
 | `--cta-emphasis`               | gray-800               | apna-plum-300 (lavender) | emphasis CTA (`Button variant="emphasis"`) — an add-on/upsell push on a screen whose primary CTA is taken |
 | `--cta-inverted` / `-hover` / `-foreground` | gray-0 / gray-100 / gray-900 | same (fixed) | the `emphasis` CTA on a dark surface — inside `data-surface="dark"` it renders white with a dark label ("Upgrade now" on an offer header) |

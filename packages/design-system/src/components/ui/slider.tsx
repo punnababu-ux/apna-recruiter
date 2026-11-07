@@ -16,7 +16,8 @@ function Slider({
   size = "default",
   ...props
 }: SliderPrimitive.Root.Props & {
-  /** Accessible names for the thumbs, e.g. ["Minimum salary", "Maximum salary"]. */
+  /** Accessible names for the thumbs, e.g. ["Minimum salary", "Maximum salary"].
+   *  Without one, a thumb is named "Value" (or "Value 1", "Value 2" on a range). */
   thumbLabels?: string[]
   /** "sm" is a slim seek bar (4px track, 12px solid thumb) for media
    *  players; "default" is the form control. */
@@ -58,7 +59,7 @@ function Slider({
             key={i}
             index={i}
             data-slot="slider-thumb"
-            getAriaLabel={thumbLabels ? () => thumbLabels[i] ?? "" : undefined}
+            getAriaLabel={() => thumbLabels?.[i] ?? (thumbs > 1 ? `Value ${i + 1}` : "Value")}
             className={cn(
               "block rounded-full transition-interactive hover:ring-4 hover:ring-primary/15 has-focus-visible:ring-3 has-focus-visible:ring-ring/50 data-dragging:scale-110 data-dragging:ring-4 data-dragging:ring-primary/20 data-disabled:cursor-not-allowed",
               size === "sm" ? "size-3 bg-primary" : "size-5 border-2 border-primary bg-background"

@@ -1,14 +1,13 @@
 import * as React from "react"
-import Link from "next/link"
 import type { Metadata } from "next"
-import { Layers, ArrowLeft } from "@apna/design-system"
+import { Layers } from "@apna/design-system"
+import { BackToApp } from "@/components/design-system/back-to-app"
 
 import {
   SidebarProvider,
   SidebarInset,
   SidebarTrigger,
   Separator,
-  Button,
 } from "@apna/design-system"
 import { DocsSidebar } from "@/components/design-system/docs-sidebar"
 import { ThemeToggle } from "@/components/design-system/theme-toggle"
@@ -49,16 +48,7 @@ export default function DesignSystemLayout({
 
             <div className="flex items-center gap-2">
               <ThemeToggle />
-              <Button
-                variant="outline"
-                size="xs"
-                render={
-                  <Link href="/apnahire/jobs">
-                    <ArrowLeft className="mr-1 size-3.5" />
-                    Back to apna Recruiter
-                  </Link>
-                }
-              />
+              <BackToApp />
             </div>
           </header>
 

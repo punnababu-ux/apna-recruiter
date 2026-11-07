@@ -322,3 +322,32 @@ purpose: ECC is still a work in progress (Punna, 2026-11-06), so its fixme in
   the final fix, checkout + app ran 175 passed / 51 skipped and no screenshot
   changed. Plan card measured at 320–375px (no overlap at any width); tsc,
   lint:tokens and eslint on the touched files clean.
+
+### 11. Three design-system accessibility fixes (not pushed)
+Code only; no colour change. The three `KNOWN` entries are removed from
+`e2e/components.spec.ts`.
+- **Docs header "Back to apna Recruiter"** (`layout.tsx` + new
+  `src/components/design-system/back-to-app.tsx`): a `<Link>` element passed
+  as Button `render` loses its children (the button's empty children win the
+  merge), so the label never showed and the link had no name. A render
+  function puts the label on the link. The layout stays a server component.
+- **Select** on the inputs page: `FieldLabel htmlFor` tied to `SelectTrigger
+  id="experience-level"`, so the name is the visible "Experience Level".
+- **Slider:** a thumb with no `thumbLabels` is named "Value" ("Value 1" /
+  "Value 2" on a range).
+- **Table:** the scroll container is `tabIndex={0}` with the standard focus
+  ring, so a keyboard can reach columns clipped on a phone.
+
+### 12. The four light-mode contrast fixes (not pushed)
+Punna accepted the proposed shades (2026-11-06). Logged in `DECISIONS.md`.
+- **Recommended ribbon:** `--ribbon-fill` is sky-600 on light (white text).
+  The recommended card's blue edge uses the same token, so it darkens too.
+  Dark ribbon is unchanged.
+- **Struck features:** `text-muted-foreground/60` dropped in
+  `job-plan-cards.tsx`. The line-through stays. Colour is gray-550.
+- **−% and the other plan-page green text:** light `--checkout-primary` is
+  green-700. Dark stays green-500. Buttons still fill from `--cta-primary`.
+- **Jobs-list banner links:** success and info use
+  `text-success-subtle-foreground` / `text-info-subtle-foreground`
+  (`banner-tone.ts`), the text meant for those tints, in both themes.
+- The four `KNOWN` entries in `e2e/a11y.spec.ts` are removed.

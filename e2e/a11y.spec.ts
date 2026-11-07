@@ -10,32 +10,7 @@ import { EXPRESS, JOB_POST, SELF, SUBSCRIPTION_LAYOUT as SUB, open, prototype, s
  */
 type Known = { rule: string; match: RegExp; nodes: string; what: string }
 
-const KNOWN: Known[] = [
-  {
-    rule: "color-contrast",
-    match: /data-variant="ribbon"/,
-    nodes: "1",
-    what: "Badge `ribbon` (design-system badge.tsx), the blue Recommended ribbon on plan cards: white on #2f87e4 is 3.67:1, needs 4.5:1.",
-  },
-  {
-    rule: "color-contrast",
-    match: /<span>(Urgently hiring tag|Top placement in job listing)<\/span>/,
-    nodes: "3 (desktop only)",
-    what: "Struck-out feature lines on the Classic/Premium cards (job-plan-cards.tsx): text-muted-foreground/60 on white is 2.42:1.",
-  },
-  {
-    rule: "color-contrast",
-    match: /text-checkout-primary max-sm:text-sm/,
-    nodes: "1",
-    what: "Discount text (-21% / -35%) in upsell tiles (offer-choice.tsx): text-checkout-primary green on the tinted fill is 4.25:1.",
-  },
-  {
-    rule: "color-contrast",
-    match: /text-(success|info)\.underline/,
-    nodes: "2",
-    what: "Jobs list underlined link-buttons: text-success (3.77:1) and text-info (4.23:1) on their tinted pill backgrounds.",
-  },
-]
+const KNOWN: Known[] = []
 
 const isDesktop = () => test.info().project.name === "desktop"
 
