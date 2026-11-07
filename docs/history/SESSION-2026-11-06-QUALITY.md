@@ -241,7 +241,7 @@ to the entry. No importer changed.
 - **Gotcha:** `next.config.ts` redirects `/onlyrounds/*` to `/apnahire/*`, so
   the candidate drawer (only used by `src/app/onlyrounds/(product)/jobs/[id]/page.tsx`)
   has no live route. It was tested through a temporary page, since deleted.
-  The wizard is live at `/apnahire/jobs/rounds/new`.
+  The wizard is reference only. `/apnahire/jobs/rounds/new` redirects to `/apnahire/jobs/new` (Punna, 2026-11-07).
 
 ### 9. Dark-mode pricing and order-summary colours (committed, not pushed)
 Punna's dark-mode review of the plans pages and the order summary. Dark mode
@@ -379,5 +379,25 @@ Punna said to proceed with the suggestion (2026-11-07). Logged in `DECISIONS.md`
   The selectable-card description drops its `/80`.
 - Dark mode button fills only: `--cta-primary` green-700, new
   `--cta-destructive` red-700. `--primary` and `--destructive` stay bright
-  for text and icons. Badge `default` and Avatar fallback still have white
-  on green-500.
+  for text and icons. Badge `default`, the green count, the avatar badge
+  and the stepper use `--cta-primary` too, so their labels clear 4.5:1.
+
+### 15. Display-page demos use real roles
+"6 pending feedback" was gold-500 on white (2.14:1). `MetricCard`'s warning
+trend now uses `text-warning-subtle-foreground` (dark gold on light, light
+gold on dark). The "JD" avatar was a hand-painted emerald; it now uses the
+success tint and its foreground. Both `KNOWN` entries are gone.
+
+### 16. Screenshot tests run in CI
+`grepInvert` no longer drops `@visual` when `CI` is set. macOS baselines
+stay for local runs. Linux baselines are created on the Ubuntu runner the
+first time none exist, then pushed by the workflow. A later visual change
+fails the check until a commit message contains `[update-linux-snapshots]`,
+which re-renders them on that runner. The pixel tolerance stays 1%.
+
+### 17. Solid green labels, and the interview wizard leaves the route
+Badge `default`, the green count, the avatar badge and both stepper
+circles use `--cta-primary`. The display-page warning trend and "JD"
+avatar use real roles. `/apnahire/jobs/rounds/new` redirects to job
+posting; the rounds editor stays for the AI interview product. The
+design-system `KNOWN` list is empty.

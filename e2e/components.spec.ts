@@ -7,7 +7,7 @@ import { expectNoCollapsedButtons, expectNoHorizontalOverflow, settle } from "./
  * dark, on phone and desktop. Three checks per page and theme:
  *   layout   no sideways scroll, no collapsed buttons          (CI)
  *   a11y     axe WCAG 2.1 A/AA, with the KNOWN list below        (CI)
- *   @visual  full-page screenshot, desktop only                (local only, macOS baselines)
+ *   @visual  full-page screenshot, desktop only                (macOS locally, Linux in CI)
  *
  * Dark mode: ThemeProvider (next-themes, attribute="class", storageKey "theme") puts `class="dark"` on <html>.
  * We seed `localStorage.theme` before the page loads and assert the class, so a run never depends on the
@@ -37,31 +37,7 @@ type Theme = (typeof THEMES)[number]
  */
 type Known = { rule: string; match: RegExp; theme: "light" | "dark" | "both"; nodes: string; what: string }
 
-const KNOWN: Known[] = [
-  // ── Parked: white text on the dark green (docs/status/TODO.md, \"Express\" > Dark mode contrast) ───────────
-  {
-    rule: "color-contrast",
-    match: /#(fafafa|ffffff)>#00a86b/,
-    theme: "dark",
-    nodes: "~12 (actions), 2-6 elsewhere",
-    what: "Dark --primary / --checkout-primary is green-500 with white text: 2.95:1 and 3.08:1, under 4.5:1. Every solid green Button, Badge `default` and Avatar fallback, on actions, data-layout, display, marketing, overlays. Product-wide token decision, parked 2026-11-04.",
-  },
-  // ── Light and dark: tinted fills carry role-coloured text that is too faint ──────────────────────────────
-  {
-    rule: "color-contrast",
-    match: /#f59e0b>#ffffff/,
-    theme: "light",
-    nodes: "1",
-    what: "Display page demo \"6 pending feedback\": text-warning (amber-500) on white is 2.14:1. Demo-only: the warning role colour is for fills, not text.",
-  },
-  {
-    rule: "color-contrast",
-    match: /#009966>#(d9f5ec|182e2c)/,
-    theme: "both",
-    nodes: "1",
-    what: "Display page \"JD\" avatar fallback hand-painted with bg-emerald-500/15 + a raw emerald text (3.17:1 light, 3.92:1 dark). A demo that bypasses the Avatar tones; use the success role.",
-  },
-]
+const KNOWN: Known[] = []
 
 const isDesktop = () => test.info().project.name === "desktop"
 

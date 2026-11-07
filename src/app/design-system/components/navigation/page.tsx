@@ -344,7 +344,7 @@ export default function NavigationComponentsPage() {
                 {/* Workspace Switcher */}
                 <div className="rounded-lg border border-border bg-background p-2 flex items-center justify-between text-xs cursor-pointer hover:border-primary/40 transition-colors">
                   <div className="flex items-center gap-2 min-w-0">
-                    <div className="size-5 rounded bg-primary text-white text-3xs font-bold flex items-center justify-center shrink-0">R</div>
+                    <div className="size-5 rounded bg-cta-primary text-primary-foreground text-3xs font-bold flex items-center justify-center shrink-0">R</div>
                     <div className="truncate">
                       <p className="font-semibold text-foreground text-xs leading-none">Rohini Enterprises</p>
                       <p className="text-3xs text-muted-foreground mt-0.5">Company Account</p>

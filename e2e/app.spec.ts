@@ -208,7 +208,6 @@ screens("product routes", [
   { name: "database: saved searches", path: "/apnahire/database/saved-searches" },
   { name: "invite centre: database WhatsApp invites", path: "/apnahire/invite-centre/database-wa-invites" },
   { name: "invite centre: job WhatsApp connects", path: "/apnahire/invite-centre/job-wa-connects" },
-  { name: "new interview round", path: "/apnahire/jobs/rounds/new" },
   { name: "sidebar specs", path: "/apnahire/sidebar-specs" },
   { name: "sidebar specs, interactive", path: "/apnahire/sidebar-specs/interactive" },
 ])

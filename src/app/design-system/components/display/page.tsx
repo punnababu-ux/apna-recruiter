@@ -147,10 +147,10 @@ export default function DisplayComponentsPage() {
             <AvatarFallback>PB</AvatarFallback>
           </Avatar>
           <Avatar className="size-10">
-            <AvatarFallback className="bg-primary text-primary-foreground font-bold">AK</AvatarFallback>
+            <AvatarFallback className="bg-cta-primary text-primary-foreground font-bold">AK</AvatarFallback>
           </Avatar>
           <Avatar className="size-12">
-            <AvatarFallback className="bg-emerald-500/15 text-emerald-600 font-bold">JD</AvatarFallback>
+            <AvatarFallback className="bg-success-subtle text-success-subtle-foreground font-bold">JD</AvatarFallback>
           </Avatar>
         </div>
       </div>

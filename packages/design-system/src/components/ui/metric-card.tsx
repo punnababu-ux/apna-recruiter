@@ -59,7 +59,9 @@ export interface MetricCardProps
 
 const trendVariantMap = {
   success: "text-success",
-  warning: "text-warning",
+  /* Gold-500 is a fill. On a white or dark card it fails contrast.
+     The subtle foreground is dark gold on light and light gold on dark. */
+  warning: "text-warning-subtle-foreground",
   destructive: "text-destructive",
   neutral: "text-muted-foreground",
 }

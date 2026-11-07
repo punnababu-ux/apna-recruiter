@@ -279,7 +279,7 @@ export default function RadiusMotionPage() {
                 <div
                   key={animateKey}
                   style={{ transition: `transform 500ms ${e.curve}` }}
-                  className="h-6 w-12 rounded-md bg-primary text-primary-foreground flex items-center justify-center text-3xs font-bold shadow-xs transition-transform group-hover:translate-x-48"
+                  className="h-6 w-12 rounded-md bg-cta-primary text-primary-foreground flex items-center justify-center text-3xs font-bold shadow-xs transition-transform group-hover:translate-x-48"
                 >
                   <Sparkles className="size-3" />
                 </div>

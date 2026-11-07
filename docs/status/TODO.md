@@ -111,13 +111,13 @@ Design-system pages (`e2e/components.spec.ts` `KNOWN`, full list in
 - [x] `table.tsx` scroll container isn't focusable on phones
 - [x] Contrast: role-coloured text on `-subtle` tints uses that tint's foreground (banner links, outline badges, struck prices, soft destructive button, info badge, "Verify Identity")
 - [x] Contrast: marketing eyebrow is gray; selectable-card description drops the `/80`
-- [ ] Contrast: white text on dark `--primary` (green-500) still fails on Badge `default` and Avatar fallback. Buttons use `--cta-primary` (green-700 in dark) so their labels pass. Parked for the badge and avatar.
+- [x] Contrast: Badge `default`, the green count, and the solid avatar fallback use `--cta-primary` (green-700 in dark), same as buttons. Icons and links stay on `--primary`.
 
 ## Before production
 - [ ] Remove the hidden prototype-settings ingresses: the silent clicks on "*GST applicable" (`GstNote`, both checkouts) and the post-job "Candidate view" caption, the plan card's "Valid till" line (`SubscriberPlanCard`), the expired banner's "Resubscribe at the same price." (`PlanEndedBanner`), plus `PrototypeSettings` itself (grep `openPrototypeSettings`). Current builds are not production.
 
 ## Express (recruiter chat)
-- [ ] Dark mode contrast: white text on dark --primary (green-500) still fails for Badge `default` and Avatar fallback (about 3:1). Green and red button fills are darker (green-700, red-700) so their labels pass. Parked for the badge and avatar, 2026-11-04
+- [x] Dark mode contrast: solid green badges and avatars use the darker button fill. Icons and links stay on green-500. (2026-11-07)
 - [ ] Confirm the resume unlock cost and copy ("Unlock resume · 1 credit" was written for the prototype)
 - [ ] Search within one chat's messages
 - [ ] Open a thread at its newest message (scroll after photos load); full-contrast mic button

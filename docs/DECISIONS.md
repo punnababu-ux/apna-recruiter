@@ -8,6 +8,19 @@ or **Open**.
 
 ---
 
+## Solid green badges and avatars use the button fill (2026-11-07)
+
+- **Decision:** in dark mode, a solid green surface with a light label uses `--cta-primary` (green-700), not `--primary` (green-500). That is Badge `default`, the green count, the avatar badge, and the stepper's current and completed steps. Icons and links stay on `--primary`.
+- **Why:** white on green-500 is about 3:1. White on green-700 clears 4.5:1. Darkening `--primary` would dim every green icon and link.
+- **Status:** Decided (Punna, 2026-11-07: take the score up, one item at a time).
+
+## The OnlyRounds interview wizard is reference, not a route (2026-11-07)
+
+- **Decision:** keep `src/components/onlyrounds/create-job-wizard.tsx` and its steps. `/apnahire/jobs/rounds/new` redirects to `/apnahire/jobs/new`. Do not fold the rounds editor into `wizard-screens` yet.
+- **Why:** today's posting only asks walk-in or scheduled, and AI calling is added at the plan step. The rounds editor is the only built version of an AI interview step, so deleting it means redrawing it later. Two live "create a job" wizards is how people open the wrong one.
+- **Would change it:** the AI interview product is designed and needs a route of its own.
+- **Status:** Decided (Punna, 2026-11-07).
+
 ## Tinted text, and darker buttons in dark mode (2026-11-07)
 
 - **Decision:** text on a tinted fill uses that tint's foreground (`-subtle-foreground`), not the solid role colour and not `-foreground`. The marketing eyebrow is gray. The selectable-card description drops its `/80` fade. In dark mode only the button fills get darker: green buttons `--cta-primary` green-700, red buttons `--cta-destructive` red-700. `--primary` and `--destructive` stay the bright colours used for text and icons.

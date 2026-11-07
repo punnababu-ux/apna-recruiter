@@ -755,9 +755,8 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
       {
         name: "CreateJobWizard and steps",
         file: "onlyrounds/create-job-wizard.tsx",
-        what: "4-step job authoring wizard.",
-        live: "/onlyrounds/jobs/new",
-        where: "/onlyrounds/jobs/new, /apnahire/jobs/rounds/new",
+        what: "4-step interview-rounds wizard. Reference only, not a live route. Kept for the AI interview product.",
+        where: "src/components/onlyrounds/create-job-wizard.tsx. /apnahire/jobs/rounds/new redirects to job posting.",
         rules: ["WizardFooter for step navigation."],
       },
       {

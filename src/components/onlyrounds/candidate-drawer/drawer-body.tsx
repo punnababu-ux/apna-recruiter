@@ -389,7 +389,7 @@ export function DrawerBody({
                   </Button>
                   <Button
                     size="xs"
-                    className="h-6 px-2 text-2xs bg-primary text-primary-foreground"
+                    className="h-6 px-2 text-2xs bg-cta-primary text-primary-foreground"
                     onClick={(e) => {
                       e.stopPropagation()
                       commitNote()

@@ -9,7 +9,10 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
+        /* Solid green uses the button fill (--cta-primary), not --primary.
+           In dark mode --primary is green-500 and white text on it is ~3:1.
+           --cta-primary is green-700 there. Icons and links stay on --primary. */
+        default: "bg-cta-primary text-primary-foreground [a]:hover:bg-cta-primary-hover",
         secondary:
           "bg-secondary text-secondary-foreground [a]:hover:bg-secondary/80",
         /* destructive and success use the paired subtle roles, as warning
@@ -46,7 +49,7 @@ const badgeVariants = cva(
         count: "bg-destructive font-semibold text-destructive-foreground",
         /* The same count in green: unread messages in a conversation list
          * (WhatsApp's pill). Red stays for alerts that need attention. */
-        "count-positive": "bg-primary font-semibold text-primary-foreground",
+        "count-positive": "bg-cta-primary font-semibold text-primary-foreground",
         /* Translucent pills that tint the surface under them instead of
          * sitting on it as a block: `on-dark` lightens a dark/gradient
          * surface (offer headers, solid banners), `on-tint` darkens a light

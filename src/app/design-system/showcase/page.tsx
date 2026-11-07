@@ -2087,9 +2087,9 @@ export default function Home() {
                     icon: Share2,
                   },
                   {
-                    href: "/apnahire/jobs/rounds/new",
-                    title: "Create Job wizard",
-                    body: "4-step Stepper wizard with ScreeningConfigurator.",
+                    href: "/apnahire/jobs/new",
+                    title: "Create a job",
+                    body: "The live posting wizard. The old interview-rounds wizard is reference only.",
                     icon: UserPlus,
                   },
                 ].map((t) => {

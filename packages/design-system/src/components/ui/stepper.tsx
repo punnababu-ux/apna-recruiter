@@ -145,14 +145,14 @@ export function Stepper({
 function StepGlyph({ status, index }: { status: StepStatus; index: number }) {
   if (status === "completed") {
     return (
-      <span className="relative z-docked flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+      <span className="relative z-docked flex size-6 shrink-0 items-center justify-center rounded-full bg-cta-primary text-primary-foreground">
         <Check className="size-3.5" />
       </span>
     )
   }
   if (status === "current") {
     return (
-      <span className="relative z-docked flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
+      <span className="relative z-docked flex size-6 shrink-0 items-center justify-center rounded-full bg-cta-primary text-xs font-semibold text-primary-foreground">
         {index}
       </span>
     )

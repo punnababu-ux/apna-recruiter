@@ -28,6 +28,13 @@ const nextConfig: NextConfig = {
         destination: "/apnahire/:path*",
         permanent: true,
       },
+      // The interview-rounds wizard is reference only. Job posting is the
+      // live create-a-job flow (Punna, 2026-11-07).
+      {
+        source: "/apnahire/jobs/rounds/new",
+        destination: "/apnahire/jobs/new",
+        permanent: false,
+      },
       // The public pricing page moved out of the product namespace and into
       // the (marketing) route group, which doesn't appear in the URL.
       {
