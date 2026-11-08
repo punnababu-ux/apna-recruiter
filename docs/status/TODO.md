@@ -29,7 +29,7 @@ Take one at a time, top down. P0 = now, P1 = next, P2 = after, P3 = later.
 20. **P3** Profile page; workspace switcher (if in scope); Refer and earn
 21. **P3** Plan cards: AI add-on upfront note, feature explainers (both paused)
 22. **P3** Clay objects for plan pop-ups and banners; city-lock clay
-23. **P3** Express: dark-mode contrast, resume unlock copy, in-chat search, thread scroll, document requests
+23. **P3** Express: resume unlock copy, in-chat search, thread scroll, document requests
 
 Each live-parity item: compare with live first (`docs/reference/LIVE-EMPLOYER-KB.md`, section per area), then build; done = works at 375px and desktop, `npm run check` green.
 Open before ECC: keep "View number" as the green action, or make Shortlist primary?
@@ -86,7 +86,7 @@ Open before ECC: keep "View number" as the green action, or make Shortlist prima
 ## Layout bugs (found by the browser tests, 2026-11-06; each is a `test.fixme` — remove it when fixed)
 - [x] Plan cards at 320px scroll the page sideways: "Active for 15 days" now moves under the title when the panel is narrow
 - [x] Job posting "Describe" screen, phones: the `ai-idle` halo now stays inside the 1rem page padding
-- [ ] ECC job page, filter applied, 320px: the results bar's "· 1 filter Clear" runs 16px off screen (`e2e/app.spec.ts`). Left: ECC is a work in progress (Punna, 2026-11-06); fix it with the ECC phone layout
+- [ ] ECC job page, filter applied, 320px: the results bar's "· 1 filter Clear" runs 16px off screen (`e2e/app.spec.ts`). Left with the ECC phone layout (Punna, 2026-11-06). Also on the design-system score list
 - [x] Homepage, 320px: the apna Database / Enterprise cards ran 17px off screen; the card grid is now `grid-cols-1`
 - [x] Interview prep lounge, 375px and 320px: overflow fixed (short hero CTA on phones; the carousel's neighbour cards clipped)
 
@@ -96,7 +96,6 @@ Each is in the spec's `KNOWN` list, matched per element; delete the entry when i
 - [x] Contrast: struck plan-card feature lines (`job-plan-cards.tsx`) use `text-muted-foreground`, the line-through kept
 - [x] Contrast: the "−21%" saving (`--checkout-primary` is green-700 on light; dark stays green-500)
 - [x] Contrast: green / blue links on tinted banners use the `-subtle-foreground` text
-  (proposed shades for all four: `docs/history/SESSION-2026-11-06-QUALITY.md` §5; awaiting sign-off)
 - [x] Phone plan cards (`mobile-plan-row.tsx`): a radio that contains the Buy now button (nested-interactive)
 - [x] A focusable `aria-hidden` span, our own `PrototypeSettings` anchor (aria-hidden-focus)
 - [x] `LogoWall` marquee scrolls with nothing focusable inside
@@ -114,7 +113,40 @@ Design-system pages (`e2e/components.spec.ts` `KNOWN`, full list in
 - [x] Contrast: Badge `default`, the green count, and the solid avatar fallback use `--cta-primary` (green-700 in dark), same as buttons. Icons and links stay on `--primary`.
 
 ## Before production
-- [x] Hidden prototype settings removed (2026-11-07). "*GST applicable", "Valid till", "Candidate view" and "Resubscribe at the same price." are plain text. Express review states are `?layout=subscription` and `?credits=partial|held`.
+- [x] Hidden prototype settings removed (2026-11-07). "*GST applicable", "Valid till", "Candidate view" and "Resubscribe at the same price." are plain text. Express review states are `?layout=subscription` and `?credits=` (`partial`, `job4`, `ai`, `partial-ai`, `job4-ai`, `addon`, `held`). A jobs-list offer bar is `?bar=` on `/apnahire/jobs`.
+
+## Design-system score (2026-11-08)
+**Target: 8.5/10 against a production design system.** Today it is 7.5 (8.5 as a prototype). The point of this list is that score, not new product features.
+
+Why these, and not more: contrast, CI screenshots, and the hidden preview panel are already done. What still separates this from a system someone else can change safely is a changelog and two files that are too big to review (`wizard-screens.tsx` 2,048 lines, `self-checkout.tsx` 1,075). Each task below is one move. No behavior change. The posting and self-checkout browser tests must stay green.
+
+Done, and not to be undone (`AGENTS.md` → "Quality bar"): darker green labels, display-page demos on real roles, Linux screenshot baselines, the preview panel removed, both `KNOWN` lists empty.
+
+Do in this order, one task at a time:
+
+Changelog
+- [ ] Add `packages/design-system/CHANGELOG.md` with one short entry for the token and contrast changes already on main
+- [ ] In `AGENTS.md`, one line: a semantic token or a primitive variant gets a changelog line in the same change
+
+Job-posting screens (`wizard-screens.tsx` stays the entry; parts go in `wizard-screens/`; `SCREENS` and the types stay exported from the entry)
+- [ ] Move the shared helpers and icon maps
+- [ ] Move the opening screens: describe, manual intro, title, category, industry
+- [ ] Move workplace, night shift, relocation, and job type
+- [ ] Move the location screen
+- [ ] Move salary and pay type
+- [ ] Move candidate requirements: perks, education, English, experience, preferences
+- [ ] Move setup and review: screening, description, interview, contact, review
+
+Self-checkout (`self-checkout.tsx` stays the entry and the export)
+- [ ] Move the Jobs tab panel into `self-checkout/`
+- [ ] Move the Database tab panel
+- [ ] Move the Unlimited and Enterprise tab panels
+- [ ] If the file is still over ~600 lines, move the payment and order handlers. Stop once it is under that
+
+Not this plan. They do not move the 7.5, and each is a different stream:
+- ECC, including the 320px filter bar. It stays with the ECC phone layout (Layout bugs, and the P0 ECC items above).
+- Replacing browser storage (credits, slots, pricing phase) with an account API. That is a product backend, not a design-system change.
+- `sidebar.tsx` (723 lines) is a stable primitive. Split it only when a change is already inside it.
 
 ## Express (recruiter chat)
 - [x] Dark mode contrast: solid green badges and avatars use the darker button fill. Icons and links stay on green-500. (2026-11-07)

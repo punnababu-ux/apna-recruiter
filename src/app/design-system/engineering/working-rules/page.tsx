@@ -92,6 +92,7 @@ export default function WorkingRulesPage() {
         <RuleList
           rules={[
             "Look up before you explore: PROJECT-MAP.md, then graphify query, only then grep. Read the section you need, not whole files.",
+            "The quality bar in AGENTS.md is binding: contrast, no setState in effects, no hidden preview panel, no second create-job wizard. A failing check is fixed at the cause. KNOWN and the screenshot tolerance are not loosened.",
             "Independent subagents go out in one message so they run in parallel; each returns a short reply, not file dumps.",
             "Keep progress in a status file so a new chat can resume from it.",
           ]}

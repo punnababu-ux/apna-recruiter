@@ -8,9 +8,17 @@ or **Open**.
 
 ---
 
+## The next score work is a changelog and two file splits (2026-11-08)
+
+- **Question:** what is left to move the repo from 7.5/10 toward a production design system, and what is in scope?
+- **Decision:** target **8.5/10**. Do only a short design-system changelog and the splits of `wizard-screens.tsx` and `self-checkout.tsx`, one small move at a time, no behavior change. ECC (including the 320px filter bar) stays with the ECC phone layout. Replacing browser storage with an account API is a product backend, not this plan. `sidebar.tsx` is split only when a change is already inside it.
+- **Why:** contrast, CI screenshots, and the hidden preview panel are done. The remaining gap a design system is judged on is being able to see what changed and to review a file. ECC and a real account API would raise a different score, and each is larger than these tasks.
+- **Would change it:** Punna picks up ECC, or asks for the account API.
+- **Status:** Decided (Punna, 2026-11-08: plan the open score items, keep the tasks small, put them on the to-do list).
+
 ## No hidden preview panel (2026-11-07)
 
-- **Decision:** product copy is not a control. "*GST applicable", "Valid till", "Candidate view" and "Resubscribe at the same price." are plain text. The preview panel is gone. Express checkout review states are query params: `?layout=subscription`, `?credits=partial`, `?credits=held`. The pricing phase stays in `apnahire:pricing-phase` (a fresh browser opens on december), with no on-screen switch.
+- **Decision:** product copy is not a control. "*GST applicable", "Valid till", "Candidate view" and "Resubscribe at the same price." are plain text. The preview panel is gone. Express checkout review states are query params: `?layout=subscription` and `?credits=` (`partial`, `job4`, `ai`, `partial-ai`, `job4-ai`, `addon`, `held`). A jobs-list offer bar is `?bar=` on `/apnahire/jobs`. The pricing phase stays in `apnahire:pricing-phase` (a fresh browser opens on december), with no on-screen switch. These rules are also in AGENTS.md → "Quality bar".
 - **Why:** a silent click on a tax line or a date is how a prototype leaks into the product. Tests and the handoff script set the same states through the address bar.
 - **Would change it:** account data for the plan layout, the credit balance and the pricing phase. Until then the query and the storage key stay.
 - **Status:** Decided (Punna, 2026-11-07: the next score item after CI screenshots).
@@ -32,8 +40,7 @@ or **Open**.
 
 - **Decision:** text on a tinted fill uses that tint's foreground (`-subtle-foreground`), not the solid role colour and not `-foreground`. The marketing eyebrow is gray. The selectable-card description drops its `/80` fade. In dark mode only the button fills get darker: green buttons `--cta-primary` green-700, red buttons `--cta-destructive` red-700. `--primary` and `--destructive` stay the bright colours used for text and icons.
 - **Why:** the solid colour on its own pale tint was under 4.5:1. Darkening the shared green or red would dim every icon and link. White text only fails on the button fill, so only the fill changes.
-- **Left:** Badge `default` and Avatar fallback still use `--primary` (green-500) with white text in dark mode, about 3:1.
-- **Status:** Decided (Punna, 2026-11-07: proceed with the suggestion).
+- **Status:** Decided (Punna, 2026-11-07: proceed with the suggestion). Badge `default`, the green count, the avatar badge and the stepper were moved to `--cta-primary` the same day; see the entry above.
 
 ## Light-mode contrast: the four faint spots (2026-11-06)
 
@@ -83,7 +90,7 @@ or **Open**.
 
 - **Decision:** a control's accessible name is its visible text; extra context is sr-only text after it, never an `aria-label` that replaces it (job metric pills, workspace switcher). A phone plan card with its own Buy now button is not `role=radio` (an interactive inside an interactive); the card keeps the tap, the button is the keyboard route.
 - **Why:** voice-control users say what they see; a different `aria-label` breaks that (axe `label-content-name-mismatch`). Nested interactives confuse screen readers.
-- **Status:** Decided. Colour-contrast shades (ribbon, struck lines, −% on tiles, links on tints) are **Open**, awaiting Punna; proposals in `history/SESSION-2026-11-06-QUALITY.md` §5.
+- **Status:** Decided. The colour-contrast shades (ribbon, struck lines, −% on tiles, links on tints) were accepted the same day; see "Light-mode contrast" above.
 
 ## How the repo is tested, and what CI blocks on (2026-11-06)
 
@@ -96,7 +103,7 @@ or **Open**.
 
 - **Decision:** Next.js 16.2.3 → 16.4.5 (critical advisory) and `npm audit fix`; not `npm audit fix --force`, which proposes downgrades (eslint-config-next 15, shadcn 1). A dev-only advisory (brace-expansion under eslint) is accepted.
 - **Why:** the minor upgrade passed build, lint and every browser test; the forced ones would break tooling for advisories that never reach users.
-- **New lint rule** `react-hooks/set-state-in-effect` (31 hits) is a warning until fixed (TODO.md → "Lint debt").
+- **New lint rule** `react-hooks/set-state-in-effect` was a warning, then made an error again once the 31 hits were removed (2026-11-07). It stays an error.
 - **Status:** Decided.
 
 ## New job, no applicants: show active leads from the database (2026-11-06)

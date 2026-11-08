@@ -1065,6 +1065,41 @@ A PR that uses a raw colour, introduces a component not listed in
 `docs/reference/COMPONENTS.md`, breaks `npm run lint:tokens`, or adds a template
 without also adding its new components, is a reject.
 
+### Quality bar — do not undo (2026-11-07)
+
+These are the score fixes. Each one is also a decision in `docs/DECISIONS.md`.
+A failing check is fixed at the cause. Never loosen `KNOWN`, a `test.fixme`,
+or the screenshot pixel tolerance to make it pass.
+
+**Contrast.** White on green-500 in dark mode is about 3:1.
+
+- A solid green surface with a light label uses `bg-cta-primary` (dark:
+  green-700). That is Badge `default`, the green count, the avatar badge,
+  and both stepper circles. Icons and links stay on `--primary`.
+- Text on a tinted fill uses that tint's `-subtle-foreground`. Not the solid
+  role colour, not `-foreground`, and not a `/60` or `/80` fade.
+- A struck price on a tinted banner is `text-banner-strike` (neutral gray).
+  It does not take the banner's colour.
+- Dark button fills only: `--cta-primary` green-700, `--cta-destructive`
+  red-700. Do not darken `--primary` or `--destructive` to fix a label.
+- Light `--ribbon-fill` is sky-600. Light `--checkout-primary` is green-700.
+  Dark checkout text stays green-500.
+- A demo uses a real role. No hand-painted emerald, and no gold-500 text on
+  a white or dark card (`text-warning` is a fill).
+
+**Effects.** Do not set state inside an effect. A browser-only read goes
+through `useClientSnapshot`. A reset when a prop or route changes happens
+during render. `react-hooks/set-state-in-effect` stays an error.
+
+**Routes and prototype seams.** Product copy is not a control: no click on
+"*GST applicable", "Valid till", "Candidate view", or "Resubscribe at the
+same price." There is no preview panel. Express review states are query
+params (`layout`, `credits`). `/apnahire/jobs/rounds/new` redirects to job
+posting; the rounds editor stays in the repo and is not a second live wizard.
+
+**Files.** A file over about 600 lines is split by moving code only. The
+original file keeps its path and exports; the parts go in a sibling folder.
+
 ---
 
 ## Working rules for AI agents (Punna, 2026-11-04)

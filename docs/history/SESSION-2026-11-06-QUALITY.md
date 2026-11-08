@@ -408,3 +408,11 @@ the same price." are plain text. `PrototypeSettings`, the checkout gear
 and the job-plan switcher are deleted. Express tests set
 `?layout=subscription` and `?credits=partial` or `?credits=held`. The
 pricing phase stays in local storage.
+
+### 19. The score fixes are rules
+The contrast, effect, test and prototype-seam fixes are in AGENTS.md
+("Quality bar — do not undo") as well as `docs/DECISIONS.md`. A later
+session follows that section. Three decision entries that still described
+the old state (badges left on green-500, contrast still open, the effect
+lint still a warning) were corrected. `docs/reference/TOKENS.md` now says
+dark `--cta-primary` is green-700, not green-500.

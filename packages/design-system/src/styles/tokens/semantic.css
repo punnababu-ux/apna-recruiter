@@ -1140,7 +1140,7 @@
   /* Ribbon one step quieter on dark (sky-500 was the loudest mark on the
    * dark cards). --checkout-primary is the plan pages' green TEXT and
    * icons (labels, ticks, savings lines): bright green-500 on dark so it
-   * reads. Their green BUTTONS fill from --cta-primary (green-500). */
+   * reads. Their green BUTTONS fill from --cta-primary (green-700 in dark). */
   --checkout-info:          var(--color-apna-sky-700);
   --checkout-primary:       var(--color-apna-green-500);
 }
