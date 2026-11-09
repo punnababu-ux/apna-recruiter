@@ -14,6 +14,7 @@ export type { LucideIcon as IconComponent, LucideProps as IconProps } from "luci
 
 export {
   BadgePercent, CircleAlert,
+  ThumbsDown, ThumbsUp,
   Activity, AlertCircle, AlertTriangle, ArrowDown, ArrowLeft,
   ArrowRight, ArrowUp, ArrowUpDown, ArrowUpRight, AtSign, AudioLines,
   Award, Ban, BarChart2, Bell, Bike, Bold, BookOpen, Crown, LifeBuoy,

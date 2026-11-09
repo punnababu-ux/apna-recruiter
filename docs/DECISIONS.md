@@ -10,6 +10,63 @@ or **Open**.
 
 
 
+## Small icons for card facts (2026-11-09)
+
+- **Question:** should job and candidate cards use small icons instead of dots?
+- **Decision:** yes, the default on phones and desktop (Punna's call; ?icons=0 shows the dots until they are deleted). Job cards: pin, calendar, user, which also drop "Posted" and "By". Candidate cards: briefcase, pin, and a plain clock for Applied, which replaces the green dot. Salary has no icon because the ₹ already says it. Phone cards show only the area, so the line still fits.
+- **Why:** an icon earns its place when it replaces a word or a dot.
+- **What would change it:** the line feeling busier than the dots at phone width.
+- **Status:** Decided.
+
+## Applied candidates show when they applied, not when they were active (2026-11-09)
+
+- **Question:** which recency helps a recruiter on each tab?
+- **Decision:** the Applied tab (cards, table, details) shows "Applied 2 days ago" and no active status. The Database tab keeps "Active 2 days ago".
+- **Why:** a job is live for 15 days, so everyone who applied was active lately; Active tells the recruiter little there. Applied says who is a fresh lead. In Database the recruiter is hunting, and Active predicts who will respond.
+- **What would change it:** data showing Active predicts pickup among applicants, or job lifetimes well beyond 15 days.
+- **Status:** Decided (Punna's call).
+
+## New candidate details are the default (2026-11-09)
+
+- **Question:** should the phone card deck and the rethought details stay behind ?deck=1?
+- **Decision:** no. They are the default on desktop and phones (Punna's call). The entries below were written while this was a preview. ?deck=0 shows the old details until they are deleted.
+- **Why:** Punna reviewed the preview on both platforms and chose it.
+- **What would change it:** recruiters missing swipes or actions in the card.
+- **Status:** Decided.
+
+## Resume is a row in Profile, not a tab (2026-11-09)
+
+- **Question:** without a resume preview, does the resume need its own tab?
+- **Decision:** no, on desktop and phones. Tabs are Profile and Notes. Profile has a Resume section under AI match, with View and Download, shown only when there is a resume. This replaces the Resume tab and the desktop stand-in viewer in the entries below.
+- **Why:** the tab held one button and a download icon, so it cost a tap to reach one action.
+- **What would change it:** embedding the real document on desktop, as live does; that view could earn a tab back.
+- **Status:** Decided, for the preview.
+
+## Candidate profile fields for applied candidates (2026-11-09)
+
+- **Question:** the live applied profile (read 2026-11-09) has fields we missed. Which belong in ours, and which are noise, on each platform? Database profiles are separate and come later.
+- **Added, both platforms:** salary and location in the header; job duration and notice period; languages as their own section; candidate preferences; assets and documents; AI disclaimer; resume download.
+- **Added, desktop only:** applied date; role and industry on each job; AI feedback thumbs; resume read in place.
+- **Removed, both:** Key facts (salary and location moved up, languages got a section); Availability (invented by our mock, not on live); Departments and the Industries section (taxonomy for filters; each job already says its role); "Add a note" in the footer (Notes is a tab); the Resume tab when there is no resume.
+- **Removed on phones:** email (Call and WhatsApp are there); lower education levels (highest is enough); role and industry per job; applied date; AI thumbs; the embedded resume (unreadable at 375px, so View and Download). Gender and age move from the header to Personal details, so the header leads with experience, salary and place.
+- **Why:** keep what changes whether the recruiter calls this person. On a phone, also drop what needs a desk to act on.
+- **What would change it:** recruiters filtering by department in the profile, or asking for email on phones.
+- **Status:** Decided; the default since 2026-11-09.
+
+## Candidate details rethink and phone candidate deck (2026-11-09)
+
+- **Question:** the details page lacked a full profile, split notes between top and bottom, and scattered its actions. Should a phone tap open an intermediate card?
+- **Decision:** one details layout on desktop and phones: who, then Profile · Resume · Notes, with actions in one fixed footer (contact left, decide right). On phones a tap opens a floating card, not a bottom sheet, with the previous and next cards peeking at its sides (Punna saw cards stacked at the bottom as something to pull up). The cards follow the finger with a slight tilt: left is next, right is previous. Scrolling takes it to full screen. Reject and Shortlist fly the card out.
+- **Why:** recruiters learn one action order from the card. Notes are written and read in one tab. The expanded card is a decision step without leaving the list.
+- **Swipe never decides:** a slip must not reject a real person, and with side peeks left and right mean next and previous. Decided; the `&swipe=decide` trial is removed.
+- **Previous and next are in the floating pill on phones** and in the panel header on desktop.
+- **Tabs show at the expanded stage too:** one layout, simpler than revealing them on full screen.
+- **Actions on the card, navigation in the pill:** Call, WhatsApp, Reject and Shortlist sit at the bottom of the card and travel with it. A floating pill holds previous, "1 of 4", next and close; there is no back button or top bar. Close replaces the usual CloseBubble here.
+- **Expanded is a normal screen:** once scrolled, the card turns into a profile screen: the name block and tabs stay sticky (one header, not a second title bar) and a back button takes the photo's place, because two circles side by side compete; the pill and sideways drag go away. Reaching the top returns it to the card; the back button goes to the list (Punna's call).
+- **Card shadows:** stacked cards carry a shadow so they separate. Punna's call; an exception to "resting cards are flat", for this stack only.
+- **What would change it:** recruiters missing the swipe on a real phone, or tabs hiding the notes.
+- **Status:** Decided; the default since 2026-11-09.
+
 ## Phone Sort and Filters: fixed bottom bar (2026-11-10)
 
 - **Question:** two chips left the top row half empty. What fills it?

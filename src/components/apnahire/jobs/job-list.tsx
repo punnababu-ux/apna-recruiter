@@ -29,6 +29,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { MetaFact, useMetaIcons } from "@/components/apnahire/jobs/meta-fact"
 import { toast } from "sonner"
 import {
   AlertBanner,
@@ -49,7 +50,10 @@ import {
   RefreshCw,
   Share2,
   Trash2,
+  Calendar,
+  MapPin,
   UserCheck,
+  UserRound,
   Users,
 } from "@apna/design-system"
 import { JobCardFrame, JobMetricPill } from "@apna/design-system"
@@ -215,6 +219,7 @@ function JobActions({ job }: { job: ApnaJob }) {
 function JobCard({ job }: { job: ApnaJob }) {
   const router = useRouter()
   const status = STATUS[job.status]
+  const icons = useMetaIcons()
   // Under review: not live yet, so nothing is counting.
   const counting = job.status !== "under_review"
   const href = `/apnahire/jobs/${job.id}`
@@ -229,6 +234,15 @@ function JobCard({ job }: { job: ApnaJob }) {
         </Badge>
       }
       meta={
+        icons ? (
+          <span className="flex w-full flex-col gap-0.5 text-sm text-foreground sm:flex-row sm:gap-3">
+            <MetaFact icon={MapPin}>{job.area}, {job.city}</MetaFact>
+            <span className="flex min-w-0 gap-3">
+              <MetaFact icon={Calendar} className="shrink-0">{job.postedAt}</MetaFact>
+              <MetaFact icon={UserRound}>{job.postedBy}</MetaFact>
+            </span>
+          </span>
+        ) : (
         // A candidate card's facts: dots, no icons. Phones get two set lines,
         // so a date never cuts off.
         <p className="flex w-full flex-col gap-0.5 text-sm text-foreground sm:flex-row sm:flex-wrap sm:gap-0">
@@ -242,6 +256,7 @@ function JobCard({ job }: { job: ApnaJob }) {
             By {job.postedBy}
           </span>
         </p>
+        )
       }
       actions={<JobActions job={job} />}
       pills={

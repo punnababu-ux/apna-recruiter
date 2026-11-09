@@ -1490,6 +1490,32 @@
   }
 }
 
+/* The phone candidate deck (jobs/candidate-deck.tsx): cards side by side,
+ * --deck-slot apart (0 in hand, 1 next, -1 previous; the 8px is CARD_GAP).
+ * --deck-x moves them all with the finger, directly while dragging and eased
+ * otherwise, so a swipe carries on from where the finger let go. */
+@keyframes deck-enter {
+  from { translate: 0 var(--deck-from, 32px); opacity: 0.4; }
+}
+@utility animate-deck-enter {
+  animation: deck-enter var(--duration-slide) var(--ease-standard);
+  @media (prefers-reduced-motion: reduce) { animation: none; }
+}
+@utility deck-slide {
+  translate: calc(var(--deck-slot, 0) * (100% + 8px) + var(--deck-x, 0px)) 0;
+  transition: translate var(--duration-slide) var(--ease-standard), rotate var(--duration-slide) var(--ease-standard), inset var(--duration-slide) var(--ease-standard), border-radius var(--duration-slide) var(--ease-standard);
+  [data-dragging] & { transition: none; }
+  @media (prefers-reduced-motion: reduce) { transition-duration: 0ms; }
+}
+@utility deck-tilt {
+  rotate: var(--deck-tilt, 0deg);
+}
+/* Punna's call, 2026-11-09: floating deck cards carry a shadow to separate
+ * from each other. Only this deck; other resting cards stay flat. */
+@utility deck-card-shadow {
+  box-shadow: var(--shadow-elevated);
+}
+
 /* Settle-in — a band's pieces rise into place as you scroll to it (the
  * homepage's proof band and FAQ, the contact band and the footer on every
  * marketing page). The wrapper carries `data-settle`, set by SettleIn

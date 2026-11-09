@@ -453,6 +453,26 @@ reopening a question that is logged there.
 
 ---
 
+## Job candidates page (ECC) (user calls, 2026-11-09)
+
+Detail and reasons: `docs/DECISIONS.md`, entries dated 2026-11-09.
+
+- **Recency follows intent.** Applied candidates show when they applied
+  (`ActiveStatus label="Applied"`); never Active. A job is live for 15 days, so
+  everyone there was active lately. Database candidates show Active: the
+  recruiter is hunting, and it says who is likely to respond.
+- **Card facts use small icons, not dots** (`MetaFact`, `CandidateFacts`): MapPin
+  location, Calendar posted on, UserRound posted by, Briefcase experience, Clock
+  applied. The ₹ needs no icon. Phone cards show only the area.
+- **A phone tap opens `CandidateDeck`,** a floating card that follows the finger.
+  Actions live in the card; previous, next and close in the floating pill. It
+  scrolls to a full-screen profile, and back from there goes to the list.
+- **One profile, `CandidateDetails`:** Profile and Notes. The resume is a section
+  in Profile; it earns a tab back only when the real file is embedded. Database
+  profiles are a separate type, still to design.
+
+---
+
 ## Card corners — one radius, every page
 
 Every card on every page — home, pricing, the plans step, login, the app —

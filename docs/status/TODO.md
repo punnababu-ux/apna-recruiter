@@ -4,13 +4,20 @@ The running backlog. Add items as Punna names them, tick them off when they
 ship, and keep one line per item. Open price questions live in
 `docs/reference/PRICING.md` → "Still open".
 
+## ECC follow-ups (2026-11-09)
+- [ ] Check the swipe card and new cards on a real phone
+- [ ] Delete the old paths behind `?deck=0` and `?icons=0`
+- [ ] Applied tab filters: "Applied in" before "Last active"; drop "Last 30 days"
+- [ ] Design the Database candidate profile (differs from the applied one)
+- [ ] Real resume files for View and Download (toasts today)
+
 ## Order of work (prioritized 2026-11-05)
 Take one at a time, top down. P0 = now, P1 = next, P2 = after, P3 = later.
 
 1. **P0** ECC 1 · job header, ⋮ side panel (plan, preference, job details), expired/review banners
 2. **P0** ECC 2 · Applied tab: pipeline counters, sort, filters (quick + "See more"), high-match group
-3. **P0** ECC 3 · candidate card: matching chips, rows, actions (view number, WhatsApp, reject, shortlist), note
-4. **P0** ECC 4 · candidate profile drawer: AI matching, full profile, CV, notes, sticky actions
+3. **P0** ECC 3 · (reworked 2026-11-09, phones + desktop) candidate card: matching chips, rows, actions (view number, WhatsApp, reject, shortlist), note
+4. **P0** ECC 4 · (reworked 2026-11-09, phones + desktop) candidate profile drawer: AI matching, full profile, CV, notes, sticky actions
 5. **P0** ECC 5 · Database tab: AI-suggested banner, filters, select all, Excel, credit note, pagination
 6. **P0** ECC 6 · journeys: no leads yet · leads arriving · expired (= "Job details journeys" below)
 7. ✅ **Done** Jobs list: status chips, card states (repost, finish posting), three counts, pending actions, empty state

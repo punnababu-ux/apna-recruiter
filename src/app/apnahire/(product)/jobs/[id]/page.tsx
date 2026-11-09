@@ -12,6 +12,7 @@
  *   CandidateDrawer (right-side panel; URL-driven via ?leadId=)
  */
 
+import { appliedAgo } from "@/components/apnahire/active-status"
 import {
   Card,
   SlidersHorizontal,
@@ -46,8 +47,10 @@ import { ApplicantTable } from "@/components/apnahire/jobs/applicant-table"
 import type { CallStatus } from "@/components/apnahire/jobs/contact-number"
 import { ApplicantActions, ApplicantCard, type ApplicantProfile } from "@/components/apnahire/jobs/applicant-card"
 import { CandidateProfilePanel, CandidateProfileSheet } from "@/components/apnahire/chats/candidate-profile-panel"
+import { CandidateDetailsSheet } from "@/components/apnahire/jobs/candidate-details"
 import { MatchBars, matchLevel } from "@/components/apnahire/match-bars"
 import type { ApnaJob } from "@/components/apnahire/jobs/job-list"
+import type { CandidateFullProfile } from "@/content/chats"
 import { MATCH_LABEL, type ChatNote, type ChatThread, type MatchLevel } from "@/content/chats"
 import { STATUS } from "@/components/apnahire/jobs/job-list"
 import { JobInfoPanel, JobStatusBanner } from "@/components/apnahire/jobs/job-info-panel"
@@ -313,7 +316,7 @@ const APPLY_META: Record<string, ApplyMeta> = {
     skills: ["Field sales"],
     languages: "English (basic) | Hindi",
     activeAgo: "a week ago",
-    score: 22, appliedDays: 20, english: "basic",
+    score: 22, appliedDays: 13, english: "basic",
   },
   "anjali-interview": {
     ...P("Female", 27, "4 years", "₹21,000 /month", "Whitefield, Bengaluru"),
@@ -333,7 +336,7 @@ const APPLY_META: Record<string, ApplyMeta> = {
     skills: ["CRM", "Email support"],
     languages: "English (good) | Tamil | Hindi",
     activeAgo: "4 days ago",
-    score: 58, resume: true, appliedDays: 26, english: "good",
+    score: 58, resume: true, appliedDays: 15, english: "good",
   },
 }
 const metaOf = (id: string): ApplyMeta =>
@@ -343,6 +346,27 @@ const metaOf = (id: string): ApplyMeta =>
 const REQUIREMENTS = ["Education", "English", "Location", "Languages"]
 /** As written mid-sentence (English stays capitalised). */
 const inSentence = (r: string) => (r === "English" ? r : r.toLowerCase())
+
+// shortcut: invented from the row's facts so the preview reads as a whole
+// profile; replace with the candidate's real profile when the API exists.
+function fullProfile(name: string, m: ApplyMeta): CandidateFullProfile {
+  const [title = "—", company = "—", dates = "—"] = (m.current ?? "").split(" · ")
+  const school = m.education?.startsWith("12th") ? [] : ["12th · State board"]
+  return {
+    work: [
+      ...(m.current ? [{ title, company, dates, duration: m.experience, role: "Operations", industry: "Retail", notice: "1 month notice" }] : []),
+      { title: "Data entry operator", company: "Concentrix", dates: "2019 – 2021", duration: "2 years", role: "Back office", industry: "BPO" },
+    ],
+    education: [m.education ?? "—", ...school, "10th · State board"],
+    assets: ["Bike", "Aadhaar card", "PAN card"],
+    preferences: ["Day shift", "Full time", "Field job"],
+    gender: m.gender,
+    age: `${m.age} years`,
+    appliedAgo: appliedAgo(m.appliedDays),
+    email: `${name.split(" ")[0].toLowerCase()}@example.com`,
+    hasResume: !!m.resume,
+  }
+}
 
 /** A lead in the shape of a chat thread, so the chats profile panel (Candidate 360) shows it. */
 function toThread(c: CandidateRow, m: ApplyMeta, job: ApnaJob | undefined, notes: ChatNote[], resumeUnlocked: boolean): ChatThread {
@@ -365,6 +389,7 @@ function toThread(c: CandidateRow, m: ApplyMeta, job: ApnaJob | undefined, notes
       expectedSalary: m.salary,
       availability: "Can join in 15 days",
       phoneMasked: "Hidden until you view the number",
+      full: fullProfile(c.name, m),
     },
     match: {
       level,
@@ -595,6 +620,9 @@ function JobDetailPageInner({ id }: { id: string }) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const leadId = searchParams.get("leadId")
+  // The default since 2026-11-09. ?deck=0 shows the old details for comparison.
+  const deck = searchParams.get("deck") !== "0"
+  const leadPushed = React.useRef(false)
 
   const job = jobById(id)
   const jobTitle = job?.title ?? decodeURIComponent(id).replace(/-/g, " ")
@@ -898,7 +926,15 @@ function JobDetailPageInner({ id }: { id: string }) {
     const params = new URLSearchParams(searchParams.toString())
     if (next) params.set("leadId", next)
     else params.delete("leadId")
-    router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+    const url = `${pathname}?${params.toString()}`
+    // Preview: an open card is a history step, so Android back closes it.
+    if (deck && next && !leadId) {
+      leadPushed.current = true
+      router.push(url, { scroll: false })
+    } else if (deck && !next && leadPushed.current) {
+      leadPushed.current = false
+      router.back()
+    } else router.replace(url, { scroll: false })
   }
 
   // Relevance runs high → low; a section header opens each level
@@ -1109,7 +1145,7 @@ function JobDetailPageInner({ id }: { id: string }) {
               phone: c.phone,
               photo: PHOTOS[c.id],
               level: matchLevel(m.score),
-              activeAgo: m.activeAgo,
+              appliedDays: m.appliedDays,
               experience: m.experience,
               salary: m.salary,
               location: m.location,
@@ -1133,6 +1169,20 @@ function JobDetailPageInner({ id }: { id: string }) {
           leadId={leadId}
           onOpenLead={setLeadId}
           profile={selected && selectedThread ? { thread: selectedThread, onAddNote: panelProps(selected).onAddNote } : undefined}
+          deck={
+            deck
+              ? {
+                  threadOf: (id) => {
+                    const c = candidates.find((x) => x.id === id)
+                    return c && toThread(c, metaOf(c.id), job, notes[c.id] ?? [], true)
+                  },
+                  addNote: (id, text) => {
+                    const c = candidates.find((x) => x.id === id)
+                    if (c) panelProps(c).onAddNote(text)
+                  },
+                }
+              : undefined
+          }
           noApplicants={noApplicants}
           leads={ACTIVE_LEADS}
           moreLeads={MORE_LEADS}
@@ -1538,7 +1588,20 @@ function JobDetailPageInner({ id }: { id: string }) {
       </main>
 
       {/* Detailed view and phones: the profile opens as the side panel. */}
-      {selected && selectedThread && (
+      {deck && selected && selectedThread && (
+        <CandidateDetailsSheet
+          open={!!leadId && !split}
+          onOpenChange={(o) => !o && setLeadId(null)}
+          thread={selectedThread}
+          onAddNote={panelProps(selected).onAddNote}
+          footer={actionsFor(selected)}
+          position={filteredCandidates.findIndex((c) => c.id === selected.id) + 1}
+          total={filteredCandidates.length}
+          onPrevious={() => setLeadId(filteredCandidates[filteredCandidates.findIndex((c) => c.id === selected.id) - 1]?.id ?? selected.id)}
+          onNext={() => setLeadId(filteredCandidates[filteredCandidates.findIndex((c) => c.id === selected.id) + 1]?.id ?? selected.id)}
+        />
+      )}
+      {!deck && selected && selectedThread && (
         <CandidateProfileSheet
           title="Candidate profile"
           open={!!leadId && !split}

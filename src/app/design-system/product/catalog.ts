@@ -654,6 +654,30 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
     description: "The signed-in app (/apnahire/*).",
     entries: [
       {
+        name: "MetaFact",
+        file: "apnahire/jobs/meta-fact.tsx",
+        what: "One fact on a job or candidate card, led by a small gray icon. CandidateFacts lays out experience, salary and location.",
+        live: "/apnahire/jobs",
+        where: "Job cards, candidate cards, candidate details",
+        rules: ["One icon, one meaning: MapPin location, Calendar posted on, UserRound posted by, Briefcase experience, Clock applied.", "The ₹ needs no icon. Phone cards show only the area."],
+      },
+      {
+        name: "CandidateDeck",
+        file: "apnahire/jobs/candidate-deck.tsx",
+        what: "A tapped candidate on a phone: a floating card with the neighbours peeking at its sides. Swipe for next or previous; scroll to full screen.",
+        live: "/apnahire/jobs/telecaller-koramangala",
+        where: "/apnahire/jobs/[id], below md",
+        rules: ["Back from full screen goes to the list, never to the card.", "Actions live in the card; previous, next and close live in the floating pill, which full screen drops."],
+      },
+      {
+        name: "CandidateDetails",
+        file: "apnahire/jobs/candidate-details.tsx",
+        what: "A job's candidate, read in full: who, then Profile and Notes. CandidateDetailsSheet is the desktop side panel around it.",
+        live: "/apnahire/jobs/telecaller-koramangala",
+        where: "/apnahire/jobs/[id], desktop panel and phone card",
+        rules: ["The fields are chosen in docs/DECISIONS.md. Database profiles are a separate type.", "The resume is a section in Profile, not a tab, until the real document can be embedded."],
+      },
+      {
         name: "PhoneJobPage",
         file: "apnahire/jobs/phone-job-page.tsx",
         what: "A job's candidates as a phone calling queue: To call, Called, Shortlisted, Rejected; a short card ending in Call; one question after the call; a full-screen profile with Next.",

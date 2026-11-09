@@ -140,6 +140,21 @@ export interface CandidateProfile {
   availability: string
   /** Shown instead of the number: calls are masked (PRD FR-10). */
   phoneMasked: string
+  /** The whole profile, as the candidate filled it in on apna. */
+  full?: CandidateFullProfile
+}
+
+export interface CandidateFullProfile {
+  work: { title: string; company: string; dates: string; duration: string; role: string; industry: string; notice?: string }[]
+  education: string[]
+  assets: string[]
+  /** "Day shift", "Full time", "Field job". */
+  preferences: string[]
+  gender: string
+  age: string
+  appliedAgo: string
+  email: string
+  hasResume: boolean
 }
 
 export type MatchLevel = "high" | "medium" | "low"

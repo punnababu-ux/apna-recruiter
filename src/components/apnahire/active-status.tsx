@@ -9,14 +9,22 @@
  *
  *   <ActiveStatus ago="2 hours ago" />   ● Active 2 hours ago
  *   <ActiveStatus ago="yesterday" />     Active yesterday
+ *
+ * A job is live for 15 days, so everyone who applied was active lately. There
+ * the useful recency is when they applied: label="Applied" (2026-11-09).
+ * Database candidates keep Active: it says who is likely to respond.
  */
 
+import { Clock } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 
 /** Active in the last 24 hours. */
 export const isRecentlyActive = (ago: string) => /\b(now|today|online|minutes?|mins?|hours?|hrs?)\b/i.test(ago)
 
-export function ActiveStatus({ ago, className }: { ago: string; className?: string }) {
+/** For label="Applied". */
+export const appliedAgo = (days: number) => (days <= 1 ? "today" : `${days} days ago`)
+
+export function ActiveStatus({ ago, label = "Active", clock, className }: { ago: string; label?: "Active" | "Applied"; clock?: boolean; className?: string }) {
   const recent = isRecentlyActive(ago)
   return (
     <span
@@ -26,8 +34,12 @@ export function ActiveStatus({ ago, className }: { ago: string; className?: stri
         className
       )}
     >
-      {recent && <span aria-hidden className="size-2 shrink-0 rounded-full bg-success" />}
-      Active {ago}
+      {clock ? (
+        <Clock aria-hidden className="size-3.5 shrink-0 text-muted-foreground" />
+      ) : (
+        recent && <span aria-hidden className="size-2 shrink-0 rounded-full bg-success" />
+      )}
+      {label} {ago}
     </span>
   )
 }

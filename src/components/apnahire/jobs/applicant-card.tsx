@@ -36,7 +36,8 @@ import { cn } from "@/lib/utils"
 import { WhatsAppIcon } from "@/components/onlyrounds/candidate-card"
 import { CallStatusMenu, ContactNumber, type CallStatus } from "@/components/apnahire/jobs/contact-number"
 import { MatchBars } from "@/components/apnahire/match-bars"
-import { ActiveStatus } from "@/components/apnahire/active-status"
+import { ActiveStatus, appliedAgo } from "@/components/apnahire/active-status"
+import { CandidateFacts, useMetaIcons } from "@/components/apnahire/jobs/meta-fact"
 import type { MatchLevel } from "@/content/chats"
 
 export type ApplicantProfile = {
@@ -105,9 +106,9 @@ export function ApplicantCard({
   onReject: () => void
   onShortlist: () => void
 }) {
+  const icons = useMetaIcons()
   const facts = [`${profile.gender}, ${profile.age}`, profile.experience, profile.salary, profile.location]
 
-  const applied = appliedDays <= 1 ? "Applied today" : `Applied ${appliedDays} days ago`
 
   // Four zones, read top to bottom (user call, 2026-11-06):
   //   1. who + how well   name, facts, recency · the match chip
@@ -147,10 +148,11 @@ export function ApplicantCard({
                 {name}
                 <ChevronRight aria-hidden className="size-4 shrink-0 text-muted-foreground" />
               </button>
-              <ActiveStatus ago={profile.activeAgo} />
+              <ActiveStatus label="Applied" ago={appliedAgo(appliedDays)} clock={icons} />
             </div>
             {/* The • travels with the fact after it, so a wrapped line never ends on one. */}
-            <p className="flex flex-wrap gap-x-2 text-sm text-foreground @max-3xl:hidden">
+            {icons && <CandidateFacts lead={facts[0]} experience={profile.experience} salary={profile.salary} location={profile.location} className="text-foreground @max-3xl:hidden" />}
+            <p className={cn("flex flex-wrap gap-x-2 text-sm text-foreground @max-3xl:hidden", icons && "hidden")}>
               {facts.map((f, i) => (
                 <span key={f} className="whitespace-nowrap">
                   {i > 0 && <span aria-hidden className="pr-2 text-muted-foreground">•</span>}
@@ -163,14 +165,13 @@ export function ApplicantCard({
             <Badge variant={MATCH_TONE[match.level]} className="h-6 gap-1 px-2.5 text-xs font-semibold">
               <MatchBars level={match.level} label size="sm" />
             </Badge>
-            {/* Level with the facts: the header stays two rows a side. */}
-            <span className="text-xs whitespace-nowrap text-muted-foreground @max-3xl:hidden">{applied}</span>
           </div>
         </div>
 
         {/* A narrow card (phones, or the filter panel open): full width, two
             set lines, so facts never wrap beside the avatar (2026-11-08). */}
-        <div className="flex flex-col gap-0.5 text-sm text-foreground @3xl:hidden">
+        {icons && <CandidateFacts lead={facts[0]} experience={profile.experience} salary={profile.salary} location={profile.location.split(",")[0]} className="text-foreground @3xl:hidden" />}
+        <div className={cn("flex flex-col gap-0.5 text-sm text-foreground @3xl:hidden", icons && "hidden")}>
           <p className="truncate">
             {facts.slice(0, 3).map((f, i) => (
               <React.Fragment key={f}>
@@ -179,10 +180,7 @@ export function ApplicantCard({
               </React.Fragment>
             ))}
           </p>
-          <p className="flex items-baseline justify-between gap-3">
-            <span className="truncate">{profile.location}</span>
-            <span className="shrink-0 text-xs text-muted-foreground">{applied}</span>
-          </p>
+          <p className="truncate">{profile.location}</p>
         </div>
 
         {/* 2. Why: the checklist */}

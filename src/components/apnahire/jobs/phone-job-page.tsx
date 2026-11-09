@@ -68,11 +68,13 @@ import {
 } from "@apna/design-system"
 import { WhatsAppIcon } from "@/components/onlyrounds/candidate-card"
 import { ValueArt } from "@/components/marketing/value-art"
-import { ActiveStatus } from "@/components/apnahire/active-status"
+import { ActiveStatus, appliedAgo } from "@/components/apnahire/active-status"
+import { CandidateFacts, useMetaIcons } from "@/components/apnahire/jobs/meta-fact"
 import { MatchBars } from "@/components/apnahire/match-bars"
 import { MobileChipRow } from "@/components/apnahire/mobile-chip-row"
 import { PlanPopup, PopupBody, PopupFooter, PopupHeader } from "@/components/apnahire/plan-popup"
 import { CandidateProfilePanel } from "@/components/apnahire/chats/candidate-profile-panel"
+import { CandidateDeck, type DeckHandle } from "@/components/apnahire/jobs/candidate-deck"
 import type { ActiveLead } from "@/components/apnahire/jobs/active-leads"
 import type { ApplicantStatus } from "@/components/apnahire/jobs/applicant-card"
 import type { CallStatus } from "@/components/apnahire/jobs/contact-number"
@@ -84,7 +86,7 @@ export type PhoneCandidate = {
   phone?: string
   photo?: string
   level: MatchLevel
-  activeAgo: string
+  appliedDays: number
   experience: string
   salary: string
   location: string
@@ -164,15 +166,71 @@ function CallActions({ candidate, size, onCall }: {
   )
 }
 
-function CandidateCard({ candidate: c, onOpen, onCall, onUpdate, onOutcome }: {
+/** Contact left, decide right; once called, the status. Card and deck alike. */
+function CandidateActions({ candidate: c, large, onCall, onUpdate, onOutcome }: {
   candidate: PhoneCandidate
-  onOpen: () => void
+  large?: boolean
   onCall: () => void
   onUpdate: () => void
   onOutcome: (v: CallOutcome) => void
 }) {
   const shown = outcomeOf(c) ?? (c.callStatus === "answered" ? "answered" : undefined)
   const shownStatus = shown && STATUS_VIEW[shown]
+  const size = large ? "lg" : "default"
+  const icon = large ? "icon-lg" : "icon"
+  if (c.status === "pending") {
+    return (
+      <>
+        <Button size={size} nativeButton={false} render={<a href={`tel:${c.phone ?? ""}`} />} onClick={onCall}>
+          <Phone aria-hidden /> Call
+        </Button>
+        <WhatsAppButton candidate={c} size={icon} />
+        {/* Apart from Call, so a slip on Call can't reject someone. */}
+        <div className="ml-auto flex items-center gap-2">
+          <Button variant="outline" size={icon} aria-label={`Reject ${c.name}`} onClick={() => onOutcome("rejected")}>
+            <X aria-hidden className="text-destructive" />
+          </Button>
+          <Button variant="outline" size={icon} aria-label={`Shortlist ${c.name}`} onClick={() => onOutcome("shortlisted")}>
+            <Check aria-hidden className="text-success" />
+          </Button>
+        </div>
+      </>
+    )
+  }
+  return (
+    <>
+      {/* Shows the status and changes it, as desktop's call status menu does. */}
+      <Button variant="outline" size={size} className="min-w-0 flex-1 justify-between" onClick={onUpdate}>
+        <span className="flex min-w-0 items-center gap-1.5">
+          {shownStatus?.icon}
+          <span className="truncate">{shownStatus?.label ?? "Update status"}</span>
+        </span>
+        {/* Narrowest phones: the whole label matters more than the chevron. */}
+        <ChevronDown aria-hidden className="text-muted-foreground @max-xs:hidden" />
+      </Button>
+      <Button
+        variant="outline"
+        size={icon}
+        aria-label={`Call ${c.name} again`}
+        nativeButton={false}
+        render={<a href={`tel:${c.phone ?? ""}`} />}
+        onClick={onCall}
+      >
+        <Phone aria-hidden />
+      </Button>
+      <WhatsAppButton candidate={c} size={icon} />
+    </>
+  )
+}
+
+function CandidateCard({ candidate: c, onOpen, onCall, onUpdate, onOutcome }: {
+  candidate: PhoneCandidate
+  onOpen: (e: React.MouseEvent<HTMLElement>) => void
+  onCall: () => void
+  onUpdate: () => void
+  onOutcome: (v: CallOutcome) => void
+}) {
+  const icons = useMetaIcons()
   return (
     // The name stretches over the card, so a tap anywhere opens the profile,
     // and the ink shows it. No lift: the card holds actions of its own.
@@ -195,18 +253,23 @@ function CandidateCard({ candidate: c, onOpen, onCall, onUpdate, onOutcome }: {
               <MatchBars level={c.level} label />
             </span>
           </div>
-          <ActiveStatus ago={c.activeAgo} />
+          <ActiveStatus label="Applied" ago={appliedAgo(c.appliedDays)} clock={icons} />
         </div>
       </div>
 
       <div className="flex flex-col gap-1 text-sm">
-        <p className="truncate text-foreground">
-          {c.experience}
-          <span aria-hidden className="px-1.5 text-muted-foreground">•</span>
-          {c.salary}
-          <span aria-hidden className="px-1.5 text-muted-foreground">•</span>
-          {c.location}
-        </p>
+        {icons ? (
+          // The recruiter knows the job's city; the area is enough here.
+          <CandidateFacts experience={c.experience} salary={c.salary} location={c.location.split(",")[0]} className="text-foreground" />
+        ) : (
+          <p className="truncate text-foreground">
+            {c.experience}
+            <span aria-hidden className="px-1.5 text-muted-foreground">•</span>
+            {c.salary}
+            <span aria-hidden className="px-1.5 text-muted-foreground">•</span>
+            {c.location}
+          </p>
+        )}
         <p className="flex items-center gap-1.5 text-muted-foreground">
           <Sparkles aria-hidden className="size-4 shrink-0 text-info" />
           <span className="truncate">{whyLine(c)}</span>
@@ -214,46 +277,7 @@ function CandidateCard({ candidate: c, onOpen, onCall, onUpdate, onOutcome }: {
       </div>
 
       <div className="relative z-10 flex items-center gap-2">
-        {c.status === "pending" ? (
-          <>
-            <Button nativeButton={false} render={<a href={`tel:${c.phone ?? ""}`} />} onClick={onCall}>
-              <Phone aria-hidden /> Call
-            </Button>
-            <WhatsAppButton candidate={c} size="icon" />
-            {/* Apart from Call, so a slip on Call can't reject someone. */}
-            <div className="ml-auto flex items-center gap-2">
-              <Button variant="outline" size="icon" aria-label={`Reject ${c.name}`} onClick={() => onOutcome("rejected")}>
-                <X aria-hidden className="text-destructive" />
-              </Button>
-              <Button variant="outline" size="icon" aria-label={`Shortlist ${c.name}`} onClick={() => onOutcome("shortlisted")}>
-                <Check aria-hidden className="text-success" />
-              </Button>
-            </div>
-          </>
-        ) : (
-          <>
-            {/* Shows the status and changes it, as desktop's call status menu does. */}
-            <Button variant="outline" className="min-w-0 flex-1 justify-between" onClick={onUpdate}>
-              <span className="flex min-w-0 items-center gap-1.5">
-                {shownStatus?.icon}
-                <span className="truncate">{shownStatus?.label ?? "Update status"}</span>
-              </span>
-              {/* Narrowest phones: the whole label matters more than the chevron. */}
-              <ChevronDown aria-hidden className="text-muted-foreground @max-xs:hidden" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              aria-label={`Call ${c.name} again`}
-              nativeButton={false}
-              render={<a href={`tel:${c.phone ?? ""}`} />}
-              onClick={onCall}
-            >
-              <Phone aria-hidden />
-            </Button>
-            <WhatsAppButton candidate={c} size="icon" />
-          </>
-        )}
+        <CandidateActions candidate={c} onCall={onCall} onUpdate={onUpdate} onOutcome={onOutcome} />
       </div>
     </Card>
   )
@@ -284,9 +308,9 @@ function StatusSheet({ sheet, candidate, onClose, onOutcome }: {
         >
           {OUTCOMES.map((v) => (
             <label key={v} className={SHEET_ROW}>
-              <RadioGroupItem value={v} aria-label={STATUS_VIEW[v].label} />
               {STATUS_VIEW[v].icon}
               {STATUS_VIEW[v].label}
+              <RadioGroupItem value={v} aria-label={STATUS_VIEW[v].label} className="ml-auto" />
             </label>
           ))}
         </RadioGroup>
@@ -375,6 +399,7 @@ export function PhoneJobPage({
   leadId,
   onOpenLead,
   profile,
+  deck,
   noApplicants,
   leads,
   moreLeads,
@@ -407,6 +432,8 @@ export function PhoneJobPage({
   leadId: string | null
   onOpenLead: (id: string | null) => void
   profile?: { thread: ChatThread; onAddNote: (text: string) => void }
+  /** Preview: the expanded card instead of the full-screen profile. */
+  deck?: { threadOf: (id: string) => ChatThread | undefined; addNote: (id: string, text: string) => void }
   noApplicants: boolean
   leads: ActiveLead[]
   moreLeads: number
@@ -439,6 +466,21 @@ export function PhoneJobPage({
   const call = (id: string) => {
     onCall(id)
     setSheet({ id, justCalled: true })
+  }
+  const deckHandle = React.useRef<DeckHandle>(null)
+  const [deckFrom, setDeckFrom] = React.useState<number>()
+  // Who the open card walks through stays put while decisions change queues.
+  const [deckWalk, setDeckWalk] = React.useState<string[]>([])
+  if (!leadId && deckWalk.length) setDeckWalk([])
+  if (deck && leadId && !deckWalk.length && walk.length) setDeckWalk(walk.map((r) => r.id))
+  const openCard = (e: React.MouseEvent<HTMLElement>, id: string) => {
+    if (deck) setDeckFrom(e.currentTarget.getBoundingClientRect().top - 32)
+    onOpenLead(id)
+  }
+  // With the card open, a decision from the call sheet flies it out too.
+  const setStatus = (id: string, v: CallOutcome) => {
+    if (leadId && deck && v !== "not-connected") deckHandle.current?.decide(id, v)
+    else onOutcome(id, v)
   }
 
   return (
@@ -548,7 +590,7 @@ export function PhoneJobPage({
               <CandidateCard
                 key={c.id}
                 candidate={c}
-                onOpen={() => onOpenLead(c.id)}
+                onOpen={(e) => openCard(e, c.id)}
                 onCall={() => call(c.id)}
                 onUpdate={() => setSheet({ id: c.id, justCalled: false })}
                 onOutcome={(v) => onOutcome(c.id, v)}
@@ -556,11 +598,11 @@ export function PhoneJobPage({
             ))
           )}
           {/* Reachable while scrolling a long list; the page has no bottom nav. */}
-          <div className="fixed inset-x-0 bottom-0 z-sticky grid grid-cols-2 divide-x divide-border border-t border-border bg-card pb-safe">
-            <Button variant="ghost" size="lg" className="min-w-0 rounded-none px-2" aria-label={`Sort candidates, ${sort}`} onClick={() => setSortOpen(true)}>
+          <div className="fixed inset-x-0 bottom-0 z-sticky grid grid-cols-2 border-t border-border bg-card pb-safe">
+            <Button variant="ghost" size="xl" className="min-w-0 rounded-none border-r-border px-2" aria-label={`Sort candidates, ${sort}`} onClick={() => setSortOpen(true)}>
               <ArrowUpDown aria-hidden /> <span className="truncate">{sort}</span>
             </Button>
-            <Button variant="ghost" size="lg" className="min-w-0 rounded-none px-2" onClick={() => setFiltersOpen(true)}>
+            <Button variant="ghost" size="xl" className="min-w-0 rounded-none px-2" onClick={() => setFiltersOpen(true)}>
               <SlidersHorizontal aria-hidden /> Filters
               {filterCount > 0 && <Badge variant="count">{filterCount}</Badge>}
             </Button>
@@ -589,15 +631,41 @@ export function PhoneJobPage({
           >
             {sorts.map((s) => (
               <label key={s} className={SHEET_ROW}>
-                <RadioGroupItem value={s} aria-label={s} />
                 {s}
+                <RadioGroupItem value={s} aria-label={s} className="ml-auto" />
               </label>
             ))}
           </RadioGroup>
         </PopupBody>
       </PlanPopup>
 
-      {current && profile && (
+      {deck && leadId && deckWalk.length > 0 && (
+        <CandidateDeck
+          rows={rows}
+          walk={deckWalk}
+          startId={leadId}
+          fromY={deckFrom}
+          handle={deckHandle}
+          threadOf={deck.threadOf}
+          onAddNote={deck.addNote}
+          onClose={() => onOpenLead(null)}
+          onDecide={onOutcome}
+          actions={(id) => {
+            const c = rows.find((r) => r.id === id)
+            return c && (
+              <CandidateActions
+                candidate={c}
+                large
+                onCall={() => call(id)}
+                onUpdate={() => setSheet({ id, justCalled: false })}
+                onOutcome={(v) => setStatus(id, v)}
+              />
+            )
+          }}
+        />
+      )}
+
+      {!deck && current && profile && (
         <Sheet open={!!leadId} onOpenChange={(o) => !o && onOpenLead(null)}>
           <SheetPanel>
             <div className="bg-card py-3">
@@ -620,7 +688,7 @@ export function PhoneJobPage({
         </Sheet>
       )}
 
-      <StatusSheet sheet={sheet} candidate={sheetCandidate} onClose={() => setSheet(null)} onOutcome={onOutcome} />
+      <StatusSheet sheet={sheet} candidate={sheetCandidate} onClose={() => setSheet(null)} onOutcome={setStatus} />
     </div>
   )
 }

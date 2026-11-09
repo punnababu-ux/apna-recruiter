@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Dev only: lets a phone on the same Wi-Fi open the dev server.
+  allowedDevOrigins: ["192.168.*.*"],
   transpilePackages: ["@apna/design-system"],
   // Next's dev indicator defaults to bottom-left, where it sits on top of the
   // self-checkout auth-state switcher and eats its clicks. Dev-only overlay,
