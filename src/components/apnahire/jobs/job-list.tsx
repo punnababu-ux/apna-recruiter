@@ -248,7 +248,6 @@ function JobCard({ job }: { job: ApnaJob }) {
         job.status === "draft" ? undefined : (
           <>
             <JobMetricPill
-              stacked
               href={`${href}?tab=applied`}
               icon={UserCheck}
               label="Applied"
@@ -258,25 +257,13 @@ function JobCard({ job }: { job: ApnaJob }) {
               unread={counting && job.appliedPending ? `${job.appliedPending} pending` : undefined}
             />
             <JobMetricPill
-              stacked
               href={`${href}?tab=leads`}
               icon={Users}
               label="Active leads"
               count={counting ? job.activeLeads : "–"}
               unread={counting && job.activeLeadsNew ? `${job.activeLeadsNew} new` : undefined}
             />
-            <JobMetricPill
-              stacked
-              href={`${href}?tab=database`}
-              icon={Database}
-              label={
-                <>
-                  <span className="sm:hidden">Database</span>
-                  <span className="max-sm:hidden">Database matches</span>
-                </>
-              }
-              count={job.dbMatches}
-            />
+            <JobMetricPill href={`${href}?tab=database`} icon={Database} label="Database matches" count={job.dbMatches} />
           </>
         )
       }

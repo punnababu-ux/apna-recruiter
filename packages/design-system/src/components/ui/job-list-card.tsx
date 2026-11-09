@@ -6,7 +6,6 @@
  */
 
 import * as React from "react"
-import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { ChevronRight } from "@/icons/icons"
 import { Card } from "./card"
@@ -111,18 +110,15 @@ export function JobMetricPill({
   label,
   count,
   unread,
-  stacked,
 }: {
   href: string
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
-  label: React.ReactNode
+  label: string
   count: number | string
   /** Something here hasn't been looked at ("4 new", "5 pending"). Shown as
    *  a dot on the count — the exact number lives on the list it opens —
    *  and spoken in full to screen readers. */
   unread?: string
-  /** Phones: equal tiles, count over label, so a row of three never clips. */
-  stacked?: boolean
 }) {
   const shown = typeof count === "number" ? count.toLocaleString("en-IN") : count
   return (
@@ -130,9 +126,9 @@ export function JobMetricPill({
     // says so. 32px tall — an easy tap.
     <Link
       href={href}
-      className={cn(stacked && "max-sm:h-auto max-sm:min-w-0 max-sm:flex-1 max-sm:shrink max-sm:flex-col-reverse max-sm:gap-0.5 max-sm:py-2", "ink press-subtle inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md bg-secondary px-3 text-xs text-secondary-foreground transition-interactive outline-none hover:bg-secondary/80 focus-visible:ring-3 focus-visible:ring-ring/50")}
+      className="ink press-subtle inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md bg-secondary px-3 text-xs text-secondary-foreground transition-interactive outline-none hover:bg-secondary/80 focus-visible:ring-3 focus-visible:ring-ring/50"
     >
-      <Icon className={cn("size-3.5 text-muted-foreground", stacked && "max-sm:hidden")} aria-hidden />
+      <Icon className="size-3.5 text-muted-foreground" aria-hidden />
       <span>{label}</span>
       {/* Same box as a default Badge (20px, px-2, text-xs, medium, pill). */}
       <span className="relative inline-flex h-5 min-w-5 items-center justify-center rounded-4xl bg-muted-foreground/25 px-2 text-xs leading-none font-medium tabular-nums text-foreground">
@@ -150,7 +146,7 @@ export function JobMetricPill({
           </span>
         )}
       </span>
-      <ChevronRight className={cn("-mr-1 size-3.5 text-muted-foreground", stacked && "max-sm:hidden")} aria-hidden />
+      <ChevronRight className="-mr-1 size-3.5 text-muted-foreground" aria-hidden />
     </Link>
   )
 }

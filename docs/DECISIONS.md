@@ -64,7 +64,7 @@ or **Open**.
 ## Job cards match candidate cards (2026-11-10)
 
 - **Question:** the job card and the candidate card looked like two products. Keep both?
-- **Decision:** no. Punna prefers the candidate card, so `JobCardFrame` now sits on `Card`: `rounded-card`, flat at rest, a dotted facts line with no icons (two set lines on phones), no rule above the metrics on phones. On phones the three metrics are equal tiles, count over label, because the third was clipped.
+- **Decision:** no. Punna prefers the candidate card, so `JobCardFrame` now sits on `Card`: `rounded-card`, flat at rest, a dotted facts line with no icons (two set lines on phones), no rule above the metrics on phones. The metric chips stay chips: tiles were tried on phones and removed (Punna, 2026-11-10), because they read as cards inside the card.
 - **Why:** one list card across the product. The old frame also broke the card corner and resting shadow rules.
 - **Would change it:** recruiters needing the icons to scan facts.
 - **Status:** Decided. OnlyRounds shares the frame, so it gets the same shell and keeps its own meta.
