@@ -23,7 +23,7 @@ export function TaskTypePicker({
   disabledTypes: ReadonlySet<TaskType>
 }) {
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-border bg-card p-4 shadow-card">
+    <div className="flex flex-col gap-3 rounded-card border border-border bg-card p-4">
       <div className="flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2.5">
           <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-muted-foreground">
@@ -50,7 +50,7 @@ export function TaskTypePicker({
               // No shadow — the picker container already carries the
               // elevation. `group` lets the icon box react on hover.
               className={cn(
-                "ink press-subtle group relative flex items-start gap-3 rounded-lg border border-border bg-card p-3 text-left transition-interactive",
+                "ink press-subtle group relative flex items-start gap-3 rounded-card-nested border border-border bg-card p-3 text-left transition-interactive",
                 disabled
                   ? "cursor-not-allowed opacity-50"
                   : "hover:border-primary hover:bg-accent/30",

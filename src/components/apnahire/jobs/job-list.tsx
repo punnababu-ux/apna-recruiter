@@ -34,7 +34,6 @@ import {
   AlertBanner,
   Badge,
   Button,
-  CalendarDays,
   Copy,
   Database,
   DropdownMenu,
@@ -44,18 +43,15 @@ import {
   DropdownMenuTrigger,
   Info,
   Lightbulb,
-  MapPin,
   MoreVertical,
   Pencil,
   PowerOff,
   RefreshCw,
   Share2,
   Trash2,
-  User2,
   UserCheck,
   Users,
 } from "@apna/design-system"
-import { IconLabel } from "@/components/onlyrounds/shared"
 import { JobCardFrame, JobMetricPill } from "@apna/design-system"
 
 export type ApnaJobStatus = "under_review" | "active" | "draft" | "expired"
@@ -233,19 +229,26 @@ function JobCard({ job }: { job: ApnaJob }) {
         </Badge>
       }
       meta={
-        <>
-          <IconLabel icon={MapPin}>
+        // A candidate card's facts: dots, no icons. Phones get two set lines,
+        // so a date never cuts off.
+        <p className="flex w-full flex-col gap-0.5 text-sm text-foreground sm:flex-row sm:flex-wrap sm:gap-0">
+          <span className="truncate">
             {job.area}, {job.city}
-          </IconLabel>
-          <IconLabel icon={CalendarDays}>Posted {job.postedAt}</IconLabel>
-          <IconLabel icon={User2}>By {job.postedBy}</IconLabel>
-        </>
+          </span>
+          <span className="truncate">
+            <span aria-hidden className="px-1.5 text-muted-foreground max-sm:hidden">•</span>
+            Posted {job.postedAt}
+            <span aria-hidden className="px-1.5 text-muted-foreground">•</span>
+            By {job.postedBy}
+          </span>
+        </p>
       }
       actions={<JobActions job={job} />}
       pills={
         job.status === "draft" ? undefined : (
           <>
             <JobMetricPill
+              stacked
               href={`${href}?tab=applied`}
               icon={UserCheck}
               label="Applied"
@@ -255,13 +258,25 @@ function JobCard({ job }: { job: ApnaJob }) {
               unread={counting && job.appliedPending ? `${job.appliedPending} pending` : undefined}
             />
             <JobMetricPill
+              stacked
               href={`${href}?tab=leads`}
               icon={Users}
               label="Active leads"
               count={counting ? job.activeLeads : "–"}
               unread={counting && job.activeLeadsNew ? `${job.activeLeadsNew} new` : undefined}
             />
-            <JobMetricPill href={`${href}?tab=database`} icon={Database} label="Database matches" count={job.dbMatches} />
+            <JobMetricPill
+              stacked
+              href={`${href}?tab=database`}
+              icon={Database}
+              label={
+                <>
+                  <span className="sm:hidden">Database</span>
+                  <span className="max-sm:hidden">Database matches</span>
+                </>
+              }
+              count={job.dbMatches}
+            />
           </>
         )
       }

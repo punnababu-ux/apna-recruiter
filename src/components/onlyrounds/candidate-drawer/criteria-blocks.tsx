@@ -83,7 +83,7 @@ function CriterionRow({
   const hasTimestamp = typeof item.atSecond === "number"
 
   return (
-    <div className="rounded-lg border border-border bg-card overflow-hidden">
+    <div className="rounded-card-nested border border-border bg-card overflow-hidden">
       {/* Card Header */}
       <div
         className={cn(
@@ -143,7 +143,7 @@ function CefrDimensionCard({ dimension }: { dimension: CefrDimension }) {
   return (
     <div
       className={cn(
-        "rounded-lg border bg-card overflow-hidden",
+        "rounded-card-nested border bg-card overflow-hidden",
         isHigh ? "border-border" : "border-warning/30"
       )}
     >
@@ -191,7 +191,7 @@ export function CefrBlock({ cefr }: { cefr: CefrAnalysis }) {
 
       {/* Areas of Improvement */}
       {cefr.areasOfImprovement.length > 0 && (
-        <div className="rounded-lg border border-border bg-muted/10 p-3 mt-1">
+        <div className="rounded-card-nested border border-border bg-muted/10 p-3 mt-1">
           <h5 className="text-xs font-bold text-foreground mb-2">Areas of improvement</h5>
           <ul className="flex flex-col gap-2 text-xs text-muted-foreground">
             {cefr.areasOfImprovement.map((a, i) => (

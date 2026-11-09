@@ -74,7 +74,7 @@ export function Section({
   const bodyId = `section-${id}-body`
   const Icon = SECTION_ICONS[id]
   return (
-    <section className="overflow-hidden rounded-lg border border-border bg-card shadow-card">
+    <section className="overflow-hidden rounded-card border border-border bg-card">
       <button
         type="button"
         onClick={onToggle}

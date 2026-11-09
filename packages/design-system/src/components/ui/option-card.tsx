@@ -93,7 +93,7 @@ function OptionCard({
       aria-checked={selected}
       onClick={onSelect}
       className={cn(
-        "ink press-subtle relative flex w-full gap-3 rounded-xl border bg-card text-left transition-interactive outline-none",
+        "ink press-subtle relative flex w-full gap-3 rounded-card-nested border bg-card text-left transition-interactive outline-none",
         "focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50",
         tile ? "min-h-24 flex-col items-start justify-between p-4" : "items-start p-4",
         selected

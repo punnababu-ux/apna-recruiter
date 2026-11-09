@@ -211,7 +211,14 @@ Reject the PR if you see any of:
   page different; change it everywhere or not at all. (A wizard's footer
   "Back" is a different action — previous question, not leave — and is
   always WizardFooter's outline button; see `wizard.tsx`.)
-- Two primary (green) CTAs on one screen. There is exactly one primary
+- Two primary (green) CTAs on one surface. **One green per surface** (user
+  call, 2026-11-10). A surface is the screen, or one card in a list of equal
+  items. Wherever possible the whole screen is the surface, with a single
+  green. A repeated card is its own surface and may carry one green for its
+  one action: "Buy now" on phone plan cards, "Call" on phone candidate
+  cards, "View number" on desktop candidate cards and table rows. Never two
+  greens in one card, and never a green beside the list that competes with
+  the cards' greens. Otherwise there is exactly one primary
   action per screen ("Proceed to pay", the recommended plan's "Buy now").
   Something else that must still be pushed hard — an add-on or upsell like
   "Add AI calling agent" — uses `Button variant="emphasis"` (dark gray),
@@ -495,6 +502,13 @@ inside) never lifts. It's built in, so there's nothing to remember:
   mark the frame `data-card-lift-group` and pass `interactive` to the card.
 - A hand-rolled clickable card: `card-hover-lift ink press-subtle
   cursor-pointer` (ContactSalesCard). Better: make it a `Card`.
+- **Every tappable card ripples** (user call, 2026-11-10). A card that opens
+  something when tapped anywhere shows `ink press-subtle cursor-pointer`, on
+  phones and desktop, even when it holds actions of its own and so does not
+  lift (candidate cards). A stretched link (`after:inset-0`) inside a `Card`
+  without them fails `npm run test:e2e`. So does a `Card` with a shadow at
+  rest. `npm run lint:tokens` refuses a hand-built card off the two card
+  corners or with a resting shadow.
 
 **Card shadows — resting cards are flat** (user call, 2026-10-19). No card
 carries a shadow at rest: plan and pricing cards, testimonials, stats, the

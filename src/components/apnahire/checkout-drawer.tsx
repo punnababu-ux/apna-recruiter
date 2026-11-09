@@ -298,7 +298,7 @@ function InlineActionInput({
 }) {
   const enabled = value.trim().length > 0
   return (
-    <div className="flex h-10 items-center gap-2.5 rounded-xl border border-border bg-card pl-2.5 focus-within:border-ring">
+    <div className="flex h-10 items-center gap-2.5 rounded-field border border-border bg-card pl-2.5 focus-within:border-ring">
       <Input
         value={value}
         aria-label={ariaLabel}
@@ -667,7 +667,7 @@ export function CheckoutDrawer({
       <SheetPanel size={isSubscription ? "lg" : "md"}>
         <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto">
           {/* 1 — Header + line items */}
-          <section className="flex flex-col gap-4 bg-card py-5 shadow-card">
+          <section className="flex flex-col gap-4 bg-card py-5">
             <SheetPanelHeader title="Order summary" />
 
             <Separator />
@@ -726,7 +726,7 @@ export function CheckoutDrawer({
 
           {/* 2 — Database-credit upsell */}
           {showUpsell && (
-            <section className="flex flex-col gap-4 bg-card p-4 shadow-card">
+            <section className="flex flex-col gap-4 bg-card p-4">
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-2">
                   <Sparkles className="size-5 text-checkout-primary" aria-hidden />
@@ -820,7 +820,7 @@ export function CheckoutDrawer({
           {/* 3 — Coupon: trigger, expanded panel, or applied row. Nothing to
               discount when credits cover everything. */}
           {nothingToPay ? null : appliedCoupon ? (
-            <section className="flex items-center justify-between gap-3 bg-card p-4 shadow-card">
+            <section className="flex items-center justify-between gap-3 bg-card p-4">
               <div className="flex items-start gap-2">
                 <Tag className="mt-0.5 size-5 shrink-0 text-checkout-primary" aria-hidden />
                 <div className="flex flex-col gap-1">
@@ -879,7 +879,7 @@ export function CheckoutDrawer({
               {Object.values(COUPONS).map((c) => (
                 <div
                   key={c.label}
-                  className="flex items-center gap-3 rounded-xl border border-border bg-card p-3"
+                  className="flex items-center gap-3 rounded-card-nested border border-border bg-card p-3"
                 >
                   <div className="flex flex-1 flex-col gap-1">
                     <span className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
@@ -901,7 +901,7 @@ export function CheckoutDrawer({
             <button
               type="button"
               onClick={() => setExpanded("coupon")}
-              className="flex items-center justify-between gap-3 bg-card p-4 text-left shadow-card"
+              className="flex items-center justify-between gap-3 bg-card p-4 text-left"
             >
               <span className="flex items-center gap-2">
                 <Tag className="size-5 text-foreground" aria-hidden />
@@ -923,7 +923,7 @@ export function CheckoutDrawer({
               card grows. Dropped entirely when credits cover the cart — the
               footer's one line already says there's nothing to pay. */}
           {nothingToPay ? null : (
-          <section className="flex flex-1 flex-col justify-end gap-4 bg-card shadow-card">
+          <section className="flex flex-1 flex-col justify-end gap-4 bg-card">
             <div className="flex flex-col gap-4 px-4 pt-3 pb-4">
               <p className="text-sm font-semibold text-foreground">Bill details</p>
 

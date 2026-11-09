@@ -36,7 +36,7 @@ import type { Candidate } from "@/components/onlyrounds/candidate-card"
 import { Checkbox, ChevronDown, Database, Download, FilterGroups, Input, Search, SearchFilterBar, UserCheck } from "@apna/design-system"
 import { toast } from "sonner"
 import { ActiveLeads, FindingCandidates, type ActiveLead } from "@/components/apnahire/jobs/active-leads"
-import { PhoneJobPage } from "@/components/apnahire/jobs/phone-job-page"
+import { PhoneJobPage, type CallOutcome } from "@/components/apnahire/jobs/phone-job-page"
 import { ValueArt } from "@/components/marketing/value-art"
 import { WhatsAppIcon } from "@/components/onlyrounds/candidate-card"
 import { PageHeader } from "@/components/onlyrounds/page-header"
@@ -390,6 +390,15 @@ function pipelineOf(c: CandidateRow, viewed: Set<string>): Exclude<Pipeline, "al
   if (c.stage !== "screening") return "shortlisted"
   if (metaOf(c.id).viewed || viewed.has(c.id)) return "viewed"
   return "pending"
+}
+
+function withOutcome(c: CandidateRow, v: CallOutcome): CandidateRow {
+  const score = c.state.kind === "completed" ? c.state.score : 30
+  const insights = c.state.kind === "completed" ? c.state.insights : []
+  if (v === "rejected") return { ...c, state: { kind: "completed", score, verdict: "not-fit", insights } }
+  const state = c.state.kind === "completed" && c.state.verdict === "not-fit" ? { ...c.state, verdict: "review" as const } : c.state
+  if (v === "shortlisted") return { ...c, state, stage: c.stage === "screening" ? "interview" : c.stage }
+  return { ...c, state, stage: "screening" }
 }
 
 const SORTS = ["Relevance", "Recently applied"] as const
@@ -1054,14 +1063,31 @@ function JobDetailPageInner({ id }: { id: string }) {
       setNotes((n) => ({ ...n, [c.id]: [{ id: `n${Date.now()}`, text, at: "Today" }, ...(n[c.id] ?? [])] })),
   })
 
-  // A decision takes the candidate out of the queue, so it can be undone.
-  const decide = (act: (id: string) => void, id: string, done: string) => {
+  // One status at a time. A decision can be undone: it moves the candidate.
+  const setOutcome = (id: string, v: CallOutcome) => {
     const before = candidates.find((c) => c.id === id)
-    act(id)
-    if (before)
-      toast(`${before.name} ${done}`, {
-        action: { label: "Undo", onClick: () => setCandidates((p) => p.map((c) => (c.id === id ? before : c))) },
-      })
+    if (!before) return
+    const beforeCall = calls[id]
+    // A decision from the card comes before any call, so it records none.
+    const called = v === "not-connected" || viewed.has(id) || metaOf(id).viewed
+    if (v === "not-connected") setViewed((seen) => new Set(seen).add(id))
+    if (called) setCalls((c) => ({ ...c, [id]: v === "not-connected" ? v : "answered" }))
+    setCandidates((p) => p.map((c) => (c.id === id ? withOutcome(c, v) : c)))
+    if (v === "not-connected") return
+    toast(`${before.name} ${v}`, {
+      action: {
+        label: "Undo",
+        onClick: () => {
+          setCandidates((p) => p.map((c) => (c.id === id ? before : c)))
+          setCalls((c) => {
+            const next = { ...c }
+            if (beforeCall) next[id] = beforeCall
+            else delete next[id]
+            return next
+          })
+        },
+      },
+    })
   }
 
   // Phones are a product of their own (docs/DECISIONS.md). The server can't see
@@ -1125,9 +1151,7 @@ function JobDetailPageInner({ id }: { id: string }) {
           onBack={back}
           onAbout={() => setInfoOpen(true)}
           onCall={viewNumber}
-          onCallStatus={(id, v) => setCall(id)(v)}
-          onShortlist={(id) => decide(handleMoveToNextRound, id, "shortlisted")}
-          onReject={(id) => decide(handleReject, id, "rejected")}
+          onOutcome={setOutcome}
         />
         {job && <JobInfoPanel job={job} open={infoOpen} onOpenChange={setInfoOpen} />}
       </div>

@@ -102,7 +102,7 @@ export function CandidateTable({
     sortKey === key ? sortDir : null
 
   return (
-    <div className="rounded-lg border border-border bg-card overflow-hidden">
+    <div className="rounded-card border border-border bg-card overflow-hidden">
       <Table className="table-fixed">
         <colgroup>
           <col style={{ width: widths.name }} />

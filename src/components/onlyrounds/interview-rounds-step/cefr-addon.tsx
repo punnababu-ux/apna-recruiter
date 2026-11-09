@@ -72,7 +72,7 @@ export function CefrAddon({
         <Puzzle className="size-4 text-muted-foreground shrink-0" />
         Add-ons
       </Label>
-      <div className="overflow-hidden rounded-lg border border-border">
+      <div className="overflow-hidden rounded-card-nested border border-border">
         <label
           htmlFor={toggleId}
           className="flex cursor-pointer items-start justify-between gap-3 p-3"

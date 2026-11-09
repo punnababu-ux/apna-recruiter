@@ -52,7 +52,7 @@ function RadioCard({ selected, onSelect, radioPosition = "start", className, chi
         }
       }}
       className={cn(
-        "ink press-subtle relative flex cursor-pointer items-start gap-4 rounded-xl bg-card p-4 text-left outline-none transition-interactive focus-visible:ring-3 focus-visible:ring-ring/50",
+        "ink press-subtle relative flex cursor-pointer items-start gap-4 rounded-card-nested bg-card p-4 text-left outline-none transition-interactive focus-visible:ring-3 focus-visible:ring-ring/50",
         selected ? "border-2 border-primary" : "border border-border hover:border-input",
         className
       )}

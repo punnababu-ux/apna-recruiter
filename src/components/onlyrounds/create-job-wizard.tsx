@@ -542,7 +542,7 @@ export function CreateJobWizard() {
           {activeId === "details" ? (
             <>
               {filledFromJd ? (
-                <div className="flex items-center gap-3 rounded-lg border border-primary/20 bg-primary/5 px-4 py-2.5 text-sm">
+                <div className="flex items-center gap-3 rounded-card-nested border border-primary/20 bg-primary/5 px-4 py-2.5 text-sm">
                   <Sparkles className="size-4 shrink-0 text-primary" />
                   <span>
                     Fields pre-filled from your job description — review and
@@ -583,7 +583,7 @@ export function CreateJobWizard() {
               populateFormFromGeneration={populateFormFromGeneration}
             />
           ) : activeId === "review" ? (
-            <div className="rounded-lg border border-border bg-card p-6 shadow-card">
+            <div className="rounded-card border border-border bg-card p-6">
               <ReviewStep
                 title={form.title}
                 jd={form.jd}

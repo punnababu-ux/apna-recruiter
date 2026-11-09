@@ -198,7 +198,7 @@ export function MobilePlanRow({
               tabIndex: 0,
             })}
         className={cn(
-          "@container relative flex flex-col gap-3 overflow-hidden bg-plan-card px-4 pt-8 pb-6 shadow-card",
+          "@container relative flex flex-col gap-3 overflow-hidden bg-plan-card px-4 pt-8 pb-6",
           !readOnly && "ink press-subtle cursor-pointer transition-interactive",
           nested ? "rounded-card-nested" : "rounded-card",
           // No tick tab: only a Recommended card needs the room.
@@ -588,7 +588,7 @@ export function MobileUnlimitedCard({
       <div
         className={cn(
           "relative flex flex-col gap-3 overflow-hidden bg-plan-card text-card-foreground",
-          "rounded-card-nested p-4 shadow-card",
+          "rounded-card-nested p-4",
           // The tap answers on the white card, not the dark frame.
           onSelect && "ink press-subtle transition-interactive",
           // Selected as in MobilePlanRow: the CTA green edge.

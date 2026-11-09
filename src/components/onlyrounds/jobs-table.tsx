@@ -56,7 +56,7 @@ const STATUS_VARIANT: Record<JobStatus, "success" | "secondary" | "outline" | "i
 export function JobsTable({ rows }: { rows: JobRow[] }) {
   if (rows.length === 0) {
     return (
-      <div className="flex min-h-64 items-center justify-center rounded-lg border border-dashed border-border bg-card p-8 text-sm text-muted-foreground">
+      <div className="flex min-h-64 items-center justify-center rounded-card border border-dashed border-border bg-card p-8 text-sm text-muted-foreground">
         No jobs yet. Start by creating your first role.
       </div>
     )

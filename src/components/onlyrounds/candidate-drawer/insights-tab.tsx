@@ -31,7 +31,7 @@ function RetakeHistoryBlock({ history }: { history: NonNullable<Candidate["retak
         <RotateCcw className="size-3.5 text-muted-foreground shrink-0" />
         Re-Take History
       </div>
-      <div className="rounded-lg border border-border bg-muted/50 p-4">
+      <div className="rounded-card-nested border border-border bg-muted/50 p-4">
         <ul className="flex flex-col gap-2.5 text-xs text-muted-foreground">
           {history.map((h, i) => (
             <li key={i} className="flex items-start justify-between gap-3">
@@ -134,7 +134,7 @@ export function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
             )}
 
             {/* Partial assessment banner */}
-            <div className="rounded-lg border border-warning/40 bg-warning/5 px-4 py-3 flex items-start gap-3">
+            <div className="rounded-card-nested border border-warning/40 bg-warning/5 px-4 py-3 flex items-start gap-3">
               <ShieldAlert className="size-4 text-warning shrink-0 mt-0.5" />
               <div className="flex flex-col gap-0.5">
                 <p className="text-xs font-semibold text-foreground">
@@ -249,7 +249,7 @@ export function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
       ) : (
         /* Video: thumbnail card + floating panel */
         <>
-          <div className="bg-muted/30 p-3 rounded-lg flex items-center justify-between gap-3 border border-border">
+          <div className="bg-muted/30 p-3 rounded-card-nested flex items-center justify-between gap-3 border border-border">
             <div className="flex items-center gap-3">
               {/* Thumbnail */}
               <div className="relative w-20 h-12 rounded-md border border-border bg-accent/20 flex items-center justify-center overflow-hidden shrink-0">
@@ -317,7 +317,7 @@ export function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
 
       {/* Insight chips */}
       <section className="flex flex-col gap-3">
-        <div className="border border-border bg-muted/10 p-4 rounded-lg flex flex-col gap-3">
+        <div className="border border-border bg-muted/10 p-4 rounded-card-nested flex flex-col gap-3">
           <div className="flex items-center gap-2">
             <Sparkles className="size-4 text-primary shrink-0" />
             <h4 className="text-sm font-bold text-foreground">
@@ -381,7 +381,7 @@ export function InsightsTab({ candidate }: { candidate: DrawerCandidate }) {
             <Footprints className="size-4 text-info shrink-0" />
             Next step for you
           </div>
-          <div className="rounded-lg border border-info/20 bg-info/5 p-4">
+          <div className="rounded-card-nested border border-info/20 bg-info/5 p-4">
             <h5 className="text-sm font-bold text-foreground mb-3">
               Candidate is a strong fit. Proceed with next steps.
             </h5>

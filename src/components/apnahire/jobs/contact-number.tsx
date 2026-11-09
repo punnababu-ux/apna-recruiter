@@ -7,7 +7,7 @@
  *                   desktop: the number, Copy, and a QR that opens a pop-up
  *                   to scan with a phone (a desktop can't place the call).
  *   CallStatusMenu  the recruiter records how the call went: Answered ·
- *                   Not connected · Invalid number.
+ *                   Did not pick up.
  *
  * The QR is drawn on the device (qrcode), so the number never leaves it.
  */
@@ -31,7 +31,6 @@ import {
   Phone,
   PhoneOff,
   QrCode,
-  X,
 } from "@apna/design-system"
 import { PlanPopup, PopupBody, PopupHeader } from "@/components/apnahire/plan-popup"
 
@@ -95,12 +94,11 @@ function CallQr({ phone }: { phone: string }) {
   )
 }
 
-export type CallStatus = "answered" | "not-connected" | "invalid"
+export type CallStatus = "answered" | "not-connected"
 
 const CALL_STATUS: { id: CallStatus; label: string; icon: React.ReactNode }[] = [
   { id: "answered", label: "Answered", icon: <Check aria-hidden className="text-success" /> },
-  { id: "not-connected", label: "Not connected", icon: <PhoneOff aria-hidden className="text-warning" /> },
-  { id: "invalid", label: "Invalid number", icon: <X aria-hidden className="text-destructive" /> },
+  { id: "not-connected", label: "Did not pick up", icon: <PhoneOff aria-hidden className="text-warning" /> },
 ]
 
 export function CallStatusMenu({ value, onChange }: { value?: CallStatus; onChange: (v: CallStatus) => void }) {

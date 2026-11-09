@@ -2,7 +2,7 @@
  * Card — the base surface every other surface is built on.
  *
  * The system went without one for a long time, and the cost is visible: the
- * app hand-rolls `rounded-2xl border border-border bg-card p-6` in two dozen
+ * app hand-rolls a bordered white box in two dozen
  * places, and those copies have already drifted apart on radius, border alpha
  * and shadow. This is that string, once, with the variation named.
  *

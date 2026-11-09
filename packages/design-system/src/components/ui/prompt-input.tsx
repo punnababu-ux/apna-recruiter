@@ -90,7 +90,7 @@ function PromptInput({
       data-slot="prompt-input"
       data-size={size}
       className={cn(
-        "flex w-full flex-col gap-2 rounded-2xl border border-input bg-card shadow-card transition-interactive focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50",
+        "flex w-full flex-col gap-2 rounded-2xl border border-input bg-card shadow-card transition-interactive focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50", // token-lint-ignore: a text field, not a card
         active && "border-ring ring-3 ring-ring/50",
         lg ? "p-4" : "p-2.5",
         className

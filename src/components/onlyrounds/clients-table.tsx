@@ -96,14 +96,14 @@ export function ClientsTable({ rows }: { rows: ClientRow[] }) {
 
   if (rows.length === 0) {
     return (
-      <div className="flex min-h-64 items-center justify-center rounded-lg border border-dashed border-border bg-card p-8 text-sm text-muted-foreground">
+      <div className="flex min-h-64 items-center justify-center rounded-card border border-dashed border-border bg-card p-8 text-sm text-muted-foreground">
         No clients yet. Add your first client to start posting jobs.
       </div>
     )
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border border-border bg-card">
+    <div className="overflow-hidden rounded-card border border-border bg-card">
       <Table className="table-fixed">
         <colgroup>
           <col style={{ width: widths.logo }} />

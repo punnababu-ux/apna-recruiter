@@ -9,9 +9,13 @@
  *
  *   App bar       Back · job, status and place · search · ⋮
  *   Tabs          Applied | Database
- *   Queue         To call · Called · Shortlisted · Rejected, then Filters and Sort
- *   Card          who · facts · one AI line · a green Call and WhatsApp
- *   After a call  one question: Shortlist, Not a fit, or why it failed
+ *   Queue         All · To call · Called · Shortlisted · Rejected (desktop's
+ *                 All · Action pending · Viewed number · Shortlisted · Rejected),
+ *                 with Sort and Filters fixed at the bottom of the screen
+ *   Card          who · facts · one AI line · contact left (compact green Call,
+ *                 WhatsApp), decide right (Reject, Shortlist icons); once
+ *                 called, a button that shows the status and changes it
+ *   After a call  one tap on a radio list, or Later to change nothing
  *   Profile       full screen, actions in thumb reach, Next
  *   No applicants the job is live, then a quiet list of database leads
  *
@@ -32,6 +36,7 @@ import {
   Button,
   Card,
   Check,
+  ChevronDown,
   ChevronRight,
   ConversationList,
   ConversationRow,
@@ -66,7 +71,7 @@ import { ValueArt } from "@/components/marketing/value-art"
 import { ActiveStatus } from "@/components/apnahire/active-status"
 import { MatchBars } from "@/components/apnahire/match-bars"
 import { MobileChipRow } from "@/components/apnahire/mobile-chip-row"
-import { PlanPopup, PopupBody, PopupHeader } from "@/components/apnahire/plan-popup"
+import { PlanPopup, PopupBody, PopupFooter, PopupHeader } from "@/components/apnahire/plan-popup"
 import { CandidateProfilePanel } from "@/components/apnahire/chats/candidate-profile-panel"
 import type { ActiveLead } from "@/components/apnahire/jobs/active-leads"
 import type { ApplicantStatus } from "@/components/apnahire/jobs/applicant-card"
@@ -90,18 +95,29 @@ export type PhoneCandidate = {
   callStatus?: CallStatus
 }
 
-const QUEUES: { value: ApplicantStatus; label: string; empty: string }[] = [
+type Queue = ApplicantStatus | "all"
+
+const QUEUES: { value: Queue; label: string; empty: string }[] = [
+  { value: "all", label: "All", empty: "No candidates yet" },
   { value: "pending", label: "To call", empty: "You have called everyone" },
   { value: "viewed", label: "Called", empty: "No calls yet" },
   { value: "shortlisted", label: "Shortlisted", empty: "No one shortlisted yet" },
   { value: "rejected", label: "Rejected", empty: "No one rejected" },
 ]
 
-const CALL_LABEL: Record<CallStatus, string> = {
-  answered: "Answered",
-  "not-connected": "Did not pick up",
-  invalid: "Wrong number",
+/** What the recruiter can set after a call. One candidate, one status. */
+export type CallOutcome = "shortlisted" | "rejected" | "not-connected"
+const OUTCOMES: CallOutcome[] = ["shortlisted", "rejected", "not-connected"]
+
+const STATUS_VIEW: Record<CallOutcome | "answered", { label: string; icon: React.ReactNode }> = {
+  shortlisted: { label: "Shortlisted", icon: <Check aria-hidden className="size-4 text-success" /> },
+  rejected: { label: "Rejected", icon: <X aria-hidden className="size-4 text-destructive" /> },
+  "not-connected": { label: "Did not pick up", icon: <PhoneOff aria-hidden className="size-4 text-warning" /> },
+  answered: { label: "Answered", icon: <Phone aria-hidden className="size-4 text-success" /> },
 }
+
+const outcomeOf = (c: PhoneCandidate): CallOutcome | undefined =>
+  c.status === "shortlisted" || c.status === "rejected" ? c.status : c.callStatus === "not-connected" ? c.callStatus : undefined
 
 const whatsappHref = (phone = "") => `https://wa.me/${phone.replace(/\D/g, "")}`
 
@@ -111,11 +127,24 @@ function whyLine(c: PhoneCandidate) {
   return `Missing: ${c.missing.join(", ")}`
 }
 
-function CallActions({ candidate, size, onCall, children }: {
+function WhatsAppButton({ candidate, size }: { candidate: PhoneCandidate; size: "icon" | "icon-lg" }) {
+  return (
+    <Button
+      variant="outline"
+      size={size}
+      aria-label={`Message ${candidate.name} on WhatsApp`}
+      nativeButton={false}
+      render={<a href={whatsappHref(candidate.phone)} target="_blank" rel="noreferrer" />}
+    >
+      <WhatsAppIcon className="size-4 text-success" />
+    </Button>
+  )
+}
+
+function CallActions({ candidate, size, onCall }: {
   candidate: PhoneCandidate
   size: "default" | "lg"
   onCall: () => void
-  children?: React.ReactNode
 }) {
   const first = candidate.status === "pending"
   return (
@@ -130,30 +159,24 @@ function CallActions({ candidate, size, onCall, children }: {
       >
         <Phone aria-hidden /> {first ? "Call" : "Call again"}
       </Button>
-      {children}
-      <Button
-        variant="outline"
-        size={size === "lg" ? "icon-lg" : "icon"}
-        aria-label={`Message ${candidate.name} on WhatsApp`}
-        nativeButton={false}
-        render={<a href={whatsappHref(candidate.phone)} target="_blank" rel="noreferrer" />}
-      >
-        <WhatsAppIcon className="size-4 text-success" />
-      </Button>
+      <WhatsAppButton candidate={candidate} size={size === "lg" ? "icon-lg" : "icon"} />
     </>
   )
 }
 
-function CandidateCard({ candidate: c, onOpen, onCall, onUpdate }: {
+function CandidateCard({ candidate: c, onOpen, onCall, onUpdate, onOutcome }: {
   candidate: PhoneCandidate
   onOpen: () => void
   onCall: () => void
   onUpdate: () => void
+  onOutcome: (v: CallOutcome) => void
 }) {
+  const shown = outcomeOf(c) ?? (c.callStatus === "answered" ? "answered" : undefined)
+  const shownStatus = shown && STATUS_VIEW[shown]
   return (
-    // The name stretches over the card, so a tap anywhere opens the profile.
-    // No lift: the card holds actions of its own.
-    <Card padding="none" className="relative flex flex-col gap-3 p-4">
+    // The name stretches over the card, so a tap anywhere opens the profile,
+    // and the ink shows it. No lift: the card holds actions of its own.
+    <Card padding="none" className="@container ink press-subtle relative flex cursor-pointer flex-col gap-3 p-4">
       <div className="flex items-center gap-3">
         <Avatar size="lg">
           {c.photo && <AvatarImage src={c.photo} alt="" />}
@@ -172,11 +195,7 @@ function CandidateCard({ candidate: c, onOpen, onCall, onUpdate }: {
               <MatchBars level={c.level} label />
             </span>
           </div>
-          {c.callStatus ? (
-            <span className="truncate text-xs text-muted-foreground">{CALL_LABEL[c.callStatus]}</span>
-          ) : (
-            <ActiveStatus ago={c.activeAgo} />
-          )}
+          <ActiveStatus ago={c.activeAgo} />
         </div>
       </div>
 
@@ -195,52 +214,91 @@ function CandidateCard({ candidate: c, onOpen, onCall, onUpdate }: {
       </div>
 
       <div className="relative z-10 flex items-center gap-2">
-        <CallActions candidate={c} size="default" onCall={onCall}>
-          {c.status === "viewed" && (
-            <Button variant="outline" onClick={onUpdate}>
-              Update
+        {c.status === "pending" ? (
+          <>
+            <Button nativeButton={false} render={<a href={`tel:${c.phone ?? ""}`} />} onClick={onCall}>
+              <Phone aria-hidden /> Call
             </Button>
-          )}
-        </CallActions>
+            <WhatsAppButton candidate={c} size="icon" />
+            {/* Apart from Call, so a slip on Call can't reject someone. */}
+            <div className="ml-auto flex items-center gap-2">
+              <Button variant="outline" size="icon" aria-label={`Reject ${c.name}`} onClick={() => onOutcome("rejected")}>
+                <X aria-hidden className="text-destructive" />
+              </Button>
+              <Button variant="outline" size="icon" aria-label={`Shortlist ${c.name}`} onClick={() => onOutcome("shortlisted")}>
+                <Check aria-hidden className="text-success" />
+              </Button>
+            </div>
+          </>
+        ) : (
+          <>
+            {/* Shows the status and changes it, as desktop's call status menu does. */}
+            <Button variant="outline" className="min-w-0 flex-1 justify-between" onClick={onUpdate}>
+              <span className="flex min-w-0 items-center gap-1.5">
+                {shownStatus?.icon}
+                <span className="truncate">{shownStatus?.label ?? "Update status"}</span>
+              </span>
+              {/* Narrowest phones: the whole label matters more than the chevron. */}
+              <ChevronDown aria-hidden className="text-muted-foreground @max-xs:hidden" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              aria-label={`Call ${c.name} again`}
+              nativeButton={false}
+              render={<a href={`tel:${c.phone ?? ""}`} />}
+              onClick={onCall}
+            >
+              <Phone aria-hidden />
+            </Button>
+            <WhatsAppButton candidate={c} size="icon" />
+          </>
+        )}
       </div>
     </Card>
   )
 }
 
-function AfterCallSheet({ candidate, onClose, onCallStatus, onShortlist, onReject }: {
+/** The sheet's rows answer the tap; the radio shows what is set. */
+const SHEET_ROW = "ink relative flex h-11 cursor-pointer items-center gap-3 rounded-md text-sm transition-interactive"
+
+function StatusSheet({ sheet, candidate, onClose, onOutcome }: {
+  sheet: { justCalled: boolean } | null
   candidate?: PhoneCandidate
   onClose: () => void
-  onCallStatus: (id: string, v: CallStatus) => void
-  onShortlist: (id: string) => void
-  onReject: (id: string) => void
+  onOutcome: (id: string, v: CallOutcome) => void
 }) {
-  if (!candidate) return <PlanPopup open={false} onOpenChange={onClose}>{null}</PlanPopup>
-  const id = candidate.id
-  const options = [
-    { label: "Shortlist", icon: <Check aria-hidden className="text-success" />, act: () => (onCallStatus(id, "answered"), onShortlist(id)) },
-    { label: "Not a fit", icon: <X aria-hidden className="text-destructive" />, act: () => (onCallStatus(id, "answered"), onReject(id)) },
-    { label: "Did not pick up", icon: <PhoneOff aria-hidden className="text-warning" />, act: () => onCallStatus(id, "not-connected") },
-    { label: "Wrong number", icon: <PhoneOff aria-hidden className="text-destructive" />, act: () => onCallStatus(id, "invalid") },
-  ]
+  if (!sheet || !candidate) return <PlanPopup open={false} onOpenChange={onClose}>{null}</PlanPopup>
   return (
     <PlanPopup open onOpenChange={(o) => !o && onClose()}>
       <PopupHeader art="contact" title={`How did the call with ${candidate.name} go?`} />
-      <PopupBody className="gap-2">
-        {options.map((o) => (
-          <Button
-            key={o.label}
-            variant="outline"
-            size="lg"
-            className="w-full justify-start"
-            onClick={() => {
-              o.act()
-              onClose()
-            }}
-          >
-            {o.icon} {o.label}
-          </Button>
-        ))}
+      <PopupBody className="gap-0">
+        <RadioGroup
+          aria-label="Candidate status"
+          value={outcomeOf(candidate) ?? ""}
+          onValueChange={(v) => {
+            onOutcome(candidate.id, v as CallOutcome)
+            onClose()
+          }}
+          className="gap-0"
+        >
+          {OUTCOMES.map((v) => (
+            <label key={v} className={SHEET_ROW}>
+              <RadioGroupItem value={v} aria-label={STATUS_VIEW[v].label} />
+              {STATUS_VIEW[v].icon}
+              {STATUS_VIEW[v].label}
+            </label>
+          ))}
+        </RadioGroup>
       </PopupBody>
+      {sheet.justCalled && (
+        <PopupFooter>
+          {/* Answered but undecided, or not now: nothing changes. */}
+          <Button variant="outline" size="lg" onClick={onClose}>
+            Later
+          </Button>
+        </PopupFooter>
+      )}
     </PlanPopup>
   )
 }
@@ -328,9 +386,7 @@ export function PhoneJobPage({
   onBack,
   onAbout,
   onCall,
-  onCallStatus,
-  onShortlist,
-  onReject,
+  onOutcome,
 }: {
   title: string
   status: { label: string; variant: React.ComponentProps<typeof Badge>["variant"] }
@@ -362,27 +418,27 @@ export function PhoneJobPage({
   onBack: () => void
   onAbout: () => void
   onCall: (id: string) => void
-  onCallStatus: (id: string, v: CallStatus) => void
-  onShortlist: (id: string) => void
-  onReject: (id: string) => void
+  onOutcome: (id: string, v: CallOutcome) => void
 }) {
-  const [queue, setQueue] = React.useState<ApplicantStatus>("pending")
+  // The page's job is who to call next; All once no one is left.
+  const [queue, setQueue] = React.useState<Queue>(() => (rows.some((r) => r.status === "pending") ? "pending" : "all"))
   const [searching, setSearching] = React.useState(false)
   const [filtersOpen, setFiltersOpen] = React.useState(false)
   const [sortOpen, setSortOpen] = React.useState(false)
-  const [afterCallId, setAfterCallId] = React.useState<string | null>(null)
+  const [sheet, setSheet] = React.useState<{ id: string; justCalled: boolean } | null>(null)
 
-  const counts = (status: ApplicantStatus) => rows.filter((r) => r.status === status).length
-  const shown = rows.filter((r) => r.status === queue)
+  const inQueue = (r: PhoneCandidate, q: Queue) => q === "all" || r.status === q
+  const counts = (q: Queue) => rows.filter((r) => inQueue(r, q)).length
+  const shown = rows.filter((r) => inQueue(r, queue))
   const narrowed = filterCount > 0 || search.trim() !== ""
-  const afterCall = rows.find((r) => r.id === afterCallId)
+  const sheetCandidate = rows.find((r) => r.id === sheet?.id)
   const current = rows.find((r) => r.id === leadId)
   // The current row stays in the walk after a decision moves it to another queue.
-  const walk = rows.filter((r) => r.status === queue || r.id === leadId)
+  const walk = rows.filter((r) => inQueue(r, queue) || r.id === leadId)
   const next = walk[walk.findIndex((r) => r.id === leadId) + 1]
   const call = (id: string) => {
     onCall(id)
-    setAfterCallId(id)
+    setSheet({ id, justCalled: true })
   }
 
   return (
@@ -450,21 +506,17 @@ export function PhoneJobPage({
       ) : noApplicants ? (
         <JustPosted leads={leads} more={moreLeads} credits={credits} onOpenLead={onOpenDatabaseLead} onViewAll={onViewAllLeads} />
       ) : (
-        <main className="flex flex-1 flex-col gap-3 px-4 pt-3 pb-safe-6">
+        <main className="flex flex-1 flex-col gap-3 px-4 pt-3 pb-safe-20">
           <MobileChipRow
             items={QUEUES.map((q) => ({ value: q.value, label: `${q.label} (${counts(q.value)})` }))}
             value={queue}
             onValueChange={setQueue}
           />
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => setFiltersOpen(true)}>
-              <SlidersHorizontal aria-hidden /> Filters
-              {filterCount > 0 && <Badge variant="count">{filterCount}</Badge>}
-            </Button>
-            <Button variant="outline" size="sm" aria-label={`Sort candidates, ${sort}`} onClick={() => setSortOpen(true)}>
-              <ArrowUpDown aria-hidden /> {sort}
-            </Button>
-          </div>
+          {narrowed && (
+            <p className="text-sm text-muted-foreground">
+              Showing {rows.length} of {appliedCount}
+            </p>
+          )}
           {shown.length === 0 ? (
             <Card padding="none">
               <Empty>
@@ -498,10 +550,21 @@ export function PhoneJobPage({
                 candidate={c}
                 onOpen={() => onOpenLead(c.id)}
                 onCall={() => call(c.id)}
-                onUpdate={() => setAfterCallId(c.id)}
+                onUpdate={() => setSheet({ id: c.id, justCalled: false })}
+                onOutcome={(v) => onOutcome(c.id, v)}
               />
             ))
           )}
+          {/* Reachable while scrolling a long list; the page has no bottom nav. */}
+          <div className="fixed inset-x-0 bottom-0 z-sticky grid grid-cols-2 divide-x divide-border border-t border-border bg-card pb-safe">
+            <Button variant="ghost" size="lg" className="min-w-0 rounded-none px-2" aria-label={`Sort candidates, ${sort}`} onClick={() => setSortOpen(true)}>
+              <ArrowUpDown aria-hidden /> <span className="truncate">{sort}</span>
+            </Button>
+            <Button variant="ghost" size="lg" className="min-w-0 rounded-none px-2" onClick={() => setFiltersOpen(true)}>
+              <SlidersHorizontal aria-hidden /> Filters
+              {filterCount > 0 && <Badge variant="count">{filterCount}</Badge>}
+            </Button>
+          </div>
         </main>
       )}
 
@@ -525,7 +588,7 @@ export function PhoneJobPage({
             className="gap-0"
           >
             {sorts.map((s) => (
-              <label key={s} className="flex h-11 cursor-pointer items-center gap-3 text-sm">
+              <label key={s} className={SHEET_ROW}>
                 <RadioGroupItem value={s} aria-label={s} />
                 {s}
               </label>
@@ -557,13 +620,7 @@ export function PhoneJobPage({
         </Sheet>
       )}
 
-      <AfterCallSheet
-        candidate={afterCall}
-        onClose={() => setAfterCallId(null)}
-        onCallStatus={onCallStatus}
-        onShortlist={onShortlist}
-        onReject={onReject}
-      />
+      <StatusSheet sheet={sheet} candidate={sheetCandidate} onClose={() => setSheet(null)} onOutcome={onOutcome} />
     </div>
   )
 }

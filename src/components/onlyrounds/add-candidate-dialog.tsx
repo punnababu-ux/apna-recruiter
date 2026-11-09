@@ -108,7 +108,7 @@ function SelectStep({
         <button
           type="button"
           onClick={onViewBulk}
-          className="ink press-subtle relative flex items-start gap-4 rounded-xl border border-border bg-card p-4 text-left outline-none transition-interactive hover:bg-muted/40 focus-visible:ring-3 focus-visible:ring-ring/50"
+          className="ink press-subtle relative flex items-start gap-4 rounded-card-nested border border-border bg-card p-4 text-left outline-none transition-interactive hover:bg-muted/40 focus-visible:ring-3 focus-visible:ring-ring/50"
         >
           <div className="flex size-10 shrink-0 items-center justify-center rounded-lg border border-border bg-muted/30 text-primary">
             <FileSpreadsheet className="size-5" />
@@ -126,7 +126,7 @@ function SelectStep({
         <button
           type="button"
           onClick={onViewManual}
-          className="ink press-subtle relative flex items-start gap-4 rounded-xl border border-border bg-card p-4 text-left outline-none transition-interactive hover:bg-muted/40 focus-visible:ring-3 focus-visible:ring-ring/50"
+          className="ink press-subtle relative flex items-start gap-4 rounded-card-nested border border-border bg-card p-4 text-left outline-none transition-interactive hover:bg-muted/40 focus-visible:ring-3 focus-visible:ring-ring/50"
         >
           <div className="flex size-10 shrink-0 items-center justify-center rounded-lg border border-border bg-muted/30 text-primary">
             <UserPlus className="size-5" />
@@ -251,7 +251,7 @@ function BulkStep({
 
       <div className="flex flex-col gap-6 pl-8">
         {/* Sample file trigger */}
-        <div className="flex items-center justify-between rounded-lg border border-border bg-muted/20 p-3">
+        <div className="flex items-center justify-between rounded-card-nested border border-border bg-muted/20 p-3">
           <div className="flex items-center gap-2 min-w-0">
             <FileSpreadsheet className="size-4 text-primary shrink-0" />
             <div className="min-w-0">
@@ -279,7 +279,7 @@ function BulkStep({
           onDrop={handleDrop}
           onClick={() => !processing && fileInputRef.current?.click()}
           className={cn(
-            "flex min-h-36 cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border p-6 text-center transition-interactive hover:bg-muted/30 focus-visible:outline-none",
+            "flex min-h-36 cursor-pointer flex-col items-center justify-center gap-3 rounded-card-nested border border-dashed border-border p-6 text-center transition-interactive hover:bg-muted/30 focus-visible:outline-none",
             file && "border-primary bg-primary/5 hover:bg-primary/5",
             error && "border-destructive bg-destructive/5 hover:bg-destructive/5",
             processing && "pointer-events-none opacity-60"

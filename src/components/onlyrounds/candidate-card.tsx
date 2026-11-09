@@ -120,8 +120,8 @@ export function CandidateCard({
         }
       }}
       className={cn(
-        "rounded-lg border border-border bg-card transition-interactive",
-        onOpen && "cursor-pointer hover:shadow-card focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+        "rounded-card border border-border bg-card transition-interactive",
+        onOpen && "ink press-subtle relative cursor-pointer focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
         className,
       )}
     >

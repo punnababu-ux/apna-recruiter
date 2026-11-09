@@ -113,6 +113,17 @@ run_check \
 #    puts it: marketing pages (headlines via SectionHeading, quotes). The
 #    presets, and the raw serif families, are refused anywhere else — the
 #    app, the onlyrounds product, ad-hoc components.
+# Hand-built cards use the two card corners and no resting shadow (AGENTS.md, "Card corners").
+FILES_CARD=$(printf "%s\n" "$FILES_TS" | grep -vE '/app/design-system/|/sidebar-specs/' || true)
+run_check \
+  "Hand-built card off the card corners (use rounded-card or rounded-card-nested, or make it a Card)" \
+  'border[^"]*bg-card[^"]*rounded-(lg|xl|2xl|3xl)\b|rounded-(lg|xl|2xl|3xl)\b[^"]*border[^"]*bg-card' \
+  "$FILES_CARD"
+run_check \
+  "A rounded card has no resting shadow (AGENTS.md, \"Card shadows\")" \
+  'rounded-card[^"]*shadow-card|shadow-card[^"]*rounded-card' \
+  "$FILES_CARD"
+
 FILES_SERIF=$(printf "%s\n" "$FILES_TS" | grep -vE '/app/\(marketing\)/|/components/marketing/|/app/design-system/|/components/ui/section-heading\.tsx|/components/apnahire/(testimonial-grid|faq-section|trust-bar|pricing-hero)\.tsx|/app/layout\.tsx' || true)
 run_check \
   "Serif (text-editorial-*, text-quote*, font-editorial, font-serif) only on marketing pages" \

@@ -6,8 +6,10 @@
  */
 
 import * as React from "react"
+import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { ChevronRight } from "@/icons/icons"
+import { Card } from "./card"
 
 /**
  * JobCardFrame — the job card's shell, shared by every jobs list (OnlyRounds
@@ -56,7 +58,7 @@ export function JobCardFrame({
   banner?: React.ReactNode
 }) {
   return (
-    <div className="ink press-subtle relative cursor-pointer rounded-xl border border-border/60 bg-card px-4 py-4 sm:px-5 shadow-card transition-interactive hover:shadow-elevated">
+    <Card padding="none" className="card-hover-lift ink press-subtle relative cursor-pointer p-4 sm:px-5">
       {/* Header row: Logo · content block · actions */}
       <div className="flex items-start gap-3">
         {logo && <div className="mt-0.5 shrink-0">{logo}</div>}
@@ -69,7 +71,7 @@ export function JobCardFrame({
           <div className="flex min-w-0 items-start gap-2">
             <Link
               href={href}
-              className="group min-w-0 outline-none after:absolute after:inset-0 after:rounded-xl focus-visible:after:ring-3 focus-visible:after:ring-ring/50"
+              className="group min-w-0 outline-none after:absolute after:inset-0 after:rounded-card focus-visible:after:ring-3 focus-visible:after:ring-ring/50"
             >
               <span className="line-clamp-2 text-base font-semibold group-hover:underline sm:text-lg">{title}</span>
             </Link>
@@ -88,7 +90,7 @@ export function JobCardFrame({
       {/* Pills — horizontal scroll on mobile */}
       {pills && (
         <>
-          <hr className="-mx-4 mt-4 border-t border-border/60 sm:-mx-5" />
+          <hr className="-mx-4 mt-4 border-t border-border/60 max-sm:hidden sm:-mx-5" />
           <div className="relative z-docked mt-3 flex max-w-full items-center gap-1.5 overflow-x-auto whitespace-nowrap no-scrollbar pb-0.5">
             {pills}
           </div>
@@ -96,7 +98,7 @@ export function JobCardFrame({
       )}
 
       {banner && <div className="relative z-docked mt-3">{banner}</div>}
-    </div>
+    </Card>
   )
 }
 
@@ -109,15 +111,18 @@ export function JobMetricPill({
   label,
   count,
   unread,
+  stacked,
 }: {
   href: string
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
-  label: string
+  label: React.ReactNode
   count: number | string
   /** Something here hasn't been looked at ("4 new", "5 pending"). Shown as
    *  a dot on the count — the exact number lives on the list it opens —
    *  and spoken in full to screen readers. */
   unread?: string
+  /** Phones: equal tiles, count over label, so a row of three never clips. */
+  stacked?: boolean
 }) {
   const shown = typeof count === "number" ? count.toLocaleString("en-IN") : count
   return (
@@ -125,9 +130,9 @@ export function JobMetricPill({
     // says so. 32px tall — an easy tap.
     <Link
       href={href}
-      className="ink press-subtle inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md bg-secondary px-3 text-xs text-secondary-foreground transition-interactive outline-none hover:bg-secondary/80 focus-visible:ring-3 focus-visible:ring-ring/50"
+      className={cn(stacked && "max-sm:h-auto max-sm:min-w-0 max-sm:flex-1 max-sm:shrink max-sm:flex-col-reverse max-sm:gap-0.5 max-sm:py-2", "ink press-subtle inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md bg-secondary px-3 text-xs text-secondary-foreground transition-interactive outline-none hover:bg-secondary/80 focus-visible:ring-3 focus-visible:ring-ring/50")}
     >
-      <Icon className="size-3.5 text-muted-foreground" aria-hidden />
+      <Icon className={cn("size-3.5 text-muted-foreground", stacked && "max-sm:hidden")} aria-hidden />
       <span>{label}</span>
       {/* Same box as a default Badge (20px, px-2, text-xs, medium, pill). */}
       <span className="relative inline-flex h-5 min-w-5 items-center justify-center rounded-4xl bg-muted-foreground/25 px-2 text-xs leading-none font-medium tabular-nums text-foreground">
@@ -145,7 +150,7 @@ export function JobMetricPill({
           </span>
         )}
       </span>
-      <ChevronRight className="-mr-1 size-3.5 text-muted-foreground" aria-hidden />
+      <ChevronRight className={cn("-mr-1 size-3.5 text-muted-foreground", stacked && "max-sm:hidden")} aria-hidden />
     </Link>
   )
 }

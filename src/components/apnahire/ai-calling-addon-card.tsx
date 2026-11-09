@@ -41,7 +41,7 @@ export function AiCallingAddonCard({
   onAdd: () => void
 }) {
   return (
-    <section data-slot="ai-calling-addon" data-product="ai-calling" className="bg-card p-4 shadow-card">
+    <section data-slot="ai-calling-addon" data-product="ai-calling" className="bg-card p-4">
       {/* The ring sits on a wrapper: the card clips its corners, which would clip the glow. */}
       <div className="relative rounded-card-nested">
         <div className="overflow-hidden rounded-card-nested border border-border">

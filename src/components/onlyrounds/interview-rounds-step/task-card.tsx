@@ -59,7 +59,7 @@ export function TaskCard({
       : meta.label
 
   return (
-    <section className="overflow-hidden rounded-lg border border-border bg-card shadow-card">
+    <section className="overflow-hidden rounded-card border border-border bg-card">
       <div className="flex items-center gap-3 px-4 py-3">
         <div className="flex min-w-0 flex-1 items-center gap-3 text-left">
           <Icon className="size-5 shrink-0 text-muted-foreground" />

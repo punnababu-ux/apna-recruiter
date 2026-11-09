@@ -167,7 +167,7 @@ function TaskReviewCard({
       : undefined
 
   return (
-    <div className="flex flex-col gap-4 rounded-lg border border-border bg-card p-4">
+    <div className="flex flex-col gap-4 rounded-card border border-border bg-card p-4">
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-col gap-0.5">
@@ -353,7 +353,7 @@ export function ReviewStep({
     <div className="flex flex-col gap-4">
       {/* ── Job description ─────────────────────────────────────── */}
       <Section title="Job description" icon={FileText}>
-        <div className="rounded-lg border border-border bg-card p-4">
+        <div className="rounded-card border border-border bg-card p-4">
           <div className="flex flex-col gap-5">
             <DisplayField label="Job title" value={title} icon={Briefcase} />
             {jd && (
@@ -369,7 +369,7 @@ export function ReviewStep({
 
       {/* ── Job details ─────────────────────────────────────────── */}
       <Section title="Job details" icon={Briefcase}>
-        <div className="rounded-lg border border-border bg-card p-4">
+        <div className="rounded-card border border-border bg-card p-4">
           <div className="flex flex-col gap-4">
             <FieldGrid>
               <DisplayField label="Client" value={details.clientId ? clientName(details.clientId) : undefined} icon={Building2} />

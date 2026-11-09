@@ -130,7 +130,7 @@ function JobsPageInner() {
   const query = searchQuery.trim()
   const emptyState =
     query || filterCount ? (
-      <Empty className="rounded-lg border border-dashed border-border bg-card">
+      <Empty className="rounded-card border border-dashed border-border bg-card">
         <EmptyHeader>
           <EmptyMedia>
             <ValueArt name="no-results" size="sm" />

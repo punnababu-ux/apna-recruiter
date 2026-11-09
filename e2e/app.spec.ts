@@ -14,6 +14,24 @@ const isPhone = () => !isDesktop()
 async function expectLayout(page: Page, label: string) {
   await expectNoHorizontalOverflow(page, label)
   await expectNoCollapsedButtons(page)
+  await expectTappableCardsRipple(page, label)
+}
+
+/** A card whose whole surface is a tap target must answer the tap (AGENTS.md, "Clickable cards"). */
+async function expectTappableCardsRipple(page: Page, label: string) {
+  const silent = await page.evaluate(() =>
+    [...document.querySelectorAll('a[class*="after:inset-0"], button[class*="after:inset-0"]')]
+      .map((el) => [el.textContent?.trim(), el.closest('[data-slot="card"]')] as const)
+      .filter(([, card]) => card && !(card.classList.contains("ink") && card.classList.contains("cursor-pointer")))
+      .map(([name]) => name),
+  )
+  expect(silent, `${label}: tappable cards with no ripple`).toEqual([])
+  const raised = await page.evaluate(() =>
+    [...document.querySelectorAll('[data-slot="card"]')]
+      .filter((c) => !c.matches(":hover") && getComputedStyle(c).boxShadow !== "none")
+      .map((c) => c.textContent?.trim().slice(0, 40)),
+  )
+  expect(raised, `${label}: cards with a shadow at rest`).toEqual([])
 }
 
 /** Scroll to the bottom and back: sticky bars (match sections, results bar, docked header) engage on the way. */
@@ -202,10 +220,51 @@ screens("ECC job page", [
       await call.evaluate((a) => a.addEventListener("click", (e) => e.preventDefault(), { once: true })) // a real tel: stalls the browser
       await call.click()
       await settle(page, 800) // the sheet is still sliding in
-      await page.getByRole("button", { name: "Not a fit" }).click()
+      await page.getByRole("radio", { name: "Rejected" }).click()
       await expect(rejected).not.toHaveText(before)
       await page.getByRole("button", { name: "Undo" }).click()
       await expect(rejected).toHaveText(before)
+    },
+  },
+  {
+    name: "phone: did not pick up shows on the card",
+    path: ECC,
+    prepare: async (page) => {
+      test.skip(isDesktop(), "phone only")
+      const call = page.locator('a[href^="tel:"]').first()
+      await call.evaluate((a) => a.addEventListener("click", (e) => e.preventDefault(), { once: true }))
+      await call.click()
+      await settle(page, 800)
+      await page.getByRole("radio", { name: "Did not pick up" }).click()
+      await page.getByText(/^Called/).filter({ visible: true }).first().click()
+      await expect(page.getByRole("button", { name: "Did not pick up" }).first()).toBeVisible()
+    },
+  },
+  {
+    name: "phone: Later changes nothing",
+    path: ECC,
+    prepare: async (page) => {
+      test.skip(isDesktop(), "phone only")
+      const call = page.locator('a[href^="tel:"]').first()
+      await call.evaluate((a) => a.addEventListener("click", (e) => e.preventDefault(), { once: true }))
+      await call.click()
+      await settle(page, 800)
+      await page.getByRole("button", { name: "Later" }).click()
+      await settle(page, 800)
+      await page.getByText(/^All/).filter({ visible: true }).first().click()
+      await expect(page.getByRole("button", { name: "Update status" }).first()).toBeVisible()
+    },
+  },
+  {
+    name: "phone: reject from the card, then undo",
+    path: ECC,
+    prepare: async (page) => {
+      test.skip(isDesktop(), "phone only")
+      await expect(page.getByText("To call (4)").filter({ visible: true })).toBeVisible()
+      await page.getByRole("button", { name: /^Reject / }).first().click()
+      await expect(page.getByText("To call (3)").filter({ visible: true })).toBeVisible()
+      await page.getByRole("button", { name: "Undo" }).click()
+      await expect(page.getByText("To call (4)").filter({ visible: true })).toBeVisible()
     },
   },
   { name: "phone: just posted", path: `${ECC}?applicants=0` },
@@ -215,7 +274,7 @@ screens("ECC job page", [
     prepare: async (page) => {
       test.skip(isDesktop(), "phone only")
       await page.locator('a[href^="tel:"]').first().click({ noWaitAfter: true })
-      await expect(page.getByRole("button", { name: "Did not pick up" })).toBeVisible()
+      await expect(page.getByRole("radio", { name: "Did not pick up" })).toBeVisible()
     },
   },
   {

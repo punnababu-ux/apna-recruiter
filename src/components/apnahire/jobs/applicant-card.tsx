@@ -119,7 +119,7 @@ export function ApplicantCard({
   // anywhere opens the profile; actions sit above it (relative z-10). No
   // lift: the card holds several actions of its own (AGENTS.md).
   return (
-    <Card padding="none" className="@container relative flex flex-col">
+    <Card padding="none" className="@container ink press-subtle relative flex cursor-pointer flex-col">
       <div className="flex flex-col gap-4 p-4 md:p-5">
         {/* 1. Who + how well */}
         <div className="flex items-start gap-3">

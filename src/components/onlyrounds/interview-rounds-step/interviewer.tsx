@@ -47,7 +47,7 @@ export function InterviewerCard({
   const agent = AGENTS[agentId]
 
   return (
-    <div className="flex items-center gap-3 rounded-lg border border-border bg-muted/20 p-3">
+    <div className="flex items-center gap-3 rounded-card-nested border border-border bg-muted/20 p-3">
       <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border bg-card text-muted-foreground">
         <Bot className="size-5" />
       </span>

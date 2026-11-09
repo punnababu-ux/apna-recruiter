@@ -265,7 +265,7 @@ export default function InterviewPrepLoungePage() {
           {/* The policy fit and its conclusion in one card; the minister's
               visit beside it, captioned on the photo itself — nothing loose. */}
           <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
-            <Card padding="none" className="surface-frosted overflow-hidden shadow-card">
+            <Card padding="none" className="surface-frosted overflow-hidden">
               <dl className="flex flex-col divide-y divide-border">
                 {publicOutcomes.items.map((item) => (
                   <div key={item.title} className="flex flex-col gap-1 p-5 sm:p-6">
@@ -279,7 +279,7 @@ export default function InterviewPrepLoungePage() {
                 {outcomeRest}
               </p>
             </Card>
-            <figure className="relative min-h-72 overflow-hidden rounded-card shadow-card">
+            <figure className="relative min-h-72 overflow-hidden rounded-card">
               <Image
                 src={publicOutcomes.image.src}
                 alt={publicOutcomes.image.alt}
@@ -287,7 +287,7 @@ export default function InterviewPrepLoungePage() {
                 sizes="(min-width: 1024px) 50vw, 100vw"
                 className="object-cover"
               />
-              <figcaption className="absolute inset-x-3 bottom-3 rounded-card-nested bg-surface-glass px-4 py-3 text-sm text-foreground shadow-card backdrop-blur-xl">
+              <figcaption className="absolute inset-x-3 bottom-3 rounded-card-nested bg-surface-glass px-4 py-3 text-sm text-foreground backdrop-blur-xl">
                 {publicOutcomes.image.caption}
               </figcaption>
             </figure>

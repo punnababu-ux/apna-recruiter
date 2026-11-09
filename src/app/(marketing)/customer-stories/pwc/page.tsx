@@ -48,7 +48,7 @@ export default function PwcStoryPage() {
           </Button>
 
           {/* The result, big, in the mother gradient (no dark band). */}
-          <Card padding="none" className="gap-2 border-card/60 bg-gradient-checkout-hero p-8 shadow-card sm:p-10">
+          <Card padding="none" className="gap-2 border-card/60 bg-gradient-checkout-hero p-8 sm:p-10">
             <span className="text-display-lg font-heading text-foreground tabular-nums">{headline.value}</span>
             <span className="text-lead text-pretty text-muted-foreground">{headline.label}</span>
           </Card>

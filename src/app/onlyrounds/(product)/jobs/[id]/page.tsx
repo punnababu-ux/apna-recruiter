@@ -1481,7 +1481,7 @@ function JobDetailPageInner({ id }: { id: string }) {
         />
 
         {filteredCandidates.length === 0 ? (
-          <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-muted/30 px-6 py-12 text-center">
+          <div className="flex flex-col items-center justify-center gap-2 rounded-card border border-dashed border-border bg-muted/30 px-6 py-12 text-center">
             <p className="text-sm font-medium">
               No candidates match your filters
             </p>

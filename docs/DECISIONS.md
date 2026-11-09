@@ -8,6 +8,67 @@ or **Open**.
 
 ---
 
+
+
+## Phone Sort and Filters: fixed bottom bar (2026-11-10)
+
+- **Question:** two chips left the top row half empty. What fills it?
+- **Decision:** remove the row. Sort and Filters are two equal halves in a bar fixed to the bottom of the screen. A filtered list says "Showing 2 of 7".
+- **Why:** Punna's call. Always in thumb reach on a long list, and the first candidate sits higher. Quick filter chips were set aside until usage shows which filters matter.
+- **Would change it:** Sumit's review, or the bar crowding short screens.
+- **Status:** Leaning (Punna, 2026-11-10), pending Sumit.
+
+
+## Phone To call card: compact Call, decision icons (2026-11-10)
+
+- **Question:** should the phone card keep a full-width Call, and can a recruiter decide without calling?
+- **Decision:** To call cards have a compact green Call and WhatsApp on the left, Reject and Shortlist icons on the right. A decision from the card records no call, and Undo returns the candidate to To call. Called and decided cards keep the status button.
+- **Why:** Punna's call. Recruiters can clear a clear mismatch in one tap, as on desktop. The gap keeps Reject away from Call.
+- **Would change it:** accidental rejects, or recruiters misreading the icons.
+- **Status:** Decided (Punna, 2026-11-10).
+
+
+## One green per surface (2026-11-10)
+
+- **Question:** are repeated green CTAs acceptable (phone plan cards, phone Call, desktop View number)?
+- **Decision:** yes, keep all three as they are. The rule is one green per surface: a surface is the screen or one card in a list of equal items. Wherever possible the whole screen is the surface, with a single green.
+- **Why:** Punna's call after the research. A repeated action asks "which item?", not "which action?". Design systems mostly say one primary per page, and no controlled study covers repeated buttons, so this is a product judgement.
+- **Would change it:** data showing a single green per screen lifts calls or purchases. Options studied: View number green only on card hover; phone Call green only on the next candidate.
+- **Status:** Decided (Punna, 2026-11-10).
+
+
+## Phone candidate statuses: one status, one tap (2026-11-10)
+
+- **Question:** phones showed call results as small text, had no All, no way to postpone, and buttons that did not show the current status.
+- **Decision:** chips All, To call, Called, Shortlisted, Rejected, mapped one to one to desktop's All, Action pending, Viewed number, Shortlisted, Rejected. The page opens on To call, or All when no one is left. A called card has a button that shows the status and changes it. After a call, a radio list saves on one tap: Shortlisted, Rejected, Did not pick up, with Later to change nothing. Wrong number is gone on both platforms; desktop's "Not connected" is now "Did not pick up".
+- **Why:** a candidate has one status, so radios, not a checklist. One tap suits a recruiter between calls; Undo covers a mis-tap. To call and Called are phone words on purpose, an exception to same words on both platforms.
+- **Would change it:** recruiters needing a separate "answered, undecided" status, or mis-taps outweighing the speed.
+- **Status:** Decided (Punna, 2026-11-10).
+
+## One card style across the product (2026-11-10)
+
+- **Question:** cards drifted: `rounded-lg` and `rounded-xl` corners and resting shadows, mostly in OnlyRounds, some in checkout and marketing.
+- **Decision:** every card uses `rounded-card` or `rounded-card-nested` and is flat at rest. Lint and e2e now enforce it. Checkout's order-summary sections and phone plan cards lost their shadow too.
+- **Why:** Punna asked for one style everywhere, and these are existing rules that nothing checked.
+- **Would change it:** Sumit preferring the checkout's raised sections; restore them as a logged exception.
+- **Status:** Decided. Kept: tiles inside marketing illustrations, the stacked carousel, sticky bars, and the sidebar spec mock-ups.
+
+## Every tappable card ripples (2026-11-10)
+
+- **Question:** candidate cards opened on tap with no visual feedback. Is that acceptable?
+- **Decision:** no. Any card that is a tap target as a whole has the ink and press, and an e2e check fails if a stretched link sits in a `Card` without them.
+- **Why:** Punna's call. A tap with no response reads as broken, and the miss went unseen because no check covered it.
+- **Would change it:** nothing expected.
+- **Status:** Decided. Lift stays only on cards with no actions inside, plus the job card, which had it already.
+
+## Job cards match candidate cards (2026-11-10)
+
+- **Question:** the job card and the candidate card looked like two products. Keep both?
+- **Decision:** no. Punna prefers the candidate card, so `JobCardFrame` now sits on `Card`: `rounded-card`, flat at rest, a dotted facts line with no icons (two set lines on phones), no rule above the metrics on phones. On phones the three metrics are equal tiles, count over label, because the third was clipped.
+- **Why:** one list card across the product. The old frame also broke the card corner and resting shadow rules.
+- **Would change it:** recruiters needing the icons to scan facts.
+- **Status:** Decided. OnlyRounds shares the frame, so it gets the same shell and keeps its own meta.
+
 ## ECC on phones is its own product (2026-11-09)
 
 - **Question:** should the phone job page keep adapting the desktop page?

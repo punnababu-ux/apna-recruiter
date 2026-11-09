@@ -49,7 +49,7 @@ export function VideoPopup({
       className="fixed z-modal animate-in fade-in slide-in-from-right-4 duration-200"
       style={{ top: "16px", right: "calc(56rem + 12px)" }}
     >
-      <div className="w-full max-w-lg overflow-hidden rounded-xl border border-border bg-card shadow-dialog">
+      <div className="w-full max-w-lg overflow-hidden rounded-overlay border border-border bg-card shadow-dialog">
         {/* Header */}
         <div className="flex items-center gap-2 border-b border-border px-4 py-2.5">
           <Video className="size-4 shrink-0 text-muted-foreground" />
@@ -123,7 +123,7 @@ export function AudioPlayer({
         /* Playing → full-bleed sticky strip below the tab bar */
         ? "-mx-4 sticky top-0 z-docked bg-card border-b border-border shadow-card"
         /* At rest → normal rounded card, same style as other insight cards */
-        : "rounded-lg border border-border bg-card",
+        : "rounded-card-nested border border-border bg-card",
     )}>
       <div className={cn(
         "flex items-center gap-3",
