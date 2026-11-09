@@ -29,6 +29,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
   Phone,
+  CalendarClock,
   PhoneOff,
   QrCode,
 } from "@apna/design-system"
@@ -94,10 +95,11 @@ function CallQr({ phone }: { phone: string }) {
   )
 }
 
-export type CallStatus = "answered" | "not-connected"
+export type CallStatus = "answered" | "follow-up" | "not-connected"
 
 const CALL_STATUS: { id: CallStatus; label: string; icon: React.ReactNode }[] = [
   { id: "answered", label: "Answered", icon: <Check aria-hidden className="text-success" /> },
+  { id: "follow-up", label: "Follow up", icon: <CalendarClock aria-hidden className="text-info" /> },
   { id: "not-connected", label: "Did not pick up", icon: <PhoneOff aria-hidden className="text-warning" /> },
 ]
 
@@ -111,18 +113,27 @@ export function CallStatusMenu({ value, onChange }: { value?: CallStatus; onChan
         <ChevronDown aria-hidden className="text-muted-foreground" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" onClick={(e) => e.stopPropagation()}>
-        <DropdownMenuGroup>
-          <DropdownMenuLabel>How did the call go?</DropdownMenuLabel>
-          <DropdownMenuRadioGroup value={value ?? ""} onValueChange={(v) => onChange(v as CallStatus)}>
-            {CALL_STATUS.map((s) => (
-              <DropdownMenuRadioItem key={s.id} value={s.id}>
-                {s.icon}
-                {s.label}
-              </DropdownMenuRadioItem>
-            ))}
-          </DropdownMenuRadioGroup>
-        </DropdownMenuGroup>
+        <CallStatusGroup value={value} onChange={onChange} />
       </DropdownMenuContent>
     </DropdownMenu>
   )
 }
+
+/** The call status choices, for any menu. */
+export function CallStatusGroup({ value, onChange }: { value?: CallStatus; onChange: (v: CallStatus) => void }) {
+  return (
+    <DropdownMenuGroup>
+      <DropdownMenuLabel>How did the call go?</DropdownMenuLabel>
+      <DropdownMenuRadioGroup value={value ?? ""} onValueChange={(v) => onChange(v as CallStatus)}>
+        {CALL_STATUS.map((s) => (
+          <DropdownMenuRadioItem key={s.id} value={s.id}>
+            {s.icon}
+            {s.label}
+          </DropdownMenuRadioItem>
+        ))}
+      </DropdownMenuRadioGroup>
+    </DropdownMenuGroup>
+  )
+}
+
+export const callStatusLabel = (v: CallStatus) => CALL_STATUS.find((s) => s.id === v)?.label

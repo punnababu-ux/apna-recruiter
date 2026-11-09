@@ -25,6 +25,11 @@ import {
   Table2,
   ToggleGroup,
   ToggleGroupItem,
+  Check,
+  X,
+  Sheet,
+  SheetPanel,
+  SheetPanelHeader,
 } from "@apna/design-system"
 import * as React from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
@@ -37,17 +42,19 @@ import type { Candidate } from "@/components/onlyrounds/candidate-card"
 import { Checkbox, ChevronDown, Database, Download, FilterGroups, Input, Search, SearchFilterBar, UserCheck } from "@apna/design-system"
 import { toast } from "sonner"
 import { ActiveLeads, FindingCandidates, type ActiveLead } from "@/components/apnahire/jobs/active-leads"
-import { PhoneJobPage, type CallOutcome } from "@/components/apnahire/jobs/phone-job-page"
+import { CandidateCard, PhoneJobPage, type CallOutcome } from "@/components/apnahire/jobs/phone-job-page"
 import { ValueArt } from "@/components/marketing/value-art"
 import { WhatsAppIcon } from "@/components/onlyrounds/candidate-card"
 import { PageHeader } from "@/components/onlyrounds/page-header"
 import { MobileChipRow } from "@/components/apnahire/mobile-chip-row"
 import { cn } from "@/lib/utils"
+import { ApplicantTriageTable } from "@/components/apnahire/jobs/applicant-triage-table"
 import { ApplicantTable } from "@/components/apnahire/jobs/applicant-table"
 import type { CallStatus } from "@/components/apnahire/jobs/contact-number"
 import { ApplicantActions, ApplicantCard, type ApplicantProfile } from "@/components/apnahire/jobs/applicant-card"
 import { CandidateProfilePanel, CandidateProfileSheet } from "@/components/apnahire/chats/candidate-profile-panel"
-import { CandidateDetailsSheet } from "@/components/apnahire/jobs/candidate-details"
+import { useBackToClose } from "@/hooks/use-back-to-close"
+import { CandidateDetailsSheet, CandidatePane } from "@/components/apnahire/jobs/candidate-details"
 import { MatchBars, matchLevel } from "@/components/apnahire/match-bars"
 import type { ApnaJob } from "@/components/apnahire/jobs/job-list"
 import type { CandidateFullProfile } from "@/content/chats"
@@ -622,6 +629,10 @@ function JobDetailPageInner({ id }: { id: string }) {
   const leadId = searchParams.get("leadId")
   // The default since 2026-11-09. ?deck=0 shows the old details for comparison.
   const deck = searchParams.get("deck") !== "0"
+  // The default since 2026-11-09. ?views=0 shows the old compact and table.
+  const views = searchParams.get("views") !== "0"
+  // The default since 2026-11-09. ?pill=0 shows the old footer.
+  const pill = searchParams.get("pill") !== "0"
   const leadPushed = React.useRef(false)
 
   const job = jobById(id)
@@ -629,6 +640,7 @@ function JobDetailPageInner({ id }: { id: string }) {
   const status = STATUS[job?.status ?? "active"]
   const meta = [job ? `${job.area}, ${job.city}` : null, job?.salary, job?.education, job?.experience].filter(Boolean)
   const [infoOpen, setInfoOpen] = useState(false)
+  useBackToClose(infoOpen, () => setInfoOpen(false))
   const [candidates, setCandidates] = useState<CandidateRow[]>(CANDIDATES)
   const [addDialogOpen, setAddDialogOpen] = useState(false)
 
@@ -900,7 +912,12 @@ function JobDetailPageInner({ id }: { id: string }) {
                   variant="outline"
                   aria-label="List view"
                   value={[listView]}
-                  onValueChange={(v) => v[0] && setListView(v[0] as "detailed" | "compact" | "list")}
+                  onValueChange={(v) => {
+                    if (!v[0]) return
+                    setListView(v[0] as "detailed" | "compact" | "list")
+                    // The panel is a modal over the table; don't pop it open.
+                    if (v[0] === "list") setFilterPanelOpen(false)
+                  }}
                   className="ml-auto rounded-full bg-card lg:ml-0 [&>*]:px-3! [&>*:first-child]:rounded-l-full! [&>*:first-child]:pl-3.5! [&>*:last-child]:rounded-r-full! max-md:[&>*:nth-last-child(2)]:rounded-r-full! [&>*:last-child]:pr-3.5!"
                 >
                   <ToggleGroupItem value="detailed" aria-label="Detailed cards">
@@ -916,6 +933,8 @@ function JobDetailPageInner({ id }: { id: string }) {
     </>
   )
   const sideFilters = wide
+  // A table needs its width: its filters open over it, not beside it.
+  const filterColumn = sideFilters && filterPanelOpen && !(views && listView === "list")
 
   const handleClearFilters = () => {
     setFilters({})
@@ -1040,6 +1059,16 @@ function JobDetailPageInner({ id }: { id: string }) {
         )}
         {selectedShown.length > 0 && (
           <div className="ml-auto flex items-center gap-3">
+            {views && listView === "list" && (
+              <>
+                <Button variant="outline" size="sm" onClick={() => decideMany("rejected")}>
+                  <X aria-hidden className="text-destructive" /> Reject
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => decideMany("shortlisted")}>
+                  <Check aria-hidden className="text-success" /> Shortlist
+                </Button>
+              </>
+            )}
             <Button
               variant="outline"
               size="sm"
@@ -1062,6 +1091,34 @@ function JobDetailPageInner({ id }: { id: string }) {
       // Room for the bulk buttons: 32px buttons get 12px above and below.
       true
     )
+  const filterBody = (
+    <div className="min-h-0 flex-1 overflow-y-auto">
+      <FilterGroups groups={[...groupsOf("top"), ...groupsOf("next")]} touch />
+      {/* The long tail, under one toggle: ≤7% of recruiters use any
+          of these (ECC data, 2026-11-06). */}
+      <button
+        type="button"
+        aria-expanded={moreFilters || moreActive > 0}
+        onClick={() => setMoreFilters((o) => !o)}
+        className="flex w-full items-center justify-between gap-2 border-t border-border px-5 py-4 text-sm font-semibold text-foreground hover:bg-muted"
+      >
+        <span className="flex items-center gap-2">
+          More filters
+          {moreActive > 0 && <Badge variant="count">{moreActive}</Badge>}
+        </span>
+        <ChevronDown
+          aria-hidden
+          className={cn("size-4 text-muted-foreground transition-select", (moreFilters || moreActive > 0) && "rotate-180")}
+        />
+      </button>
+      {(moreFilters || moreActive > 0) && (
+        <div className="border-t border-border">
+          <FilterGroups groups={groupsOf("more")} touch />
+        </div>
+      )}
+    </div>
+  )
+
   const tableSections = Object.fromEntries(
     filteredCandidates.flatMap((c, i) => {
       const level = sectionAt(i)
@@ -1099,17 +1156,47 @@ function JobDetailPageInner({ id }: { id: string }) {
       setNotes((n) => ({ ...n, [c.id]: [{ id: `n${Date.now()}`, text, at: "Today" }, ...(n[c.id] ?? [])] })),
   })
 
+  const cardRow = (c: CandidateRow) => {
+    const m = metaOf(c.id)
+    return {
+      id: c.id,
+      name: c.name,
+      phone: c.phone,
+      photo: PHOTOS[c.id],
+      level: matchLevel(m.score),
+      appliedDays: m.appliedDays,
+      experience: m.experience,
+      salary: m.salary,
+      location: m.location,
+      met: m.matching.length,
+      total: REQUIREMENTS.length,
+      missing: REQUIREMENTS.filter((r) => !m.matching.includes(r)),
+      status: pipelineOf(c, viewed),
+      callStatus: calls[c.id],
+    }
+  }
+
+  // Bulk decisions come from the table; Undo puts every row back.
+  const decideMany = (v: "shortlisted" | "rejected") => {
+    const before = candidates
+    setCandidates((p) => p.map((c) => (picked.has(c.id) ? withOutcome(c, v) : c)))
+    toast(`${picked.size} candidates ${v}`, { action: { label: "Undo", onClick: () => setCandidates(before) } })
+    setPicked(new Set())
+  }
+
   // One status at a time. A decision can be undone: it moves the candidate.
   const setOutcome = (id: string, v: CallOutcome) => {
     const before = candidates.find((c) => c.id === id)
     if (!before) return
     const beforeCall = calls[id]
     // A decision from the card comes before any call, so it records none.
-    const called = v === "not-connected" || viewed.has(id) || metaOf(id).viewed
-    if (v === "not-connected") setViewed((seen) => new Set(seen).add(id))
-    if (called) setCalls((c) => ({ ...c, [id]: v === "not-connected" ? v : "answered" }))
+    // These two record the call and decide nothing.
+    const callOnly = v === "not-connected" || v === "follow-up"
+    const called = callOnly || viewed.has(id) || metaOf(id).viewed
+    if (callOnly) setViewed((seen) => new Set(seen).add(id))
+    if (called) setCalls((c) => ({ ...c, [id]: callOnly ? v : "answered" }))
     setCandidates((p) => p.map((c) => (c.id === id ? withOutcome(c, v) : c)))
-    if (v === "not-connected") return
+    if (callOnly) return
     toast(`${before.name} ${v}`, {
       action: {
         label: "Undo",
@@ -1137,25 +1224,7 @@ function JobDetailPageInner({ id }: { id: string }) {
           place={job ? `${job.area}, ${job.city}` : undefined}
           appliedCount={noApplicants ? 0 : candidates.length}
           databaseCount={job?.dbMatches ?? 0}
-          rows={filteredCandidates.map((c) => {
-            const m = metaOf(c.id)
-            return {
-              id: c.id,
-              name: c.name,
-              phone: c.phone,
-              photo: PHOTOS[c.id],
-              level: matchLevel(m.score),
-              appliedDays: m.appliedDays,
-              experience: m.experience,
-              salary: m.salary,
-              location: m.location,
-              met: m.matching.length,
-              total: REQUIREMENTS.length,
-              missing: REQUIREMENTS.filter((r) => !m.matching.includes(r)),
-              status: pipelineOf(c, viewed),
-              callStatus: calls[c.id],
-            }
-          })}
+          rows={filteredCandidates.map(cardRow)}
           search={searchQuery}
           onSearch={setSearchQuery}
           filterGroups={filterGroups}
@@ -1375,8 +1444,8 @@ function JobDetailPageInner({ id }: { id: string }) {
               </div>
             </div>
 
-            <div className={cn(sideFilters && filterPanelOpen && "flex items-start gap-4")}>
-            {sideFilters && filterPanelOpen && (
+            <div className={cn(filterColumn && "flex items-start gap-4")}>
+            {filterColumn && (
               <Card id="lead-filter-panel" padding="none" className="sticky top-(--list-top) order-last flex max-h-(--list-room) w-72 shrink-0 flex-col overflow-hidden">
                 <div className="flex items-center justify-between gap-2 border-b border-border px-5 py-3">
                   <span className="text-base font-semibold text-foreground">Filters</span>
@@ -1386,31 +1455,7 @@ function JobDetailPageInner({ id }: { id: string }) {
                     </Button>
                   )}
                 </div>
-                <div className="min-h-0 flex-1 overflow-y-auto">
-                  <FilterGroups groups={[...groupsOf("top"), ...groupsOf("next")]} touch />
-                  {/* The long tail, under one toggle: ≤7% of recruiters use any
-                      of these (ECC data, 2026-11-06). */}
-                  <button
-                    type="button"
-                    aria-expanded={moreFilters || moreActive > 0}
-                    onClick={() => setMoreFilters((o) => !o)}
-                    className="flex w-full items-center justify-between gap-2 border-t border-border px-5 py-4 text-sm font-semibold text-foreground hover:bg-muted"
-                  >
-                    <span className="flex items-center gap-2">
-                      More filters
-                      {moreActive > 0 && <Badge variant="count">{moreActive}</Badge>}
-                    </span>
-                    <ChevronDown
-                      aria-hidden
-                      className={cn("size-4 text-muted-foreground transition-select", (moreFilters || moreActive > 0) && "rotate-180")}
-                    />
-                  </button>
-                  {(moreFilters || moreActive > 0) && (
-                    <div className="border-t border-border">
-                      <FilterGroups groups={groupsOf("more")} touch />
-                    </div>
-                  )}
-                </div>
+                {filterBody}
               </Card>
             )}
             <div className="min-w-0 flex-1">
@@ -1476,13 +1521,13 @@ function JobDetailPageInner({ id }: { id: string }) {
                       The page-coloured backing masks cards scrolling under it;
                       with the panel shut it runs to the page edges. */}
                   {resultsMode && (
-                    <DockingBar key={`results-${sideFilters && filterPanelOpen}`} bleed={!(sideFilters && filterPanelOpen)}>
-                      {(docked) => resultsBar(docked && (sideFilters && filterPanelOpen ? "column" : "full"))}
+                    <DockingBar key={`results-${filterColumn}`} bleed={!filterColumn}>
+                      {(docked) => resultsBar(docked && (filterColumn ? "column" : "full"))}
                     </DockingBar>
                   )}
                   {g.level && (
-                    <DockingBar key={String(sideFilters && filterPanelOpen)} bleed={!(sideFilters && filterPanelOpen)}>
-                      {(docked) => sectionHeader(g.level!, false, docked && (sideFilters && filterPanelOpen ? "column" : "full"))}
+                    <DockingBar key={String(filterColumn)} bleed={!filterColumn}>
+                      {(docked) => sectionHeader(g.level!, false, docked && (filterColumn ? "column" : "full"))}
                     </DockingBar>
                   )}
                 {g.items.map((c) => {
@@ -1514,6 +1559,22 @@ function JobDetailPageInner({ id }: { id: string }) {
                 </section>
                   ))}
               </div>
+            ) : listView === "list" && views ? (
+              <div className="flex flex-col gap-3">
+              {resultsMode && resultsBar(false)}
+              <ApplicantTriageTable
+                rows={filteredCandidates.map((c) => ({ ...cardRow(c), genderAge: `${metaOf(c.id).gender}, ${metaOf(c.id).age}` }))}
+                sections={tableSections}
+                picked={picked}
+                onPick={toggleSelect}
+                onPickAll={(on) => setPicked(on ? new Set(shownIds) : new Set())}
+                onOpen={setLeadId}
+                onViewNumber={viewNumber}
+                onCallStatus={(id, v) => setCall(id)(v)}
+                onReject={handleReject}
+                onShortlist={handleMoveToNextRound}
+              />
+              </div>
             ) : listView === "list" ? (
               <ApplicantTable
                 rows={filteredCandidates.map((c) => {
@@ -1535,6 +1596,19 @@ function JobDetailPageInner({ id }: { id: string }) {
                 onReject={handleReject}
                 onShortlist={handleMoveToNextRound}
               />
+            ) : views ? (
+              // Compact: the phone's card and profile, side by side on wide screens.
+              <div className="flex items-start gap-4">
+                <div className="flex min-w-0 flex-1 flex-col gap-3 lg:max-w-sm">
+                  {/* No match headers: every card already says its level. */}
+                  {filteredCandidates.map((c) => (
+                    <CandidateCard key={c.id} candidate={cardRow(c)} active={split && c.id === selectedId} onOpen={() => setLeadId(c.id)} />
+                  ))}
+                </div>
+                {split && selected && selectedThread && (
+                  <CandidatePane key={selected.id} thread={selectedThread} onAddNote={panelProps(selected).onAddNote} actions={actionsFor(selected)} floating={pill} />
+                )}
+              </div>
             ) : (
               // Compact: the chats list's row. Wide screens show the profile beside it.
               <div className="flex items-start gap-4">
@@ -1587,6 +1661,23 @@ function JobDetailPageInner({ id }: { id: string }) {
         )}
       </main>
 
+      <Sheet open={sideFilters && filterPanelOpen && views && listView === "list"} onOpenChange={setFilterPanelOpen}>
+        <SheetPanel>
+          <div className="border-b border-border bg-card py-4">
+            <SheetPanelHeader
+              title="Filters"
+              action={activeFilterCount > 0 && <Button variant="link" size="sm" onClick={handleClearFilters}>Clear all</Button>}
+            />
+          </div>
+          <div className="flex min-h-0 flex-1 flex-col bg-card">{filterBody}</div>
+          <div className="border-t border-border bg-card p-4">
+            <Button size="xl" className="w-full" onClick={() => setFilterPanelOpen(false)}>
+              Show {filteredCandidates.length} {filteredCandidates.length === 1 ? "candidate" : "candidates"}
+            </Button>
+          </div>
+        </SheetPanel>
+      </Sheet>
+
       {/* Detailed view and phones: the profile opens as the side panel. */}
       {deck && selected && selectedThread && (
         <CandidateDetailsSheet
@@ -1595,6 +1686,7 @@ function JobDetailPageInner({ id }: { id: string }) {
           thread={selectedThread}
           onAddNote={panelProps(selected).onAddNote}
           footer={actionsFor(selected)}
+          floating={pill}
           position={filteredCandidates.findIndex((c) => c.id === selected.id) + 1}
           total={filteredCandidates.length}
           onPrevious={() => setLeadId(filteredCandidates[filteredCandidates.findIndex((c) => c.id === selected.id) - 1]?.id ?? selected.id)}

@@ -654,6 +654,14 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
     description: "The signed-in app (/apnahire/*).",
     entries: [
       {
+        name: "ApplicantTriageTable",
+        file: "apnahire/jobs/applicant-triage-table.tsx",
+        what: "A job's leads as a table, to scan, compare and act in bulk. Each row offers only what its stage needs.",
+        live: "/apnahire/jobs/telecaller-koramangala",
+        where: "/apnahire/jobs/[id], the table view from md",
+        rules: ["Contact shows the number action and a small WhatsApp icon; Status says where the candidate stands.", "Call status, Shortlist and Reject live in the row's ⋮; Shortlist and Reject also in the bulk bar.", "View number is the row's one green."],
+      },
+      {
         name: "MetaFact",
         file: "apnahire/jobs/meta-fact.tsx",
         what: "One fact on a job or candidate card, led by a small gray icon. CandidateFacts lays out experience, salary and location.",
@@ -672,7 +680,7 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
       {
         name: "CandidateDetails",
         file: "apnahire/jobs/candidate-details.tsx",
-        what: "A job's candidate, read in full: who, then Profile and Notes. CandidateDetailsSheet is the desktop side panel around it.",
+        what: "A job's candidate, read in full: who, then Profile and Notes. CandidateDetailsSheet is the desktop side panel around it; CandidatePane the compact view's pane. Both float the actions in a pill.",
         live: "/apnahire/jobs/telecaller-koramangala",
         where: "/apnahire/jobs/[id], desktop panel and phone card",
         rules: ["The fields are chosen in docs/DECISIONS.md. Database profiles are a separate type.", "The resume is a section in Profile, not a tab, until the real document can be embedded."],

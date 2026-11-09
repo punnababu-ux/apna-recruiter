@@ -22,6 +22,7 @@ import {
   avatarTone,
   Badge,
   Button,
+  Card,
   ChevronLeft,
   ChevronRight,
   CircleCheck,
@@ -300,12 +301,66 @@ export function CandidateStepper({ position, total, onPrevious, onNext }: {
   )
 }
 
-export function CandidateDetailsSheet({ open, onOpenChange, thread, onAddNote, footer, ...stepper }: {
+/**
+ * The actions floating over the bottom of a desktop profile. The
+ * host needs `relative`, and its scroller the PILL_ROOM padding, so the last
+ * lines of the profile can scroll clear of the pill.
+ */
+const PILL_ROOM = "pb-32"
+
+function ActionPill({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="@container pointer-events-none absolute inset-x-0 bottom-4 z-20 flex justify-center px-4">
+      <div className="pointer-events-auto w-fit max-w-full rounded-card border border-border bg-card p-2 shadow-elevated @2xl:rounded-full">
+        {children}
+      </div>
+    </div>
+  )
+}
+
+/** Desktop compact: the profile beside the list, always ending inside the window. */
+export function CandidatePane({ thread, onAddNote, actions, floating }: {
+  thread: ChatThread
+  onAddNote: (text: string) => void
+  actions: React.ReactNode
+  floating?: boolean
+}) {
+  const pane = React.useRef<HTMLDivElement>(null)
+  React.useEffect(() => {
+    const el = pane.current
+    if (!el) return
+    // Bars and banners above it move its top, so measure rather than assume.
+    const fit = () => {
+      el.style.height = `${window.innerHeight - el.getBoundingClientRect().top - 16}px`
+    }
+    fit()
+    const seen = new ResizeObserver(fit)
+    seen.observe(document.body)
+    window.addEventListener("scroll", fit, { passive: true })
+    window.addEventListener("resize", fit)
+    return () => {
+      seen.disconnect()
+      window.removeEventListener("scroll", fit)
+      window.removeEventListener("resize", fit)
+    }
+  }, [])
+  return (
+    <Card ref={pane} padding="none" className="relative sticky top-48 hidden min-w-0 flex-1 flex-col overflow-hidden lg:flex">
+      <div className={cn("min-h-0 flex-1 overflow-y-auto", floating && PILL_ROOM)}>
+        <CandidateDetails key={thread.id} thread={thread} onAddNote={onAddNote} />
+      </div>
+      {floating ? <ActionPill>{actions}</ActionPill> : <div className="shrink-0 border-t border-border p-4">{actions}</div>}
+    </Card>
+  )
+}
+
+export function CandidateDetailsSheet({ open, onOpenChange, thread, onAddNote, footer, floating, ...stepper }: {
   open: boolean
   onOpenChange: (open: boolean) => void
   thread: ChatThread
   onAddNote: (text: string) => void
   footer: React.ReactNode
+  floating?: boolean
 } & React.ComponentProps<typeof CandidateStepper>) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -313,10 +368,10 @@ export function CandidateDetailsSheet({ open, onOpenChange, thread, onAddNote, f
         <div className="border-b border-border bg-card py-4">
           <SheetPanelHeader title="Candidate profile" action={<CandidateStepper {...stepper} />} />
         </div>
-        <div className="min-h-0 flex-1 overflow-y-auto bg-card">
+        <div className={cn("min-h-0 flex-1 overflow-y-auto bg-card", floating && PILL_ROOM)}>
           <CandidateDetails key={thread.id} thread={thread} onAddNote={onAddNote} />
         </div>
-        <div className="border-t border-border bg-card p-4">{footer}</div>
+        {floating ? <ActionPill>{footer}</ActionPill> : <div className="border-t border-border bg-card p-4">{footer}</div>}
       </SheetPanel>
     </Sheet>
   )

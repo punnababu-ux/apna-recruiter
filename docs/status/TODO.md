@@ -6,10 +6,15 @@ ship, and keep one line per item. Open price questions live in
 
 ## ECC follow-ups (2026-11-09)
 - [ ] Check the swipe card and new cards on a real phone
-- [ ] Delete the old paths behind `?deck=0` and `?icons=0`
+- [ ] Delete the old paths behind `?deck=0`, `?icons=0`, `?views=0` and `?pill=0`
+- [ ] ECC at about 1100px with the sidebar open: 55px of sideways page scroll; the table scrolls sideways there, with the action pinned
 - [ ] Applied tab filters: "Applied in" before "Last active"; drop "Last 30 days"
 - [ ] Design the Database candidate profile (differs from the applied one)
 - [ ] Real resume files for View and Download (toasts today)
+
+## Next, high priority
+- [ ] Follow up: decide if it needs a date, a reminder, or its own queue (today it is only a call status)
+- [ ] **Integrate ECC profiles and Express chats deeply (Punna, 2026-11-09: "super important").** A candidate should be one person across both: profile and chat coherent and linked, with chat available in ECC beside Call. Think it through first, then design.
 
 ## Order of work (prioritized 2026-11-05)
 Take one at a time, top down. P0 = now, P1 = next, P2 = after, P3 = later.

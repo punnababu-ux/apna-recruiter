@@ -18,6 +18,62 @@ or **Open**.
 - **What would change it:** the line feeling busier than the dots at phone width.
 - **Status:** Decided.
 
+## "Follow up" as a call status (2026-11-09)
+
+- **Question:** a recruiter may call someone and not decide yet. Answered and Did not pick up do not cover it.
+- **Decision:** add "Follow up" to the call status on phones and desktop. It records the call and decides nothing, so the candidate stays out of Shortlisted and Rejected.
+- **Why:** it says what happens next, and the candidate is not lost in "Viewed number".
+- **What would change it:** recruiters needing a follow-up date or reminder; this has neither yet.
+- **Status:** Decided (Punna's call on the need; the label is a recommendation).
+
+## Desktop profile actions as a floating pill (2026-11-09)
+
+- **Question:** the compact profile's footer could leave the screen. Fix the footer, move the actions to the top, or float them?
+- **Decision:** the default (Punna's call; ?pill=0 shows the old footer until it is deleted): a pill floating over the bottom of the profile, in compact and the side panel. The profile scrolls clear of it. Separately, the compact pane now measures the room left, so it fits the window in every state.
+- **Why:** it stays in reach and keeps the phone's "actions at the bottom" habit, with no bar across the content.
+- **What would change it:** the pill covering content recruiters are reading.
+- **Status:** Decided.
+
+## Table filters open over the table (2026-11-09)
+
+- **Question:** the filter column squeezed the table. Should it?
+- **Decision:** in the table view, filters open as a right side panel over the page, with "Show N candidates" to close. The detailed and compact views keep the column.
+- **Why:** a table needs its width. The panel hides the results, so it says how many remain.
+- **What would change it:** recruiters wanting to watch rows change while filtering.
+- **Status:** Decided (Punna's call).
+
+## Table column order and a fixed action (2026-11-09)
+
+- **Question:** in what order does a recruiter read a row, and how do we stop WhatsApp moving when the number appears?
+- **Decision:** Candidate, Match, Applied, Experience, Salary, Area, Status, then the action at the far right: number or View number, WhatsApp, ⋮. The action is right-aligned, and it stays pinned while the table scrolls below xl.
+- **Why:** who, how good and how fresh decide whether a row is worth attention; the facts confirm it; Status and the action come last, where the eye ends. Right-aligning leaves only the number's left edge changing.
+- **What would change it:** recruiters comparing on salary or experience first.
+- **Status:** Decided (Punna's call on the action; the order is a recommendation).
+
+## No match headers in desktop compact (2026-11-09)
+
+- **Question:** the High / Medium headers hung as white strips in the compact list. Are they needed?
+- **Decision:** removed from compact. The detailed view and the table keep them.
+- **Why:** each card already shows its level and why, and the list is sorted by it. Only the count was new, and it does not change who to open next.
+- **What would change it:** recruiters losing track of where a level ends in long lists; then a slim sticky divider.
+- **Status:** Decided (Punna's call).
+
+## Table: Call status in the ⋮, and a Status column (2026-11-09)
+
+- **Question:** the inline Call status took room on every row with a number. Where should it go?
+- **Decision:** Call status moves to the row's ⋮, shown once the number is out. Contact holds only View number or the number, plus a small ghost WhatsApp icon on every row. A new Status column says Action pending, Viewed number, the call's result, Shortlisted or Rejected.
+- **Why:** where a candidate stands is what a recruiter scans a table for; marking a call is an occasional action.
+- **What would change it:** recruiters marking calls in long runs, where two clicks per row hurt.
+- **Status:** Decided (Punna's call).
+
+## Desktop compact and table views (2026-11-09)
+
+- **Question:** what should desktop's compact and table views be for, and which actions belong on a table row?
+- **Decision:** the default (Punna's call; ?views=0 shows the old views until they are deleted). Compact is the phone card beside the new profile; the cards drop their actions, so only the profile's green shows. The table is for scanning and bulk: one contact action by stage (View number, then number with WhatsApp and Call status, then the outcome), Shortlist and Reject in a row's ⋮ and in the bulk bar, Requirements merged into Match (bars and 4/4), Experience, Salary and Applied sortable. Area hides below xl.
+- **Why:** three buttons on every row compete, and a recruiter rarely decides from a row before seeing the profile or calling.
+- **What would change it:** live data showing frequent rejects straight from a row; then Reject returns as an icon.
+- **Status:** Decided.
+
 ## Applied candidates show when they applied, not when they were active (2026-11-09)
 
 - **Question:** which recency helps a recruiter on each tab?

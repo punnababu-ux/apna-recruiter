@@ -29,7 +29,7 @@ One-page index: what Punna means → where it lives. Rules are in `AGENTS.md`
 | post a job / job wizard | `/apnahire/jobs/new` | `apnahire/post-job/*`, `lib/apnahire/job-draft.ts`, `prompt-parse.ts` (context: `docs/reference/JOB-POSTING.md`) |
 | slots full | — | `apnahire/slots/slots-full-dialog.tsx`, `hooks/use-job-slots.ts` |
 | dashboard / jobs / job details | `/apnahire/dashboard`, `/apnahire/jobs`, `/apnahire/jobs/[id]` | `apnahire/jobs/job-list.tsx` |
-| ECC candidates: phone page, swipe card, profile, card facts | `/apnahire/jobs/[id]` | `apnahire/jobs/phone-job-page.tsx`, `candidate-deck.tsx`, `candidate-details.tsx`, `meta-fact.tsx` |
+| ECC candidates: phone page, swipe card, profile, card facts | `/apnahire/jobs/[id]` | `apnahire/jobs/phone-job-page.tsx`, `candidate-deck.tsx`, `candidate-details.tsx`, `meta-fact.tsx`, `applicant-triage-table.tsx` (desktop table), `contact-number.tsx` (call status) |
 | database (search/saved/unlocked) | `/apnahire/database/*` | — |
 | notifications | `/apnahire/notifications` | `apnahire/notifications/*`, `content/notifications.ts`, `hooks/apnahire/use-notifications.ts` |
 | sidebar / top bar / bottom nav (product) | — | `apnahire/app-sidebar.tsx`, `top-bar.tsx`, `bottom-nav.tsx`, `lib/apnahire/nav.ts` |

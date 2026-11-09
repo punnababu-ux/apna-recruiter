@@ -18,6 +18,16 @@ The reasons are in `docs/DECISIONS.md`, entries dated 2026-11-09.
   15 days, so Active says little there. Database keeps Active.
 - **Small icons** (`jobs/meta-fact.tsx`) replace dots on job and candidate cards.
 
+- **Desktop compact** (phone card beside the profile) and **table**
+  (`jobs/applicant-triage-table.tsx`: one contact action by stage, ⋮, bulk bar).
+
+- Table: Call status in the ⋮, Status column, action fixed at the far right,
+  filters in a side panel. Compact has no match headers. Desktop profile
+  actions float in a pill. Android back closes the job page's pop-ups.
+
+- Follow up joins Answered and Did not pick up as a call status, on both
+  platforms. It records the call and decides nothing.
+
 ## How it was tested
 - Touch must be tested with real touch events (CDP `Input.dispatchTouchEvent`).
   Mouse tests passed while the finger swipe was broken: `touch-action` has to be
@@ -27,6 +37,9 @@ The reasons are in `docs/DECISIONS.md`, entries dated 2026-11-09.
   `.next/dev`, start again.
 
 ## Left open (also in `docs/status/TODO.md`)
+- Integrate ECC profiles with Express chats (high priority).
+- Follow up has no date, reminder or queue yet.
+- The `?deck=0`, `?icons=0`, `?views=0`, `?pill=0` paths are still to delete.
 - Check swipe and the new cards on a real phone.
 - Delete the old paths behind `?deck=0` and `?icons=0`.
 - Applied tab filters: "Applied in" before "Last active"; drop "Last 30 days".

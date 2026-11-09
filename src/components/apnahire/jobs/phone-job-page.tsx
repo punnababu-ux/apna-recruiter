@@ -50,6 +50,7 @@ import {
   Input,
   MoreVertical,
   Phone,
+  CalendarClock,
   PhoneOff,
   RadioGroup,
   RadioGroupItem,
@@ -65,10 +66,12 @@ import {
   UserCheck,
   X,
   type FilterGroup,
+  cn,
 } from "@apna/design-system"
 import { WhatsAppIcon } from "@/components/onlyrounds/candidate-card"
 import { ValueArt } from "@/components/marketing/value-art"
 import { ActiveStatus, appliedAgo } from "@/components/apnahire/active-status"
+import { useBackToClose } from "@/hooks/use-back-to-close"
 import { CandidateFacts, useMetaIcons } from "@/components/apnahire/jobs/meta-fact"
 import { MatchBars } from "@/components/apnahire/match-bars"
 import { MobileChipRow } from "@/components/apnahire/mobile-chip-row"
@@ -108,18 +111,19 @@ const QUEUES: { value: Queue; label: string; empty: string }[] = [
 ]
 
 /** What the recruiter can set after a call. One candidate, one status. */
-export type CallOutcome = "shortlisted" | "rejected" | "not-connected"
-const OUTCOMES: CallOutcome[] = ["shortlisted", "rejected", "not-connected"]
+export type CallOutcome = "shortlisted" | "rejected" | "follow-up" | "not-connected"
+const OUTCOMES: CallOutcome[] = ["shortlisted", "rejected", "follow-up", "not-connected"]
 
 const STATUS_VIEW: Record<CallOutcome | "answered", { label: string; icon: React.ReactNode }> = {
   shortlisted: { label: "Shortlisted", icon: <Check aria-hidden className="size-4 text-success" /> },
   rejected: { label: "Rejected", icon: <X aria-hidden className="size-4 text-destructive" /> },
+  "follow-up": { label: "Follow up", icon: <CalendarClock aria-hidden className="size-4 text-info" /> },
   "not-connected": { label: "Did not pick up", icon: <PhoneOff aria-hidden className="size-4 text-warning" /> },
   answered: { label: "Answered", icon: <Phone aria-hidden className="size-4 text-success" /> },
 }
 
 const outcomeOf = (c: PhoneCandidate): CallOutcome | undefined =>
-  c.status === "shortlisted" || c.status === "rejected" ? c.status : c.callStatus === "not-connected" ? c.callStatus : undefined
+  c.status === "shortlisted" || c.status === "rejected" ? c.status : c.callStatus === "not-connected" || c.callStatus === "follow-up" ? c.callStatus : undefined
 
 const whatsappHref = (phone = "") => `https://wa.me/${phone.replace(/\D/g, "")}`
 
@@ -223,18 +227,20 @@ function CandidateActions({ candidate: c, large, onCall, onUpdate, onOutcome }: 
   )
 }
 
-function CandidateCard({ candidate: c, onOpen, onCall, onUpdate, onOutcome }: {
+/** Desktop's compact view reuses it with no actions: the open profile has them. */
+export function CandidateCard({ candidate: c, active, onOpen, onCall, onUpdate, onOutcome }: {
   candidate: PhoneCandidate
+  active?: boolean
   onOpen: (e: React.MouseEvent<HTMLElement>) => void
-  onCall: () => void
-  onUpdate: () => void
-  onOutcome: (v: CallOutcome) => void
+  onCall?: () => void
+  onUpdate?: () => void
+  onOutcome?: (v: CallOutcome) => void
 }) {
   const icons = useMetaIcons()
   return (
     // The name stretches over the card, so a tap anywhere opens the profile,
     // and the ink shows it. No lift: the card holds actions of its own.
-    <Card padding="none" className="@container ink press-subtle relative flex cursor-pointer flex-col gap-3 p-4">
+    <Card padding="none" className={cn("@container ink press-subtle relative flex cursor-pointer flex-col gap-3 p-4", active && "border-primary")}>
       <div className="flex items-center gap-3">
         <Avatar size="lg">
           {c.photo && <AvatarImage src={c.photo} alt="" />}
@@ -276,9 +282,11 @@ function CandidateCard({ candidate: c, onOpen, onCall, onUpdate, onOutcome }: {
         </p>
       </div>
 
-      <div className="relative z-10 flex items-center gap-2">
-        <CandidateActions candidate={c} onCall={onCall} onUpdate={onUpdate} onOutcome={onOutcome} />
-      </div>
+      {onCall && onUpdate && onOutcome && (
+        <div className="relative z-10 flex items-center gap-2">
+          <CandidateActions candidate={c} onCall={onCall} onUpdate={onUpdate} onOutcome={onOutcome} />
+        </div>
+      )}
     </Card>
   )
 }
@@ -453,6 +461,9 @@ export function PhoneJobPage({
   const [filtersOpen, setFiltersOpen] = React.useState(false)
   const [sortOpen, setSortOpen] = React.useState(false)
   const [sheet, setSheet] = React.useState<{ id: string; justCalled: boolean } | null>(null)
+  useBackToClose(filtersOpen, () => setFiltersOpen(false))
+  useBackToClose(sortOpen, () => setSortOpen(false))
+  useBackToClose(!!sheet, () => setSheet(null))
 
   const inQueue = (r: PhoneCandidate, q: Queue) => q === "all" || r.status === q
   const counts = (q: Queue) => rows.filter((r) => inQueue(r, q)).length
@@ -479,7 +490,7 @@ export function PhoneJobPage({
   }
   // With the card open, a decision from the call sheet flies it out too.
   const setStatus = (id: string, v: CallOutcome) => {
-    if (leadId && deck && v !== "not-connected") deckHandle.current?.decide(id, v)
+    if (leadId && deck && (v === "shortlisted" || v === "rejected")) deckHandle.current?.decide(id, v)
     else onOutcome(id, v)
   }
 

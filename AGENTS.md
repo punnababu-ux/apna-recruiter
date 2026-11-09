@@ -467,6 +467,15 @@ Detail and reasons: `docs/DECISIONS.md`, entries dated 2026-11-09.
 - **A phone tap opens `CandidateDeck`,** a floating card that follows the finger.
   Actions live in the card; previous, next and close in the floating pill. It
   scrolls to a full-screen profile, and back from there goes to the list.
+- **Desktop compact is the phone's parts:** `CandidateCard` with no actions
+  beside `CandidateDetails`; only the profile carries the green. On desktop the
+  profile's actions float in a pill at its bottom (compact and side panel), and
+  the profile scrolls clear of it. Phones keep their own action row.
+- **The table is for scanning and bulk** (`ApplicantTriageTable`): one contact
+  action per row by stage, a small WhatsApp icon, and a Status column. Call
+  status, Shortlist and Reject live in the ⋮; decisions also in the bulk bar.
+- **Call status has three results:** Answered, Follow up, Did not pick up. Follow
+  up records the call and decides nothing. Phones and desktop offer the same.
 - **One profile, `CandidateDetails`:** Profile and Notes. The resume is a section
   in Profile; it earns a tab back only when the real file is embedded. Database
   profiles are a separate type, still to design.

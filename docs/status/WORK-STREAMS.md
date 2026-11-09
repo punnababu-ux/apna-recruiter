@@ -20,10 +20,10 @@ No other branch is ahead of `origin/main`. No stashes.
 | Figma ↔ code sync | Dev hand-off page complete; nothing blocking (`status/FIGMA-SYNC-STATUS.md`) | Re-audit after the next code change to checkout (skill `figma-code-sync`) | Claude |
 | Docs + knowledge base | Organized 2026-11-05 (`docs/README.md`) | Keep the index current | Claude |
 | Code quality | CI + browser tests live; a11y fixes, tests for every product / marketing / design-system page, OnlyRounds splits done locally, 403 tests green (2026-11-06; `history/SESSION-2026-11-06-QUALITY.md`) | Push; Punna signs off contrast shades; fix the 3 new phone layout bugs (TODO.md) | Claude, Punna for shades |
-| Knowledge graph (graphify) | Rebuilt 2026-11-05: code + 21 docs; copied to the main checkout | See "Recurring" below | Claude, with reminders |
+| Knowledge graph (graphify) | Code rebuilt 2026-11-09 in the main checkout; docs last extracted 2026-11-05 | See "Recurring" below | Claude, with reminders |
 | DS audit: chat + job posting | Catalog updated; fixes applied; 3 kept for a decision + 13 primitive candidates (`history/AUDIT-2026-11-05-CHAT-JOB-POSTING.md`) | Punna OKs the fixes / which primitives to build | Punna, then Claude |
 | Job posting flow | AI fill, voice, pay screen, draft resume fixed 2026-11-06 (`reference/JOB-POSTING.md`) | Device test for voice; live AI test; desktop walk (`status/TODO.md` → Job posting) | Punna tests voice; Claude the rest |
-| ECC candidates page | Phone card, profile, applied recency, card icons shipped 2026-11-09 (`history/SESSION-2026-11-09-ECC-CANDIDATES.md`). Paused here on purpose | Real-phone check; Database profile later | Punna |
+| ECC candidates page | Phone card, profile, applied recency, card icons, desktop compact and table, action pill, Follow up shipped 2026-11-09 (`history/SESSION-2026-11-09-ECC-CANDIDATES.md`) | Integrate with Express chats (`status/TODO.md`, high priority); real-phone check; Database profile later | Punna picks; Claude builds |
 | Product backlog | 23 open items (`status/TODO.md`) | Punna picks the next one | Punna |
 | Pricing gaps | 5 open questions (`reference/PRICING.md` → "Still open") | Punna supplies numbers | Punna |
 | Marketing pages without Lovable source | Parked (`start-here/AI-HANDOFF.md` → Pending) | Punna's call | Punna |
@@ -40,7 +40,7 @@ No other branch is ahead of `origin/main`. No stashes.
 9. ~~Copy the graph to the main checkout~~ done 2026-11-05 (old copy kept as `graphify-out.bak`).
 
 ## 🔁 Recurring — Claude reminds Punna
-- **Rebuild the graph** when docs or many files changed, or 7+ days since the last build (last: 2026-11-06, code only).
+- **Rebuild the graph** when docs or many files changed, or 7+ days since the last build (last: 2026-11-09, code only).
   - Code only, free: `graphify update .`
   - Docs too (LLM): ask Claude "re-extract docs into graphify" (incremental, only changed docs).
 - **Figma re-audit** after a checkout code change.
