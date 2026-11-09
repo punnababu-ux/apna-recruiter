@@ -131,10 +131,10 @@ screens("ECC job page", [
   { name: "no applicants (active leads)", path: `${ECC}?applicants=0`, scroll: true },
   { name: "database tab", path: `${ECC}?tab=database` },
   { name: "profile sheet open", path: `${ECC}?leadId=aditi` },
-  { name: "side filter panel, closed", path: `${ECC}?filters=side`, desktopOnly: true },
+  { name: "side filter panel, closed", path: ECC, desktopOnly: true },
   {
     name: "side filter panel, open",
-    path: `${ECC}?filters=side`,
+    path: ECC,
     desktopOnly: true,
     prepare: openSideFilters,
     scroll: true,
@@ -142,6 +142,7 @@ screens("ECC job page", [
   {
     name: "compact view",
     path: ECC,
+    desktopOnly: true,
     prepare: (page) => pickView(page, "Compact list"),
     scroll: true,
   },
@@ -155,14 +156,67 @@ screens("ECC job page", [
   {
     name: "filter applied (results bar)",
     path: ECC,
+    desktopOnly: true,
     prepare: async (page) => {
       await applyFilter(page, "Graduate")
       await expect(page.getByText(/Showing \d+ of \d+/).filter({ visible: true }).first()).toBeVisible()
     },
     scroll: true,
-    fixme320:
-      "Results bar, 'Showing N of M' + '· 1 filter  Clear' (jobs/[id]/page.tsx DockingBar): at 320px the nowrap " +
-      "'· 1 filter / Clear' span ends 16px past the screen, Clear is cut off and the page scrolls sideways",
+  },
+  {
+    name: "candidate selected (bulk actions)",
+    path: ECC,
+    desktopOnly: true,
+    prepare: async (page) => {
+      await applyFilter(page, "Graduate")
+      await page.getByRole("checkbox", { name: "Select all shown candidates" }).filter({ visible: true }).first().click()
+      await expect(page.getByRole("button", { name: "Download Excel" }).filter({ visible: true }).first()).toBeVisible()
+    },
+  },
+  { name: "phone: queue", path: `${ECC}`, scroll: true },
+  {
+    name: "phone: filter applied",
+    path: `${ECC}`,
+    prepare: async (page) => {
+      test.skip(isDesktop(), "phone only")
+      await applyFilter(page, "Graduate")
+    },
+  },
+  {
+    name: "phone: sort sheet",
+    path: `${ECC}`,
+    prepare: async (page) => {
+      test.skip(isDesktop(), "phone only")
+      await page.getByRole("button", { name: /^Sort candidates/ }).click()
+      await expect(page.getByRole("radio", { name: "Recently applied" })).toBeVisible()
+    },
+  },
+  {
+    name: "phone: undo a decision",
+    path: ECC,
+    prepare: async (page) => {
+      test.skip(isDesktop(), "phone only")
+      const rejected = page.getByText(/^Rejected/).first()
+      const before = (await rejected.textContent()) ?? ""
+      const call = page.locator('a[href^="tel:"]').first()
+      await call.evaluate((a) => a.addEventListener("click", (e) => e.preventDefault(), { once: true })) // a real tel: stalls the browser
+      await call.click()
+      await settle(page, 800) // the sheet is still sliding in
+      await page.getByRole("button", { name: "Not a fit" }).click()
+      await expect(rejected).not.toHaveText(before)
+      await page.getByRole("button", { name: "Undo" }).click()
+      await expect(rejected).toHaveText(before)
+    },
+  },
+  { name: "phone: just posted", path: `${ECC}?applicants=0` },
+  {
+    name: "phone: after a call",
+    path: `${ECC}`,
+    prepare: async (page) => {
+      test.skip(isDesktop(), "phone only")
+      await page.locator('a[href^="tel:"]').first().click({ noWaitAfter: true })
+      await expect(page.getByRole("button", { name: "Did not pick up" })).toBeVisible()
+    },
   },
   {
     name: "pipeline: shortlisted",

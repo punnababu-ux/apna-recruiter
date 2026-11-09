@@ -8,6 +8,48 @@ or **Open**.
 
 ---
 
+## ECC on phones is its own product (2026-11-09)
+
+- **Question:** should the phone job page keep adapting the desktop page?
+- **Decision:** no. Design it phone first, as the posting flow and phone plan cards were. Punna's call. Built in `jobs/phone-job-page.tsx`; the live phone page is unchanged. Shape: one-line app bar with search and filters as icons; no view toggle; "To call" as the default queue; a short card ending in a green Call; Shortlist or Reject asked after the call; a full-screen profile with a bottom action bar and Next.
+- **Kept on phones (Punna, 2026-11-09):** icons on the Applied and Database tabs, the job's status in the app bar, and when each database lead was last active. The leads block keeps the product name, "Active leads for this job". Filters and Sort are labelled buttons above the list, not icons in the app bar.
+- **Why:** first card starts at 344 of 852px and the first card's main action at 640px. A phone recruiter has a dialer in hand and is working down a queue.
+- **Would change it:** phone usage data on this page shows recruiters triage without calling. The Applied tab has no events today, so this is reasoned, not measured.
+- **Would reverse if built:** "View number stays the green action" on phones, and Reject and Shortlist on the phone card.
+- **Status:** Direction decided. Decided. It is the default phone page, below md (Punna, 2026-11-09). A decision after a call has Undo in its toast. Phones drop the Excel and WhatsApp bulk actions and the view toggle; tablets and desktop keep them. Sumit has not reviewed it yet.
+
+## ECC compact row: only what earns the next click (2026-11-08)
+
+- **Question:** the compact row showed name, match, experience, salary, location, the met requirements and a status line. What does a recruiter need to choose the next candidate, with the profile open beside the list?
+- **Decision:** two lines. Name with the time at the right; experience • salary below. Once decided, Shortlisted or Rejected takes the place of the time. The match level shows on a row only when no section header says it (another sort, or results mode). Location, requirements and "Viewed number" are left to the pane and the status chips.
+- **Why:** Punna's call. The list is for choosing and the pane is for judging, so anything the pane repeats is noise.
+- **Would change it:** recruiters open many rows only to find the location or a missing requirement.
+- **Status:** Leaning.
+
+## ECC filters: the right panel is the desktop default (2026-11-08)
+
+- **Question:** which filter layout does a job's candidate list use on desktop?
+- **Decision:** the right-hand filter panel (the former `?filters=side` preview), from 1024px, opened from the Filters button. Between 768 and 1023px the popover stays; phones keep the bottom sheet.
+- **Why:** Punna's call. The list stays in view while filters change, and filters apply live.
+- **Would change it:** recruiters want the panel open on arrival, or a narrow laptop feels cramped with it open.
+- **Status:** Decided.
+
+## ECC on phones: header, card, filter sheet (2026-11-08)
+
+- **Question:** how does a job's candidate list work at phone width, where the sticky header took about 200px and each card about 570px?
+- **Decision:** the phone header shows status and place only; salary, education and experience are under ⋮. The card puts its facts on two set lines at full width: "gender, age • experience • salary", then location with "Applied N days ago" at the right. Latest job and education take one truncated line each. Once decided, call status and the outcome share a row. The filter sheet shows the top and next filters; the long tail waits behind "More filters", as on the desktop panel.
+- **Why:** recruiters scan many candidates, so more of them per screen matters most. Cards fell to 381px. Full detail is one tap away in the profile. Phones may drop what desktop shows (AGENTS.md).
+- **Would change it:** recruiters need salary in the job header while they scan, or the truncated job line hides what they judge on.
+- **Status:** Leaning.
+
+## ECC results bar on phones (2026-11-08)
+
+- **Question:** how does the results bar fit 320px, where "Showing N of M candidates · 1 filter Clear" ran 16px off screen?
+- **Decision:** below `sm`, the bar drops the word "candidates". Once a candidate is selected it also hides "· N filter Clear", and Excel and WhatsApp become icon-only buttons with accessible names.
+- **Why:** the count and the bulk actions are what the bar is for. A selection is the moment the actions matter, and the filter count returns as soon as the selection clears.
+- **Would change it:** recruiters need to clear filters while candidates are selected on a phone.
+- **Status:** Leaning.
+
 ## The next score work is a changelog and two file splits (2026-11-08)
 
 - **Question:** what is left to move the repo from 7.5/10 toward a production design system, and what is in scope?

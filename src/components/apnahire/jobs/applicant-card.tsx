@@ -119,7 +119,7 @@ export function ApplicantCard({
   // anywhere opens the profile; actions sit above it (relative z-10). No
   // lift: the card holds several actions of its own (AGENTS.md).
   return (
-    <Card padding="none" className="relative flex flex-col">
+    <Card padding="none" className="@container relative flex flex-col">
       <div className="flex flex-col gap-4 p-4 md:p-5">
         {/* 1. Who + how well */}
         <div className="flex items-start gap-3">
@@ -150,7 +150,7 @@ export function ApplicantCard({
               <ActiveStatus ago={profile.activeAgo} />
             </div>
             {/* The • travels with the fact after it, so a wrapped line never ends on one. */}
-            <p className="flex flex-wrap gap-x-2 text-sm text-foreground">
+            <p className="flex flex-wrap gap-x-2 text-sm text-foreground @max-3xl:hidden">
               {facts.map((f, i) => (
                 <span key={f} className="whitespace-nowrap">
                   {i > 0 && <span aria-hidden className="pr-2 text-muted-foreground">•</span>}
@@ -164,8 +164,25 @@ export function ApplicantCard({
               <MatchBars level={match.level} label size="sm" />
             </Badge>
             {/* Level with the facts: the header stays two rows a side. */}
-            <span className="text-xs whitespace-nowrap text-muted-foreground">{applied}</span>
+            <span className="text-xs whitespace-nowrap text-muted-foreground @max-3xl:hidden">{applied}</span>
           </div>
+        </div>
+
+        {/* A narrow card (phones, or the filter panel open): full width, two
+            set lines, so facts never wrap beside the avatar (2026-11-08). */}
+        <div className="flex flex-col gap-0.5 text-sm text-foreground @3xl:hidden">
+          <p className="truncate">
+            {facts.slice(0, 3).map((f, i) => (
+              <React.Fragment key={f}>
+                {i > 0 && <span aria-hidden className="px-1.5 text-muted-foreground">•</span>}
+                {f}
+              </React.Fragment>
+            ))}
+          </p>
+          <p className="flex items-baseline justify-between gap-3">
+            <span className="truncate">{profile.location}</span>
+            <span className="shrink-0 text-xs text-muted-foreground">{applied}</span>
+          </p>
         </div>
 
         {/* 2. Why: the checklist */}
@@ -205,13 +222,13 @@ export function ApplicantCard({
             {profile.current && (
               <li className="flex items-start gap-2">
                 <Briefcase aria-label="Current or latest job" className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-                {profile.current}
+                <span className="min-w-0 max-md:truncate">{profile.current}</span>
               </li>
             )}
             {profile.education && (
               <li className="flex items-start gap-2">
                 <GraduationCap aria-label="Education" className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-                {profile.education}
+                <span className="min-w-0 max-md:truncate">{profile.education}</span>
               </li>
             )}
           </ul>
@@ -275,13 +292,17 @@ export function ApplicantActions({
       >
         <WhatsAppIcon className="size-4 text-success" />
       </Button>
-      {numberShown && onCallStatus && <CallStatusMenu value={callStatus} onChange={onCallStatus} />}
+      {numberShown && onCallStatus && !decided && <CallStatusMenu value={callStatus} onChange={onCallStatus} />}
       {/* Phones: the decision pair takes its own row in equal halves. */}
-      <div className="flex items-center gap-2 max-sm:w-full sm:ml-auto">
+      {/* Once decided, phones keep call status and the outcome on one row. */}
+      <div className={cn("flex items-center gap-2 max-sm:w-full", decided ? "max-sm:justify-between sm:contents" : "sm:ml-auto")}>
         {decided ? (
-          <Badge variant={status === "shortlisted" ? "success" : "destructive"}>
-            {status === "shortlisted" ? "Shortlisted" : "Rejected"}
-          </Badge>
+          <>
+            {numberShown && onCallStatus && <CallStatusMenu value={callStatus} onChange={onCallStatus} />}
+            <Badge variant={status === "shortlisted" ? "success" : "destructive"} className="sm:ml-auto">
+              {status === "shortlisted" ? "Shortlisted" : "Rejected"}
+            </Badge>
+          </>
         ) : (
           <>
             {/* Neutral buttons, coloured icons: the match chip is the card's

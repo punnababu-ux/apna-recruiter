@@ -87,6 +87,7 @@ import {
 import {
   AI_CALLING_ADDON,
   NO_CREDITS,
+  type CreditBalance,
   creditLabel,
   type JobPlanTier,
 } from "@/content/job-plans"
@@ -138,7 +139,7 @@ const SERVER_PREVIEW = { layout: "tiered" as JobPlanLayout, balance: NO_CREDITS 
 
 /** Express checkout review states, from the address bar. The design system
  *  showcase links every one. `partial` and `held` are what the tests use. */
-const CREDIT_PREVIEWS = {
+const CREDIT_PREVIEWS: Record<string, CreditBalance> = {
   partial: { job: 1, "ai-calling": 0 },
   job4: { job: 4, "ai-calling": 0 },
   ai: { job: 0, "ai-calling": 1 },
@@ -146,7 +147,7 @@ const CREDIT_PREVIEWS = {
   "job4-ai": { job: 4, "ai-calling": 1 },
   addon: { job: 4, "ai-calling": 0, "ai-addon": 1 },
   held: { job: 4, "ai-calling": 1, "ai-addon": 1 },
-} as const
+}
 
 function readPreview() {
   const params = new URLSearchParams(window.location.search)

@@ -6,7 +6,7 @@ Main file: `src/app/apnahire/(product)/jobs/[id]/page.tsx`. Decisions are in
 "active leads", "filters").
 
 ## Preview flags
-- `?filters=side` — the new layout (wide screens, from 1024px): the filter panel sits on the right, plus sticky match bars.
+- The filter panel on the right is the default from 1024px (2026-11-08); `?filters=side` is gone.
 - `?applicants=0` — a new job with no applicants: "Finding the right candidates" + Active leads.
 
 ## What is built
@@ -34,7 +34,7 @@ Main file: `src/app/apnahire/(product)/jobs/[id]/page.tsx`. Decisions are in
   - "1 database credit unlocks 1 profile".
 
 ## Not done
-- **Phone versions:** filter sheet, card layout, toolbar.
+- **Phone versions:** the header, card and filter sheet are done (2026-11-08). The toolbar still takes three rows.
 - **Dark mode.**
 - **Compact and table views:** no sticky bars, results bar or checkboxes yet.
 - **Database tab:** still a placeholder.
@@ -43,3 +43,16 @@ Main file: `src/app/apnahire/(product)/jobs/[id]/page.tsx`. Decisions are in
 - **Mock data:** Location ✕ glitch on chaitra and Karthik.
 - **Copy:** the match-bar hint lines are placeholders.
 - **Mock values:** the leads and the credit balance are mock data.
+
+## 2026-11-08
+- Results bar fits 320px: see "ECC results bar on phones" in `docs/DECISIONS.md`. The rest of "Not done" stands.
+
+## 2026-11-09: Sumit audit, phone (393px, measured)
+First card at 344px of 852; View number at 640px; card 381px.
+Fails: words (lens 3: "Action pending", "Viewed number", "Candidate profile"; lens 1: "Applied to job"), noise (5: AI panel on every card), mark once (14: level in the bar and on the card), group one decision (10: three toolbar rows), AI look (large gradient on each active lead).
+Holds: filter bottom sheet (17), underline tabs (18), one match mark (6).
+Flag (7): signal bars were rejected for visibility but chosen for match on 2026-11-05.
+Not checked: spacing (11, 12), motion (16).
+Proposal: see "ECC on phones is its own product" in `docs/DECISIONS.md`.
+
+Preview built 2026-11-09: `?phone=v2` below md. First card 164px, card 180px. Not built: undo after a decision, Database tab, the alert behind "We will alert you".

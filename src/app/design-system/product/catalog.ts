@@ -654,6 +654,14 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
     description: "The signed-in app (/apnahire/*).",
     entries: [
       {
+        name: "PhoneJobPage",
+        file: "apnahire/jobs/phone-job-page.tsx",
+        what: "A job's candidates as a phone calling queue: To call, Called, Shortlisted, Rejected; a short card ending in Call; one question after the call; a full-screen profile with Next.",
+        live: "/apnahire/jobs/telecaller-koramangala",
+        where: "/apnahire/jobs/[id], below md",
+        rules: ["Phone only: never a reference for the desktop page.", "Shortlist and Reject are asked after a call, not on the card."],
+      },
+      {
         name: "ApnaHireTopBar / ApnaHireBreadcrumb",
         file: "apnahire/top-bar.tsx",
         what: "Sticky top bar with breadcrumbs from the URL.",

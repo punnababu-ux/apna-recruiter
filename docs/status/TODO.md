@@ -86,7 +86,7 @@ Open before ECC: keep "View number" as the green action, or make Shortlist prima
 ## Layout bugs (found by the browser tests, 2026-11-06; each is a `test.fixme` — remove it when fixed)
 - [x] Plan cards at 320px scroll the page sideways: "Active for 15 days" now moves under the title when the panel is narrow
 - [x] Job posting "Describe" screen, phones: the `ai-idle` halo now stays inside the 1rem page padding
-- [ ] ECC job page, filter applied, 320px: the results bar's "· 1 filter Clear" runs 16px off screen (`e2e/app.spec.ts`). Left with the ECC phone layout (Punna, 2026-11-06). Also on the design-system score list
+- [x] ECC job page, filter applied, 320px: the results bar now fits, with or without a selection (2026-11-08)
 - [x] Homepage, 320px: the apna Database / Enterprise cards ran 17px off screen; the card grid is now `grid-cols-1`
 - [x] Interview prep lounge, 375px and 320px: overflow fixed (short hero CTA on phones; the carousel's neighbour cards clipped)
 
@@ -144,7 +144,7 @@ Self-checkout (`self-checkout.tsx` stays the entry and the export)
 - [ ] If the file is still over ~600 lines, move the payment and order handlers. Stop once it is under that
 
 Not this plan. They do not move the 7.5, and each is a different stream:
-- ECC, including the 320px filter bar. It stays with the ECC phone layout (Layout bugs, and the P0 ECC items above).
+- ECC. It stays with the ECC phone layout (the P0 ECC items above).
 - Replacing browser storage (credits, slots, pricing phase) with an account API. That is a product backend, not a design-system change.
 - `sidebar.tsx` (723 lines) is a stable primitive. Split it only when a change is already inside it.
 

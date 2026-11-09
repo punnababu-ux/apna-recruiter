@@ -94,12 +94,15 @@ export function CandidateProfilePanel({
   actions,
   onAddNote,
   onUnlockResume,
+  hideWho,
 }: {
   thread: ChatThread
   /** Replaces Call: the host's own actions for this candidate. */
   actions?: React.ReactNode
   onAddNote?: (text: string) => void
   onUnlockResume?: () => void
+  /** The host already names the person (a phone profile's title bar). */
+  hideWho?: boolean
 }) {
   const chats = useChats()
   const addNote = (id: string, text: string) => (onAddNote ? onAddNote(text) : chats.addNote(id, text))
@@ -147,7 +150,7 @@ export function CandidateProfilePanel({
       {/* Who: the pane's sub-row (h-14, as the list's and the thread's), so
           the three panes' second bar reads as one context strip: the
           list's count and filters, the thread's job, this candidate. */}
-      <div className="flex h-14 shrink-0 items-center gap-3 border-b border-border px-4">
+      <div className={hideWho ? "hidden" : "flex h-14 shrink-0 items-center gap-3 border-b border-border px-4"}>
         <Avatar size="lg">
           {candidate.photo && <AvatarImage src={candidate.photo} alt="" />}
           <AvatarFallback tone={avatarTone(candidate.name)}>{candidate.initial}</AvatarFallback>

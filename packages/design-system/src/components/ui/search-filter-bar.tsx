@@ -15,7 +15,7 @@
  */
 
 import * as React from "react"
-import { Search, SlidersHorizontal, X } from "@/icons/icons"
+import { ChevronDown, Search, SlidersHorizontal, X } from "@/icons/icons"
 
 import { Badge } from "./badge"
 import { Button } from "./button"
@@ -33,6 +33,8 @@ export type FilterGroup = {
   onToggle: (value: string) => void
   /** A short note after an option, keyed by option ("From your job"). */
   tags?: Record<string, string>
+  /** Phone sheet only: rarely used, so it waits behind "More filters". */
+  more?: boolean
 }
 
 export interface SearchFilterBarProps {
@@ -68,8 +70,6 @@ export function SearchFilterBar({
   const isMobile = useIsMobile()
   const [focused, setFocused] = React.useState(false)
   const [sheetOpen, setSheetOpen] = React.useState(false)
-  // The sheet's staged picks, by group label; committed on Apply.
-  const [draft, setDraft] = React.useState<Record<string, string[]>>({})
   const activeFilterCount =
     filterGroups?.reduce((sum, g) => sum + g.selected.length, 0) ?? 0
   const hasFilters = (filterGroups?.length ?? 0) > 0
@@ -105,10 +105,7 @@ export function SearchFilterBar({
     </Button>
   )
 
-  const openSheet = () => {
-    setDraft(Object.fromEntries(filterGroups!.map((g) => [g.label, g.selected])))
-    setSheetOpen(true)
-  }
+  const openSheet = () => setSheetOpen(true)
 
   return (
     <div className={cn("flex items-center gap-3", className)}>
@@ -162,62 +159,12 @@ export function SearchFilterBar({
       {hasFilters && isMobile && (
         <>
           {!inside && React.cloneElement(trigger, { onClick: openSheet })}
-          <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-            {/* No overflow-hidden: it would clip the close bubble. */}
-            <SheetContent side="bottom" className="max-h-5/6 gap-0 rounded-t-2xl border-t-0 p-0 pb-safe">
-              <div className="flex items-center justify-between gap-3 border-b border-border px-5 pt-5 pb-4">
-                <SheetTitle className="text-h4 text-foreground">Filters</SheetTitle>
-                <Button
-                  type="button"
-                  variant="link"
-                  onClick={() => {
-                    onClearFilters?.()
-                    setSheetOpen(false)
-                  }}
-                  disabled={activeFilterCount === 0 && Object.values(draft).every((d) => d.length === 0)}
-                  className="h-auto px-0"
-                >
-                  Clear filters
-                </Button>
-              </div>
-              <div className="min-h-0 flex-1 overflow-y-auto">
-                <FilterGroups
-                  touch
-                  groups={filterGroups!.map((g) => {
-                    const selected = draft[g.label] ?? g.selected
-                    return {
-                      ...g,
-                      selected,
-                      onToggle: (v: string) =>
-                        setDraft((d) => ({
-                          ...d,
-                          [g.label]: selected.includes(v) ? selected.filter((x) => x !== v) : [...selected, v],
-                        })),
-                    }
-                  })}
-                />
-              </div>
-              <div className="border-t border-border p-4">
-                <Button
-                  type="button"
-                  size="xl"
-                  className="w-full"
-                  onClick={() => {
-                    // Toggle exactly the options whose state changed.
-                    filterGroups!.forEach((g) => {
-                      const next = draft[g.label] ?? g.selected
-                      g.options.forEach((opt) => {
-                        if (next.includes(opt) !== g.selected.includes(opt)) g.onToggle(opt)
-                      })
-                    })
-                    setSheetOpen(false)
-                  }}
-                >
-                  Apply filters
-                </Button>
-              </div>
-            </SheetContent>
-          </Sheet>
+          <FilterSheet
+            open={sheetOpen}
+            onOpenChange={setSheetOpen}
+            filterGroups={filterGroups!}
+            onClearFilters={onClearFilters}
+          />
         </>
       )}
 
@@ -243,6 +190,113 @@ export function SearchFilterBar({
         </Popover>
       )}
     </div>
+  )
+}
+
+/** The phone filter sheet. Picks are staged and apply on "Apply filters";
+ *  dismissing discards them. SearchFilterBar opens it from its button; a phone app bar can
+ *  open it from its own button. */
+export function FilterSheet({
+  open,
+  onOpenChange,
+  filterGroups,
+  onClearFilters,
+}: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  filterGroups: FilterGroup[]
+  onClearFilters?: () => void
+}) {
+  // The staged picks, by group label; committed on Apply.
+  const [draft, setDraft] = React.useState<Record<string, string[]>>({})
+  const [moreOpen, setMoreOpen] = React.useState(false)
+  const [wasOpen, setWasOpen] = React.useState(open)
+  if (open !== wasOpen) {
+    setWasOpen(open)
+    if (open) setDraft({})
+  }
+  const activeFilterCount = filterGroups.reduce((sum, g) => sum + g.selected.length, 0)
+  const sheetGroups = filterGroups.map((g) => {
+    const selected = draft[g.label] ?? g.selected
+    return {
+      ...g,
+      selected,
+      onToggle: (v: string) =>
+        setDraft((d) => ({
+          ...d,
+          [g.label]: selected.includes(v) ? selected.filter((x) => x !== v) : [...selected, v],
+        })),
+    }
+  })
+  const moreGroups = sheetGroups.filter((g) => g.more)
+  const moreSelected = moreGroups.reduce((sum, g) => sum + g.selected.length, 0)
+  const showMore = moreOpen || moreSelected > 0
+  const setSheetOpen = onOpenChange
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+            {/* No overflow-hidden: it would clip the close bubble. */}
+            <SheetContent side="bottom" className="max-h-5/6 gap-0 rounded-t-2xl border-t-0 p-0 pb-safe">
+              <div className="flex items-center justify-between gap-3 border-b border-border px-5 pt-5 pb-4">
+                <SheetTitle className="text-h4 text-foreground">Filters</SheetTitle>
+                <Button
+                  type="button"
+                  variant="link"
+                  onClick={() => {
+                    onClearFilters?.()
+                    setSheetOpen(false)
+                  }}
+                  disabled={activeFilterCount === 0 && Object.values(draft).every((d) => d.length === 0)}
+                  className="h-auto px-0"
+                >
+                  Clear filters
+                </Button>
+              </div>
+              <div className="min-h-0 flex-1 overflow-y-auto">
+                <FilterGroups touch groups={sheetGroups.filter((g) => !g.more)} />
+                {moreGroups.length > 0 && (
+                  <>
+                    <button
+                      type="button"
+                      aria-expanded={showMore}
+                      onClick={() => setMoreOpen((o) => !o)}
+                      className="ink relative transition-interactive flex h-12 w-full items-center justify-between gap-2 border-t border-border px-5 text-sm font-semibold text-foreground"
+                    >
+                      <span className="flex items-center gap-2">
+                        More filters
+                        {moreSelected > 0 && <Badge variant="count">{moreSelected}</Badge>}
+                      </span>
+                      <ChevronDown aria-hidden className={cn("size-4 text-muted-foreground transition-select", showMore && "rotate-180")} />
+                    </button>
+                    {showMore && (
+                      <div className="border-t border-border">
+                        <FilterGroups touch groups={moreGroups} />
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+              <div className="border-t border-border p-4">
+                <Button
+                  type="button"
+                  size="xl"
+                  className="w-full"
+                  onClick={() => {
+                    // Toggle exactly the options whose state changed.
+                    filterGroups.forEach((g) => {
+                      const next = draft[g.label] ?? g.selected
+                      g.options.forEach((opt) => {
+                        if (next.includes(opt) !== g.selected.includes(opt)) g.onToggle(opt)
+                      })
+                    })
+                    setSheetOpen(false)
+                  }}
+                >
+                  Apply filters
+                </Button>
+              </div>
+            </SheetContent>
+          </Sheet>
   )
 }
 

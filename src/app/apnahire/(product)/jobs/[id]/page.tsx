@@ -15,7 +15,6 @@
 import {
   Card,
   SlidersHorizontal,
-  Check,
   ConversationList,
   ConversationRow,
   LayoutList,
@@ -37,6 +36,7 @@ import type { Candidate } from "@/components/onlyrounds/candidate-card"
 import { Checkbox, ChevronDown, Database, Download, FilterGroups, Input, Search, SearchFilterBar, UserCheck } from "@apna/design-system"
 import { toast } from "sonner"
 import { ActiveLeads, FindingCandidates, type ActiveLead } from "@/components/apnahire/jobs/active-leads"
+import { PhoneJobPage } from "@/components/apnahire/jobs/phone-job-page"
 import { ValueArt } from "@/components/marketing/value-art"
 import { WhatsAppIcon } from "@/components/onlyrounds/candidate-card"
 import { PageHeader } from "@/components/onlyrounds/page-header"
@@ -610,8 +610,8 @@ function JobDetailPageInner({ id }: { id: string }) {
   const [sort, setSort] = useState<(typeof SORTS)[number]>("Relevance")
 
   const [filters, setFilters] = useState<Record<string, Set<string>>>({})
-  // Preview (2026-11-06): ?filters=side puts filters in a panel left of the
-  // detailed cards on wide screens, opened from a button before the status row.
+  // Wide screens: filters are a right-hand panel, opened from the Filters
+  // button (default since 2026-11-08). Narrower: popover, then a bottom sheet.
   const [filterPanelOpen, setFilterPanelOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [moreFilters, setMoreFilters] = useState(false)
@@ -815,6 +815,7 @@ function JobDetailPageInner({ id }: { id: string }) {
   const groupsOf = (tier: FilterDef["tier"]) => filterGroups.filter((_, i) => FILTERS[i].tier === tier)
   const filterGroups = (() => {
     return FILTERS.map((group) => ({
+      more: group.tier === "more",
       label: group.label,
       tags: Object.fromEntries(group.options.filter((o) => o.tag).map((o) => [o.label, o.tag!])),
       options: group.options.map((o) => o.label),
@@ -863,7 +864,7 @@ function JobDetailPageInner({ id }: { id: string }) {
                   aria-label="List view"
                   value={[listView]}
                   onValueChange={(v) => v[0] && setListView(v[0] as "detailed" | "compact" | "list")}
-                  className="ml-auto rounded-full bg-card lg:ml-0 [&>*]:px-3! [&>*:first-child]:rounded-l-full! [&>*:first-child]:pl-3.5! [&>*:last-child]:rounded-r-full! [&>*:last-child]:pr-3.5!"
+                  className="ml-auto rounded-full bg-card lg:ml-0 [&>*]:px-3! [&>*:first-child]:rounded-l-full! [&>*:first-child]:pl-3.5! [&>*:last-child]:rounded-r-full! max-md:[&>*:nth-last-child(2)]:rounded-r-full! [&>*:last-child]:pr-3.5!"
                 >
                   <ToggleGroupItem value="detailed" aria-label="Detailed cards">
                     <LayoutList />
@@ -877,7 +878,7 @@ function JobDetailPageInner({ id }: { id: string }) {
                 </ToggleGroup>
     </>
   )
-  const sideFilters = searchParams.get("filters") === "side" && wide
+  const sideFilters = wide
 
   const handleClearFilters = () => {
     setFilters({})
@@ -936,14 +937,23 @@ function JobDetailPageInner({ id }: { id: string }) {
     barShell(
       flush,
       docked,
-      <>
-        <MatchBars level={level} />
-        {SECTION_TITLE[level]}
-        <span className="font-regular text-muted-foreground">
-          {filteredCandidates.filter((c) => levelOf(c) === level).length}
-        </span>
-        <span className="truncate font-regular text-muted-foreground max-sm:hidden">· {SECTION_HINT[level]}</span>
-      </>
+      // In a list card (compact view) the column is narrow: the hint takes its
+      // own line under the title (user call, 2026-11-08).
+      <div className={cn("flex min-w-0", flush ? "flex-col gap-0.5" : "items-center gap-2")}>
+        <div className="flex items-center gap-2">
+          <MatchBars level={level} />
+          <span className="whitespace-nowrap">{SECTION_TITLE[level]}</span>
+          <span className="font-regular text-muted-foreground">
+            {filteredCandidates.filter((c) => levelOf(c) === level).length}
+          </span>
+        </div>
+        {flush ? (
+          <span className="truncate text-xs font-regular text-muted-foreground">{SECTION_HINT[level]}</span>
+        ) : (
+          <span className="truncate font-regular text-muted-foreground max-sm:hidden">· {SECTION_HINT[level]}</span>
+        )}
+      </div>,
+      flush
     )
   const shownIds = filteredCandidates.map((c) => c.id)
   const selectedShown = shownIds.filter((id) => picked.has(id))
@@ -968,10 +978,11 @@ function JobDetailPageInner({ id }: { id: string }) {
         <span className="whitespace-nowrap">
           {selectedShown.length > 0
             ? `${selectedShown.length} selected`
-            : `Showing ${shownIds.length} of ${candidates.length} candidates`}
+            : <>Showing {shownIds.length} of {candidates.length}<span className="max-sm:hidden"> candidates</span></>}
         </span>
         {activeFilterCount > 0 && (
-          <span className="flex items-center gap-1 font-regular whitespace-nowrap text-muted-foreground">
+          // Phones: the bulk actions need this room once something is selected.
+          <span className={cn("flex items-center gap-1 font-regular whitespace-nowrap text-muted-foreground", selectedShown.length > 0 && "max-sm:hidden")}>
             · {activeFilterCount} {activeFilterCount === 1 ? "filter" : "filters"}
             {/* One reset on screen: the panel's "Clear all" while it's open,
                 this one once it's shut (user call, 2026-11-06). */}
@@ -987,16 +998,18 @@ function JobDetailPageInner({ id }: { id: string }) {
             <Button
               variant="outline"
               size="sm"
+              aria-label="Download Excel"
               onClick={() => toast.success(`Excel with ${selectedShown.length} candidates downloaded`)}
             >
-              <Download aria-hidden /> Excel
+              <Download aria-hidden /> <span className="max-sm:hidden">Excel</span>
             </Button>
             <Button
               variant="outline"
               size="sm"
+              aria-label="Send WhatsApp"
               onClick={() => toast.success(`WhatsApp sent to ${selectedShown.length} candidates`)}
             >
-              <WhatsAppIcon className="size-4 text-success" /> WhatsApp
+              <WhatsAppIcon className="size-4 text-success" /> <span className="max-sm:hidden">WhatsApp</span>
             </Button>
           </div>
         )}
@@ -1041,6 +1054,86 @@ function JobDetailPageInner({ id }: { id: string }) {
       setNotes((n) => ({ ...n, [c.id]: [{ id: `n${Date.now()}`, text, at: "Today" }, ...(n[c.id] ?? [])] })),
   })
 
+  // A decision takes the candidate out of the queue, so it can be undone.
+  const decide = (act: (id: string) => void, id: string, done: string) => {
+    const before = candidates.find((c) => c.id === id)
+    act(id)
+    if (before)
+      toast(`${before.name} ${done}`, {
+        action: { label: "Undo", onClick: () => setCandidates((p) => p.map((c) => (c.id === id ? before : c))) },
+      })
+  }
+
+  // Phones are a product of their own (docs/DECISIONS.md). The server can't see
+  // the width, so md:hidden keeps this page from flashing on desktop.
+  if (!tablet) {
+    return (
+      <div className="md:hidden">
+        <PhoneJobPage
+          title={jobTitle}
+          status={status}
+          place={job ? `${job.area}, ${job.city}` : undefined}
+          appliedCount={noApplicants ? 0 : candidates.length}
+          databaseCount={job?.dbMatches ?? 0}
+          rows={filteredCandidates.map((c) => {
+            const m = metaOf(c.id)
+            return {
+              id: c.id,
+              name: c.name,
+              phone: c.phone,
+              photo: PHOTOS[c.id],
+              level: matchLevel(m.score),
+              activeAgo: m.activeAgo,
+              experience: m.experience,
+              salary: m.salary,
+              location: m.location,
+              met: m.matching.length,
+              total: REQUIREMENTS.length,
+              missing: REQUIREMENTS.filter((r) => !m.matching.includes(r)),
+              status: pipelineOf(c, viewed),
+              callStatus: calls[c.id],
+            }
+          })}
+          search={searchQuery}
+          onSearch={setSearchQuery}
+          filterGroups={filterGroups}
+          filterCount={activeFilterCount}
+          onClearFilters={handleClearFilters}
+          sort={sort}
+          sorts={SORTS}
+          onSort={(v) => setSort(v as (typeof SORTS)[number])}
+          tab={mainTab}
+          onTab={setMainTab}
+          leadId={leadId}
+          onOpenLead={setLeadId}
+          profile={selected && selectedThread ? { thread: selectedThread, onAddNote: panelProps(selected).onAddNote } : undefined}
+          noApplicants={noApplicants}
+          leads={ACTIVE_LEADS}
+          moreLeads={MORE_LEADS}
+          credits={DB_CREDITS}
+          onOpenDatabaseLead={openLead}
+          onViewAllLeads={() => openLead(null)}
+          banner={job && job.status !== "active" ? <JobStatusBanner job={job} /> : undefined}
+          database={
+            <Empty className="border border-dashed border-border">
+              <EmptyHeader>
+                <EmptyTitle>Active leads first, then the rest of our database</EmptyTitle>
+                <EmptyDescription>People who did not apply but match this job. Coming next.</EmptyDescription>
+              </EmptyHeader>
+            </Empty>
+          }
+          onBack={back}
+          onAbout={() => setInfoOpen(true)}
+          onCall={viewNumber}
+          onCallStatus={(id, v) => setCall(id)(v)}
+          onShortlist={(id) => decide(handleMoveToNextRound, id, "shortlisted")}
+          onReject={(id) => decide(handleReject, id, "rejected")}
+        />
+        {job && <JobInfoPanel job={job} open={infoOpen} onOpenChange={setInfoOpen} />}
+      </div>
+    )
+  }
+
   return (
     <div className="flex min-h-svh flex-col">
       <PageHeader
@@ -1058,11 +1151,13 @@ function JobDetailPageInner({ id }: { id: string }) {
                 <span className="line-clamp-2 text-lg leading-tight font-semibold capitalize md:text-xl">{jobTitle}</span>
                 <Badge variant={status.variant} className="hidden md:inline-flex">{status.label}</Badge>
               </div>
-              <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
-                <Badge variant={status.variant} className="md:hidden">{status.label}</Badge>
+              {/* Phones: status and place only, so this sticky header stays
+                  short; the rest is under ⋮ (user call, 2026-11-08). */}
+              <div className="flex items-center gap-x-2 gap-y-1 text-sm text-muted-foreground md:flex-wrap">
+                <Badge variant={status.variant} className="shrink-0 md:hidden">{status.label}</Badge>
                 {/* The • travels with the fact after it, so a wrapped line never ends on one. */}
                 {meta.map((m, i) => (
-                  <span key={m} className="whitespace-nowrap">
+                  <span key={m} className={cn("whitespace-nowrap", i > 0 ? "max-md:hidden" : "max-md:min-w-0 max-md:truncate")}>
                     {i > 0 && <span aria-hidden className="pr-2">•</span>}
                     {m}
                   </span>
@@ -1382,21 +1477,20 @@ function JobDetailPageInner({ id }: { id: string }) {
                             name={c.name}
                             initial={c.name.charAt(0).toUpperCase()}
                             avatarSrc={PHOTOS[c.id]}
-                            subtitle={`${m.experience} • ${m.salary} • ${m.location}`}
-                            previewIcon={<Check />}
-                            preview={
-                              m.matching.length
-                                ? `Meets ${m.matching.length} of ${REQUIREMENTS.length}: ${m.matching.join(", ")}`
-                                : "Meets none of your key requirements"
-                            }
-                            time={m.appliedDays <= 1 ? "Today" : `${m.appliedDays}d ago`}
-                            statusIcon={<MatchBars level={level} label />}
-                            status={
-                              status !== "pending" ? (
-                                <Badge variant={status === "rejected" ? "destructive" : status === "shortlisted" ? "success" : "secondary"}>
-                                  {PIPELINE.find((p) => p.value === status)?.label}
-                                </Badge>
-                              ) : undefined
+                            // Only what earns the next click: the open pane has the rest (user call, 2026-11-08).
+                            preview={`${m.experience} • ${m.salary}`}
+                            // Once decided, the outcome takes the time's place.
+                            time={status === "shortlisted" || status === "rejected" ? "" : m.appliedDays <= 1 ? "Today" : `${m.appliedDays}d ago`}
+                            statusIcon={
+                              <>
+                                {/* Under Relevance the section header already says the level. */}
+                                {(sort !== "Relevance" || resultsMode) && <MatchBars level={level} />}
+                                {(status === "shortlisted" || status === "rejected") && (
+                                  <Badge variant={status === "rejected" ? "destructive" : "success"}>
+                                    {PIPELINE.find((p) => p.value === status)?.label}
+                                  </Badge>
+                                )}
+                              </>
                             }
                             active={split && c.id === selectedId}
                             render={<button type="button" onClick={() => setLeadId(c.id)} />}
