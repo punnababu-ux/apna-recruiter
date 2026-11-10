@@ -40,7 +40,7 @@ import { ExtraOffBanner } from "@/components/apnahire/offers/extra-off-line"
 import * as React from "react"
 import { useRouter } from "next/navigation"
 import { AvailableCreditsButton } from "@/components/apnahire/available-credits-button"
-import { JobPostingChrome } from "@/components/apnahire/post-job/job-posting-chrome"
+import { ESSENTIAL_STEP_LABELS, JobPostingChrome } from "@/components/apnahire/post-job/job-posting-chrome"
 import { JOB_DRAFT_STORAGE_KEY } from "@/components/apnahire/post-job/post-job-flow"
 import {
   CheckoutDrawer,
@@ -175,12 +175,16 @@ export function JobPlanSelection() {
   const [mandateMethod, setMandateMethod] = React.useState<SubscriptionPaymentMethod | null>(null)
   const [order, setOrder] = React.useState<{ lines: CartLine[]; total: number; id: string; note?: string } | null>(null)
   const [cartLines, setCartLines] = React.useState<CartLine[]>([])
+  const essentialPreview = useClientSnapshot(
+    () => new URLSearchParams(window.location.search).get("flow") === "essential",
+    false,
+  )
   const [postedTitle, setPostedTitleOnly] = React.useState("Your job")
   // PREVIEW (?flow=essential): the job-live screen asks the rest (FinishSetup).
   const [postedDraft, setPostedDraft] = React.useState<Partial<JobPostDraft> | null>(null)
   const setPostedTitle = (title: string) => {
     setPostedTitleOnly(title)
-    if (new URLSearchParams(window.location.search).get("flow") === "essential") setPostedDraft(readDraft() as Partial<JobPostDraft>)
+    if (essentialPreview) setPostedDraft(readDraft() as Partial<JobPostDraft>)
   }
 
   // Upsells + exit loop.
@@ -473,6 +477,7 @@ export function JobPlanSelection() {
     <div className="flex min-h-svh flex-col bg-gradient-checkout-hero">
       <JobPostingChrome
         current="plan"
+        labels={essentialPreview ? ESSENTIAL_STEP_LABELS : undefined}
         onStepClick={(step) => step !== "plan" && router.push(`/apnahire/jobs/new?resume=1&stage=${step}`)}
         // Phones show the step in the bottom bar, as on the questions.
         stepperClassName="max-sm:hidden"

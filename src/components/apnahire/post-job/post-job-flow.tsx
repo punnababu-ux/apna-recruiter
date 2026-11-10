@@ -70,6 +70,7 @@ import { ValueArt } from "@/components/marketing/value-art"
 import { useDraftPersistence } from "@/hooks/onlyrounds/use-draft-persistence"
 import { CandidateJobPreview } from "@/components/apnahire/post-job/candidate-job-preview"
 import {
+  ESSENTIAL_STEP_LABELS,
   JobPostingChrome,
   JobPostingStepMenu,
   type JobPostingStep,
@@ -103,20 +104,9 @@ const firstMissing = (draft: JobPostDraft, among?: ScreenId[]) =>
   SCREENS.find((s) => (among ? among.includes(s.id) : s.id !== "review") && s.check?.(draft))
 const flowFlag = () => new URLSearchParams(window.location.search).get("flow")
 
-// PREVIEW ONLY (?flow=short): fewer steps. Related questions share a page:
-// short ones on phones, a topic on desktop (the room is there). An AI draft lands on Review.
-const PHONE_PAGES: ScreenId[][] = [
-  ["title", "category"],
-  ["industry"],
-  ["job-type", "workplace"],
-  ["location"],
-  ["salary", "perks"],
-  ["education"],
-  ["english", "experience"],
-  ["preferences", "screening"],
-  ["description"],
-  ["interview", "contact"],
-]
+// PREVIEW ONLY (?flow=short): on desktop a topic's questions share a page (the
+// room is there). Phones keep one question per screen (user call, 2026-11-10).
+// An AI draft walks the same pages, filled in.
 const DESKTOP_PAGES: ScreenId[][] = [
   // Job details in two: one page of it ran 4.7 screens tall.
   ["title", "category", "industry", "job-type", "workplace"],
@@ -129,10 +119,17 @@ const DESKTOP_PAGES: ScreenId[][] = [
 // PREVIEW ONLY (?flow=essential): ask only what a candidate is matched on.
 // The role, industry and description are worked out; "Who can apply" follows
 // the role (role-profiles.ts); the rest is asked after posting (FinishSetup).
+/** The role's "Who can apply" questions; `allAsks` adds the ones it left out, after them. */
+const whoAsks = (category: string, allAsks: boolean): ScreenId[] => {
+  const asks = roleAsks(category)
+  return allAsks ? [...asks, ...ALL_ASKS.filter((a) => !asks.includes(a))] : asks
+}
 const essentialPages = (phone: boolean, category: string, allAsks: boolean): ScreenId[][] => {
-  const who = allAsks ? ALL_ASKS : roleAsks(category)
+  const who = whoAsks(category, allAsks)
+  // Phones: one question per screen (user call, 2026-11-10). The joining fee
+  // is a line under the salary, not a question.
   return phone
-    ? [["title"], ["workplace", "location"], ["salary", "perks"], who]
+    ? [["title"], ["workplace"], ["location"], ["salary", "perks"], ...who.map((w) => [w])]
     : [["title", "workplace", "location", "salary", "perks"], who]
 }
 
@@ -221,7 +218,8 @@ async function callDraftApi(body: object, signal?: AbortSignal): Promise<Partial
     method: "POST",
     signal,
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+    // PREVIEW (?flow=essential): the AI fills only what the job role asks.
+    body: JSON.stringify({ ...body, flow: flowFlag() ?? undefined }),
   })
   return res.ok ? res.json() : {}
 }
@@ -268,13 +266,16 @@ function normalizeFlow(raw: Partial<FlowState> & { phase?: string }): FlowState 
 }
 
 /** Fill of each stage's progress segment. */
-function stageProgress(screen: ScreenId): number[] {
+function stageProgress(screen: ScreenId, shown?: ScreenId[]): number[] {
   const current = SCREENS[screenIndex(screen)]?.stage ?? null
   const at = current ? STAGES.indexOf(current) : -1
   return STAGES.map((stage, i) => {
     if (i < at) return 1
     if (i > at) return 0
-    const inStage = SCREENS.filter((s) => s.stage === stage)
+    // `shown`: the essential flow's own questions, in its order.
+    const inStage = shown
+      ? shown.map((id) => SCREENS[screenIndex(id)]).filter((s) => s.stage === stage)
+      : SCREENS.filter((s) => s.stage === stage)
     return (inStage.findIndex((s) => s.id === screen) + 1) / inStage.length
   })
 }
@@ -301,7 +302,7 @@ export function PostJobFlow() {
   const washPreview = React.useSyncExternalStore(noSubscribe, hasWashFlag, () => false)
   const flow = React.useSyncExternalStore(noSubscribe, flowFlag, () => null)
   const essential = flow === "essential"
-  /** Both previews show a page of questions and send an AI draft to Review. */
+  /** Both previews can show a page of questions; Review sends a missing answer back in one pass. */
   const shortFlow = flow === "short" || essential
   /** Essential: "Add a requirement" shows the questions the role left out. */
   const [allAsks, setAllAsks] = React.useState(false)
@@ -350,15 +351,15 @@ export function PostJobFlow() {
   // The questions on screen together: one, or (?flow=short) a page of them.
   const pages = essential
     ? essentialPages(isMobile, state.draft.category, allAsks)
-    : shortFlow
-      ? isMobile
-        ? PHONE_PAGES
-        : DESKTOP_PAGES
+    : shortFlow && !isMobile
+      ? DESKTOP_PAGES
       : null
   const pageIndex = pages?.findIndex((p) => p.includes(def.id)) ?? -1
   /** Essential: the questions it asks; the rest never block or get asked. */
   const asked = essential ? pages?.flat() : undefined
-  const whoPage = essential && pageIndex === pages!.length - 1
+  const who = essential ? whoAsks(state.draft.category, allAsks) : []
+  const whoFirst = !!pages?.[pageIndex]?.includes(who[0])
+  const whoLast = !!pages?.[pageIndex]?.includes(who[who.length - 1])
   const pageIds = pages?.find((p) => p.includes(def.id)) ?? [def.id]
   const page = pageIds.map((id) => SCREENS[screenIndex(id)])
   const pageStart = (id: ScreenId) => pages?.find((p) => p.includes(id))?.[0] ?? id
@@ -426,24 +427,21 @@ export function PostJobFlow() {
     // A joining fee the AI heard about still needs the recruiter's own answer.
     const merged = { ...mergeDraft(EMPTY_JOB_DRAFT, result), joiningFeeAnswered: false }
     const draft = essential ? withEssentials(merged) : merged
-    const missing = shortFlow
-      ? firstMissing(draft, essential ? essentialPages(isMobile, draft.category, false).flat() : undefined)
-      : undefined
     setState((s) => ({
       ...s,
-      // ?flow=short: the draft answers the questions, so go check it. Anything
-      // required it missed is asked first, one page after the other.
-      screen: shortFlow ? (missing?.id ?? "review") : "title",
+      // Every version: the same questions as by hand, filled in; Next walks
+      // them to Review (user call, 2026-11-10; the previews used to jump there).
+      screen: "title",
       draft,
       draftedPrompt: s.prompt.trim(),
       aiFilled: filledKeys(result),
-      returnTo: missing ? "review" : null,
+      returnTo: null,
       descriptionBasis: draft.description ? descriptionBasisOf(draft) : "",
     }))
     setDrafting(false)
     setDirection("forward")
     window.scrollTo({ top: 0 })
-  }, [draftResult, setState, shortFlow, essential, isMobile])
+  }, [draftResult, setState, essential])
 
   /** Resolves true when the AI changed something. */
   const refine = async (instruction: string): Promise<boolean> => {
@@ -486,21 +484,25 @@ export function PostJobFlow() {
   }, [])
 
   const writeDescription = React.useCallback(
-    async (instruction?: string) => {
+    // `from`: the screen's own draft, for a write on arrival (the ref is
+    // only updated by an effect that runs after the screen's).
+    async (instruction?: string, from?: JobPostDraft) => {
       writeAbort.current?.abort()
       const ctrl = new AbortController()
       writeAbort.current = ctrl
       setWriting(true)
       try {
-        const d = draftRef.current
+        const d = from ?? draftRef.current
         const summary = [
           d.title,
           d.category,
           d.industry,
           d.area,
           d.city,
-          d.education,
-          d.experienceType,
+          // Essential: an open answer (the role skipped the question) says
+          // nothing to candidates, so the description leaves it out.
+          essential && d.education === "10th" ? null : d.education,
+          essential && d.experienceType === "any" ? null : d.experienceType,
           ...d.languages,
           instruction,
         ]
@@ -526,7 +528,7 @@ export function PostJobFlow() {
         }
       }
     },
-    [setState],
+    [setState, essential],
   )
 
   // Subscribers post into a job slot at the end instead of buying a plan.
@@ -656,9 +658,9 @@ export function PostJobFlow() {
     drafting,
     draftResult,
     finishDrafting,
-    // Essential: "Who can apply" opens the role's page, whatever it starts with.
-    edit: (id) => goTo(essential && id === "education" ? pages![pages!.length - 1][0] : id, "forward", state.screen),
+    edit: (id) => goTo(id, "forward", state.screen),
     essential,
+    asks: essential ? who : undefined,
     applyPatch,
     refine,
     refining,
@@ -672,13 +674,17 @@ export function PostJobFlow() {
   }
 
   const stage = def.stage
+  /** The questions this flow shows, in its order (essential: its own, the
+   *  fee line aside), for the step menu, progress and stage jumps. */
+  const shown = asked ? ([...asked.filter((id) => id !== "perks"), "review"] as ScreenId[]) : undefined
+  const stageScreens = shown ? shown.map((id) => SCREENS[screenIndex(id)]) : SCREENS.filter((s) => s.stage)
   /** Before the stages (describe, the manual intro): no job to preview yet,
    *  so one centred column. */
   const solo = stage === null
   const chromeStep: JobPostingStep = stage ?? "job"
   /** Back to the start of a stage already reached (stepper, phone step menu). */
   const jumpToStage = (to: StageId) => {
-    const first = SCREENS.find((s) => s.stage === to)
+    const first = stageScreens.find((s) => s.stage === to)
     if (first && STAGES.indexOf(to) <= (stage ? STAGES.indexOf(stage) : -1)) goTo(first.id, "back")
   }
   // The furthest question reached: a jump back keeps it as returnTo, so Next
@@ -690,15 +696,16 @@ export function PostJobFlow() {
     if (i > reach) return
     goTo(id, i < screenIndex(state.screen) ? "back" : "forward", id === furthest ? null : furthest)
   }
-  const menuScreens = SCREENS.filter((s) => s.stage).map((s, i, all) => ({
+  const menuScreens = stageScreens.map((s, i, all) => ({
     id: s.id,
     icon: SCREEN_ICONS[s.id],
-    label: SCREEN_NAMES[s.id],
+    label: essential && s.id === "preferences" && !allAsks ? "Must have" : SCREEN_NAMES[s.id],
     stage: s.stage!,
     current: s.id === state.screen,
     disabled: screenIndex(s.id) > reach && all[i].id !== state.screen,
   }))
-  const firstOfStage = stage !== null && SCREENS.find((s) => s.stage === stage)?.id === state.screen
+  const firstOfStage = stage !== null && stageScreens.find((s) => s.stage === stage)?.id === state.screen
+  const stageLabel = (id: StageId) => (essential && id === "setup" ? "Review" : STAGE_LABELS[id])
   // Subscribers' last step commits: "Post job", the flow's one green CTA.
   const postsNow = state.screen === "review" && !state.returnTo && !!slots
   const nextLabel =
@@ -740,6 +747,7 @@ export function PostJobFlow() {
         stepperClassName="max-sm:hidden"
         onStepClick={(step) => step !== "plan" && jumpToStage(step)}
         onSaveExit={() => persistDraft(state)}
+        labels={essential ? ESSENTIAL_STEP_LABELS : undefined}
       />
 
       <main className="relative z-10 flex-1 px-4 py-8 sm:px-6 sm:py-10">
@@ -758,26 +766,33 @@ export function PostJobFlow() {
                   each stage's first question, in place of an intro screen. */}
             {firstOfStage && stage && (
               <p className="text-xs font-semibold text-muted-foreground max-sm:hidden">
-                Step {STAGES.indexOf(stage) + 1} of 3 · {STAGE_LABELS[stage]}
+                Step {STAGES.indexOf(stage) + 1} of 3 · {stageLabel(stage)}
               </p>
             )}
             {/* Filled in by hand (no AI draft): each question types itself in. */}
             <WizardTypingProvider value={!state.draftedPrompt && page.length === 1}>
-              {whoPage && (
+              {whoFirst && (
                 <p className="text-sm text-muted-foreground">
                   The usual answers for {state.draft.category === "Other" ? "this job" : `${state.draft.category.toLowerCase()} jobs`}. Change what does not fit.
                 </p>
               )}
               {page.map((s) => (
                 <section key={s.id} id={`q-${s.id}`} className="flex scroll-mt-40 flex-col gap-6">
+                  {/* Preferences: only "must have" on the way through; in full from Review's Edit. */}
                   <s.Render
                     {...ctx}
-                    part={!essential ? undefined : s.id === "perks" ? "fee" : s.id === "preferences" && !allAsks ? "assets" : undefined}
+                    part={!essential ? undefined : s.id === "perks" ? "fee" : s.id === "preferences" && !allAsks && state.returnTo !== "review" ? "assets" : undefined}
                   />
                 </section>
               ))}
-              {whoPage && !allAsks && (
-                <Button type="button" variant="outline" size="lg" className="self-start" onClick={() => setAllAsks(true)}>
+              {whoLast && !allAsks && (
+                <Button type="button" variant="outline" size="lg" className="self-start" onClick={() => {
+                    setAllAsks(true)
+                    // Phones: one question per screen, so open the first one added.
+                    const added = ALL_ASKS.find((ask) => !who.includes(ask))
+                    if (isMobile && added) goTo(added, "forward", state.returnTo)
+                  }}
+                >
                   <Plus aria-hidden /> Add a requirement
                 </Button>
               )}
@@ -789,7 +804,7 @@ export function PostJobFlow() {
             <aside className="hidden lg:block">
               <div className="sticky top-36 flex flex-col gap-3">
                 <p className="text-center text-xs font-medium text-muted-foreground">Candidate view</p>
-                <CandidateJobPreview draft={state.draft} flashKey={flashKey} focus={def.preview} />
+                <CandidateJobPreview draft={state.draft} flashKey={flashKey} focus={def.preview} hideOpen={essential} />
               </div>
             </aside>
           )}
@@ -797,7 +812,7 @@ export function PostJobFlow() {
       </main>
 
       <WizardFooter
-        progress={stage ? stageProgress(state.screen) : undefined}
+        progress={stage ? stageProgress(state.screen, shown) : undefined}
         progressClassName="sm:hidden"
         innerClassName={solo ? SOLO_WIDTH : CONTENT_WIDTH}
         onBack={back}
@@ -811,6 +826,7 @@ export function PostJobFlow() {
               current={stage}
               onJump={(s) => s !== "plan" && jumpToStage(s)}
               screens={menuScreens}
+              labels={essential ? ESSENTIAL_STEP_LABELS : undefined}
               onPickScreen={(id) => jumpToScreen(id as ScreenId)}
             />
           ) : undefined

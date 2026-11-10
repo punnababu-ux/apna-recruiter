@@ -39,12 +39,18 @@ import { HelpMenu } from "@/components/apnahire/post-job/help-menu"
 /** The wizard's three stages, then the plan page. */
 export type JobPostingStep = "job" | "candidates" | "setup" | "plan"
 
-const STEPS: { id: JobPostingStep; label: string }[] = [
+const ALL_STEPS: { id: JobPostingStep; label: string }[] = [
   { id: "job", label: "Job details" },
   { id: "candidates", label: "Who can apply" },
   { id: "setup", label: "Hiring setup" },
   { id: "plan", label: "Select plan" },
 ]
+
+/** PREVIEW (?flow=essential): the third step is only the review. */
+export type StepLabels = Partial<Record<JobPostingStep, string>>
+export const ESSENTIAL_STEP_LABELS: StepLabels = { setup: "Review" }
+const withLabels = (labels?: StepLabels) =>
+  labels ? ALL_STEPS.map((s) => ({ ...s, label: labels[s.id] ?? s.label })) : ALL_STEPS
 
 interface JobPostingChromeProps {
   current: JobPostingStep
@@ -62,6 +68,7 @@ interface JobPostingChromeProps {
   stepperClassName?: string
   /** A strip at the header's bottom, pinned with it (ExtraOffBar). */
   below?: React.ReactNode
+  labels?: StepLabels
 }
 
 export function JobPostingChrome({
@@ -72,8 +79,10 @@ export function JobPostingChrome({
   onExitAttempt,
   stepperClassName,
   below,
+  labels,
 }: JobPostingChromeProps) {
   const router = useRouter()
+  const STEPS = withLabels(labels)
   const currentIdx = STEPS.findIndex((s) => s.id === current)
   const steps: Step[] = STEPS.map((s, i) => ({
     id: s.id,
@@ -176,7 +185,9 @@ export function JobPostingStepMenu({
   onJump,
   screens,
   onPickScreen,
+  labels,
 }: {
+  labels?: StepLabels
   current: JobPostingStep
   onJump: (step: JobPostingStep) => void
   /** Every question, grouped by step: any one already reached opens
@@ -184,6 +195,7 @@ export function JobPostingStepMenu({
   screens?: StepMenuScreen[]
   onPickScreen?: (id: string) => void
 }) {
+  const STEPS = withLabels(labels)
   const at = STEPS.findIndex((s) => s.id === current)
   const isMobile = useIsMobile()
   const [open, setOpen] = React.useState(false)

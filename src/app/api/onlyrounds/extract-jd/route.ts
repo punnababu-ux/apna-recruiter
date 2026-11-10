@@ -13,7 +13,7 @@
  * ──────────────────────────────────────────────────────────────────────────
  */
 
-import { google } from "@ai-sdk/google"
+import { google, hasGoogleKey } from "@/lib/ai/google"
 import { generateText, Output } from "ai"
 import { NextRequest, NextResponse } from "next/server"
 
@@ -402,7 +402,7 @@ export async function POST(req: NextRequest) {
     // Returns keyword-matched mock data so the full UI flow works locally.
     // Set the env var to enable the real Gemini call (see INTEGRATION.md).
     // ─────────────────────────────────────────────────────────────────────
-    if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+    if (!hasGoogleKey) {
       console.log("[extract-jd] dummy mode — set GOOGLE_GENERATIVE_AI_API_KEY to use live AI")
       return NextResponse.json(buildDummyResponse(title, jd))
     }

@@ -110,8 +110,12 @@ export function CandidateJobPreview({
   loading = false,
   flashKey,
   focus,
+  hideOpen = false,
 }: {
   draft: JobPostDraft
+  /** PREVIEW (?flow=essential): an open answer ("10th or below", any
+   *  experience) shuts nobody out, so it is not shown as a requirement. */
+  hideOpen?: boolean
   /** Drafting in progress — placeholders shimmer. */
   loading?: boolean
   /** Changing this replays a brief highlight over the screen (AI edits). */
@@ -133,7 +137,9 @@ export function CandidateJobPreview({
   }, [focus])
   const salary = salaryLabel(draft)
   const location = locationLabel(draft)
-  const experience = experienceLabel(draft)
+  const openEducation = hideOpen && draft.education === "10th"
+  const openExperience = hideOpen && draft.experienceType === "any"
+  const experience = openExperience ? null : experienceLabel(draft)
   const tags = [
     draft.jobType && JOB_TYPE_LABELS[draft.jobType],
     draft.locationType && LOCATION_TYPE_LABELS[draft.locationType],
@@ -215,6 +221,7 @@ export function CandidateJobPreview({
 
           <Section title="Requirements" id="requirements">
             <div className="flex flex-col gap-1.5">
+              {!openEducation && (
               <Row icon={GraduationCap}>
                 {draft.education ? (
                   <Req label={EDUCATION_LABELS[draft.education]} preferred={draft.strictness.education === "preferred"} />
@@ -222,6 +229,8 @@ export function CandidateJobPreview({
                   <Placeholder>Education not set</Placeholder>
                 )}
               </Row>
+              )}
+              {!openExperience && (
               <Row icon={Briefcase}>
                 {experience ? (
                   <Req label={experience} preferred={draft.strictness.experience === "preferred"} />
@@ -229,6 +238,7 @@ export function CandidateJobPreview({
                   <Placeholder>Experience not set</Placeholder>
                 )}
               </Row>
+              )}
               {draft.english && draft.english !== "none" && (
                 <Row icon={Languages}>
                   <Req label={ENGLISH_LABELS[draft.english]} preferred={draft.strictness.english === "preferred"} />

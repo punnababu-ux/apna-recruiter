@@ -66,7 +66,8 @@ const STEPS: Step[] = [
     heading: /^How does the description read\?$/,
     answer: async (page) => {
       // The screen writes a description on arrival; wait for it, then make sure there is one.
-      await expect(page.getByRole("button", { name: "Stop", exact: true })).toHaveCount(0, { timeout: 15_000 })
+      // "Stop" on phones, "Stop, I'll paste mine" from sm; with a Gemini key the write is live (up to ~20 s).
+      await expect(page.getByRole("button", { name: /^Stop/ })).toHaveCount(0, { timeout: 40_000 })
       const box = page.getByRole("textbox", { name: "Description" })
       if (!(await box.inputValue()).trim()) {
         await box.fill("Deliver orders on time in the city. Own a bike and a smartphone. Weekly payout.")
@@ -217,12 +218,14 @@ test.describe("job posting: drafts", () => {
     await expectScreenLayout(page, "salary")
   })
 
-  test("?flow=short (preview) puts related questions on one page", async ({ page }) => {
+  test("?flow=short (preview) puts related questions on one page, on desktop only", async ({ page }) => {
+    // Phones keep one question per screen (user call, 2026-11-10).
+    const phone = (page.viewportSize()?.width ?? 0) < 768
     await open(page, JOB_POST)
     await seedFlow(page, "job-type")
     await page.goto(`${JOB_POST}?resume=1&flow=short`, { waitUntil: "networkidle" })
     await expect(page.getByRole("heading", { name: "What type of job is it?" })).toBeVisible()
-    await expect(page.getByRole("heading", { name: "Where will they work?" })).toBeVisible()
+    await expect(page.getByRole("heading", { name: "Where will they work?" })).toHaveCount(phone ? 0 : 1)
     const fits = await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)
     expect(fits).toBe(true)
   })

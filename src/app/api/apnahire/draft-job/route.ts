@@ -5,7 +5,9 @@
  * 15-20k, graduate, Hindi") into a structured job draft, or applies a
  * follow-up instruction ("make it 18-22k") to an existing draft.
  *
- * Body: { prompt: string } | { current: JobPostDraft, instruction: string }
+ * Body: { prompt: string } | { current: JobPostDraft, instruction: string },
+ * plus `flow: "essential"` (PREVIEW) to fill only the requirements the job
+ * role asks for (src/lib/apnahire/role-profiles.ts).
  * Returns: Partial<JobPostDraft> — only fields the model is confident about.
  *
  * Same stack as /api/onlyrounds/extract-jd: AI SDK + Gemini, structured
@@ -13,7 +15,7 @@
  * GOOGLE_GENERATIVE_AI_API_KEY is absent so the whole flow works locally.
  */
 
-import { google } from "@ai-sdk/google"
+import { DRAFT_MODEL, google, hasGoogleKey } from "@/lib/ai/google"
 import { generateText, Output } from "ai"
 import { NextRequest, NextResponse } from "next/server"
 
@@ -22,6 +24,7 @@ import { z } from "zod"
 
 import { ASSETS, CATEGORIES, DEGREES, INDUSTRIES, PERKS } from "@/lib/apnahire/job-draft"
 import { parsePrompt } from "@/lib/apnahire/prompt-parse"
+import { roleRulesForAi } from "@/lib/apnahire/role-profiles"
 import type { JobPostDraft } from "@/types/apnahire-job"
 
 export const SYSTEM_PROMPT =
@@ -35,54 +38,58 @@ export const SYSTEM_PROMPT =
   "'Age 21-30' is age, never experience. " +
   "Salaries are monthly INR (\"15-20k\" means 15000-20000). " +
   "Always write `description`: 80-140 words, plain text, a one-line summary, then 'Responsibilities:' and " +
-  "'Requirements:' each followed by 3-5 lines starting with '- '. Do not invent salary, perks or company facts " +
+  "'Requirements:' each followed by 3-5 lines starting with '- '. Put a newline character between every line " +
+  "and a blank line before each heading. Do not invent salary, perks or company facts " +
   "in the description. Keep every requirement the recruiter stated exactly — never relax or broaden them. " +
   "Set `industry` only when the business or sector is stated or unambiguous (it is the main reason jobs reach " +
   "the wrong candidates, so the app asks when unsure). Use one role per job. " +
   "When given an existing job and an instruction, return the full updated job."
 
+// Every field is required but nullable: with an all-optional schema Gemini's
+// structured output answered with two fields; made to answer each one, it
+// fills the job. Nulls are dropped before the client sees the draft.
 export const JobDraftSchema = z.object({
-  title: z.string().optional().describe("Short job title, e.g. 'Telecaller', 'Delivery Executive'."),
-  category: z.enum(CATEGORIES as [string, ...string[]]).optional().describe("apna job role category."),
+  title: z.string().nullable().describe("Short job title, e.g. 'Telecaller', 'Delivery Executive'."),
+  category: z.enum(CATEGORIES as [string, ...string[]]).nullable().describe("apna job role category."),
   industry: z
     .enum(INDUSTRIES as [string, ...string[]])
-    .optional()
+    .nullable()
     .describe("The employer's industry — only when stated or unambiguous."),
-  jobType: z.enum(["full_time", "part_time", "both"]).optional(),
-  nightShift: z.boolean().optional(),
+  jobType: z.enum(["full_time", "part_time", "both"]).nullable(),
+  nightShift: z.boolean().nullable(),
   locationType: z
     .enum(["office", "home", "field"])
-    .optional()
+    .nullable()
     .describe("office = work from office, home = work from home, field = on-the-road job."),
-  city: z.string().optional().describe("Indian city in canonical spelling, e.g. 'Bengaluru'."),
-  area: z.string().optional().describe("Locality / office area, e.g. 'Koramangala'."),
+  city: z.string().nullable().describe("Indian city in canonical spelling, e.g. 'Bengaluru'."),
+  area: z.string().nullable().describe("Locality / office area, e.g. 'Koramangala'."),
   payType: z
     .enum(["fixed", "fixed_incentive", "incentive"])
-    .optional()
+    .nullable()
     .describe("'fixed' when a salary is given and incentives are not mentioned; 'fixed_incentive' when both are; 'incentive' for incentive-only pay."),
-  salaryMin: z.number().optional().describe("Monthly fixed salary lower bound in INR."),
-  salaryMax: z.number().optional().describe("Monthly fixed salary upper bound in INR."),
-  incentive: z.number().optional().describe("Average monthly incentive in INR."),
-  perks: z.array(z.enum(PERKS as [string, ...string[]])).optional().describe("Only perks the recruiter names."),
-  education: z.enum(["10th", "12th", "diploma", "iti", "graduate", "post_graduate"]).optional(),
-  english: z.enum(["none", "basic", "good"]).optional(),
-  experienceType: z.enum(["any", "experienced", "fresher"]).optional(),
-  minExperienceYears: z.number().optional().describe("Minimum years when experienceType is 'experienced'."),
-  maxExperienceYears: z.number().optional().describe("Maximum years when experienceType is 'experienced', if stated."),
-  languages: z.array(z.string()).optional().describe("Regional languages required, e.g. ['Hindi']."),
-  skills: z.array(z.string()).optional().describe("3-6 short skills relevant to the role."),
-  gender: z.enum(["any", "male", "female"]).optional().describe("From words like 'female', 'women', 'male only'."),
-  ageMin: z.number().optional().describe("Candidate minimum age in years."),
-  ageMax: z.number().optional().describe("Candidate maximum age in years."),
+  salaryMin: z.number().nullable().describe("Monthly fixed salary lower bound in INR."),
+  salaryMax: z.number().nullable().describe("Monthly fixed salary upper bound in INR."),
+  incentive: z.number().nullable().describe("Average monthly incentive in INR."),
+  perks: z.array(z.enum(PERKS as [string, ...string[]])).nullable().describe("Only perks the recruiter names."),
+  education: z.enum(["10th", "12th", "diploma", "iti", "graduate", "post_graduate"]).nullable(),
+  english: z.enum(["none", "basic", "good"]).nullable(),
+  experienceType: z.enum(["any", "experienced", "fresher"]).nullable(),
+  minExperienceYears: z.number().nullable().describe("Minimum years when experienceType is 'experienced'."),
+  maxExperienceYears: z.number().nullable().describe("Maximum years when experienceType is 'experienced', if stated."),
+  languages: z.array(z.string()).nullable().describe("Regional languages required, e.g. ['Hindi']."),
+  skills: z.array(z.string()).nullable().describe("3-6 short skills relevant to the role."),
+  gender: z.enum(["any", "male", "female"]).nullable().describe("From words like 'female', 'women', 'male only'."),
+  ageMin: z.number().nullable().describe("Candidate minimum age in years."),
+  ageMax: z.number().nullable().describe("Candidate maximum age in years."),
   assets: z
     .array(z.enum(ASSETS as [string, ...string[]]))
-    .optional()
+    .nullable()
     .describe("Things the candidate must own or hold."),
-  degrees: z.array(z.enum(DEGREES as [string, ...string[]])).optional().describe("Specific degrees, only if named."),
-  relocation: z.boolean().optional().describe("True if candidates willing to relocate may apply."),
-  joiningFee: z.boolean().optional().describe("True only if the recruiter says the candidate pays a fee or deposit."),
-  walkIn: z.boolean().optional(),
-  description: z.string().optional(),
+  degrees: z.array(z.enum(DEGREES as [string, ...string[]])).nullable().describe("Specific degrees, only if named."),
+  relocation: z.boolean().nullable().describe("True if candidates willing to relocate may apply."),
+  joiningFee: z.boolean().nullable().describe("True only if the recruiter says the candidate pays a fee or deposit."),
+  walkIn: z.boolean().nullable(),
+  description: z.string().nullable(),
 })
 
 const buildPrompt = (prompt: string) => `Recruiter's description:\n${prompt}`
@@ -143,6 +150,7 @@ export async function POST(req: NextRequest) {
   let instruction = ""
   let current: JobPostDraft | undefined
   let refining = false
+  let essential = false
   // The local parser's answer — used whenever the live AI can't give one.
   const fallback = () =>
     refining && current ? buildDummyRefine(current, instruction) : buildDummyDraft(prompt)
@@ -152,24 +160,25 @@ export async function POST(req: NextRequest) {
     prompt = body?.prompt ?? ""
     instruction = body?.instruction ?? ""
     current = body?.current
+    essential = body?.flow === "essential"
     refining = Boolean(current && instruction.trim())
 
     if (!refining && !prompt.trim()) return NextResponse.json({})
 
-    if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+    if (!hasGoogleKey) {
       console.log("[draft-job] dummy mode — set GOOGLE_GENERATIVE_AI_API_KEY to use live AI")
       return NextResponse.json(fallback())
     }
 
     const { output } = await generateText({
-      model: google("gemini-2.5-flash"),
+      model: google(DRAFT_MODEL),
       output: Output.object({ schema: JobDraftSchema }),
-      system: SYSTEM_PROMPT,
+      system: essential ? `${SYSTEM_PROMPT}\n\n${roleRulesForAi()}` : SYSTEM_PROMPT,
       prompt: refining && current ? buildRefinePrompt(current, instruction) : buildPrompt(prompt),
     })
 
     const cleaned = Object.fromEntries(
-      Object.entries(output ?? {}).filter(([, v]) => v !== undefined && v !== ""),
+      Object.entries(output ?? {}).filter(([, v]) => v != null && v !== "" && !(Array.isArray(v) && v.length === 0)),
     )
     // An empty answer from the AI would leave every field blank: fill from
     // the local parser instead.

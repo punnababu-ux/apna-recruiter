@@ -12,7 +12,7 @@
  * ──────────────────────────────────────────────────────────────────────────
  */
 
-import { google } from "@ai-sdk/google"
+import { google, hasGoogleKey } from "@/lib/ai/google"
 import { generateText, Output } from "ai"
 import { NextRequest, NextResponse } from "next/server"
 
@@ -206,7 +206,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ questions: [] })
     }
 
-    if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+    if (!hasGoogleKey) {
       console.log(
         "[generate-questions] dummy mode — set GOOGLE_GENERATIVE_AI_API_KEY to use live Gemini",
       )

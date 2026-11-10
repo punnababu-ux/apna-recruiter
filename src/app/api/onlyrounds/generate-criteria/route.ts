@@ -19,7 +19,7 @@
  * ──────────────────────────────────────────────────────────────────────────
  */
 
-import { google } from "@ai-sdk/google"
+import { google, hasGoogleKey } from "@/lib/ai/google"
 import { generateText, Output } from "ai"
 import { NextRequest, NextResponse } from "next/server"
 
@@ -172,7 +172,7 @@ export async function POST(req: NextRequest) {
 
     // Bulk Mode
     if (tasks.length > 0) {
-      if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+      if (!hasGoogleKey) {
         console.log(
           "[generate-criteria] dummy bulk mode — set GOOGLE_GENERATIVE_AI_API_KEY to use live Gemini",
         )
@@ -210,7 +210,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Single Mode
-    if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+    if (!hasGoogleKey) {
       console.log(
         "[generate-criteria] dummy mode — set GOOGLE_GENERATIVE_AI_API_KEY to use live Gemini",
       )

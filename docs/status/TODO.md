@@ -53,7 +53,7 @@ Open before ECC: keep "View number" as the green action, or make Shortlist prima
 - [x] Help lines that only repeat a card's label removed
 - [x] "Continue draft" opens on the saved screen
 - [ ] Test voice on a real Android phone and desktop Chrome
-- [ ] Essential flow preview (`?flow=essential`): Punna to review. Before it ships: role profiles from live data, save "Finish setup" answers to the job and show the list on the job's page, confirm industry comes from the company profile, step labels and the manual intro copy
+- [ ] Essential flow preview (`?flow=essential`): Punna to review. Before it ships: role profiles from live data, save "Finish setup" answers to the job and show the list on the job's page, confirm industry comes from the company profile
 - [ ] Short flow preview (`?flow=short`): Punna to review; missing answers are now asked in one pass before Review; if approved, make it the default (see `DECISIONS.md`, 2026-11-10)
 - [ ] Test the live AI fill (needs the Gemini key; only the keyword fill was tested locally)
 - [ ] Walk every screen on desktop after the help-line removal

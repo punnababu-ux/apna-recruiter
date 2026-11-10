@@ -19,7 +19,7 @@
  * ──────────────────────────────────────────────────────────────────────────
  */
 
-import { google } from "@ai-sdk/google"
+import { google, hasGoogleKey } from "@/lib/ai/google"
 import { generateText, Output } from "ai"
 import { NextRequest, NextResponse } from "next/server"
 
@@ -356,7 +356,7 @@ export async function POST(req: NextRequest) {
     // Once GOOGLE_GENERATIVE_AI_API_KEY is configured we never fall back to
     // dummy content — the user should see a real error instead of generic
     // template text that doesn't match what they typed.
-    if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+    if (!hasGoogleKey) {
       console.log(
         "[generate-jd] dummy mode — set GOOGLE_GENERATIVE_AI_API_KEY to use live Gemini",
       )

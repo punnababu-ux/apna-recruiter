@@ -8,6 +8,53 @@ or **Open**.
 
 ---
 
+## Job posting: the description writes itself in the AI's voice (2026-11-10)
+**Status: Decided** (Punna)
+
+- **Question:** the description step wrote itself on arrival, but as a plain line, an outlined "Stop" button and an empty box; Describe's "Draft my job" has the loading ring, the backdrop and a rolling status strip. Should the two match?
+- **Decision:** yes. While the description is being written, the box wears the loading ring, the page the AI backdrop, and a strip under the box rolls "Reading your answers…", "Writing the summary…", "Listing the responsibilities…", "Adding the requirements…". The text then types into the box (read-only until it lands). The one way out is a link in the strip, "Stop, I'll paste mine" ("Stop" on phones), which leaves the box empty and focused with "Paste or type your description"; "Write it for me" comes back for a change of mind. The essential flow's Review row gets the same strip, compact.
+- **Why:** the AI does the same work in both places, so it should look the same (`WritingState`, `useTypeIn` in `post-job/writing-state.tsx`). The way out is a link, not a CTA: the AI is working, not asking. The wait is real (10–15 s with 3.8 Flash), so the lines are not decoration.
+- **Also fixed:** the write on arrival used a draft ref that an effect updates after the screen's own effect, so a resumed draft wrote from an empty summary; the screen now passes its draft.
+- **What would change it:** streaming the description (then the text arrives word by word and the strip becomes the stream).
+
+---
+
+## Job posting: one role profile drives every surface (2026-11-10)
+**Status: Leaning** (built in the `?flow=essential` preview; the table itself is an estimate)
+
+- **Question:** how do we decide which questions a role needs, and keep the chips, steps and Review in step with that?
+- **Decision:** one table, a profile per job role (`src/lib/apnahire/role-profiles.ts`). A profile says which "who can apply" questions the role asks and what each starts at. Every surface reads it: the Describe chips, the steps, the defaults, the Review rows. Nothing else keeps its own list.
+- **Today:** the role comes from the title by keyword rules (13 roles); the profiles are hand-written by design judgement in three families (desk, field, site).
+- **For production:** build the table from the live form's data (per role, how often recruiters set each field to something other than its open answer; ask a field above a threshold, skip it below), keep it as server config so it changes without a release, and let the AI draft return the role so the same profile applies.
+- **Connected (same day):** the description writer and the candidate preview leave out an open answer ("10th or below", any experience) in the essential flow, so a skipped question never shows as a requirement. The AI draft's prompt now carries the profiles too (`roleRulesForAi`, sent when the page is on `?flow=essential`), so with live AI the draft fills only what the role asks. Verified live (2026-11-10, new key in `.env.local`): a delivery text that says "12th pass, good English" comes back with no education or English, in the fields and in the description; a telecaller keeps both. **Model (Punna, 2026-11-10): the job draft uses `gemini-3.8-flash` (`DRAFT_MODEL` in `src/lib/ai/google.ts`), chosen 2026-11-10 after trying `gemini-3.1-pro-preview` and `gemini-3.5-flash` too. All three return the same fields on the five demo roles; 3.8 Flash writes the most concrete descriptions of the two Flashes (specific duties, no repeated points), at 14–19 s a draft against 3.5's 11–16 s and Pro's 13–23 s. One nuance: 3.5 Flash read "freshers welcome" as fresher, where 3.8 and Pro gave any. Accuracy comes before speed and cost (Punna); `gemini-2.5-pro` is closed to new keys. The OnlyRounds routes keep Flash. Along the way the live route itself was fixed: Gemini's structured output returned two fields for an all-optional schema, so every field is now required-but-nullable.
+- **Demo:** the Describe screen offers five roles to try (delivery, telecaller, housekeeping, accountant, field sales); one tap fills the description.
+- **What would change it:** roles the keyword rules cannot tell apart; then the role must be picked or confirmed, not inferred.
+
+---
+
+## Job posting: an AI draft walks the same questions (2026-11-10)
+**Status: Decided** (Punna)
+
+- **Question:** after "Draft my job", go straight to Review, or through the questions?
+- **Decision:** through the same questions as by hand, in the same order, with the answers filled in. The recruiter taps Next to confirm each. This holds for the live flow and both previews, on phones and desktop.
+- **Why:** one path to learn. The jump to Review made the AI path a different flow, hid answers the recruiter never saw, and sent them out and back for anything missing.
+- **Replaces:** "AI draft lands on Review" (option D) in the entry below.
+- **Kept:** if an answer goes missing after its screen (a later edit), Review still asks for all of them in one pass.
+- **What would change it:** data that recruiters tap Next through every filled screen without reading; then a shorter confirm step is worth a test.
+
+---
+
+## Job posting: one question per screen on phones (2026-11-10)
+**Status: Decided** (Punna)
+
+- **Question:** should a phone screen hold more than one question, to cut the number of screens?
+- **Decision:** no. On phones every question has its own screen, in every version of the flow. Fewer screens come from asking fewer questions, not from sharing a screen. Desktop may group a topic's questions on one page.
+- **Why:** two questions on a phone screen scroll, hide the second one under the fold, and make "Next" unclear about what it confirms. Grouping only moved the work; it did not remove any.
+- **Not a question:** a line with "Change" (the joining fee under the salary) may share a screen.
+- **What would change it:** nothing planned. This replaces the phone grouping in the two previews below.
+
+---
+
 ## Job posting: which questions does a job need? (2026-11-10)
 **Status: Leaning** (built as a preview, `?flow=essential`, 2026-11-10; waiting for Punna's review)
 
@@ -30,6 +77,8 @@ or **Open**.
   - **Three families to start:** desk and calling (education, English, experience); field and delivery (vehicle, licence, smartphone; no education or English); home and site work (experience only, plus gender or age where recruiters ask it).
   - **A hidden question takes the open answer** ("any"), never a narrow one.
   - **Not confirmed:** the profiles are my estimate. They need the live form's data (what recruiters pick per role) before they ship.
+- **Skipped questions stay on Review (Punna, 2026-11-10).** A question a role skips (education and English for delivery) is set to its open answer ("Any", "Not needed"), left out of the steps, and shown on Review as its own row with Edit. So nothing is decided out of sight, and one tap changes it.
+- **Phone audit, 2026-11-10:** the essential flow now has its own step names (step 3 is "Review"), step menu, progress and manual intro; Review marks missing answers; the manual path gets the role's skills as the AI path does. The live flow needed no change.
 - **As built:** pay type defaults to fixed (three choices stay on the pay page). Review lists only what narrows who can apply ("Anyone can apply" when nothing does). "Finish setup" sits on the job-live screen; its answers are not saved to the job yet.
 
 ---

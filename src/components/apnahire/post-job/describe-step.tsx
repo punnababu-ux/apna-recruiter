@@ -15,6 +15,7 @@ import { createPortal } from "react-dom"
 import { AudioLines, Badge, Button, Check, Circle, PromptInput, WizardQuestion } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 import { promptSignals, type PromptSignals } from "@/lib/apnahire/prompt-parse"
+import { DEMO_ROLES, rolePromptChips, type PromptChip } from "@/lib/apnahire/role-profiles"
 import { useSpeechRecognition } from "@/hooks/use-speech-recognition"
 import { DraftingState } from "@/components/apnahire/post-job/drafting-state"
 import type { JobPostDraft } from "@/types/apnahire-job"
@@ -26,6 +27,8 @@ interface DescribeStepProps {
   drafting: boolean
   draftResult: Partial<JobPostDraft> | null
   onDrafted: () => void
+  /** PREVIEW (?flow=essential): the chips follow the role, and demo roles fill the box. */
+  essential?: boolean
 }
 
 /** Staggered entrance — each block rises in a beat after the previous. */
@@ -59,9 +62,21 @@ const SIGNALS: { key: keyof PromptSignals; label: string; say: string }[] = [
  *  teaches what to include before submitting, without blocking it. While
  *  listening, the next one to say is lit and named, so a speaker knows what
  *  to say next without stopping to read. */
-function PromptCoverage({ prompt, listening }: { prompt: string; listening: boolean }) {
+function PromptCoverage({
+  prompt,
+  listening,
+  essential,
+}: {
+  prompt: string
+  listening: boolean
+  essential?: boolean
+}) {
   const signals = promptSignals(prompt)
-  const missing = SIGNALS.filter((s) => !signals[s.key])
+  // Essential: what this role needs (role-profiles.ts), not one fixed list.
+  const chips: PromptChip[] = essential
+    ? rolePromptChips(prompt)
+    : SIGNALS.map((s) => ({ ...s, on: signals[s.key] }))
+  const missing = chips.filter((s) => !s.on)
   const next = listening ? missing[0] : undefined
   const done = prompt.trim() && missing.length === 0
   // Before any input the placeholder's example already says what to include.
@@ -69,8 +84,8 @@ function PromptCoverage({ prompt, listening }: { prompt: string; listening: bool
   return (
     <div className="relative z-20 flex flex-col gap-2 animate-in fade-in duration-200" aria-live="polite">
       <div className="flex flex-wrap items-center gap-2">
-        {SIGNALS.map((s) => {
-          const on = signals[s.key]
+        {chips.map((s) => {
+          const on = s.on
           return (
             <Badge
               key={s.key}
@@ -99,7 +114,7 @@ function PromptCoverage({ prompt, listening }: { prompt: string; listening: bool
       ) : (
         prompt.trim() && (
           <p className="text-xs text-muted-foreground">
-            Add {missing.map((m) => m.label.toLowerCase()).join(", ")}, or we ask later.
+            Add {missing.map((m) => (m.label === "English" ? m.label : m.label.toLowerCase())).join(", ")}, or we ask later.
           </p>
         )
       )}
@@ -114,6 +129,7 @@ export function DescribeStep({
   drafting,
   draftResult,
   onDrafted,
+  essential,
 }: DescribeStepProps) {
   const speech = useSpeechRecognition()
   const baseRef = React.useRef("")
@@ -200,9 +216,33 @@ export function DescribeStep({
           />
           {drafting && <span aria-hidden className="loading-ring" />}
         </div>
-        {drafting ? <DraftingState result={draftResult} onComplete={onDrafted} /> : <PromptCoverage prompt={prompt} listening={speech.listening} />}
+        {drafting ? <DraftingState result={draftResult} onComplete={onDrafted} /> : <PromptCoverage prompt={prompt} listening={speech.listening} essential={essential} />}
         {speech.error && <p className="text-xs text-destructive">{speech.error}</p>}
       </div>
+
+      {/* Demo: each role asks different questions; one tap fills the box. */}
+      {essential && !drafting && !prompt.trim() && !speech.listening && (
+        <div {...rise(2)} className={`${rise(2).className} relative z-20 flex flex-col gap-2`}>
+          <p className="text-xs font-medium text-muted-foreground">Try a role</p>
+          <div className="flex flex-wrap gap-2">
+            {DEMO_ROLES.map((role) => (
+              <Button
+                key={role.label}
+                type="button"
+                variant="outline"
+                size="sm"
+                className="rounded-full"
+                onClick={() => {
+                  onPromptChange(role.prompt)
+                  inputRef.current?.focus()
+                }}
+              >
+                {role.label}
+              </Button>
+            ))}
+          </div>
+        </div>
+      )}
 
     </div>
   )

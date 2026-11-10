@@ -99,6 +99,7 @@ import { PlanPopup, PopupBody, PopupFooter, PopupHeader } from "@/components/apn
 import { AreaMap } from "@/components/apnahire/post-job/area-map"
 import { CandidateJobPreview, type PreviewSection } from "@/components/apnahire/post-job/candidate-job-preview"
 import { DescribeStep } from "@/components/apnahire/post-job/describe-step"
+import { WritingState, useTypeIn } from "@/components/apnahire/post-job/writing-state"
 import {
   AddCustom,
   ChipMultiSelect,
@@ -185,7 +186,7 @@ export interface ScreenCtx {
   applyPatch: (patch: Partial<JobPostDraft>) => void
   refine: (instruction: string) => Promise<boolean>
   refining: boolean
-  writeDescription: (instruction?: string) => Promise<void>
+  writeDescription: (instruction?: string, from?: JobPostDraft) => Promise<void>
   writing: boolean
   stopWriting: () => void
   /** The answers the description was written from have changed since. */
@@ -195,6 +196,8 @@ export interface ScreenCtx {
   /** PREVIEW (?flow=essential): one part of a screen. Perks: the joining fee
    *  line ("fee") or the chips ("perks"). Preferences: "assets" only. */
   part?: "fee" | "perks" | "assets"
+  /** PREVIEW (?flow=essential): the "Who can apply" questions the role asks. */
+  asks?: ScreenId[]
 }
 
 export interface ScreenDef {
@@ -345,6 +348,7 @@ function Describe(ctx: ScreenCtx) {
       drafting={ctx.drafting}
       draftResult={ctx.draftResult}
       onDrafted={ctx.finishDrafting}
+      essential={ctx.essential}
     />
   )
 }
@@ -369,7 +373,13 @@ function ManualIntro(ctx: ScreenCtx) {
       />
       <ol className="flex flex-col">
         {[
-          ...(Object.keys(STAGE_SUMMARY) as StageId[]).map((id) => [STAGE_LABELS[id], STAGE_SUMMARY[id]]),
+          ...(ctx.essential
+            ? [
+                ["Job details", "Title, location and pay"],
+                ["Who can apply", "Only what the job needs"],
+                ["Review", "Check it before posting"],
+              ]
+            : (Object.keys(STAGE_SUMMARY) as StageId[]).map((id) => [STAGE_LABELS[id], STAGE_SUMMARY[id]])),
           ["Select plan", "Pick a plan and post"],
         ].map(([label, summary], i) => (
           <li key={label} className="flex items-start gap-4 border-t border-border py-4 first:border-t-0 first:pt-0">
@@ -1564,6 +1574,8 @@ function Description(ctx: ScreenCtx) {
   const [instruction, setInstruction] = React.useState("")
   const n = draft.description.trim().length
   const untouched = aiFilled.includes("description")
+  // The AI's text types into the box as it lands (read-only meanwhile).
+  const typing = useTypeIn(draft.description, untouched)
 
   // Written at the start, from the first draft. If the answers it was
   // written from have changed and the recruiter hasn't edited it, rewrite
@@ -1575,9 +1587,9 @@ function Description(ctx: ScreenCtx) {
     if (autoRewrote.current) return
     if (n === 0 || (descriptionStale && untouched)) {
       autoRewrote.current = true
-      void writeDescription()
+      void writeDescription(undefined, draft)
     }
-  }, [n, descriptionStale, untouched, writeDescription])
+  }, [n, descriptionStale, untouched, writeDescription, draft])
 
   const rewrite = async () => {
     await writeDescription(instruction.trim() || undefined)
@@ -1609,26 +1621,34 @@ function Description(ctx: ScreenCtx) {
           </AlertDescription>
         </Alert>
       )}
-      {ctx.writing ? (
-        <Button type="button" variant="outline" size="lg" onClick={ctx.stopWriting}>
-          Stop
+      {!ctx.writing && n === 0 && (
+        <Button type="button" variant="outline" size="lg" onClick={() => void writeDescription()}>
+          <Wand2 aria-hidden /> Write it for me
         </Button>
-      ) : (
-        n === 0 && (
-          <Button type="button" variant="outline" size="lg" onClick={() => void writeDescription()}>
-            <Wand2 aria-hidden /> Write it for me
-          </Button>
-        )
       )}
       <Field>
         <FieldLabel htmlFor="job-description">Description</FieldLabel>
-        <Textarea
-          id="job-description"
-          inputSize="lg"
-          value={draft.description}
-          onChange={(e) => update("description", e.target.value)}
-          placeholder="What will they do day to day?"
-        />
+        {/* While writing: the loading ring behind the box (as on Describe),
+            the rolling strip under it with the one way out. */}
+        <div className="relative z-10 rounded-field">
+          <Textarea
+            id="job-description"
+            inputSize="lg"
+            value={typing ?? draft.description}
+            readOnly={ctx.writing || typing != null}
+            onChange={(e) => update("description", e.target.value)}
+            placeholder={ctx.writing ? "" : "Paste or type your description"}
+          />
+          {ctx.writing && <span aria-hidden className="loading-ring" />}
+        </div>
+        {ctx.writing && (
+          <WritingState
+            onStop={() => {
+              ctx.stopWriting()
+              document.getElementById("job-description")?.focus()
+            }}
+          />
+        )}
         <FieldDescription className="flex justify-between tabular-nums">
           <span>{n < 150 ? "Aim for 150+ characters" : "Good length"}</span>
           <span>{n} / 3000</span>
@@ -1734,10 +1754,13 @@ function ReviewSection({
   title,
   onEdit,
   children,
+  missing,
 }: {
   title: React.ReactNode
   onEdit: () => void
   children: React.ReactNode
+  /** A required answer is not there yet (an AI draft that left it out). */
+  missing?: boolean
 }) {
   return (
     <section className="flex flex-col gap-2 border-t border-border py-4 first:border-t-0 first:pt-0 last:pb-0">
@@ -1747,7 +1770,9 @@ function ReviewSection({
           <Pencil aria-hidden /> Edit
         </Button>
       </div>
-      <div className="text-sm text-muted-foreground">{children}</div>
+      <div className="text-sm text-muted-foreground">
+        {missing ? <span className="font-medium text-destructive">Not answered yet</span> : children}
+      </div>
     </section>
   )
 }
@@ -1765,12 +1790,15 @@ function Review(ctx: ScreenCtx) {
   }
   // ?flow=essential has no description step: it is written here.
   const { essential, writeDescription } = ctx
+  // Written before a late answer (the location): rewrite it, unless edited by hand.
+  const stale = ctx.descriptionStale && ctx.aiFilled.includes("description")
   const wrote = React.useRef(false)
   React.useEffect(() => {
-    if (!essential || wrote.current || draft.description.trim()) return
+    if (!essential || wrote.current || (draft.description.trim() && !stale)) return
     wrote.current = true
-    void writeDescription()
-  }, [essential, draft.description, writeDescription])
+    void writeDescription(undefined, draft)
+  }, [essential, draft, stale, writeDescription])
+  const unanswered = (...ids: ScreenId[]) => SCREENS.some((s) => ids.includes(s.id) && s.check?.(draft))
   const strict = (s: "must" | "preferred") => (s === "preferred" ? " (preferred)" : "")
   const reqs = [
     draft.education && `${EDUCATION_LABELS[draft.education]}${strict(draft.strictness.education)}`,
@@ -1779,13 +1807,23 @@ function Review(ctx: ScreenCtx) {
     experienceLabel(draft) &&
       `${experienceLabel(draft)}${draft.experienceType === "experienced" ? strict(draft.strictness.experience) : ""}`,
   ].filter(Boolean)
-  // Essential: only what narrows who can apply; the open answers say nothing.
-  const narrows = [
-    draft.assets.length > 0 && `Must have: ${draft.assets.join(", ")}`,
-    draft.education && draft.education !== "10th" && reqs[0],
-    draft.english && draft.english !== "none" && `${ENGLISH_LABELS[draft.english]}${strict(draft.strictness.english)}`,
-    draft.experienceType && draft.experienceType !== "any" && reqs[reqs.length - 1],
-  ].filter(Boolean)
+  // Essential: "Who can apply" lists what the role asked. A question the role
+  // skipped was set to its open answer; it gets its own row, so it can still
+  // be changed (user call, 2026-11-10).
+  const WHO: Record<string, { title: string; value: string }> = {
+    preferences: { title: "Must have", value: draft.assets.join(", ") || "Nothing" },
+    education: {
+      title: "Education",
+      value: draft.education && draft.education !== "10th" ? EDUCATION_LABELS[draft.education] : "Any",
+    },
+    english: {
+      title: "English",
+      value: draft.english && draft.english !== "none" ? ENGLISH_LABELS[draft.english] : "Not needed",
+    },
+    experience: { title: "Experience", value: experienceLabel(draft) ?? "Any" },
+  }
+  const asks = ctx.asks ?? []
+  const skipped = essential ? Object.keys(WHO).filter((id) => !asks.includes(id as ScreenId)) : []
   const prefs = [
     draft.languages.join(", "),
     draft.skills.join(", "),
@@ -1800,12 +1838,12 @@ function Review(ctx: ScreenCtx) {
       {/* Phones get the preview here; wider screens have it beside the questions. */}
       <div className="flex justify-center lg:hidden">
         <div className="w-full max-w-xs">
-          <CandidateJobPreview draft={draft} />
+          <CandidateJobPreview draft={draft} hideOpen={essential} />
         </div>
       </div>
 
       <div className="flex flex-col rounded-card-nested border border-border bg-card p-4">
-        <ReviewSection title="Job" onEdit={() => ctx.edit("title")}>
+        <ReviewSection title="Job" onEdit={() => ctx.edit("title")} missing={unanswered("title")}>
           {draft.title || "—"} · {companyName(draft)}
           <br />
           {[
@@ -1817,10 +1855,14 @@ function Review(ctx: ScreenCtx) {
             .filter(Boolean)
             .join(" · ")}
         </ReviewSection>
-        <ReviewSection title="Location" onEdit={() => ctx.edit("location")}>
+        <ReviewSection
+          title="Location"
+          onEdit={() => ctx.edit(draft.locationType ? "location" : "workplace")}
+          missing={unanswered("workplace", "location")}
+        >
           {locationLabel(draft) ?? "—"}
         </ReviewSection>
-        <ReviewSection title="Pay & perks" onEdit={() => ctx.edit("salary")}>
+        <ReviewSection title="Pay & perks" onEdit={() => ctx.edit("salary")} missing={unanswered("salary", "perks")}>
           {salaryLabel(draft) ? `${salaryLabel(draft)} / month` : "—"}
           {draft.perks.length > 0 && <> · {draft.perks.join(", ")}</>}
           <br />
@@ -1828,18 +1870,29 @@ function Review(ctx: ScreenCtx) {
             ? `Joining fee ${inr(draft.joiningFeeDetails.amount)}`
             : "No joining fee"}
         </ReviewSection>
-        <ReviewSection title="Who can apply" onEdit={() => ctx.edit("education")}>
-          {essential ? narrows.join(" · ") || "Anyone can apply" : reqs.join(" · ") || "—"}
+        <ReviewSection
+          title="Who can apply"
+          onEdit={() => ctx.edit(asks[0] ?? "education")}
+          missing={unanswered("education", "english", "experience")}
+        >
+          {essential ? asks.map((id) => `${WHO[id].title}: ${WHO[id].value}`).join(" · ") : reqs.join(" · ") || "—"}
         </ReviewSection>
+        {skipped.map((id) => (
+          <ReviewSection key={id} title={WHO[id].title} onEdit={() => ctx.edit(id as ScreenId)}>
+            {WHO[id].value}
+          </ReviewSection>
+        ))}
         {(!ctx.essential || prefs.length > 0) && (
           <ReviewSection title="Preferences" onEdit={() => ctx.edit("preferences")}>
             {prefs.join(" · ") || "None"}
           </ReviewSection>
         )}
         <ReviewSection title="Description" onEdit={() => ctx.edit("description")}>
-          <span className="line-clamp-3 whitespace-pre-line">
-            {draft.description || (ctx.writing ? "Writing…" : "—")}
-          </span>
+          {ctx.writing ? (
+            <WritingState compact onStop={ctx.stopWriting} />
+          ) : (
+            <span className="line-clamp-3 whitespace-pre-line">{draft.description || "—"}</span>
+          )}
         </ReviewSection>
         {ctx.essential ? (
           // Asked after posting (Finish setup); until then these defaults hold.

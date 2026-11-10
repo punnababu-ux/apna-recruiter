@@ -153,6 +153,16 @@ gets a pointer here, not a copy.
 32b. **Voice sits under the thumb** (approved 2026-11-10). In a prompt box
     the mic is a round button beside the send arrow, bottom right, never
     bottom left. The arrow always shows and is disabled until there is text.
+32c. **One question per screen on phones** (approved 2026-11-10). Never put
+    two questions on one phone screen to save a step; ask fewer questions
+    instead. Desktop may group a topic. A line with "Change" is not a question.
+32d. **An AI-filled flow is the same flow** (approved 2026-11-10). After an
+    AI draft the recruiter walks the same questions as by hand, filled in,
+    and taps Next. Never a different path or a jump to the review.
+32e. **AI work looks the same everywhere** (approved 2026-11-10). Whenever
+    the AI is writing or drafting, the box wears the loading ring, the page
+    the AI backdrop, and a strip rolls what it is doing. The way out is a
+    link in the strip, never an outlined CTA. Arriving text types in.
 
 ## 1a. Audit: the current version
 
