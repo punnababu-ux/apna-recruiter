@@ -2,8 +2,8 @@
 
 /**
  * The wizard's "Describe the job" screen: one prompt box, and every later
- * screen arrives answered from it. Voice is a first-class way in (a labelled
- * "Speak" pill; while listening the box glows and the chips say what to say
+ * screen arrives answered from it. Voice is a first-class way in (a mic beside the send
+ * arrow, on the right; while listening the box glows and the chips say what to say
  * next). Example chips fill the
  * box and focus it, so they read as a starting point to edit, not a menu.
  * The CTA ("Draft my job") and "Fill it in myself" live in the wizard
@@ -12,7 +12,7 @@
 
 import * as React from "react"
 import { createPortal } from "react-dom"
-import { AudioLines, Badge, Button, Check, Plus, PromptInput, WizardQuestion } from "@apna/design-system"
+import { AudioLines, Badge, Button, Check, Circle, PromptInput, WizardQuestion } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 import { promptSignals, type PromptSignals } from "@/lib/apnahire/prompt-parse"
 import { useSpeechRecognition } from "@/hooks/use-speech-recognition"
@@ -64,8 +64,10 @@ function PromptCoverage({ prompt, listening }: { prompt: string; listening: bool
   const missing = SIGNALS.filter((s) => !signals[s.key])
   const next = listening ? missing[0] : undefined
   const done = prompt.trim() && missing.length === 0
+  // Before any input the placeholder's example already says what to include.
+  if (!prompt.trim() && !listening) return null
   return (
-    <div className="relative z-20 flex flex-col gap-2" aria-live="polite">
+    <div className="relative z-20 flex flex-col gap-2 animate-in fade-in duration-200" aria-live="polite">
       <div className="flex flex-wrap items-center gap-2">
         {SIGNALS.map((s) => {
           const on = signals[s.key]
@@ -76,11 +78,12 @@ function PromptCoverage({ prompt, listening }: { prompt: string; listening: bool
               className={cn(
                 "gap-1",
                 on && "animate-in zoom-in-95 duration-200",
-                !on && s !== next && "border-dashed bg-card text-muted-foreground",
+                !on && s !== next && "bg-card text-muted-foreground",
                 s === next && "animate-pulse border-primary text-primary",
               )}
             >
-              {on ? <Check aria-hidden /> : <Plus aria-hidden />}
+              {/* Status only: a + or dashed outline read as "tap to add" in user testing. */}
+              {on ? <Check aria-hidden /> : <Circle aria-hidden />}
               {s.label}
             </Badge>
           )
@@ -134,25 +137,20 @@ export function DescribeStep({
     speech.start()
   }
 
-  // Talk, after Gemini: a tinted round-ended control with sound bars; while
-  // listening it turns into a pill of moving light (ai-voice).
-  const voiceControl = speech.supported ? (
+  // Mic beside the send arrow, both under the right thumb (ChatGPT, Claude).
+  // The arrow stays disabled until there is text.
+  const micIcon = speech.supported && (
     <Button
       type="button"
-      size="sm"
-      variant="ghost"
-      className={cn(
-        "rounded-full text-foreground",
-        speech.listening ? "ai-voice px-4" : "bg-info/10 text-info hover:bg-info/15",
-      )}
+      size="icon"
+      variant={speech.listening ? "ghost" : "outline"}
+      className={cn("rounded-full", speech.listening && "ai-voice")}
       aria-pressed={speech.listening}
+      aria-label={speech.listening ? "Stop speaking" : "Speak"}
       onClick={toggleMic}
     >
-      {speech.listening ? <VoiceWave /> : <AudioLines className="size-4" aria-hidden />}
-      {speech.listening ? "Listening · Stop" : "Speak"}
+      {speech.listening ? <VoiceWave /> : <AudioLines aria-hidden />}
     </Button>
-  ) : (
-    <span />
   )
 
   return (
@@ -183,10 +181,6 @@ export function DescribeStep({
             aria-label="About the job"
             ref={inputRef}
             size="lg"
-            hideSubmit
-            // Phones: the keyboard hides the footer's "Draft my job", so the
-            // box shows its own arrow while typing.
-            submitWhileTyping={!speech.listening}
             submitLabel="Draft my job"
             enterKeyHint="go"
             value={prompt}
@@ -202,7 +196,7 @@ export function DescribeStep({
                 : "e.g. Telecaller in Koramangala, ₹15–20k, graduate, Hindi, 1 year experience"
             }
             disabled={drafting}
-            footerStart={drafting ? <span /> : voiceControl}
+            actions={drafting ? undefined : micIcon}
           />
           {drafting && <span aria-hidden className="loading-ring" />}
         </div>

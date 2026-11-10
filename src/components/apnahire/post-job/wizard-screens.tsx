@@ -190,6 +190,11 @@ export interface ScreenCtx {
   stopWriting: () => void
   /** The answers the description was written from have changed since. */
   descriptionStale: boolean
+  /** PREVIEW (?flow=essential): Review shows only what was asked. */
+  essential?: boolean
+  /** PREVIEW (?flow=essential): one part of a screen. Perks: the joining fee
+   *  line ("fee") or the chips ("perks"). Preferences: "assets" only. */
+  part?: "fee" | "perks" | "assets"
 }
 
 export interface ScreenDef {
@@ -1255,26 +1260,30 @@ function Perks(ctx: ScreenCtx) {
   }
   return (
     <>
-      <WizardQuestion
-        eyebrow={<AiTag ctx={ctx} keys={["perks"]} />}
-        title="Any extra perks?"
-        description="Perks attract more applicants."
-      />
-      <ChipMultiSelect
-        label="Perks"
-        options={perks}
-        value={draft.perks}
-        onChange={(v) => update("perks", v)}
-        icons={PERK_ICONS}
-        size="lg"
-      />
-      <AddCustom
-        placeholder="Add another perk"
-        onAdd={(v) => update("perks", Array.from(new Set([...draft.perks, v])))}
-      />
+      {ctx.part !== "fee" && (
+        <>
+          <WizardQuestion
+            eyebrow={<AiTag ctx={ctx} keys={["perks"]} />}
+            title="Any extra perks?"
+            description="Perks attract more applicants."
+          />
+          <ChipMultiSelect
+            label="Perks"
+            options={perks}
+            value={draft.perks}
+            onChange={(v) => update("perks", v)}
+            icons={PERK_ICONS}
+            size="lg"
+          />
+          <AddCustom
+            placeholder="Add another perk"
+            onAdd={(v) => update("perks", Array.from(new Set([...draft.perks, v])))}
+          />
+        </>
+      )}
 
-      <Separator />
-      <p className="flex items-center gap-2 text-sm text-muted-foreground">
+      {!ctx.part && <Separator />}
+      <p className={cn("flex items-center gap-2 text-sm text-muted-foreground", ctx.part === "perks" && "hidden")}>
         {fee ? (
           <IndianRupee className="size-4 shrink-0" aria-hidden />
         ) : (
@@ -1421,6 +1430,13 @@ function Preferences(ctx: ScreenCtx) {
   )
   // Languages and skills up front; the rarer ones on "More" unless filled.
   const [more, setMore] = React.useState(() => open.some((v) => v !== "languages" && v !== "skills"))
+  if (ctx.part === "assets")
+    return (
+      <>
+        <WizardQuestion title="What must they have?" description="Only matching candidates can apply." />
+        <ChipMultiSelect label="Must have" options={ASSETS} value={draft.assets} onChange={(v) => update("assets", v)} size="lg" />
+      </>
+    )
   return (
     <>
       <WizardQuestion
@@ -1747,6 +1763,14 @@ function Review(ctx: ScreenCtx) {
     setStatus(changed ? "Updated." : "No changes. Try rephrasing.")
     if (changed) setInstruction("")
   }
+  // ?flow=essential has no description step: it is written here.
+  const { essential, writeDescription } = ctx
+  const wrote = React.useRef(false)
+  React.useEffect(() => {
+    if (!essential || wrote.current || draft.description.trim()) return
+    wrote.current = true
+    void writeDescription()
+  }, [essential, draft.description, writeDescription])
   const strict = (s: "must" | "preferred") => (s === "preferred" ? " (preferred)" : "")
   const reqs = [
     draft.education && `${EDUCATION_LABELS[draft.education]}${strict(draft.strictness.education)}`,
@@ -1755,10 +1779,17 @@ function Review(ctx: ScreenCtx) {
     experienceLabel(draft) &&
       `${experienceLabel(draft)}${draft.experienceType === "experienced" ? strict(draft.strictness.experience) : ""}`,
   ].filter(Boolean)
+  // Essential: only what narrows who can apply; the open answers say nothing.
+  const narrows = [
+    draft.assets.length > 0 && `Must have: ${draft.assets.join(", ")}`,
+    draft.education && draft.education !== "10th" && reqs[0],
+    draft.english && draft.english !== "none" && `${ENGLISH_LABELS[draft.english]}${strict(draft.strictness.english)}`,
+    draft.experienceType && draft.experienceType !== "any" && reqs[reqs.length - 1],
+  ].filter(Boolean)
   const prefs = [
     draft.languages.join(", "),
     draft.skills.join(", "),
-    draft.assets.length ? `Must own: ${draft.assets.join(", ")}` : "",
+    draft.assets.length && !essential ? `Must own: ${draft.assets.join(", ")}` : "",
     draft.gender !== "any" ? (draft.gender === "male" ? "Male" : "Female") : "",
   ].filter(Boolean)
   return (
@@ -1798,14 +1829,27 @@ function Review(ctx: ScreenCtx) {
             : "No joining fee"}
         </ReviewSection>
         <ReviewSection title="Who can apply" onEdit={() => ctx.edit("education")}>
-          {reqs.join(" · ") || "—"}
+          {essential ? narrows.join(" · ") || "Anyone can apply" : reqs.join(" · ") || "—"}
         </ReviewSection>
-        <ReviewSection title="Preferences" onEdit={() => ctx.edit("preferences")}>
-          {prefs.join(" · ") || "None"}
-        </ReviewSection>
+        {(!ctx.essential || prefs.length > 0) && (
+          <ReviewSection title="Preferences" onEdit={() => ctx.edit("preferences")}>
+            {prefs.join(" · ") || "None"}
+          </ReviewSection>
+        )}
         <ReviewSection title="Description" onEdit={() => ctx.edit("description")}>
-          <span className="line-clamp-3 whitespace-pre-line">{draft.description || "—"}</span>
+          <span className="line-clamp-3 whitespace-pre-line">
+            {draft.description || (ctx.writing ? "Writing…" : "—")}
+          </span>
         </ReviewSection>
+        {ctx.essential ? (
+          // Asked after posting (Finish setup); until then these defaults hold.
+          <section className="flex flex-col gap-2 border-t border-border pt-4">
+            <h2 className="text-sm font-semibold text-foreground">After you post</h2>
+            <p className="text-sm text-muted-foreground">
+              We ask about walk-ins, perks and questions for applicants. Until then, candidates call you.
+            </p>
+          </section>
+        ) : (
         <ReviewSection title="Interview & contact" onEdit={() => ctx.edit("interview")}>
           {draft.walkIn ? "Walk-in" : "Scheduled interviews"} ·{" "}
           {draft.contact === "self"
@@ -1814,6 +1858,7 @@ function Review(ctx: ScreenCtx) {
               ? `Candidates call ${draft.otherRecruiter.name || "a teammate"}`
               : "You call candidates first"}
         </ReviewSection>
+        )}
       </div>
 
       <div className="flex flex-col gap-2">

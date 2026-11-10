@@ -72,6 +72,7 @@ export function normalizeDraft(d: Partial<JobPostDraft> | undefined): JobPostDra
 
 /** Account data — in production these come from the recruiter's profile. */
 export const COMPANY_NAME = "PixelVeda Studios"
+export const COMPANY_INDUSTRY = "IT & Software"
 
 /** The company candidates see on the post. */
 export const companyName = (d: JobPostDraft) =>

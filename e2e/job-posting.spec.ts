@@ -217,6 +217,27 @@ test.describe("job posting: drafts", () => {
     await expectScreenLayout(page, "salary")
   })
 
+  test("?flow=short (preview) puts related questions on one page", async ({ page }) => {
+    await open(page, JOB_POST)
+    await seedFlow(page, "job-type")
+    await page.goto(`${JOB_POST}?resume=1&flow=short`, { waitUntil: "networkidle" })
+    await expect(page.getByRole("heading", { name: "What type of job is it?" })).toBeVisible()
+    await expect(page.getByRole("heading", { name: "Where will they work?" })).toBeVisible()
+    const fits = await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)
+    expect(fits).toBe(true)
+  })
+
+  test("?flow=essential (preview) asks only what a job needs", async ({ page }) => {
+    await open(page, JOB_POST)
+    await seedFlow(page, "workplace")
+    await page.goto(`${JOB_POST}?resume=1&flow=essential`, { waitUntil: "networkidle" })
+    await expect(page.getByRole("heading", { name: "Where will they work?" })).toBeVisible()
+    // Job type is a default here, not a question.
+    await expect(page.getByRole("heading", { name: "What type of job is it?" })).toHaveCount(0)
+    const fits = await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)
+    expect(fits).toBe(true)
+  })
+
   test("Back steps to the previous screen and keeps the answer", async ({ page }) => {
     await open(page, JOB_POST)
     await seedFlow(page, "industry")

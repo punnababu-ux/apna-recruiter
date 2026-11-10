@@ -54,6 +54,7 @@ import {
   ListChecks,
   MapPin,
   Phone,
+  Plus,
   SlidersHorizontal,
   Store,
   Tag,
@@ -86,14 +87,54 @@ import {
 import { EMPTY_JOB_DRAFT, locationLabel, mergeDraft, normalizeDraft } from "@/lib/apnahire/job-draft"
 import { rememberPostIntent } from "@/lib/apnahire/post-intent"
 import { PaymentSuccess } from "@/components/apnahire/payment-success"
+import { FinishSetup } from "@/components/apnahire/post-job/finish-setup"
+import { ALL_ASKS, roleAsks, withEssentials } from "@/lib/apnahire/role-profiles"
 import { CityLockDialog } from "@/components/apnahire/city-lock-dialog"
 import { SlotsFullDialog } from "@/components/apnahire/slots/slots-full-dialog"
 import { freeSlots, lockSubscriptionCity, setJobSlots, todayLabel, useJobSlots } from "@/hooks/use-job-slots"
 import { cn } from "@/lib/utils"
+import { useIsMobile } from "@/hooks/use-mobile"
 import type { JobPostDraft } from "@/types/apnahire-job"
 
 const noSubscribe = () => () => {}
 const hasWashFlag = () => new URLSearchParams(window.location.search).has("wash")
+/** The first question still unanswered; `among`: only these (the essential flow's own). */
+const firstMissing = (draft: JobPostDraft, among?: ScreenId[]) =>
+  SCREENS.find((s) => (among ? among.includes(s.id) : s.id !== "review") && s.check?.(draft))
+const flowFlag = () => new URLSearchParams(window.location.search).get("flow")
+
+// PREVIEW ONLY (?flow=short): fewer steps. Related questions share a page:
+// short ones on phones, a topic on desktop (the room is there). An AI draft lands on Review.
+const PHONE_PAGES: ScreenId[][] = [
+  ["title", "category"],
+  ["industry"],
+  ["job-type", "workplace"],
+  ["location"],
+  ["salary", "perks"],
+  ["education"],
+  ["english", "experience"],
+  ["preferences", "screening"],
+  ["description"],
+  ["interview", "contact"],
+]
+const DESKTOP_PAGES: ScreenId[][] = [
+  // Job details in two: one page of it ran 4.7 screens tall.
+  ["title", "category", "industry", "job-type", "workplace"],
+  ["location", "salary", "perks"],
+  ["education", "english", "experience", "preferences", "screening"],
+  ["description"],
+  ["interview", "contact"],
+]
+
+// PREVIEW ONLY (?flow=essential): ask only what a candidate is matched on.
+// The role, industry and description are worked out; "Who can apply" follows
+// the role (role-profiles.ts); the rest is asked after posting (FinishSetup).
+const essentialPages = (phone: boolean, category: string, allAsks: boolean): ScreenId[][] => {
+  const who = allAsks ? ALL_ASKS : roleAsks(category)
+  return phone
+    ? [["title"], ["workplace", "location"], ["salary", "perks"], who]
+    : [["title", "workplace", "location", "salary", "perks"], who]
+}
 
 interface FlowState {
   screen: ScreenId
@@ -258,6 +299,13 @@ export function PostJobFlow() {
   /** "Draft my job" is running — on the Describe screen, not a screen of its own. */
   const [drafting, setDrafting] = React.useState(false)
   const washPreview = React.useSyncExternalStore(noSubscribe, hasWashFlag, () => false)
+  const flow = React.useSyncExternalStore(noSubscribe, flowFlag, () => null)
+  const essential = flow === "essential"
+  /** Both previews show a page of questions and send an AI draft to Review. */
+  const shortFlow = flow === "short" || essential
+  /** Essential: "Add a requirement" shows the questions the role left out. */
+  const [allAsks, setAllAsks] = React.useState(false)
+  const isMobile = useIsMobile()
   /** Posted into a subscription slot: show the job-live screen. */
   const [live, setLive] = React.useState<{ title: string; note: string } | null>(null)
   const [refining, setRefining] = React.useState(false)
@@ -299,6 +347,26 @@ export function PostJobFlow() {
   // An id this version doesn't know (a draft saved by a newer build) falls
   // back to the first screen instead of crashing.
   const def = SCREENS[screenIndex(state.screen)] ?? SCREENS[0]
+  // The questions on screen together: one, or (?flow=short) a page of them.
+  const pages = essential
+    ? essentialPages(isMobile, state.draft.category, allAsks)
+    : shortFlow
+      ? isMobile
+        ? PHONE_PAGES
+        : DESKTOP_PAGES
+      : null
+  const pageIndex = pages?.findIndex((p) => p.includes(def.id)) ?? -1
+  /** Essential: the questions it asks; the rest never block or get asked. */
+  const asked = essential ? pages?.flat() : undefined
+  const whoPage = essential && pageIndex === pages!.length - 1
+  const pageIds = pages?.find((p) => p.includes(def.id)) ?? [def.id]
+  const page = pageIds.map((id) => SCREENS[screenIndex(id)])
+  const pageStart = (id: ScreenId) => pages?.find((p) => p.includes(id))?.[0] ?? id
+  // Opened on a question further down its page (review's Edit, the step menu).
+  React.useEffect(() => {
+    if (pageIds[0] !== def.id) document.getElementById(`q-${def.id}`)?.scrollIntoView({ block: "start" })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [def.id])
 
   const goTo = React.useCallback(
     (screen: ScreenId, dir: "forward" | "back" = "forward", returnTo: ScreenId | null = null) => {
@@ -356,23 +424,26 @@ export function PostJobFlow() {
   const finishDrafting = React.useCallback(() => {
     const result = draftResult ?? {}
     // A joining fee the AI heard about still needs the recruiter's own answer.
-    const draft = {
-      ...mergeDraft(EMPTY_JOB_DRAFT, result),
-      joiningFeeAnswered: false,
-    }
+    const merged = { ...mergeDraft(EMPTY_JOB_DRAFT, result), joiningFeeAnswered: false }
+    const draft = essential ? withEssentials(merged) : merged
+    const missing = shortFlow
+      ? firstMissing(draft, essential ? essentialPages(isMobile, draft.category, false).flat() : undefined)
+      : undefined
     setState((s) => ({
       ...s,
-      screen: "title",
+      // ?flow=short: the draft answers the questions, so go check it. Anything
+      // required it missed is asked first, one page after the other.
+      screen: shortFlow ? (missing?.id ?? "review") : "title",
       draft,
       draftedPrompt: s.prompt.trim(),
       aiFilled: filledKeys(result),
-      returnTo: null,
+      returnTo: missing ? "review" : null,
       descriptionBasis: draft.description ? descriptionBasisOf(draft) : "",
     }))
     setDrafting(false)
     setDirection("forward")
     window.scrollTo({ top: 0 })
-  }, [draftResult, setState])
+  }, [draftResult, setState, shortFlow, essential, isMobile])
 
   /** Resolves true when the AI changed something. */
   const refine = async (instruction: string): Promise<boolean> => {
@@ -497,33 +568,45 @@ export function PostJobFlow() {
   // A subscription without a city locks to this job's, confirmed on the
   // location step; one with a city only posts there.
   const [cityLockOpen, setCityLockOpen] = React.useState(false)
+  const moreMissing =
+    shortFlow && state.returnTo === "review"
+      ? SCREENS.find(
+          (s) =>
+            !pageIds.includes(s.id) && (asked ? asked.includes(s.id) : s.id !== "review") && s.check?.(state.draft),
+        )
+      : undefined
   const next = (cityConfirmed = false) => {
-    if (state.screen === "location" && slots && state.draft.city) {
+    const failing = page.find((s) => s.check?.(state.draft))
+    if (pageIds.includes("location") && slots && state.draft.city) {
       if (slots.city && slots.city !== state.draft.city) {
         setError(`Your plan hires in ${slots.city} only`)
         setAttempts((n) => n + 1)
         return
       }
-      if (!slots.city && !cityConfirmed && !def.check?.(state.draft)) return setCityLockOpen(true)
+      if (!slots.city && !cityConfirmed && !failing) return setCityLockOpen(true)
     }
     if (state.screen === "describe") return drafting ? undefined : submitPrompt()
     // Safety net: an answer can go missing after its screen was passed (a
     // later edit, a jump back). Review doesn't send you hunting — it opens
     // the first unfinished screen with what's missing.
     if (state.screen === "review") {
-      const unfinished = SCREENS.find((s) => s.id !== "review" && s.check?.(state.draft))
+      // Essential: its own questions first; a description still being written last.
+      const unfinished = (asked && firstMissing(state.draft, asked)) || firstMissing(state.draft)
       if (unfinished) {
-        goTo(unfinished.id, "back")
+        goTo(unfinished.id, "back", shortFlow ? "review" : null)
         setError(unfinished.check!(state.draft))
         return
       }
     }
-    const problem = def.check?.(state.draft)
-    if (problem) {
-      setError(problem)
+    if (failing) {
+      setError(failing.check!(state.draft))
       setAttempts((n) => n + 1)
+      if (page.length > 1) document.getElementById(`q-${failing.id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })
       return
     }
+    // ?flow=short: finish every missing answer before going back to Review,
+    // so Review never bounces the recruiter out one question at a time.
+    if (moreMissing) return goTo(moreMissing.id, "forward", "review")
     if (state.returnTo) return goTo(state.returnTo)
     if (state.screen === "review") {
       persistDraft(state)
@@ -532,10 +615,14 @@ export function PostJobFlow() {
         if (freeSlots(slots) > 0) return postInSlot()
         return setSlotsFullOpen(true)
       }
-      router.push("/apnahire/jobs/new/plans")
+      router.push(essential ? "/apnahire/jobs/new/plans?flow=essential" : "/apnahire/jobs/new/plans")
       return
     }
-    const following = SCREENS[screenIndex(state.screen) + 1]
+    // Essential: the title gives the role, and the role its usual answers.
+    if (essential && pageIds.includes("title")) setState((s) => ({ ...s, draft: withEssentials(s.draft) }))
+    // A page of questions: the next page, then Review.
+    if (pages && pageIndex >= 0) return goTo(pages[pageIndex + 1]?.[0] ?? "review")
+    const following = SCREENS[screenIndex(def.id) + 1]
     if (following) goTo(following.id)
   }
 
@@ -543,7 +630,12 @@ export function PostJobFlow() {
     // From review's Edit, Back cancels the edit; after a jump from the step
     // menu it steps back as usual and still remembers the furthest question.
     if (state.returnTo === "review") return goTo(state.returnTo, "back")
-    const previous = SCREENS[screenIndex(state.screen) - 1]
+    const before = SCREENS[screenIndex(pageIds[0]) - 1]
+    // A page of questions: the page before it (from Review, the last page).
+    const pageBefore = pages && (pageIndex > 0 ? pages[pageIndex - 1] : def.id === "review" ? pages[pages.length - 1] : null)
+    const previous = pageBefore
+      ? SCREENS[screenIndex(pageBefore[0])]
+      : before && SCREENS[screenIndex(pageStart(before.id))]
     if (state.returnTo && previous?.stage) return goTo(previous.id, "back", state.returnTo)
     // The manual intro is only on the way in by hand; an AI draft's first
     // question goes back to its description.
@@ -564,7 +656,9 @@ export function PostJobFlow() {
     drafting,
     draftResult,
     finishDrafting,
-    edit: (id) => goTo(id, "forward", state.screen),
+    // Essential: "Who can apply" opens the role's page, whatever it starts with.
+    edit: (id) => goTo(essential && id === "education" ? pages![pages!.length - 1][0] : id, "forward", state.screen),
+    essential,
     applyPatch,
     refine,
     refining,
@@ -608,11 +702,13 @@ export function PostJobFlow() {
   // Subscribers' last step commits: "Post job", the flow's one green CTA.
   const postsNow = state.screen === "review" && !state.returnTo && !!slots
   const nextLabel =
-    state.returnTo === "review"
+    moreMissing
+      ? "Next"
+      : state.returnTo === "review"
       ? "Done"
       : postsNow
         ? "Post job"
-        : def.isEmpty?.(state.draft)
+        : page.every((s) => s.isEmpty?.(state.draft))
           ? "Skip"
           : (def.cta ?? "Next")
 
@@ -629,6 +725,7 @@ export function PostJobFlow() {
         note={live.note}
         postedJob={{ title: live.title, onViewJobs: () => router.push("/apnahire/jobs") }}
         onSearchCandidates={() => router.push("/apnahire/database/search-candidates")}
+        setup={essential ? <FinishSetup draft={state.draft} /> : undefined}
       />
     )
   }
@@ -648,9 +745,10 @@ export function PostJobFlow() {
       <main className="relative z-10 flex-1 px-4 py-8 sm:px-6 sm:py-10">
         <div className={solo ? SOLO_WIDTH : WIZARD_LAYOUT}>
           <div
-            key={state.screen}
+            key={pageIds[0]}
             className={cn(
-              "flex min-w-0 flex-col gap-6 animate-in fade-in duration-300 fill-mode-both",
+              "flex min-w-0 flex-col animate-in fade-in duration-300 fill-mode-both",
+              page.length > 1 ? "gap-12" : "gap-6",
               direction === "forward" ? "slide-in-from-right-4" : "slide-in-from-left-4",
             )}
           >
@@ -664,8 +762,25 @@ export function PostJobFlow() {
               </p>
             )}
             {/* Filled in by hand (no AI draft): each question types itself in. */}
-            <WizardTypingProvider value={!state.draftedPrompt}>
-              <def.Render {...ctx} />
+            <WizardTypingProvider value={!state.draftedPrompt && page.length === 1}>
+              {whoPage && (
+                <p className="text-sm text-muted-foreground">
+                  The usual answers for {state.draft.category === "Other" ? "this job" : `${state.draft.category.toLowerCase()} jobs`}. Change what does not fit.
+                </p>
+              )}
+              {page.map((s) => (
+                <section key={s.id} id={`q-${s.id}`} className="flex scroll-mt-40 flex-col gap-6">
+                  <s.Render
+                    {...ctx}
+                    part={!essential ? undefined : s.id === "perks" ? "fee" : s.id === "preferences" && !allAsks ? "assets" : undefined}
+                  />
+                </section>
+              ))}
+              {whoPage && !allAsks && (
+                <Button type="button" variant="outline" size="lg" className="self-start" onClick={() => setAllAsks(true)}>
+                  <Plus aria-hidden /> Add a requirement
+                </Button>
+              )}
             </WizardTypingProvider>
           </div>
           {/* From the first question on: on Describe there's no job yet,

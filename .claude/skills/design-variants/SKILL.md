@@ -146,6 +146,13 @@ gets a pointer here, not a copy.
 32. **Familiar controls.** Underline tabs over custom chips; a scrolling tab
     row keeps its padding inside the scroll (starts 16px in, can scroll
     off the edge, every tab reachable at 320px).
+32a. **A status must not look like a button** (approved 2026-11-09). A + or
+    dashed outline says "tap to add". Read-only progress chips use a plain
+    pill and a circle, and appear only once there is input to report on
+    (job posting Describe).
+32b. **Voice sits under the thumb** (approved 2026-11-10). In a prompt box
+    the mic is a round button beside the send arrow, bottom right, never
+    bottom left. The arrow always shows and is disabled until there is text.
 
 ## 1a. Audit: the current version
 

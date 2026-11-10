@@ -25,7 +25,7 @@ export {
   Building, Building2, Calendar, CalendarCheck, CalendarClock,
   CalendarDays, Check, CheckCircle2, CheckIcon, CheckSquare,
   ChevronDown, ChevronDownIcon, ChevronLeft, ChevronRight, ChevronRightIcon,
-  ChevronUp, ChevronUpIcon, ChevronsUpDown, CircleCheck, CircleCheckBig, CircleCheckIcon,
+  ChevronUp, ChevronUpIcon, ChevronsUpDown, Circle, CircleCheck, CircleCheckBig, CircleCheckIcon,
   Clock, ClockFading, Code, Compass, Copy, Cpu,
   CreditCard, Database, DollarSign, Download, Edit,
   Edit3, ExternalLink, Eye, EyeOff, File,

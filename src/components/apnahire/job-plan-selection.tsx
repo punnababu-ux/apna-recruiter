@@ -56,6 +56,8 @@ import { clearPostIntent, wantsAiCalling } from "@/lib/apnahire/post-intent"
 import { useClientSnapshot } from "@/hooks/use-client-snapshot"
 import { GstNote } from "@/components/apnahire/gst-note"
 import { PaymentFailed, PaymentSuccess } from "@/components/apnahire/payment-success"
+import { FinishSetup } from "@/components/apnahire/post-job/finish-setup"
+import type { JobPostDraft } from "@/types/apnahire-job"
 import { addPurchasedJobCredits } from "@/hooks/use-plans-ingress"
 import { usePlans } from "@/hooks/apnahire/use-plans"
 import { ExitOfferDialog } from "@/components/apnahire/offers/exit-offer-dialog"
@@ -173,7 +175,13 @@ export function JobPlanSelection() {
   const [mandateMethod, setMandateMethod] = React.useState<SubscriptionPaymentMethod | null>(null)
   const [order, setOrder] = React.useState<{ lines: CartLine[]; total: number; id: string; note?: string } | null>(null)
   const [cartLines, setCartLines] = React.useState<CartLine[]>([])
-  const [postedTitle, setPostedTitle] = React.useState("Your job")
+  const [postedTitle, setPostedTitleOnly] = React.useState("Your job")
+  // PREVIEW (?flow=essential): the job-live screen asks the rest (FinishSetup).
+  const [postedDraft, setPostedDraft] = React.useState<Partial<JobPostDraft> | null>(null)
+  const setPostedTitle = (title: string) => {
+    setPostedTitleOnly(title)
+    if (new URLSearchParams(window.location.search).get("flow") === "essential") setPostedDraft(readDraft() as Partial<JobPostDraft>)
+  }
 
   // Upsells + exit loop.
   const offer = useExtraOff()
@@ -453,6 +461,7 @@ export function JobPlanSelection() {
         note={order.note}
         postedJob={{ title: postedTitle, onViewJobs: () => router.push("/apnahire/jobs") }}
         onSearchCandidates={() => router.push("/apnahire/database/search-candidates")}
+        setup={postedDraft ? <FinishSetup draft={postedDraft} /> : undefined}
       />
     )
   }

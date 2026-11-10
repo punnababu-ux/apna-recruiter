@@ -31,6 +31,8 @@ interface PaymentSuccessProps {
   postedJob?: { title: string; onViewJobs: () => void }
   /** What paid for it when nothing was charged, e.g. "Used 1 Premium job credit". */
   note?: string
+  /** PREVIEW (?flow=essential): the Finish setup list, under the title. */
+  setup?: React.ReactNode
 }
 
 export function PaymentSuccess({
@@ -41,6 +43,7 @@ export function PaymentSuccess({
   onPostJob,
   postedJob,
   note,
+  setup,
 }: PaymentSuccessProps) {
   const paid = total > 0
 
@@ -55,7 +58,7 @@ export function PaymentSuccess({
           </h1>
           {postedJob && (
             <p className="text-sm text-foreground">
-              {postedJob.title} is now visible to candidates. Nothing else to do.
+              {postedJob.title} is now visible to candidates.{setup ? "" : " Nothing else to do."}
             </p>
           )}
           {paid ? (
@@ -65,6 +68,7 @@ export function PaymentSuccess({
           )}
         </div>
 
+        {setup}
         {paid && <OrderDetails lines={lines} total={total} title="Payment details" />}
 
         {/* One solid primary (the screen's only green); phones stack it on top. */}

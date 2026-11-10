@@ -8,7 +8,68 @@ or **Open**.
 
 ---
 
+## Job posting: which questions does a job need? (2026-11-10)
+**Status: Leaning** (built as a preview, `?flow=essential`, 2026-11-10; waiting for Punna's review)
 
+- **Question:** the short flow only put the same 16 questions on fewer pages. Which of them must the recruiter answer to post a job?
+- **Proposal:** sort every field into four groups.
+  - **Ask (4):** job title, location with workplace, salary, joining fee.
+  - **Confirm (3, filled in for them):** education, experience, English, set from the job role, on one page.
+  - **Do not ask:** job role (from the title), industry (from the company), pay type (from the salary), description (the AI writes it).
+  - **Default, change on Review:** job type (full time), walk-in (no), contact (me), perks, preferences, screening questions.
+- **Why:** candidates are matched on role, place and pay. The rest is a filter or has one common answer, and a question with a common answer should be a default.
+- **What would change it:** the back end or policy needs a field answered by hand; data shows a default (full time, role-based education) is wrong too often.
+- **Not confirmed:** industry on the company profile; role-based defaults for who can apply.
+- **Added 2026-11-10 (Punna): ask some of it after the job is posted.** Leads do not arrive at once, so the wait is the time to ask.
+  - **After posting, as a "Finish setup" list** (payment confirmation and the job's page): walk-in or interview details, who candidates contact, screening questions, perks, preferences, description edits.
+  - **Each has a default, so a job nobody finishes still works:** contact is the recruiter who posted, no walk-in, no screening questions, no perks shown, no preferences.
+  - **Stays before posting:** title, location, salary, joining fee (candidates see it; safety), and who can apply (alerts go out when the job is posted, so a wrong filter wastes them).
+  - **Not confirmed:** whether an edit after posting sends the job back to review on the live product; whether alerts go out at once or after review.
+- **Added 2026-11-10 (Punna): the questions follow the kind of job.** A delivery job does not need education; it needs a two-wheeler and a licence. So "who can apply" is not one fixed page of education, experience and English.
+  - **One table, a profile per job role** (the 13 in `CATEGORIES`, found from the title by `CATEGORY_RULES`): which "who can apply" questions the role asks, what they default to, and what is hidden (still reachable through "Add a requirement").
+  - **Three families to start:** desk and calling (education, English, experience); field and delivery (vehicle, licence, smartphone; no education or English); home and site work (experience only, plus gender or age where recruiters ask it).
+  - **A hidden question takes the open answer** ("any"), never a narrow one.
+  - **Not confirmed:** the profiles are my estimate. They need the live form's data (what recruiters pick per role) before they ship.
+- **As built:** pay type defaults to fixed (three choices stay on the pay page). Review lists only what narrows who can apply ("Anyone can apply" when nothing does). "Finish setup" sits on the job-live screen; its answers are not saved to the job yet.
+
+---
+
+
+
+## Job posting: fewer steps, and one step at a time on desktop? (2026-11-10)
+
+- **Question:** the flow asks 16 questions on 16 screens, on phones and desktop alike. Desktop has the room for more. Airbnb and most onboarding flows still go one step at a time. Which way?
+- **Options:** (A) keep one question per screen everywhere. (B) one long form on desktop. (C) group related questions into pages: short pairs on phones, a topic per page on desktop. (D) after "Draft my job", skip the questions and land on Review.
+- **Decision (leaning, built as a preview at `?flow=short`):** C and D together.
+  - Phones: 16 screens → 10 pages (title + role, job type + workplace, salary + perks, English + experience, preferences + questions, interview + contact; industry, location, education and description stay alone).
+  - Desktop: 16 screens → 5 pages (the job; location and pay; who can apply; description; interview and contact).
+  - AI draft: Describe → Review, when the draft answers every required question. If it misses any, the missing ones are asked first, one page after the other ("Next", then "Done" on the last), and only then Review.
+  - Changed 2026-11-10 (Punna's review): the first build went to Review with answers missing, and "Choose a plan" sent the recruiter out and back once per missing answer. Review must never be a place you are bounced from: ask everything missing in one pass.
+- **Why:**
+  - One question per screen pays off when each answer needs thought and the person does it once (Airbnb hosts, onboarding). A recruiter knows these answers, posts often, and most answers are one tap. 16 "Next" taps is the cost; the questions are not.
+  - Desktop shows the candidate preview beside the form, so several answers on one page still give instant feedback.
+  - One job-details page on desktop was 4.7 screens tall, so it is two pages. No page is over 3 screens.
+  - Once the AI has filled the form, the task is "check it", and Review already does that with an Edit per section.
+  - Phones keep small pages: a long form on a phone hides errors and the keyboard covers the footer.
+- **What would change it:** recruiters skipping the lower questions on a page; AI drafts that are often wrong (then walk the pages after the draft); data showing first-time posters finish the 16-screen flow more often.
+- **Open:** Review does not yet mark what is missing before "Choose a plan" is pressed. Industry could come from the company profile, not be asked per job.
+- **Status:** Leaning. The live flow is unchanged.
+
+## Job posting: mic beside the send arrow (2026-11-10)
+
+- **Question:** the Speak pill sat at the bottom left of the Describe box, hard to reach with a right thumb. Where should voice go?
+- **Decision:** a round mic button next to the send arrow, both at the bottom right (ChatGPT, Claude). The arrow is always shown and disabled until there is text. Options weighed: one button that swaps mic → send (WhatsApp), and Speak in the footer (Gemini Live).
+- **Why:** thumb reach on phones; a familiar pattern; you can speak, then type to fix, then send. The swap hides the mic once text exists.
+- **What would change it:** recruiters missing the mic (it lost its "Speak" label), or the two ways to proceed (arrow and "Draft my job") confusing people.
+- **Status:** Decided (Punna's call).
+
+## Job posting: Describe chips are status, not buttons (2026-11-09)
+
+- **Question:** a user tapped the Role, Area, Salary and Who can apply chips to add that information. They only tick as the prompt covers each one. Should a tap work, or should they stop looking tappable?
+- **Decision:** they stay read-only and appear only once the recruiter starts typing or speaking. The + and dashed outline go; an unticked chip is a plain outlined pill with an empty circle (Punna's call).
+- **Why:** the + and dashed outline were what invited the tap. The placeholder's example already says what to include, so the empty screen does not need them. Once there is input, they show what is covered.
+- **What would change it:** users still tapping them in testing. The alternative is a tap that adds "Salary: " to the box and focuses it.
+- **Status:** Decided.
 
 ## Small icons for card facts (2026-11-09)
 

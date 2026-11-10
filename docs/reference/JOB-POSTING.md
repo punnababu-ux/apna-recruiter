@@ -21,6 +21,26 @@ Last updated 2026-11-06.
   `?resume=1` continues without asking; `&stage=…` opens a step's first
   question.
 
+## Preview: short flow (`?flow=short`, 2026-11-10)
+- Related questions share a page: 10 pages on phones, 5 on desktop
+  (`PHONE_PAGES`, `DESKTOP_PAGES` in `post-job-flow.tsx`). An AI draft lands
+  on Review; required answers it missed are asked first, in one pass. Not live; the reasons are in `DECISIONS.md`.
+
+## Preview: essential flow (`?flow=essential`, 2026-11-10)
+- **Asks:** title; workplace and location; salary (joining fee as a line with
+  Change); "Who can apply". Phones 4 pages, desktop 2, then Review.
+- **Works out:** job role from the title (`categoryForTitle`), industry from
+  the company (`COMPANY_INDUSTRY`), pay type (fixed), job type (full time),
+  the description (written on Review).
+- **"Who can apply" follows the role** (`src/lib/apnahire/role-profiles.ts`):
+  Delivery asks what they must have and experience; Telesales asks education,
+  English, experience. "Add a requirement" shows the rest. The profiles are an
+  estimate, not data.
+- **After posting:** the job-live screen shows "Finish setup"
+  (`post-job/finish-setup.tsx`): who candidates call, walk-in, questions for
+  applicants, perks. Answers are not saved to the job yet.
+- Not live; the reasons are in `DECISIONS.md`.
+
 ## Files
 | What | Where |
 |---|---|
@@ -48,6 +68,7 @@ Last updated 2026-11-06.
   salaries ("15 to 20 thousand").
 
 ## Voice
+- The mic is a round button beside the send arrow, bottom right of the box.
 - Uses the browser's own speech-to-text (`en-IN`). Chrome stops listening after
   silence, so the hook restarts until the recruiter taps Stop.
 - Android takes one phrase per session (continuous mode repeated words there).
