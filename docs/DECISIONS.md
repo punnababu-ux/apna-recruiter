@@ -8,6 +8,132 @@ or **Open**.
 
 ---
 
+## Editing a job after applications start: what may change (2026-11-12)
+**Status: Open** (to circle back; Punna)
+
+- **Question:** "View or edit job" needs an edit flow of its own (today it opens the whole posting flow). Once a job has applicants, which fields may still change?
+- **Punna's view:** who candidates call (too many calls, divert them), questions for applicants (filter spam from then on) and perks may change; unsure why job location would; perhaps everything may change.
+- **Proposal (not agreed):** three groups.
+  - *Change any time:* who candidates call, walk-in details, questions for applicants, perks added. They affect what happens next, not who applied.
+  - *Change, applies to new applicants only* (with a line saying so): distance, gender, age and other preferences, the address inside the same city, pay raised.
+  - *Locked, repost instead:* title, job role, city, job type, pay lowered. They are what candidates applied to and what was reviewed.
+- **Why not everything:** an applicant applied to a title, a pay and a place; changing those afterwards means calling people about a job they did not apply to.
+- **Why location stays editable:** job location and walk-in location are the most edited fields on live (data bank §2d): a wrong pin or an incomplete address. A correction in the same area is safe; a move to another city is a different job.
+- **Details that follow:** earlier applicants show "Not asked" for a question added later; tightening a preference never removes existing applicants; removing a perk is allowed.
+- **Not known:** the exact fields live lets a recruiter edit after posting (step 3 fully, steps 1 and 2 partly, per Punna), and whether an edit sends the job back for review.
+- **What would settle it:** the live list of editable fields, and why recruiters edit location (the edited-fields data by field and by time since posting).
+
+---
+
+## Job details: "About this job" holds the job's settings, edited in the same pop-up (2026-11-12)
+**Status: Decided** (Punna)
+
+- **Question:** in job details, ⋮ "About this job" had a "Preference" section whose Edit opened the whole posting flow. And once every Finish setup row was done, the card's banner went and there was no way back to those settings.
+- **Decision:** the section is now "Job settings": the seven Finish setup rows with their answers (who candidates call, walk-in, questions, location, distance, preferences, perks). A tap opens the same step-through pop-up, titled "Job settings" here. "apna alerts" moved to its own "Notifications" section (it is not a job setting; no editor yet). "View or edit job" stays for the full job.
+- **Why:** one editor for the same settings from the success screen, the job card and job details; it works for jobs from either flow.
+- **Prototype limit:** only the last posted job has saved answers; other jobs show sample answers and save nothing. The posted job has no job details page of its own yet.
+- **What would change it:** a settings area in job details outside the ⋮ panel.
+
+---
+
+## Job posting, essential: the Finish setup pop-up steps through the rows (2026-11-12)
+**Status: Decided** (Punna)
+
+- **Question:** every row had to be opened, answered and closed by itself, then the next one found in the list.
+- **Decision:** the list stays as the overview. A tap on any row opens the pop-up there; "Save and next" saves it and moves to the next row not saved yet (later rows first, then earlier ones). "Skip" (outline) moves on without saving. The header says "Job location · 4 of 7". With no unsaved row left, the button is "Done" and the pop-up closes. Closing at any point keeps what was saved; Skip and close drop the open row's unsaved edits.
+- **The guard:** it starts only on the recruiter's tap and every step can be skipped. A forced run of seven steps after posting would be the long form again, which essential exists to avoid.
+- **What would change it:** recruiters closing at the first step more often than before; then go back to one row per pop-up.
+
+---
+
+## Job posting, essential: Finish setup rows show their answer; preferences and perks show a count (2026-11-12)
+**Status: Decided** (Punna)
+
+- **Question:** "Gender, age and other preferences" showed only gender and age, so a driving licence, a certificate or an MBA set there did not show.
+- **Decision:** every row shows its answer, saved or not ("None", the job location, "Any distance"); the green tick says it was saved. Two rows show a count: preferences ("5 set", or "Anyone" when nothing is set) and perks ("4 perks", or "None"). Review also lists degrees under Preferences.
+- **Why:** only the preferences row is complex: it holds languages, skills, must-haves, degrees, gender and age, which do not fit a row. The other rows hold one short answer, and "None" is a real answer.
+- **Tried and dropped:** "Default" / "Done" as states on every row. Punna: it is unclear what the default is, and it hides answers that fit.
+- **What would change it:** the preferences panel being split into smaller rows.
+
+---
+
+## Job posting: the job role shows three rows, then "More roles" (2026-11-11)
+**Status: Decided** (Punna)
+
+- **Question:** the role list grew to 19 tiles. On desktop it shares a page with Industry, which shows six and "More industries".
+- **Decision:** the job role shows six tiles (three rows) and a "More roles" link, as Industry does, on phones and desktop. The picked or suggested role leads, so it is always in the first six.
+- **Why:** two lists on one page behave the same way, and Industry is reachable without scrolling past 19 tiles.
+- **What would change it:** recruiters picking a role outside the first six often; then order the six by how often each role is posted.
+
+---
+
+## Job posting, essential: Finish setup lives on the job's card, not on the dashboard (2026-11-11)
+**Status: Decided** (Punna)
+
+- **Question:** the Finish setup list sat as a block above the Jobs list. It felt wrong there: it is about one job, not the dashboard.
+- **Decision:** two places only. (1) The "job is live" screen, as before. (2) The job's own card on the Jobs page: a banner "N optional details left to add · Finish setup" that opens the list in a side panel (`SheetPanel`; full screen on phones). The banner goes once every row is answered. The job just posted leads the Jobs list.
+- **Chosen over** opening job details: the side panel keeps the recruiter in the list and is a short task; job details is a workspace for candidates.
+- **What would change it:** job details gaining a settings area of its own.
+
+---
+
+## Job posting: recruiters with credits barely drop in the form (2026-11-11)
+**Status: Data** (Mixpanel screenshot from Punna; table in `reference/JOB-POSTING-DATA.md` §2e)
+
+- **Numbers (3 months, sessions, credit holders):** 11,510 started; 5.5% leave at step 1; 8.1% leave across the whole form; 98% click pay; 84.5% post.
+- **What it corrects:** I had read the step 1 drop (new 20.9%, existing 13.8%) as mostly form friction. Credit holders lose 5.5% there, so most of that drop is intent or price doubt. The form's own friction is about 8 points end to end.
+- **For the design:** step 1 is still the form's largest drop, so the opening is the right place to work. But the gain in completed posts is capped at a few points for committed recruiters. The case for the new flows rests on time to post, effort before the price, and phones, more than on conversion.
+- **For the default-flow call:** the test should measure time and step 1 drop for new recruiters, not only posted jobs.
+
+---
+
+## Job posting, essential: Finish setup has a "Job location" row (2026-11-11)
+**Status: Decided** (Punna)
+
+- **Question:** the job location was asked once, with no way to change it after posting.
+- **Decision:** Finish setup gets a "Job location" row, above "How far candidates can live". It opens the same location question as the flow.
+- **Why:** on live, the job location and the walk-in location are the most edited fields (data bank §2d). Recruiters correct them after the fact, so the correction should be one tap.
+- **What would change it:** the edited-fields chart with a window and totals showing location edits are rare per job.
+
+---
+
+## Job posting: new against existing recruiters in the live funnel (2026-11-11)
+**Status: Data** (Mixpanel screenshot from Punna; full table in `reference/JOB-POSTING-DATA.md` §2b)
+
+- **Numbers (3 months, sessions):** new recruiters 95,150 started, 19.0% posted; existing 57,340 started, 50.0% posted. Step 1: new lose 20.9%, existing 13.8%. Steps 2 and 3: 1–3% each. Review: 4–6%. Pay click: new 31.1%, existing 76.3%.
+- **What it settles:** step 1 is the form's real problem for everyone, not only first-timers; the pay drop is the price surprise (a 45-point gap at the same screen). Existing recruiters are 38% of sessions and 61% of posted jobs.
+- **For the design:** the opening of the flow is where a redesign pays; the later steps already convert. A repost shortcut for existing recruiters is worth a look, since they post most jobs.
+- **Unexplained:** existing recruiters lose 11% between Review and the plan step; perhaps credit or subscription holders skip it.
+
+---
+
+## Job posting: the live funnel and time to post (2026-11-11)
+**Status: Data** (from Punna's Figma board "02 · Problem", employer-app file, node 1610:19163)
+
+- **Source:** Mixpanel "Job posting funnel", sessions, last 30 days at 3 Nov 2026, new recruiters only (user source = Onboarding). Times from Clarity, Step 1 to Review job.
+- **Entries:** desktop 9,285 (56%), mobile web 7,328 (44%).
+- **Funnel, share of the step before (count):**
+
+| Step | Desktop | Mobile web |
+|---|---|---|
+| Step 1 continue | 83.3% (7,738) | 75.0% (5,498) |
+| Review shown | 7,340 | 5,039 |
+| Review next | 96.8% (7,107) | 87.1% (4,388) |
+| Select plan | 97.6% (6,936) | 98.6% (4,328) |
+| Pay button click | 26.9% (1,869) | 18.7% (808) |
+| Job posted | 91.0% (1,701) | 85.4% (690) |
+| Entered to posted | 18.3% | 9.4% |
+
+- **Reading it:** of those who enter, 79% on desktop and 69% on mobile reach Review; 75% and 59% reach the plan step. Step 1 is the biggest drop inside the form (17% desktop, 25% mobile); mobile loses another 13% at Review. The largest drop of all is the plan step: only 27% (desktop) and 19% (mobile) click pay.
+- **Time, Step 1 to Review:** 25th percentile 4.4 min desktop, 3.5 min mobile; 75th 12.5 and 8.4; 90th 26.3 and 13.9. The form has 25+ inputs over 3 steps. The board notes desktop and mobile are different users and job types, not a like-for-like comparison.
+- **Recordings (40+):** dead clicks on dense chip groups (languages, requirements); the description sits below many selections; back-and-forth before preview; sessions dropped after interruptions or errors.
+- **What it means for us:** a shorter first step and a phone Review that opens on the answers aim at the two form drops. But the form is not the main leak: a perfect form lifts "reached plan" from 75% to at most 100% on desktop and 59% to 100% on mobile, while the plan step loses three in four after that.
+- **Who these sessions are (Punna):** user source = Onboarding, so each is a recruiter who has just signed up and is posting a first job. Many expect posting to be free and meet the price only at the plan step. The pay drop is therefore mostly a price surprise, not a fault of the plan page; and the form numbers describe first-timers, not recruiters who already know the form.
+- **Open question it raises:** should the price be said before or early in the form? Not decided; it could cut wasted effort and it could cut starts.
+- **Still missing:** which fields are edited most after posting; the split by ATS and dashboard; the returning-recruiter funnel.
+
+---
+
 ## Job posting, essential: what it needed before it can be the default (2026-11-11)
 **Status: Decided** (Punna asked for the fixes; the default itself is still open)
 

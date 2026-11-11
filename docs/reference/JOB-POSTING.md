@@ -22,6 +22,7 @@ Last updated 2026-11-11.
   question.
 
 ## State on 2026-11-11 (read this first)
+- **Data behind the decisions:** `JOB-POSTING-DATA.md` (funnel, time to post, job mix, per-role answers, gaps).
 - **Two flows:** regular (asks everything) and essential (`?flow=essential`,
   asks only what matching needs; preview, waiting on Punna). `?flow=short` is
   retired: its desktop pages and one-pass Review are now regular.
@@ -46,8 +47,8 @@ Last updated 2026-11-11.
   is never asked: it defaults to any distance in both flows, and Finish setup's "How far candidates can live" changes it.
   Regular shows it under Preferences (`DistanceField`).
 - **Essential, ready-for-default fixes (2026-11-11):** Finish setup answers
-  are saved (`apnahire:finish-setup`) and shown on the Jobs page
-  (`SavedFinishSetup`); Review always has a Preferences row; 18 role
+  are saved (`apnahire:finish-setup`); the posted job leads the Jobs list
+  and its card's banner opens them in a side panel (`FinishSetupPanel`); Review always has a Preferences row; 18 role
   profiles, tuned from Ana's live-job data (see DECISIONS). Education has
   "Any"; distance has "Within <city>" and is locked by relocation.
 - **Kept on purpose:** an unmatched title becomes "Other" in essential.
@@ -78,7 +79,10 @@ Last updated 2026-11-11.
   (`DEMO_ROLES`) fills the box with a sample for five roles.
 - **After posting:** the job-live screen shows "Finish setup"
   (`post-job/finish-setup.tsx`): who candidates call, walk-in, questions for
-  applicants, perks. Answers are not saved to the job yet.
+  applicants, job location, distance, preferences, perks. The pop-up steps
+  through the rows ("Save and next", "Skip"). The same rows are on the job's
+  card (side panel) and in job details, ⋮ "About this job" → "Job settings"
+  (`JobSetup`). Prototype: only the last posted job's answers are saved.
 - **Its own chrome:** step 3 is "Review"; the step menu, progress bar and the
   manual intro list only its questions. Review marks a missing answer "Not
   answered yet" and rewrites a description written before a late answer.

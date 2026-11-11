@@ -30,6 +30,7 @@ import * as React from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { MetaFact, useMetaIcons } from "@/components/apnahire/jobs/meta-fact"
+import { FinishSetupPanel } from "@/components/apnahire/post-job/finish-setup"
 import { toast } from "sonner"
 import {
   AlertBanner,
@@ -44,6 +45,7 @@ import {
   DropdownMenuTrigger,
   Info,
   Lightbulb,
+  ListChecks,
   MoreVertical,
   Pencil,
   PowerOff,
@@ -75,6 +77,8 @@ export interface ApnaJob {
   activeLeads: number
   activeLeadsNew?: number
   dbMatches: number
+  /** Essential flow: optional details still to add after posting (Finish setup). */
+  finishSetupLeft?: number
   /** Job details page facts (meta line and the ⋮ panel). */
   salary?: string
   education?: string
@@ -102,7 +106,17 @@ export const STATUS_LABELS: Record<ApnaJobStatus, string> = {
 }
 
 /** The banner a card shows, if any — one per card, the most important. */
-function jobBanner(job: ApnaJob, go: (path: string) => void): React.ReactNode {
+function jobBanner(job: ApnaJob, go: (path: string) => void, onFinishSetup: () => void): React.ReactNode {
+  // A job just posted through the essential flow: what it can still be told.
+  if (job.finishSetupLeft)
+    return (
+      <AlertBanner
+        variant="info"
+        icon={<ListChecks />}
+        title={`${job.finishSetupLeft} optional ${job.finishSetupLeft === 1 ? "detail" : "details"} left to add.`}
+        action={{ label: "Finish setup", onClick: onFinishSetup }}
+      />
+    )
   switch (job.status) {
     // Under review: no card banner — account verification is asked for once,
     // by the account alert (sidebar / More), not on every job.
@@ -223,8 +237,11 @@ function JobCard({ job }: { job: ApnaJob }) {
   // Under review: not live yet, so nothing is counting.
   const counting = job.status !== "under_review"
   const href = `/apnahire/jobs/${job.id}`
+  const [setupOpen, setSetupOpen] = React.useState(false)
 
   return (
+    <>
+    {job.finishSetupLeft != null && <FinishSetupPanel open={setupOpen} onOpenChange={setSetupOpen} />}
     <JobCardFrame
       title={job.title}
       href={href}
@@ -282,8 +299,9 @@ function JobCard({ job }: { job: ApnaJob }) {
           </>
         )
       }
-      banner={jobBanner(job, (path) => router.push(path))}
+      banner={jobBanner(job, (path) => router.push(path), () => setSetupOpen(true))}
     />
+    </>
   )
 }
 

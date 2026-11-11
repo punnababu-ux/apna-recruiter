@@ -39,6 +39,7 @@ move or retire a doc.
 | `history/SESSION-2026-11-03-CHECKOUT.md` | Switch removed; one design; Buy now on every phone card |
 | `history/SESSION-2026-11-06-QUALITY.md` | Code quality: CI, Playwright layout/a11y/visual tests (`e2e/`), Next 16.4 upgrade, fixes |
 | `reference/JOB-POSTING.md` | Job posting flow: how it works, files, AI fill, voice, progress |
+| `reference/JOB-POSTING-DATA.md` | Data bank: live funnel, time to post, job mix, per-role answers, and the decisions each number backs |
 | `history/AUDIT-2026-11-05-CHAT-JOB-POSTING.md` | Chat + job posting vs DS: fixes and new-primitive candidates |
 | `history/AUDIT-2026-10.md` | October 2026 code + layout audit findings |
 | `history/PONEGLYPH-ROLLOUT-PLAN.md` / `.html` | Plan to roll the design system into the recruiter dashboard |

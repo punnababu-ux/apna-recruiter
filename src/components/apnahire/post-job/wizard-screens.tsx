@@ -524,6 +524,10 @@ function Category(ctx: ScreenCtx) {
   const { draft, update } = ctx
   const suggested = draft.title ? categoryForTitle(draft.title) : undefined
   const categories = usePickedFirst(CATEGORIES, draft.category || suggested || "")
+  // Three rows first (the picked or suggested one leads); the rest on "More",
+  // as Industry does.
+  const [all, setAll] = React.useState(false)
+  const shown = all ? categories : categories.slice(0, 6)
   return (
     <>
       <WizardQuestion
@@ -532,9 +536,9 @@ function Category(ctx: ScreenCtx) {
         description="Decides who sees your job."
       />
       <Checks ctx={ctx} ids={["category-mismatch"]} />
-      {/* Above the tiles, so it's read before the choice — not below 13 of them. */}
+      {/* Above the tiles, so it is read before the choice. */}
       <OptionCardGroup aria-label="Job role" columns={2}>
-        {categories.map((c) => (
+        {shown.map((c) => (
           <OptionCard
             key={c}
             layout="tile"
@@ -546,6 +550,12 @@ function Category(ctx: ScreenCtx) {
           />
         ))}
       </OptionCardGroup>
+      {!all && (
+        <Button type="button" variant="link" className="self-start" onClick={() => setAll(true)}>
+          More roles
+          <ChevronDown aria-hidden />
+        </Button>
+      )}
     </>
   )
 }
@@ -1928,6 +1938,7 @@ function Review(ctx: ScreenCtx) {
     draft.languages.join(", "),
     draft.skills.join(", "),
     draft.assets.length && !essential ? `Must own: ${draft.assets.join(", ")}` : "",
+    draft.degrees.join(", "),
     genderAgeLabel(draft) === "Anyone" ? "" : genderAgeLabel(draft),
   ].filter(Boolean)
   return (

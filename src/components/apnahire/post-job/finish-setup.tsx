@@ -12,16 +12,18 @@
  */
 
 import * as React from "react"
-import { Button, Check, ChevronRight, DoorOpen, Gift, ListChecks, MapPin, Phone, Users } from "@apna/design-system"
+import { Button, Check, ChevronRight, DoorOpen, Gift, ListChecks, MapPin, Navigation, Sheet, SheetPanel, SheetPanelHeader, cn, Phone, Users } from "@apna/design-system"
 import { PlanPopup, PopupBody, PopupFooter, PopupHeader } from "@/components/apnahire/plan-popup"
 import { DistanceField, SCREENS, type ScreenCtx, type ScreenId } from "@/components/apnahire/post-job/wizard-screens"
-import { useClientSnapshot } from "@/hooks/use-client-snapshot"
-import { distanceText, genderAgeLabel, normalizeDraft } from "@/lib/apnahire/job-draft"
+import { distanceText, genderAgeLabel, locationLabel, normalizeDraft } from "@/lib/apnahire/job-draft"
 import type { JobPostDraft } from "@/types/apnahire-job"
 
 /** Distance has no screen of its own: essential never asks it while posting. */
 const Distance = (ctx: ScreenCtx) => <DistanceField ctx={ctx} />
 
+// Each row shows its answer; the tick says it was saved. Two rows hold too
+// much for the row and show a count: preferences ("5 set") and perks ("4 perks").
+const count = (n: number, one: string, many: string, none: string) => (n ? `${n} ${n === 1 ? one : many}` : none)
 const ROWS: { id: ScreenId | "distance"; label: string; icon: React.ReactNode; value: (d: JobPostDraft) => string }[] = [
   {
     id: "contact",
@@ -37,15 +39,24 @@ const ROWS: { id: ScreenId | "distance"; label: string; icon: React.ReactNode; v
     icon: <ListChecks aria-hidden />,
     value: (d) => (d.screeningQuestions.length ? `${d.screeningQuestions.length} added` : "None"),
   },
-  { id: "distance", label: "How far candidates can live", icon: <MapPin aria-hidden />, value: distanceText },
+  // The most edited field on live (data bank §2d): one tap to correct it.
+  { id: "location", label: "Job location", icon: <MapPin aria-hidden />, value: (d) => locationLabel(d) ?? "Not set" },
+  { id: "distance", label: "How far candidates can live", icon: <Navigation aria-hidden />, value: distanceText },
+  // Gender and age shut candidates out, so they are never asked before posting.
   {
-    // Gender and age shut candidates out, so they are never asked before posting.
     id: "preferences",
     label: "Gender, age and other preferences",
     icon: <Users aria-hidden />,
-    value: genderAgeLabel,
+    // Languages, skills, must-haves, degrees, gender, age: a count, not a list.
+    value: (d) =>
+      count(
+        d.languages.length + d.skills.length + d.assets.length + d.degrees.length + (genderAgeLabel(d) === "Anyone" ? 0 : 1),
+        "set",
+        "set",
+        "Anyone",
+      ),
   },
-  { id: "perks", label: "Perks", icon: <Gift aria-hidden />, value: (d) => d.perks.join(", ") || "None" },
+  { id: "perks", label: "Perks", icon: <Gift aria-hidden />, value: (d) => count(d.perks.length, "perk", "perks", "None") },
 ]
 
 const noop = () => {}
@@ -55,13 +66,26 @@ type Saved = { draft: Partial<JobPostDraft>; done: RowId[] }
 /** Prototype: the last posted job's Finish setup answers. In production
  *  they are saved on the job. */
 const STORAGE_KEY = "apnahire:finish-setup"
+const EVENT = "apnahire:finish-setup"
+let cachedRaw: string | null | undefined
+let cached: Saved | null = null
 function readSaved(): Saved | null {
+  let raw: string | null = null
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY)
-    return raw ? (JSON.parse(raw) as Saved) : null
+    raw = window.localStorage.getItem(STORAGE_KEY)
   } catch {
-    return null
+    // Storage blocked: nothing saved.
   }
+  // The same object while the text is the same, so readers do not re-render.
+  if (raw !== cachedRaw) {
+    cachedRaw = raw
+    try {
+      cached = raw ? (JSON.parse(raw) as Saved) : null
+    } catch {
+      cached = null
+    }
+  }
+  return cached
 }
 function writeSaved(saved: Saved) {
   try {
@@ -69,33 +93,91 @@ function writeSaved(saved: Saved) {
   } catch {
     // Storage blocked: the answers last for this visit only.
   }
+  window.dispatchEvent(new Event(EVENT))
+}
+function subscribe(onChange: () => void) {
+  window.addEventListener(EVENT, onChange)
+  window.addEventListener("storage", onChange)
+  return () => {
+    window.removeEventListener(EVENT, onChange)
+    window.removeEventListener("storage", onChange)
+  }
 }
 
-/** The last posted job's Finish setup, wherever the recruiter comes back to
- *  it (the Jobs page). Gone once every row is answered. */
-export function SavedFinishSetup() {
-  const saved = useClientSnapshot(readSaved, null)
-  if (!saved || saved.done.length >= ROWS.length) return null
-  return <FinishSetup draft={saved.draft} initialDone={saved.done} jobTitle={saved.draft.title} />
+/** The last posted job's Finish setup: its answers and how many rows are
+ *  still open. Null when no job was posted through the essential flow. */
+export function useSavedFinishSetup(): { draft: Partial<JobPostDraft>; left: number } | null {
+  const saved = React.useSyncExternalStore(subscribe, readSaved, () => null)
+  return React.useMemo(
+    () => (saved ? { draft: saved.draft, left: ROWS.filter((r) => !saved.done.includes(r.id)).length } : null),
+    [saved],
+  )
+}
+
+/** Finish setup as a side panel, opened from the job's card on the Jobs
+ *  page (never a block on the dashboard itself; Punna, 2026-11-11). */
+export function FinishSetupPanel({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
+  const saved = React.useSyncExternalStore(subscribe, readSaved, () => null)
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetPanel>
+        <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto bg-card py-4">
+          <SheetPanelHeader title="Finish setup" />
+          <p className="px-4 text-sm text-muted-foreground sm:px-5">
+            {saved?.draft.title ? `${saved.draft.title} · ` : ""}Optional. Your job works without it.
+          </p>
+          <div className="px-3 sm:px-4">
+            {saved && <FinishSetup draft={saved.draft} initialDone={saved.done} plain />}
+          </div>
+        </div>
+      </SheetPanel>
+    </Sheet>
+  )
+}
+
+/** A job's settings in job details ("About this job"): the same rows and
+ *  step-through pop-up. Prototype: the last posted job shows its saved
+ *  answers; any other job shows sample answers and saves nothing. */
+export function JobSetup({ job }: { job: { title: string; city: string; area: string } }) {
+  const saved = React.useSyncExternalStore(subscribe, readSaved, () => null)
+  const own = saved?.draft.title === job.title ? saved : null
+  return (
+    <FinishSetup
+      key={own ? "saved" : job.title}
+      draft={own ? own.draft : { title: job.title, city: job.city, area: job.area }}
+      initialDone={own ? own.done : []}
+      persist={!!own}
+      title="Job settings"
+      plain
+    />
+  )
 }
 
 export function FinishSetup({
   draft: initial,
   initialDone = [],
-  jobTitle,
+  plain,
+  persist = true,
+  title = "Finish setup",
 }: {
   draft: Partial<JobPostDraft>
   initialDone?: RowId[]
-  /** Names the job when the list is shown away from its "job is live" screen. */
-  jobTitle?: string
+  /** Inside a panel that has its own title: the rows only, no frame. */
+  plain?: boolean
+  /** False: a sample job, nothing is saved. */
+  persist?: boolean
+  /** The pop-up's title. Job details calls these "Job settings". */
+  title?: string
 }) {
   const [draft, setDraft] = React.useState(() => normalizeDraft(initial))
+  // What was last saved: Skip and close drop the open row's unsaved edits.
+  const [kept, setKept] = React.useState(draft)
   const [done, setDone] = React.useState<RowId[]>(initialDone)
   const [open, setOpen] = React.useState<ScreenId | "distance" | null>(null)
   const [error, setError] = React.useState<string | null>(null)
   // Saved as soon as the job is live, so the list is still there on the Jobs page.
   React.useEffect(() => {
-    if (!readSaved() || readSaved()?.draft.title !== initial.title) writeSaved({ draft: initial, done: initialDone })
+    if (persist && (!readSaved() || readSaved()?.draft.title !== initial.title)) writeSaved({ draft: initial, done: initialDone })
     // Once, for the job this list was opened for.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -123,22 +205,35 @@ export function FinishSetup({
     descriptionStale: false,
     part: "perks",
   }
+  // The pop-up steps through the rows: after this one, the next row that is
+  // not saved yet (later rows first, then earlier ones). None left: it closes.
+  const at = ROWS.findIndex((r) => r.id === open)
+  const nextRow = (saved: RowId[]) =>
+    [...ROWS.slice(at + 1), ...ROWS.slice(0, Math.max(at, 0))].find((r) => !saved.includes(r.id))?.id ?? null
+  const upcoming = nextRow(open ? [...done, open] : done)
   const save = () => {
     const problem = screen?.check?.(draft)
     if (problem) return setError(problem)
-    if (open) {
-      const next = Array.from(new Set([...done, open]))
-      setDone(next)
-      writeSaved({ draft, done: next })
-    }
-    setOpen(null)
+    if (!open) return
+    const saved = Array.from(new Set([...done, open]))
+    setDone(saved)
+    setKept(draft)
+    if (persist) writeSaved({ draft, done: saved })
+    setOpen(nextRow(saved))
+  }
+  const leave = (to: RowId | null) => {
+    setError(null)
+    setDraft(kept)
+    setOpen(to)
   }
   return (
-    <div className="flex w-full flex-col gap-2 rounded-card-nested border border-border bg-muted/40 p-3 sm:p-4">
-      <div className="flex flex-col gap-1 px-1">
-        <p className="text-sm font-semibold text-foreground">Finish setup{jobTitle ? ` · ${jobTitle}` : ""}</p>
-        <p className="text-xs text-muted-foreground">Optional. Your job works without it.</p>
-      </div>
+    <div className={cn("flex w-full flex-col gap-2", !plain && "rounded-card-nested border border-border bg-muted/40 p-3 sm:p-4")}>
+      {!plain && (
+        <div className="flex flex-col gap-1 px-1">
+          <p className="text-sm font-semibold text-foreground">Finish setup</p>
+          <p className="text-xs text-muted-foreground">Optional. Your job works without it.</p>
+        </div>
+      )}
       <ul className="flex flex-col">
         {ROWS.map((row) => (
           <li key={row.id}>
@@ -154,15 +249,17 @@ export function FinishSetup({
                 {done.includes(row.id) ? <Check aria-hidden /> : row.icon}
               </span>
               <span className="min-w-0 flex-1 text-sm text-foreground">{row.label}</span>
-              <span className="max-w-32 truncate text-sm text-muted-foreground">{row.value(draft)}</span>
+              <span className="max-w-32 truncate text-sm text-muted-foreground">
+                {row.value(draft)}
+              </span>
               <ChevronRight className="text-muted-foreground" aria-hidden />
             </button>
           </li>
         ))}
       </ul>
 
-      <PlanPopup open={!!screen} onOpenChange={(o) => !o && setOpen(null)}>
-        <PopupHeader title="Finish setup" description={ROWS.find((r) => r.id === open)?.label} />
+      <PlanPopup open={!!screen} onOpenChange={(o) => !o && leave(null)}>
+        <PopupHeader title={title} description={at < 0 ? undefined : `${ROWS[at].label} · ${at + 1} of ${ROWS.length}`} />
         <PopupBody>
           {screen && <screen.Render {...ctx} />}
           {error && (
@@ -172,8 +269,13 @@ export function FinishSetup({
           )}
         </PopupBody>
         <PopupFooter>
+          {upcoming && (
+            <Button type="button" size="lg" variant="outline" onClick={() => leave(upcoming)}>
+              Skip
+            </Button>
+          )}
           <Button type="button" size="lg" onClick={save}>
-            Done
+            {upcoming ? "Save and next" : "Done"}
           </Button>
         </PopupFooter>
       </PlanPopup>

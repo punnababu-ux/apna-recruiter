@@ -35,7 +35,7 @@ import { PageHeader } from "@/components/onlyrounds/page-header"
 import { PlanEndedBanner } from "@/components/apnahire/plan-ended"
 import { PriceChangeBanner } from "@/components/apnahire/price-change-banner"
 import { OFFER_BAR_TEMPLATES, SubscriberPlanCard, type OfferBarTemplate } from "@/components/apnahire/subscriber-plan-card"
-import { SavedFinishSetup } from "@/components/apnahire/post-job/finish-setup"
+import { useSavedFinishSetup } from "@/components/apnahire/post-job/finish-setup"
 import { useJobSlots } from "@/hooks/use-job-slots"
 import { MOCK_JOBS as MOCK } from "@/content/apnahire-jobs"
 import { useFlushHeader } from "@/hooks/use-flush-header"
@@ -83,7 +83,31 @@ function JobsPageInner() {
   const showPlanCard = !!slots || offerBar !== null
 
   // Search and filters first; the tabs then split what they matched.
-  const matched = MOCK.filter((j) => {
+  // Essential flow: the job just posted leads the list, with its Finish setup
+  // ingress on the card (a side panel), not a block above the list.
+  const setup = useSavedFinishSetup()
+  const jobs = useMemo(() => {
+    if (!setup?.draft.title) return MOCK
+    const d = setup.draft
+    return [
+      {
+        id: d.title!.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+        title: d.title!,
+        status: "active" as const,
+        company: "",
+        area: d.area || d.city || "",
+        city: d.city || "",
+        postedAt: "Today",
+        postedBy: "You",
+        applied: 0,
+        activeLeads: 0,
+        dbMatches: 0,
+        finishSetupLeft: setup.left,
+      },
+      ...MOCK,
+    ]
+  }, [setup])
+  const matched = jobs.filter((j) => {
     if (cityFilters.length > 0 && !cityFilters.includes(j.city)) return false
     if (posterFilters.length > 0 && !posterFilters.includes(j.postedBy)) return false
     if (searchQuery.trim() && !j.title.toLowerCase().includes(searchQuery.toLowerCase())) return false
@@ -168,8 +192,6 @@ function JobsPageInner() {
       {/* A plan that just ended (a week): the way back. */}
       <PlanEndedBanner />
       {showPlanCard && <SubscriberPlanCard template={offerBar} />}
-      {/* Essential flow: what the last posted job still needs answered. */}
-      <SavedFinishSetup />
       <PageHeader
         variant="transparent"
         // Phones: no page title — the bottom bar already says Jobs.

@@ -4,9 +4,10 @@
  * Job details page: the ⋮ side panel and the status banner (live
  * employer.apna.co, docs/reference/LIVE-EMPLOYER-KB.md §3 "Header").
  *
- *   JobInfoPanel      SheetPanel with three white sections: Plan (job type +
- *                     when it ends), Preference (who contacts first, alerts),
- *                     Job details (view / edit). Draft jobs have no Plan.
+ *   JobInfoPanel      SheetPanel with white sections: Plan (job type +
+ *                     when it ends), Job settings (the Finish setup rows and
+ *                     pop-up), Notifications (alerts), Job details (view /
+ *                     edit). Draft jobs have no Plan.
  *   JobStatusBanner   one AlertBanner for what the job needs: expired →
  *                     repost, under review → wait, draft → finish posting.
  *                     Active jobs show none.
@@ -18,11 +19,9 @@ import { toast } from "sonner"
 import {
   AlertBanner,
   Bell,
-  Button,
   ChevronRight,
   Clock,
   Info,
-  MessageSquare,
   RefreshCw,
   Separator,
   Sheet,
@@ -30,6 +29,7 @@ import {
   SheetPanelHeader,
   Star,
 } from "@apna/design-system"
+import { JobSetup } from "@/components/apnahire/post-job/finish-setup"
 import type { ApnaJob } from "@/components/apnahire/jobs/job-list"
 
 const EDIT_HREF = "/apnahire/jobs/new?resume=1"
@@ -91,15 +91,13 @@ export function JobInfoPanel({
             </Section>
           )}
 
-          <Section
-            title="Preference"
-            action={
-              <Button variant="link" size="sm" onClick={() => router.push(EDIT_HREF)}>
-                Edit
-              </Button>
-            }
-          >
-            <Row icon={<MessageSquare />} label="Candidate communication" value="You contact candidates first" />
+          {/* The Finish setup rows, with the same step-through pop-up: one
+              editor for these settings, wherever the recruiter comes from. */}
+          <Section title="Job settings">
+            <JobSetup job={job} />
+          </Section>
+
+          <Section title="Notifications">
             <Row icon={<Bell />} label="apna alerts" value="Daily summary" />
           </Section>
 

@@ -13,6 +13,7 @@ ship, and keep one line per item. Open price questions live in
 - [ ] Real resume files for View and Download (toasts today)
 
 ## Next, high priority
+- [ ] **Job edit flow:** "View or edit job" needs its own flow; first settle what may change after applications start (Open in `docs/DECISIONS.md`, 2026-11-12). Needs the live list of editable fields.
 - [ ] Follow up: decide if it needs a date, a reminder, or its own queue (today it is only a call status)
 - [ ] **Integrate ECC profiles and Express chats deeply (Punna, 2026-11-09: "super important").** A candidate should be one person across both: profile and chat coherent and linked, with chat available in ECC beside Call. Think it through first, then design.
 
@@ -64,7 +65,10 @@ Open before ECC: keep "View number" as the green action, or make Shortlist prima
   - [x] `CountUpInr` clamps at 0
 - [x] Job posting audit, 2026-11-11, recommendations (all done): ~~auto-advance on single-choice screens~~ (done 2026-11-11 for role, industry, workplace; see DECISIONS); ~~preselect the suggested role, workplace and industry~~ (done 2026-11-11); ~~roll the drafting lines during the wait and drop the 7 s reveal after it~~ (done 2026-11-11); ~~phone Review: answers first, preview behind a button~~ (done 2026-11-11); ~~essential: description as its own last step~~ (done 2026-11-11); ~~show all missing answers on a desktop page at once~~ (done; desktop now grouped in both flows)
 - [x] Essential: distance defaults to any distance, editable after posting in Finish setup (built 2026-11-11)
-- [ ] Waiting on Punna (2026-11-11): the job posting funnel step by step, time to post, device split, and which fields are edited most. Ana has none of these. When they arrive: update the presentation, recheck the "after posting" fields and the role profiles, log in DECISIONS
+- [x] Live funnel, time to post and device split received 2026-11-11 (Figma board; logged in DECISIONS, shown in the presentation)
+- [x] Top edited fields received 2026-11-11: all eleven are location (data bank §2d)
+- [ ] Ask Punna for the edited-fields chart beyond the top 11, its window and what counts as an edit; then recheck the "after posting" fields
+- [ ] Location: job location and walk-in location are the most edited fields on live (Punna, 2026-11-11). Finish setup now has a "Job location" row (2026-11-11); walk-in is there too. To decide: whether the walk-in address should start as the job location
 - [ ] Essential flow preview (`?flow=essential`): Punna to review. Its pre-default fixes are done (2026-11-11, see DECISIONS): role settings from live data, Finish setup saved and shown on the Jobs page, gender and age at Review. Open: the default decision
 - [x] Short flow preview retired 2026-11-11: its desktop pages and one-pass missing answers are the regular flow (see `DECISIONS.md`)
 - [x] Test the live AI fill (worked in the 2026-11-11 walks)

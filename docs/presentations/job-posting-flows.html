@@ -143,7 +143,8 @@ footer { font-size: 12px; color: var(--muted); border-top: 1px solid var(--line)
 .tile q, .tile p { color: var(--muted); font-size: 14px; }
 .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .jobs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; } .jobs .tile q { flex: 1; }
-.jobs .bar { grid-template-columns: 96px 1fr 24px; gap: 8px; } .jobs .bl { font-size: 12px; }
+.jobs .bar, .four .bar { grid-template-columns: 64px 1fr 40px; gap: 8px; } .four .bl { font-size: 12px; }
+.jobs .bar { grid-template-columns: 96px 1fr 24px; } .jobs .bl { font-size: 12px; }
 .stack { display: flex; gap: 3px; height: 44px; }
 .stack i { font-style: normal; font-weight: 800; font-size: 18px; display: flex; align-items: center; justify-content: center; border-radius: 10px; }
 .s-ask { background: var(--green-tint); color: var(--green); } .s-auto { background: var(--sky-tint); color: var(--sky); }
@@ -172,6 +173,17 @@ section { display: flex; flex-direction: column; gap: 20px; }
       <div class="tile"><h3>Regular</h3><p>Reads the description, then asks every remaining question.</p></div>
       <div class="tile"><h3>Essential</h3><p>Reads the description, then asks only what the match needs.</p></div>
     </div>
+  </section>
+
+  <section>
+    <div class="head"><span class="eyebrow">Live today</span><h2>Where new recruiters drop</h2><p class="sub">Mixpanel, 30 days, new recruiters. 9,285 started on desktop, 7,328 on mobile web.</p></div>
+    <div class="four">
+      <div class="tile"><h3>Leave at step 1</h3><div class="bars"><div class="bar"><span class="bl">Desktop</span><span class="bt"><i class="b-live" style="width:17%"></i></span><b>17%</b></div><div class="bar"><span class="bl">Mobile</span><span class="bt"><i class="b-live" style="width:25%"></i></span><b>25%</b></div></div></div>
+      <div class="tile"><h3>Reach Review</h3><div class="bars"><div class="bar"><span class="bl">Desktop</span><span class="bt"><i class="b-live" style="width:79%"></i></span><b>79%</b></div><div class="bar"><span class="bl">Mobile</span><span class="bt"><i class="b-live" style="width:69%"></i></span><b>69%</b></div></div></div>
+      <div class="tile"><h3>Post the job</h3><div class="bars"><div class="bar"><span class="bl">Desktop</span><span class="bt"><i class="b-live" style="width:18%"></i></span><b>18%</b></div><div class="bar"><span class="bl">Mobile</span><span class="bt"><i class="b-live" style="width:9%"></i></span><b>9%</b></div></div></div>
+      <div class="tile"><h3>Slowest 10% take</h3><div class="bars"><div class="bar"><span class="bl">Desktop</span><span class="bt"><i class="b-live" style="width:100%"></i></span><b>26m</b></div><div class="bar"><span class="bl">Mobile</span><span class="bt"><i class="b-live" style="width:53%"></i></span><b>14m</b></div></div></div>
+    </div>
+    <p class="sub">These are first-time recruiters, posting right after sign-up. Step 1 is the biggest drop inside the form. The biggest drop overall is the plan step, where many who expected a free post first see the price: only 27% on desktop and 19% on mobile go on to pay.</p>
   </section>
 
   <section>
