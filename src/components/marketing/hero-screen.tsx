@@ -18,8 +18,14 @@ export function HeroScreen({ className }: { className?: string }) {
     // Desktop only (Punna, 2026-11-11): phones keep the hero to the form.
     <div className={cn("relative isolate hidden w-full md:block", className)}>
       <span aria-hidden className="hero-glow" />
-      <div className="mx-auto max-h-160 w-full max-w-6xl overflow-hidden rounded-card border border-border bg-card mask-b-from-70%">
-        <Image src="/images/home/hero-dashboard-desktop.png" alt={ALT} width={2880} height={1800} sizes="(min-width: 1280px) 1152px, 90vw" quality={95} className="w-full" />
+      {/* A sheer glass frame (40%, light blur), the screen inset in it; the
+          glow shows through. A deeper top edge (40px) reads as an empty
+          browser bar, without fake dots or a URL. Flat at rest: the glass
+          and glow give the lift, no shadow. */}
+      <div className="mx-auto max-h-170 w-full max-w-6xl overflow-hidden rounded-card border border-card/60 bg-surface-glass-faint p-3 pt-10 backdrop-blur-md mask-b-from-70%">
+        <div className="overflow-hidden rounded-card-nested border border-border bg-card">
+          <Image src="/images/home/hero-dashboard-desktop.png" alt={ALT} width={2880} height={1800} sizes="(min-width: 1280px) 1152px, 90vw" quality={95} className="w-full" />
+        </div>
       </div>
     </div>
   )

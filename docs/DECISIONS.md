@@ -15,6 +15,13 @@ or **Open**.
 - **Would change it:** account data that replaces the params.
 - **Status:** Decided (Punna, 2026-11-11).
 
+## Homepage hero screen: a frosted glass frame, no browser bar, no shadow (2026-11-11)
+
+- **Question:** Give the dashboard capture a browser bar and elevation, as in Punna's reference?
+- **Decision:** A sheer glass frame (`bg-surface-glass-faint`, 40%, light blur; 12px sides and bottom, 40px top that reads as an empty browser bar; `rounded-card`) with the capture inset (`rounded-card-nested`). No fake dots or URL. No shadow: resting surfaces stay flat; the glass and the glow give the lift.
+- **Would change it:** Punna wanting more lift (then `shadow-elevated` once, as a hero exception).
+- **Status:** Decided
+
 ## Homepage hero: one rounded field with the CTA inside (2026-11-11)
 
 - **Question:** The field and the button beside it read as two parts.
