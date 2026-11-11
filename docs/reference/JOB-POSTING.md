@@ -82,10 +82,10 @@ Last updated 2026-11-06.
   salaries ("15 to 20 thousand").
 
 ## Description step
-- Writes itself on arrival (and on Review in the essential flow) with the
-  same working state as Describe: loading ring, AI backdrop, a rolling strip
-  (`post-job/writing-state.tsx`) and a "Stop, I'll paste mine" link. The text
-  types into the box; stopping leaves it empty and focused for a paste.
+- Writes itself on arrival (and on Review in the essential flow): a skeleton
+  in the box, a rolling strip under it (`post-job/writing-state.tsx`) with a
+  "Stop, I'll paste mine" link. The text types into the box; stopping leaves
+  it empty and focused for a paste.
 
 ## Voice
 - The mic is a round button beside the send arrow, bottom right of the box.

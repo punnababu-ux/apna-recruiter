@@ -53,6 +53,16 @@ Open before ECC: keep "View number" as the green action, or make Shortlist prima
 - [x] Help lines that only repeat a card's label removed
 - [x] "Continue draft" opens on the saved screen
 - [ ] Test voice on a real Android phone and desktop Chrome
+- [ ] Job posting audit, 2026-11-11 (all four paths, phone + desktop; nothing fixed yet; full write-up with taps per path: `history/AUDIT-2026-11-11-JOB-POSTING.md`). Bugs:
+  - [ ] Salary slider shows ₹15k–₹25k while no salary is set; Next then says "Add the salary range" (`Salary`, the `?? 15000` / `?? 25000` fallbacks)
+  - [ ] Next / "Choose a plan" stay live while the AI writes the description; a tap gives "Add a description" (essential Review sends you to the description screen with that error)
+  - [ ] After an AI draft, answering the missing industry makes the description step rewrite a description that was just written (industry is in `descriptionBasisOf`); 20 s more
+  - [ ] Essential, desktop: pay type is not defaulted to fixed (the default only runs when leaving the title page; on desktop salary is on that page)
+  - [ ] Essential: changing the title from Review's Edit does not re-infer the role (`withEssentials` runs after the `returnTo` return in `next()`). Read from code, not reproduced
+  - [ ] Essential: a title that matches no role becomes "Other" silently; and the company's industry ("IT & Software") goes into every job, and into the AI description
+  - [ ] "Step 1 of 3" (chapter marker, desktop) against "Step 1 of 4" (stepper, footer)
+  - [ ] `CountUpInr` can flash a negative salary for a frame (rAF time earlier than `t0`; clamp `p` at 0)
+- [ ] Job posting audit, 2026-11-11, recommendations: auto-advance on single-choice screens; preselect the suggested role, workplace and industry; roll the drafting lines during the wait and drop the 7 s reveal after it; phone Review: answers first, preview behind a button; essential: description as its own last step; show all missing answers on a desktop page at once
 - [ ] Essential flow preview (`?flow=essential`): Punna to review. Before it ships: role profiles from live data, save "Finish setup" answers to the job and show the list on the job's page, confirm industry comes from the company profile
 - [ ] Short flow preview (`?flow=short`): Punna to review; missing answers are now asked in one pass before Review; if approved, make it the default (see `DECISIONS.md`, 2026-11-10)
 - [ ] Test the live AI fill (needs the Gemini key; only the keyword fill was tested locally)

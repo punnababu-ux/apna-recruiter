@@ -72,6 +72,7 @@ import {
   Route,
   Search,
   Separator,
+  Skeleton,
   ShieldCheck,
   RangeSlider,
   Smartphone,
@@ -1628,31 +1629,45 @@ function Description(ctx: ScreenCtx) {
       )}
       <Field>
         <FieldLabel htmlFor="job-description">Description</FieldLabel>
-        {/* While writing: the loading ring behind the box (as on Describe),
-            the rolling strip under it with the one way out. */}
-        <div className="relative z-10 rounded-field">
+        {/* While writing: a skeleton in the box, the rolling strip under it
+            with the one way out. */}
+        {ctx.writing ? (
+          <div
+            role="status"
+            aria-label="Writing the description"
+            className="flex min-h-24 flex-col gap-2 rounded-field border border-input bg-card px-4 py-3"
+          >
+            <Skeleton className="h-3.5 w-11/12" />
+            <Skeleton className="h-3.5 w-4/5" />
+            <Skeleton className="h-3.5 w-2/3" />
+          </div>
+        ) : (
           <Textarea
             id="job-description"
             inputSize="lg"
             value={typing ?? draft.description}
-            readOnly={ctx.writing || typing != null}
+            readOnly={typing != null}
             onChange={(e) => update("description", e.target.value)}
-            placeholder={ctx.writing ? "" : "Paste or type your description"}
+            placeholder="Paste or type your description"
           />
-          {ctx.writing && <span aria-hidden className="loading-ring" />}
-        </div>
+        )}
         {ctx.writing && (
           <WritingState
             onStop={() => {
               ctx.stopWriting()
-              document.getElementById("job-description")?.focus()
+              // The box replaces the skeleton on the next paint.
+              window.setTimeout(() => document.getElementById("job-description")?.focus(), 0)
             }}
           />
         )}
-        <FieldDescription className="flex justify-between tabular-nums">
-          <span>{n < 150 ? "Aim for 150+ characters" : "Good length"}</span>
-          <span>{n} / 3000</span>
-        </FieldDescription>
+        {/* Length advice is for a person typing: hidden while the AI writes
+            and while its text types in (user call, 2026-11-11). */}
+        {!ctx.writing && typing == null && (
+          <FieldDescription className="flex justify-between tabular-nums">
+            <span>{n < 150 ? "Aim for 150+ characters" : "Good length"}</span>
+            <span>{n} / 3000</span>
+          </FieldDescription>
+        )}
       </Field>
       {n > 0 && (
         <div className="flex flex-col gap-2">

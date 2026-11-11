@@ -159,10 +159,12 @@ gets a pointer here, not a copy.
 32d. **An AI-filled flow is the same flow** (approved 2026-11-10). After an
     AI draft the recruiter walks the same questions as by hand, filled in,
     and taps Next. Never a different path or a jump to the review.
-32e. **AI work looks the same everywhere** (approved 2026-11-10). Whenever
-    the AI is writing or drafting, the box wears the loading ring, the page
-    the AI backdrop, and a strip rolls what it is doing. The way out is a
-    link in the strip, never an outlined CTA. Arriving text types in.
+32e. **AI work animates in one place** (approved 2026-11-10, toned down
+    2026-11-11). While the AI writes into a field, the field shows a
+    skeleton and a plain strip under it rolls what the AI is doing; the
+    strip is the only animation (no ring, no backdrop on a form step; those
+    belong to Describe's "Draft my job"). The way out is a link in the strip,
+    never an outlined CTA. Arriving text types in.
 
 ## 1a. Audit: the current version
 

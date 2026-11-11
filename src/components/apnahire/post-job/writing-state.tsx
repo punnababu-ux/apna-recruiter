@@ -1,19 +1,18 @@
 "use client"
 
 /**
- * WritingState — what "writing the description" is doing, in the same voice
- * as DraftingState's strip on the Describe screen: one rolling line under
- * the box ("Reading your answers…", "Writing the summary…"), the Sparkles
- * pulse, and one quiet way out, "Stop, I'll paste mine" (a link, never an
- * outlined CTA: the AI is working, not asking). The box above it wears the
- * loading ring and the page the AI backdrop, as on Describe.
+ * WritingState — what "writing the description" is doing: one rolling line
+ * under the box ("Reading your answers…", "Writing the summary…"), the
+ * Sparkles pulse, and one quiet way out, "Stop, I'll paste mine" (a link,
+ * never an outlined CTA: the AI is working, not asking). The animation lives
+ * in this strip only; the box shows a skeleton meanwhile (user call,
+ * 2026-11-11: no ring, no backdrop, they overdid it and overlapped the box).
  *
  * Lines roll on a fixed beat and hold on the last one until the text lands;
  * the wait is real (10–15 s), so nothing is faked.
  */
 
 import * as React from "react"
-import { createPortal } from "react-dom"
 import { Button, Sparkles } from "@apna/design-system"
 import { cn } from "@/lib/utils"
 
@@ -32,13 +31,9 @@ export function WritingState({ onStop, compact }: { onStop: () => void; compact?
       aria-live="polite"
       className={cn(
         "flex items-center justify-between gap-3 overflow-hidden",
-        compact
-          ? "text-sm"
-          : "mx-3 -mt-4 h-12 rounded-b-card-nested bg-muted px-4 pt-2 animate-in fade-in slide-in-from-top-4 duration-300",
+        !compact && "rounded-card-nested bg-muted px-4 py-3 animate-in fade-in duration-300",
       )}
     >
-      {typeof document !== "undefined" &&
-        createPortal(<span aria-hidden className="ai-backdrop" />, document.querySelector("[data-ai-backdrop-host]") ?? document.body)}
       <p key={at} className="flex min-w-0 items-center gap-2 text-sm text-muted-foreground animate-in fade-in slide-in-from-bottom-3 duration-300">
         <Sparkles className="size-4 shrink-0 animate-pulse text-info" aria-hidden />
         <span className="truncate">{LINES[at]}…</span>
