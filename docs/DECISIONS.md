@@ -161,6 +161,113 @@ or **Open**.
 
 ---
 
+## Leadership and management: one page (2026-11-11)
+
+- **Decision:** `/about/management` is merged into `/about/leadership` and redirects there. The page shows the founder, CEO and COO as rows, then "Leading apna forward" over the management team's cards, then the investors. Nav and footer lose "Management team". Kathak Mehta is dropped on purpose (Punna).
+- **Why:** The Lovable site merged them. Lovable gives the content only; the layout and look stay ours.
+- **Status:** Decided (Punna, 2026-11-11).
+## Premium + AI rolling line: phone and desktop differ on purpose (2026-11-11)
+
+- **Question:** On phones the "AI calling agent" line itself rolls through the AI points; on desktop "AI calling agent" is a fixed heading with a rolling line under it. Is the difference a bug?
+- **Decision:** No. It's deliberate. Phone: one feature line that starts as "AI calling agent" and rolls to "30% higher call pickup", "Ready to interview candidates", "Hindi & English calling" (`RollingLabel`). Desktop: fixed "AI calling agent" heading in the AI block, rolling line under it from "Calls all applicants" (`RollingPoint`).
+- **Why:** Punna's call: the phone card has room for one line, so the agent's name has to share it with its points.
+- **Changes it:** a phone card with room for the full AI block.
+- **Status:** Decided
+
+## Payment success: next step by what was bought (2026-11-11)
+
+- **Question:** Every success page offered "Post a job now", even right after a job was posted or after buying database credits.
+- **Decision:** Primary (green) / secondary (outline):
+  - Express checkout (job just posted): **Go to dashboard** / Search candidates.
+  - Self-checkout, job credits or a subscription: **Post a job** / Go to dashboard.
+  - Self-checkout, database credits: **Search candidates** / Go to dashboard.
+  The way out is "Go to dashboard", not "Done": it names where it leads.
+- **Why:** Punna's call: the primary is the next task for what was bought; posting again after posting was the old support issue. "Done" vs "Go to dashboard" was open; picked the named destination.
+- **Changes it:** a dashboard that isn't the recruiter's home, or a purchase that mixes job and database credits (today it follows the first line).
+- **Status:** Decided (CTAs), Leaning ("Go to dashboard" over "Done")
+
+## Review states page in the design system (2026-11-11)
+
+- **Decision:** `/design-system/engineering/review-states` lists every review state (express `layout` + `credits`, self-checkout `tab`, jobs-list `bar`, job candidates `tab` / `applicants` / `deck` / `views` / `pill`). It has a builder that makes the URL, and a ready-made link for each state. The pricing phase can be switched there for this browser.
+- **Why:** after the hidden preview panel went (2026-11-07), nobody could find the states. This brings the panel's job back without making product copy a control.
+- **Would change it:** account data that replaces the params.
+- **Status:** Decided (Punna, 2026-11-11).
+
+## Homepage hero screen: a frosted glass frame, no browser bar, no shadow (2026-11-11)
+
+- **Question:** Give the dashboard capture a browser bar and elevation, as in Punna's reference?
+- **Decision:** A sheer glass frame (`bg-surface-glass-faint`, 40%, light blur; 12px sides and bottom, 40px top that reads as an empty browser bar; `rounded-card`) with the capture inset (`rounded-card-nested`). No fake dots or URL. No shadow: resting surfaces stay flat; the glass and the glow give the lift.
+- **Would change it:** Punna wanting more lift (then `shadow-elevated` once, as a hero exception).
+- **Status:** Decided
+
+## Homepage hero: one rounded field with the CTA inside (2026-11-11)
+
+- **Question:** The field and the button beside it read as two parts.
+- **Decision:** One 48px fully rounded field with the green CTA inside at its end, 4px in (as `SearchFilterBar`'s phone search holds its Filters pill). Phones: "Continue"; from sm: "Login / Sign up". Placeholder "Mobile number". A one-off: every other input keeps `rounded-field`.
+- **Why:** Punna's call: one simpler control. Short phone label so a 10-digit number fits at 320px.
+- **Status:** Decided
+
+## Pricing phase defaults to today (2026-11-11)
+
+- **Question:** A fresh login showed the Jan 2027 new-prices banner.
+- **Decision:** `DEFAULT_PRICING_PHASE` is "today" (was "december"). The other phases stay reachable by setting `apnahire:pricing-phase`.
+- **Why:** Punna's call: today's prices are what a recruiter sees now.
+- **Status:** Decided
+
+## Page gradient: the gold brand gradient again, legacy mesh only on logged-in plans (2026-11-11)
+
+- **Question:** Which mother gradient do the marketing pages wear?
+- **Decision:** The gold "brand gradient" is live in `:root` (marketing, login, everything). The legacy mesh stays only on the logged-in plans page (`/apnahire/credits`), which marks itself `data-canvas="legacy-mesh"`. Mother plum stays a preview (`?mother=plum`).
+- **Why:** Punna's call.
+- **Status:** Decided
+
+## Homepage hero: "AI-native" is a sky-to-green sweep (2026-11-11)
+
+- **Question:** The plum text gradient barely showed on the dark headline.
+- **Decision:** `--gradient-text-brand` sweeps sky-600 → green-600 (dark: sky-300 → green-300), still the slow `animate-text-gradient` flow.
+- **Why:** AI elements wear sky (AGENTS.md); green ties it to the brand. Darker steps keep it readable as a headline.
+- **Would change it:** Punna preferring plain text.
+- **Status:** Leaning
+
+## Homepage hero: the eyebrow is plain text, not a chip (2026-11-11)
+
+- **Question:** The white hero chip and the white mobile field looked like two inputs.
+- **Decision:** Every marketing hero's label (`HeroChip`) is small gray text with its icon, no box. Started on the homepage, then applied to all pages the same day.
+- **Why:** Punna's call. Frosted glass barely differed from white; removing the line was the other option.
+- **Status:** Decided
+
+## Homepage hero: the candidates page under the form (2026-11-11)
+
+- **Question:** Show the product in the hero, as product-led SaaS sites do?
+- **Decision (live; was the `/?hero=screen` preview):** A real capture of a job's candidates page under the form, on a green-and-sky glow (`hero-glow`). Desktop only; phones show no screen (Punna). No play button until there is a demo video. Not the pricing page: the candidates page shows the result a recruiter gets.
+- **Why:** Punna's reference; the hero said what apna is but never showed it.
+- **Would change it:** captures going stale as the page changes.
+- **Status:** Decided
+
+## Marketing headlines: Google Sans Flex bold, not Fraunces (2026-11-11)
+
+- **Question:** Keep the serif (Fraunces) on marketing headlines?
+- **Decision:** Google Sans Flex, bold, on every marketing headline and section title (text-editorial-display, text-editorial-h1/h2, text-hero-h1/h2); card titles stay Inter. Body and product stay Inter. The hero fills the first screen with the stats at its foot; "Hiring at scale? Enterprise login" in small text, no icon. Inputs keep `rounded-field` even beside a pill button.
+- **Why:** Punna's call: the serif felt off; the enterprise link needed a lead-in. Fully rounded inputs exist nowhere else.
+- **Would change it:** Brand asking for a different display face.
+- **Status:** Decided
+
+## Homepage hero: one centred stack, no card (2026-11-11)
+
+- **Question:** Should the hero keep copy on the left and the login card on the right?
+- **Decision:** One centred stack: chip, headline, subtext, mobile number + "Login / Sign up" in one row, "Enterprise login" under it, then the stats. No card title and no terms line.
+- **Why:** Punna's reference (a centred SaaS hero). The terms already show on the login steps that follow, so the hero need not repeat them.
+- **Would change it:** Legal asking for the terms at the first tap, or sign-ups falling.
+- **Status:** Leaning
+
+## Marketing footer: links, then the wordmark, then the legal bar (2026-11-11)
+
+- **Question:** How should the marketing footer be arranged?
+- **Decision:** Social buttons and app links on the left (no small logo or tagline: the wordmark and the contact band already say it), four link columns with gray overline headings on the right, the "apna" watermark under them, and the copyright + legal bar last.
+- **Why:** Punna's reference (a dark template footer): the watermark reads as the sign-off between content and the fine print.
+- **Would change it:** The watermark feeling cut off from the page end on phones.
+- **Status:** Leaning
+
 ## Job posting: the description writes itself in the AI's voice (2026-11-10)
 **Status: Decided** (Punna)
 

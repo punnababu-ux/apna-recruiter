@@ -18,7 +18,6 @@ const ROUTES = [
   { name: "about", path: "/about" },
   { name: "about: culture", path: "/about/culture" },
   { name: "about: leadership", path: "/about/leadership" },
-  { name: "about: management", path: "/about/management" },
   { name: "about: by the numbers", path: "/about/numbers" },
   { name: "newsroom", path: "/newsroom" },
   { name: "newsroom: awards", path: "/newsroom/awards" },

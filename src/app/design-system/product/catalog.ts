@@ -94,7 +94,7 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
       {
         name: "MotherPreview",
         file: "marketing/mother-preview.tsx",
-        what: "Preview-only: ?mother=plum (the mother plum) or ?mother=brand (gold) shows a saved mother gradient; the legacy mesh is live.",
+        what: "Preview-only: ?mother=plum shows the saved mother plum; the gold brand gradient is live, and the legacy mesh stays on the logged-in plans page only.",
         where: "Marketing layout, behind a URL flag",
         rules: ["Preview only. Never on by default; remove before production."],
       },
@@ -378,7 +378,10 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
         what: "Mocked payment chooser and the full-page confirmation.",
         live: "/design-system/product/pop-ups",
         where: "After Proceed to pay",
-        rules: ["Prototype payment. Wire to the real gateway before production."],
+        rules: [
+          "Prototype payment. Wire to the real gateway before production.",
+          "Success CTAs follow the purchase: job posted → Go to dashboard; job credits or plan → Post a job; database → Search candidates. Go to dashboard is the outline way out.",
+        ],
       },
       {
         name: "OfferDialog / OfferChoice",

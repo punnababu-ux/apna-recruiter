@@ -48,7 +48,7 @@ export function FooterWatermark() {
   }, [])
 
   return (
-    <div ref={frame} aria-hidden className="mt-6 aspect-13/4 overflow-hidden mask-b-from-20%">
+    <div ref={frame} aria-hidden className="mt-16 aspect-13/4 overflow-hidden mask-b-from-20%">
       <div className="parallax-rise aspect-30/11 w-full origin-bottom bg-foreground/5" style={WORDMARK_MASK}>
         <video
           src="/videos/footer-watermark.mp4"

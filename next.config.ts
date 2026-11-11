@@ -4,6 +4,9 @@ const nextConfig: NextConfig = {
   // Dev only: lets a phone on the same Wi-Fi open the dev server.
   allowedDevOrigins: ["192.168.*.*"],
   transpilePackages: ["@apna/design-system"],
+  // 95 for the homepage hero's product capture: at the default 75 its small
+  // UI text went soft.
+  images: { qualities: [75, 95] },
   // Next's dev indicator defaults to bottom-left, where it sits on top of the
   // self-checkout auth-state switcher and eats its clicks. Dev-only overlay,
   // so moving it costs nothing in production.
@@ -36,6 +39,12 @@ const nextConfig: NextConfig = {
         source: "/apnahire/jobs/rounds/new",
         destination: "/apnahire/jobs/new",
         permanent: false,
+      },
+      // Management team merged into Our leadership (Lovable, 2026-11-11).
+      {
+        source: "/about/management",
+        destination: "/about/leadership",
+        permanent: true,
       },
       // The public pricing page moved out of the product namespace and into
       // the (marketing) route group, which doesn't appear in the URL.

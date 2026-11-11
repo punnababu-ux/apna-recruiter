@@ -12,7 +12,7 @@
 <!-- The design system's tokens (src/app/redrawn/tokens.css): brand colours,
      fonts, the mother gradient and the hero blobs follow the system. -->
 <link rel="stylesheet" href="/redrawn/tokens.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Inter:wght@400;500;600;700&family=Noto+Serif+Devanagari:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400..700&family=Inter:wght@400;500;600;700&family=Noto+Serif+Devanagari:wght@500&display=swap">
 <style>
 /* Layout: a keynote stage. One idea per full-screen slide, dark plum
    ground, the brand's own colours as the only light on stage. */
@@ -38,13 +38,14 @@
   --plum: var(--color-apna-plum-400);         /* logo plum (the wordmark) */
   --plum-soft: var(--color-apna-plum-300);
   --paper: #FFFFFF;
-  /* Inter for everything; Fraunces for hero titles only (2026-11-05), as on
-     the website. The "before" examples stay in Inter. */
+  /* Inter for everything; Google Sans Flex bold for headlines (2026-11-11,
+     was Fraunces), as on the website. The "before" examples stay in Inter. */
   --font-display: "Inter", var(--font-family-sans);
   --font-body: "Inter", var(--font-family-sans);
   --font-old: "Inter", var(--font-family-sans);
-  /* Slide h1s: Fraunces, matching the marketing hero headline (2026-11-05). */
-  --font-hero: "Fraunces", Georgia, serif;
+  /* Slide headlines: Google Sans Flex bold, matching the marketing hero and
+     section titles (2026-11-11). */
+  --font-hero: "Google Sans Flex", "Inter", var(--font-family-sans);
   --slide-pad: clamp(24px, 6vw, 96px);
 }
 :root[data-mode="dark"] {
@@ -90,8 +91,9 @@ body {
 .center { align-items: center; text-align: center; }
 
 .kicker { font-size: clamp(15px, 1.2vw, 18px); font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-dim); }
-h1, h2 { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.015em; text-wrap: balance; margin: 0; line-height: 1.04; }
-h1 { font-family: var(--font-hero); font-weight: 500; font-size: clamp(56px, 11vw, 168px); }
+h1, h2 { font-family: var(--font-hero); font-weight: 700; letter-spacing: -0.015em; text-wrap: balance; margin: 0; line-height: 1.04; }
+h1 em, h2 em { font-style: normal; } /* no italic accent, as on the website */
+h1 { font-family: var(--font-hero); font-weight: 700; font-size: clamp(56px, 11vw, 168px); }
 /* The real wordmark in the title, sized to the headline's lowercase and
    sitting on the same baseline. */
 .title-wordmark { height: 0.8em; width: auto; vertical-align: -0.257em; color: currentColor; margin-right: -0.03em; }
@@ -467,13 +469,13 @@ em { font-style: normal; }
 .type-eyebrow { margin: 0; align-self: flex-start; font-size: clamp(15px, 1.2vw, 18px); font-weight: 600; padding: 4px 10px; border-radius: 99px; border: 1px solid var(--ink-faint); color: var(--ink-dim); }
 .type-head { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(28px, 3.6vw, 48px); line-height: 1.05; letter-spacing: -0.015em; text-wrap: balance; color: var(--ink); transition: letter-spacing 500ms ease; }
 .type-demo.before .type-head { font-family: var(--font-old); letter-spacing: -0.03em; }
-.type-demo:not(.before) .type-head { font-family: var(--font-hero); font-weight: 500; }
+.type-demo:not(.before) .type-head { font-family: var(--font-hero); font-weight: 700; }
 /* The hero's accent word: light plum to near-black, as on the site. */
-.accent-word { background: linear-gradient(90deg, var(--color-apna-plum-950), var(--color-apna-plum-400) 50%, var(--color-apna-plum-950)); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; padding-inline: 0.15em; margin-inline: -0.15em; animation: accent-flow 4s ease-in-out infinite alternate; }
-[data-mode="dark"] .accent-word { background-image: linear-gradient(90deg, var(--color-apna-plum-50), var(--color-apna-plum-300) 50%, var(--color-apna-plum-50)); }
+.accent-word { background: linear-gradient(90deg, var(--color-apna-sky-600), var(--color-apna-green-600) 50%, var(--color-apna-sky-600)); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; padding-inline: 0.15em; margin-inline: -0.15em; animation: accent-flow 4s ease-in-out infinite alternate; }
+[data-mode="dark"] .accent-word { background-image: linear-gradient(90deg, var(--color-apna-sky-300), var(--color-apna-green-300) 50%, var(--color-apna-sky-300)); }
 @keyframes accent-flow { from { background-position: 0% 50%; } to { background-position: 100% 50%; } }
 @media (prefers-reduced-motion: reduce) { .accent-word { animation: none; } }
-.living .lv-a { font-family: var(--font-hero); font-weight: 500; }
+.living .lv-a { font-family: var(--font-hero); font-weight: 700; }
 .type-demo:not(.before) .rx-b, .type-demo.before .rx-a { display: none; }
 .type-body { margin: 0; font-size: clamp(15px, 1.4vw, 18px); line-height: 1.5; color: var(--ink-dim); max-width: 56ch; }
 .type-stats { display: flex; flex-wrap: wrap; gap: 28px; padding-top: 8px; }
@@ -484,7 +486,7 @@ em { font-style: normal; }
 .type-rules > div { display: flex; flex-direction: column; gap: 4px; padding: 16px 20px; border-radius: 18px; border: 1px solid var(--ink-faint); text-align: left; }
 .type-rules strong { font-size: 22px; font-weight: 500; color: var(--ink); }
 .tr-sans { font-family: var(--font-body); font-weight: 600 !important; }
-.tr-hero { font-family: var(--font-hero); font-weight: 500; }
+.tr-hero { font-family: var(--font-hero); font-weight: 700; }
 .type-rules span { font-size: 15px; line-height: 1.5; color: var(--ink-dim); }
 [aria-label="Typography"] .inner { gap: clamp(14px, 2.4vh, 28px); }
 .type-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
@@ -817,7 +819,7 @@ em { font-style: normal; }
 
   <section class="slide" aria-label="Typography">
     <div class="inner">
-      <p class="kicker rise">Type · Fraunces and Inter</p>
+      <p class="kicker rise">Type · Google Sans Flex and Inter</p>
       <h2 class="rise">A face for the story. One for the work.</h2>
       <div class="type-demo rise" id="typedemo">
         <p class="type-eyebrow">India's #1 hiring platform</p>
@@ -830,10 +832,10 @@ em { font-style: normal; }
           <button type="button" id="type-before" aria-pressed="false">Before</button>
           <button type="button" id="type-after" aria-pressed="true">After</button>
         </div>
-        <p class="type-product">The website opens in Fraunces, a soft display serif, and works in Inter. The accent word is a slow sweep of plum, the logo&rsquo;s wordmark colour. The product stays all Inter.</p>
+        <p class="type-product">The website&rsquo;s headlines are Google Sans Flex, bold; everything else is Inter. The accent word is a slow sweep of sky into green: the AI colour meeting the brand. The product stays all Inter.</p>
       </div>
       <div class="type-rules rise">
-        <div><strong class="tr-hero">Hero titles</strong><span>Fraunces, medium weight, sentence case, on the website only. 64px heroes on a desktop, 32px on a phone; 48px for a page&rsquo;s closing line.</span></div>
+        <div><strong class="tr-hero">Hero titles</strong><span>Google Sans Flex, bold, sentence case, on the website only: heroes and section titles. 64px heroes on a desktop, 40px on a phone; 48px for a page&rsquo;s closing line.</span></div>
         <div><strong class="tr-sans">Everything else</strong><span>Section titles, body, buttons, forms, quotes and every number, and the whole product: Inter.</span></div>
       </div>
     </div>
@@ -887,7 +889,7 @@ em { font-style: normal; }
         <ol class="pg-laws rise">
           <li><strong>Written once, read everywhere</strong><span>Every colour, size and motion is a named token. Change it in one place and every screen follows.</span></li>
           <li><strong>Compose, never re-style</strong><span>Pages are built from existing parts. A new need becomes a new part first, so nothing is drawn twice.</span></li>
-          <li><strong>Subtract the obvious, add the meaningful</strong><span>After Maeda&rsquo;s laws of simplicity: one green action, one product typeface, and the warmth kept in.</span></li>
+          <li><strong>Subtract the obvious, add the meaningful</strong><span>After Maeda&rsquo;s laws of simplicity: one green action per surface, one product typeface, and the warmth kept in.</span></li>
         </ol>
       </div>
       <div class="pg-tablet rise" aria-hidden="true">
@@ -911,7 +913,7 @@ em { font-style: normal; }
       <div class="facts rise">
         <div class="fact"><b data-count="41">41</b><span>components in 8 categories, from a button to a pricing card</span></div>
         <div class="fact"><b data-count="4">4</b><span>product colours, all from the logo</span></div>
-        <div class="fact"><b data-count="2">2</b><span>typefaces: Fraunces for website heroes, Inter for everything else</span></div>
+        <div class="fact"><b data-count="2">2</b><span>typefaces: Google Sans Flex for website headlines, Inter for everything else</span></div>
         <div class="fact"><b data-count="1">1</b><span>green action per screen</span></div>
       </div>
       <p class="lede rise">Designers and engineers build from the same parts. A change made once shows up everywhere.</p>
@@ -955,7 +957,7 @@ em { font-style: normal; }
         <div class="rx-list" role="tablist" aria-label="Rules">
           <button class="rx-rule" role="tab" aria-selected="true" data-rx="glass"><strong>Cards on a gradient are glass</strong><span>One rule, on for every marketing page at once. Nobody edited a page.</span></button>
           <button class="rx-rule" role="tab" aria-selected="false" data-rx="accent"><strong>Sentence case, everywhere</strong><span>Headlines, buttons and labels capitalise only the first word. No italic accents; the voice holds, whoever writes the copy.</span></button>
-          <button class="rx-rule" role="tab" aria-selected="false" data-rx="green"><strong>One green button per screen</strong><span>The add-on used to wear the same green as &ldquo;Proceed to pay&rdquo;. Now it&rsquo;s dark, so paying is the one clear next step.</span></button>
+          <button class="rx-rule" role="tab" aria-selected="false" data-rx="green"><strong>One green button per surface</strong><span>A surface is the screen, or one card in a list of equal cards. The add-on used to wear the same green as &ldquo;Proceed to pay&rdquo;. Now it&rsquo;s dark, so paying is the one clear next step. In a list, each card keeps one green for its own action, such as &ldquo;Call&rdquo; on a candidate card.</span></button>
         </div>
         <div class="rx-stage">
           <div class="toggle rx-toggle" role="group" aria-label="Show">
@@ -1076,7 +1078,7 @@ em { font-style: normal; }
         <div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span id="browser-url">employer.apna.co/jobs</span></div>
         <div class="browser-view">
           <img src="img/dashboard.jpg" data-dark="img/dashboard-dark.jpg" alt="The recruiter dashboard: jobs list with applied, active leads and database matches" class="screen on" data-screen="dashboard" loading="lazy">
-          <img src="img/home.jpg" data-dark="img/home-dark.jpg" alt="The homepage: Fraunces headline with AI-native in a plum sweep, and the sign-up card" class="screen" data-screen="home" loading="lazy">
+          <img src="img/home.jpg" data-dark="img/home-dark.jpg" alt="The homepage: Google Sans Flex headline, the phone field, and the product screen" class="screen" data-screen="home" loading="lazy">
         </div>
       </figure>
     </div>

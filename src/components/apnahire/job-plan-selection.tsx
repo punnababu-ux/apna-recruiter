@@ -463,7 +463,8 @@ export function JobPlanSelection() {
         total={order.total}
         orderId={order.id}
         note={order.note}
-        postedJob={{ title: postedTitle, onViewJobs: () => router.push("/apnahire/jobs") }}
+        postedJob={{ title: postedTitle }}
+        onDashboard={() => router.push("/apnahire/dashboard")}
         onSearchCandidates={() => router.push("/apnahire/database/search-candidates")}
         setup={postedDraft ? <FinishSetup draft={postedDraft} /> : undefined}
       />

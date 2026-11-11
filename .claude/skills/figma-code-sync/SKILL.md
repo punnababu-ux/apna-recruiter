@@ -27,7 +27,9 @@ Progress and history live in `docs/status/FIGMA-SYNC-STATUS.md`. Read its
    first, or the page behind leaks in. Store it once as
    `localStorage.__x` and `eval` it, to save context. Phone 375×812,
    desktop 1440×900. Close the gear popover before a capture.
-3. **Figma side** — `figma-dump.js` (this folder) on page
+3. **Figma side** — `figma-dump.js` (this folder) on the Checkout file
+   (92gU18d45olE04ATyhhVHD), page "Revamp" (5367:50210); components live in the DS file
+   (f8O8wKTD4EdBvFj7h5ilev). Before 2026-11-11 screens were on DS page
    "Checkout — dev hand-off" (441:2): `text | size weight | token ~hex | id
    | component`. Return small batches (2–4 frames); big copies trip the
    API safety filter.
@@ -46,9 +48,15 @@ Progress and history live in `docs/status/FIGMA-SYNC-STATUS.md`. Read its
 
 ## Rules learned (don't repeat these bugs)
 
+- **No screens in the design system file** (Punna, 2026-11-11). It holds components and
+  tokens only; edit access there is risky to hand out. Before making a new screen, ask
+  Punna which file and page. That file must use the DS as a library (its instances report
+  `remote: true`); the Plugin API can't link a library, so ask Punna to link it if not.
+  Checkout screens: Checkout file 92gU18d45olE04ATyhhVHD, page "Revamp".
+
 - **Every text uses a text style.** Change the style, never fontSize or
   fontWeight by hand; set the style last (fontName after it detaches it).
-  New size? Create the style first (e.g. `Label/MD Bold`, `Body/XS Loose`
+  New size? Create the style first (e.g. `Body/XS Loose`
   12/20, `Price/Total MD` 18 bold) with a description of where it's used.
 - **Button label per size = code `button.tsx`**: every size semibold —
   xs/sm 12, default 14, lg 16, xl 16, `card` 14 at 40px (the desktop plan
@@ -94,7 +102,7 @@ Progress and history live in `docs/status/FIGMA-SYNC-STATUS.md`. Read its
   `checkout-primary` on text and icon. Not selected: phone sticky bar and
   desktop docked bar are `foreground` at 60%, 14 medium; the desktop hero tabs
   are `surface-checkout-hero-fg-secondary` (titles 18 semibold, subtitles
-  12). Selected label: 14 bold (Label/MD Bold) on the phone and docked bars,
+  12). Selected label: 14 semibold (Label/MD) on the phone and docked bars,
   18 semibold green on the hero. Read the rendered colour of the svg as well
   as the label: they must match.
 - **"The sticky tabs on mobile"** means `SelfCheckoutTabs/phone` (305:111),

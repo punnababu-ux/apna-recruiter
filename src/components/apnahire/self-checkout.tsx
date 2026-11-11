@@ -595,6 +595,8 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
         orderId={order.id}
         onSearchCandidates={() => router.push("/apnahire/database/search-candidates")}
         onPostJob={() => router.push("/apnahire/jobs/new")}
+        onDashboard={() => router.push("/apnahire/dashboard")}
+        boughtDatabase={order.lines[0]?.id.startsWith("db-")}
       />
     )
   }
@@ -604,6 +606,9 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
     // the title (content/price-change.ts). /pricing shows today's prices.
     <UpcomingPricesProvider enabled={!isLoggedOut}>
       <div
+        // Logged in, the plans page keeps the legacy mesh (Punna, 2026-11-11);
+        // every other page wears the brand gradient.
+        data-canvas={isLoggedOut ? undefined : "legacy-mesh"}
         className={cn(
           "flex flex-col",
           // Logged-out renders inside (marketing)/layout.tsx, which already

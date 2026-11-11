@@ -26,9 +26,12 @@ Gemini…) can pick up from here.
   rules that matter. Its images are at `handoff/<name>-phone|desktop.jpg`.
   A "(Copy)" version (`SVLoiza7JPGf11A3CrY3Vd`) belongs to another account
   and is not kept in sync.
-- **Figma:** the same screens, same order, on the page "Checkout — dev hand-off" of
-  https://www.figma.com/design/f8O8wKTD4EdBvFj7h5ilev (sections 0–10, phone left, desktop
-  right; see docs/status/FIGMA-SYNC-STATUS.md).
+- **Figma:** the same screens, same order, in the Checkout file, page "Revamp":
+  https://www.figma.com/design/92gU18d45olE04ATyhhVHD/Checkout?node-id=5367-50210
+  (sections 0–10, phone left, desktop right; see docs/status/FIGMA-SYNC-STATUS.md).
+  Since 2026-11-11 the design system file (f8O8wKTD4EdBvFj7h5ilev) is the hub for components
+  and tokens only, never screens. New screens go in the file Punna names for the story (ask
+  if none); that file must use the design system as a library (ask Punna to link it).
 - **Live prototype:** poneglyphag.vercel.app (rebuilt from `main`).
   Express `/apnahire/jobs/new/plans`, self-checkout `/apnahire/credits`.
   Express plan layout and credit balance are query params

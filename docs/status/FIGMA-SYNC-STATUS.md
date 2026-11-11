@@ -1,9 +1,42 @@
 # Figma sync — status (resume from here)
 
-Last updated: 2026-11-06. Keep this file current after every Figma step.
+Last updated: 2026-11-11. Keep this file current after every Figma step.
 How to audit/sync (workflow, scripts, rules learned): skill `.claude/skills/figma-code-sync/`.
 
 ## ▶ Latest state (read this first)
+- **2026-11-11: checkout screens moved.** The hand-off screens now live in the Checkout file,
+  page "Revamp": https://www.figma.com/design/92gU18d45olE04ATyhhVHD/Checkout?node-id=5367-50210
+  (sections 0–10, same frame names). Edit screens THERE from now on. Components stay in the
+  design system file (f8O8wKTD4EdBvFj7h5ilev) and reach the Checkout file as a library: change
+  the main there, publish, then accept the update in Checkout. The old "Checkout — dev hand-off"
+  page (441:2) in the DS file is no longer the source for screens.
+- 2026-11-11 phone Premium + AI card matches code: new components AiDemoCall 524:180 (hugs,
+  divider) and AiTag 524:183 on the PricingCard page (built from the desktop card's `demo` /
+  `AI badge` frames, which are still plain frames there). MobilePlanRow 296:259 got booleans
+  "Show AI tag" / "Show demo call" (off by default) and its CTA now sits at the bottom
+  (`self-end` in code). On in E3 306:858 and M1 394:1739, title "Premium job +".
+  Dev Mode notes (rolling line, demo pill, live link) on those two and on the desktop
+  Premium + AI cards D-E3 339:2114, D-M1 394:1811, D-E8 344:6288 (other desktop cards keep the
+  AI block hidden). Note also in the MobilePlanRow and PricingCard set descriptions.
+- 2026-11-11 PaymentSuccess (Checkout shell) is a variant set 521:27270: Purchase (Job credits /
+  Database / Job posted) × Platform (Desktop / Phone, stacked, primary on top). Job posted adds
+  "<title> is now visible to candidates. Nothing else to do." Section 10 has a new row
+  "S3 Express · job live" (522:16546 desktop, 522:16649 phone). Sample order lines are still
+  "3 job credits"; no Database success screen in the hand-off yet.
+- 2026-11-11 foundations audit (variables + text styles vs tokens/*.css, index.css):
+  Color: 24 values re-pointed to match semantic.css (checkout-primary light green-700,
+  cta-emphasis dark plum-300/200/950, surface-plan-card dark plum-700, cta-primary dark green-700,
+  ribbon-fg dark sky-300, aliases now follow code's chains), 24 missing tokens added (avatar-*,
+  chat-*, banner-strike, surface-glass(-faint), cta-primary-hover, cta-destructive(-hover),
+  checkout-chip(-pill), checkout-inset-cta(-hover), chip-on-tint, app-chip-pill, plan-card-line,
+  checkout-discount-bg, night-sky-cloud). color-mix values are baked as computed rgba.
+  Typography: + line-height relaxed/loose, letter-spacing tighter…widest. Radius: + radius-role
+  bubble, composer, default. Text style "Label/MD Bold" (was Semi Bold, a duplicate) merged into
+  Label/MD. Duplicates merged into the code preset names: Body/MD → Body (5 layers),
+  Caption/XS → Caption (30), Body/SM → Body SM (153; line height 20 → 21, code's 1.5).
+  Open: Figma-only primitives alpha-black/8, alpha-white/8,12,16,26,30.
+- ExtraOffBanner countdown pill: the 15% sits on a `bg` layer's opacity, not the fill —
+  paint opacity on a variable-bound fill did not reach instances.
 - All checkout screens are on ONE page, "Checkout — dev hand-off" (441:2), sections 0–10 in the
   hand-off's order (details below). Every upsell, exit pop-up, menu and edge state is drawn,
   phone + desktop.
@@ -469,7 +502,7 @@ Review fixes (Punna, 2026-11-04):
 - Page "Checkout — phone" (screens 390 wide, x step 440):
   - [x] E1 Plans · no credits 306:3
   - [x] E2 Plans · offer claimed 306:362
-  - [x] E3 Plans · all three credits 306:621 (Premium + AI card lacks the demo player row)
+  - [x] E3 Plans · all three credits 306:621 (demo player added 2026-11-11)
   - [x] E4 Plans · 1 job credit 306:904
   - [ ] E5 "Pay less when you buy 3" sheet over E1
   - [ ] E6 Order summary · paying, E7 · AI calling added, E8 · paid by credits

@@ -21,6 +21,9 @@ export const PHONE_LOGIN = {
   title: "Let’s get started",
   label: "Mobile number",
   placeholder: "Enter your mobile number",
+  /** The homepage hero, where the CTA sits inside the field (ctaShort on phones). */
+  placeholderShort: "Mobile number",
+  ctaShort: "Continue",
   /** "Login / Sign up" on the homepage card (the header's label, so the
    *  header button reads as this one moving up), "Send OTP" on the
    *  sign-in page. */
@@ -29,6 +32,8 @@ export const PHONE_LOGIN = {
   invalid: "Enter your 10-digit mobile number",
   or: "OR",
   enterprise: "Enterprise login",
+  /** Leads into the enterprise link under the homepage hero's form. */
+  enterpriseLead: "Hiring at scale?",
 }
 
 export const ENTERPRISE_LOGIN = {

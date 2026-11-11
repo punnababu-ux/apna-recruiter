@@ -30,7 +30,6 @@ export const FOOTER_COLUMNS: FooterColumn[] = [
       { label: "Our culture and values", href: "/about/culture" },
       { label: "Apna by the numbers", href: "/about/numbers" },
       { label: "Our leadership", href: "/about/leadership" },
-      { label: "Management team", href: "/about/management" },
       { label: "Join us", href: "/careers" },
     ],
   },
@@ -99,3 +98,4 @@ export const LEGAL_LINKS: NavLink[] = [
 /** Computed, so the footer doesn't quietly go stale on 1 January. */
 export const copyrightLine = () =>
   `© ${new Date().getFullYear()} Apna | All rights reserved.`
+

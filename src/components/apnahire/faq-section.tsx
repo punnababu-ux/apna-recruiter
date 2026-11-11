@@ -49,7 +49,7 @@ export function FaqSection({ items = FAQS, hideActions, onHelpAndSupport, onShow
       )}
     >
       <div className="flex w-full shrink-0 flex-col items-start gap-6 lg:w-92">
-        <h2 className="text-h3 font-heading font-semibold text-foreground [[data-voice=editorial]_&]:font-editorial">
+        <h2 className="text-h3 font-heading font-semibold text-foreground [[data-voice=editorial]_&]:font-hero [[data-voice=editorial]_&]:font-bold">
           Frequently
           <br />
           asked questions

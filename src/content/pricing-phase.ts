@@ -28,9 +28,9 @@ export const PRICING_PHASES: { value: PricingPhase; label: string }[] = [
   { value: "jan", label: "From Jan 1, new prices" },
 ]
 
-/** The phase a fresh browser opens on: the announcement, the one with the
- *  most to review. */
-export const DEFAULT_PRICING_PHASE: PricingPhase = "december"
+/** The phase a fresh browser opens on: today's prices, no banner (Punna,
+ *  2026-11-11; it was the December announcement). */
+export const DEFAULT_PRICING_PHASE: PricingPhase = "today"
 
 /** Only December announces the Jan prices: banner, notification, the line
  *  on every card and upsell tile. */

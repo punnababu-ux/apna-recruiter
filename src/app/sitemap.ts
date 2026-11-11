@@ -37,7 +37,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       "/about/culture",
       "/about/numbers",
       "/about/leadership",
-      "/about/management",
       "/careers",
       "/newsroom",
       "/newsroom/awards",

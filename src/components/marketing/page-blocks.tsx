@@ -29,7 +29,6 @@ import type { ReactNode } from "react"
 import Image from "next/image"
 import {
   ArrowUpRight,
-  Badge,
   Button,
   Card,
   CheckCircle2,
@@ -62,10 +61,12 @@ export function withAccent(text: string, word?: string): ReactNode {
 /** The hero's chip — the homepage hero's own (Badge lg, outline, on card). */
 export function HeroChip({ children, icon }: { children: ReactNode; icon?: ReactNode }) {
   return (
-    <Badge size="lg" variant="outline" className="bg-card">
+    // Plain gray text with the icon, no box: a white chip read as a second
+    // input beside the hero's form (2026-11-11).
+    <span className="flex items-center gap-2 text-sm font-medium text-muted-foreground [&_svg]:size-4">
       {icon ?? <CheckCircle2 aria-hidden />}
       {children}
-    </Badge>
+    </span>
   )
 }
 
