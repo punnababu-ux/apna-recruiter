@@ -378,7 +378,10 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
         what: "Mocked payment chooser and the full-page confirmation.",
         live: "/design-system/product/pop-ups",
         where: "After Proceed to pay",
-        rules: ["Prototype payment. Wire to the real gateway before production."],
+        rules: [
+          "Prototype payment. Wire to the real gateway before production.",
+          "Success CTAs follow the purchase: job posted → Go to dashboard; job credits or plan → Post a job; database → Search candidates. Go to dashboard is the outline way out.",
+        ],
       },
       {
         name: "OfferDialog / OfferChoice",

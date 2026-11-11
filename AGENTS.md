@@ -1023,6 +1023,13 @@ skips steps 2–4: add an entry to `src/app/design-system/product/catalog.ts`
 
 ---
 
+## Figma: components in the hub, screens in the story's file (Punna, 2026-11-11)
+
+"Apna Recruiter — Design System" (f8O8wKTD4EdBvFj7h5ilev) holds every component, token,
+variable and text style, and never screens. Screens go in the file named for the story
+(checkout: the Checkout file, page "Revamp"); ask Punna when none is named. That file uses
+the design system as a library; the Plugin API can't link one, so ask Punna to link it.
+
 ## Adding a new template / page
 
 1. Compose existing components. No new JSX primitives other than layout

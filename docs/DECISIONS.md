@@ -8,6 +8,26 @@ or **Open**.
 
 ---
 
+## Premium + AI rolling line: phone and desktop differ on purpose (2026-11-11)
+
+- **Question:** On phones the "AI calling agent" line itself rolls through the AI points; on desktop "AI calling agent" is a fixed heading with a rolling line under it. Is the difference a bug?
+- **Decision:** No. It's deliberate. Phone: one feature line that starts as "AI calling agent" and rolls to "30% higher call pickup", "Ready to interview candidates", "Hindi & English calling" (`RollingLabel`). Desktop: fixed "AI calling agent" heading in the AI block, rolling line under it from "Calls all applicants" (`RollingPoint`).
+- **Why:** Punna's call: the phone card has room for one line, so the agent's name has to share it with its points.
+- **Changes it:** a phone card with room for the full AI block.
+- **Status:** Decided
+
+## Payment success: next step by what was bought (2026-11-11)
+
+- **Question:** Every success page offered "Post a job now", even right after a job was posted or after buying database credits.
+- **Decision:** Primary (green) / secondary (outline):
+  - Express checkout (job just posted): **Go to dashboard** / Search candidates.
+  - Self-checkout, job credits or a subscription: **Post a job** / Go to dashboard.
+  - Self-checkout, database credits: **Search candidates** / Go to dashboard.
+  The way out is "Go to dashboard", not "Done": it names where it leads.
+- **Why:** Punna's call: the primary is the next task for what was bought; posting again after posting was the old support issue. "Done" vs "Go to dashboard" was open; picked the named destination.
+- **Changes it:** a dashboard that isn't the recruiter's home, or a purchase that mixes job and database credits (today it follows the first line).
+- **Status:** Decided (CTAs), Leaning ("Go to dashboard" over "Done")
+
 ## Review states page in the design system (2026-11-11)
 
 - **Decision:** `/design-system/engineering/review-states` lists every review state (express `layout` + `credits`, self-checkout `tab`, jobs-list `bar`, job candidates `tab` / `applicants` / `deck` / `views` / `pill`). It has a builder that makes the URL, and a ready-made link for each state. The pricing phase can be switched there for this browser.

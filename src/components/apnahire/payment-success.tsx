@@ -25,10 +25,15 @@ interface PaymentSuccessProps {
   orderId: string
   onSearchCandidates?: () => void
   onPostJob?: () => void
+  /** Every outcome offers the way back to the dashboard. */
+  onDashboard: () => void
   /** Set when this payment was the last step of posting a job: the job is
    *  already live, so the screen says so and doesn't ask them to post again
    *  (paid-but-not-posted jobs were a recurring support issue). */
-  postedJob?: { title: string; onViewJobs: () => void }
+  postedJob?: { title: string }
+  /** Database credits bought (self-checkout): searching is the next step,
+   *  not posting a job. */
+  boughtDatabase?: boolean
   /** What paid for it when nothing was charged, e.g. "Used 1 Premium job credit". */
   note?: string
   /** PREVIEW (?flow=essential): the Finish setup list, under the title. */
@@ -41,7 +46,9 @@ export function PaymentSuccess({
   orderId,
   onSearchCandidates,
   onPostJob,
+  onDashboard,
   postedJob,
+  boughtDatabase,
   note,
   setup,
 }: PaymentSuccessProps) {
@@ -71,19 +78,29 @@ export function PaymentSuccess({
         {setup}
         {paid && <OrderDetails lines={lines} total={total} title="Payment details" />}
 
-        {/* One solid primary (the screen's only green); phones stack it on top. */}
+        {/* One solid primary (the screen's only green), chosen by what was bought:
+            job posted → dashboard; database credits → search; job credits or a
+            subscription → post a job. "Go to dashboard" is the way out of all
+            three (decided 2026-11-11, docs/DECISIONS.md). Phones stack it on top. */}
         <div className="flex w-full flex-col-reverse gap-3 sm:flex-row">
-          <Button variant="outline" size="lg" className="w-full font-semibold sm:flex-1" onClick={onSearchCandidates}>
-            Search candidates
-          </Button>
           {postedJob ? (
-            <Button size="lg" className="w-full font-semibold sm:flex-1" onClick={postedJob.onViewJobs}>
-              View my jobs
-            </Button>
+            <>
+              <Button variant="outline" size="lg" className="w-full sm:flex-1" onClick={onSearchCandidates}>
+                Search candidates
+              </Button>
+              <Button size="lg" className="w-full sm:flex-1" onClick={onDashboard}>
+                Go to dashboard
+              </Button>
+            </>
           ) : (
-            <Button size="lg" className="w-full font-semibold sm:flex-1" onClick={onPostJob}>
-              Post a job now
-            </Button>
+            <>
+              <Button variant="outline" size="lg" className="w-full sm:flex-1" onClick={onDashboard}>
+                Go to dashboard
+              </Button>
+              <Button size="lg" className="w-full sm:flex-1" onClick={boughtDatabase ? onSearchCandidates : onPostJob}>
+                {boughtDatabase ? "Search candidates" : "Post a job"}
+              </Button>
+            </>
           )}
         </div>
       </div>

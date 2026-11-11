@@ -595,6 +595,8 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
         orderId={order.id}
         onSearchCandidates={() => router.push("/apnahire/database/search-candidates")}
         onPostJob={() => router.push("/apnahire/jobs/new")}
+        onDashboard={() => router.push("/apnahire/dashboard")}
+        boughtDatabase={order.lines[0]?.id.startsWith("db-")}
       />
     )
   }

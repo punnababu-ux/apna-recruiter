@@ -730,7 +730,8 @@ export function PostJobFlow() {
         total={0}
         orderId=""
         note={live.note}
-        postedJob={{ title: live.title, onViewJobs: () => router.push("/apnahire/jobs") }}
+        postedJob={{ title: live.title }}
+        onDashboard={() => router.push("/apnahire/dashboard")}
         onSearchCandidates={() => router.push("/apnahire/database/search-candidates")}
         setup={essential ? <FinishSetup draft={state.draft} /> : undefined}
       />
