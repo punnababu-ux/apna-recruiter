@@ -546,7 +546,7 @@ export function PostJobFlow() {
       jobs: [
         ...kept,
         {
-          id: `job-${Date.now().toString(36)}`,
+          id: `job-${crypto.randomUUID().slice(0, 8)}`,
           title,
           location: locationLabel(state.draft) ?? "",
           postedAt: todayLabel(),
