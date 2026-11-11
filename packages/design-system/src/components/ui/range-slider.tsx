@@ -153,7 +153,7 @@ function RangeSlider({
                 key={i}
                 index={i}
                 getAriaLabel={thumbLabels ? () => thumbLabels[i] : undefined}
-                getAriaValueText={(_, v) => formatValue(v)}
+                getAriaValueText={(_, v) => (unset ? "Not set" : formatValue(v))}
                 className={cn(
                   "group/thumb flex h-10 w-6 cursor-grab items-center justify-center gap-0.5 rounded-xl border-2 border-background shadow-popover outline-none transition-[box-shadow,scale,background-color] duration-150",
                   // Focus lands on the hidden input inside the thumb, so it's
@@ -175,7 +175,9 @@ function RangeSlider({
                   className={cn(
                     "pointer-events-none absolute bottom-full mb-2 whitespace-nowrap rounded-md px-2 py-1 text-xs font-semibold tabular-nums opacity-0 transition-[opacity,translate] duration-150",
                     "translate-y-1 group-hover/thumb:translate-y-0 group-hover/thumb:opacity-100 group-data-dragging/thumb:translate-y-0 group-data-dragging/thumb:opacity-100 group-focus-within/thumb:translate-y-0 group-focus-within/thumb:opacity-100",
-                    bad ? "bg-destructive text-destructive-foreground" : "bg-foreground text-background"
+                    bad ? "bg-destructive text-destructive-foreground" : "bg-foreground text-background",
+                    // No value yet: the thumbs sit on a placeholder range, so don't name it.
+                    unset && "hidden"
                   )}
                 >
                   {formatValue(value[i])}

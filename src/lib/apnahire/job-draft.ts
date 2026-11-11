@@ -49,6 +49,7 @@ export const EMPTY_JOB_DRAFT: JobPostDraft = {
   gender: "any",
   ageMin: null,
   ageMax: null,
+  distanceKm: null,
   walkIn: false,
   walkInDetails: { address: "", startDate: "", endDate: "", startTime: "10:00", endTime: "16:00", instructions: "" },
   contact: "self",
@@ -68,6 +69,32 @@ export function normalizeDraft(d: Partial<JobPostDraft> | undefined): JobPostDra
     otherRecruiter: { ...EMPTY_JOB_DRAFT.otherRecruiter, ...(d?.otherRecruiter ?? {}) },
     joiningFeeDetails: { ...EMPTY_JOB_DRAFT.joiningFeeDetails, ...(d?.joiningFeeDetails ?? {}) },
   }
+}
+
+/** Anywhere in the job's city, as a distance choice. */
+export const DISTANCE_CITY = -1
+/** Distance choices: km, the whole city, or 0 = any distance. */
+export const DISTANCE_OPTIONS = [5, 10, 15, 25, DISTANCE_CITY, 0] as const
+/** Any distance unless the recruiter narrows it (Punna, 2026-11-11). A job
+ *  that takes candidates willing to relocate cannot also limit distance. */
+export const distanceKm = (d: Pick<JobPostDraft, "distanceKm" | "relocation">): number =>
+  d.relocation ? 0 : (d.distanceKm ?? 0)
+export const distanceLabel = (km: number, city = "") =>
+  km === DISTANCE_CITY ? `Within ${city || "the city"}` : km ? `Within ${km} km` : "Any distance"
+/** The job's distance answer in words. */
+export const distanceText = (d: Pick<JobPostDraft, "distanceKm" | "relocation" | "city">) =>
+  distanceLabel(distanceKm(d), d.city)
+/** "Female · 18–35", "18+", "Up to 35" or "Anyone": what the gender and age answers say. */
+export function genderAgeLabel(d: Pick<JobPostDraft, "gender" | "ageMin" | "ageMax">): string {
+  const age =
+    d.ageMin != null && d.ageMax != null
+      ? `${d.ageMin}–${d.ageMax}`
+      : d.ageMin != null
+        ? `${d.ageMin}+`
+        : d.ageMax != null
+          ? `Up to ${d.ageMax}`
+          : ""
+  return [d.gender === "male" ? "Male" : d.gender === "female" ? "Female" : "", age].filter(Boolean).join(" · ") || "Anyone"
 }
 
 /** Account data — in production these come from the recruiter's profile. */
@@ -95,7 +122,8 @@ export const PAY_TYPE_LABELS: Record<PayType, string> = {
   incentive: "Incentive only",
 }
 export const EDUCATION_LABELS: Record<Education, string> = {
-  "10th": "10th or below",
+  any: "Any",
+  "10th": "10th pass",
   "12th": "12th pass",
   diploma: "Diploma",
   iti: "ITI",
@@ -170,6 +198,12 @@ export const CATEGORIES = [
   "Security",
   "Housekeeping",
   "Retail Sales",
+  "Inside Sales",
+  "Business Development",
+  "Loan Sales",
+  "Front Office",
+  "Restaurant Staff",
+  "Warehouse & Logistics",
   "Other",
 ]
 
@@ -375,6 +409,47 @@ const GENERIC_TITLES = new Set([
 
 /** The category a title's words point to, if any. */
 export const categoryForTitle = (title: string) => CATEGORY_RULES.find(([re]) => re.test(title))?.[1]
+
+/** What a role's title tells us besides the role: its usual industry and
+ *  workplace. Left out where the role spans many (Field Sales' industry). */
+const ROLE_DEFAULTS: Record<string, { industry?: string; locationType?: LocationType }> = {
+  Telesales: { industry: "BPO / Call Centre", locationType: "office" },
+  Delivery: { industry: "E-commerce & Logistics", locationType: "field" },
+  "Customer Support": { industry: "BPO / Call Centre", locationType: "office" },
+  Teaching: { industry: "Education", locationType: "office" },
+  "Field Sales": { locationType: "field" },
+  "Back Office": { locationType: "office" },
+  Driver: { locationType: "field" },
+  Accounts: { locationType: "office" },
+  "Cook / Chef": { industry: "Food & Hospitality", locationType: "office" },
+  Security: { locationType: "office" },
+  Housekeeping: { locationType: "office" },
+  "Inside Sales": { locationType: "office" },
+  "Business Development": { locationType: "field" },
+  "Loan Sales": { industry: "Banking & Finance", locationType: "field" },
+  "Front Office": { locationType: "office" },
+  "Restaurant Staff": { industry: "Food & Hospitality", locationType: "office" },
+  "Warehouse & Logistics": { industry: "E-commerce & Logistics", locationType: "office" },
+}
+
+/** The answers a title suggests: role, industry, workplace. */
+export function suggestFromTitle(title: string): Pick<JobPostDraft, "category" | "industry" | "locationType"> {
+  const category = categoryForTitle(title) ?? ""
+  const d = ROLE_DEFAULTS[category] ?? {}
+  return { category, industry: d.industry ?? "", locationType: d.locationType ?? "" }
+}
+
+/** A new title: fill the role, industry and workplace it suggests, where the
+ *  recruiter left them empty or still on the last title's suggestion. */
+export function withTitleSuggestions(d: JobPostDraft, title: string): JobPostDraft {
+  const before = suggestFromTitle(d.title)
+  const after = suggestFromTitle(title)
+  const next = { ...d, title }
+  for (const k of ["category", "industry", "locationType"] as const) {
+    if (!d[k] || d[k] === before[k]) (next[k] as string) = after[k]
+  }
+  return next
+}
 
 /** Each check traces to a recurring Employer Success issue: unserved
  *  cities, title/category mismatch, several roles in one title, and generic

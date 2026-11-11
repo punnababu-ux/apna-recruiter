@@ -1,0 +1,381 @@
+<title>Job posting flows</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: one column of visual bands — stats, journeys as blocks, fields as colour-coded chips. Product palette: apna green, sky for AI. */
+:root {
+  --bg: #f6f7f6; --surface: #ffffff; --fg: #141c17; --muted: #545f59; --line: #e1e6e3;
+  --green: #17693a; --green-solid: #1f8a4c; --green-tint: #e4f3ea;
+  --sky: #175d9c; --sky-tint: #e4eefa;
+  --amber: #7d5200; --amber-tint: #fbefd6;
+  --grey: #5d6862; --grey-tint: #eceeed;
+  --live: #3d4742; --live-tint: #eceeed; --violet: #5b3fa0;
+  --on-solid: #ffffff;
+  --font: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f1411; --surface: #18201b; --fg: #e8eeea; --muted: #a3aea8; --line: #2a342e;
+  --green: #5cd08f; --green-solid: #2e9e5e; --green-tint: #15301f;
+  --sky: #7ab8f0; --sky-tint: #13283b; --amber: #e8bb63; --amber-tint: #30260f;
+  --grey: #aab4ae; --grey-tint: #232b26; --live: #c7d0cb; --live-tint: #232b26; --on-solid: #0f1411; --violet: #b49cf0; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0f1411; --surface: #18201b; --fg: #e8eeea; --muted: #a3aea8; --line: #2a342e;
+  --green: #5cd08f; --green-solid: #2e9e5e; --green-tint: #15301f;
+  --sky: #7ab8f0; --sky-tint: #13283b; --amber: #e8bb63; --amber-tint: #30260f;
+  --grey: #aab4ae; --grey-tint: #232b26; --live: #c7d0cb; --live-tint: #232b26; --on-solid: #0f1411; --violet: #b49cf0; color-scheme: dark }
+
+body { background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 15px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+main { max-width: 1080px; margin: 0 auto; padding-block: 48px 80px; display: flex; flex-direction: column; gap: 64px; }
+h1, h2, h3 { margin: 0; text-wrap: balance; line-height: 1.15; }
+h1 { font-size: 40px; font-weight: 800; letter-spacing: -0.025em; }
+h2 { font-size: 24px; font-weight: 700; letter-spacing: -0.015em; }
+h3 { font-size: 15px; font-weight: 700; }
+p { margin: 0; }
+.sub { color: var(--muted); font-size: 16px; max-width: 60ch; }
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+section { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.head { display: flex; flex-direction: column; gap: 6px; }
+
+/* Stat comparison */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+.flowcard { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.flowcard .name { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 17px; }
+.dot { width: 12px; height: 12px; border-radius: 50%; flex: none; }
+.d-short { background: var(--violet); } .d-live { background: var(--live); } .d-reg { background: var(--green-solid); } .d-ess { background: var(--sky); }
+.kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.kpi { display: flex; flex-direction: column; gap: 2px; }
+.kpi b { font-size: 30px; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1; }
+.kpi span { font-size: 12px; color: var(--muted); }
+.flowcard .one { font-size: 14px; color: var(--muted); }
+
+/* Journeys */
+.lane { display: flex; flex-direction: column; gap: 10px; }
+.lane-label { display: flex; align-items: center; gap: 8px; font-weight: 700; }
+.lane-label small { font-weight: 500; color: var(--muted); font-size: 13px; }
+.track { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; }
+.block { flex: 1 0 150px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 8px; position: relative; }
+.block .n { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+.block.ai { background: var(--sky-tint); border-color: transparent; }
+.block.end { background: var(--green-tint); border-color: transparent; }
+.block.after { background: var(--amber-tint); border-color: transparent; }
+.mini { display: flex; flex-wrap: wrap; gap: 4px; }
+.mini i { font-style: normal; font-size: 12px; background: var(--grey-tint); color: var(--fg); border-radius: 6px; padding: 3px 8px; }
+.block.ai .mini i, .block.end .mini i, .block.after .mini i { background: var(--surface); }
+.phone-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+.screens { display: flex; gap: 3px; flex-wrap: wrap; }
+.screens span { width: 12px; height: 20px; border-radius: 3px; background: var(--grey-tint); border: 1px solid var(--line); }
+.screens span.r { background: var(--green-solid); border-color: transparent; }
+.screens span.s { background: var(--sky); border-color: transparent; }
+.screens span.v { background: var(--violet); border-color: transparent; }
+.vs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+.vs .flowcard ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; font-size: 14px; }
+@media (max-width: 640px) { .vs { grid-template-columns: minmax(0, 1fr); } }
+
+/* Field chips */
+.legend { display: flex; flex-wrap: wrap; gap: 10px 18px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; }
+.sw { width: 14px; height: 14px; border-radius: 4px; }
+.c-asked { background: var(--green-tint); color: var(--green); }
+.c-auto { background: var(--sky-tint); color: var(--sky); }
+.c-after { background: var(--amber-tint); color: var(--amber); }
+.c-gone { background: var(--grey-tint); color: var(--grey); text-decoration: line-through; text-decoration-thickness: 1px; }
+.c-new { background: var(--green); color: var(--on-solid); }
+.fields { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; overflow-x: auto; }
+.frow { display: grid; grid-template-columns: 170px repeat(var(--cols, 2), minmax(0, 1fr)); min-width: 680px; border-bottom: 1px solid var(--line); }
+.frow:last-child { border-bottom: 0; }
+.frow > div { padding: 14px 16px; display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; }
+.frow .grp { font-weight: 700; font-size: 13px; display: block; }
+.frow .grp small { display: block; font-weight: 500; color: var(--muted); margin-top: 2px; }
+.frow.headrow > div { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding-block: 12px; align-items: center; }
+.exlist { display: flex; flex-direction: column; gap: 16px; }
+.excard { border: 1px solid var(--grey-tint); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+.exhead { display: flex; flex-direction: column; gap: 4px; }
+.exhead q { color: var(--muted); font-size: 14px; }
+.exrow { display: grid; grid-template-columns: 110px 1fr; gap: 12px; }
+.exlbl { font-weight: 700; display: flex; align-items: flex-start; }
+.exgs { display: flex; flex-direction: column; gap: 8px; }
+.exg small { color: var(--muted); font-size: 12px; font-weight: 600; }
+.chips2 { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.exnote { font-weight: 600; margin: 0; }
+@media (max-width: 600px) { .exrow { grid-template-columns: 1fr; gap: 6px; } }
+.chip { font-size: 13px; font-weight: 600; border-radius: 999px; padding: 4px 10px; white-space: nowrap; }
+
+/* Reasons */
+.reasons { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; }
+.reason { border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+.reason.auto { background: var(--sky-tint); } .reason.role { background: var(--green-tint); }
+.reason.after { background: var(--amber-tint); } .reason.open { background: var(--grey-tint); }
+.reason .why { font-size: 14px; }
+.reason .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.reason .chips span { font-size: 12px; font-weight: 600; background: var(--surface); border-radius: 999px; padding: 3px 9px; }
+.reason .big { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+.reason.auto .big { color: var(--sky); } .reason.role .big { color: var(--green); }
+.reason.after .big { color: var(--amber); } .reason.open .big { color: var(--grey); }
+
+/* Changes */
+.changes { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.metric-sm { font-size: 20px; font-weight: 800; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; width: 100%; }
+.frow .note { display: block; width: 100%; font-size: 12px; color: var(--muted); }
+.chg { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 6px; }
+.chg .metric { font-size: 22px; font-weight: 800; color: var(--green); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+.chg p { font-size: 14px; }
+
+.open { display: flex; flex-wrap: wrap; gap: 10px; }
+.open span { background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; font-size: 14px; font-weight: 500; }
+.open span b { color: var(--amber); font-weight: 700; margin-right: 6px; }
+footer { font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 16px; }
+
+@media (max-width: 760px) {
+  .stats { grid-template-columns: minmax(0, 1fr); }
+  h1 { font-size: 30px; }
+  main { gap: 48px; padding-block: 32px 56px; }
+}
+.bars { display: flex; flex-direction: column; gap: 10px; }
+.bar { display: grid; grid-template-columns: 120px 1fr 36px; gap: 12px; align-items: center; }
+.bl { font-weight: 600; font-size: 14px; }
+.bt { display: block; height: 20px; border-radius: 999px; background: var(--grey-tint); overflow: hidden; }
+.bt i { display: block; height: 100%; border-radius: 999px; }
+.b-live { background: var(--grey); } .b-reg { background: var(--sky); } .b-ess { background: var(--green-solid); }
+.bar b { font-size: 18px; font-weight: 800; }
+.bars.big .bt { height: 36px; } .bars.big .bar b { font-size: 32px; } .bars.big .bar { grid-template-columns: 130px 1fr 52px; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.tile q, .tile p { color: var(--muted); font-size: 14px; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.jobs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; } .jobs .tile q { flex: 1; }
+.jobs .bar { grid-template-columns: 96px 1fr 24px; gap: 8px; } .jobs .bl { font-size: 12px; }
+.stack { display: flex; gap: 3px; height: 44px; }
+.stack i { font-style: normal; font-weight: 800; font-size: 18px; display: flex; align-items: center; justify-content: center; border-radius: 10px; }
+.s-ask { background: var(--green-tint); color: var(--green); } .s-auto { background: var(--sky-tint); color: var(--sky); }
+.s-after { background: var(--amber-tint); color: var(--amber); } .s-gone { background: var(--grey-tint); color: var(--grey); }
+.four { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; } .four > div { display: flex; flex-direction: column; gap: 6px; }
+.four p { color: var(--muted); font-size: 14px; } .k { width: 28px; height: 8px; border-radius: 999px; }
+section { display: flex; flex-direction: column; gap: 20px; }
+.more > summary { cursor: pointer; font-weight: 700; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.morein { display: flex; flex-direction: column; gap: 56px; padding-top: 40px; }
+@media (max-width: 760px) { .jobs, .two { grid-template-columns: 1fr; } .four { grid-template-columns: 1fr 1fr; } h1 { font-size: 30px; }
+  .bars.big .bar { grid-template-columns: 96px 1fr 40px; } .bars.big .bar b { font-size: 24px; } }
+</style>
+
+<main>
+<main>
+  <header class="head">
+    <span class="eyebrow">Job posting · live form vs the new flows</span>
+    <h1>Post a job with one sentence, not 29 fields</h1>
+    <p class="sub">Today a recruiter fills 29 fields by hand. In the new flows they describe the job once, and we fill in the rest.</p>
+  </header>
+
+  <section>
+    <div class="head"><span class="eyebrow">The headline</span><h2>Fields a recruiter fills by hand</h2><p class="sub">A delivery job, described in one sentence.</p></div>
+    <div class="bars big"><div class="bar"><span class="bl">Live today</span><span class="bt"><i class="b-live" style="width:100.0%"></i></span><b>29</b></div><div class="bar"><span class="bl">New: regular</span><span class="bt"><i class="b-reg" style="width:51.7%"></i></span><b>15</b></div><div class="bar"><span class="bl">New: essential</span><span class="bt"><i class="b-ess" style="width:3.4%"></i></span><b>1</b></div></div>
+    <div class="two">
+      <div class="tile"><h3>Regular</h3><p>Reads the description, then asks every remaining question.</p></div>
+      <div class="tile"><h3>Essential</h3><p>Reads the description, then asks only what the match needs.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="head"><span class="eyebrow">Three real jobs</span><h2>The same job, three ways</h2></div>
+    <div class="jobs"><div class="tile"><h3>Delivery executive</h3><q>Delivery executive in HSR Layout, Bengaluru. ₹18,000–22,000 a month. Must have a bike and licence. Freshers are fine.</q><div class="bars "><div class="bar"><span class="bl">Live today</span><span class="bt"><i class="b-live" style="width:100.0%"></i></span><b>29</b></div><div class="bar"><span class="bl">New: regular</span><span class="bt"><i class="b-reg" style="width:51.7%"></i></span><b>15</b></div><div class="bar"><span class="bl">New: essential</span><span class="bt"><i class="b-ess" style="width:3.4%"></i></span><b>1</b></div></div></div><div class="tile"><h3>Telecaller</h3><q>Telecaller in Koramangala, Bengaluru, 1 year of experience, graduate, good English and Kannada. Work from office, no joining fee, ₹25,000–30,000, BPO industry.</q><div class="bars "><div class="bar"><span class="bl">Live today</span><span class="bt"><i class="b-live" style="width:100.0%"></i></span><b>29</b></div><div class="bar"><span class="bl">New: regular</span><span class="bt"><i class="b-reg" style="width:41.4%"></i></span><b>12</b></div><div class="bar"><span class="bl">New: essential</span><span class="bt"><i class="b-ess" style="width:1.2%"></i></span><b>0</b></div></div></div><div class="tile"><h3>Security guard</h3><q>Security guard for an apartment in Whitefield, Bengaluru. Night shift, ₹16,000 a month.</q><div class="bars "><div class="bar"><span class="bl">Live today</span><span class="bt"><i class="b-live" style="width:100.0%"></i></span><b>29</b></div><div class="bar"><span class="bl">New: regular</span><span class="bt"><i class="b-reg" style="width:62.1%"></i></span><b>18</b></div><div class="bar"><span class="bl">New: essential</span><span class="bt"><i class="b-ess" style="width:6.9%"></i></span><b>2</b></div></div></div></div>
+  </section>
+
+  <section>
+    <div class="head"><span class="eyebrow">Essential</span><h2>Where the 29 live fields go</h2></div>
+    <div class="stack" role="img" aria-label="8 asked or read from the description, 9 filled for them, 7 after posting, 5 not asked">
+      <i class="s-ask" style="flex:8">8</i><i class="s-auto" style="flex:9">9</i><i class="s-after" style="flex:7">7</i><i class="s-gone" style="flex:5">5</i>
+    </div>
+    <div class="four">
+      <div><b class="k s-ask"></b><h3>8 asked, or read from the description</h3><p>Title, location, salary and the role's must-haves.</p></div>
+      <div><b class="k s-auto"></b><h3>9 filled for them</h3><p>From the title or the description: role, industry, languages, night shift, distance.</p></div>
+      <div><b class="k s-after"></b><h3>7 after posting</h3><p>The job can go live without them: perks, walk-in, contact, gender, age.</p></div>
+      <div><b class="k s-gone"></b><h3>5 not asked</h3><p>Rarely used, covered by Skills, or not needed for the role: degree, past industry experience.</p></div>
+    </div>
+  </section>
+
+  <!-- 6. Open -->
+  <section>
+    <div class="head">
+      <span class="eyebrow">Next</span>
+      <h2>Before essential can ship</h2>
+    </div>
+    <div class="open">
+      <span><b>Decide</b>Essential as the default?</span>
+      <span><b>Data</b>Real questions per role</span>
+      <span><b>Build</b>Save Finish setup answers</span>
+      <span><b>Build</b>Industry from company profile</span>
+      <span><b>Test</b>Voice on real phones</span>
+    </div>
+  </section>
+
+  <details class="more"><summary>See the exact fields, step by step</summary><div class="morein">
+  <!-- 2. Journeys -->
+  <section>
+    <div class="head">
+      <span class="eyebrow">The journey</span>
+      <h2>From start to plan, on desktop</h2>
+    </div>
+
+    <div class="lane">
+      <div class="lane-label"><span class="dot d-live"></span>Live</div>
+      <div class="track">
+        <div class="block"><span class="n">Step 1</span><h3>Job details</h3><div class="mini"><i>Company</i><i>Title</i><i>Role</i><i>Job type</i><i>Night shift</i><i>Workplace</i><i>Location</i><i>Pay type</i><i>Salary / incentive</i><i>Perks (18 options)</i><i>Joining fee</i></div></div>
+        <div class="block"><span class="n">Step 2</span><h3>Requirements</h3><div class="mini"><i>Education</i><i>English</i><i>Experience</i><i>Industry</i><i>Degree</i><i>Gender</i><i>Age</i><i>Distance</i><i>Languages</i><i>Assets</i><i>Skills</i><i>Experience-based skills</i><i>Past industry</i><i>Description</i></div></div>
+        <div class="block"><span class="n">Step 3</span><h3>Interview</h3><div class="mini"><i>Walk-in</i><i>Contact</i><i>Who can call</i><i>WhatsApp alerts</i></div></div>
+        <div class="block end"><span class="n">Step 4</span><h3>Preview</h3><div class="mini"><i>List of answers</i></div></div>
+      </div>
+    </div>
+
+    <div class="lane">
+      <div class="lane-label"><span class="dot d-reg"></span>Regular</div>
+      <div class="track">
+        <div class="block ai"><span class="n">Start</span><h3>Describe</h3><div class="mini"><i>Type or speak</i><i>AI fills</i></div></div>
+        <div class="block"><span class="n">Page 1</span><h3>The job</h3><div class="mini"><i>Title</i><i>Role</i><i>Industry</i><i>Job type</i><i>Workplace</i></div></div>
+        <div class="block"><span class="n">Page 2</span><h3>Where &amp; pay</h3><div class="mini"><i>Location</i><i>Pay</i><i>Perks</i></div></div>
+        <div class="block"><span class="n">Page 3</span><h3>Who can apply</h3><div class="mini"><i>Education</i><i>English</i><i>Experience</i><i>Preferences</i><i>Screening</i></div></div>
+        <div class="block ai"><span class="n">Page 4</span><h3>Description</h3><div class="mini"><i>AI writes</i></div></div>
+        <div class="block"><span class="n">Page 5</span><h3>Interview</h3><div class="mini"><i>Walk-in</i><i>Contact</i><i>Who can call</i></div></div>
+        <div class="block end"><span class="n">Check</span><h3>Review</h3><div class="mini"><i>Answers + candidate view</i></div></div>
+      </div>
+    </div>
+
+    <div class="lane">
+      <div class="lane-label"><span class="dot d-ess"></span>Essential</div>
+      <div class="track">
+        <div class="block ai"><span class="n">Start</span><h3>Describe</h3><div class="mini"><i>Type or speak</i><i>AI fills</i></div></div>
+        <div class="block"><span class="n">Page 1</span><h3>The job</h3><div class="mini"><i>Title</i><i>Workplace</i><i>Location</i><i>Pay</i></div></div>
+        <div class="block"><span class="n">Page 2</span><h3>Who can apply</h3><div class="mini"><i>Delivery: must have, experience</i><i>Telecaller: education, English, experience</i></div></div>
+        <div class="block ai"><span class="n">Page 3</span><h3>Description</h3><div class="mini"><i>AI writes</i></div></div>
+        <div class="block end"><span class="n">Check</span><h3>Review</h3><div class="mini"><i>Answers + candidate view</i></div></div>
+        <div class="block after"><span class="n">Job live</span><h3>Finish setup</h3><div class="mini"><i>Contact</i><i>Walk-in</i><i>Screening</i><i>Perks</i></div></div>
+      </div>
+    </div>
+
+    <div class="lane">
+      <div class="lane-label">On phones <small>· one question per screen, both flows</small></div>
+      <div class="phone-row">
+        <span>Regular</span>
+        <div class="screens" aria-label="16 screens"><span class="r"></span><span class="r"></span><span class="r"></span><span class="r"></span><span class="r"></span><span class="r"></span><span class="r"></span><span class="r"></span><span class="r"></span><span class="r"></span><span class="r"></span><span class="r"></span><span class="r"></span><span class="r"></span><span class="r"></span><span class="r"></span></div>
+        <span>16</span>
+      </div>
+      <div class="phone-row">
+        <span>Essential</span>
+        <div class="screens" aria-label="7 screens"><span class="s"></span><span class="s"></span><span class="s"></span><span class="s"></span><span class="s"></span><span class="s"></span><span class="s"></span></div>
+        <span>7 (delivery) · 8 (telecaller)</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Examples -->
+  <section>
+    <div class="head">
+      <span class="eyebrow">Three real jobs</span>
+      <h2>The same job on live, regular and essential</h2>
+    </div>
+    <div class="exlist"><div class="excard"><div class="exhead"><strong>Delivery executive</strong><q>Delivery executive in HSR Layout, Bengaluru. ₹18,000–22,000 a month. Must have a bike and licence. Freshers are fine.</q></div><div class="exrow"><div class="exlbl"><span class="dot d-live"></span>&nbsp;Live today</div><div class="exgs"><div class="exg"><small>No description box. The recruiter fills all 29 fields by hand, in 3 steps</small><div class="chips2"><span class="chip c-asked">Company</span><span class="chip c-asked">Title</span><span class="chip c-asked">Role</span><span class="chip c-asked">Job type</span><span class="chip c-asked">Night shift</span><span class="chip c-asked">Workplace</span><span class="chip c-asked">Location</span><span class="chip c-asked">Pay type</span><span class="chip c-asked">Salary</span><span class="chip c-asked">Perks</span><span class="chip c-asked">Joining fee</span><span class="chip c-asked">Education</span><span class="chip c-asked">English</span><span class="chip c-asked">Experience</span><span class="chip c-asked">Industry</span><span class="chip c-asked">Degree</span><span class="chip c-asked">Gender</span><span class="chip c-asked">Age</span><span class="chip c-asked">Distance</span><span class="chip c-asked">Languages</span><span class="chip c-asked">Assets</span><span class="chip c-asked">Skills</span><span class="chip c-asked">Experience-based skills</span><span class="chip c-asked">Past industry experience</span><span class="chip c-asked">Description</span><span class="chip c-asked">Walk-in</span><span class="chip c-asked">Contact</span><span class="chip c-asked">Who can call</span><span class="chip c-asked">WhatsApp alerts</span></div></div></div></div><div class="exrow"><div class="exlbl"><span class="dot d-reg"></span>&nbsp;Regular</div><div class="exgs"><div class="exg"><small>Filled from the description</small><div class="chips2"><span class="chip c-auto">Title</span><span class="chip c-auto">Role</span><span class="chip c-auto">Industry</span><span class="chip c-auto">Workplace</span><span class="chip c-auto">Location</span><span class="chip c-auto">Salary</span><span class="chip c-auto">Assets</span><span class="chip c-auto">Experience</span><span class="chip c-auto">Description</span></div></div><div class="exg"><small>Still asked</small><div class="chips2"><span class="chip c-asked">Company</span><span class="chip c-asked">Job type</span><span class="chip c-asked">Night shift</span><span class="chip c-asked">Education</span><span class="chip c-asked">English</span><span class="chip c-asked">Gender</span><span class="chip c-asked">Age</span><span class="chip c-asked">Languages</span><span class="chip c-asked">Skills</span><span class="chip c-asked">Degree</span><span class="chip c-asked">Perks</span><span class="chip c-asked">Joining fee</span><span class="chip c-asked">Walk-in</span><span class="chip c-asked">Contact</span><span class="chip c-asked">Who can call</span></div></div></div></div><div class="exrow"><div class="exlbl"><span class="dot d-ess"></span>&nbsp;Essential</div><div class="exgs"><div class="exg"><small>Filled from the description</small><div class="chips2"><span class="chip c-auto">Title</span><span class="chip c-auto">Role</span><span class="chip c-auto">Industry</span><span class="chip c-auto">Workplace</span><span class="chip c-auto">Location</span><span class="chip c-auto">Salary</span><span class="chip c-auto">Assets</span><span class="chip c-auto">Experience</span><span class="chip c-auto">Description</span></div></div><div class="exg"><small>Still asked</small><div class="chips2"><span class="chip c-asked">Joining fee</span></div></div><div class="exg"><small>After posting</small><div class="chips2"><span class="chip c-after">Perks</span><span class="chip c-after">Walk-in</span><span class="chip c-after">Contact</span><span class="chip c-after">Who can call</span><span class="chip c-after">Screening</span><span class="chip c-after">Gender</span><span class="chip c-after">Age</span></div></div><div class="exg"><small>Not asked</small><div class="chips2"><span class="chip c-gone">Education</span><span class="chip c-gone">English</span><span class="chip c-gone">Languages</span><span class="chip c-gone">Degree</span><span class="chip c-gone">Night shift</span></div></div></div></div><p class="exnote">Fields the recruiter fills: live 29, regular 15, essential 1.</p></div><div class="excard"><div class="exhead"><strong>Telecaller</strong><q>Telecaller in Koramangala, Bengaluru, 1 year of experience, graduate, good English and Kannada. Work from office, no joining fee, ₹25,000–30,000, BPO industry.</q></div><div class="exrow"><div class="exlbl"><span class="dot d-live"></span>&nbsp;Live today</div><div class="exgs"><div class="exg"><small>No description box. The recruiter fills all 29 fields by hand, in 3 steps</small><div class="chips2"><span class="chip c-asked">Company</span><span class="chip c-asked">Title</span><span class="chip c-asked">Role</span><span class="chip c-asked">Job type</span><span class="chip c-asked">Night shift</span><span class="chip c-asked">Workplace</span><span class="chip c-asked">Location</span><span class="chip c-asked">Pay type</span><span class="chip c-asked">Salary</span><span class="chip c-asked">Perks</span><span class="chip c-asked">Joining fee</span><span class="chip c-asked">Education</span><span class="chip c-asked">English</span><span class="chip c-asked">Experience</span><span class="chip c-asked">Industry</span><span class="chip c-asked">Degree</span><span class="chip c-asked">Gender</span><span class="chip c-asked">Age</span><span class="chip c-asked">Distance</span><span class="chip c-asked">Languages</span><span class="chip c-asked">Assets</span><span class="chip c-asked">Skills</span><span class="chip c-asked">Experience-based skills</span><span class="chip c-asked">Past industry experience</span><span class="chip c-asked">Description</span><span class="chip c-asked">Walk-in</span><span class="chip c-asked">Contact</span><span class="chip c-asked">Who can call</span><span class="chip c-asked">WhatsApp alerts</span></div></div></div></div><div class="exrow"><div class="exlbl"><span class="dot d-reg"></span>&nbsp;Regular</div><div class="exgs"><div class="exg"><small>Filled from the description</small><div class="chips2"><span class="chip c-auto">Title</span><span class="chip c-auto">Role</span><span class="chip c-auto">Industry</span><span class="chip c-auto">Workplace</span><span class="chip c-auto">Location</span><span class="chip c-auto">Salary</span><span class="chip c-auto">Experience</span><span class="chip c-auto">Education</span><span class="chip c-auto">English</span><span class="chip c-auto">Languages</span><span class="chip c-auto">Joining fee</span><span class="chip c-auto">Description</span></div></div><div class="exg"><small>Still asked</small><div class="chips2"><span class="chip c-asked">Company</span><span class="chip c-asked">Job type</span><span class="chip c-asked">Night shift</span><span class="chip c-asked">Gender</span><span class="chip c-asked">Age</span><span class="chip c-asked">Assets</span><span class="chip c-asked">Skills</span><span class="chip c-asked">Degree</span><span class="chip c-asked">Perks</span><span class="chip c-asked">Walk-in</span><span class="chip c-asked">Contact</span><span class="chip c-asked">Who can call</span></div></div></div></div><div class="exrow"><div class="exlbl"><span class="dot d-ess"></span>&nbsp;Essential</div><div class="exgs"><div class="exg"><small>Filled from the description</small><div class="chips2"><span class="chip c-auto">Title</span><span class="chip c-auto">Role</span><span class="chip c-auto">Industry</span><span class="chip c-auto">Workplace</span><span class="chip c-auto">Location</span><span class="chip c-auto">Salary</span><span class="chip c-auto">Experience</span><span class="chip c-auto">Education</span><span class="chip c-auto">English</span><span class="chip c-auto">Joining fee</span><span class="chip c-auto">Description</span><span class="chip c-auto">Languages</span></div></div><div class="exg"><small>After posting</small><div class="chips2"><span class="chip c-after">Perks</span><span class="chip c-after">Walk-in</span><span class="chip c-after">Contact</span><span class="chip c-after">Who can call</span><span class="chip c-after">Screening</span><span class="chip c-after">Gender</span><span class="chip c-after">Age</span></div></div><div class="exg"><small>Not asked</small><div class="chips2"><span class="chip c-gone">Assets</span><span class="chip c-gone">Degree</span><span class="chip c-gone">Night shift</span></div></div></div></div><p class="exnote">Fields the recruiter fills: live 29, regular 12, essential 0 (only Review). Kannada is read from the description and used to match.</p></div><div class="excard"><div class="exhead"><strong>Security guard</strong><q>Security guard for an apartment in Whitefield, Bengaluru. Night shift, ₹16,000 a month.</q></div><div class="exrow"><div class="exlbl"><span class="dot d-live"></span>&nbsp;Live today</div><div class="exgs"><div class="exg"><small>No description box. The recruiter fills all 29 fields by hand, in 3 steps</small><div class="chips2"><span class="chip c-asked">Company</span><span class="chip c-asked">Title</span><span class="chip c-asked">Role</span><span class="chip c-asked">Job type</span><span class="chip c-asked">Night shift</span><span class="chip c-asked">Workplace</span><span class="chip c-asked">Location</span><span class="chip c-asked">Pay type</span><span class="chip c-asked">Salary</span><span class="chip c-asked">Perks</span><span class="chip c-asked">Joining fee</span><span class="chip c-asked">Education</span><span class="chip c-asked">English</span><span class="chip c-asked">Experience</span><span class="chip c-asked">Industry</span><span class="chip c-asked">Degree</span><span class="chip c-asked">Gender</span><span class="chip c-asked">Age</span><span class="chip c-asked">Distance</span><span class="chip c-asked">Languages</span><span class="chip c-asked">Assets</span><span class="chip c-asked">Skills</span><span class="chip c-asked">Experience-based skills</span><span class="chip c-asked">Past industry experience</span><span class="chip c-asked">Description</span><span class="chip c-asked">Walk-in</span><span class="chip c-asked">Contact</span><span class="chip c-asked">Who can call</span><span class="chip c-asked">WhatsApp alerts</span></div></div></div></div><div class="exrow"><div class="exlbl"><span class="dot d-reg"></span>&nbsp;Regular</div><div class="exgs"><div class="exg"><small>Filled from the description</small><div class="chips2"><span class="chip c-auto">Title</span><span class="chip c-auto">Role</span><span class="chip c-auto">Location</span><span class="chip c-auto">Salary</span><span class="chip c-auto">Night shift</span><span class="chip c-auto">Description</span></div></div><div class="exg"><small>Still asked</small><div class="chips2"><span class="chip c-asked">Company</span><span class="chip c-asked">Industry</span><span class="chip c-asked">Workplace</span><span class="chip c-asked">Job type</span><span class="chip c-asked">Education</span><span class="chip c-asked">English</span><span class="chip c-asked">Experience</span><span class="chip c-asked">Gender</span><span class="chip c-asked">Age</span><span class="chip c-asked">Languages</span><span class="chip c-asked">Assets</span><span class="chip c-asked">Skills</span><span class="chip c-asked">Degree</span><span class="chip c-asked">Perks</span><span class="chip c-asked">Joining fee</span><span class="chip c-asked">Walk-in</span><span class="chip c-asked">Contact</span><span class="chip c-asked">Who can call</span></div></div></div></div><div class="exrow"><div class="exlbl"><span class="dot d-ess"></span>&nbsp;Essential</div><div class="exgs"><div class="exg"><small>Filled from the description</small><div class="chips2"><span class="chip c-auto">Title</span><span class="chip c-auto">Role</span><span class="chip c-auto">Workplace</span><span class="chip c-auto">Location</span><span class="chip c-auto">Salary</span><span class="chip c-auto">Description</span><span class="chip c-auto">Night shift</span></div></div><div class="exg"><small>Still asked</small><div class="chips2"><span class="chip c-asked">Experience</span><span class="chip c-asked">Joining fee</span></div></div><div class="exg"><small>After posting</small><div class="chips2"><span class="chip c-after">Perks</span><span class="chip c-after">Walk-in</span><span class="chip c-after">Contact</span><span class="chip c-after">Who can call</span><span class="chip c-after">Screening</span><span class="chip c-after">Gender</span><span class="chip c-after">Age</span></div></div><div class="exg"><small>Not asked</small><div class="chips2"><span class="chip c-gone">Education</span><span class="chip c-gone">English</span><span class="chip c-gone">Languages</span><span class="chip c-gone">Assets</span><span class="chip c-gone">Degree</span></div></div></div></div><p class="exnote">Fields the recruiter fills: live 29, regular 18, essential 2. For site roles, only experience decides the match.</p></div></div>
+  </section>
+
+  <!-- 3. Fields -->
+  <section>
+    <div class="head">
+      <span class="eyebrow">Field by field</span>
+      <h2>Where every live field went</h2>
+    </div>
+    <div class="legend">
+      <span><i class="sw c-asked"></i>Asked</span>
+      <span><i class="sw c-auto"></i>Filled for them</span>
+      <span><i class="sw c-after"></i>After posting</span>
+      <span><i class="sw c-gone"></i>Not asked</span>
+      <span><i class="sw c-new"></i>New</span>
+    </div>
+    <div class="fields">
+      <div class="frow headrow"><div>Live step</div><div><span class="dot d-reg"></span>&nbsp;Regular</div><div><span class="dot d-ess"></span>&nbsp;Essential</div></div>
+      <div class="frow">
+        <div><span class="grp">Job details<small>11 fields</small></span></div>
+        <div><span class="chip c-asked">Company</span><span class="chip c-asked">Title</span><span class="chip c-asked">Role</span><span class="chip c-asked">Job type</span><span class="chip c-asked">Night shift</span><span class="chip c-asked">Workplace</span><span class="chip c-asked">Location</span><span class="chip c-asked">Pay type</span><span class="chip c-asked">Salary</span><span class="chip c-asked">Perks (7)</span><span class="chip c-asked">Joining fee</span></div>
+        <div><span class="chip c-asked">Company</span><span class="chip c-asked">Title</span><span class="chip c-auto">Role</span><span class="chip c-auto">Job type</span><span class="chip c-auto">Night shift</span><span class="chip c-asked">Workplace</span><span class="chip c-asked">Location</span><span class="chip c-auto">Pay type</span><span class="chip c-asked">Salary</span><span class="chip c-after">Perks</span><span class="chip c-asked">Joining fee</span></div>
+      </div>
+      <div class="frow">
+        <div><span class="grp">Requirements<small>14 fields + 1 new</small></span></div>
+        <div><span class="chip c-asked">Education</span><span class="chip c-asked">English</span><span class="chip c-asked">Industry</span><span class="chip c-asked">Experience</span><span class="chip c-asked">Assets</span><span class="chip c-asked">Gender</span><span class="chip c-asked">Age</span><span class="chip c-asked">Languages</span><span class="chip c-asked">Skills</span><span class="chip c-asked">Degree</span><span class="chip c-asked">Distance</span><span class="chip c-gone">Experience-based skills</span><span class="chip c-gone">Past industry experience</span><span class="chip c-auto">Description</span><span class="chip c-new">Screening</span></div>
+        <div><span class="chip c-asked">Education*</span><span class="chip c-asked">English*</span><span class="chip c-auto">Industry</span><span class="chip c-asked">Experience</span><span class="chip c-asked">Assets*</span><span class="chip c-after">Gender</span><span class="chip c-after">Age</span><span class="chip c-auto">Languages</span><span class="chip c-auto">Skills</span><span class="chip c-gone">Degree</span><span class="chip c-auto">Distance</span><span class="chip c-gone">Experience-based skills</span><span class="chip c-gone">Past industry experience</span><span class="chip c-auto">Description</span><span class="chip c-after">Screening</span></div>
+      </div>
+      <div class="frow">
+        <div><span class="grp">Interview<small>4 fields</small></span></div>
+        <div><span class="chip c-asked">Walk-in</span><span class="chip c-asked">Contact</span><span class="chip c-asked">Who can call</span><span class="chip c-after">WhatsApp alerts</span></div>
+        <div><span class="chip c-after">Walk-in</span><span class="chip c-after">Contact</span><span class="chip c-after">Who can call</span><span class="chip c-after">WhatsApp alerts</span></div>
+      </div>
+    </div>
+    <p class="sub" style="font-size:13px">* Only when the role needs it: education and English for desk roles (telesales, support, back office, accounts, teaching); "must have" for field roles (delivery, driver, field sales). Industry sits in live step 2 under "Additional requirements"; our flows ask it with the job.</p>
+  </section>
+
+  <!-- 4. Reasons -->
+  <section>
+    <div class="head">
+      <span class="eyebrow">Why</span>
+      <h2>Why some fields are not asked</h2>
+      <p class="sub">Ask before posting only what decides who sees the job.</p>
+    </div>
+    <div class="reasons">
+      <div class="reason auto">
+        <span class="big">Filled for them</span>
+        <p class="why">The title and the role already tell us.</p>
+        <div class="chips"><span>Role</span><span>Industry</span><span>Job type</span><span>Pay type</span><span>Skills</span><span>Description</span></div>
+      </div>
+      <div class="reason role">
+        <span class="big">Only if the role needs it</span>
+        <p class="why">Delivery needs a bike, not a degree. A telecaller needs English.</p>
+        <div class="chips"><span>Education</span><span>English</span><span>Assets</span></div>
+      </div>
+      <div class="reason after">
+        <span class="big">After posting</span>
+        <p class="why">The job can go live without them. Asked while applicants arrive.</p>
+        <div class="chips"><span>Perks</span><span>Walk-in</span><span>Contact</span><span>Who can call</span><span>Screening</span><span>Alerts</span></div>
+      </div>
+      <div class="reason after">
+        <span class="big">After posting, optional</span>
+        <p class="why">Each one shuts candidates out, so it is never asked upfront.</p>
+        <div class="chips"><span>Gender</span><span>Age</span></div>
+      </div>
+      <div class="reason auto">
+        <span class="big">Read from the description</span>
+        <p class="why">Shown at Review. Night shift can be changed there.</p>
+        <div class="chips"><span>Languages</span><span>Night shift</span></div>
+      </div>
+      <div class="reason auto">
+        <span class="big">Set by default</span>
+        <p class="why">Any distance, unless the recruiter narrows it after posting.</p>
+        <div class="chips"><span>Distance</span></div>
+      </div>
+      <div class="reason open">
+        <span class="big">Not asked</span>
+        <p class="why">Set by under 7% of recruiters, or already covered by Skills.</p>
+        <div class="chips"><span>Degree</span><span>Experience-based skills</span><span>Past industry experience</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Against live -->
+  <section>
+    <div class="head">
+      <span class="eyebrow">Against live</span>
+      <h2>What changes for the recruiter</h2>
+      <p class="sub">Every number compares with the live form today.</p>
+    </div>
+    <div class="fields" style="--cols: 3">
+      <div class="frow headrow"><div>Measure</div><div><span class="dot d-live"></span>&nbsp;Live</div><div><span class="dot d-reg"></span>&nbsp;Regular</div><div><span class="dot d-ess"></span>&nbsp;Essential</div></div>
+      <div class="frow"><div><span class="grp">Fields answered before posting</span></div><div><span class="metric-sm">29</span></div><div><span class="metric-sm">24</span><span class="note">+1 new: screening questions (optional)</span></div><div><span class="metric-sm">8 · 9</span><span class="note">Delivery · telecaller</span></div></div>
+      <div class="frow"><div><span class="grp">Filled in for the recruiter</span></div><div><span class="metric-sm">0</span></div><div><span class="metric-sm">4</span><span class="note">Role, industry, workplace from the title; description by AI</span></div><div><span class="metric-sm">6</span><span class="note">Role, industry, job type, pay type, skills, description</span></div></div>
+      <div class="frow"><div><span class="grp">Job description</span></div><div><span class="metric-sm">Typed</span><span class="note">By hand</span></div><div><span class="metric-sm">AI</span><span class="note">Written from the answers, editable</span></div><div><span class="metric-sm">AI</span><span class="note">Own step, read before Review</span></div></div>
+      <div class="frow"><div><span class="grp">Fill the whole form from one sentence</span></div><div><span class="metric-sm">No</span></div><div><span class="metric-sm">Yes</span><span class="note">Type or speak; 20 s in our test</span></div><div><span class="metric-sm">Yes</span><span class="note">Type or speak</span></div></div>
+      <div class="frow"><div><span class="grp">Moved to after posting</span></div><div><span class="metric-sm">0</span></div><div><span class="metric-sm">1</span><span class="note">WhatsApp alerts</span></div><div><span class="metric-sm">5 + 1</span><span class="note">Perks, walk-in, contact, who can call, WhatsApp alerts; plus new screening questions</span></div></div>
+      <div class="frow"><div><span class="grp">Not asked anywhere</span></div><div><span class="metric-sm">0</span></div><div><span class="metric-sm">3</span><span class="note">Distance, experience-based skills, past industry experience</span></div><div><span class="metric-sm">10 · 9</span><span class="note">Delivery · telecaller. Those 3, plus gender, age, languages, degree, night shift (open answers). Delivery also skips education and English; telecaller skips assets</span></div></div>
+      <div class="frow"><div><span class="grp">Desktop pages</span></div><div><span class="metric-sm">4</span><span class="note">Long form steps</span></div><div><span class="metric-sm">5</span><span class="note">Grouped pages, then Review</span></div><div><span class="metric-sm">3</span><span class="note">Then Review</span></div></div>
+      <div class="frow"><div><span class="grp">Phone</span></div><div><span class="metric-sm">4</span><span class="note">Same long form steps</span></div><div><span class="metric-sm">16</span><span class="note">One question per screen</span></div><div><span class="metric-sm">7 · 8</span><span class="note">Delivery · telecaller</span></div></div>
+      <div class="frow"><div><span class="grp">Taps and time to post</span></div><div><span class="metric-sm">Not measured</span></div><div><span class="metric-sm">27 · 18</span><span class="note">Manual · AI, delivery job (11 Nov audit)</span></div><div><span class="metric-sm">11 · 8</span><span class="note">Manual · AI, delivery job (11 Nov audit)</span></div></div>
+    </div>
+    <p class="sub" style="font-size:13px">To compare taps and time with live, the live form needs the same delivery job timed end to end.</p>
+  </section>
+  </div></details>
+
+  <footer>Live form read from employer.apna.co, 11 Nov 2026 (desktop). Our flows: apna Hire prototype, /apnahire/jobs/new and ?flow=essential. Tap counts from the 11 Nov audit; the AI draft time was measured after the change.</footer>
+</main>

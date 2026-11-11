@@ -8,7 +8,7 @@
  * recruiters pick per role on the live form before this ships.
  */
 
-import { categoryForTitle, COMPANY_INDUSTRY } from "@/lib/apnahire/job-draft"
+import { categoryForTitle, COMPANY_INDUSTRY, suggestFromTitle } from "@/lib/apnahire/job-draft"
 import { CATEGORY_RULES, parsePrompt, promptSignals } from "@/lib/apnahire/prompt-parse"
 import type { JobPostDraft } from "@/types/apnahire-job"
 
@@ -23,7 +23,7 @@ interface RoleProfile {
 }
 
 /** The answer that shuts nobody out. */
-const OPEN: Required<Suggest> = { education: "10th", english: "none", experienceType: "any", assets: [] }
+const OPEN: Required<Suggest> = { education: "any", english: "none", experienceType: "any", assets: [] }
 
 const desk = (suggest: Suggest): RoleProfile => ({ asks: ["education", "english", "experience"], suggest })
 const field = (assets: string[]): RoleProfile => ({ asks: ["preferences", "experience"], suggest: { assets } })
@@ -37,11 +37,25 @@ const PROFILES: Record<string, RoleProfile> = {
   Teaching: desk({ education: "graduate", english: "good" }),
   Delivery: field(["Bike / two-wheeler", "Driving licence"]),
   Driver: field(["Driving licence"]),
-  "Field Sales": field(["Bike / two-wheeler", "Smartphone"]),
-  "Retail Sales": { asks: ["experience", "english"], suggest: { english: "basic" } },
+  // Live jobs (Ana, 2026-11-11): 77% of hand-posted field sales jobs set 12th
+  // or higher and 76% some English, so it asks both on top of the assets.
+  "Field Sales": {
+    asks: ["preferences", "education", "english", "experience"],
+    suggest: { assets: ["Bike / two-wheeler", "Smartphone"], education: "12th", english: "basic" },
+  },
+  // Live jobs: 65% of hand-posted retail jobs set 12th or higher, 72% some English.
+  "Retail Sales": desk({ education: "12th", english: "basic" }),
   "Cook / Chef": SITE,
   Security: SITE,
   Housekeeping: SITE,
+  // From hand-posted live jobs (Ana, 2026-11-11): the most common answers.
+  "Inside Sales": desk({ education: "12th", english: "basic" }),
+  "Business Development": desk({ education: "graduate", english: "basic" }),
+  "Loan Sales": desk({ education: "12th", english: "basic" }),
+  "Front Office": desk({ education: "12th", english: "basic" }),
+  // 58% need no education, but 70% ask for some English.
+  "Restaurant Staff": { asks: ["english", "experience"], suggest: { english: "basic" } },
+  "Warehouse & Logistics": SITE,
 }
 
 export const roleAsks = (category: string): RoleAsk[] => (PROFILES[category] ?? desk({})).asks
@@ -69,6 +83,19 @@ export function roleRulesForAi(): string {
   )
 }
 
+/** After an AI draft in the regular flow: a role that does not need education
+ *  or English starts on the open answer ("Any", "No English") instead of
+ *  blank. Returns the keys it filled, so they show as AI-filled. Roles we
+ *  have no profile for are left alone. */
+export function openAnswersForRole(d: JobPostDraft): Pick<Partial<JobPostDraft>, "education" | "english"> {
+  const asks = PROFILES[d.category]?.asks
+  if (!asks) return {}
+  return {
+    ...(!d.education && !asks.includes("education") ? { education: OPEN.education } : {}),
+    ...(!d.english && !asks.includes("english") ? { english: OPEN.english } : {}),
+  }
+}
+
 /** Fills what the essential flow does not ask. The job role comes from the
  *  title, the industry from the company, and "Who can apply" starts at the
  *  role's usual answers. When the role changes, its suggestions replace the
@@ -80,7 +107,8 @@ export function withEssentials(d: JobPostDraft): JobPostDraft {
   return {
     ...d,
     category,
-    industry: d.industry || COMPANY_INDUSTRY,
+    // The role's usual industry first; the company's only when the role has none.
+    industry: d.industry || suggestFromTitle(d.title).industry || COMPANY_INDUSTRY,
     // Most jobs pay a fixed salary; the pay screen opens on it, with the others one tap away.
     payType: d.payType || "fixed",
     education: (!replace && d.education) || s.education,

@@ -72,6 +72,11 @@ import {
   Route,
   Search,
   Separator,
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+  Eye,
   Skeleton,
   ShieldCheck,
   RangeSlider,
@@ -92,6 +97,11 @@ import {
   ChevronDown,
   Users,
   Wallet,
+  Languages,
+  PhoneCall,
+  Landmark,
+  Building,
+  UtensilsCrossed,
   Wand2,
   Wrench,
   WizardQuestion,
@@ -140,6 +150,11 @@ import {
   missingRequired,
   runJobChecks,
   salaryLabel,
+  DISTANCE_OPTIONS,
+  genderAgeLabel,
+  distanceKm,
+  distanceLabel,
+  distanceText,
 } from "@/lib/apnahire/job-draft"
 import { cn } from "@/lib/utils"
 import { useJobSlots } from "@/hooks/use-job-slots"
@@ -171,6 +186,8 @@ export type ScreenId =
   | "review"
 
 export interface ScreenCtx {
+  /** Several questions on one page: the page carries the AI note. */
+  grouped?: boolean
   draft: JobPostDraft
   update: UpdateDraft
   /** Draft keys the AI filled that the recruiter hasn't changed. */
@@ -210,6 +227,9 @@ export interface ScreenDef {
   /** Why Next can't move on yet, or null. */
   check?: (d: JobPostDraft) => string | null
   cta?: string
+  /** A screen that is one single-choice question: a pick of this answer
+   *  moves on by itself, no Next (audit 2026-11-11). */
+  advanceOn?: keyof JobPostDraft
   /** Part of the candidate preview this screen changes — scrolled into view. */
   preview?: PreviewSection
   Render: React.ComponentType<ScreenCtx>
@@ -220,7 +240,7 @@ export interface ScreenDef {
 /** "From your description" — shown while any of the screen's fields still
  *  hold the AI's answer. Goes once the recruiter changes it. */
 function AiTag({ ctx, keys }: { ctx: ScreenCtx; keys: (keyof JobPostDraft)[] }) {
-  if (!keys.some((k) => ctx.aiFilled.includes(k))) return null
+  if (ctx.grouped || !keys.some((k) => ctx.aiFilled.includes(k))) return null
   return (
     <Badge variant="info" className="gap-1">
       <Sparkles aria-hidden /> AI-filled · check it
@@ -288,6 +308,12 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   Security: <ShieldCheck />,
   Housekeeping: <Home />,
   "Retail Sales": <Store />,
+  "Inside Sales": <PhoneCall />,
+  "Business Development": <TrendingUp />,
+  "Loan Sales": <Landmark />,
+  "Front Office": <Building />,
+  "Restaurant Staff": <UtensilsCrossed />,
+  "Warehouse & Logistics": <Package />,
   Other: <Briefcase />,
 }
 
@@ -1101,7 +1127,7 @@ function CountUpInr({ value }: { value: number }) {
     const t0 = performance.now()
     let raf = 0
     const tick = (now: number) => {
-      const p = Math.min(1, (now - t0) / 700)
+      const p = Math.min(1, Math.max(0, (now - t0) / 700))
       const v = Math.round(start + (value - start) * (1 - (1 - p) ** 3))
       from.current = v
       setShown(v)
@@ -1424,6 +1450,41 @@ const hasPreferences = (d: JobPostDraft) =>
   d.ageMin != null ||
   d.ageMax != null
 
+/** How far from the job candidates may live. Preferences (regular) and Finish setup (essential). */
+export function DistanceField({ ctx: { draft, update } }: { ctx: ScreenCtx }) {
+  return (
+    <div className="flex flex-col gap-3">
+      <p className="text-sm text-muted-foreground">
+        {draft.relocation
+          ? "You accept candidates willing to relocate, so any distance applies. To set a range, turn that off in the job’s location."
+          : `Candidates who live farther than this do not see the job. Measured from ${draft.area || draft.city || "the job"}.`}
+      </p>
+      <ChipTabs
+        variant="choice"
+        size="lg"
+        aria-label="Distance"
+        items={DISTANCE_OPTIONS.map((km) => ({
+          value: String(km),
+          label: distanceLabel(km, draft.city),
+          disabled: draft.relocation && km !== 0,
+        }))}
+        value={String(distanceKm(draft))}
+        onValueChange={(v) => update("distanceKm", Number(v))}
+      />
+    </div>
+  )
+}
+
+/** A preference section's header: its icon, then "Name · value". */
+function PrefLabel({ icon, children }: { icon: React.ReactNode; children: React.ReactNode }) {
+  return (
+    <span className="flex items-center gap-3 [&_svg]:size-5 [&_svg]:shrink-0 [&_svg]:text-muted-foreground">
+      <span aria-hidden>{icon}</span>
+      <span>{children}</span>
+    </span>
+  )
+}
+
 function Preferences(ctx: ScreenCtx) {
   const { draft, update } = ctx
   const count = (n: number) => (n ? `${n} added` : "None")
@@ -1457,7 +1518,9 @@ function Preferences(ctx: ScreenCtx) {
       />
       <Accordion multiple defaultValue={open} className="flex flex-col gap-2">
         <AccordionItem value="languages" className="rounded-card-nested border border-border px-4">
-          <AccordionTrigger>Languages · {count(draft.languages.length)}</AccordionTrigger>
+          <AccordionTrigger>
+            <PrefLabel icon={<Languages />}>Languages · {count(draft.languages.length)}</PrefLabel>
+          </AccordionTrigger>
           <AccordionContent>
             <ChipMultiSelect
               label="Languages"
@@ -1468,8 +1531,21 @@ function Preferences(ctx: ScreenCtx) {
             />
           </AccordionContent>
         </AccordionItem>
+        {/* Essential never asks it while posting: Finish setup has its own row. */}
+        {!ctx.essential && !ctx.part && (
+          <AccordionItem value="distance" className="rounded-card-nested border border-border px-4">
+            <AccordionTrigger>
+            <PrefLabel icon={<MapPin />}>Distance · {distanceText(draft)}</PrefLabel>
+          </AccordionTrigger>
+            <AccordionContent>
+              <DistanceField ctx={ctx} />
+            </AccordionContent>
+          </AccordionItem>
+        )}
         <AccordionItem value="skills" className="rounded-card-nested border border-border px-4">
-          <AccordionTrigger>Skills · {count(draft.skills.length)}</AccordionTrigger>
+          <AccordionTrigger>
+            <PrefLabel icon={<Wrench />}>Skills · {count(draft.skills.length)}</PrefLabel>
+          </AccordionTrigger>
           <AccordionContent className="flex flex-col gap-3">
             <ChipMultiSelect
               label="Skills"
@@ -1486,7 +1562,9 @@ function Preferences(ctx: ScreenCtx) {
         {more && (
           <>
         <AccordionItem value="assets" className="rounded-card-nested border border-border px-4">
-          <AccordionTrigger>Must own · {count(draft.assets.length)}</AccordionTrigger>
+          <AccordionTrigger>
+            <PrefLabel icon={<Bike />}>Must own · {count(draft.assets.length)}</PrefLabel>
+          </AccordionTrigger>
           <AccordionContent>
             <ChipMultiSelect
               label="Assets"
@@ -1497,7 +1575,9 @@ function Preferences(ctx: ScreenCtx) {
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="degrees" className="rounded-card-nested border border-border px-4">
-          <AccordionTrigger>Degree · {count(draft.degrees.length)}</AccordionTrigger>
+          <AccordionTrigger>
+            <PrefLabel icon={<GraduationCap />}>Degree · {count(draft.degrees.length)}</PrefLabel>
+          </AccordionTrigger>
           <AccordionContent>
             <ChipMultiSelect
               label="Degrees"
@@ -1509,8 +1589,9 @@ function Preferences(ctx: ScreenCtx) {
         </AccordionItem>
         <AccordionItem value="gender-age" className="rounded-card-nested border border-border px-4">
           <AccordionTrigger>
-            Gender &amp; age ·{" "}
-            {draft.gender === "any" && draft.ageMin == null && draft.ageMax == null ? "Anyone" : "Set"}
+            <PrefLabel icon={<Users />}>
+              Gender &amp; age · {genderAgeLabel(draft)}
+            </PrefLabel>
           </AccordionTrigger>
           <AccordionContent className="flex flex-col gap-4">
             <ChipTabs
@@ -1605,7 +1686,7 @@ function Description(ctx: ScreenCtx) {
           ctx.writing ? "Writing it from your answers…" : n ? "Written from your answers. Edit freely." : "Type it, or let us write it."
         }
       />
-      {descriptionStale && !untouched && n > 0 && (
+      {descriptionStale && !untouched && n > 0 && !ctx.writing && (
         <Alert variant="warning">
           <AlertTitle>Your answers changed since this was written</AlertTitle>
           <AlertDescription className="flex flex-col items-start gap-2">
@@ -1669,7 +1750,9 @@ function Description(ctx: ScreenCtx) {
           </FieldDescription>
         )}
       </Field>
-      {n > 0 && (
+      {/* Only for a description that is there to amend (pasted, or the AI's,
+          landed): never while it is written or types in (user call, 2026-11-11). */}
+      {n > 0 && !ctx.writing && typing == null && (
         <div className="flex flex-col gap-2">
           <span className="text-sm font-medium text-foreground">Rewrite with AI</span>
           <PromptInput
@@ -1816,7 +1899,8 @@ function Review(ctx: ScreenCtx) {
   const unanswered = (...ids: ScreenId[]) => SCREENS.some((s) => ids.includes(s.id) && s.check?.(draft))
   const strict = (s: "must" | "preferred") => (s === "preferred" ? " (preferred)" : "")
   const reqs = [
-    draft.education && `${EDUCATION_LABELS[draft.education]}${strict(draft.strictness.education)}`,
+    draft.education &&
+      (draft.education === "any" ? "Any education" : `${EDUCATION_LABELS[draft.education]}${strict(draft.strictness.education)}`),
     draft.english &&
       `${ENGLISH_LABELS[draft.english]}${draft.english === "none" ? "" : strict(draft.strictness.english)}`,
     experienceLabel(draft) &&
@@ -1829,33 +1913,48 @@ function Review(ctx: ScreenCtx) {
     preferences: { title: "Must have", value: draft.assets.join(", ") || "Nothing" },
     education: {
       title: "Education",
-      value: draft.education && draft.education !== "10th" ? EDUCATION_LABELS[draft.education] : "Any",
+      value: draft.education && draft.education !== "any" ? EDUCATION_LABELS[draft.education] : "Any",
     },
     english: {
       title: "English",
-      value: draft.english && draft.english !== "none" ? ENGLISH_LABELS[draft.english] : "Not needed",
+      value: ENGLISH_LABELS[draft.english || "none"],
     },
     experience: { title: "Experience", value: experienceLabel(draft) ?? "Any" },
   }
   const asks = ctx.asks ?? []
   const skipped = essential ? Object.keys(WHO).filter((id) => !asks.includes(id as ScreenId)) : []
   const prefs = [
+    essential ? "" : distanceText(draft),
     draft.languages.join(", "),
     draft.skills.join(", "),
     draft.assets.length && !essential ? `Must own: ${draft.assets.join(", ")}` : "",
-    draft.gender !== "any" ? (draft.gender === "male" ? "Male" : "Female") : "",
+    genderAgeLabel(draft) === "Anyone" ? "" : genderAgeLabel(draft),
   ].filter(Boolean)
   return (
     <>
       <WizardQuestion title="Review" description="Check everything before posting." />
       <Checks ctx={ctx} ids={["unserved-city", "category-mismatch", "multi-role", "generic-title"]} />
 
-      {/* Phones get the preview here; wider screens have it beside the questions. */}
-      <div className="flex justify-center lg:hidden">
-        <div className="w-full max-w-xs">
-          <CandidateJobPreview draft={draft} hideOpen={essential} />
-        </div>
-      </div>
+      {/* Below lg: answers first; the candidate view opens on a tap (audit
+          2026-11-11). Wider screens have it beside the answers. */}
+      <Sheet>
+        <SheetTrigger
+          render={
+            <Button type="button" variant="outline" size="lg" className="lg:hidden">
+              <Eye aria-hidden /> See what candidates see
+            </Button>
+          }
+        />
+        {/* The CloseBubble sits outside the sheet: scroll inside, never clip it. */}
+        <SheetContent side="bottom" className="max-h-5/6 gap-0 rounded-t-2xl border-t-0 p-0">
+          <SheetTitle className="sr-only">Candidate view</SheetTitle>
+          <div className="flex min-h-0 justify-center overflow-y-auto p-5 pb-safe-5">
+            <div className="w-full max-w-xs">
+              <CandidateJobPreview draft={draft} hideOpen={essential} />
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
 
       <div className="flex flex-col rounded-card-nested border border-border bg-card p-4">
         <ReviewSection title="Job" onEdit={() => ctx.edit("title")} missing={unanswered("title")}>
@@ -1865,11 +1964,17 @@ function Review(ctx: ScreenCtx) {
             draft.category,
             draft.industry,
             draft.jobType && JOB_TYPE_LABELS[draft.jobType],
-            draft.nightShift && "Night shift",
+            !essential && draft.nightShift && "Night shift",
           ]
             .filter(Boolean)
             .join(" · ")}
         </ReviewSection>
+        {essential && (
+          // Not asked in essential, but candidates must know before they apply.
+          <ReviewSection title="Shift" onEdit={() => ctx.edit("job-type")}>
+            {draft.nightShift ? "Night shift" : "No night shift"}
+          </ReviewSection>
+        )}
         <ReviewSection
           title="Location"
           onEdit={() => ctx.edit(draft.locationType ? "location" : "workplace")}
@@ -1897,11 +2002,11 @@ function Review(ctx: ScreenCtx) {
             {WHO[id].value}
           </ReviewSection>
         ))}
-        {(!ctx.essential || prefs.length > 0) && (
-          <ReviewSection title="Preferences" onEdit={() => ctx.edit("preferences")}>
-            {prefs.join(" · ") || "None"}
-          </ReviewSection>
-        )}
+        {/* Essential never asks these, but a third of live jobs limit gender or
+            age, so the row is always here, one tap from the answer. */}
+        <ReviewSection title="Preferences" onEdit={() => ctx.edit("preferences")}>
+          {prefs.join(" · ") || (essential ? "Any gender, any age" : "None")}
+        </ReviewSection>
         <ReviewSection title="Description" onEdit={() => ctx.edit("description")}>
           {ctx.writing ? (
             <WritingState compact onStop={ctx.stopWriting} />
@@ -1914,7 +2019,7 @@ function Review(ctx: ScreenCtx) {
           <section className="flex flex-col gap-2 border-t border-border pt-4">
             <h2 className="text-sm font-semibold text-foreground">After you post</h2>
             <p className="text-sm text-muted-foreground">
-              We ask about walk-ins, perks and questions for applicants. Until then, candidates call you.
+              We ask about walk-ins, perks, questions for applicants, and any gender or age preference. Until then, candidates call you.
             </p>
           </section>
         ) : (
@@ -1980,6 +2085,7 @@ export const SCREENS: ScreenDef[] = [
   {
     id: "category",
     stage: "job",
+    advanceOn: "category",
     preview: "top",
     check: (d) => (!d.category ? "Choose a job role" : null),
     Render: Category,
@@ -1987,6 +2093,7 @@ export const SCREENS: ScreenDef[] = [
   {
     id: "industry",
     stage: "job",
+    advanceOn: "industry",
     preview: "top",
     check: (d) => (!d.industry ? "Choose an industry" : null),
     Render: Industry,
@@ -2001,6 +2108,7 @@ export const SCREENS: ScreenDef[] = [
   {
     id: "workplace",
     stage: "job",
+    advanceOn: "locationType",
     preview: "top",
     check: (d) => (!d.locationType ? "Choose a workplace" : null),
     Render: Workplace,
@@ -2155,7 +2263,7 @@ export const SCREEN_NAMES: Record<ScreenId, string> = {
 export const STAGE_LABELS: Record<StageId, string> = {
   job: "Job details",
   candidates: "Who can apply",
-  setup: "Hiring setup",
+  setup: "Setup & review",
 }
 
 export const screenIndex = (id: ScreenId) => SCREENS.findIndex((s) => s.id === id)

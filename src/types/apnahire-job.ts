@@ -7,7 +7,8 @@
 export type JobType = "full_time" | "part_time" | "both"
 export type LocationType = "office" | "home" | "field"
 export type PayType = "fixed" | "fixed_incentive" | "incentive"
-export type Education = "10th" | "12th" | "diploma" | "iti" | "graduate" | "post_graduate"
+/** "any": education does not matter. Every other value is a minimum. */
+export type Education = "any" | "10th" | "12th" | "diploma" | "iti" | "graduate" | "post_graduate"
 export type EnglishLevel = "none" | "basic" | "good"
 export type ExperienceType = "any" | "experienced" | "fresher"
 export type ContactPreference = "self" | "other" | "none"
@@ -89,6 +90,8 @@ export interface JobPostDraft {
   gender: GenderPreference
   ageMin: number | null
   ageMax: number | null
+  /** How far from the job candidates may live, in km. null or 0 = any distance; -1 = anywhere in the job's city. */
+  distanceKm: number | null
   walkIn: boolean
   walkInDetails: WalkInDetails
   contact: ContactPreference

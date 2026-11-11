@@ -8,6 +8,159 @@ or **Open**.
 
 ---
 
+## Job posting, essential: what it needed before it can be the default (2026-11-11)
+**Status: Decided** (Punna asked for the fixes; the default itself is still open)
+
+- **Finish setup answers are saved** as soon as the job is live and on each "Done", and the list shows on the Jobs page ("Finish setup · <title>") until every row is answered. Prototype: browser storage, last posted job only.
+- **Gender and age, verified** (hand-posted jobs, real values, n = 206,977): 33.6% limit gender (20.5% male only, 13.1% female only); 36.1% set a real age limit (max under 60). Male only: Delivery 51.5%, Driver 47.6%, Field Sales 39.1%. Female only: Telesales 30.2%. Age: Customer Support 54.5%, Telesales 46.0%. The earlier 89% was a "field touched" flag, not a limit.
+  - **So:** still never asked, but essential's Review always shows a Preferences row ("Any gender, any age" by default) with Change, and Finish setup keeps its row. A third of jobs use it; two thirds do not.
+- **Six more roles have settings**, from the most common answers on hand-posted jobs: Inside Sales (12th, basic English), Business Development (graduate, basic), Loan Sales (12th, basic), Front Office (12th, basic), Restaurant Staff (English and experience only; basic English), Warehouse & Logistics (experience only). Data entry already maps to Back Office, and its numbers match. Title rules put the narrower sales roles before Field Sales.
+- **Industry:** already the role's usual industry first, then the company's. In production the second comes from the company profile; nothing to build in the prototype.
+- **What would change it:** a true ATS marker; funnel data.
+
+---
+
+## Job posting: which flow is the default, regular or essential? (2026-11-11)
+**Status: Leaning** (recommendation; Punna to decide)
+
+- **Question:** two flows exist. Which one should recruiters get by default?
+- **Leaning:** essential, released as a test against regular, not a hard switch.
+- **Why:** it is 11 taps against 27 by hand and 8 against 18 with AI (audit, phone, delivery job). The role defaults are right for most jobs: the most common answer covers 65–98% of jobs in the confirmed roles, and 60% of all jobs set experience to "any". Roles without a profile still get education, English and experience asked, so a wrong guess is not silent. Everything it skips stays editable at Review or after posting.
+- **Risks:** gender and age may be set on 50–89% of jobs in some roles (unverified flags); the top 12 roles are only about 39% of hand-posted jobs; there is no funnel data, so the gain in completed posts is not measured.
+- **Before it ships:** done on 2026-11-11, see the entry above.
+- **What would change it:** funnel data showing recruiters do not drop off in the long form; gender and age confirmed as widely used (then show them at Review, not after posting).
+
+---
+
+## Job posting: distance has "Within the city", and relocation locks it to any distance (2026-11-11)
+**Status: Decided** (Punna)
+
+- **Question:** the distance choices were 5, 10, 15, 25 km and any distance. What about "anyone in the city", and a job that accepts candidates willing to relocate?
+- **Decision:** a "Within <city>" choice sits between 25 km and any distance. When "Accept candidates willing to relocate" is on, distance is any distance: the other choices are disabled and a line says to turn relocation off in the job's location to set a range. The recruiter's earlier range comes back when relocation is turned off.
+- **Why:** a range and relocation contradict each other; and many recruiters mean "anyone in Bengaluru", which no km value says.
+- **What would change it:** live's own distance list, still not read.
+
+---
+
+## Job posting: what 265k live jobs say about role questions (2026-11-11)
+**Status: Decided for Field Sales and Retail** (Punna); the rest Open
+
+- **Decision:** Field Sales now asks education and English as well as assets and experience, starting on 12th pass and basic English. Retail Sales asks education, English and experience, starting on 12th pass and basic English. Both from the hand-posted numbers below.
+
+- **Source:** Ana analytics, Employer pod, `core_job` joined to `employer_subdepartment`, jobs created from 2026-08-13 (n = 265,421). Test jobs and drafts not excluded. Education and English are filled on ~100% of jobs, so a value may be a default, not a choice.
+- **Job mix:** Delivery 11.1%, Field Sales 7.2%, Telesales 6.1%, Cook 3.5%, Accounting 3.2%, Customer Support 2.8%, Retail counter sales 2.3%, Driver 2.3%, Back Office 2.1%, Inside Sales 1.8%, Restaurant staff 1.7%, Front Office 1.7%. The top 20 are about 58% of jobs.
+- **Confirms the profiles:** Delivery (97.8% lowest education, 94.5% no English), Driver (87% / 85%), Cook (78% / 65%), Telesales (65% 12th, 67% basic English), Customer Support (68% 12th), Accounting (81% graduate, 80% basic English).
+- **Disagrees:** Field Sales is profiled as "no education, no English", but 71% of its jobs set 12th or higher and 62% set some English. Retail is profiled "no education", but 66% set 12th or higher.
+- **Experience:** any 60.4%, experienced 35.2%, freshers only 4.4%. Supports reading "freshers are fine" as "any".
+- **Gender and age (unverified proxy flags):** gender looks set on 89% of Delivery and 74% of Driver jobs; age on 50–63% of Telesales, Field Sales and Customer Support. If real, "after posting, optional" needs a second look for those roles.
+- **Regional language:** 16% for Customer Support, 9% Telesales, under 8% elsewhere.
+- **No data:** distance (no column), night shift, the posting funnel by step, time to post, device, and which fields are edited after posting.
+- **Roles with no profile yet:** Inside Sales, Restaurant staff, Front Office, BD / pre-sales, Banking sales, Data entry, Logistics.
+- **ATS against dashboard (proxy only):** the job table has no column for how a job was posted. Proxy: organisations with 100+ jobs in the window (131 orgs, 58.7k jobs, 22%) are "likely ATS, bulk or agency"; the rest (about 206.8k jobs) are "likely posted by hand". Bulk-format jobs (6.7%) are nearly all Delivery and Driver.
+  - **By hand, the mix changes:** Telesales 7.3%, Field Sales 5.7%, Cook 4.3%, Accounting 4.0%, Customer Support 2.9%, Retail 2.6%, Front Office 2.2%, Delivery 2.1%, Back Office 2.1%, Restaurant 2.1%, Inside Sales 2.0%, Driver 1.6%. 85% of Delivery jobs come from high-volume organisations.
+  - **By hand, per role:** Delivery 86.9% lowest education, 74.3% no English (25% basic); Field Sales 77% set 12th or higher, 76% some English; Retail counter 65% 12th or higher, 72% some English; Telesales unchanged.
+  - **To get a true split:** ask engineering which field marks an ATS or API post.
+
+---
+
+## Job posting, regular: an AI draft preselects "Any" education and "No English" where the role does not need them (2026-11-11)
+**Status: Decided** (Punna)
+
+- **Question:** a delivery job described to the AI left education blank in the regular flow, though we know delivery does not need it.
+- **Decision:** after an AI draft, a role whose profile does not ask education or English (delivery, driver, field sales, cook, security, housekeeping; retail for education) starts on "Any" / "No English", marked AI-filled so the recruiter checks it. Never overrides what the description said. Typing the title by hand does not do this: a later title change would leave a stale answer. (`openAnswersForRole`, `role-profiles.ts`.)
+- **Why:** the AI is told to leave those fields empty for such roles; blank made the recruiter answer what we already know.
+- **What would change it:** role profiles from live data.
+
+---
+
+## Job posting: education has "Any", and 10th means 10th pass (2026-11-11)
+**Status: Decided** (Punna)
+
+- **Question:** the lowest option was "10th or below · Anyone can apply". Review called it "Any", but the education screen had no "Any" to pick, so Edit showed a different word for the same answer.
+- **Decision:** education gets its own first option, "Any · Education does not matter". "10th" is now "10th pass · 10th pass or higher", a real minimum like the rest. Roles that do not need education (delivery, site work) are set to "Any". Candidates are not shown an education line when it is "Any".
+- **Why:** "we don't care" and "at least 10th" are different answers; one label for both made Review and the screen disagree.
+- **What would change it:** nothing expected. Live's own list was not re-read (signed out).
+
+---
+
+## Job posting, essential: the eight live fields it does not ask (2026-11-11)
+**Status: Decided** (Punna)
+
+- **Question:** live asks distance, experience-based skills, past industry experience, gender, age, languages, degree and night shift. What happens to each in essential?
+- **Decision:**
+  - **Distance:** kept, never asked; the default is any distance, for every workplace and both flows (Punna, 2026-11-11; `distanceKm()` in `job-draft.ts`), changed after posting in Finish setup ("How far candidates can live": 5, 10, 15, 25 km, any distance — live's choices). Regular asks everything, so it shows Distance under Preferences ("Anyone you'd prefer?"), after Languages (Punna, 2026-11-11).
+  - **Experience-based skills:** dropped as a field; part of Skills, which the AI fills.
+  - **Past industry experience:** dropped from posting; stays in the description if the recruiter says it.
+  - **Gender, age:** after posting, optional ("Gender, age and other preferences" in Finish setup).
+  - **Languages:** read from the description and shown at Review (Preferences); otherwise not asked.
+  - **Degree:** not asked.
+  - **Night shift:** read from the description; Review has a "Shift" row (Day shift / Night shift) with Change.
+- **Why:** search-filter use (entry below, 2026-11-09): distance is the most-set filter (38.6%), but narrowing it is the recruiter's choice, so it starts open; gender 20.3% and age 22.4% each shut candidates out; industry and languages 6–7%; degree ≤3%. Night shift is something a candidate must know before applying, so it cannot live only in the description. Languages matter for calling roles.
+- **What would change it:** job-posting data (these numbers are from candidate search); a role where recruiters set gender or age most of the time.
+
+---
+
+## Job posting: the short flow is retired into regular (2026-11-11)
+**Status: Decided** (Punna)
+
+- **Question:** with its desktop pages already the default, short differed from regular only in how Review sends you to missing answers. Keep it as a separate preview?
+- **Decision:** no. Review now takes the recruiter through every missing answer in one pass, then back to Review, in every flow. `?flow=short` no longer does anything. Two flows remain: regular (asks everything) and essential (asks only what matching needs).
+- **Why:** a third flow that looks the same as regular confused the comparison, and one-pass is better: Review no longer drops the recruiter mid-flow after the first fix.
+- **What would change it:** nothing expected; essential's decision is separate.
+
+---
+
+## Job posting, essential: an unmatched title stays "Other" (2026-11-11)
+**Status: Decided** (Punna)
+
+- **Question:** the essential flow never asks the role; a title no rule matches becomes "Other" silently. Ask the role in that case?
+- **Decision:** no; keep "Other". The description already leaves "Other" out.
+- **Why:** Punna's call; it keeps the essential flow free of a conditional question.
+- **What would change it:** many jobs landing in "Other", or wrong-candidate complaints traced to it.
+
+---
+
+## Job posting: phone Review answers first; a shorter AI draft wait (2026-11-11)
+**Status: Decided** (Punna: "proceed as recommended")
+
+- **Question:** on phones the candidate view filled the first ~780px of Review, so the rows to check started a screen down. And "Draft my job" held one line for ~17 s, then played a ~7 s reveal after the answer had arrived.
+- **Decision:** phone (below lg) Review opens on the answers; "See what candidates see" (outline) opens the candidate view in a bottom sheet. The draft strip rolls "Understanding the role… → Setting location & pay… → Working out who can apply… → Writing the job description…" every 4 s while waiting, holds the last, then "Ready, let's check it" for 0.7 s. No "Found: …" reveal; the questions show what was found.
+- **Why:** Review is for checking answers; the preview is a second look, one tap away. The wait is the AI's, so the lines run during it, not after. Measured: 20 s (was ~25 s).
+- **What would change it:** streaming the draft (then the lines can name what it really found as it finds it).
+
+---
+
+## Job posting, desktop: a topic's questions share a page, both flows (2026-11-11)
+**Status: Decided** (Punna)
+
+- **Question:** with the candidate view only at Review, the regular desktop flow was 16 near-empty one-question pages. Group them?
+- **Decision:** yes, on desktop in both flows. Regular uses the `?flow=short` split (5 pages: job basics, location and pay, who can apply, description, interview and contact); essential keeps its own. Phones keep one question per screen. A failed Next on a page names every missing answer under its question, with "N answers missing" in the footer. Stage 3 is "Setup & review", since it holds Review.
+- **Also:** a title preselects its role, usual industry and workplace (`suggestFromTitle` in `job-draft.ts`), on every path and after an AI draft that left them empty. A changed title replaces only answers still on the last title's suggestion. Essential takes the role's industry before the company's.
+- **Why:** 11 fewer presses of Next, and the same desktop pattern in both flows. The title already tells us the role, and for most roles the industry and workplace.
+- **What would change it:** recruiters missing a question further down a long page (then split the page).
+
+---
+
+## Job posting, desktop: preview at Review, ruled sections, one AI note, description step (2026-11-11)
+**Status: Decided** (Punna)
+
+- **Question:** on desktop the candidate view sat beside every question; grouped pages (essential, short) ran together with no section breaks; every question heading carried "AI-filled · check it"; and the essential flow wrote the description only on Review.
+- **Decision:** (1) desktop shows the candidate view only at Review; before it, one centred column like phones. "What candidates see" under salary stays. (2) On a page of several questions, a `Separator` between them. (3) That page carries one note at the top, "AI-filled from your description · check it", instead of a tag per question; one-question screens keep their own tag. (4) The essential flow has a description step of its own after "Who can apply", on phones and desktop, so the recruiter reads it before Review.
+- **Why:** a preview of a mostly empty job is noise, and it squeezed the form; the preview earns its place where the post is checked. A repeated tag stops being read. The description is the longest thing the recruiter approves; reading it inside Review's list hides it.
+- **What would change it:** recruiters missing the live preview while answering (then a "Preview" button, not a permanent column).
+
+---
+
+## Job posting: a single-choice screen moves on at the tap (2026-11-11)
+**Status: Leaning** (from the 2026-11-11 audit; Punna to confirm)
+
+- **Question:** role, industry and workplace each took a tap and then "Next". Should the tap be enough?
+- **Decision:** yes, on a page that is that one question alone (`advanceOn` on the screen): the pick shows for 250 ms, then the next screen opens. Back to it does not move on again. Job type (night shift toggle), education and English ("Must have" toggle after the pick), experience (years) and pay keep "Next", because more follows the pick. Desktop grouped pages keep "Next".
+- **Why:** the tap already is the answer; the second tap is a confirmation nobody needs. Saves about 3 taps per manual job, fewer surprises than including screens with a follow-up control.
+- **What would change it:** recruiters mis-tapping and having to come back, or moving the follow-up toggles off those screens (then education and English join).
+
+---
+
 ## Job posting: the description writes itself in the AI's voice (2026-11-10)
 **Status: Decided** (Punna)
 
@@ -17,6 +170,7 @@ or **Open**.
 - **Also fixed:** the write on arrival used a draft ref that an effect updates after the screen's own effect, so a resumed draft wrote from an empty summary; the screen now passes its draft.
 - **Toned down (Punna, 2026-11-11):** the ring and the backdrop were too much, and on a phone the strip overlapped the box's corner and sat washed out under the glow. Now the box shows a skeleton while writing, the strip is a plain muted row under it (the sparkle pulse is the only animation), and the text still types in. One place animates, not three.
 - **Length hint (Punna, 2026-11-11):** "Aim for 150+ characters · 0 / 3000" is advice to a person typing, so it is hidden while the AI writes and while its text types in; it shows once the box is theirs to edit.
+- **Rewrite with AI (Punna, 2026-11-11):** hidden while the description is written and while it types in; it shows only once there is a description to amend (pasted, typed or the AI's, landed). The "answers changed" alert hides while writing too.
 - **What would change it:** streaming the description (then the text arrives word by word and the strip becomes the stream).
 
 ---

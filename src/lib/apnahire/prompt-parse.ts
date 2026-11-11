@@ -50,11 +50,18 @@ export const CATEGORY_RULES: [RegExp, string, string[]][] = [
   [/delivery|rider|biker/i, "Delivery", ["Two-wheeler driving", "Route knowledge", "Cash handling"]],
   [/support|customer care|helpdesk/i, "Customer Support", ["Query resolution", "Patient listening", "Ticketing tools"]],
   [/teacher|tutor|faculty/i, "Teaching", ["Lesson planning", "Classroom management"]],
-  [/sales|business development|\bbde\b|relationship/i, "Field Sales", ["Lead generation", "Negotiation", "Target achievement"]],
+  // The narrower sales roles first: the next rule catches any other "sales".
+  [/inside sales/i, "Inside Sales", ["Lead follow-up", "Product pitching", "CRM basics"]],
+  [/loan|credit card|\bdsa\b|banking sales/i, "Loan Sales", ["Lead generation", "Document collection", "Target achievement"]],
+  [/business development|\bbd[em]?\b|pre ?sales/i, "Business Development", ["Lead generation", "Client meetings", "Negotiation"]],
+  [/sales|relationship/i, "Field Sales", ["Lead generation", "Negotiation", "Target achievement"]],
   [/data entry|back office|computer operator/i, "Back Office", ["Typing speed", "MS Excel", "Accuracy"]],
   [/driver/i, "Driver", ["Driving licence", "Route knowledge"]],
   [/account|tally/i, "Accounts", ["Tally", "GST basics", "Bookkeeping"]],
   [/cook|chef/i, "Cook / Chef", ["Food preparation", "Kitchen hygiene"]],
+  [/waiter|steward|restaurant|barista|captain/i, "Restaurant Staff", ["Table service", "Order taking", "Hygiene"]],
+  [/reception|front (office|desk)/i, "Front Office", ["Greeting visitors", "Call handling", "MS Office"]],
+  [/warehouse|picker|packer|loader|logistics/i, "Warehouse & Logistics", ["Picking and packing", "Loading", "Inventory basics"]],
   [/security|guard/i, "Security", ["Patrolling", "Visitor management"]],
   [/housekeep|cleaner/i, "Housekeeping", ["Cleaning", "Room upkeep"]],
 ]
@@ -186,7 +193,9 @@ export function parsePrompt(source: string): Partial<JobPostDraft> {
     out.payType = /incentive/.test(text) ? "fixed_incentive" : "fixed"
   } else if (/incentive only/.test(text)) out.payType = "incentive"
 
-  if (/post ?graduate|\bpg\b|\bmba\b/.test(text)) out.education = "post_graduate"
+  if (/\b(no|any) (minimum )?(education|qualification)|(education|qualification) (is )?(not|does ?n[o']t) (needed|required|matter)/.test(text))
+    out.education = "any"
+  else if (/post ?graduate|\bpg\b|\bmba\b/.test(text)) out.education = "post_graduate"
   else if (/graduate|degree|b\.?com|b\.?sc|b\.?a\b/.test(text)) out.education = "graduate"
   else if (/12th|puc|intermediate/.test(text)) out.education = "12th"
   else if (/10th|sslc/.test(text)) out.education = "10th"
@@ -206,7 +215,10 @@ export function parsePrompt(source: string): Partial<JobPostDraft> {
   const expText = age ? text.replace(age[0], " ") : text
   const range = expText.match(/(\d+(?:\.\d+)?)\s*(?:-|–|to)\s*(\d+(?:\.\d+)?)\s*(?:years?|yrs?)/)
   const years = expText.match(/(\d+(?:\.\d+)?)\s*\+?\s*(?:years?|yrs?)/)
-  if (/fresher/.test(text)) out.experienceType = "fresher"
+  // "Freshers are fine" lets freshers in; it does not shut experienced people
+  // out. Only "freshers only" / "only freshers" does.
+  if (/freshers? only|only freshers?/.test(text)) out.experienceType = "fresher"
+  else if (/fresher/.test(text)) out.experienceType = "any"
   else if (years) {
     out.experienceType = "experienced"
     out.minExperienceYears = parseFloat(range ? range[1] : years[1])

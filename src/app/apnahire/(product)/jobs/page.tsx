@@ -35,6 +35,7 @@ import { PageHeader } from "@/components/onlyrounds/page-header"
 import { PlanEndedBanner } from "@/components/apnahire/plan-ended"
 import { PriceChangeBanner } from "@/components/apnahire/price-change-banner"
 import { OFFER_BAR_TEMPLATES, SubscriberPlanCard, type OfferBarTemplate } from "@/components/apnahire/subscriber-plan-card"
+import { SavedFinishSetup } from "@/components/apnahire/post-job/finish-setup"
 import { useJobSlots } from "@/hooks/use-job-slots"
 import { MOCK_JOBS as MOCK } from "@/content/apnahire-jobs"
 import { useFlushHeader } from "@/hooks/use-flush-header"
@@ -167,6 +168,8 @@ function JobsPageInner() {
       {/* A plan that just ended (a week): the way back. */}
       <PlanEndedBanner />
       {showPlanCard && <SubscriberPlanCard template={offerBar} />}
+      {/* Essential flow: what the last posted job still needs answered. */}
+      <SavedFinishSetup />
       <PageHeader
         variant="transparent"
         // Phones: no page title — the bottom bar already says Jobs.

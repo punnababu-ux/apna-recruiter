@@ -71,9 +71,15 @@ export const JobDraftSchema = z.object({
   salaryMax: z.number().nullable().describe("Monthly fixed salary upper bound in INR."),
   incentive: z.number().nullable().describe("Average monthly incentive in INR."),
   perks: z.array(z.enum(PERKS as [string, ...string[]])).nullable().describe("Only perks the recruiter names."),
-  education: z.enum(["10th", "12th", "diploma", "iti", "graduate", "post_graduate"]).nullable(),
+  education: z
+    .enum(["any", "10th", "12th", "diploma", "iti", "graduate", "post_graduate"])
+    .nullable()
+    .describe("Minimum education. 'any' only when the recruiter says education does not matter."),
   english: z.enum(["none", "basic", "good"]).nullable(),
-  experienceType: z.enum(["any", "experienced", "fresher"]).nullable(),
+  experienceType: z
+    .enum(["any", "experienced", "fresher"])
+    .nullable()
+    .describe("'fresher' only when the text says freshers ONLY. 'Freshers are fine / welcome / can apply' means 'any'."),
   minExperienceYears: z.number().nullable().describe("Minimum years when experienceType is 'experienced'."),
   maxExperienceYears: z.number().nullable().describe("Maximum years when experienceType is 'experienced', if stated."),
   languages: z.array(z.string()).nullable().describe("Regional languages required, e.g. ['Hindi']."),

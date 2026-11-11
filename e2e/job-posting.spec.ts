@@ -43,7 +43,7 @@ const STEPS: Step[] = [
     answer: async (page) => {
       // The first popular place sets the area and its city together.
       await page.getByRole("button", { pressed: false }).filter({ hasText: /, \w+/ }).first().click()
-      await expect(page.getByRole("button", { name: "Change", exact: true })).toBeVisible()
+      await expect(page.getByRole("button", { name: "Change", exact: true }).last()).toBeVisible()
     },
   },
   {
@@ -115,22 +115,30 @@ async function expectScreenLayout(page: Page, id: string) {
 
 /** Waits for the screen's question, lets the entrance finish, then runs the layout checks. */
 async function arrive(page: Page, step: Step) {
-  await expect(page.getByRole("heading", { level: 1, name: step.heading }), `${step.id}: heading`).toBeVisible()
+  await expect(page.getByRole("heading", { name: step.heading }), `${step.id}: heading`).toBeVisible()
   await settle(page, 450)
   await expectScreenLayout(page, step.id)
+}
+
+/** After a step's answer: the next question may share the page (desktop), or
+ *  a single-choice pick may already have moved on (role, industry, workplace);
+ *  otherwise press the footer's primary button. */
+async function moveOn(page: Page, i: number) {
+  const step = STEPS[i]
+  if (step.id === "describe") return page.getByRole("button", { name: "Fill manually" }).click()
+  const next = STEPS[i + 1]
+  if (next && (await page.getByRole("heading", { name: next.heading }).isVisible())) return
+  await settle(page, 600)
+  if (await page.getByRole("heading", { name: step.heading }).isVisible()) await primary(page).click()
 }
 
 /** Fills each screen with its minimum answer and moves on, checking every one, up to the plans step. */
 async function walk(page: Page) {
   await startFresh(page)
-  for (const step of STEPS) {
+  for (const [i, step] of STEPS.entries()) {
     await arrive(page, step)
     await step.answer(page)
-    if (step.id === "describe") {
-      await page.getByRole("button", { name: "Fill manually" }).click()
-    } else {
-      await primary(page).click()
-    }
+    await moveOn(page, i)
   }
   await expect(page).toHaveURL(new RegExp(`${PLANS}$`))
   await expect(page.getByRole("heading", { name: "Select a job type" }).or(page.getByText("Select a job type")).first()).toBeVisible()
@@ -150,14 +158,13 @@ test.describe("job posting: walk-through", () => {
     test.setTimeout(120_000)
     await page.setViewportSize({ width: 320, height: 640 })
     await startFresh(page)
-    for (const step of STEPS) {
-      await expect(page.getByRole("heading", { level: 1, name: step.heading }), `${step.id}: heading`).toBeVisible()
+    for (const [i, step] of STEPS.entries()) {
+      await expect(page.getByRole("heading", { name: step.heading }), `${step.id}: heading`).toBeVisible()
       await settle(page, 450)
       await expectNoHorizontalOverflow(page, step.id)
       await expectNoCollapsedButtons(page)
       await step.answer(page)
-      if (step.id === "describe") await page.getByRole("button", { name: "Fill manually" }).click()
-      else await primary(page).click()
+      await moveOn(page, i)
     }
     await expect(page).toHaveURL(new RegExp(`${PLANS}$`))
     await settle(page, 600)
@@ -218,12 +225,12 @@ test.describe("job posting: drafts", () => {
     await expectScreenLayout(page, "salary")
   })
 
-  test("?flow=short (preview) puts related questions on one page, on desktop only", async ({ page }) => {
+  test("related questions share a page on desktop only", async ({ page }) => {
     // Phones keep one question per screen (user call, 2026-11-10).
     const phone = (page.viewportSize()?.width ?? 0) < 768
     await open(page, JOB_POST)
     await seedFlow(page, "job-type")
-    await page.goto(`${JOB_POST}?resume=1&flow=short`, { waitUntil: "networkidle" })
+    await page.goto(`${JOB_POST}?resume=1`, { waitUntil: "networkidle" })
     await expect(page.getByRole("heading", { name: "What type of job is it?" })).toBeVisible()
     await expect(page.getByRole("heading", { name: "Where will they work?" })).toHaveCount(phone ? 0 : 1)
     const fits = await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)
@@ -242,6 +249,7 @@ test.describe("job posting: drafts", () => {
   })
 
   test("Back steps to the previous screen and keeps the answer", async ({ page }) => {
+    test.skip(test.info().project.name === "desktop", "desktop puts role and industry on one page")
     await open(page, JOB_POST)
     await seedFlow(page, "industry")
     await page.goto(`${JOB_POST}?resume=1`, { waitUntil: "networkidle" })
@@ -362,7 +370,7 @@ test.describe("job posting: screens @visual", () => {
       await open(page, JOB_POST)
       await seedFlow(page, step.id)
       await page.goto(`${JOB_POST}?resume=1`, { waitUntil: "networkidle" })
-      await expect(page.getByRole("heading", { level: 1, name: step.heading })).toBeVisible()
+      await expect(page.getByRole("heading", { name: step.heading })).toBeVisible()
       // `open` hid the Next dev badge on the first load only; this is a second one.
       await page.addStyleTag({ content: "nextjs-portal{display:none!important} *{caret-color:transparent!important}" })
       // Let the entrance, the idle glow and the map settle.

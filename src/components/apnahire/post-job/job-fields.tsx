@@ -17,6 +17,12 @@ import {
   FieldLabel,
   Input,
   Backpack,
+  Ban,
+  BriefcaseBusiness,
+  MessageCircle,
+  MessagesSquare,
+  UserPlus,
+  Users,
   GraduationCap,
   Hammer,
   NumberStepper,
@@ -278,6 +284,7 @@ export function ChoiceCards<V extends string>({
 }
 
 const EDUCATION_ICONS: Record<Education, React.ReactNode> = {
+  any: <Users />,
   "10th": <Backpack />,
   "12th": <School />,
   diploma: <ScrollText />,
@@ -287,12 +294,23 @@ const EDUCATION_ICONS: Record<Education, React.ReactNode> = {
 }
 
 const EDUCATION_HELP: Record<Education, string> = {
-  "10th": "Anyone can apply",
+  any: "Education does not matter",
+  "10th": "10th pass or higher",
   "12th": "12th pass or higher",
   diploma: "Diploma or higher",
   iti: "ITI certificate or higher",
   graduate: "Bachelor’s degree or higher",
   post_graduate: "Master’s degree",
+}
+const ENGLISH_ICONS: Record<EnglishLevel, React.ReactNode> = {
+  none: <Ban />,
+  basic: <MessageCircle />,
+  good: <MessagesSquare />,
+}
+const EXPERIENCE_ICONS: Record<ExperienceType, React.ReactNode> = {
+  any: <Users />,
+  experienced: <BriefcaseBusiness />,
+  fresher: <UserPlus />,
 }
 const ENGLISH_HELP: Record<EnglishLevel, string> = {
   none: "Candidates don’t need to speak English",
@@ -322,7 +340,7 @@ export function EducationField({ draft, update }: FieldEditorProps) {
         mustHave={{
           value: draft.strictness.education,
           onChange: strictnessSetter(draft, update, "education"),
-          applicable: !!draft.education,
+          applicable: !!draft.education && draft.education !== "any",
         }}
       />
     </div>
@@ -336,6 +354,7 @@ export function EnglishField({ draft, update }: FieldEditorProps) {
         label="English level"
         labels={ENGLISH_LABELS}
         help={ENGLISH_HELP}
+        icons={ENGLISH_ICONS}
         value={draft.english}
         onChange={(v) => update("english", v)}
         mustHave={{
@@ -361,6 +380,7 @@ export function ExperienceField({ draft, update }: FieldEditorProps) {
         label="Experience"
         labels={EXPERIENCE_LABELS}
         help={EXPERIENCE_HELP}
+        icons={EXPERIENCE_ICONS}
         value={draft.experienceType}
         onChange={(v) => {
           update("experienceType", v)

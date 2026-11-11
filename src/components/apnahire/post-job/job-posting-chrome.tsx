@@ -42,7 +42,7 @@ export type JobPostingStep = "job" | "candidates" | "setup" | "plan"
 const ALL_STEPS: { id: JobPostingStep; label: string }[] = [
   { id: "job", label: "Job details" },
   { id: "candidates", label: "Who can apply" },
-  { id: "setup", label: "Hiring setup" },
+  { id: "setup", label: "Setup & review" },
   { id: "plan", label: "Select plan" },
 ]
 

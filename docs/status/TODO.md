@@ -53,19 +53,21 @@ Open before ECC: keep "View number" as the green action, or make Shortlist prima
 - [x] Help lines that only repeat a card's label removed
 - [x] "Continue draft" opens on the saved screen
 - [ ] Test voice on a real Android phone and desktop Chrome
-- [ ] Job posting audit, 2026-11-11 (all four paths, phone + desktop; nothing fixed yet; full write-up with taps per path: `history/AUDIT-2026-11-11-JOB-POSTING.md`). Bugs:
-  - [ ] Salary slider shows ₹15k–₹25k while no salary is set; Next then says "Add the salary range" (`Salary`, the `?? 15000` / `?? 25000` fallbacks)
-  - [ ] Next / "Choose a plan" stay live while the AI writes the description; a tap gives "Add a description" (essential Review sends you to the description screen with that error)
-  - [ ] After an AI draft, answering the missing industry makes the description step rewrite a description that was just written (industry is in `descriptionBasisOf`); 20 s more
-  - [ ] Essential, desktop: pay type is not defaulted to fixed (the default only runs when leaving the title page; on desktop salary is on that page)
-  - [ ] Essential: changing the title from Review's Edit does not re-infer the role (`withEssentials` runs after the `returnTo` return in `next()`). Read from code, not reproduced
-  - [ ] Essential: a title that matches no role becomes "Other" silently; and the company's industry ("IT & Software") goes into every job, and into the AI description
-  - [ ] "Step 1 of 3" (chapter marker, desktop) against "Step 1 of 4" (stepper, footer)
-  - [ ] `CountUpInr` can flash a negative salary for a frame (rAF time earlier than `t0`; clamp `p` at 0)
-- [ ] Job posting audit, 2026-11-11, recommendations: auto-advance on single-choice screens; preselect the suggested role, workplace and industry; roll the drafting lines during the wait and drop the 7 s reveal after it; phone Review: answers first, preview behind a button; essential: description as its own last step; show all missing answers on a desktop page at once
-- [ ] Essential flow preview (`?flow=essential`): Punna to review. Before it ships: role profiles from live data, save "Finish setup" answers to the job and show the list on the job's page, confirm industry comes from the company profile
-- [ ] Short flow preview (`?flow=short`): Punna to review; missing answers are now asked in one pass before Review; if approved, make it the default (see `DECISIONS.md`, 2026-11-10)
-- [ ] Test the live AI fill (needs the Gemini key; only the keyword fill was tested locally)
+- [x] Job posting audit, 2026-11-11, bugs fixed 2026-11-11 (write-up: `history/AUDIT-2026-11-11-JOB-POSTING.md`); 1, 2, 4–7 walked on desktop essential; 3 and 8 not walked:
+  - [x] Unset salary slider no longer names the placeholder ₹15k–₹25k (RangeSlider `unset` hides the value bubble)
+  - [x] Next / "Choose a plan" wait while the description is written
+  - [x] Filling industry after an AI draft no longer rewrites the description (industry left out of `descriptionBasisOf`)
+  - [x] Essential: role and pay-type defaults apply before the checks, so desktop and Review's Edit get them
+  - [x] Essential: "Other" and the company's industry stay out of the AI description
+  - [x] Essential: a title that matches no role becomes "Other" — kept as is (Punna, 2026-11-11; see DECISIONS)
+  - [x] Chapter marker counts the plan step ("Step 1 of 4")
+  - [x] `CountUpInr` clamps at 0
+- [x] Job posting audit, 2026-11-11, recommendations (all done): ~~auto-advance on single-choice screens~~ (done 2026-11-11 for role, industry, workplace; see DECISIONS); ~~preselect the suggested role, workplace and industry~~ (done 2026-11-11); ~~roll the drafting lines during the wait and drop the 7 s reveal after it~~ (done 2026-11-11); ~~phone Review: answers first, preview behind a button~~ (done 2026-11-11); ~~essential: description as its own last step~~ (done 2026-11-11); ~~show all missing answers on a desktop page at once~~ (done; desktop now grouped in both flows)
+- [x] Essential: distance defaults to any distance, editable after posting in Finish setup (built 2026-11-11)
+- [ ] Waiting on Punna (2026-11-11): the job posting funnel step by step, time to post, device split, and which fields are edited most. Ana has none of these. When they arrive: update the presentation, recheck the "after posting" fields and the role profiles, log in DECISIONS
+- [ ] Essential flow preview (`?flow=essential`): Punna to review. Its pre-default fixes are done (2026-11-11, see DECISIONS): role settings from live data, Finish setup saved and shown on the Jobs page, gender and age at Review. Open: the default decision
+- [x] Short flow preview retired 2026-11-11: its desktop pages and one-pass missing answers are the regular flow (see `DECISIONS.md`)
+- [x] Test the live AI fill (worked in the 2026-11-11 walks)
 - [ ] Walk every screen on desktop after the help-line removal
 - [ ] Steps menu: two hand-built chips (step number, "you are here") could be `Badge` (`job-posting-chrome.tsx`)
 - [ ] 13 design-system primitive candidates from the 2026-11-05 audit wait for Punna's pick

@@ -113,7 +113,7 @@ export function CandidateJobPreview({
   hideOpen = false,
 }: {
   draft: JobPostDraft
-  /** PREVIEW (?flow=essential): an open answer ("10th or below", any
+  /** PREVIEW (?flow=essential): an open answer ("Any" education, any
    *  experience) shuts nobody out, so it is not shown as a requirement. */
   hideOpen?: boolean
   /** Drafting in progress — placeholders shimmer. */
@@ -137,7 +137,8 @@ export function CandidateJobPreview({
   }, [focus])
   const salary = salaryLabel(draft)
   const location = locationLabel(draft)
-  const openEducation = hideOpen && draft.education === "10th"
+  // "Any" is not a requirement, so candidates are not shown it.
+  const openEducation = draft.education === "any"
   const openExperience = hideOpen && draft.experienceType === "any"
   const experience = openExperience ? null : experienceLabel(draft)
   const tags = [

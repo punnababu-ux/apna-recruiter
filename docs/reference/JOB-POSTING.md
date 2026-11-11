@@ -3,7 +3,7 @@
 How the job posting flow at `/apnahire/jobs/new` works today, so a new chat can
 pick it up without reading the code. The to-do list is in `status/TODO.md`
 under "Job posting". The reasons behind each choice are in `DECISIONS.md`.
-Last updated 2026-11-06.
+Last updated 2026-11-11.
 
 ## Shape
 - **Start:** "Describe the job" (type or speak) → **Draft my job** (AI fills the
@@ -21,10 +21,44 @@ Last updated 2026-11-06.
   `?resume=1` continues without asking; `&stage=…` opens a step's first
   question.
 
-## Preview: short flow (`?flow=short`, 2026-11-10)
-- Desktop only: related questions share a page, 5 pages (`DESKTOP_PAGES` in
-  `post-job-flow.tsx`). Phones keep one question per screen. An AI draft walks
-  the same pages, filled in, as it does in the live flow. Not live; the reasons are in `DECISIONS.md`.
+## State on 2026-11-11 (read this first)
+- **Two flows:** regular (asks everything) and essential (`?flow=essential`,
+  asks only what matching needs; preview, waiting on Punna). `?flow=short` is
+  retired: its desktop pages and one-pass Review are now regular.
+- **Desktop:** a topic's questions share a page (`DESKTOP_PAGES`, 5 pages;
+  essential 3: job, who can apply, description), a `Separator` between them,
+  one "AI-filled" note per page, every missing answer named under its question
+  ("N answers missing"). Candidate view only at Review. Stage 3 is "Setup & review".
+- **Phones:** one question per screen. Role, industry and workplace move on at
+  the tap (`advanceOn`). Review opens on the answers; "See what candidates see"
+  opens the candidate view in a bottom sheet.
+- **Title suggestions:** `suggestFromTitle` / `withTitleSuggestions` in
+  `job-draft.ts` preselect role, industry and workplace; also after an AI draft.
+- **AI draft strip** (`drafting-state.tsx`): four lines roll every 4 s while
+  waiting, then "Ready" for 0.7 s; no reveal after. ~20 s measured.
+- **Description:** essential has its own step before Review. "Rewrite with AI"
+  shows only once a description exists, never while writing.
+- **Review:** walks every missing answer in one pass, then back.
+- **Essential, fields not asked (decided 2026-11-11, see DECISIONS):** Review
+  has a "Shift" row (day / night, Change opens job type); languages from the
+  description show under Preferences; gender and age are in Finish setup;
+  degree, experience-based skills and past industry are not asked. Distance
+  is never asked: it defaults to any distance in both flows, and Finish setup's "How far candidates can live" changes it.
+  Regular shows it under Preferences (`DistanceField`).
+- **Essential, ready-for-default fixes (2026-11-11):** Finish setup answers
+  are saved (`apnahire:finish-setup`) and shown on the Jobs page
+  (`SavedFinishSetup`); Review always has a Preferences row; 18 role
+  profiles, tuned from Ana's live-job data (see DECISIONS). Education has
+  "Any"; distance has "Within <city>" and is locked by relocation.
+- **Kept on purpose:** an unmatched title becomes "Other" in essential.
+- **Presentation:** `docs/presentations/job-posting-flows.html`, published at
+  https://claude.ai/artifact/4KSptg81ELuVtePvwsqDkx (live form vs our flows).
+  Live form fields were read from employer.apna.co on 2026-11-11.
+- **Open / not done:** e2e walk tests were adapted for auto-advance and desktop
+  pages; screenshot baselines (`@visual`) need updating after review. Nothing
+  committed. Live taps/time not measured. Bug seen: with "telecaller … BPO"
+  the AI picks a role the title rule disagrees with, so "Role looks like
+  Telesales" shows on page 1 and Review.
 
 ## Preview: essential flow (`?flow=essential`, 2026-11-10)
 - **Asks:** title; workplace and location; salary (joining fee as a line with
