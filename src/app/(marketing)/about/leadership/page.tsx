@@ -3,8 +3,10 @@
  * ABOUT_LEADERSHIP (Lovable "Our Leadership").
  *
  *   Hero       the chip, the serif headline, the line
- *   Leaders    one row each: portrait beside their own words (serif quote),
- *              name, role, LinkedIn; sides alternate
+ *   Leaders    one row each: portrait beside their own words, name, role,
+ *              LinkedIn; sides alternate
+ *   Team       "Leading apna forward": the management team's portrait cards
+ *              (merged from /about/management, 2026-11-11)
  *   Investors  the six firms' own logos, in colour, in the same white band
  */
 
@@ -12,7 +14,7 @@ import type { Metadata } from "next"
 import Image from "next/image"
 import { Compass, Section, SectionHeading } from "@apna/design-system"
 import { PageHero, PersonCard, withAccent } from "@/components/marketing/page-blocks"
-import { ABOUT_LEADERSHIP } from "@/content/company"
+import { ABOUT_LEADERSHIP, ABOUT_MANAGEMENT } from "@/content/company"
 import { cn } from "@/lib/utils"
 
 export const metadata: Metadata = ABOUT_LEADERSHIP.meta
@@ -21,7 +23,7 @@ export const metadata: Metadata = ABOUT_LEADERSHIP.meta
 const LOGO_HEIGHT = { sm: "h-5 sm:h-6", md: "h-7 sm:h-8", lg: "h-10 sm:h-12", xl: "h-14 sm:h-16" } as const
 
 export default function LeadershipPage() {
-  const { eyebrow, title, description, people, investors } = ABOUT_LEADERSHIP
+  const { eyebrow, title, description, people, forward, investors } = ABOUT_LEADERSHIP
   return (
     <>
       <PageHero
@@ -42,6 +44,22 @@ export default function LeadershipPage() {
               </li>
             ))}
           </ul>
+
+          <div className="flex flex-col items-center gap-12">
+            <SectionHeading
+              level={2}
+              align="center"
+              title={withAccent(forward.title, forward.titleAccent)}
+              description={forward.description}
+            />
+            <ul className="grid w-full gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {ABOUT_MANAGEMENT.people.map((person) => (
+                <li key={person.name}>
+                  <PersonCard person={person} />
+                </li>
+              ))}
+            </ul>
+          </div>
 
           <div className="flex flex-col items-center gap-12">
             <SectionHeading level={2} align="center" title={investors.title} />

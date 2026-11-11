@@ -40,6 +40,12 @@ const nextConfig: NextConfig = {
         destination: "/apnahire/jobs/new",
         permanent: false,
       },
+      // Management team merged into Our leadership (Lovable, 2026-11-11).
+      {
+        source: "/about/management",
+        destination: "/about/leadership",
+        permanent: true,
+      },
       // The public pricing page moved out of the product namespace and into
       // the (marketing) route group, which doesn't appear in the URL.
       {

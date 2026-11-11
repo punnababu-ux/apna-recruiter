@@ -8,6 +8,12 @@ or **Open**.
 
 ---
 
+
+## Leadership and management: one page (2026-11-11)
+
+- **Decision:** `/about/management` is merged into `/about/leadership` and redirects there. The page shows the founder, CEO and COO as rows, then "Leading apna forward" over the management team's cards, then the investors. Nav and footer lose "Management team". Kathak Mehta is dropped on purpose (Punna).
+- **Why:** The Lovable site merged them. Lovable gives the content only; the layout and look stay ours.
+- **Status:** Decided (Punna, 2026-11-11).
 ## Premium + AI rolling line: phone and desktop differ on purpose (2026-11-11)
 
 - **Question:** On phones the "AI calling agent" line itself rolls through the AI points; on desktop "AI calling agent" is a fixed heading with a rolling line under it. Is the difference a bug?

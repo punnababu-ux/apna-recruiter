@@ -30,7 +30,6 @@ export const FOOTER_COLUMNS: FooterColumn[] = [
       { label: "Our culture and values", href: "/about/culture" },
       { label: "Apna by the numbers", href: "/about/numbers" },
       { label: "Our leadership", href: "/about/leadership" },
-      { label: "Management team", href: "/about/management" },
       { label: "Join us", href: "/careers" },
     ],
   },

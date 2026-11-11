@@ -206,12 +206,21 @@ export interface Person {
   photo: string
 }
 
+/** One page since 2026-11-11 (Lovable merged "Management team" into it):
+ *  the leaders (founder, CEO, COO), then "Leading apna forward" over the
+ *  management team, then the investors. */
 export const ABOUT_LEADERSHIP = {
-  meta: { title: "Our leadership", description: "The leaders and investors behind apna." },
+  meta: { title: "Our leadership", description: "The leaders, team and investors behind apna." },
   eyebrow: "Our leadership",
   title: "Guided by experience. Backed by the best.",
   description:
-    "Our board comprises industry veterans, strategic investors, and visionary leaders committed to shaping the future of India's workforce.",
+    "Our leadership brings together visionary founders and experienced leaders committed to shaping the future of India's workforce.",
+  forward: {
+    title: "Leading apna forward",
+    titleAccent: "forward",
+    description:
+      "Behind apna is a team united by a shared vision: to make hiring smarter and opportunities more accessible through AI. Across product, engineering, AI, business, operations, customer success, people, and marketing, our teams work together to solve real-world hiring challenges.",
+  },
   people: [
     {
       name: "Nirmit Parikh",
@@ -253,13 +262,8 @@ export const ABOUT_LEADERSHIP = {
   },
 } as const
 
+/** The management team section of /about/leadership. */
 export const ABOUT_MANAGEMENT = {
-  meta: { title: "Management team", description: "The team leading apna forward." },
-  eyebrow: "Management team",
-  title: "Leading apna forward",
-  titleAccent: "forward",
-  description:
-    "Behind apna is a team united by a shared vision: to make hiring smarter and opportunities more accessible through AI. Across product, engineering, AI, business, operations, customer success, people, and marketing, our teams work together to solve real-world hiring challenges.",
   people: [
     {
       name: "Abhishek Ranjan",
@@ -276,13 +280,6 @@ export const ABOUT_MANAGEMENT = {
       linkedin: "https://www.linkedin.com/in/yuvraj-khemani-22496081/",
     },
     {
-      name: "Akshayita Saxena",
-      photo: "/images/company/people/akshayita-saxena.jpg",
-      role: "Head of Growth & Marketing",
-      bio: "I believe the most meaningful careers are built around convictions worth pursuing. At apna, I'm focused on taking the future of work deeper into Bharat, using growth, technology, and AI to unlock opportunity across every city, every collar, and every ambition.",
-      linkedin: "https://www.linkedin.com/in/saxenaakshayita/",
-    },
-    {
       name: "Sonu Abhinandan",
       photo: "/images/company/people/sonu-abhinandan.jpg",
       role: "Head of SMB Business",
@@ -297,18 +294,18 @@ export const ABOUT_MANAGEMENT = {
       linkedin: "https://www.linkedin.com/in/mayuresh-shinde-ms-66293a7/",
     },
     {
+      name: "Akshayita Saxena",
+      photo: "/images/company/people/akshayita-saxena.jpg",
+      role: "Head of Growth & Marketing",
+      bio: "I believe the most meaningful careers are built around convictions worth pursuing. At apna, I'm focused on taking the future of work deeper into Bharat, using growth, technology, and AI to unlock opportunity across every city, every collar, and every ambition.",
+      linkedin: "https://www.linkedin.com/in/saxenaakshayita/",
+    },
+    {
       name: "Sumit Bajaj",
       photo: "/images/company/people/sumit-bajaj.jpg",
       role: "Head of Product",
       bio: "I believe the future of hiring is about making the right opportunity discoverable, and the right talent easier to find. At apna, I'm building AI-native products that make hiring smarter, simpler, and more meaningful at Bharat-scale.",
       linkedin: "https://www.linkedin.com/in/sumit-bajaj-6b688624/",
-    },
-    {
-      name: "Kathak Mehta",
-      photo: "/images/company/people/kathak-mehta.jpg",
-      role: "Strategy, CEO's Office",
-      bio: "I strategise initiatives at apna, bringing expertise in technology commercialisation, innovation, and entrepreneurship to shape growth and long-term business strategy.",
-      linkedin: "https://www.linkedin.com/in/kathak-mehta/",
     },
     {
       name: "Apoorva Patwa",
