@@ -25,6 +25,7 @@ move or retire a doc.
 | `start-here/PROJECT-MAP.md` | Find the route and file for a term |
 | `reference/COMPONENTS.md` | Design-system component inventory + import snippets |
 | `reference/TOKENS.md` | Every semantic token and its primitive (grep it) |
+| `reference/REVIEW-STATES.md` | Every URL param / storage key that sets a review state. Update with any new one |
 | `reference/PRICING.md` | Every plan's price in the prototype, open price questions |
 | `reference/LIVE-EMPLOYER-KB.md` | The live employer.apna.co app, page by page (read before planning recruiter-app work) |
 | `reference/CLAY-ILLUSTRATIONS.md` | Clay 3D illustration style, rules, live prompt |

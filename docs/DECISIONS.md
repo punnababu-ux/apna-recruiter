@@ -8,6 +8,13 @@ or **Open**.
 
 ---
 
+## Review states page in the design system (2026-11-11)
+
+- **Decision:** `/design-system/engineering/review-states` lists every review state (express `layout` + `credits`, self-checkout `tab`, jobs-list `bar`, job candidates `tab` / `applicants` / `deck` / `views` / `pill`). It has a builder that makes the URL, and a ready-made link for each state. The pricing phase can be switched there for this browser.
+- **Why:** after the hidden preview panel went (2026-11-07), nobody could find the states. This brings the panel's job back without making product copy a control.
+- **Would change it:** account data that replaces the params.
+- **Status:** Decided (Punna, 2026-11-11).
+
 ## Homepage hero: one rounded field with the CTA inside (2026-11-11)
 
 - **Question:** The field and the button beside it read as two parts.

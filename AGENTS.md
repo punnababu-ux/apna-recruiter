@@ -1137,7 +1137,10 @@ during render. `react-hooks/set-state-in-effect` stays an error.
 **Routes and prototype seams.** Product copy is not a control: no click on
 "*GST applicable", "Valid till", "Candidate view", or "Resubscribe at the
 same price." There is no preview panel. Express review states are query
-params (`layout`, `credits`). `/apnahire/jobs/rounds/new` redirects to job
+params (`layout`, `credits`). Every review state is listed in
+`docs/reference/REVIEW-STATES.md` and the builder at
+`/design-system/engineering/review-states`; a new or changed state updates
+both in the same change. `/apnahire/jobs/rounds/new` redirects to job
 posting; the rounds editor stays in the repo and is not a second live wizard.
 
 **Files.** A file over about 600 lines is split by moving code only. The
