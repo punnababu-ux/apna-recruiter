@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Geist_Mono, Inter } from "next/font/google";
+import { Geist_Mono, Google_Sans_Flex, Inter } from "next/font/google";
 
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { InkProvider } from "@/components/ui/ink-provider";
@@ -20,13 +20,12 @@ const sans = Inter({
   display: "swap",
 });
 
-// Fraunces · the marketing hero headline only (text-editorial-display, inside
-// [data-voice=editorial]). Exposed as `--font-hero-face`; the product never reads it.
-const hero = Fraunces({
+// Google Sans Flex · the marketing headlines only (text-editorial-display,
+// text-hero-*, inside [data-voice=editorial]), set bold. Replaced Fraunces
+// 2026-11-11. Exposed as `--font-hero-face`; the product never reads it.
+const hero = Google_Sans_Flex({
   variable: "--font-hero-face",
   subsets: ["latin"],
-  style: ["normal", "italic"],
-  axes: ["opsz"],
   display: "swap",
 });
 

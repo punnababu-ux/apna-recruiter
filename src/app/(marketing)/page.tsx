@@ -6,19 +6,17 @@
  * remaining bands (pricing, why-apna, testimonials, FAQ, CTA) land in
  * Phase 1.
  *
- * Two columns on the hero, matching both references: copy + stats on the
- * left, the lead-capture card on the right — the card IS the primary CTA,
- * so unlike an earlier draft of this page there are no separate "Post a
- * Job" / "See pricing" buttons competing with it in the text column.
+ * The hero is one centred stack: chip, headline, subtext, the mobile number
+ * and CTA in one row (Enterprise login under it), then the stats. The form
+ * IS the primary CTA; the terms show on the login steps that follow.
  */
 
-import Link from "next/link"
-import { cn } from "@/lib/utils"
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 import {
   ArrowRight,
   ArrowUpRight,
   Building2,
-  Badge,
   Button,
   Card,
   CheckCircle2,
@@ -29,51 +27,63 @@ import {
   Trophy,
   Section,
   SectionHeading,
-} from "@apna/design-system"
-import { Stat } from "@/components/marketing/page-blocks"
-import { FaqBand, TrustedByBand, WhyHireBand } from "@/components/marketing/proof-bands"
-import { ContactButton } from "@/components/marketing/contact-section"
-import { HeroBackdrop } from "@/components/marketing/hero-backdrop"
-import { HeroLeadCard } from "@/components/marketing/hero-lead-card"
+} from "@apna/design-system";
+import { HeroChip, Stat } from "@/components/marketing/page-blocks";
+import {
+  FaqBand,
+  TrustedByBand,
+  WhyHireBand,
+} from "@/components/marketing/proof-bands";
+import { ContactButton } from "@/components/marketing/contact-section";
+import { HeroBackdrop } from "@/components/marketing/hero-backdrop";
+import { HeroLeadForm } from "@/components/marketing/hero-lead-card"
+import { HeroScreen } from "@/components/marketing/hero-screen";
 import {
   EnterpriseIllustration,
   PRODUCT_GRADIENT,
   PRODUCT_ICON,
   PRODUCT_KEY,
   ProductIllustration,
-} from "@/components/marketing/product-illustrations"
+} from "@/components/marketing/product-illustrations";
 import {
   HOME_ENTERPRISE,
   HOME_HERO,
   HOME_PRESS,
   HOME_PRODUCT_DETAILS,
   HOME_SUITE,
-} from "@/content/home"
-import { PRODUCT_LINKS } from "@/content/nav"
-import { PRESS } from "@/content/press"
-
-
+} from "@/content/home";
+import { PRODUCT_LINKS } from "@/content/nav";
+import { PRESS } from "@/content/press";
 
 // The homepage's three stories, as the Newsroom lists them (content/press.ts):
 // the article's own headline and date, not a summary of it.
-const HOME_PRESS_ARTICLES = HOME_PRESS.items.flatMap((item) => PRESS.items.filter((a) => a.url === item.href))
+const HOME_PRESS_ARTICLES = HOME_PRESS.items.flatMap((item) =>
+  PRESS.items.filter((a) => a.url === item.href),
+);
 
-type ProductName = (typeof HOME_SUITE.items)[number]["name"]
+
+type ProductName = (typeof HOME_SUITE.items)[number]["name"];
 
 // nav.ts's PRODUCT_LINKS is the one place a product's href is defined —
 // cross-referenced by name rather than duplicating the URL here too.
 function hrefFor(name: string) {
-  return PRODUCT_LINKS.find((p) => p.label === name)?.href ?? "#"
+  return PRODUCT_LINKS.find((p) => p.label === name)?.href ?? "#";
 }
 
 /** Enterprise is the deck's last stacking card: three of its page's
  *  features (as many points as the product cards), shortened the same way;
  *  the rest behind "See all features". */
 const ENTERPRISE_STACK_FEATURES = [
-  { title: "Team management", description: "Logins and permissions for your team" },
+  {
+    title: "Team management",
+    description: "Logins and permissions for your team",
+  },
   { title: "ATS integrations", description: "Connect your ATS, Sheets or ERP" },
-  { title: "Dedicated customer support", description: "Help to onboard and hire better" },
-]
+  {
+    title: "Dedicated customer support",
+    description: "Help to onboard and hire better",
+  },
+];
 
 /** Its three cards, the same shape as the products': the scale in the
  *  Enterprise page's own line ("a pool of 50M jobseekers in 200+ industries
@@ -82,43 +92,59 @@ const ENTERPRISE_STACK_CARDS = [
   { value: "50M", title: "Jobseekers", description: "One pool to hire from" },
   { value: "200+", title: "Industries", description: "Hire across sectors" },
   { value: "900+", title: "Cities", description: "All over India" },
-]
+];
+
+// Phones: the hero fills the first view, less the sticky header (72px), so
+// the form sits mid-screen and the stats at its foot. Desktop shows the
+// product screen instead.
+const HERO_FULL_SCREEN_PHONE = "max-md:min-h-[calc(100svh-4.5rem)]" // token-lint-ignore: viewport minus the header's height, no token for it
 
 export default function HomePage() {
   return (
     <>
       {/* The hero's living background sits behind the section (and the
           transparent header above it); the section paints over it. */}
-      <div className="relative isolate">
+      <div className="relative isolate overflow-x-clip">
         <HeroBackdrop />
         {/* Phones: the sign-up form must sit in the first screen. Less
             space above, no badge, one line of subtext, a smaller headline
             (the display token's phone size), then the form, then the stats
             as a compact strip under it. The text column is `contents` below
             lg so its heading and stats can sit either side of the form. */}
-        <Section size="lg" className="relative max-md:pt-6 md:pb-48">
-          <div className="flex flex-col items-start gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-12">
-            <div className="flex max-w-2xl flex-col gap-10 max-lg:contents">
+        {/* The centrepiece, then the product screen rising into the first
+            view (HeroScreen), then the stats. */}
+        <Section
+          size="lg"
+          className={cn("relative flex flex-col pb-8 max-md:pt-6 md:pb-10", HERO_FULL_SCREEN_PHONE)}
+          innerClassName="flex flex-1 flex-col"
+        >
+          <div className="flex flex-1 flex-col items-center gap-8 text-center md:gap-10">
+            {/* The centrepiece sits in the middle of the space above the stats. */}
+            <div className="relative z-10 flex w-full flex-1 flex-col items-center justify-center gap-8 md:gap-10">
               <SectionHeading
                 level={1}
+                align="center"
                 eyebrow={
                   // Says what "India's Largest" says right under it; phones
                   // can't spare the row.
-                  <Badge size="lg" variant="outline" className="bg-card max-sm:hidden">
-                    <Trophy aria-hidden />
-                    {HOME_HERO.eyebrow}
-                  </Badge>
+                  // Plain text, no box: a white chip read as a second input
+                  // beside the mobile field (2026-11-11).
+                  <span className="max-sm:hidden">
+                    <HeroChip icon={<Trophy aria-hidden />}>{HOME_HERO.eyebrow}</HeroChip>
+                  </span>
                 }
                 title={
                   <>
-                    India&apos;s largest <span className="whitespace-nowrap animate-text-gradient">AI-native</span> early talent platform
+                    India&apos;s largest{" "}
+                    <span className="whitespace-nowrap animate-text-gradient">
+                      AI-native
+                    </span>{" "}
+                    early talent platform
                   </>
                 }
                 description={
                   <span>
                     {HOME_HERO.description}
-                    {/* The tagline is the second line from sm; on phones the
-                        two ran together as one run-on sentence. */}
                     <span className="max-sm:hidden">
                       <br />
                       {HOME_HERO.tagline}
@@ -127,23 +153,23 @@ export default function HomePage() {
                 }
               />
 
-              {/* Phones: a compact 3-up strip under the form. */}
-              <dl className="grid w-full grid-cols-3 gap-4 max-lg:order-last sm:flex sm:flex-wrap sm:gap-x-12 sm:gap-y-6">
-                {HOME_HERO.stats.map((stat) => (
-                  <Stat
-                    key={stat.label}
-                    value={stat.value}
-                    label={stat.label}
-                    shortLabel={stat.shortLabel}
-                    size="sm"
-                  />
-                ))}
-              </dl>
+              <HeroLeadForm />
             </div>
 
-            {/* max-w-md is already set inside HeroLeadCard itself — shrink-0
-                just stops the flex row from compressing it on medium widths. */}
-            <HeroLeadCard className="w-full shrink-0" />
+            <HeroScreen className="mt-6 md:mt-10" />
+
+            <dl className="grid w-full grid-cols-3 gap-4 sm:flex sm:w-auto sm:flex-wrap sm:justify-center sm:gap-x-16 sm:gap-y-6">
+              {HOME_HERO.stats.map((stat) => (
+                <Stat
+                  key={stat.label}
+                  value={stat.value}
+                  label={stat.label}
+                  shortLabel={stat.shortLabel}
+                  size="sm"
+                  className="items-center"
+                />
+              ))}
+            </dl>
           </div>
         </Section>
       </div>
@@ -158,7 +184,9 @@ export default function HomePage() {
             level={2}
             align="center"
             eyebrow={
-              <span className="text-overline text-muted-foreground">{HOME_SUITE.eyebrow}</span>
+              <span className="text-overline text-muted-foreground">
+                {HOME_SUITE.eyebrow}
+              </span>
             }
             title={HOME_SUITE.title}
             description={HOME_SUITE.description}
@@ -197,29 +225,47 @@ export default function HomePage() {
                     {/* apna Unlimited is a brand with its own wordmark — show the
                         "apna ∞ Unlimited" logo, not the eyebrow text. */}
                     {product.name === "apna Unlimited" ? (
-                      <LogoApnaUnlimited variant="theme" className="h-4 w-auto self-start text-foreground" />
+                      <LogoApnaUnlimited
+                        variant="theme"
+                        className="h-4 w-auto self-start text-foreground"
+                      />
                     ) : (
                       // The product's mark from its page's hero chip, so the card
                       // and the page it opens read as one product.
                       <span className="flex items-center gap-2 text-overline text-muted-foreground">
                         {(() => {
-                          const Icon = PRODUCT_ICON[product.name as ProductName]
-                          return <Icon className="size-4 shrink-0" aria-hidden />
+                          const Icon =
+                            PRODUCT_ICON[product.name as ProductName];
+                          return (
+                            <Icon className="size-4 shrink-0" aria-hidden />
+                          );
                         })()}
                         {product.eyebrow}
                       </span>
                     )}
-                    <h3 className="text-h2 text-foreground">{product.heading}</h3>
+                    <h3 className="text-h2 text-foreground">
+                      {product.heading}
+                    </h3>
                   </div>
                   {/* The three points, all shown, each with a tick, a rule
                       between them (the three cards sit under the picture). */}
                   <ul className="flex flex-col divide-y divide-border">
                     {product.features.map((feature) => (
-                      <li key={feature.title} className="flex items-start gap-3 py-3 first:pt-0 last:pb-0">
-                        <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-foreground" aria-hidden />
+                      <li
+                        key={feature.title}
+                        className="flex items-start gap-3 py-3 first:pt-0 last:pb-0"
+                      >
+                        <CheckCircle2
+                          className="mt-0.5 size-5 shrink-0 text-foreground"
+                          aria-hidden
+                        />
                         <div className="flex flex-col gap-0.5">
-                          <p className="text-sm font-semibold text-foreground">{feature.title}</p>
-                          <p className="text-sm text-muted-foreground">{feature.description}</p>
+                          <p className="text-sm font-semibold text-foreground">
+                            {feature.title}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {feature.description}
+                          </p>
                         </div>
                       </li>
                     ))}
@@ -266,13 +312,22 @@ export default function HomePage() {
                       // The picture's gradient, so the three read as part of it.
                       <li
                         key={card.title}
-                        className={cn("flex flex-col gap-1 rounded-card-nested p-3 sm:p-4", PRODUCT_GRADIENT[product.name as ProductName])}
+                        className={cn(
+                          "flex flex-col gap-1 rounded-card-nested p-3 sm:p-4",
+                          PRODUCT_GRADIENT[product.name as ProductName],
+                        )}
                       >
-                        <span className="text-lg font-semibold text-foreground sm:text-h3">{card.value}</span>
+                        <span className="text-lg font-semibold text-foreground sm:text-h3">
+                          {card.value}
+                        </span>
                         {/* Phones: three across, small type (titles may wrap); from
                             sm one line each, so the three read across alike. */}
-                        <span className="text-xs font-semibold text-foreground sm:truncate sm:text-sm">{card.title}</span>
-                        <span className="text-2xs text-muted-foreground sm:text-xs">{card.description}</span>
+                        <span className="text-xs font-semibold text-foreground sm:truncate sm:text-sm">
+                          {card.title}
+                        </span>
+                        <span className="text-2xs text-muted-foreground sm:text-xs">
+                          {card.description}
+                        </span>
                       </li>
                     ))}
                   </ul>
@@ -293,21 +348,37 @@ export default function HomePage() {
                     <Building2 className="size-4 shrink-0" aria-hidden />
                     {HOME_ENTERPRISE.eyebrow}
                   </span>
-                  <h3 className="text-h2 text-foreground">{HOME_ENTERPRISE.title}</h3>
+                  <h3 className="text-h2 text-foreground">
+                    {HOME_ENTERPRISE.title}
+                  </h3>
                 </div>
                 <ul className="flex flex-col divide-y divide-border">
                   {ENTERPRISE_STACK_FEATURES.map((feature) => (
-                    <li key={feature.title} className="flex items-start gap-3 py-3 first:pt-0 last:pb-0">
-                      <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-foreground" aria-hidden />
+                    <li
+                      key={feature.title}
+                      className="flex items-start gap-3 py-3 first:pt-0 last:pb-0"
+                    >
+                      <CheckCircle2
+                        className="mt-0.5 size-5 shrink-0 text-foreground"
+                        aria-hidden
+                      />
                       <div className="flex flex-col gap-0.5">
-                        <p className="text-sm font-semibold text-foreground">{feature.title}</p>
-                        <p className="text-sm text-muted-foreground">{feature.description}</p>
+                        <p className="text-sm font-semibold text-foreground">
+                          {feature.title}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {feature.description}
+                        </p>
                       </div>
                     </li>
                   ))}
                 </ul>
                 <div className="pointer-events-auto mt-auto flex flex-col gap-3 sm:flex-row">
-                  <ContactButton variant="emphasis" size="lg" className="w-full sm:w-fit">
+                  <ContactButton
+                    variant="emphasis"
+                    size="lg"
+                    className="w-full sm:w-fit"
+                  >
                     {HOME_ENTERPRISE.primary.label}
                   </ContactButton>
                   <Button
@@ -324,25 +395,35 @@ export default function HomePage() {
               {/* The mother gradient: Enterprise is all of apna, tailored,
                   so it wears the brand's own gradient, not a fifth hue. */}
               <div className="pointer-events-none relative flex flex-col gap-2 max-lg:order-first">
-                <EnterpriseIllustration photo className="relative h-48 lg:h-auto lg:min-h-56 lg:flex-1" />
+                <EnterpriseIllustration
+                  photo
+                  className="relative h-48 lg:h-auto lg:min-h-56 lg:flex-1"
+                />
                 {/* Sky to plum, no gold (user call, 2026-10-28): the brand
                     gradient's yellow patch read as noise on small tiles. */}
                 <ul className="grid grid-cols-3 gap-2">
                   {ENTERPRISE_STACK_CARDS.map((card) => (
-                    <li key={card.title} className="flex flex-col gap-1 rounded-card-nested bg-gradient-illustration-sky p-3 sm:p-4">
-                      <span className="text-lg font-semibold text-foreground sm:text-h3">{card.value}</span>
-                      <span className="text-xs font-semibold text-foreground sm:truncate sm:text-sm">{card.title}</span>
-                      <span className="text-2xs text-muted-foreground sm:text-xs">{card.description}</span>
+                    <li
+                      key={card.title}
+                      className="flex flex-col gap-1 rounded-card-nested bg-gradient-illustration-sky p-3 sm:p-4"
+                    >
+                      <span className="text-lg font-semibold text-foreground sm:text-h3">
+                        {card.value}
+                      </span>
+                      <span className="text-xs font-semibold text-foreground sm:truncate sm:text-sm">
+                        {card.title}
+                      </span>
+                      <span className="text-2xs text-muted-foreground sm:text-xs">
+                        {card.description}
+                      </span>
                     </li>
                   ))}
                 </ul>
               </div>
             </ScrollStackItem>
           </ScrollStack>
-
         </div>
       </Section>
-
 
       {/* After the gradient suite, the proof on white (its cards turn the
           muted grey there by themselves), then the press, the FAQ. */}
@@ -358,16 +439,33 @@ export default function HomePage() {
               article's own headline, the way to read it. */}
           <div className="grid gap-6 sm:grid-cols-3">
             {HOME_PRESS_ARTICLES.map((article) => (
-              <a key={article.url} href={article.url} target="_blank" rel="noreferrer noopener" className="group min-w-0">
-                <Card padding="lg" interactive className="flex h-full flex-col gap-4">
+              <a
+                key={article.url}
+                href={article.url}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="group min-w-0"
+              >
+                <Card
+                  padding="lg"
+                  interactive
+                  className="flex h-full flex-col gap-4"
+                >
                   <span className="flex items-center justify-between gap-3 text-overline text-muted-foreground tabular-nums">
                     <span className="flex min-w-0 items-center gap-2">
-                      <Newspaper className="size-4 shrink-0 text-primary" aria-hidden />
+                      <Newspaper
+                        className="size-4 shrink-0 text-primary"
+                        aria-hidden
+                      />
                       <span className="truncate">{article.source}</span>
                     </span>
-                    <span className="shrink-0 whitespace-nowrap">{article.date}</span>
+                    <span className="shrink-0 whitespace-nowrap">
+                      {article.date}
+                    </span>
                   </span>
-                  <h3 className="text-h5 text-pretty text-foreground">{article.title}</h3>
+                  <h3 className="text-h5 text-pretty text-foreground">
+                    {article.title}
+                  </h3>
                   <span className="mt-auto flex items-center gap-1 text-sm font-semibold text-foreground">
                     Read the story
                     <ArrowUpRight
@@ -393,5 +491,5 @@ export default function HomePage() {
       </Section>
       <FaqBand />
     </>
-  )
+  );
 }

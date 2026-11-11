@@ -37,6 +37,10 @@ export interface PhoneLoginFormProps {
   defaultPhone?: string
   onContinue?: (phone: string) => void
   onEnterpriseLogin?: () => void
+  /** The homepage hero: no title, one fully rounded field with the CTA
+   *  inside it at the end (as SearchFilterBar's phone search holds its
+   *  Filters pill), Enterprise login centred under it, no "OR" rule. */
+  inline?: boolean
 }
 
 export const withNext = (path: string, next?: string | null, extra?: Record<string, string>) => {
@@ -51,6 +55,7 @@ export function PhoneLoginForm({
   onContinue,
   onEnterpriseLogin,
   handsOffToHeader = false,
+  inline = false,
 }: PhoneLoginFormProps) {
   const ctaRef = React.useRef<HTMLButtonElement>(null)
   useTrackHeroCta(ctaRef, handsOffToHeader)
@@ -67,10 +72,10 @@ export function PhoneLoginForm({
 
   return (
     <>
-      <h2 className="text-h3 font-bold text-foreground">{PHONE_LOGIN.title}</h2>
+      {!inline && <h2 className="text-h3 font-bold text-foreground">{PHONE_LOGIN.title}</h2>}
 
       <form
-        className="flex flex-col gap-6"
+        className={cn("flex flex-col", inline ? "relative w-full" : "gap-6")}
         noValidate
         onSubmit={(e) => {
           e.preventDefault()
@@ -82,7 +87,7 @@ export function PhoneLoginForm({
         }}
       >
         <Field>
-          <FieldLabel htmlFor="login-phone">{PHONE_LOGIN.label}</FieldLabel>
+          <FieldLabel htmlFor="login-phone" className={cn(inline && "sr-only")}>{PHONE_LOGIN.label}</FieldLabel>
           {/* A fixed +91 prefix inside the field: Input's own look
               (inputVariants) on the wrapper, a bare input inside; the
               wrapper shows focus for it. */}
@@ -90,6 +95,9 @@ export function PhoneLoginForm({
             aria-invalid={!!error || undefined}
             className={cn(
               inputVariants({ inputSize: "lg" }),
+              // The hero: a 48px pill (a one-off, like the phone search) with
+              // room at the end for the CTA sitting inside it.
+              inline && "h-12 rounded-full bg-card pr-28 sm:pr-40",
               "flex items-center gap-3 focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50",
               // The error outranks the focus ring: the field stays red while
               // the cursor is back in it.
@@ -105,7 +113,7 @@ export function PhoneLoginForm({
               type="tel"
               inputMode="numeric"
               autoComplete="tel-national"
-              placeholder={PHONE_LOGIN.placeholder}
+              placeholder={inline ? PHONE_LOGIN.placeholderShort : PHONE_LOGIN.placeholder}
               className="w-full min-w-0 border-0 bg-transparent p-0 text-base outline-none placeholder:text-muted-foreground md:text-sm"
               value={phone}
               onChange={(e) => {
@@ -117,22 +125,45 @@ export function PhoneLoginForm({
           {error && <FieldError id="login-phone-error">{error}</FieldError>}
         </Field>
 
-        <Button ref={ctaRef} type="submit" size="lg" className="w-full">
-          {ctaLabel}
+        <Button
+          ref={ctaRef}
+          type="submit"
+          size="lg"
+          // Inside the field: 4px of field around it (5px from the outer edge).
+          className={cn(inline ? "absolute top-1 right-1 rounded-full" : "w-full")}
+        >
+          {inline ? (
+            // Phones: a short label, so a 10-digit number still fits at 320px.
+            <>
+              <span className="sm:hidden">{PHONE_LOGIN.ctaShort}</span>
+              <span className="max-sm:hidden">{ctaLabel}</span>
+            </>
+          ) : (
+            ctaLabel
+          )}
         </Button>
       </form>
 
-      <FieldSeparator>{PHONE_LOGIN.or}</FieldSeparator>
+      {!inline && <FieldSeparator>{PHONE_LOGIN.or}</FieldSeparator>}
 
-      <Button
-        type="button"
-        variant="link-inline"
-        className="self-start text-foreground"
-        onClick={enterprise}
-        leadingIcon={<Building2 aria-hidden />}
-      >
-        {PHONE_LOGIN.enterprise}
-      </Button>
+      {inline ? (
+        <p className="text-sm text-muted-foreground">
+          {PHONE_LOGIN.enterpriseLead}{" "}
+          <Button type="button" variant="link-inline" className="text-sm text-foreground" onClick={enterprise}>
+            {PHONE_LOGIN.enterprise}
+          </Button>
+        </p>
+      ) : (
+        <Button
+          type="button"
+          variant="link-inline"
+          className={cn("text-foreground", inline ? "self-center" : "self-start")}
+          onClick={enterprise}
+          leadingIcon={<Building2 aria-hidden />}
+        >
+          {PHONE_LOGIN.enterprise}
+        </Button>
+      )}
     </>
   )
 }
@@ -146,5 +177,15 @@ export function HeroLeadCard({ className, ...props }: PhoneLoginFormProps & { cl
       {/* Desktop: one line (it ran 3px over and dropped "Privacy policy"). */}
       <LegalLine className="text-xs md:tracking-tight md:whitespace-nowrap" />
     </Card>
+  )
+}
+
+/** The homepage hero's form: one row, no card, no legal line (the login
+ *  steps that follow show the terms). */
+export function HeroLeadForm({ className, ...props }: PhoneLoginFormProps & { className?: string }) {
+  return (
+    <div className={cn("flex w-full max-w-xl flex-col items-center gap-4", className)}>
+      <PhoneLoginForm ctaLabel={HEADER_ACTIONS.primary.label} handsOffToHeader inline {...props} />
+    </div>
   )
 }

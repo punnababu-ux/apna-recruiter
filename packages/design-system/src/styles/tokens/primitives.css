@@ -285,8 +285,8 @@
   /* The editorial voice is the sans too (2026-10-23, replacing Source
    * Serif 4): marketing headlines and quotes set in Google Sans Flex. */
   --font-family-editorial: var(--font-family-sans);
-  /* Marketing hero headline face (Fraunces, 2026-11-05), via next/font. */
-  --font-family-hero: var(--font-hero-face, "Fraunces"), Georgia, serif;
+  /* Marketing headline face (Google Sans Flex, 2026-11-11; was Fraunces), via next/font. */
+  --font-family-hero: var(--font-hero-face, "Google Sans Flex"), var(--font-family-sans);
   --font-family-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 
   /* --------------------------------------------------------------------------
@@ -334,7 +334,7 @@
    * on a phone, 64px from ~1280 up (2026-10-23 at 88px, 64px since
    * 2026-10-24). Quotes and product headlines keep the 60px display-fluid
    * above. */
-  --font-size-display-hero-fluid: clamp(2rem, 1.33rem + 3.33vw, 4rem);
+  --font-size-display-hero-fluid: clamp(2.5rem, 1.33rem + 3.33vw, 4rem); /* 40px on phones (was 32, 2026-11-11) */
 
   /* --------------------------------------------------------------------------
    * Typography · Line-height ramp (unitless, pairs with size ramp)

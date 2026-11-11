@@ -604,6 +604,9 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
     // the title (content/price-change.ts). /pricing shows today's prices.
     <UpcomingPricesProvider enabled={!isLoggedOut}>
       <div
+        // Logged in, the plans page keeps the legacy mesh (Punna, 2026-11-11);
+        // every other page wears the brand gradient.
+        data-canvas={isLoggedOut ? undefined : "legacy-mesh"}
         className={cn(
           "flex flex-col",
           // Logged-out renders inside (marketing)/layout.tsx, which already

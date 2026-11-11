@@ -10,7 +10,6 @@
  */
 
 import Link from "next/link"
-import { LogoApnaWordmark } from "@apna/design-system"
 import { FooterWatermark } from "@/components/marketing/footer-watermark"
 import { cn } from "@/lib/utils"
 import {
@@ -44,13 +43,9 @@ const STORE_MARKS = { apple: AppleMark, "google-play": GooglePlayMark }
 export function SiteFooter({ className }: { className?: string }) {
   return (
     <footer data-slot="site-footer" className={cn("pt-20", className)}>
-      <div className="grid grid-cols-2 gap-x-8 gap-y-10 lg:grid-cols-6">
-        <div data-settle-item className="col-span-2 flex flex-col gap-6 lg:col-span-2">
-          <Link href="/" aria-label="apna for employers, home" className="w-fit">
-            <LogoApnaWordmark variant="deep" className="h-7 w-auto dark:hidden" />
-            <LogoApnaWordmark variant="white" className="hidden h-7 w-auto dark:block" />
-          </Link>
-          <div className="flex items-center gap-6">
+      <div className="grid grid-cols-2 gap-x-8 gap-y-10 lg:grid-cols-12">
+        <div data-settle-item className="col-span-2 flex flex-col gap-6 lg:col-span-4">
+          <div className="flex items-center gap-3">
             {SOCIAL_LINKS.map(({ label, href, icon }) => {
               const Mark = SOCIAL_MARKS[icon]
               return (
@@ -60,7 +55,7 @@ export function SiteFooter({ className }: { className?: string }) {
                   aria-label={label}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="text-foreground transition-interactive hover:opacity-70"
+                  className="ink press relative flex size-10 items-center justify-center rounded-full border border-foreground/15 text-foreground transition-interactive hover:bg-muted"
                 >
                   <Mark />
                 </a>
@@ -68,7 +63,7 @@ export function SiteFooter({ className }: { className?: string }) {
             })}
           </div>
           <div className="flex flex-col gap-4">
-            <h2 className="text-sm font-semibold tracking-wide text-foreground uppercase">
+            <h2 className="text-overline text-muted-foreground">
               Download apna recruiter app
             </h2>
             <div className="flex items-center gap-6">
@@ -92,8 +87,8 @@ export function SiteFooter({ className }: { className?: string }) {
         </div>
 
         {FOOTER_COLUMNS.map((column) => (
-          <nav key={column.heading} data-settle-item aria-label={column.heading} className="flex flex-col gap-4">
-            <h2 className="text-sm font-semibold tracking-wide text-foreground uppercase">
+          <nav key={column.heading} data-settle-item aria-label={column.heading} className="flex flex-col gap-4 lg:col-span-2">
+            <h2 className="text-overline text-muted-foreground">
               {column.heading}
             </h2>
             {column.links.map((link) =>
@@ -121,7 +116,9 @@ export function SiteFooter({ className }: { className?: string }) {
         ))}
       </div>
 
-      <div className="mt-15 flex flex-col gap-4 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
+      <FooterWatermark />
+
+      <div className="flex flex-col gap-4 border-t border-border py-6 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs text-foreground">{copyrightLine()}</p>
         <div className="flex flex-wrap items-center gap-4">
           {LEGAL_LINKS.map((item) => (
@@ -138,7 +135,6 @@ export function SiteFooter({ className }: { className?: string }) {
         </div>
       </div>
 
-      <FooterWatermark />
     </footer>
   )
 }

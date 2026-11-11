@@ -94,7 +94,7 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
       {
         name: "MotherPreview",
         file: "marketing/mother-preview.tsx",
-        what: "Preview-only: ?mother=plum (the mother plum) or ?mother=brand (gold) shows a saved mother gradient; the legacy mesh is live.",
+        what: "Preview-only: ?mother=plum shows the saved mother plum; the gold brand gradient is live, and the legacy mesh stays on the logged-in plans page only.",
         where: "Marketing layout, behind a URL flag",
         rules: ["Preview only. Never on by default; remove before production."],
       },

@@ -557,13 +557,13 @@ Never add `shadow-card` / `shadow-elevated` to a resting card to make it
 
 ## Marketing pages — the visual language
 
-- **Heroes have a chip, not an eyebrow.** The opening band carries the
-  homepage hero's outlined chip (`HeroChip` in
-  `src/components/marketing/page-blocks.tsx`: Badge `lg`, outline, on card,
-  with an icon). `PageHero` and the product hero draw it for you.
+- **Heroes open with a label line** (`HeroChip` in
+  `src/components/marketing/page-blocks.tsx`): small gray text with an
+  icon, no box (2026-11-11; it was an outlined white chip, which read as a
+  second input beside the hero's form). `PageHero` and the product hero draw it for you.
 - **Eyebrows below the hero are gray** (`text-overline
   text-muted-foreground`), never green.
-- **One typeface: Inter, everywhere** (user call, 2026-10-23; back to Inter from Google Sans Flex 2026-10-29).
+- **One typeface: Inter, everywhere** (user call, 2026-10-23; back to Inter from Google Sans Flex 2026-10-29). Exception (2026-11-11): marketing headlines and section titles (`text-editorial-display`, `text-editorial-h1/h2`, `text-hero-*`) are Google Sans Flex bold; the product never gets it.
   Marketing pages, the homepage and the product all use it — headlines,
   section titles, quotes, numbers, body, buttons, nav, forms, footer. There
   is no serif and no italic accent: hero headlines (h1) are plain sentence
@@ -571,7 +571,7 @@ Never add `shadow-card` / `shadow-elevated` to a resting card to make it
   same sans, so `SectionHeading`'s levels 1–2, `text-editorial-*` and
   `text-quote*` keep working without a second face.
   - **Hero headline size:** `text-editorial-display`, read from
-    `--font-size-display-hero-fluid` — 32px on a phone, 64px from ~1280px
+    `--font-size-display-hero-fluid` — 40px on a phone (was 32, 2026-11-11), 64px from ~1280px
     (2026-10-24). Every marketing hero uses it through `SectionHeading`
     level 1; change the token, never one page.
   - **`withAccent` / `titleAccent`** now only keep the accent phrase on one

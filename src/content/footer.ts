@@ -99,3 +99,4 @@ export const LEGAL_LINKS: NavLink[] = [
 /** Computed, so the footer doesn't quietly go stale on 1 January. */
 export const copyrightLine = () =>
   `© ${new Date().getFullYear()} Apna | All rights reserved.`
+

@@ -201,6 +201,7 @@
   --font-display: var(--font-display);
   --font-quote:   var(--font-quote);
   --font-editorial: var(--font-editorial);
+  --font-hero: var(--font-hero);
   --font-sans:    var(--font-body); /* backwards-compat alias; prefer font-body */
 
   /* Weight utilities → .font-regular, .font-medium, .font-semibold, .font-bold, .font-extrabold */
@@ -421,30 +422,30 @@
   font-family:     var(--font-hero);
   font-size:       var(--text-display-hero-fluid);
   line-height:     var(--line-height-tight);
-  font-weight:     var(--font-weight-medium); /* Fraunces is heavy; 500 reads like Inter's 700 */
+  font-weight:     var(--font-weight-bold);
   letter-spacing:  var(--letter-spacing-tight);
   & em { font-style: italic; }
 }
 
-/* The hero face (Fraunces on marketing) at h1/h2 size: closing lines like
+/* The hero face (Google Sans Flex on marketing) at h1/h2 size: closing lines like
  * the contact band's "Your next hire could apply today." */
 @utility text-hero-h1 {
   font-family:     var(--font-hero);
   font-size:       var(--text-5xl);
   line-height:     var(--line-height-tight);
-  font-weight:     var(--font-weight-medium);
+  font-weight:     var(--font-weight-bold);
   letter-spacing:  var(--letter-spacing-tight);
 }
 @utility text-hero-h2 {
   font-family:     var(--font-hero);
   font-size:       var(--text-4xl);
   line-height:     var(--line-height-tight);
-  font-weight:     var(--font-weight-medium);
+  font-weight:     var(--font-weight-bold);
   letter-spacing:  var(--letter-spacing-tight);
 }
 
 @utility text-editorial-h1 {
-  font-family:     var(--font-editorial);
+  font-family:     var(--font-hero); /* Google Sans Flex on marketing, Inter elsewhere */
   font-size:       var(--text-5xl);
   line-height:     var(--line-height-tight);
   font-weight:     var(--font-weight-bold);
@@ -453,7 +454,7 @@
 }
 
 @utility text-editorial-h2 {
-  font-family:     var(--font-editorial);
+  font-family:     var(--font-hero); /* Google Sans Flex on marketing, Inter elsewhere */
   font-size:       var(--text-4xl);
   line-height:     var(--line-height-tight);
   font-weight:     var(--font-weight-bold);
@@ -1365,6 +1366,19 @@
 @keyframes attention-ring-fade-in {
   from { opacity: 0; }
   to   { opacity: 1; }
+}
+
+/* hero-glow — the soft light behind the homepage hero's product screen
+   (--gradient-hero-glow). An empty `<span aria-hidden>` first in a
+   `relative isolate` box; it reaches a little above the screen's top edge,
+   so the content above must sit over it (`relative z-10`). Still. */
+@utility hero-glow {
+  position: absolute;
+  inset: -8% -4% 25%;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--gradient-hero-glow);
+  filter: blur(32px);
 }
 
 /* voice-glow — a soft halo of the AI hues behind the job prompt while the

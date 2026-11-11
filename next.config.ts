@@ -4,6 +4,9 @@ const nextConfig: NextConfig = {
   // Dev only: lets a phone on the same Wi-Fi open the dev server.
   allowedDevOrigins: ["192.168.*.*"],
   transpilePackages: ["@apna/design-system"],
+  // 95 for the homepage hero's product capture: at the default 75 its small
+  // UI text went soft.
+  images: { qualities: [75, 95] },
   // Next's dev indicator defaults to bottom-left, where it sits on top of the
   // self-checkout auth-state switcher and eats its clicks. Dev-only overlay,
   // so moving it costs nothing in production.
