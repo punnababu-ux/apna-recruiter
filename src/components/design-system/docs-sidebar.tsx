@@ -62,6 +62,7 @@ const DOCS_NAV: NavGroup[] = [
     items: [
       { href: "/design-system/product/components", label: "Component catalog", icon: Layout },
       { href: "/design-system/product/pop-ups", label: "Pop-ups", icon: MessageSquare },
+      { href: "/design-system/product/banners", label: "Banners", icon: Bell },
       { href: "/design-system/product/surfaces", label: "Surfaces & glass", icon: Palette },
       { href: "/design-system/product/alternates", label: "Alternates", icon: Shapes },
     ],

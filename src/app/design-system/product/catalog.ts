@@ -429,7 +429,7 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
       {
         name: "SubscriberPlanCard",
         file: "apnahire/subscriber-plan-card.tsx",
-        what: "The subscriber's plan on the jobs dashboard: an OfferBar on top, then apna Unlimited, valid till and four numbers. OFFER_BAR_TEMPLATES holds every case from the Figma (tenure upgrades, 2nd / 3rd slot, database top-up, auto-pay off, rebuys).",
+        what: "The subscriber's plan on the jobs dashboard: an OfferBar on top, then apna Unlimited, valid till and four numbers. The bar is one of OFFER_BANNERS (offer-banners.tsx): tenure upgrades, 2nd / 3rd slot, database top-up, auto-pay off, rebuys. Credits and festive cases stand alone above it.",
         live: "/apnahire/jobs",
         where: "Jobs dashboard, above the list",
         rules: [

@@ -7,10 +7,10 @@
  *
  *   PlanEndedBanner    for a week (BANNER_DAYS), above the page title on the
  *                      jobs dashboard, Manage plan and the plans page: a red
- *                      RenewalBanner, "Your Apna unlimited plan expired on
- *                      6 May 2026. Resubscribe at the same price." with the
- *                      plan's slot and database credits, the price last paid
- *                      and Renew now. The plan card is gone by then.
+ *                      rebuy OfferBar: "Your plan ended", "Renew at your old
+ *                      price", the plan's slot and database credits, the
+ *                      price last paid and Renew plan. The plan card is gone
+ *                      by then.
  *   PlanEndedState     Manage plan's body for that week, in place of "No
  *                      active plan": what ended, what happened, Renew.
  *
@@ -21,12 +21,11 @@
 import * as React from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 import {
-  Badge,
-  ChevronRight,
-  RefreshCw,
-  RenewalBanner,
   Button,
+  OfferBar,
+  OfferBarAccent,
   Empty,
   EmptyContent,
   EmptyDescription,
@@ -55,33 +54,25 @@ export function PlanEndedBanner({ className, onRenew }: { className?: string; on
   const today = plans.slotCounts.includes(prev.slots as JobSlotCount) ? plans.plan(prev.term, prev.slots as JobSlotCount) : null
   const paid = prev.paid ?? today?.price
   const db = prev.dbCredits ?? today?.dbCredits
-  // Struck price and % OFF only when today's list price is above it.
+  // Struck price only when today's list price is above what they paid.
   const mrp = paid && today?.mrp && today.mrp > paid ? today.mrp : null
-  const off = paid && mrp ? Math.round((1 - paid / mrp) * 100) : null
   return (
-    <RenewalBanner
-      variant="destructive"
+    <OfferBar
+      tone="renew"
       className={className}
-      icon={<RefreshCw />}
-      title={`Your Apna unlimited plan expired on ${dayLabel(prev.endedOn)}.`}
-      subtitle="Resubscribe at the same price."
-      items={[
-        { label: slotTermLabel({ slots: prev.slots, slotDays: SUBSCRIPTION_TERMS[prev.term].slotDays }) },
-        ...(db ? [{ label: `${num(db)} database credits` }] : []),
-      ]}
-      price={paid ? inr(paid) : undefined}
-      mrp={mrp ? inr(mrp) : undefined}
-      badge={
-        off ? (
-          <Badge variant="outline" className="border-transparent bg-foreground/15 text-foreground">
-            {off}% OFF
-          </Badge>
-        ) : undefined
+      art={<Image src="/images/company/values/banner-rebuy.png" alt="" width={96} height={96} unoptimized />}
+      badge={`Your plan ended on ${dayLabel(prev.endedOn)}`}
+      headline={
+        <>
+          Renew at your <OfferBarAccent>old price</OfferBarAccent>
+        </>
       }
+      sub={[slotTermLabel({ slots: prev.slots, slotDays: SUBSCRIPTION_TERMS[prev.term].slotDays }), ...(db ? [`${num(db)} database credits`] : [])].join(" · ")}
+      price={paid ? { amount: inr(paid), strike: mrp ? inr(mrp) : undefined } : undefined}
       cta={
         // The plans page opens its Unlimited tab in place.
-        <Button variant="inverted" trailingIcon={<ChevronRight />} onClick={onRenew ?? (() => router.push(RENEW_HREF))}>
-          Renew now
+        <Button variant="emphasis" onClick={onRenew ?? (() => router.push(RENEW_HREF))}>
+          Renew plan
         </Button>
       }
     />

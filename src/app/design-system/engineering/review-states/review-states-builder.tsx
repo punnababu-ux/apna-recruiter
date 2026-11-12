@@ -12,7 +12,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { ChipTabs, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, buttonVariants } from "@apna/design-system"
-import { OFFER_BAR_TEMPLATES } from "@/components/apnahire/subscriber-plan-card"
+import { OFFER_BANNERS } from "@/components/apnahire/offer-banners"
 import { PRICING_PHASES, type PricingPhase } from "@/content/pricing-phase"
 import { setPricingPhase, usePricingPhase } from "@/hooks/use-pricing-phase"
 
@@ -35,7 +35,7 @@ export const CREDIT_OPTIONS: Option[] = [
 
 const BAR_OPTIONS: Option[] = [
   { value: NONE, label: "None" },
-  ...Object.entries(OFFER_BAR_TEMPLATES).map(([value, t]) => ({ value, label: t.label })),
+  ...Object.entries(OFFER_BANNERS).map(([value, t]) => ({ value, label: t.label })),
 ]
 
 const OFF_ON = (label: string): Param["options"] => [

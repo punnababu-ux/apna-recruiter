@@ -4,56 +4,14 @@ import Image from "next/image"
 import * as React from "react"
 import {
   Bell,
-  MoreHorizontal, AlertBanner, OfferBar, OfferBarDrop, RenewalBanner, Meter, Button, Badge, Switch, Label } from "@apna/design-system"
+  MoreHorizontal, AlertBanner, OfferBar, OfferBarAccent, Meter, Button, Badge, Switch, Label } from "@apna/design-system"
 import { toast } from "sonner"
-import { AlertCircle, Info, CreditCard, ChevronRight, RefreshCw, Sparkles, InfinityIcon, ArrowUp, ArrowRight, Clock } from "@apna/design-system"
+import { AlertCircle, Info, CreditCard, ChevronRight, Sparkles } from "@apna/design-system"
 import { cn } from "@/lib/utils"
-
-// Badge's translucent tones: `on-tint` softly darkens a light tint card (and
-// lightens a dark one, as foreground flips), `on-dark` lightens a solid or
-// gradient surface, instead of either sitting on it as an opaque block.
-function DiscountBadge({
-  appearance,
-  children = "22% OFF",
-}: {
-  appearance: "primary" | "secondary"
-  children?: React.ReactNode
-}) {
-  return appearance === "primary" ? (
-    <Badge variant="on-dark">
-      {children}
-    </Badge>
-  ) : (
-    <Badge variant="on-tint">
-      {children}
-    </Badge>
-  )
-}
-
-// Same translucent-overlay logic as DiscountBadge, in the ribbon's corner shape.
-function RibbonBadge({
-  appearance,
-  children,
-}: {
-  appearance: "primary" | "secondary"
-  children: React.ReactNode
-}) {
-  return appearance === "primary" ? (
-    <Badge size="ribbon" variant="on-dark">
-      {children}
-    </Badge>
-  ) : (
-    <Badge size="ribbon" variant="on-tint">
-      {children}
-    </Badge>
-  )
-}
 
 export default function FeedbackComponentsPage() {
   const [showIcon, setShowIcon] = React.useState(true)
   const [showCTA, setShowCTA] = React.useState(true)
-  const [stackItems, setStackItems] = React.useState(true)
-  const [premiumSurface, setPremiumSurface] = React.useState(false)
   const [showClose, setShowClose] = React.useState(true)
   const [appearance, setAppearance] = React.useState<"primary" | "secondary">("secondary")
 
@@ -84,8 +42,7 @@ export default function FeedbackComponentsPage() {
               Configurable Alert Banner
             </h2>
             <p className="text-sm text-muted-foreground mt-1 max-w-prose">
-              AlertBanner and RenewalBanner share one appearance=&quot;primary&quot; | &quot;secondary&quot; system
-              — the toggles below drive every banner in this card, RenewalBanner included.
+              AlertBanner&apos;s appearance=&quot;primary&quot; | &quot;secondary&quot; system: the toggles below drive every banner in this card.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-6">
@@ -192,114 +149,71 @@ export default function FeedbackComponentsPage() {
             cta={showCTA ? <Button variant="secondary" size="sm">Upgrade @ ₹9,999 /year</Button> : undefined}
           />
 
-          <RenewalBanner
-            variant="destructive"
-            appearance={appearance}
-            icon={showIcon ? <RefreshCw /> : undefined}
-            title="0 job credits remaining."
-            subtitle="Renew now! Same discount applied!"
-            items={[{ label: "6 Job credits" }, { label: "90 days validity" }]}
-            price="₹3,649"
-            mrp="₹4,306"
-            badge={<DiscountBadge appearance={appearance} />}
-            cta={<Button variant="secondary" trailingIcon={<ChevronRight />}>Renew now</Button>}
-          />
-
-          <RenewalBanner
-            variant="warning"
-            appearance={appearance}
-            icon={showIcon ? <RefreshCw /> : undefined}
-            title="Just 1 job credit remaining."
-            subtitle="Renew now - same price as before!"
-            items={[{ label: "6 Job credits" }, { label: "90 days validity" }]}
-            price="₹3,649"
-            mrp="₹4,306"
-            badge={<DiscountBadge appearance={appearance} />}
-            cta={<Button variant="secondary" trailingIcon={<ChevronRight />}>Renew now</Button>}
-          />
-
-          <div className="flex flex-wrap items-center gap-6">
-            <div className="flex items-center gap-2">
-              <Switch id="toggle-stack" checked={stackItems} onCheckedChange={setStackItems} />
-              <Label htmlFor="toggle-stack">Checklist on its own lines (itemsLayout=&quot;stacked&quot;)</Label>
-            </div>
-            <div className="flex items-center gap-2">
-              <Switch id="toggle-premium" checked={premiumSurface} onCheckedChange={setPremiumSurface} />
-              <Label htmlFor="toggle-premium">Unlimited gradient (surface=&quot;premium&quot;)</Label>
-            </div>
-          </div>
-          {/* Fixed single-state exception to the "both appearances" rule —
-              a deliberately dark, premium promo treatment, not a tone that's
-              meant to flip with the toggle. See the file header's note. */}
-          <RenewalBanner
-            variant="default"
-            appearance="primary"
-            icon={
-              <div className="flex size-14 items-center justify-center rounded-full bg-highlight/15">
-                <InfinityIcon className="size-8 text-highlight" />
-              </div>
-            }
-            itemsLayout={stackItems ? "stacked" : "inline"}
-            surface={premiumSurface ? "premium" : "default"}
-            title="Unlimited hiring for 90 days."
-            subtitle="0 job credits left. Repost any job, any time."
-            items={[{ label: "1 job live at a time for 90 days" }, { label: "600 database credits" }]}
-            price="₹5,400"
-            mrp="₹5,999"
-            badge={<DiscountBadge appearance="primary">10% OFF</DiscountBadge>}
-            priceCaption="Quarterly plan · That's just ₹1,800 /month"
-            ribbon={<RibbonBadge appearance="primary"><Clock className="size-3.5" /> Offer ends in 4 days</RibbonBadge>}
-            cta={<Button variant="secondary" trailingIcon={<ChevronRight />}>Buy now</Button>}
-          />
-
-          <RenewalBanner
-            variant="success"
-            appearance={appearance}
-            icon={showIcon ? <ArrowUp /> : undefined}
-            title="Get 3 classic jobs"
-            subtitle="Same job type, lower price per job."
-            items={[{ label: "3 Job credits" }, { label: "180 days validity" }]}
-            price="₹1,949"
-            mrp="₹2,499"
-            badge={<DiscountBadge appearance={appearance} />}
-            ribbon={<RibbonBadge appearance={appearance}><Clock className="size-3.5" /> Offer ends in 4 days</RibbonBadge>}
-            cta={<Button variant="secondary" trailingIcon={<ChevronRight />}>Buy now</Button>}
-          />
         </div>
       </div>
 
-      {/* OfferBar: the subscriber's nudge on the plan card, one per tone */}
+      {/* OfferBar: the one rebuy / upgrade / credit banner (2026-11-12) */}
       <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-6">
         <h2 className="border-b border-border/60 pb-2 text-h6 text-foreground">Offer bar</h2>
         <p className="text-sm text-muted-foreground">
-          One plum bar for every subscriber nudge. tone colours the top line only: offer (grey), fix (amber), lapsed (salmon).
-          Without points and price, the right side is just the CTA.
+          One banner for every rebuy, upgrade and credit nudge. surface follows the pop-up the CTA opens (subscription,
+          credits, urgent, festive); tone colours the badge dot. Time goes between price and CTA, never in the badge.
+          Every case: /apnahire/banners.
         </p>
         <OfferBar
-          art={<Image src="/images/company/values/annual.png" alt="" width={48} height={48} unoptimized />}
-          hook="Special upgrade offer"
-          headline={<>Pay <OfferBarDrop from="₹2,499" to="₹833" unit="/month" /> on the annual plan</>}
-          points={["1 job live at a time for 365 days", "2,400 database credits"]}
-          price={{ amount: "₹9,999", strike: "₹11,110", off: "10% OFF" }}
+          art={<Image src="/images/company/values/annual.png" alt="" width={96} height={96} unoptimized />}
+          badge="Plan ends in 5 days"
+          headline={<>Hire all year for just <OfferBarAccent>₹787/month</OfferBarAccent></>}
+          sub="1 live job for 365 days · 2,400 database credits"
+          price={{ amount: "₹9,443", strike: "₹11,110" }}
           deadline="Limited time offer"
-          cta={<Button variant="emphasis" trailingIcon={<ArrowRight />}>Upgrade now</Button>}
+          cta={<Button variant="emphasis">Upgrade to annual</Button>}
         />
         <OfferBar
-          tone="fix"
-          art={<Image src="/images/company/values/alert.png" alt="" width={48} height={48} unoptimized />}
-          hook="Auto-pay is off"
-          headline="Your plan ends in 9 days"
-          cta={<Button variant="emphasis" trailingIcon={<ArrowRight />}>Turn on auto-pay</Button>}
+          surface="credits"
+          tone="warning"
+          art={<Image src="/images/company/values/wallet.png" alt="" width={96} height={96} unoptimized />}
+          badge="1 job credit left"
+          headline={<>Get 6 job credits at <OfferBarAccent>₹608 each</OfferBarAccent></>}
+          sub="Valid for 90 days"
+          price={{ amount: "₹3,649", strike: "₹4,306" }}
+          cta={<Button variant="emphasis">Buy 6 credits</Button>}
         />
         <OfferBar
-          tone="lapsed"
-          art={<Image src="/images/company/values/expired.png" alt="" width={48} height={48} unoptimized />}
-          hook="Your plan ended 39 days ago"
-          headline="Renew at the price you paid last time"
-          points={["1 job live at a time for 30 days", "200 database credits"]}
-          price={{ amount: "₹2,249", strike: "₹2,499", off: "10% OFF" }}
-          deadline={<><Clock className="size-3.5" /> Offer ends in 6 days</>}
-          cta={<Button variant="emphasis" trailingIcon={<ArrowRight />}>Renew now</Button>}
+          surface="urgent"
+          tone="urgent"
+          art={<Image src="/images/company/values/wallet.png" alt="" width={96} height={96} unoptimized />}
+          badge="0 job credits left"
+          headline={<>Get 6 job credits at <OfferBarAccent>₹608 each</OfferBarAccent></>}
+          sub="Valid for 90 days"
+          price={{ amount: "₹3,649", strike: "₹4,306" }}
+          cta={<Button variant="emphasis">Buy 6 credits</Button>}
+        />
+        <OfferBar
+          surface="festive"
+          art={<Image src="/images/company/values/exit-offer.png" alt="" width={96} height={96} unoptimized />}
+          badge="Hiring Utsav"
+          headline={<>22 job credits at just <OfferBarAccent>₹455 each</OfferBarAccent></>}
+          sub="Valid for 365 days"
+          price={{ amount: "₹9,999", strike: "₹15,383" }}
+          deadline="Limited time offer"
+          cta={<Button variant="emphasis">Buy job credits</Button>}
+        />
+        <OfferBar
+          tone="renew"
+          art={<Image src="/images/company/values/expired.png" alt="" width={96} height={96} unoptimized />}
+          badge="Your plan ended"
+          headline={<>Renew at your <OfferBarAccent>old price</OfferBarAccent></>}
+          sub="1 live job for 30 days · 200 database credits"
+          price={{ amount: "₹2,249", strike: "₹2,499" }}
+          cta={<Button variant="emphasis">Renew plan</Button>}
+        />
+        <OfferBar
+          art={<Image src="/images/company/values/alert.png" alt="" width={96} height={96} unoptimized />}
+          badge="Auto-pay is off"
+          headline="Keep hiring without a break"
+          sub="Your plan ends in 9 days"
+          cta={<Button variant="emphasis">Turn on auto-pay</Button>}
         />
       </div>
 

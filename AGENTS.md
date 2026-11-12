@@ -786,7 +786,8 @@ every line may break; never let the width of a string decide it.**
    line takes the row's tallest height. The marks are all it needs, so a
    new comparison surface gets it by carrying them.
 7. **The price group reads outward from the price** (user call,
-   2026-11-02). Left-aligned price: price → struck price → % off.
+   2026-11-02). Global: build a price row with `PriceGroup` (`align` start / end /
+   responsive) so the order follows the alignment by itself. Left-aligned price: price → struck price → % off.
    Right-aligned price (phone plan cards): % off → struck price → price, so
    the price sits at the far right. When the group can't fit one line (a
    phone upsell tile, ~130px), the struck price and % move to the next line

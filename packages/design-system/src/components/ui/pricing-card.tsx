@@ -98,6 +98,7 @@
 
 import * as React from "react"
 import { cn } from "@/lib/utils"
+import { PriceGroup } from "./price-group"
 
 export interface PricingCardProps extends Omit<React.ComponentProps<"div">, "title"> {
   ribbon?: React.ReactNode
@@ -178,10 +179,13 @@ export function PricingCard({
           under the price in EVERY card of the row, never just this one. */}
       {/* Packed left: the % tag sits right after the struck price, never
           flung to the card's far edge. */}
-      <div data-compare="price" className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
-        {/* Centred: price, unit, struck price and % share one centre line
-            (user call, 2026-11-02, every price row). */}
-        <div className="flex items-center gap-1.5">
+      {/* Price, unit and struck price never split; the % sits right after
+          them and, when the row is too narrow, wraps under as a whole.
+          CompareAlign stacks it in EVERY card of the row, never one. Centred
+          on one line (user call, 2026-11-02). Order: PriceGroup. */}
+      <PriceGroup
+        data-compare="price"
+        price={
           <span
             className={cn(
               // The plan type scale (styles/index.css): every plan price,
@@ -192,13 +196,11 @@ export function PricingCard({
           >
             {price}
           </span>
-          {unit && <span className={cn("text-plan-unit", fgMuted)}>{unit}</span>}
-          {mrp && (
-            <span className={cn("text-sm line-through", fgMuted)}>{mrp}</span>
-          )}
-        </div>
-        {badge && <div className="shrink-0">{badge}</div>}
-      </div>
+        }
+        unit={unit && <span className={cn("text-plan-unit", fgMuted)}>{unit}</span>}
+        strike={mrp && <span className={cn("text-sm line-through", fgMuted)}>{mrp}</span>}
+        discount={badge}
+      />
       {priceSuffix && (
         <p data-compare="price-suffix" className={cn("text-xs italic leading-6", fgMuted)}>{priceSuffix}</p>
       )}

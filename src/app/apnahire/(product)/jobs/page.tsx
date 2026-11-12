@@ -34,12 +34,13 @@ import { JobList, STATUS_LABELS, type ApnaJobStatus } from "@/components/apnahir
 import { PageHeader } from "@/components/onlyrounds/page-header"
 import { PlanEndedBanner } from "@/components/apnahire/plan-ended"
 import { PriceChangeBanner } from "@/components/apnahire/price-change-banner"
-import { OFFER_BAR_TEMPLATES, SubscriberPlanCard, type OfferBarTemplate } from "@/components/apnahire/subscriber-plan-card"
+import { PLAN_CARD_BARS, SubscriberPlanCard } from "@/components/apnahire/subscriber-plan-card"
 import { useSavedFinishSetup } from "@/components/apnahire/post-job/finish-setup"
 import { useJobSlots } from "@/hooks/use-job-slots"
 import { MOCK_JOBS as MOCK } from "@/content/apnahire-jobs"
 import { useFlushHeader } from "@/hooks/use-flush-header"
 import { cn } from "@/lib/utils"
+import { OfferBannerFor, isOfferBannerCase } from "@/components/apnahire/offer-banners"
 
 type JobTab = ApnaJobStatus | "all"
 const TAB_ORDER: JobTab[] = ["all", "active", "under_review", "draft", "expired"]
@@ -79,7 +80,9 @@ function JobsPageInner() {
   // banner shows alone unless that link asks for a bar.
   const slots = useJobSlots()
   const bar = searchParams.get("bar")
-  const offerBar = bar && bar in OFFER_BAR_TEMPLATES ? (bar as OfferBarTemplate) : null
+  const offerBar = isOfferBannerCase(bar) && PLAN_CARD_BARS.includes(bar) ? bar : null
+  // Credits and festive bars are not on the plan card: they stand alone.
+  const loneBar = isOfferBannerCase(bar) && !PLAN_CARD_BARS.includes(bar) ? bar : null
   const showPlanCard = !!slots || offerBar !== null
 
   // Search and filters first; the tabs then split what they matched.
@@ -191,6 +194,7 @@ function JobsPageInner() {
       <PriceChangeBanner />
       {/* A plan that just ended (a week): the way back. */}
       <PlanEndedBanner />
+      {loneBar && <OfferBannerFor bar={loneBar} />}
       {showPlanCard && <SubscriberPlanCard template={offerBar} />}
       <PageHeader
         variant="transparent"

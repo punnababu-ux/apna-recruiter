@@ -10,6 +10,7 @@ import Image from "next/image"
 import { Badge } from "@apna/design-system"
 import { CopyBlock } from "@/components/design-system/copy-block"
 import {
+  CLAY_BANNER_EXAMPLES,
   CLAY_EXAMPLES,
   CLAY_OPENING,
   CLAY_STYLE,
@@ -148,6 +149,22 @@ export default function ClayPage() {
           {CLAY_EXAMPLES.map((ex) => (
             <div key={ex.name} className="flex flex-col gap-2">
               <span className="text-overline text-muted-foreground">
+                {ex.name} · {ex.file}.png
+              </span>
+              <CopyBlock text={clayPrompt(ex.subject)} label="Copy prompt" />
+            </div>
+          ))}
+        </div>
+
+        <h3 className="pt-2 font-heading text-base font-semibold text-foreground">Offer banners: full prompts</h3>
+        <p className="text-sm text-muted-foreground">
+          The clay sits on the banner&apos;s left edge at 96px, on that banner&apos;s colour. Colours are picked for that colour.
+        </p>
+        <div className="flex flex-col gap-4">
+          {CLAY_BANNER_EXAMPLES.map((ex) => (
+            <div key={ex.file} className="flex flex-col gap-2">
+              <span className="flex items-center gap-3 text-overline text-muted-foreground">
+                <Image src={`/${DIR}/${ex.file}.png`} alt="" width={48} height={48} unoptimized className="size-12 object-contain" />
                 {ex.name} · {ex.file}.png
               </span>
               <CopyBlock text={clayPrompt(ex.subject)} label="Copy prompt" />

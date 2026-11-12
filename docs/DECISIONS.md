@@ -9,6 +9,32 @@ or **Open**.
 ---
 
 
+
+## 2026-11-12 — Price order is one component (Decided)
+- **Question:** the "reads outward from the price" order (left: price, strike, %; right: %, strike, price) was hand-built per card, and OfferBar broke it on desktop.
+- **Decision:** `PriceGroup` in the design system owns the order only (`align` start / end / responsive); callers keep sizes and placement. PricingCard, the Subscription tab and OfferBar use it.
+- **Why:** a rule each card re-implements gets missed by the next card.
+- **Not moved yet:** the phone plan rows (`MobilePlanRow`, `MobileUnlimitedCard`) and the checkout drawer's pack row already read right-to-left correctly but by hand, with their % under the price.
+- **Would change it:** a price layout PriceGroup can't express.
+## 2026-11-12 — OfferBar redesign goes into the design system
+
+- **Question:** keep the redesigned banners as a preview, or make them the system?
+- **Decision:** the design system's `OfferBar` is rewritten to the new design. It has a clay object, a badge for the trigger, a headline with one gold number, the price with the saving as text, a deadline between price and CTA, and a `default` emphasis CTA. `surface` is subscription / credits / urgent / festive. `RenewalBanner` is removed, and the plan-ended banner is now a rebuy `OfferBar`. The cases live in `src/components/apnahire/offer-banners.tsx`, and all of them show on `/apnahire/banners`.
+- **Why:** Punna approved the cases ("you covered all the banners"). One banner replaces two look-alikes.
+- **What would change it:** the new clay set (next), or a festive skin capability (examples are on /apnahire/banners).
+- **Status:** Decided.
+
+## 2026-11-12 — Rebuy / offer banners: three layout options (preview)
+- **Question:** OfferBar and RenewalBanner spread info over three zones (headline | facts | price … CTA); the CTA feels detached from the offer.
+- **Options** (preview on /apnahire/jobs?bar=…&banner=d|e|f, `src/components/apnahire/banner-options.tsx`; DS components untouched): A live. B and C (cluster, deal panel) rejected by Punna as too close to today. D stacked column with CTA under the copy + clay art right; E one-line strip with deadline box; F message + CTA left, white receipt card right. From the Figma references (Airtable, Kraken+, ClickUp, Codecademy, Etsy); D–F break DS rules on purpose.
+- **Why these:** proximity — what you pay and the button that pays it read as one action; fewer scan zones (Hick).
+- **Would change it:** Punna/Sumit picking one; then it moves into the DS component and the preview file goes.
+- **Later rounds (same day):** S (two lines + priced CTA), then X from Punna's example (stat tile, chip, gold-free: new `bg-gradient-banner-hero` plum→sky with a green glow, per-month in blue, "Save ₹…" in green), then Y = X with a simple phone (Sumit lenses 1, 3, 5): headline, then price + Save, then CTA; tile, chip, facts and struck price hidden on phones; the subline stays when there's no price (auto-pay).
+- **Gradient by family (user call):** subscription banners use the subscription upsell pop-up's look (plum `bg-gradient-offer-bar` with the gold bloom kept to a corner glow; the raw `bg-gradient-offer-premium` washes a wide bar brown); credits banners (job credits, database) use the credits pop-up's green `bg-gradient-offer`. New per-month price gold (`text-highlight`), as in the pop-ups. The preview `--gradient-banner-hero` was removed from the DS.
+- **Templates:** 3 — single offer (tones: upgrade / renew / urgent), action without price (auto-pay), two offers (festive). Festive is a skin, not a template.
+- **Saving as text, not a chip (user call):** as on the plans page, "−10%" after the struck price, no "Save ₹…" chip. On dark/green banners it uses a new token `--discount-on-dark` (apna green-300, beside `--lapsed-on-dark`): the plans page's dark green vanished, white lost the "saving" meaning. Desktop: price above the CTA; phones: full-width CTA.
+- **Status:** Open.
+
 ## 2026-11-12 — One look for "show more" buttons
 
 - **Question:** "More preferences" was a full-width outlined button; "More industries" and "More roles" were link buttons with a chevron. Which one?

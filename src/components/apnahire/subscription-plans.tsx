@@ -16,6 +16,7 @@
 import * as React from "react"
 import {
   Badge,
+  PriceGroup,
   BriefcaseBusiness,
   Button,
   Check,
@@ -172,14 +173,14 @@ function PlanCard({
           <p className="text-plan-name text-foreground">{title}</p>
           {/* Price, unit and struck price never split; the % OFF badge sits
               right after them, never flung to the row's far end. */}
-          <div data-compare="price" className="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <p className="flex items-center gap-1.5 whitespace-nowrap">
-              <span className="text-plan-price text-foreground">{inr(price)}</span>
-              <span className="text-plan-unit text-muted-foreground">{priceSuffix}</span>
-              {strike && <span className="text-sm text-muted-foreground line-through">{inr(strike)}</span>}
-            </p>
-            {pct ? <Badge variant="discount">−{pct}%</Badge> : null}
-          </div>
+          <PriceGroup
+            data-compare="price"
+            className="gap-x-2"
+            price={<span className="text-plan-price text-foreground">{inr(price)}</span>}
+            unit={<span className="text-plan-unit text-muted-foreground">{priceSuffix}</span>}
+            strike={strike && <span className="text-sm text-muted-foreground line-through">{inr(strike)}</span>}
+            discount={pct ? <Badge variant="discount">−{pct}%</Badge> : null}
+          />
           {/* The note line is reserved in every card whether or not it has
               one, so the dividers, feature lists and CTAs sit on the same
               baseline across the row. Without this, Monthly's divider

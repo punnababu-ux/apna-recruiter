@@ -52,6 +52,8 @@
   --color-highlight:            var(--highlight);
   --color-highlight-foreground: var(--highlight-foreground);
   --color-lapsed-on-dark:       var(--lapsed-on-dark);
+  --color-deadline-on-dark: var(--deadline-on-dark);
+  --color-discount-on-dark:     var(--discount-on-dark);
 
   /* Status */
   --color-close-bubble:            var(--close-bubble);
@@ -232,6 +234,8 @@
   --container-narrow: var(--container-narrow);
   --container-band:   var(--container-band);
   --container-wide:   var(--container-wide);
+  /* OfferBar on phones: price + "Limited time offer" share a line from here (widest price row 193px + 138px + gap). */
+  --container-offer-row: 22rem;
 
   /* ------------------------------------------------------------------------
    * Spacing — context-role aliases only.
@@ -1912,6 +1916,36 @@ a[href] > [data-slot="card"] {
   background-image: var(--gradient-illustration-gold);
 }
 
+/* Festive skin example: the Diwali toran. */
+/* Diwali skin example: a marigold toran and hanging lanterns over the
+   festive gradient. Artwork: public/images/festive/diwali.svg (drawn here). */
+/* Phones get their own art: the desktop props sit in the empty middle, which
+   a stacked phone card fills with text, so phones keep only the balloons in
+   the empty top-right beside the badge. */
+@utility bg-festive-holi {
+  background: url("/images/festive/holi-phone.svg") top right / 100% auto no-repeat, var(--gradient-festive-holi);
+  @media (width >= 48rem) {
+    background: url("/images/festive/holi.svg") center / cover no-repeat, var(--gradient-festive-holi);
+  }
+}
+@utility bg-festive-diwali {
+  background: url("/images/festive/diwali.svg") top center / 100% auto no-repeat, var(--gradient-festive);
+}
+@utility bg-mesh-offer-subscription {
+  background: var(--mesh-offer-subscription);
+}
+@utility bg-mesh-offer-credits {
+  background: var(--mesh-offer-credits);
+}
+@utility bg-mesh-offer-urgent {
+  background: var(--mesh-offer-urgent);
+}
+@utility bg-mesh-offer-festive {
+  background: var(--mesh-offer-festive);
+}
+@utility bg-gradient-festive {
+  background-image: var(--gradient-festive);
+}
 @utility bg-gradient-offer-bar {
   background-image: var(--gradient-offer-bar);
 }
@@ -2260,5 +2294,94 @@ a[href] > [data-slot="card"] {
   @media (prefers-reduced-motion: no-preference) {
     translate: 0 calc((1 - var(--parallax-p, 1)) * -12%);
     scale: calc(1.05 + 0.2 * (1 - var(--parallax-p, 1)));
+  }
+}
+
+/* A short gold light runs round a CTA's edge: the festive banner's live
+   touch (2026-11-12). Paints on ::after (ink owns ::before). */
+@property --trail-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+@utility cta-trail {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    padding: 2px;
+    background: conic-gradient(from var(--trail-angle), transparent 0deg, transparent 260deg, var(--color-apna-gold-500) 330deg, var(--color-apna-gold-400) 360deg);
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+    pointer-events: none;
+    animation: cta-trail 2.4s linear infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    &::after { animation: none; }
+  }
+}
+@keyframes cta-trail {
+  to { --trail-angle: 360deg; }
+}
+
+/* Holi splash (festive skin example, 2026-11-12): pastel colour bursts
+   splash across a light card or its CTA on hover / focus. Paints on ::after
+   (ink owns ::before); the card is `isolate`, so the splash sits under its
+   content. On the CTA the label turns dark over the pastel. */
+@utility holi-splash {
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 10% 15%, var(--color-atmosphere-pink) 0%, transparent 28%),
+      radial-gradient(circle at 42% 105%, var(--color-apna-gold-200) 0%, transparent 30%),
+      radial-gradient(circle at 70% -5%, var(--color-apna-sky-200) 0%, transparent 28%),
+      radial-gradient(circle at 96% 95%, var(--color-apna-green-200) 0%, transparent 32%),
+      radial-gradient(circle at 88% 30%, var(--color-red-200) 0%, transparent 18%);
+    opacity: 0;
+    transform: scale(0.6);
+    transition: opacity 500ms var(--ease-out-ui), transform 700ms var(--ease-select);
+  }
+  @media (hover: hover) {
+    &:hover::after { opacity: 1; transform: scale(1); }
+  }
+  &:focus-within::after { opacity: 1; transform: scale(1); }
+  @media (prefers-reduced-motion: reduce) {
+    &::after { transition: none; transform: none; }
+  }
+}
+@utility holi-splash-cta {
+  position: relative;
+  isolation: isolate;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 15% 30%, var(--color-atmosphere-pink) 0%, transparent 55%),
+      radial-gradient(circle at 55% 110%, var(--color-apna-gold-200) 0%, transparent 55%),
+      radial-gradient(circle at 85% 0%, var(--color-apna-sky-200) 0%, transparent 55%),
+      radial-gradient(circle at 100% 100%, var(--color-apna-green-200) 0%, transparent 50%),
+      var(--color-gray-0);
+    opacity: 0;
+    transform: scale(0.4);
+    transition: opacity 300ms var(--ease-out-ui), transform 450ms var(--ease-select);
+  }
+  @media (hover: hover) {
+    &:hover { color: var(--foreground); }
+    &:hover::after { opacity: 1; transform: scale(1); }
+  }
+  &:focus-visible { color: var(--foreground); }
+  &:focus-visible::after { opacity: 1; transform: scale(1); }
+  @media (prefers-reduced-motion: reduce) {
+    &::after { transition: none; transform: none; }
   }
 }

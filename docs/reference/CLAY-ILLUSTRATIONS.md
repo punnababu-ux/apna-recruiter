@@ -103,6 +103,44 @@ names to `ValueName`, `ICON` and `READY` in
 `src/components/marketing/value-art.tsx`, then swap the `art` names in
 `cancel-plan-flow.tsx`, `plan-change.tsx` and `manage-plan.tsx`.
 
+## To generate: offer banners (2026-11-12)
+
+The OfferBar cases (`src/components/apnahire/offer-banners.tsx`, all on
+`/apnahire/banners` and `/design-system/product/banners`) use stand-ins.
+The clay sits at the banner's LEFT edge, 96px, on desktop only. Every banner is
+now a mesh (2026-11-12) and its brightest pool is top left, right behind the
+clay, so the colours follow what sits there:
+
+| Surface | Behind the clay (top left) | Elsewhere | Clay may use | Never |
+|---|---|---|---|---|
+| Plum (subscription) | a gold glow on deep plum | purple pools | off-white lead, mint, sky blue | a yellow body (melts into the glow); plum outside a small mark on an off-white part |
+| Green (credits, 1 left) | bright green | sky and light green, right side | off-white and warm yellow lead | green or mint anywhere; sky blue as a body |
+| Red (credits, 0 left) | bright red | plum, a trace of gold, right side | off-white and warm yellow lead | red, coral, orange or plum anywhere |
+| Marigold (festive) | bright gold | red and plum | off-white lead, deep plum and mint accents | a yellow or orange body; a yellow flame bigger than a dot |
+
+At 96px only one bold shape reads: one object, two at most, no small text or
+tiny details (a date square, a dot) carrying the meaning.
+
+A prompt = the opening line, the subject, then CLAY_STYLE unchanged.
+
+| File | Banner (surface) | Stand-in now | Subject |
+|---|---|---|---|
+| `banner-upgrade` | Monthly → quarterly, quarterly → annual (plum) | `annual` | a rounded clay desk calendar with a chunky up arrow rising from its top edge. Off-white calendar pages, a mint binding, a big sky blue arrow. |
+| `banner-slots` | 2nd / 3rd job live at a time (plum) | `slots-full` | two rounded clay job cards side by side with a third card sliding in, and a round plus badge on it. Off-white cards, a mint card sliding in, a sky blue plus badge, thin deep plum lines on the cards. |
+| `banner-rebuy` | Rebuy, plan ended (plum) | `expired` | a rounded clay calendar with a chunky circular arrow looping around it, warm and welcoming. Off-white calendar, a mint arrow, a sky blue binding. |
+| `banner-autopay` | Auto-pay is off (plum) | `alert` | a rounded clay payment card with a large round refresh arrow badge on its corner, the arrow paused (two short bars inside it). Off-white card, a mint stripe, a sky blue badge with off-white bars. |
+| `banner-credits-low` | 1 job credit left (green) | `wallet` | a rounded clay coin jar with a single big coin resting at the bottom, lid beside it. Off-white jar, one warm yellow coin, an off-white lid with a warm yellow knob. |
+| `banner-credits-empty` | 0 job credits left (red) | `wallet` | a rounded clay coin jar, empty, tipped slightly on its side, lid off. Off-white jar, an off-white lid, a warm yellow rim band. |
+| `banner-database` | Database credits running low (green) | `database-search` | a short rounded clay stack of three database discs with a chunky magnifying glass leaning on it. Off-white discs, a warm yellow magnifier rim and handle. |
+| `banner-database-empty` | 0 database credits left (red) | `banner-database` | a short rounded clay stack of three database discs, the top disc lifted off and tipped, an empty hollow inside, a chunky magnifying glass lying beside it. Off-white discs with warm yellow edges, a warm yellow magnifier rim and handle, an off-white lens. |
+| `banner-festive` | Hiring Utsav (marigold) | `exit-offer` | a festive hand-painted clay diya (Indian oil lamp) shaped like a shallow teardrop with a pinched spout, a large glowing flame rising from the spout, resting on two small leaves with a few round petals scattered at its base. Deep plum lamp body decorated with a warm yellow scalloped rim, rows of small raised dots and little petal motifs in warm yellow, mint and off-white; a warm yellow flame with a bright off-white core; mint leaves; off-white petals. |
+| `banner-holi` | Holi hiring sale (white) | — | three small round clay bowls of Holi colour powder (gulal) in a tight cluster, each heaped into a soft rounded mound, with a little puff of powder rising from the front bowl and a few soft round splashes of colour on the ground around them. Mint powder in a deep plum bowl, sky blue powder in a warm yellow bowl, warm yellow powder in an off-white bowl with a sky blue rim; the puff and splashes in mint, sky blue and warm yellow. |
+
+**Installed 2026-11-12:** all nine above are live as `public/images/company/values/banner-*.png` (cropped to the object, 640×640); the "Stand-in now" column is history.
+
+Once approved: cut out, 640×640, `public/images/company/values/<file>.png`,
+then swap `art` in `offer-banners.tsx`. Every banner art shows only from md (phones hide it).
+
 ## Getting one into the product
 
 1. Generate 3–4 per subject; pick the cleanest silhouette (it must read at

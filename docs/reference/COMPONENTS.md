@@ -97,8 +97,8 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 |------------------|------------------------------------------------------------------------|--------------------------------------------------|
 | Alert            | `import { Alert, AlertTitle, AlertDescription } from "@apna/design-system"` | Static banner. Use for persistent messages. Variants: default · muted (neutral but visible on a card) · destructive · success · warning · info. |
 | AlertBanner      | `import { AlertBanner } from "@apna/design-system"`                   | High-emphasis action banner with icon, title, and action link or standalone CTA. |
-| OfferBar         | `import { OfferBar, OfferBarDrop } from "@apna/design-system"`        | Subscriber nudge on the plan card: plum bar, hook + headline, what you get, price, CTA; tone offer / fix / lapsed. |
-| RenewalBanner    | `import { RenewalBanner } from "@apna/design-system"`                 | Richer banner: icon + headline/subline, checklist, price + MRP + discount, CTA. For "renew your plan" reminders. |
+| OfferBar         | `import { OfferBar, OfferBarAccent } from "@apna/design-system"`      | The one rebuy / upgrade / credit banner: clay, badge (the trigger), headline with one gold number, price, deadline between price and CTA. surface subscription / credits / urgent / festive. Cases: `src/components/apnahire/offer-banners.tsx`, all on /apnahire/banners. |
+| PriceGroup       | `import { PriceGroup } from "@apna/design-system"`                    | Orders price, unit, struck price and % by alignment: start = price first, end = % first, responsive = start on phones, end from md. Order only; callers keep their sizes. Used by PricingCard, the Subscription tab, OfferBar. |
 | Sonner (toast)   | `import { toast } from "sonner"`                                       | Transient toast. Mounted via `<Toaster />` in root layout. |
 
 ## 7. Data & Layout

@@ -188,6 +188,72 @@ export const CLAY_EXAMPLES: ClayExample[] = [
   },
 ]
 
+/** Offer banner subjects (OfferBar, 2026-11-12). The clay sits at the banner's
+ *  left edge on that banner's mesh, so colours follow the surface named in each
+ *  name; see docs/reference/CLAY-ILLUSTRATIONS.md. */
+export const CLAY_BANNER_EXAMPLES: ClayExample[] = [
+  {
+    name: "Monthly → quarterly, quarterly → annual (plum)",
+    file: "banner-upgrade",
+    subject:
+      "a rounded clay desk calendar with a chunky up arrow rising from its top edge. Off-white calendar pages, a mint binding, a big sky blue arrow.",
+  },
+  {
+    name: "2nd / 3rd job live at a time (plum)",
+    file: "banner-slots",
+    subject:
+      "two rounded clay job cards side by side with a third card sliding in, and a round plus badge on it. Off-white cards, a mint card sliding in, a sky blue plus badge, thin deep plum lines on the cards.",
+  },
+  {
+    name: "Rebuy, plan ended (plum)",
+    file: "banner-rebuy",
+    subject:
+      "a rounded clay calendar with a chunky circular arrow looping around it, warm and welcoming. Off-white calendar, a mint arrow, a sky blue binding.",
+  },
+  {
+    name: "Auto-pay is off (plum)",
+    file: "banner-autopay",
+    subject:
+      "a rounded clay payment card with a large round refresh arrow badge on its corner, the arrow paused (two short bars inside it). Off-white card, a mint stripe, a sky blue badge with off-white bars.",
+  },
+  {
+    name: "1 job credit left (green)",
+    file: "banner-credits-low",
+    subject:
+      "a rounded clay coin jar with a single big coin resting at the bottom, lid beside it. Off-white jar, one warm yellow coin, an off-white lid with a warm yellow knob.",
+  },
+  {
+    name: "0 job credits left (red)",
+    file: "banner-credits-empty",
+    subject:
+      "a rounded clay coin jar, empty, tipped slightly on its side, lid off. Off-white jar, an off-white lid, a warm yellow rim band.",
+  },
+  {
+    name: "Database credits running low (green)",
+    file: "banner-database",
+    subject:
+      "a short rounded clay stack of three database discs with a chunky magnifying glass leaning on it. Off-white discs, a warm yellow magnifier rim and handle.",
+  },
+  {
+    name: "0 database credits left (red)",
+    file: "banner-database-empty",
+    subject:
+      "a short rounded clay stack of three database discs, the top disc lifted off and tipped, an empty hollow inside, a chunky magnifying glass lying beside it. Off-white discs with warm yellow edges, a warm yellow magnifier rim and handle, an off-white lens.",
+  },
+  {
+    name: "Hiring Utsav (marigold)",
+    file: "banner-festive",
+    subject:
+      "a festive hand-painted clay diya (Indian oil lamp) shaped like a shallow teardrop with a pinched spout, a large glowing flame rising from the spout, resting on two small leaves with a few round petals scattered at its base. Deep plum lamp body decorated with a warm yellow scalloped rim, rows of small raised dots and little petal motifs in warm yellow, mint and off-white; a warm yellow flame with a bright off-white core; mint leaves; off-white petals.",
+  },
+  {
+    name: "Holi hiring sale (white)",
+    file: "banner-holi",
+    subject:
+      "three small round clay bowls of Holi colour powder (gulal) in a tight cluster, each heaped into a soft rounded mound, with a little puff of powder rising from the front bowl and a few soft round splashes of colour on the ground around them. Mint powder in a deep plum bowl, sky blue powder in a warm yellow bowl, warm yellow powder in an off-white bowl with a sky blue rim; the puff and splashes in mint, sky blue and warm yellow.",
+  },
+]
+
 /**
  * The one exception to "no text": an object that IS a document, like a
  * report's book cover. Spell the text out exactly, line by line, and say

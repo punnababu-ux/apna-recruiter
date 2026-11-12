@@ -26,7 +26,7 @@ Never make product copy a control to reach a state.
 | Express checkout | `/apnahire/jobs/new/plans` | `layout` | *(none)* job credits · `subscription` | `src/components/apnahire/job-plan-selection.tsx` |
 | | | `credits` | *(none)* no credits · `partial` 1 job · `job4` 4 jobs · `ai` 1 Premium + AI · `partial-ai` 1 job + 1 P+AI · `job4-ai` 4 jobs + 1 P+AI · `addon` 4 jobs + AI add-on credit · `held` 4 jobs + P+AI + add-on | same (`CREDIT_PREVIEWS`) |
 | Self-checkout | `/apnahire/credits` (logged out: `/pricing`) | `tab` | `jobs` · `database` · `unlimited` (or `subscription`) · `enterprise` | `src/components/apnahire/self-checkout.tsx` |
-| Jobs list | `/apnahire/jobs` | `bar` | any key of `OFFER_BAR_TEMPLATES`: `monthly-to-quarterly`, `quarterly-to-annual`, `quarterly-to-annual-last-week`, slots-full, `database-top-up`, `auto-pay-off`, `rebuy-monthly` / `-quarterly` / `-annual` | `src/app/apnahire/(product)/jobs/page.tsx`, `src/components/apnahire/subscriber-plan-card.tsx` |
+| Jobs list | `/apnahire/jobs` | `bar` | any key of `OFFER_BANNERS`: `monthly-to-quarterly`, `quarterly-to-annual` (+ `-ending`, `-last-week`), `slots-2` / `-3`, `database-top-up`, `auto-pay-off`, `rebuy-monthly` / `-quarterly` / `-annual` (on the plan card); `credits-0` / `-1` (+ `-db`), `festive-unlimited` / `-credits` (standalone). All on `/apnahire/banners` | `src/app/apnahire/(product)/jobs/page.tsx`, `src/components/apnahire/offer-banners.tsx` |
 | Job candidates | `/apnahire/jobs/<id>` | `tab` | *(none)* Applied · `database` | `src/app/apnahire/(product)/jobs/[id]/page.tsx` |
 | | | `applicants` | `0` no applicants yet | same |
 | | | `deck` / `views` / `pill` | `0` shows the pre-2026-11-09 version | same |

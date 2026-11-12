@@ -5,51 +5,23 @@
  * Self-checkout › Subscription-upgrade): an OfferBar on top, then
  * "apna Unlimited", the plan's end date and four numbers.
  *
- * OFFER_BAR_TEMPLATES holds every case the Figma draws, as ready OfferBar
- * props: tenure upgrades, extra slots, a database top-up, auto-pay off and
- * the rebuys. Which one shows is passed in. The jobs page shows none until
- * a rule picks one.
- *
- * Prices and percentages are the Figma's placeholders.
+ * The bar on top is one of OFFER_BANNERS (offer-banners.tsx): tenure
+ * upgrades, extra slots, a database top-up, auto-pay off and the rebuys.
+ * Which one shows is passed in. The jobs page shows none until a rule picks one.
  */
 
-import Image from "next/image"
 import {
-  ArrowRight,
   Briefcase,
-  Button,
   CalendarClock,
   Card,
   CircleAlert,
   CircleCheck,
-  Clock,
   FileText,
   LogoApnaUnlimited,
-  OfferBar,
-  OfferBarDrop,
   UserSearch,
-  type OfferBarProps,
 } from "@apna/design-system"
-import { useIsMobile } from "@/hooks/use-mobile"
+import { OFFER_BANNERS, OfferBannerFor, type OfferBannerCase } from "@/components/apnahire/offer-banners"
 import { cn } from "@/lib/utils"
-
-const art = (name: string) => (
-  // Clay PNGs are served as-is (a re-encode smears their cut edge).
-  <Image src={`/images/company/values/${name}.png`} alt="" width={48} height={48} unoptimized />
-)
-const countdown = (
-  <>
-    <Clock className="size-3.5" aria-hidden />
-    Offer ends in 24:56:44
-  </>
-)
-// Phones: the small button, so price, struck price, % OFF and the CTA share
-// one row (as in SlotsFullDialog); at 320px the CTA drops under the price.
-const cta = (label: string, small: boolean) => (
-  <Button variant="emphasis" size={small ? "sm" : "default"} trailingIcon={<ArrowRight />}>
-    {label}
-  </Button>
-)
 
 const STATS: { icon: typeof Briefcase; label: string; short?: string; value: string }[] = [
   { icon: Briefcase, label: "Jobs posted", value: "8" },
@@ -59,142 +31,8 @@ const STATS: { icon: typeof Briefcase; label: string; short?: string; value: str
   { icon: UserSearch, label: "Database unlocks", value: "520" },
 ]
 
-type Template = { label: string; bar: Omit<OfferBarProps, "cta"> & { cta: string } }
-
-export const OFFER_BAR_TEMPLATES = {
-  "monthly-to-quarterly": {
-    label: "Monthly → Quarterly",
-    bar: {
-      art: art("annual"),
-      hook: "Your plan ends in 5 days",
-      headline: <>Pay <OfferBarDrop from="₹2,499" to="₹1,500" unit="/month" /> on the quarterly plan</>,
-      points: ["1 job live at a time for 90 days", "600 database credits"],
-      price: { amount: "₹4,499", strike: "₹4,999", off: "10% OFF" },
-      deadline: countdown,
-      cta: "Upgrade now",
-    },
-  },
-  "quarterly-to-annual": {
-    label: "Quarterly → Annual",
-    bar: {
-      art: art("unlimited"),
-      hook: "Special upgrade offer",
-      headline: <>Pay <OfferBarDrop from="₹2,499" to="₹833" unit="/month" /> on the annual plan</>,
-      points: ["1 job live at a time for 365 days", "2,400 database credits"],
-      price: { amount: "₹9,999", strike: "₹11,110", off: "10% OFF" },
-      deadline: "Limited time offer",
-      cta: "Upgrade now",
-    },
-  },
-  "quarterly-to-annual-last-week": {
-    label: "Quarterly → Annual, last week",
-    bar: {
-      art: art("annual"),
-      hook: "Your plan ends in 5 days",
-      headline: <>Pay <OfferBarDrop from="₹2,499" to="₹787" unit="/month" /> on the annual plan</>,
-      points: ["1 job live at a time for 365 days", "2,400 database credits"],
-      price: { amount: "₹9,443", strike: "₹11,110", off: "15% OFF" },
-      deadline: countdown,
-      cta: "Upgrade now",
-    },
-  },
-  "slots-2": {
-    label: "Slots full · 2nd slot",
-    bar: {
-      art: art("slots-full"),
-      hook: "All job slots full. Save 11% on a 2nd job slot",
-      headline: <OfferBarDrop from="₹2,499" to="₹1,999" unit="/job slot" />,
-      points: ["2 jobs live at a time for 30 days", "400 database credits"],
-      price: { amount: "₹3,999", strike: "₹4,499", off: "11% OFF" },
-      deadline: countdown,
-      cta: "Upgrade now",
-    },
-  },
-  "slots-3": {
-    label: "Slots full · 3rd slot",
-    bar: {
-      art: art("slots-full"),
-      hook: "Both job slots full. Save 11% on a 3rd job slot",
-      headline: <OfferBarDrop from="₹2,499" to="₹1,999" unit="/job slot" />,
-      points: ["3 jobs live at a time for 30 days", "600 database credits"],
-      price: { amount: "₹5,999", strike: "₹6,749", off: "11% OFF" },
-      deadline: countdown,
-      cta: "Upgrade now",
-    },
-  },
-  "database-top-up": {
-    label: "Database top-up",
-    bar: {
-      art: art("database-search"),
-      hook: "80 database profile unlocks left",
-      headline: <>Pay <OfferBarDrop from="₹10" to="₹6" unit="/unlock" /> on a 1,000-unlock package</>,
-      points: ["1,000 database profile unlocks", "Valid for 180 days"],
-      price: { amount: "₹5,999", strike: "₹9,999", off: "40% OFF" },
-      deadline: countdown,
-      cta: "Buy now",
-    },
-  },
-  "auto-pay-off": {
-    label: "Auto-pay off",
-    bar: {
-      tone: "fix",
-      art: art("alert"),
-      hook: "Auto-pay is off",
-      headline: "Your plan ends in 9 days",
-      cta: "Turn on auto-pay",
-    },
-  },
-  "rebuy-monthly": {
-    label: "Rebuy · Monthly",
-    bar: {
-      tone: "lapsed",
-      art: art("expired"),
-      hook: "Your plan ended 39 days ago",
-      headline: "Renew at the price you paid last time",
-      points: ["1 job live at a time for 30 days", "200 database credits"],
-      price: { amount: "₹2,249", strike: "₹2,499", off: "10% OFF" },
-      deadline: (
-        <>
-          <Clock className="size-3.5" aria-hidden />
-          Offer ends in 6 days
-        </>
-      ),
-      cta: "Renew now",
-    },
-  },
-  "rebuy-quarterly": {
-    label: "Rebuy · Quarterly",
-    bar: {
-      tone: "lapsed",
-      art: art("expired"),
-      hook: "Your plan ended 39 days ago",
-      headline: "Renew your quarterly plan at the same price",
-      points: ["1 job live at a time for 90 days", "600 database credits"],
-      price: { amount: "₹4,499", strike: "₹4,999", off: "10% OFF" },
-      deadline: (
-        <>
-          <Clock className="size-3.5" aria-hidden />
-          Offer ends in 6 days
-        </>
-      ),
-      cta: "Renew now",
-    },
-  },
-  "rebuy-annual": {
-    label: "Rebuy · Annual",
-    bar: {
-      tone: "lapsed",
-      art: art("expired"),
-      hook: "Your plan ended",
-      headline: "Renew your annual plan at the same price",
-      points: ["1 job live at a time for 365 days", "2,400 database credits"],
-      price: { amount: "₹9,999" },
-      cta: "Renew now",
-    },
-  },
-} satisfies Record<string, Template>
-
-export type OfferBarTemplate = keyof typeof OFFER_BAR_TEMPLATES
+/** The bars that sit on the plan card: everything but credits and festive. */
+export const PLAN_CARD_BARS = (Object.keys(OFFER_BANNERS) as OfferBannerCase[]).filter((k) => !k.startsWith("credits-") && !k.startsWith("festive-"))
 
 export function SubscriberPlanCard({
   template,
@@ -202,17 +40,16 @@ export function SubscriberPlanCard({
   className,
 }: {
   /** The bar on top; none, and the card starts at its plan row. */
-  template?: OfferBarTemplate | null
+  template?: OfferBannerCase | null
   validTill?: string
   className?: string
 }) {
-  const t = template ? OFFER_BAR_TEMPLATES[template] : null
-  const isMobile = useIsMobile()
+  const t = template ? OFFER_BANNERS[template] : null
   // A rebuy bar: the plan has already ended.
-  const ended = t?.bar && "tone" in t.bar && t.bar.tone === "lapsed"
+  const ended = t !== null && "tone" in t && t.tone === "renew"
   return (
     <Card padding="none" className={cn("gap-0 overflow-visible", className)}>
-      {t && <OfferBar {...t.bar} cta={cta(t.bar.cta, isMobile)} className="rounded-b-none" />}
+      {template && <OfferBannerFor bar={template} className="rounded-b-none" />}
       <div className="flex flex-col gap-4 p-4 md:p-6">
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
           <LogoApnaUnlimited variant="theme" className="h-4 w-auto text-foreground md:h-5" />

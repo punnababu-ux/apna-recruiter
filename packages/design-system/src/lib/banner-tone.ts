@@ -1,5 +1,5 @@
 /**
- * Shared tone maps for `AlertBanner` and `RenewalBanner` — kept in one place
+ * Shared tone maps for `AlertBanner` — kept in one place
  * so the two banner components can never drift on what "primary" vs
  * "secondary" appearance means for a given `Alert` variant. Not part of the
  * public API (not re-exported from the package root); each banner imports

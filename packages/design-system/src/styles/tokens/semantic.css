@@ -97,6 +97,11 @@
   /* Lapsed, on a dark surface: the salmon line of OfferBar's "lapsed" tone
    * (an expired plan). Dark surfaces are dark in both themes, so one value. */
   --lapsed-on-dark:        var(--color-red-400);
+  /* The saving (−10%) as text on a dark or green offer surface, where the
+   * plans page's dark green would vanish. Dark in both themes, so one value. */
+  /* Time pressure on a dark offer surface: "Limited time offer", "Offer ends in". */
+  --deadline-on-dark:      var(--color-red-100);  /* 5.3:1 on the chip at the bar's lightest (plum-400); red-300 was 3.4 */
+  --discount-on-dark:      var(--color-apna-green-300);
 
   /* --------------------------------------------------------------------------
    * Status roles — destructive, success, warning, info
@@ -744,6 +749,32 @@
   /* OfferBar (the subscriber's nudge on the plan card): a plain plum sweep,
    * no gold bloom, so the hook line's grey / amber / salmon all read. Always
    * dark, so the same value in both themes. */
+  /* Festive campaigns (Hiring Utsav): marigold dusk, gold to deep red to plum. Only on festive offers. */
+  /* OfferBar surfaces as soft mesh gradients: blurred colour pools over a
+     deep base, built like the hero mother gradient: wide ellipse washes that
+     fade in two steps, one neighbouring hue each, over a 135deg base, same palette as the linear ones (2026-11-12). */
+  --mesh-offer-subscription: radial-gradient(at 8% 0%, color-mix(in oklab, var(--color-apna-gold-500) 45%, transparent) 0%, transparent 40%), radial-gradient(at 30% 100%, color-mix(in oklab, var(--color-apna-plum-400) 90%, transparent) 0%, transparent 60%), radial-gradient(at 100% 0%, color-mix(in oklab, var(--color-apna-plum-600) 80%, transparent) 0%, transparent 55%), var(--color-apna-plum-950);
+  --mesh-offer-credits:
+    radial-gradient(ellipse 55% 90% at 0% 0%, color-mix(in oklab, var(--color-apna-green-500) 70%, transparent) 0%, color-mix(in oklab, var(--color-apna-green-500) 30%, transparent) 45%, transparent 100%),
+    radial-gradient(ellipse 40% 70% at 100% 100%, color-mix(in oklab, var(--color-apna-sky-500) 35%, transparent) 0%, color-mix(in oklab, var(--color-apna-sky-500) 15%, transparent) 45%, transparent 100%),
+    radial-gradient(ellipse 45% 80% at 70% 0%, color-mix(in oklab, var(--color-apna-green-300) 22%, transparent) 0%, color-mix(in oklab, var(--color-apna-green-300) 8%, transparent) 40%, transparent 100%),
+    radial-gradient(circle at 20% 110%, color-mix(in oklab, var(--color-apna-green-700) 60%, transparent) 0%, color-mix(in oklab, var(--color-apna-green-700) 25%, transparent) 30%, transparent 60%),
+    linear-gradient(135deg, var(--color-apna-green-950) 0%, var(--color-apna-green-900) 55%, var(--color-apna-green-950) 100%);
+  --mesh-offer-urgent:
+    radial-gradient(ellipse 55% 90% at 0% 0%, color-mix(in oklab, var(--color-red-500) 65%, transparent) 0%, color-mix(in oklab, var(--color-red-500) 28%, transparent) 45%, transparent 100%),
+    radial-gradient(ellipse 40% 75% at 100% 100%, color-mix(in oklab, var(--color-apna-plum-600) 45%, transparent) 0%, color-mix(in oklab, var(--color-apna-plum-600) 18%, transparent) 45%, transparent 100%),
+    radial-gradient(ellipse 40% 70% at 65% 0%, color-mix(in oklab, var(--color-apna-gold-500) 18%, transparent) 0%, color-mix(in oklab, var(--color-apna-gold-500) 6%, transparent) 40%, transparent 100%),
+    radial-gradient(circle at 25% 115%, color-mix(in oklab, var(--color-red-700) 60%, transparent) 0%, color-mix(in oklab, var(--color-red-700) 25%, transparent) 30%, transparent 60%),
+    linear-gradient(135deg, var(--color-red-950) 0%, var(--color-red-900) 55%, var(--color-red-950) 100%);
+  --mesh-offer-festive:
+    radial-gradient(ellipse 55% 95% at 0% 0%, color-mix(in oklab, var(--color-apna-gold-500) 75%, transparent) 0%, color-mix(in oklab, var(--color-apna-gold-500) 35%, transparent) 40%, transparent 100%),
+    radial-gradient(ellipse 45% 80% at 45% 110%, color-mix(in oklab, var(--color-red-600) 55%, transparent) 0%, color-mix(in oklab, var(--color-red-600) 22%, transparent) 45%, transparent 100%),
+    radial-gradient(ellipse 40% 80% at 100% 0%, color-mix(in oklab, var(--color-apna-plum-600) 45%, transparent) 0%, color-mix(in oklab, var(--color-apna-plum-600) 18%, transparent) 45%, transparent 100%),
+    radial-gradient(circle at 85% 100%, color-mix(in oklab, var(--color-red-800) 60%, transparent) 0%, color-mix(in oklab, var(--color-red-800) 25%, transparent) 30%, transparent 65%),
+    linear-gradient(135deg, var(--color-apna-plum-950) 0%, var(--color-red-950) 55%, var(--color-apna-plum-950) 100%);
+  /* Holi skin base (example, 2026-11-12): white, so pastel colour clouds stay light and dark text holds. */
+  --gradient-festive-holi: linear-gradient(110deg, var(--color-atmosphere-blush) 0%, var(--color-atmosphere-cream) 50%, var(--color-atmosphere-ice) 100%);
+  --gradient-festive: linear-gradient(110deg, var(--color-apna-gold-600) 0%, var(--color-red-800) 45%, var(--color-apna-plum-950) 100%);
   --gradient-offer-bar: linear-gradient(100deg, var(--color-apna-plum-400) 0%, var(--color-apna-plum-700) 50%, var(--color-apna-plum-950) 100%);
   --gradient-offer-premium:
     radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--color-apna-gold-500) 55%, transparent) 0%, transparent 55%),
