@@ -8,6 +8,16 @@ or **Open**.
 
 ---
 
+## apna Recruiter lockup: "Recruiter" tracked to match "apna" (2026-11-12)
+**Status: Decided** (Punna)
+
+- **Question:** "Recruiter" (Inter, outlined) looked loosely spaced beside the tight "apna" wordmark. How to balance them without touching the wordmark?
+- **Decision:** only the letter spacing of "Recruiter" changed, in two passes; Punna asked for the second, tighter one. Each letter moved left by 0.95 to 1.3 units per pair (about −4% to −5% of the type size), less for R–e (0.4) and t–e (0.6), which already sat close. Average gap 1.76 → 0.85 units, against 1.35 in "apna"; tighter than "apna" because the letters of "Recruiter" are wider and more open inside. The lockup is now 157×24 (was 165×24). The "apna" artwork, the gap between the words, and the weight and size of "Recruiter" are unchanged.
+- **Considered, not taken for now:** a heavier, narrower "Recruiter" (Inter Black squeezed to 92% matched "apna" best). Punna kept Inter Bold for now.
+- **Why:** measured, "Recruiter" had Inter's default text spacing, about 30% looser than the wordmark's. Two words in one lockup read as one mark only when their rhythm matches.
+- **Not done:** "Recruiter" is still lighter (stem 4.2 vs 4.6) and taller (capital R) than "apna"; that needs a heavier cut or a size change, a separate call. Figma's lockup component and the screenshot baselines are not updated.
+- **What would change it:** a brand-team lockup file; then that artwork replaces this.
+
 ## Saved-reels tips: a second review lens, never a rule source (2026-11-12)
 **Status: Decided** (Punna)
 
