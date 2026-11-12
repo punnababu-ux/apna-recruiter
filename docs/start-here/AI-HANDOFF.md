@@ -7,7 +7,11 @@ Gemini…) can pick up from here.
 > **Freeze (2026-11-05):** state of every stream, the needs-Punna list and
 > recurring reminders live in `docs/status/WORK-STREAMS.md`. Start there.
 
-> **Latest (2026-11-04):** the checkout is the focus. Express V11 and
+> **Latest (2026-11-12):** the new-recruiter journey, onboarding → job
+> posting → payment. `/onboarding` shipped (OTP `1111`); what's next and the
+> revenue findings are in `docs/history/SESSION-2026-11-12-ONBOARDING.md`.
+
+> **Earlier (2026-11-04):** the checkout is the focus. Express V11 and
 > self-checkout V14 are final (version switch removed; history in
 > `docs/history/SESSION-2026-10-30-CHECKOUT.md`, later calls in
 > `docs/history/SESSION-2026-11-03-CHECKOUT.md`). The design rules for it are all in
