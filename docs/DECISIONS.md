@@ -8,6 +8,23 @@ or **Open**.
 
 ---
 
+
+## 2026-11-12 — One look for "show more" buttons
+
+- **Question:** "More preferences" was a full-width outlined button; "More industries" and "More roles" were link buttons with a chevron. Which one?
+- **Decision:** the link button with a trailing chevron (down to open, up to close), left-aligned, for every in-place reveal. Fixed: More preferences, the candidate panel's "Show all N" and "+N more", OnlyRounds' "Show more" and "See more". Rule in AGENTS.md ("Same pattern, same component").
+- **Reason:** the same action drawn two ways in one flow reads as two different actions (Punna, 2026-11-12).
+- **Would change it:** a reveal that loads a large section might earn a bigger button; decide it for every case at once.
+- **Status:** Decided.
+
+## 2026-11-12 — "Finish setup" becomes "Add more details", only what posting skipped
+
+- **Question:** the after-posting list repeated Job location and Perks (both asked while posting) and was called "Finish setup", which sounds required.
+- **Decision:** renamed "Add more details" ("Optional. Your job is already live."). Rows: who candidates call, walk-in, questions for applicants, distance, gender/age and other preferences. Location and perks dropped; changing them goes through Edit. Pop-up bodies now scroll, so the buttons stay on screen on phones.
+- **Reason:** the job is live without it; asking again what was just answered wastes time (Punna, 2026-11-12).
+- **Would change it:** data showing recruiters fix wrong locations mostly from this list.
+- **Status:** Decided.
+
 ## apna Recruiter lockup: "Recruiter" tracked to match "apna" (2026-11-12)
 **Status: Decided** (Punna)
 

@@ -114,7 +114,7 @@ function jobBanner(job: ApnaJob, go: (path: string) => void, onFinishSetup: () =
         variant="info"
         icon={<ListChecks />}
         title={`${job.finishSetupLeft} optional ${job.finishSetupLeft === 1 ? "detail" : "details"} left to add.`}
-        action={{ label: "Finish setup", onClick: onFinishSetup }}
+        action={{ label: "Add more details", onClick: onFinishSetup }}
       />
     )
   switch (job.status) {

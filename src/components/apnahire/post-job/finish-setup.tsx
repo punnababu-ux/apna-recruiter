@@ -4,7 +4,7 @@
  * FinishSetup — PREVIEW ONLY (?flow=essential). The questions a job can go
  * live without, asked on the job-live screen while the first candidates are
  * still on their way: who they call, walk-in, questions for applicants,
- * perks. Each row shows the default that holds if it is never answered; a tap
+ * distance, preferences. Each row shows the default that holds if it is never answered; a tap
  * opens the same question the posting flow asks, in a pop-up.
  *
  * shortcut: answers stay in this component, wire them to the posted job
@@ -12,17 +12,18 @@
  */
 
 import * as React from "react"
-import { Button, Check, ChevronRight, DoorOpen, Gift, ListChecks, MapPin, Navigation, Sheet, SheetPanel, SheetPanelHeader, cn, Phone, Users } from "@apna/design-system"
+import { Button, Check, ChevronRight, DoorOpen, ListChecks, Navigation, Sheet, SheetPanel, SheetPanelHeader, cn, Phone, Users } from "@apna/design-system"
 import { PlanPopup, PopupBody, PopupFooter, PopupHeader } from "@/components/apnahire/plan-popup"
 import { DistanceField, SCREENS, type ScreenCtx, type ScreenId } from "@/components/apnahire/post-job/wizard-screens"
-import { distanceText, genderAgeLabel, locationLabel, normalizeDraft } from "@/lib/apnahire/job-draft"
+import { distanceText, genderAgeLabel, normalizeDraft } from "@/lib/apnahire/job-draft"
 import type { JobPostDraft } from "@/types/apnahire-job"
 
 /** Distance has no screen of its own: essential never asks it while posting. */
 const Distance = (ctx: ScreenCtx) => <DistanceField ctx={ctx} />
 
 // Each row shows its answer; the tick says it was saved. Two rows hold too
-// much for the row and show a count: preferences ("5 set") and perks ("4 perks").
+// much for the row and shows a count ("5 set"). Location and perks are asked
+// while posting, so they are not here; a change to them goes through Edit.
 const count = (n: number, one: string, many: string, none: string) => (n ? `${n} ${n === 1 ? one : many}` : none)
 const ROWS: { id: ScreenId | "distance"; label: string; icon: React.ReactNode; value: (d: JobPostDraft) => string }[] = [
   {
@@ -39,8 +40,6 @@ const ROWS: { id: ScreenId | "distance"; label: string; icon: React.ReactNode; v
     icon: <ListChecks aria-hidden />,
     value: (d) => (d.screeningQuestions.length ? `${d.screeningQuestions.length} added` : "None"),
   },
-  // One tap to correct a wrong pin or address (data bank §2d; not backed by §2f).
-  { id: "location", label: "Job location", icon: <MapPin aria-hidden />, value: (d) => locationLabel(d) ?? "Not set" },
   { id: "distance", label: "How far candidates can live", icon: <Navigation aria-hidden />, value: distanceText },
   // Gender and age shut candidates out, so they are never asked before posting.
   {
@@ -56,7 +55,6 @@ const ROWS: { id: ScreenId | "distance"; label: string; icon: React.ReactNode; v
         "Anyone",
       ),
   },
-  { id: "perks", label: "Perks", icon: <Gift aria-hidden />, value: (d) => count(d.perks.length, "perk", "perks", "None") },
 ]
 
 const noop = () => {}
@@ -122,9 +120,9 @@ export function FinishSetupPanel({ open, onOpenChange }: { open: boolean; onOpen
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetPanel>
         <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto bg-card py-4">
-          <SheetPanelHeader title="Finish setup" />
+          <SheetPanelHeader title="Add more details" />
           <p className="px-4 text-sm text-muted-foreground sm:px-5">
-            {saved?.draft.title ? `${saved.draft.title} · ` : ""}Optional. Your job works without it.
+            {saved?.draft.title ? `${saved.draft.title} · ` : ""}Optional. Your job is already live.
           </p>
           <div className="px-3 sm:px-4">
             {saved && <FinishSetup draft={saved.draft} initialDone={saved.done} plain />}
@@ -158,7 +156,7 @@ export function FinishSetup({
   initialDone = [],
   plain,
   persist = true,
-  title = "Finish setup",
+  title = "Add more details",
 }: {
   draft: Partial<JobPostDraft>
   initialDone?: RowId[]
@@ -230,8 +228,8 @@ export function FinishSetup({
     <div className={cn("flex w-full flex-col gap-2", !plain && "rounded-card-nested border border-border bg-muted/40 p-3 sm:p-4")}>
       {!plain && (
         <div className="flex flex-col gap-1 px-1">
-          <p className="text-sm font-semibold text-foreground">Finish setup</p>
-          <p className="text-xs text-muted-foreground">Optional. Your job works without it.</p>
+          <p className="text-sm font-semibold text-foreground">Add more details</p>
+          <p className="text-xs text-muted-foreground">Optional. Your job is already live.</p>
         </div>
       )}
       <ul className="flex flex-col">

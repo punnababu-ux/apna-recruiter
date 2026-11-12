@@ -64,6 +64,8 @@ import {
   StickyNote,
   Textarea,
   Unlock,
+  ChevronDown,
+  ChevronUp,
 } from "@apna/design-system"
 import { useChats } from "@/hooks/apnahire/use-chats"
 import { UNAVAILABLE_COPY, type ChatThread } from "@/content/chats"
@@ -229,10 +231,11 @@ export function CandidateProfilePanel({
               )}
               {(hiddenPoints > 0 || allPoints) && (
                 <Button
-                  variant="ghost"
+                  variant="link"
                   size="sm"
                   className="self-start"
                   aria-expanded={allPoints}
+                  trailingIcon={allPoints ? <ChevronUp aria-hidden /> : <ChevronDown aria-hidden />}
                   onClick={() => setAllPoints((v) => !v)}
                 >
                   {allPoints ? "Show fewer" : `Show all ${match.strengths.length + match.gaps.length}`}
@@ -266,7 +269,7 @@ export function CandidateProfilePanel({
                 </Badge>
               ))}
               {(hiddenSkills > 0 || allSkills) && (
-                <Button variant="ghost" size="sm" aria-expanded={allSkills} onClick={() => setAllSkills((v) => !v)}>
+                <Button variant="link" size="sm" aria-expanded={allSkills} trailingIcon={allSkills ? <ChevronUp aria-hidden /> : <ChevronDown aria-hidden />} onClick={() => setAllSkills((v) => !v)}>
                   {allSkills ? "Show fewer" : `+${hiddenSkills} more`}
                 </Button>
               )}

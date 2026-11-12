@@ -10,7 +10,7 @@
  *      AI rounds also surface a "Test AI" CTA that opens the testing page.
  */
 
-import { Bot, Briefcase, Building2, CalendarDays, CircleCheck, Clock, ExternalLink, FileText, GraduationCap, IndianRupee, Languages, Laptop, ListTodo, MapPin, MessageCircleQuestion, Mic, Phone, StickyNote, User, UserCheck, UserPlus, Video } from "@apna/design-system"
+import { Bot, ChevronDown, ChevronUp, Briefcase, Building2, CalendarDays, CircleCheck, Clock, ExternalLink, FileText, GraduationCap, IndianRupee, Languages, Laptop, ListTodo, MapPin, MessageCircleQuestion, Mic, Phone, StickyNote, User, UserCheck, UserPlus, Video } from "@apna/design-system"
 import * as React from "react"
 
 import {
@@ -92,7 +92,7 @@ function CollapsibleJd({ jd }: { jd: string }) {
       <p className={cn("whitespace-pre-wrap text-sm text-foreground", !expanded && "line-clamp-6")}>
         {jd}
       </p>
-      <Button type="button" variant="link" size="sm" className="self-start" onClick={() => setExpanded(!expanded)}>
+      <Button type="button" variant="link" size="sm" className="self-start" onClick={() => setExpanded(!expanded)} trailingIcon={expanded ? <ChevronUp aria-hidden /> : <ChevronDown aria-hidden />}>
         {expanded ? "Show less" : "Show more"}
       </Button>
     </div>

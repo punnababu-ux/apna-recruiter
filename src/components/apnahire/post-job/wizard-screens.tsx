@@ -1690,8 +1690,9 @@ function Preferences(ctx: ScreenCtx) {
         )}
       </Accordion>
       {!more && (
-        <Button type="button" variant="outline" size="lg" onClick={() => setMore(true)}>
+        <Button type="button" variant="link" className="self-start" onClick={() => setMore(true)}>
           More preferences
+          <ChevronDown aria-hidden />
         </Button>
       )}
     </>

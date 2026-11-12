@@ -1,6 +1,6 @@
 "use client"
 
-import { Briefcase, FileText, Sparkles, X, Paperclip, RotateCcw, ArrowRight } from "@apna/design-system"
+import { Briefcase, ChevronDown, ChevronUp, FileText, Sparkles, X, Paperclip, RotateCcw, ArrowRight } from "@apna/design-system"
 import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { Field as UIField, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field"
@@ -237,7 +237,7 @@ export function DescriptionStep({
                       &rdquo;
                     </div>
                     {form.promptText.length > 180 ? (
-                      <Button type="button" variant="link" size="sm" className="self-start" onClick={() => setShowAllPrompt(!showAllPrompt)}>
+                      <Button type="button" variant="link" size="sm" className="self-start" onClick={() => setShowAllPrompt(!showAllPrompt)} trailingIcon={showAllPrompt ? <ChevronUp aria-hidden /> : <ChevronDown aria-hidden />}>
                         {showAllPrompt ? "See less" : "See more"}
                       </Button>
                     ) : null}

@@ -118,7 +118,7 @@ export function PopupHeader({
 }
 
 export function PopupBody({ className, children }: { className?: string; children: React.ReactNode }) {
-  return <div className={cn("flex flex-col gap-4 px-5 py-5 sm:px-6", className)}>{children}</div>
+  return <div className={cn("flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-5 py-5 sm:px-6", className)}>{children}</div>
 }
 
 /** The action row (AGENTS.md "CTAs in a pop-up"): side by side, secondary

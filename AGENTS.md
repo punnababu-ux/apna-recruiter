@@ -382,6 +382,13 @@ that is a defect even when each looks fine alone. The shared ones:
   pill next to a round one is the same control drawn twice.
 - **Phone chip rows**: `MobileChipRow` / `SectionChips`, the self-checkout
   styling.
+- **"Show more" buttons** (user call, 2026-11-12): a button that reveals
+  more of the same list or text in place ("More industries", "More roles",
+  "More preferences", "Show more", "Show all 6", "+3 more") is one look:
+  `Button variant="link"`, `self-start`, a trailing `ChevronDown`
+  (`ChevronUp` once it can collapse again). Never an outlined or ghost
+  box, never full width. A button that goes somewhere else ("View all
+  leads") is a link to a page, not this.
 
 The phone apna Unlimited card (`MobileUnlimitedCard`) is titled "Unlimited
 monthly plan" in both checkouts (user call, 2026-10-30). It is not one of
