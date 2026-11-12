@@ -19,6 +19,7 @@ Last updated 2026-11-11.
 | S8 | Mixpanel "Old users New jobs – posting funnel 1" (screenshot from Punna) | Sessions through the live form, new against existing recruiters | 3 months to 11 Nov 2026 | 95,150 new + 57,340 existing sessions | Not split by device; how "existing" is defined not stated |
 | S9 | "Edited fields" chart (screenshot from Punna) | Count of edits per job field, top 11 | not stated | 15.7k–18.2k per field | No window, no denominator; may count fields rewritten on any edit |
 | S10 | Mixpanel posting funnel, recruiters with credits (screenshot from Punna) | Sessions through the live form | 3 months to 11 Nov 2026 | 11,510 sessions | Not split by device or user type |
+| S11 | "Edited fields by job lifecycle" table (screenshot from Punna, 2026-11-12; Punna: accurate) | Job lifecycles in which each field was edited, 16 fields | not stated | about 35,560 lifecycles (worked back from the shares) | No window; what a lifecycle is and whether the base is all jobs or edited jobs not stated; no location fields in it |
 | S7 | Live form, read on employer.apna.co | The 29 fields live asks | 11 Nov 2026 | — | Desktop only; distance choices not opened |
 
 ## 2. The live funnel (S3)
@@ -162,6 +163,47 @@ counts as an edit, and the denominator are not stated.
 - **Not in the top 11:** walk-in, contact, who can contact, perks. So this
   chart neither backs nor breaks "after posting" for them.
 
+## 2f. Edited fields by job lifecycle (S11)
+
+Table from Punna, 2026-11-12, given as the accurate edited-fields data. A
+"lifecycle" is one job from posting on; the share is of about 35,560
+lifecycles (13,479 ÷ 37.9%). A lifecycle can edit several fields.
+
+| Field | Lifecycles | Share |
+|---|---|---|
+| Maximum salary | 13,479 | 37.9% |
+| Minimum salary | 9,522 | 26.8% |
+| Minimum experience | 9,064 | 25.5% |
+| Education | 8,726 | 24.5% |
+| English requirement | 7,993 | 22.5% |
+| Title | 7,247 | 20.4% |
+| WhatsApp alert | 4,682 | 13.2% |
+| Sub-department | 4,619 | 13.0% |
+| Gender | 4,025 | 11.3% |
+| Department | 2,847 | 8.0% |
+| Walk-in | 2,182 | 6.1% |
+| Maximum experience | 1,566 | 4.4% |
+| Shift | 904 | 2.5% |
+| Part-time | 885 | 2.5% |
+| Work from home | 428 | 1.2% |
+| Openings | 8 | <0.1% |
+
+- **Pay is edited most.** Maximum salary in 38% of lifecycles, minimum in
+  27%. The direction (raised or lowered) is not in the table.
+- **"Who can apply" comes next.** Minimum experience, education and English,
+  each in 22–26%. Recruiters revise requirements after posting.
+- **The job's identity is edited too.** Title in 20%, sub-department (our job
+  role) in 13%, department in 8%.
+- **Walk-in is edited in 6%; gender in 11%.**
+- **No location field is in this table.** §2d (S9) shows only location
+  fields. The two do not share a field, so they likely come from different
+  logs: S9 counts raw field writes, S11 counts jobs where a recruiter changed
+  a value. Until that is confirmed, S11 is the one to rely on (Punna:
+  accurate), and S9 does not prove recruiters correct locations.
+- **Not known:** the window; whether the base is every job or only edited
+  jobs; when in the job's life the edit happens (before or after the first
+  applicant); whether an edit is by the recruiter or by apna's review team.
+
 ## 3. Time to post (S4)
 
 Step 1 to Review, by share of sessions:
@@ -293,10 +335,11 @@ counts are lower. Not re-counted.
 | Languages: not asked; read from the description | Required on 16% of support jobs, under 9% elsewhere (§6) | Strong |
 | Degree: not asked | Set by 3% or less in search (§7) | Weak: search data |
 | Distance: kept, default any, changed after posting | The most-set search filter, 38.6% (§7) | Weak: search data; no posting data |
-| Perks, walk-in, contact after posting | Live lets recruiters edit step 3 after posting (Punna) | Weak: not in the top edited fields (§2d) |
-| Location is asked with care: one place, a map, popular areas, manual entry | Job location and walk-in location are the most edited fields (§2d) | Medium: no window or denominator |
-| "Job location" row in Finish setup | Job location is among the most edited fields (§2d) | Medium |
-| Walk-in details after posting, in Finish setup | The walk-in location is among the most edited fields, so it is changed after the fact anyway (§2d) | Medium |
+| Perks, walk-in, contact after posting | Live lets recruiters edit step 3 after posting (Punna); walk-in edited in 6.1% (§2f); perks and contact not in §2f | Weak |
+| Location is asked with care: one place, a map, popular areas, manual entry | §2d shows location fields written most, but S11 (§2f) has no location field | Weak until the two sources are reconciled |
+| "Job location" row in Finish setup | §2d only; not backed by §2f | Weak |
+| Walk-in details after posting, in Finish setup | Walk-in is edited in 6.1% of lifecycles (§2f), so it is changed after the fact | Medium |
+| The edit flow must allow pay, experience, education, English and title | Edited in 20–38% of lifecycles (§2f) | Strong, direction and timing unknown |
 | Prioritise telesales, field sales, cook, accounting in testing | They lead hand-posted jobs; delivery is 85% high-volume organisations (§4) | Medium: proxy |
 
 ## 10. What the data says we have not solved
@@ -315,6 +358,11 @@ counts are lower. Not re-counted.
   early in the form. Not tested; the risk is fewer people starting.
 - **Confirmed by §2b:** existing recruiters click pay at 76.3% against
   31.1% for new ones, and still lose 13.8% at step 1.
+- **Requirements are revised after posting.** Experience, education and
+  English each change in 22–26% of lifecycles, and pay in 27–38% (§2f). Either
+  the first answers were wrong, or recruiters tune them once they see who
+  applies. Essential's role defaults could raise or lower this; it is a
+  number to watch, and the edit flow has to make these changes easy.
 - **The role settings cover a minority.** The top 12 roles are about 39% of
   hand-posted jobs (§4).
 

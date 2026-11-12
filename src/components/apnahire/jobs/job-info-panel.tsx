@@ -30,6 +30,7 @@ import {
   Star,
 } from "@apna/design-system"
 import { JobSetup } from "@/components/apnahire/post-job/finish-setup"
+import { JobTitleEdit } from "@/components/apnahire/jobs/job-title-edit"
 import type { ApnaJob } from "@/components/apnahire/jobs/job-list"
 
 const EDIT_HREF = "/apnahire/jobs/new?resume=1"
@@ -102,6 +103,8 @@ export function JobInfoPanel({
           </Section>
 
           <Section title="Job details">
+            {/* PREVIEW (?titleedit=1): the title, edited within its job role. */}
+            <JobTitleEdit job={job} />
             <button
               type="button"
               onClick={() => router.push(EDIT_HREF)}

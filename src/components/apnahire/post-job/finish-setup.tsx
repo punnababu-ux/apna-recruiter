@@ -39,7 +39,7 @@ const ROWS: { id: ScreenId | "distance"; label: string; icon: React.ReactNode; v
     icon: <ListChecks aria-hidden />,
     value: (d) => (d.screeningQuestions.length ? `${d.screeningQuestions.length} added` : "None"),
   },
-  // The most edited field on live (data bank §2d): one tap to correct it.
+  // One tap to correct a wrong pin or address (data bank §2d; not backed by §2f).
   { id: "location", label: "Job location", icon: <MapPin aria-hidden />, value: (d) => locationLabel(d) ?? "Not set" },
   { id: "distance", label: "How far candidates can live", icon: <Navigation aria-hidden />, value: distanceText },
   // Gender and age shut candidates out, so they are never asked before posting.

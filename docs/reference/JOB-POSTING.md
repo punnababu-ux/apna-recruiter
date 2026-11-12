@@ -61,6 +61,20 @@ Last updated 2026-11-11.
   the AI picks a role the title rule disagrees with, so "Role looks like
   Telesales" shows on page 1 and Review.
 
+## Preview: pay hint (`?payhint=1`, 2026-11-12)
+
+On the salary question, in either flow: "Similar delivery jobs pay ₹18,000 to
+₹26,000 a month", a warning when the pay looks low and a note when it looks
+high. Sample ranges per job role (`TYPICAL_PAY`), no city. Why: DECISIONS.md,
+"Editing a job after applications start".
+
+## Preview: title edit (`?titleedit=1`, 2026-11-12)
+
+Job details, ⋮ "About this job" → "Job title · Edit" (`JobTitleEdit`). A close
+title saves; a title in another job role gets an AI note with close titles
+and "Post it as a new job". Try `/apnahire/jobs/telecaller-koramangala?titleedit=1`
+and type "Field sales executive".
+
 ## Preview: essential flow (`?flow=essential`, 2026-11-10)
 - **Asks:** title; workplace and location; salary (joining fee as a line with
   Change); "Who can apply". Desktop 2 pages; phones one question per screen

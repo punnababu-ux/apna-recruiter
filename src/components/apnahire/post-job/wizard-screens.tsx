@@ -157,6 +157,7 @@ import {
   distanceText,
 } from "@/lib/apnahire/job-draft"
 import { cn } from "@/lib/utils"
+import { useClientSnapshot } from "@/hooks/use-client-snapshot"
 import { useJobSlots } from "@/hooks/use-job-slots"
 import type { JobPostDraft, JobType, PayType } from "@/types/apnahire-job"
 import { inr, num } from "@/lib/format"
@@ -1171,6 +1172,50 @@ function PayTypePicker({ draft, update }: Pick<ScreenCtx, "draft" | "update">) {
   )
 }
 
+// PREVIEW ONLY (?payhint=1): says when the pay looks low or high for the job
+// role, so the first number is right and needs no edit after posting.
+// shortcut: sample monthly ranges per role, no city; replace with live pay
+// by role and city (Ana) before this ships.
+const TYPICAL_PAY: Record<string, [number, number]> = {
+  Telesales: [15000, 22000],
+  "Customer Support": [16000, 25000],
+  "Field Sales": [18000, 28000],
+  Delivery: [18000, 26000],
+  "Back Office": [15000, 22000],
+  Accounts: [20000, 32000],
+  Driver: [18000, 25000],
+  Teaching: [15000, 28000],
+  "Cook / Chef": [16000, 25000],
+  Security: [14000, 20000],
+  Housekeeping: [12000, 18000],
+  "Retail Sales": [14000, 22000],
+  "Inside Sales": [20000, 32000],
+  "Business Development": [22000, 38000],
+  "Loan Sales": [18000, 28000],
+  "Front Office": [15000, 22000],
+  "Restaurant Staff": [14000, 20000],
+  "Warehouse & Logistics": [15000, 22000],
+}
+const readPayHint = () => new URLSearchParams(window.location.search).get("payhint") === "1"
+
+function PayHint({ draft }: { draft: JobPostDraft }) {
+  const on = useClientSnapshot(readPayHint, false)
+  const typical = TYPICAL_PAY[draft.category]
+  if (!on || !typical || draft.salaryMin == null || draft.salaryMax == null) return null
+  const mid = (draft.salaryMin + draft.salaryMax) / 2
+  const similar = `Similar ${draft.category.toLowerCase()} jobs pay ${inr(typical[0])} to ${inr(typical[1])} a month.`
+  if (mid >= typical[0] && mid <= typical[1]) return <p className="text-sm text-muted-foreground">{similar}</p>
+  const low = mid < typical[0]
+  return (
+    <Alert variant={low ? "warning" : "info"}>
+      <AlertTitle>{low ? "Pay looks low for this role" : "Pay looks high for this role"}</AlertTitle>
+      <AlertDescription>
+        {similar} {low ? "You cannot change pay after you post." : "Check that the amount is for one month."}
+      </AlertDescription>
+    </Alert>
+  )
+}
+
 function Salary(ctx: ScreenCtx) {
   const { draft, update } = ctx
   const fixed = draft.payType === "fixed" || draft.payType === "fixed_incentive"
@@ -1232,6 +1277,7 @@ function Salary(ctx: ScreenCtx) {
               {err}
             </p>
           )}
+          {!err && <PayHint draft={draft} />}
         </div>
       )}
       {incentive && (
