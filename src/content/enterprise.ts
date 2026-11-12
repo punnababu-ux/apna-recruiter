@@ -88,7 +88,7 @@ export const ENTERPRISE = {
     cta: "Download Playbook",
     href: "https://apna.co/genzplaybook#download",
     /** The cover as a 3D clay object (Punna, 2026-10-17), title spelled right. */
-    image: "/images/enterprise/genz-playbook-clay.png",
+    image: "/images/enterprise/genz-playbook-clay-v2.png",
   },
   testimonials: {
     title: "Customer testimonials",

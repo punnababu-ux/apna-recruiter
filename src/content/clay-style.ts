@@ -195,9 +195,9 @@ export const CLAY_EXAMPLES: ClayExample[] = [
  */
 export const CLAY_TEXT_EXCEPTION: ClayExample = {
   name: "Book cover (the Gen Z playbook)",
-  file: "genz-playbook-clay",
+  file: "genz-playbook-clay-v2",
   subject:
-    "a thick rounded clay hardback book standing upright at a slight three-quarter angle, chunky soft edges and a visible off-white page block on the side. Smooth deep plum clay cover with the title raised in off-white clay letters, exactly: “The India Gen Z Talent Playbook”, in four lines: “The India” / “Gen Z” / “Talent” / “Playbook”. Bold, rounded, evenly spaced letters, correctly spelled. Nothing else on the cover: no other text, no numbers, no logos.",
+    "a chunky rounded clay hardback book leaning back at a playful angle, as if just tossed on a desk, with soft pillowy edges and a thick off-white page block. Mint clay cover with two words raised in deep plum clay letters, exactly: “Gen Z” on the first line, “Playbook” on the second, big, bold and rounded, correctly spelled. A warm yellow ribbon bookmark hangs out of the pages, and three small sticker-like clay shapes sit on the cover corner: a sky blue lightning bolt, a warm yellow star and a tiny deep plum heart. Nothing else on the cover: no other text, no numbers, no logos.",
   note: "Drop “no text” from the style block for this one only.",
 }
 
