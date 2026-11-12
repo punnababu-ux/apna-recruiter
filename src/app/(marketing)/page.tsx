@@ -115,7 +115,7 @@ export default function HomePage() {
             view (HeroScreen), then the stats. */}
         <Section
           size="lg"
-          className={cn("relative flex flex-col pb-8 max-md:pt-6 md:pb-10", HERO_FULL_SCREEN_PHONE)}
+          className={cn("relative flex flex-col pb-8 max-md:pt-6 md:pt-16 md:pb-10", HERO_FULL_SCREEN_PHONE)}
           innerClassName="flex flex-1 flex-col"
         >
           <div className="flex flex-1 flex-col items-center gap-8 text-center md:gap-10">
@@ -156,7 +156,7 @@ export default function HomePage() {
               <HeroLeadForm />
             </div>
 
-            <HeroScreen className="mt-6 md:mt-10" />
+            <HeroScreen className="mt-6 md:mt-2" />
 
             <dl className="grid w-full grid-cols-3 gap-4 sm:flex sm:w-auto sm:flex-wrap sm:justify-center sm:gap-x-16 sm:gap-y-6">
               {HOME_HERO.stats.map((stat) => (
