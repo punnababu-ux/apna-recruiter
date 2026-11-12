@@ -1187,6 +1187,23 @@ original file keeps its path and exports; the parts go in a sibling folder.
 
 ---
 
+## Reels design library — a second lens (Punna, 2026-11-12)
+
+Design, Claude and dev tips from Punna's saved reels live in the
+`reels-design-library` skill (`.claude/skills/reels-design-library/`): eight
+principles, a quick review lens, references, palettes, motion values and a
+tools table, each with what was and was not verified.
+
+- **Before designing:** read its eight principles; name the ones that apply.
+- **Before showing a change:** run its review lens with Sumit's lenses
+  (`design-variants`, section 1c).
+- **It never overrides this file or `docs/DECISIONS.md`.** Its component
+  libraries are ideas only: rebuild on tokens. Items under "Not verified" are
+  never stated as fact.
+- **New reel:** follow "Adding a reel" in the skill.
+
+---
+
 ## Choice and emphasis — Hick's law and the Von Restorff effect
 
 Two laws behind the "one primary CTA" rule. Use them when you decide how

@@ -220,6 +220,15 @@ from blue round to pink.
 Check with a quick script: hue (HLS) of each stop and blob, and WCAG
 contrast of each stop on each blob, before showing the result.
 
+## 1c. Reels library lens (2026-11-12)
+
+After Sumit's lenses, run the quick review lens from the
+`reels-design-library` skill (`.claude/skills/reels-design-library/SKILL.md`):
+where the eye lands first, how many places use the accent, how many type
+sizes, a job for every colour, motion length, and whether the choice can be
+explained by mechanism. One line each: holds / fails, and the fix. AGENTS.md
+and Sumit's lenses win where they disagree.
+
 ## 2. Every idea is a new version
 
 - Checkouts: the V1–V14 switch was retired 2026-11-02 (express V11 and

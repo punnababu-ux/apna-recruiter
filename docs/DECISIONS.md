@@ -8,6 +8,17 @@ or **Open**.
 
 ---
 
+## Saved-reels tips: a second review lens, never a rule source (2026-11-12)
+**Status: Decided** (Punna)
+
+- **Question:** Punna collected design, Claude and dev tips from saved Instagram reels (Meta AI summaries). How should they shape the work?
+- **Decision:** they live in the `reels-design-library` skill (`.claude/skills/reels-design-library/`). Its eight principles are read before designing; its review lens runs with Sumit's lenses before a change is shown (`design-variants`, 1c). AGENTS.md and this log win where they disagree.
+- **Why:** the reels mostly restate rules we already hold (one green per surface, few type sizes, short motion), so they work as a check and as outside backing, not as new rules. Meta AI summaries were wrong in places (SQL injection figure, WCAG line height, Thinking Orbs platforms), so nothing from them is a rule until checked.
+- **Not verified:** listed in the skill under "Not verified"; those items are never stated as fact or recommended.
+- **What would change it:** a reel tip that contradicts a rule here and tests better on a real screen; then it is logged as its own decision.
+
+---
+
 ## Editing a job after applications start: what may change (2026-11-12)
 **Status: Open** (to circle back; Punna)
 

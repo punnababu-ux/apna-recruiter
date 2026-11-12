@@ -1,0 +1,154 @@
+<title>Saved Reels Library</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: one reading column; principles first, then a filterable index of every reel. One loud colour (cobalt) only on what you click. */
+:root{
+  --paper:#F3F4F6; --card:#FFFFFF; --ink:#14171F; --muted:#5B6270; --line:#DDE0E6;
+  --signal:#315BCE; --signal-ink:#FFFFFF; --signal-soft:#E4EAFA;
+  --ok:#1F7A4D; --ok-soft:#E3F3EA; --warn:#8A5A00; --warn-soft:#FBF0D9; --bad:#A3271E; --bad-soft:#FBE4E1;
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"Inter",ui-sans-serif,system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0F1117; --card:#171A22; --ink:#E8EAF0; --muted:#9AA1AE; --line:#2A2F3A;
+  --signal:#7C9BF0; --signal-ink:#0F1117; --signal-soft:#1D2742;
+  --ok:#6FCF9B; --ok-soft:#14281D; --warn:#E9B85C; --warn-soft:#2B2312; --bad:#F08A80; --bad-soft:#2E1715; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0F1117; --card:#171A22; --ink:#E8EAF0; --muted:#9AA1AE; --line:#2A2F3A;
+  --signal:#7C9BF0; --signal-ink:#0F1117; --signal-soft:#1D2742;
+  --ok:#6FCF9B; --ok-soft:#14281D; --warn:#E9B85C; --warn-soft:#2B2312; --bad:#F08A80; --bad-soft:#2E1715; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font:15px/1.55 var(--body)}
+.wrap{max-width:880px;margin:0 auto;padding-block:40px 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:40px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
+h1{font-size:clamp(2.2rem,6vw,3.4rem);font-weight:800;line-height:1;letter-spacing:-.02em}
+h2{font-size:1.5rem;font-weight:800}
+h3{font-size:1.05rem;font-weight:600;line-height:1.3}
+p{margin:0}
+.lede{color:var(--muted);max-width:62ch}
+.head{display:flex;flex-direction:column;gap:16px}
+.stats{display:flex;flex-wrap:wrap;gap:8px 24px;font-family:var(--mono);font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.stats b{color:var(--ink)}
+section{display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.principles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px}
+.pr{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.pr p{color:var(--muted);font-size:.9rem}
+.src{font-family:var(--mono);font-size:.72rem;color:var(--muted)}
+.tools{display:flex;flex-direction:column;gap:12px;position:sticky;top:env(safe-area-inset-top,0px);background:var(--paper);padding-block:12px;z-index:5;border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+input[type=search]{width:100%;font:inherit;font-size:16px;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+input[type=search]:focus-visible,.chip:focus-visible{outline:2px solid var(--signal);outline-offset:2px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:500 .82rem var(--body);padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--signal);color:var(--signal-ink);border-color:var(--signal)}
+.count{font-family:var(--mono);font-size:.78rem;color:var(--muted)}
+.list{display:flex;flex-direction:column;gap:12px}
+.e{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.e .top{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.who{font-size:.85rem;color:var(--muted)}
+.tag{font-family:var(--mono);font-size:.7rem;padding:2px 8px;border-radius:6px;background:var(--signal-soft);color:var(--ink)}
+.trust{font-family:var(--mono);font-size:.7rem;padding:2px 8px;border-radius:6px}
+.t-ok{background:var(--ok-soft);color:var(--ok)}.t-warn{background:var(--warn-soft);color:var(--warn)}.t-bad{background:var(--bad-soft);color:var(--bad)}
+ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.note{font-size:.88rem;padding:8px 12px;border-radius:8px;background:var(--paper)}
+.note b{font-weight:600}
+code{font-family:var(--mono);font-size:.82em}
+.empty{color:var(--muted);text-align:center;padding:24px}
+@media (prefers-reduced-motion:no-preference){.chip{transition:background-color .15s,color .15s}}
+</style>
+
+<div class="wrap">
+  <header class="head">
+    <span class="eyebrow">Instagram saved reels · summarised with Meta AI · checked where possible</span>
+    <h1>Saved Reels Library</h1>
+    <p class="lede">Every design, Claude and dev tip from the saved reels, sorted by topic. Repeats are merged, doubtful claims are flagged, and each entry says how it applies to Apna.</p>
+    <div class="stats" id="stats"></div>
+  </header>
+
+  <section>
+    <span class="eyebrow">What the reels agree on</span>
+    <h2>Principles</h2>
+    <div class="principles" id="principles"></div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Every reel</span>
+    <h2>Index</h2>
+    <div class="tools">
+      <label for="q" class="eyebrow">Search</label>
+      <input id="q" type="search" placeholder="Search creators, tools, tips…" autocomplete="off">
+      <div class="chips" id="chips" role="group" aria-label="Filter by topic"></div>
+      <span class="count" id="count" aria-live="polite"></span>
+    </div>
+    <div class="list" id="list"></div>
+  </section>
+</div>
+
+<script>
+const PRINCIPLES=[
+ ["One loud colour","Two quiet colours carry the page; one saturated accent goes only on what you want clicked. If the accent is in 20 components, the rule is broken.","Quanova ×2, Ayo Omolewa, Nunes / Ryan Naghibzadeh (shared template), Diego Aranda, Marcelo Cedeno"],
+ ["Brief Claude like a junior","Vague words (\"modern, professional\") get generic output. Give references, a style guide or a design system, and name the one thing to borrow.","Alex Yates, Omar Farook, Aminul Islam, Vishal Kumar"],
+ ["Few type sizes, real hierarchy","Three sizes or fewer per screen. Get hierarchy from weight, colour, spacing and position first. Line height shrinks as text grows.","Matt D. Smith, Maxwell Gomes, font pairing sheet"],
+ ["Taste is trained","Look at real, high-quality work daily: archives, real app flows, fonts in use. Not AI mockups.","Abhay, Aevy, Aminul Islam"],
+ ["Name the mechanism","Explain why a visual works (contrast, scale, metaphor), not just its style. It defends choices and directs AI.","Jason Murray ×2, Maxwell Gomes (Swiss style)"],
+ ["Motion is short and purposeful","150–250ms, ease-out in, shorter exits, no bounce on everyday UI, always honour reduced motion.","Charles Liu, Marcelo Cedeno, Thinking Orbs"],
+ ["Pick a style on purpose","One main style plus one support (~70/30). Style is the first impression, chosen by audience.","Strategy Fox, 20-styles reel"],
+ ["Never trust input","Parameterise every query, keep keys out of the frontend, cap AI spend, rate-limit. AI code gets reviewed like a junior's PR.","Peter A Surowski, Alex Yates"]
+];
+const E=[
+ {t:"Colour",who:"Quanova AI",title:"60-30-10 colour rule (two reels)",pts:["60% background, 30% structure and text, 10% accent for CTAs","Landing page: chalk #F2F1EE, onyx #121214, accents tangerine #FF8A1C, violet #7B4DFF, mint #22E3A2","Keyboard: oat + forest + tomato; navy + powder blue + sunflower; blush + charcoal + mint"],apna:"Same idea as one green per surface and Von Restorff.",chk:"Tangerine and mint fail contrast as text on the light background.",tr:"warn"},
+ {t:"Colour",who:"Nunes · Ryan Naghibzadeh",title:"Quiet vs loud (one template, several accounts)",pts:["Two muted colours + one saturated accent","Design in greyscale first; colour won't fix a layout that doesn't read","Match saturation: a muted base needs a muted accent"],apna:"Backs one green per surface, but count it as one voice: the same reel is reposted.",chk:"4.5:1 is for text; a button fill needs 3:1 against its surroundings.",tr:"warn"},
+ {t:"Colour",who:"Diego Aranda",title:"60/30/10 with a \"weird\" accent",pts:["Black + white + lime #C8F432","Navy #14213D + cream #F4EDE0 + coral #FF6B5B","Forest #1F302B + sand #E8DCC4 + purple #B85CF6","Count visual weight, not area; real sites land near 80/15/5"],apna:"Could become a check: count green CTA tokens per screen.",chk:"Lime fails as text on white.",tr:"warn"},
+ {t:"Colour",who:"Ayo Omolewa",title:"Three rules so a mobile app doesn't look flat",pts:["Three planes: background text, subject, buttons on top","One signal colour, only on tappable things","Huge vs tiny sizes, skip the middle"],apna:"Apna is stricter in a better way: green for the one primary, emphasis/outline/link for the rest.",chk:"You still need a button hierarchy, not one colour for all taps.",tr:"warn"},
+ {t:"Colour",who:"Maxwell Gomes",title:"Tint, tone, shade",pts:["Tint = + white, tone = + grey, shade = + black","A 50–950 ramp runs from tints to shades"],apna:"Apna's ramps and -subtle fills already follow this.",chk:"The book shown could not be confirmed as Albers' Interaction of Color.",tr:"ok"},
+ {t:"Colour",who:"Ryyze Academy",title:"Palette from the golden angle (137.5°)",pts:["Main #FFC300 → accent #449D8F → neutral #9A8B45 → contrast #2F4F4B","Roles: main, accent, neutral, contrast"],apna:"Keep the four roles; skip the maths.",chk:"The example turns ~124°, not 137.5°, and it isn't split-complementary.",tr:"bad"},
+ {t:"Colour",who:"Marcelo Cedeno",title:"\"POV: you mastered colour theory\"",pts:["Crest (finance): burnt orange, peach, burgundy","Kai Rennard: teals and tans · Emberline: reds/oranges · Orvane: night blue + beige"],apna:"Warm finance colours: an example of going against the category.",chk:"Showcase only; theory is Meta AI's; no hex codes.",tr:"warn"},
+ {t:"Palettes",who:"Alena",title:"Four mood palettes in Pantone",pts:["Autumn: dark green, orange, white","Swamp: swamp green, chive blossom, rose red","Yummy anchovy: chocolate plum, popcorn, cerulean","Flower market: vanilla custard, flamingo pink, brandy brown"],apna:"Marketing or clay colours only.",chk:"Pantone codes are print/textile; convert before UI use. Cloud Dancer as Colour of the Year 2026 is confirmed.",tr:"ok"},
+ {t:"Palettes",who:"Mange Marketing",title:"Three luxury palettes",pts:["Velvet plum: mint #C6F0E4 + plum #64165D, #8A176E","Forest luxe: champagne #D8C19A, gold #B78B45, forest #123B2C","Cobalt noir: silver #B7C1CC, cobalt #315BCE, navy #17264F"],apna:"Close to Apna's plum gradient and gold Unlimited cues.",chk:"Plum Noir is in Pinterest's 2026 palette. The Harper's Bazaar cobalt quote is secondhand only.",tr:"ok"},
+ {t:"Typography",who:"Matt D. Smith (Shift Nudge)",title:"Design principles part 1: typography",pts:["Five attributes: size, weight, line height, width, alignment","Three type sizes or fewer per screen","All 16 principles exist as a Claude skill file (comment \"16\")"],apna:"Menu type scale already uses three styles; audit screens for more.",chk:"Float label credit confirmed (his Dribbble post, 2013).",tr:"ok"},
+ {t:"Typography",who:"Maxwell Gomes",title:"A formula for leading",pts:["Body 1.5 · subheads 1.25 · headings 1.0 · big titles 0.9","Long lines need more; short lines can go to ~1.3","Use unitless line-height"],apna:"Compare text-h1…h6 and text-body line heights against this.",chk:"WCAG 2.1 AA doesn't require 1.5; that's AAA.",tr:"warn"},
+ {t:"Typography",who:"Unknown (image)",title:"Font pairing cheat sheet",pts:["12 heading + body pairs, e.g. Fraunces + Inter, Quicksand + Nunito, Cormorant Garamond + Lato","2–3 fonts per design; display font + plain font; hierarchy by weight"],apna:"Apna already does this: Google Sans Flex display + Inter.",chk:"Helvetica Neue isn't free; Muli is now Mulish.",tr:"ok"},
+ {t:"Claude",who:"Alex Yates",title:"Beat \"Claude slop\" with reference sites",pts:["Apple: animation · Duolingo: onboarding · Linear: product UI · Pentagram: type","Muji: minimalism · Airbnb: filters · Aesop: art direction · Notion: dashboards · Stripe: landing · Framer: micro-interactions"],apna:"Pick references that fit the product.",chk:"Claude's default look differs by reel; call it \"generic\".",tr:"ok"},
+ {t:"Claude",who:"Omar Farook",title:"Claude redesigns a button pair",pts:["Secondary becomes a text link","Primary lifts on hover with a conic-gradient glow","Copy: \"Get started\" → \"Book my first client\""],apna:"AGENTS.md is the style guide that keeps Claude off its defaults.",chk:"−8px lift is large; @property can animate gradients now. Claude Design's launch (17 Apr 2026) is confirmed.",tr:"warn"},
+ {t:"Motion",who:"Charles Liu",title:"20 micro-animation tips",pts:["Dropdowns 150–250ms; exits ~20% shorter","Stagger rows ~30ms; press scale 0.97","Popovers from the trigger, start at 0.95","No bounce on everyday UI"],apna:"Mostly covered by tokens. Check: do popovers open from the trigger? Are exits shorter?",chk:"No public skill named ui-animation-polish; close ones are motion-polish and ui-animation.",tr:"ok"},
+ {t:"Motion",who:"Marcelo Cedeno (MDX)",title:"Four experimental carousels",pts:["3D image wave · circular orbit · collage · diagonal stack"],apna:"ScrollStack is close to the diagonal stack.",chk:"Needs keyboard nav, reduced motion, pause on hover/focus (WCAG 2.2.2). MDX has Awwwards honourable mentions, not top awards.",tr:"warn"},
+ {t:"Tools",who:"Archie",title:"Thinking Orbs: AI loading states",pts:["Nine orbs: thinking, searching, solving, listening, composing…","2D canvas, reduced motion, 64px and 20px sizes, MIT","Indeterminate only; never a progress bar"],apna:"Best fit so far: AI calling and screening waits, in the sky AI colour.",chk:"Confirmed: MIT, npm thinking-orbs, by Jakub Antalik (github.com/Jakubantalik/thinking-orbs). React and React Native only; the Flutter port is unofficial.",tr:"ok"},
+ {t:"Tools",who:"Jameel Haider",title:"Hazeglow: grainy mesh gradients",pts:["Pill, blob, ring, 16-point mesh; grain, motion, dither","React / JSON / PNG / MP4 export; WebGL2 with CSS fallback","Grain hides banding on big gradients"],apna:"Idea only; gradients are tokens in Apna.",chk:"Confirmed at hazeglow.dev: free MIT Lite, npm i hazeglow, ~13 kB. Pro at $7/mo is \"coming soon\".",tr:"ok"},
+ {t:"Tools",who:"Kokonut UI demo",title:"Kokonut UI: physical-feeling components",pts:["100+ free MIT components on shadcn + Framer Motion","Pull-cord lamp, clicking dial, tear-off stub, slide to pay"],apna:"Raw Tailwind values fail lint:tokens; rebuild ideas on tokens.",chk:"Confirmed MIT (github.com/kokonut-labs/kokonutui). Add its registry to components.json before installing. Tailwind v4 not confirmed.",tr:"ok"},
+ {t:"Tools",who:"Kevin",title:"Block libraries: AnimmasterLib, SkiperUI, VengeanceUI",pts:["AnimmasterLib: WebGL/GSAP, paid","SkiperUI: shadcn blocks, freemium","VengeanceUI: cinematic interactions","Trusted alternatives: Aceternity, Shadcnblocks, 21st.dev, Magic UI"],apna:"Ideas only.",chk:"AnimmasterLib: no official site found; price and the scam claims are both unverified. Skiper UI: $129 one-time premium, free tier needs attribution. VengeanceUI: says open source, names no licence.",tr:"bad"},
+ {t:"Tools",who:"Kevin",title:"Particles Casberry, OriginKit, DaisyUI",pts:["Particles: animated backgrounds, export JS/React","OriginKit: 100+ micro-interactions (also in Vishal Kumar's list)","DaisyUI: CSS-only Tailwind classes and themes"],apna:"DaisyUI clashes with Apna's tokens.",chk:"Particles is \"AI Particle Simulator\" at particles.casberry.in (no licence stated). OriginKit: only a Product Hunt page. DaisyUI: MIT confirmed.",tr:"warn"},
+ {t:"Tools",who:"Vishal Kumar",title:"Five resource sites for AI builds",pts:["GetLayers: sections, gradients, 3D (mostly paid)","OriginKit · useLayouts · Evil Buttons · Podie"],apna:"Start builds from designed assets, not blank prompts.",chk:"useLayouts (uselayouts.com) and Evil Buttons (evilbuttons.com, Apache-2.0) are real and free. OriginKit and GetLayers are barely traceable. Podie was not found.",tr:"warn"},
+ {t:"Inspiration",who:"Aminul Islam",title:"Five websites to sharpen taste",pts:["howtotalktowhitekidsaboutracism.com","twomuch.studio · unbelievablycrap.com · haoqi.design","Shopify Editions Fall '26 \"Exponential\": shopify.com/editions/fall2026"],apna:"Look, don't copy.",chk:"All five sites confirmed. unbelievablycrap.com is designer Liubomyr Ulytskyi's portfolio.",tr:"ok"},
+ {t:"Inspiration",who:"Abhay",title:"Five sites to build taste daily",pts:["Godly: motion · Cosmos: moodboards · Mobbin: real app flows","Fonts In Use · It's Nice That"],apna:"Mobbin for checkout, plans and multi-step flows.",chk:"Confirmed: Fonts In Use does not list licences for every entry.",tr:"ok"},
+ {t:"Inspiration",who:"Aevy",title:"Four free design archives",pts:["Fonts In Use","Milton Glaser Design Study Center (SVA)","Cooper Hewitt","Design Reviewed"],apna:"Foundations reading.",chk:"Cooper Hewitt typeface confirmed (Chester Jenkins, 2014, open licence). The 34k Fonts In Use count is not confirmed.",tr:"ok"},
+ {t:"Foundations",who:"Jon Yablonski (book)",title:"Laws of UX",pts:["Jakob, Fitts, Hick, Miller, Tesler, Doherty, Von Restorff, peak-end, aesthetic-usability","Free companion: lawsofux.com"],apna:"AGENTS.md already uses Hick and Von Restorff; Tesler and Doherty match existing rules.",chk:"Logged from general knowledge, not from reading the book.",tr:"ok"},
+ {t:"Foundations",who:"Maxwell Gomes",title:"Swiss Style in 10 seconds",pts:["Strict grid, sans-serif, flush left, white space","Zurich/Basel 1950s; Helvetica 1957; Neue Grafik 1958–65","Column grids and spacing scales come from it"],apna:"Apna's spacing scale and one accent are Swiss in spirit.",chk:"\"Only grotesques\" is overstated.",tr:"ok"},
+ {t:"Foundations",who:"Grafix Mistri Show",title:"Four designers to follow",pts:["Rajat Patel: Claude in design work; his site is now molades.com","Ben Marriott: motion tutorials","Michael Bierut: his \"How to…\" book","\"Anithing\": storytelling (name likely misheard)"],apna:"Rajat Patel is closest to your work.",chk:"Rajat Patel: ex-Zepto confirmed; PhonePe and Airtel not. The host's name and \"Anithing\" could not be found.",tr:"warn"},
+ {t:"Art direction",who:"Jason Murray",title:"Taxonomy of Visuals + three techniques",pts:["Operation → domain → technique → execution","Form substitution (Absolut Athens)","Scale disparity (Esquire soup can)","Frame within a frame (Se7en poster)"],apna:"Use in clay illustrations and marketing heroes.",chk:"His Modern Art Direction newsletter is real; nothing public on the taxonomy or \"IRIS\". Poster details not checked.",tr:"warn"},
+ {t:"Art direction",who:"Strategy Fox · 20-styles reel",title:"UI and graphic design styles",pts:["Skeuo, minimal, glass, neumorphism, clay, neo-brutalism, bento, Y2K, Liquid Glass, flat","Pick by feeling; one main style + one support (~70/30)","20-styles reel: names only, minimal to Victorian"],apna:"Apna = minimal product, glass marketing, clay illustrations.",chk:"Neumorphism fails contrast; some posters may be AI-made.",tr:"ok"},
+ {t:"Branding",who:"Maxwell Gomes",title:"10-second rule for vertical logos",pts:["Wordmark = 3× icon width","Tagline = ⅓ wordmark height","Then adjust by eye"],apna:"For partner or logo work; Apna's wordmark is fixed.",chk:"Commenters say the result isn't balanced. The \"LogoRig\" tool Meta AI mentioned could not be found.",tr:"warn"},
+ {t:"Security",who:"Peter A Surowski",title:"SQL injection is still easy",pts:["' OR 1=1 -- works on concatenated queries","Parameterised queries are the fix; validation is a backup"],apna:"Review AI-written SQL.",chk:"\"23% of breaches\" is wrong: it was 23.4% of critical web-app vulnerabilities (Checkmarx, 2024). Injection is A05 in the OWASP Top 10:2025.",tr:"ok"},
+ {t:"Security",who:"Alex Yates",title:"20-point security checklist for Claude",pts:["Secrets: keys out of frontend and git history","Access: auth, roles, XSS, SQL, DB rules","Traffic: rate limits, AI spend caps, uploads, CSRF, CORS","Production: HTTPS, headers, cookies, debug off"],apna:"Matters for the AI routes if deployed. Claude Code has /security-review.",chk:"Not a substitute for a real review.",tr:"ok"}
+];
+const TRUST={ok:["t-ok","Mostly sound"],warn:["t-warn","Check before use"],bad:["t-bad","Doubtful"]};
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const topics=["All",...new Set(E.map(e=>e.t))];
+let topic="All";
+document.getElementById("stats").innerHTML=`<span><b>${E.length}</b> entries</span><span><b>${topics.length-1}</b> topics</span><span><b>${PRINCIPLES.length}</b> principles</span><span>Web-checked <b>12 Nov 2026</b></span>`;
+document.getElementById("principles").innerHTML=PRINCIPLES.map(([h,p,s])=>`<div class="pr"><h3>${esc(h)}</h3><p>${esc(p)}</p><span class="src">${esc(s)}</span></div>`).join("");
+const chips=document.getElementById("chips");
+chips.innerHTML=topics.map(t=>`<button class="chip" id="chip-${t.replace(/\W/g,"")}" aria-pressed="${t===topic}" data-t="${esc(t)}">${esc(t)}</button>`).join("");
+chips.addEventListener("click",ev=>{const b=ev.target.closest(".chip");if(!b)return;topic=b.dataset.t;chips.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",c.dataset.t===topic));render()});
+const q=document.getElementById("q");q.addEventListener("input",render);
+function render(){
+  const s=q.value.trim().toLowerCase();
+  const rows=E.filter(e=>(topic==="All"||e.t===topic)&&(!s||JSON.stringify(e).toLowerCase().includes(s)));
+  document.getElementById("count").textContent=`${rows.length} of ${E.length} shown`;
+  document.getElementById("list").innerHTML=rows.length?rows.map(e=>{const[c,l]=TRUST[e.tr];return `<article class="e"><div class="top"><span class="tag">${esc(e.t)}</span><span class="trust ${c}">${l}</span><span class="who">${esc(e.who)}</span></div><h3>${esc(e.title)}</h3><ul>${e.pts.map(p=>`<li>${esc(p)}</li>`).join("")}</ul><p class="note"><b>For Apna:</b> ${esc(e.apna)}</p><p class="note"><b>Check:</b> ${esc(e.chk)}</p></article>`}).join(""):`<p class="empty">Nothing matches. Clear the search or pick All.</p>`;
+}
+render();
+</script>
