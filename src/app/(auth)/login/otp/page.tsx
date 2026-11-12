@@ -9,7 +9,8 @@
  * rather tap. A number with no account signs up here — there's no separate
  * sign-up for SMB recruiters. Back returns to the number with it kept.
  *
- * Prototype: any 4 digits log in; 0000 shows the wrong-OTP state.
+ * Prototype: any 4 digits log in; 0000 shows the wrong-OTP state; 1111 is a
+ * new recruiter and goes to /onboarding.
  */
 
 import * as React from "react"
@@ -23,6 +24,8 @@ import { HOME } from "@/lib/apnahire/nav"
 
 const LENGTH = 4
 const RESEND_AFTER = 30
+/** Prototype: this code plays a number that has no account yet. */
+const NEW_RECRUITER_OTP = "1111"
 
 const mmss = (s: number) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`
 
@@ -58,6 +61,11 @@ function OtpInner() {
         setError("Incorrect OTP. Check the SMS and try again.")
         setCode("")
         setVerifying(false)
+        return
+      }
+      // A number with no account: onboarding first, which signs them in.
+      if (value === NEW_RECRUITER_OTP) {
+        router.replace(`/onboarding?phone=${phone}`)
         return
       }
       signIn({ kind: "phone", phone })
@@ -119,7 +127,7 @@ function OtpInner() {
       </div>
 
       <p className="rounded-lg bg-muted px-3 py-2 text-xs text-muted-foreground">
-        Prototype: any {LENGTH} digits log you in. 0000 shows a wrong OTP.
+        Prototype: any {LENGTH} digits log you in. 0000 shows a wrong OTP. {NEW_RECRUITER_OTP} signs up a new recruiter.
       </p>
     </AuthCard>
   )

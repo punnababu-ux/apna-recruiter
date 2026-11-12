@@ -109,6 +109,22 @@ export const SCREENS: Screen[] = [
       { key: "pill", label: "Profile actions", options: OFF_ON("Old footer") },
     ],
   },
+  {
+    // Signed out only: a signed-in recruiter has no onboarding to do.
+    value: "onboarding",
+    label: "Onboarding (new recruiter)",
+    path: "/onboarding",
+    params: [
+      {
+        key: "offer",
+        label: "First-job offer",
+        options: [
+          { value: NONE, label: "Shown" },
+          { value: "off", label: "Hidden" },
+        ],
+      },
+    ],
+  },
 ]
 
 export function buildUrl(path: string, values: Record<string, string>) {

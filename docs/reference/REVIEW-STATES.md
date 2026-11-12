@@ -30,6 +30,7 @@ Never make product copy a control to reach a state.
 | Job candidates | `/apnahire/jobs/<id>` | `tab` | *(none)* Applied · `database` | `src/app/apnahire/(product)/jobs/[id]/page.tsx` |
 | | | `applicants` | `0` no applicants yet | same |
 | | | `deck` / `views` / `pill` | `0` shows the pre-2026-11-09 version | same |
+| Onboarding (new recruiter) | `/onboarding` (signed out; from the OTP, enter `1111`) | `offer` | *(none)* first-job offer shown · `off` hidden | `src/app/(auth)/onboarding/page.tsx` |
 | Marketing pages | any | `mother` | `plum` the saved mother gradient | `src/components/marketing/mother-preview.tsx` |
 
 Params combine, e.g. `/apnahire/jobs/new/plans?layout=subscription&credits=job4`.

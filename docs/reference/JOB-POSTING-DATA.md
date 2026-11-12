@@ -4,7 +4,7 @@ Every number we hold about job posting, with its source and limits, and the
 design decisions each one backs. Use it to answer "why did we do this?".
 Add new data here first, then log the decision in `docs/DECISIONS.md`.
 
-Last updated 2026-11-11.
+Last updated 2026-11-12.
 
 ## 1. Sources
 
@@ -21,6 +21,9 @@ Last updated 2026-11-11.
 | S10 | Mixpanel posting funnel, recruiters with credits (screenshot from Punna) | Sessions through the live form | 3 months to 11 Nov 2026 | 11,510 sessions | Not split by device or user type |
 | S11 | "Edited fields by job lifecycle" table (screenshot from Punna, 2026-11-12; Punna: accurate) | Job lifecycles in which each field was edited, 16 fields | not stated | about 35,560 lifecycles (worked back from the shares) | No window; what a lifecycle is and whether the base is all jobs or edited jobs not stated; no location fields in it |
 | S7 | Live form, read on employer.apna.co | The 29 fields live asks | 11 Nov 2026 | — | Desktop only; distance choices not opened |
+| S12 | Ana analytics, `hive.BI_Core_Tables.bi_sales_pricing` (one row per `order_id`) | Paid self-serve orders, amount before GST (`sales`) | 13 Aug to 11 Nov 2026 | 54,025 orders, ₹6.82 crore | Refunds not netted; test and internal accounts not excluded; "new" means first self-serve order, so an earlier sales-led buyer counts as new |
+| S13 | Sheet "Online Revenue - Weekly Governace" (Drive, 1ulwW8iC…; tabs Express Checkout, Latest 6W - Sales & Breakdown) | Weekly online sales and the express funnel for recruiters with zero credits | weekly, 2 Mar to 2 Nov 2026 | about 14,150 entrants and 4,070 orders a week (6-week average) | The team's own sheet; the week of 2 Nov is part-filled; its express revenue runs 15–20% above S12 (likely a wider "online" definition) |
+| S14 | Ana, `bi_sales_pricing` by account (organisation), all channels; and the doc "Employer Online sales - Cohorting" (Drive, 1DBPB8XpGDWU…, Haareesh) | What an account first acquired through express checkout is worth over time | first orders Nov 2025 to Aug 2026; doc: Jun to Aug 2026 | about 23,240 accounts pooled; doc 36,371 organisations | Refunds not netted; no test-account filter; history starts Feb 2022; 365-day value rests on 1,370 accounts; the doc's lifetime figures lean towards frequent buyers |
 
 ## 2. The live funnel (S3)
 
@@ -203,6 +206,84 @@ lifecycles (13,479 ÷ 37.9%). A lifecycle can edit several fields.
 - **Not known:** the window; whether the base is every job or only edited
   jobs; when in the job's life the edit happens (before or after the first
   applicant); whether an edit is by the recruiter or by apna's review team.
+
+## 2g. What a posted job is worth (S12)
+
+Paid self-serve orders, before GST, 13 Aug to 11 Nov 2026. Filter:
+`(status='paid' OR payment_status='success') AND invoice_id IS NOT NULL`,
+`payment_channel='self'`.
+
+| Checkout | Orders | Revenue | Mean | Share of orders |
+|---|---|---|---|---|
+| Express checkout (job posting) | 46,797 | ₹4.85 crore | ₹1,036 | 86.6% |
+| Subscription, monthly | 3,115 | ₹0.80 crore | ₹2,553 | 5.8% |
+| Self-checkout, job posting | 2,107 | ₹0.56 crore | ₹2,671 | 3.9% |
+| Self-checkout, database | 843 | ₹0.20 crore | ₹2,370 | 1.6% |
+| All self-serve | 54,025 | ₹6.82 crore | ₹1,263 (median ₹699) | 100% |
+
+- **Express by tier:** Classic 28,569 orders (61%), Premium 16,274 (35%),
+  Super premium 1,282 (3%).
+- **New against repeat (express):** new 14,582 orders at ₹1,012; repeat
+  32,215 at ₹1,047. New recruiters do not buy cheaper.
+- **Payers:** 39,570 recruiters, 1.37 orders each in the window.
+- **Reconciles with S8:** 46,797 express orders against 46,760 jobs posted
+  in the Mixpanel funnel over the same 3 months.
+- **The team's sheet agrees, a little higher (S13):** express checkout
+  sells about ₹44 lakh a week (6-week average), about ₹1.9 crore a month,
+  at about ₹1,130 an order.
+- **Express funnel, zero credits (S13, 6-week average):** entered posting →
+  plan selection 66.4% (the form); plan selection → proceed to pay 39.6%
+  (49% in March); proceed → payment started 84.7%; started → success 74.1%.
+  Entered → paid 16.5% (24.8% in March). Desktop 19.7%, mobile 13.0%; new
+  9.0%, existing 30.0%. Mobile is now half of entrants.
+- **The upsell step (S13; Punna, 2026-11-12: the upsell on new recruiters
+  causes drop-off):** proceed to pay → payment started was about 91.5% in
+  March to May, 86% in the three weeks to 7 Sep (the credit upsell
+  returned that week), and 81% in the last three weeks. Upsell credit sales
+  are about ₹2.2 lakh a week. Five points at this step are about 6% of
+  express orders, about ₹2.5 lakh a week, so the upsell may cost as much as
+  it earns. Not proven: the sheet does not split this step by new and
+  existing, and the price test ran in the same weeks.
+- **Revenue estimate for a better form (2026-11-12):** the form's own
+  friction is 8.1 points (§2e). Winning back 2–4 of them lifts the form
+  step from 66.4% to 68–70%: 3–6% more orders, about ₹5–12 lakh a month on
+  a base of ₹1.6–1.9 crore. The ceiling (all 8 points) is ₹19–23 lakh a
+  month. Each 1 point more at plan selection → proceed to pay is about
+  ₹4–5 lakh a month. The share won back is an assumption.
+
+## 2h. What an account is worth (S14)
+
+Account = organisation. Accounts whose first order was online express
+checkout; revenue from every channel and product, before GST.
+
+| After the first order | Revenue per account |
+|---|---|
+| First order | about ₹1,040 |
+| 30 days | about ₹1,350 |
+| 90 days | about ₹1,680 |
+| 180 days | about ₹2,050 (median ₹1,299) |
+| 365 days | about ₹2,500 (Nov 2025 cohort, 1,370 accounts) |
+
+- **New accounts:** about 3,100 a month (Jun to Aug 2026; 3,755 in Nov 2025).
+- **Buying again:** 15% within 30 days, 26% within 90, 33% within 180. Mean
+  1.69 orders in 180 days.
+- **Sales-led follow-on:** 10.5% of accounts buy through a sales team within
+  180 days, at ₹3,991 on average. 180-day revenue: online 78%, inside sales
+  15%, field sales 4%.
+- **Concentrated:** the top 10% of accounts hold 42% of 180-day revenue; the
+  top 1% hold 11.5%.
+- **Sales teams live on these accounts:** of ₹15.1 crore sales-led revenue
+  (13 Aug to 11 Nov 2026), 52% is from accounts first acquired through
+  online express checkout (inside sales 50%, field sales 39%).
+- **Who they are (the cohorting doc):** 99% SMB, 8.4% consultant firms. Of
+  express buyers in a quarter, 22.5% have bought once, 33.8% are online-only
+  repeat (5.4 lifetime orders), 43.7% also buy through sales (20.5 lifetime
+  orders); two thirds of that last group were first acquired online.
+- **Estimate per account (2026-11-12):** a form that wins back 2–4 points
+  adds 90–190 new accounts a month, worth ₹2.3–4.7 lakh in their first year,
+  and ₹3.9–7.8 lakh a month of orders from existing accounts: ₹6–12 lakh a
+  month in all, about 30% above the per-order estimate in §2g. Ceiling ₹25
+  lakh. Not counted: value after 12 months, and accounts with credits.
 
 ## 3. Time to post (S4)
 

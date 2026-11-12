@@ -9,6 +9,47 @@ or **Open**.
 ---
 
 
+## 2026-11-12 — Onboarding follows Figma "Onboarding fixes"
+
+- **Question:** whose form wins for /onboarding: my layout, or the latest Figma (Onboarding file, page "Onboarding fixes", 4127:1760 phone, 4149:620 desktop, the frames with "Looking for a job?")?
+- **Decision:** Figma's. The title is "Create your recruiter account". Consultancy is Yes / No chips (the desktop frame; the phone frame's checkbox differs). Employee size gains a "Not sure" chip. The email field is "Official email ID". A terms checkbox is added. Two exceptions. The email stays required, because the live spec makes it mandatory and only the phone frame says optional. The 10% offer banner stays, because it is the idea under test.
+- **Not taken:** the Help and Log out icons, and the dark "What does apna offer" panel. The login shell is shared, and it keeps its own look.
+- **Would change it:** Figma settles the phone/desktop differences.
+- **Status:** Decided (Punna, "Yes, align it").
+
+## 2026-11-12 — Onboarding: one screen, the live fields, the price said first
+
+- **Question:** the prototype had login and OTP but no onboarding, so the journey to the first job could not be designed as one flow. What does a new recruiter see between the OTP and job posting?
+- **Decision:** one screen, `/onboarding`: full name, company name, who they hire for (my company / my clients), number of employees (the six live ranges), work email. "Post a job" signs them in and opens job posting. Above the form, the first-job offer ("10% off your first job. Post it today. Jobs start at ₹699."); `?offer=off` hides it. In the prototype the OTP `1111` plays a number with no account.
+- **Reason:** the fields are the live ones (Confluence, "Employer Onboarding Flow: Mandatory Email and Employee Count Verification", 2026-08-12, and "Mandatory Consultant Declaration during Onboarding"). Five short answers fit one phone screen; steps would add four taps. The offer says the price before any work, which is where half of new recruiters leave today.
+- **Calls to confirm (Punna):** the consultancy checkbox became a two-way choice, so it cannot be skipped; the terms checkbox became the login's "By continuing, you agree" line, since they agreed one screen earlier (legal may want the checkbox back); the layout is ours, the live screen and the Onboarding Figma file were not looked at.
+- **Would change it:** the live capture or Figma showing fields or an order this misses; the offer test failing (entry below).
+- **Status:** Leaning (the screen); Open (the offer, as below).
+
+## 2026-11-12 — Reinforce the recruiter from onboarding to payment
+
+- **Question:** new recruiters pay 9% of the time, and half of them leave at the plan step. What keeps them going? (Punna's five points, 2026-11-12.)
+- **Direction (Punna):**
+  1. **Proof for new recruiters:** show how many candidates applied to similar jobs in the last 7 days, or how many recruiters hired for similar roles.
+  2. **No upsell to new recruiters** (Punna, confirmed 2026-11-12). A recruiter who has never paid sees no upsell before their first payment; the pack can be offered after the job is posted or on a later posting. Existing recruiters keep the upsell.
+  3. **Design one journey,** onboarding → job posting → payment, not three separate flows.
+  4. **Proof for returning recruiters:** "your last job got N leads".
+  5. **Individuals cannot post a job today.** Whether to let them is open.
+- **Reason:** new and existing recruiters pass the form at the same rate; the gap is at the plan step (28.5% click pay against 66.6%) and nothing before it tells a new recruiter what they get. One point more of new recruiters paying is about ₹2.3 lakh a week of first-year value; one point for existing is about ₹0.6 lakh (`docs/reference/JOB-POSTING-DATA.md` §2g, §2h).
+- **Rules for the proof lines:** real numbers for the same role and city; hide the line under a floor (a small or zero count argues against buying); prefer "candidates applied" to "recruiters hired" unless hires are reliably recorded; show it once the role and city are known and again at the plan step.
+- **Not known:** how many sign-ups are individuals and where they are turned away; whether hire counts exist per role; the upsell step split by new and existing.
+- **Would change it:** a test where the proof line does not lift clicks on pay; an upsell split showing new recruiters buy packs without dropping.
+- **Status:** Decided (point 2); Leaning (points 1, 3, 4); Open (point 5).
+
+## 2026-11-12 — Onboarding offer: 10% off the first job if posted today
+
+- **Question:** new recruiters expect posting to be free and meet the price only at the plan step, where about 86% leave. Should onboarding say "post your job today and get 10% off"? (Punna's idea; it also answers the open question of 2026-11-11, whether to say the price before the form.)
+- **Decision:** none yet. Worth an A/B test: new recruiters only, split at sign-up, one line in onboarding and the same line on the plan step. Judge it on paid orders per sign-up, order value and 90-day repeat, not on form starts.
+- **Reason:** per week about 9,135 new recruiters enter posting and about 820 pay (9.0%) at about ₹1,012. The discount gives away about ₹0.8 lakh a week to those who would pay anyway; a new account is worth about ₹2,500 in its first year. So it breaks even at 9.4% paying; at 10% it adds about ₹1.4 lakh a week of first-year value, at 11% about ₹3.6 lakh. Sources: `docs/reference/JOB-POSTING-DATA.md` §2g, §2h. The lift itself is not known.
+- **Risks to settle first:** it replaces the exit offer (FIRST10 already gives 10% to those who try to leave, and costs less); "today" must be a real 24-hour limit; discount-led accounts may repeat less; one message with the Jan 1 price rise, not two.
+- **Already in flight:** the team's drop-off recovery experiment (Confluence PRD "New User Express Checkout Drop-off Feedback & Discount Recovery Experiment", Jira EM-1568, QA sign-off asked 28 Oct 2026) sends new recruiters who leave the plan step a WhatsApp with feedback options and a 24-hour 10% coupon, 50/50 against a holdout. Its feedback answers are the first direct evidence of why new recruiters do not pay; read its result before testing an upfront offer.
+- **Would change it:** a test showing under 9.4% paying, or a lower 90-day repeat than today's 26%.
+- **Status:** Open.
 
 ## 2026-11-12 — Price order is one component (Decided)
 - **Question:** the "reads outward from the price" order (left: price, strike, %; right: %, strike, price) was hand-built per card, and OfferBar broke it on desktop.

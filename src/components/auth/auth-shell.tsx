@@ -41,11 +41,19 @@ function LookingForJob() {
 export function LegalLine({ className }: { className?: string }) {
   return (
     <p className={cn("text-sm text-muted-foreground", className)}>
-      {LEGAL_LINE}{" "}
+      {LEGAL_LINE} <LegalLinks />
+    </p>
+  )
+}
+
+/** "Terms of service & Privacy policy", for a line or a consent checkbox. */
+export function LegalLinks() {
+  return (
+    <>
       <Button variant="link-inline" nativeButton={false} render={<a href={TERMS_HREF} target="_blank" rel="noreferrer noopener" />}>Terms of service</Button>{" "}
       &amp;{" "}
       <Button variant="link-inline" nativeButton={false} render={<a href={PRIVACY_HREF} target="_blank" rel="noreferrer noopener" />}>Privacy policy</Button>
-    </p>
+    </>
   )
 }
 
@@ -69,8 +77,10 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-dvh flex-col bg-card md:flex-row">
       {/* Phones: the brand bar. */}
       <header className="flex items-center justify-between gap-4 border-b border-border px-4 py-4 shadow-card md:hidden">
-        <Link href="/" aria-label="apna Hire, home">
-          <LogoApnaRecruiter className="h-6 w-auto" />
+        {/* The logo gives way at 320px, where it and the link ran 12px past
+            the screen. */}
+        <Link href="/" aria-label="apna Hire, home" className="min-w-0">
+          <LogoApnaRecruiter className="h-6 w-auto max-w-full" />
         </Link>
         <LookingForJob />
       </header>

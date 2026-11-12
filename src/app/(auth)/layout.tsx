@@ -1,5 +1,6 @@
 /**
- * (auth) — the login steps: /login, /login/otp, /login/enterprise.
+ * (auth) — the login steps: /login, /login/otp, /login/enterprise, and
+ * /onboarding for a new recruiter.
  *
  * Framed like the live employer.apna.co sign-in (AuthShell): brand half and
  * form half from md, a brand bar and a flat form on phones. Already signed
