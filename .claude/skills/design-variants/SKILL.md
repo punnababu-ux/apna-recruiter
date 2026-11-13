@@ -165,6 +165,12 @@ gets a pointer here, not a copy.
     strip is the only animation (no ring, no backdrop on a form step; those
     belong to Describe's "Draft my job"). The way out is a link in the strip,
     never an outlined CTA. Arriving text types in.
+32f. **Listening is quiet texture, not colour** (approved 2026-11-14). While
+    the mic listens, a faint gray halftone flows round the prompt (free
+    shape, fabric ripple, dots shrink outward) and the mic button stays a
+    neutral outline with one moving line. No gradient on the button; the
+    prompt's glow is the only colour. Decorations never run off a phone
+    screen.
 
 ## 1a. Audit: the current version
 

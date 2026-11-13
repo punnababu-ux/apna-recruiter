@@ -525,6 +525,14 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
         rules: ["Never leave fields blank on AI failure: the API falls back to the local parser."],
       },
       {
+        name: "VoiceDots / VoiceLine",
+        file: "apnahire/post-job/voice-dots.tsx",
+        what: "While the mic listens (after \"OK Google\"): a faint gray halftone that flows round the prompt like fabric, and one line in the mic button that moves with the voice.",
+        live: "/apnahire/jobs/new",
+        where: "Describe step, while listening",
+        rules: ["Gray and very subtle (Punna, 2026-11-13): the prompt's glow stays the only colour.", "The dots stay 4px inside the screen edge and fade before it; never let them run off a phone screen."],
+      },
+      {
         name: "Wizard screens / job fields",
         file: "apnahire/post-job/wizard-screens.tsx",
         what: "The screens in order, and their field editors (ListSelect, ChipMultiSelect, AddCustom…).",

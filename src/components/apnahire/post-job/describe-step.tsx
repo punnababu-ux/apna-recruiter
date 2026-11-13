@@ -38,20 +38,6 @@ const rise = (i: number) => ({
   style: { animationDelay: `${i * 80}ms` },
 })
 
-function VoiceWave() {
-  return (
-    <span aria-hidden className="flex h-4 items-center gap-0.5">
-      {[0, 1, 2, 3, 4].map((i) => (
-        <span
-          key={i}
-          className="h-full w-0.5 rounded-full bg-current animate-voice-bar"
-          style={{ animationDelay: `${i * 120}ms` }}
-        />
-      ))}
-    </span>
-  )
-}
-
 const SIGNALS: { key: keyof PromptSignals; label: string; say: string }[] = [
   { key: "role", label: "Role", say: "the role" },
   { key: "area", label: "Area", say: "the area" },
@@ -123,9 +109,6 @@ function PromptCoverage({
   )
 }
 
-const noSubscribe = () => () => {}
-const meshFlag = () => new URLSearchParams(window.location.search).get("voice") === "mesh"
-
 export function DescribeStep({
   prompt,
   onPromptChange,
@@ -136,8 +119,6 @@ export function DescribeStep({
   essential,
 }: DescribeStepProps) {
   const speech = useSpeechRecognition()
-  // PREVIEW (?voice=mesh): an "OK Google" halftone flows around the box while listening.
-  const mesh = React.useSyncExternalStore(noSubscribe, meshFlag, () => false)
   const baseRef = React.useRef("")
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
 
@@ -165,14 +146,14 @@ export function DescribeStep({
     <Button
       type="button"
       size="icon"
-      variant={speech.listening && !mesh ? "ghost" : "outline"}
-      className={cn("rounded-full", speech.listening && !mesh && "ai-voice")}
+      variant="outline"
+      className="rounded-full"
       aria-pressed={speech.listening}
       aria-label={speech.listening ? "Stop speaking" : "Speak"}
       onClick={toggleMic}
     >
-      {/* PREVIEW (?voice=mesh): a neutral button with a line that moves with the voice. */}
-      {speech.listening ? mesh ? <VoiceLine pulse={speech.transcript} /> : <VoiceWave /> : <AudioLines aria-hidden />}
+      {/* While listening: one line that moves with the voice (after "OK Google"). */}
+      {speech.listening ? <VoiceLine pulse={speech.transcript} /> : <AudioLines aria-hidden />}
     </Button>
   )
 
@@ -199,7 +180,7 @@ export function DescribeStep({
             While listening, it glows. */}
         <div className="relative z-10 rounded-2xl">
           {speech.listening ? <span aria-hidden className="voice-glow" /> : !drafting && <span aria-hidden className="ai-idle" />}
-          {mesh && <VoiceDots active={speech.listening} />}
+          <VoiceDots active={speech.listening} />
           <PromptInput
             id="job-prompt"
             aria-label="About the job"

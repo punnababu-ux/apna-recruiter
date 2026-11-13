@@ -1,7 +1,7 @@
 "use client"
 
 /**
- * VoiceDots — PREVIEW (?voice=mesh). While the mic listens, a faint halftone
+ * VoiceDots — while the mic listens, a faint halftone
  * of gray dots flows out around the prompt box, after Android's "OK Google"
  * (2026-11-13). Dots are biggest at the box's edge and shrink as they fade
  * outward; the outer edge is uneven and drifts, so it never reads as a
@@ -152,7 +152,7 @@ export function VoiceDots({ active, className }: { active: boolean; className?: 
 }
 
 /**
- * VoiceLine — PREVIEW (?voice=mesh). The mic button's face while listening:
+ * VoiceLine — the mic button's face while listening:
  * one line that moves like a voice waveform, in the button's own colour.
  * It swells each time `pulse` changes (new words heard) and settles back to
  * a gentle ripple in a pause. The line's ends stay still, so it reads as a
