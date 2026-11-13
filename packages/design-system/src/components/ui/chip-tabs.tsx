@@ -101,7 +101,9 @@ export function ChipTabs<V extends string = string>({
             ? active
               ? "border-primary bg-accent text-accent-foreground"
               : ariaInvalid
-                ? "border-destructive/60 bg-destructive/5 text-destructive hover:bg-destructive/10"
+                ? // On the red tint the label is the tint's own foreground: the
+                  // role red measured under 4.5:1 there (2026-11-12).
+                  "border-destructive/60 bg-destructive/5 text-destructive-subtle-foreground hover:bg-destructive/10"
                 : variant === "choice-on-tint"
                   ? "border-transparent bg-chip-on-tint text-muted-foreground hover:text-foreground"
                   : "border-border bg-muted text-muted-foreground hover:text-foreground"

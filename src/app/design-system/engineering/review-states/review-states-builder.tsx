@@ -130,6 +130,7 @@ export const SCREENS: Screen[] = [
         label: "Answers missing",
         options: [
           { value: NONE, label: "Live: every one red" },
+          { value: "soft", label: "Every one, words only" },
           { value: "note", label: "One quiet line" },
           { value: "first", label: "First one red" },
         ],

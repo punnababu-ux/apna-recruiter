@@ -103,6 +103,53 @@ const SCREENS: { name: string; run: (page: Page) => Promise<unknown> }[] = [
   },
   { name: "homepage", run: (page) => open(page, "/") },
   { name: "pricing", run: (page) => open(page, "/pricing") },
+  // The login steps, signed out (signed in, they redirect to the app).
+  { name: "login", run: (page) => open(page, "/login", { signedOut: true }) },
+  {
+    name: "login, no number",
+    run: async (page) => {
+      await open(page, "/login", { signedOut: true })
+      await page.getByRole("button", { name: "Send OTP" }).click()
+    },
+  },
+  { name: "verify OTP", run: (page) => open(page, "/login/otp?phone=9876543210", { signedOut: true }) },
+  { name: "enterprise login", run: (page) => open(page, "/login/enterprise", { signedOut: true }) },
+  {
+    name: "enterprise login, wrong password",
+    run: async (page) => {
+      await open(page, "/login/enterprise", { signedOut: true })
+      await page.locator("#ent-email").fill("asha@vermalogistics.in")
+      await page.getByRole("button", { name: "Continue", exact: true }).click()
+      await page.locator("#ent-password").fill("wrong")
+      await page.getByRole("button", { name: "Log in" }).click()
+      await expect(page.getByText("That password isn't right.")).toBeVisible()
+    },
+  },
+  { name: "onboarding", run: (page) => open(page, "/onboarding?phone=9876543210") },
+  {
+    // The offer banner and the red chips both failed contrast until 2026-11-12.
+    name: "onboarding, every answer missing",
+    run: async (page) => {
+      await open(page, "/onboarding?phone=9876543210")
+      await page.getByRole("button", { name: "Post a job" }).click()
+    },
+  },
+  {
+    // Preview: each gap said in words, the controls in their normal look.
+    name: "onboarding, every answer missing, words only",
+    run: async (page) => {
+      await open(page, "/onboarding?phone=9876543210&check=soft")
+      await page.getByRole("button", { name: "Post a job" }).click()
+    },
+  },
+  {
+    // Preview: the one quiet line above the button.
+    name: "onboarding, every answer missing, one quiet line",
+    run: async (page) => {
+      await open(page, "/onboarding?phone=9876543210&check=note")
+      await page.getByRole("button", { name: "Post a job" }).click()
+    },
+  },
 ]
 
 test.describe("accessibility (axe, WCAG 2.1 A/AA, light mode)", () => {

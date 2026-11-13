@@ -7,6 +7,7 @@ import {
   FieldLabel,
   FieldDescription,
   FieldError,
+  FloatingInput,
   Input,
   Textarea,
   Select,
@@ -223,6 +224,71 @@ export default function InputsComponentsPage() {
             <FieldError>This field is required.</FieldError>
           </Field>
         </div>
+      </div>
+
+      {/* Floating label */}
+      <div className="flex flex-col gap-6 rounded-xl border border-border bg-card p-6">
+        <h2 className="border-b border-border/60 pb-2 text-h6 text-foreground">Label inside the field (FloatingInput)</h2>
+        <div className="grid max-w-2xl grid-cols-1 gap-6 md:grid-cols-2">
+          <Field>
+            <FloatingInput label="Your full name" autoComplete="off" />
+          </Field>
+          <Field>
+            <FloatingInput label="Company name" placeholder="e.g. Swiggy" autoComplete="off" />
+            <FieldDescription>The example shows only while the field is focused and empty.</FieldDescription>
+          </Field>
+          <Field>
+            <FloatingInput label="Official email ID" type="email" defaultValue="asha@vermalogistics.in" autoComplete="off" />
+          </Field>
+          <Field>
+            <FloatingInput label="Official email ID" type="email" defaultValue="asha@" aria-invalid autoComplete="off" />
+            <FieldError>Enter a valid work email address.</FieldError>
+          </Field>
+          <Field>
+            <FloatingInput label="Company name" defaultValue="Verma Logistics" disabled />
+          </Field>
+          <Field>
+            <FloatingInput label="Mobile number" prefix="+91" type="tel" inputMode="numeric" autoComplete="off" />
+            <FieldDescription>The prefix shows with the value: focus the field to see it.</FieldDescription>
+          </Field>
+          <Field>
+            <FloatingInput label="Mobile number" prefix="+91" type="tel" defaultValue="9876543210" autoComplete="off" />
+          </Field>
+          <Field>
+            <FloatingInput
+              label="Password"
+              type="password"
+              defaultValue="correct horse"
+              autoComplete="off"
+              trailing={
+                <Button type="button" variant="link" size="sm">
+                  Show
+                </Button>
+              }
+            />
+            <FieldDescription>One small action at the end. The label and the value stop before it.</FieldDescription>
+          </Field>
+          <Field>
+            <FloatingInput
+              label="Mobile number"
+              prefix="+91"
+              type="tel"
+              defaultValue="98765"
+              aria-invalid
+              autoComplete="off"
+              trailing={
+                <Button type="button" variant="link" size="sm">
+                  Change
+                </Button>
+              }
+            />
+            <FieldError>Enter your 10-digit mobile number</FieldError>
+          </Field>
+        </div>
+        <span className="text-xs text-muted-foreground">
+          The label rests on the text line and floats to the top on focus or once there is a value. For short typed
+          answers; a question with choices keeps its label above. Used on /login, /login/enterprise and /onboarding.
+        </span>
       </div>
 
       {/* Search & Multi-Filter Bar */}

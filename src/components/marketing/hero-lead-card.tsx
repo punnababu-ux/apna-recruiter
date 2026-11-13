@@ -10,6 +10,16 @@
  *   HeroLeadCard     the homepage's card: the same form ("Continue") with the
  *                    legal line inside the card.
  *
+ * The number field has three looks, one per place:
+ *   `floatingLabel`  /login: the label inside the field (FloatingInput, +91
+ *                    as its prefix), as on every login step since 2026-11-13.
+ *   `inline`         the homepage hero (HeroLeadForm): a pill with the CTA
+ *                    inside it.
+ *   neither          HeroLeadCard (on no page today): the label above a 44px
+ *                    field.
+ * The two homepage looks were left as they were on purpose: whether the
+ * homepage follows the login is Punna's call (docs/DECISIONS.md, 2026-11-13).
+ *
  * The CTA goes to the OTP step (/login/otp) and the enterprise link to
  * /login/enterprise, both carrying `next`, the page to return to once
  * signed in; `onContinue` / `onEnterpriseLogin` override. The number is
@@ -18,8 +28,19 @@
 
 import * as React from "react"
 import { useRouter } from "next/navigation"
-import { Building2, Button, Card, Field, FieldError, FieldLabel, FieldSeparator, inputVariants } from "@apna/design-system"
+import {
+  Building2,
+  Button,
+  Card,
+  Field,
+  FieldError,
+  FieldLabel,
+  FieldSeparator,
+  FloatingInput,
+  inputVariants,
+} from "@apna/design-system"
 import { cn } from "@/lib/utils"
+import { mobileDigits } from "@/lib/mobile-number"
 import { PHONE_LOGIN } from "@/content/auth"
 import { HEADER_ACTIONS } from "@/content/nav"
 import { useTrackHeroCta } from "@/hooks/use-hero-cta-hidden"
@@ -41,6 +62,9 @@ export interface PhoneLoginFormProps {
    *  inside it at the end (as SearchFilterBar's phone search holds its
    *  Filters pill), Enterprise login centred under it, no "OR" rule. */
   inline?: boolean
+  /** The login page: the label sits inside the field and floats up on
+   *  focus, with +91 beside the number (FloatingInput). Not with `inline`. */
+  floatingLabel?: boolean
 }
 
 export const withNext = (path: string, next?: string | null, extra?: Record<string, string>) => {
@@ -56,6 +80,7 @@ export function PhoneLoginForm({
   onEnterpriseLogin,
   handsOffToHeader = false,
   inline = false,
+  floatingLabel = false,
 }: PhoneLoginFormProps) {
   const ctaRef = React.useRef<HTMLButtonElement>(null)
   useTrackHeroCta(ctaRef, handsOffToHeader)
@@ -69,6 +94,12 @@ export function PhoneLoginForm({
   // typing clears it. Nothing shows before the first press.
   const [error, setError] = React.useState<string | null>(null)
   const inputRef = React.useRef<HTMLInputElement>(null)
+  // The ten digits of whatever arrives: typed, pasted with +91 or a leading
+  // 0, or autofilled (mobileDigits). Typing clears the error.
+  const setNumber = (value: string) => {
+    setPhone(mobileDigits(value))
+    setError(null)
+  }
 
   return (
     <>
@@ -87,41 +118,56 @@ export function PhoneLoginForm({
         }}
       >
         <Field>
-          <FieldLabel htmlFor="login-phone" className={cn(inline && "sr-only")}>{PHONE_LOGIN.label}</FieldLabel>
-          {/* A fixed +91 prefix inside the field: Input's own look
-              (inputVariants) on the wrapper, a bare input inside; the
-              wrapper shows focus for it. */}
-          <div
-            aria-invalid={!!error || undefined}
-            className={cn(
-              inputVariants({ inputSize: "lg" }),
-              // The hero: a 48px pill (a one-off, like the phone search) with
-              // room at the end for the CTA sitting inside it.
-              inline && "h-12 rounded-full bg-card pr-28 sm:pr-40",
-              "flex items-center gap-3 focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50",
-              // The error outranks the focus ring: the field stays red while
-              // the cursor is back in it.
-              error && "focus-within:border-destructive focus-within:ring-destructive/20"
-            )}
-          >
-            <span className="shrink-0 text-foreground">+91</span>
-            <input
+          {floatingLabel && !inline ? (
+            <FloatingInput
               ref={inputRef}
               id="login-phone"
+              label={PHONE_LOGIN.label}
+              prefix="+91"
               aria-invalid={!!error || undefined}
               aria-describedby={error ? "login-phone-error" : undefined}
               type="tel"
               inputMode="numeric"
               autoComplete="tel-national"
-              placeholder={inline ? PHONE_LOGIN.placeholderShort : PHONE_LOGIN.placeholder}
-              className="w-full min-w-0 border-0 bg-transparent p-0 text-base outline-none placeholder:text-muted-foreground md:text-sm"
               value={phone}
-              onChange={(e) => {
-                setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))
-                setError(null)
-              }}
+              onChange={(e) => setNumber(e.target.value)}
             />
-          </div>
+          ) : (
+            <>
+              <FieldLabel htmlFor="login-phone" className={cn(inline && "sr-only")}>{PHONE_LOGIN.label}</FieldLabel>
+              {/* A fixed +91 prefix inside the field: Input's own look
+                  (inputVariants) on the wrapper, a bare input inside; the
+                  wrapper shows focus for it. */}
+              <div
+                aria-invalid={!!error || undefined}
+                className={cn(
+                  inputVariants({ inputSize: "lg" }),
+                  // The hero: a 48px pill (a one-off, like the phone search) with
+                  // room at the end for the CTA sitting inside it.
+                  inline && "h-12 rounded-full bg-card pr-28 sm:pr-40",
+                  "flex items-center gap-3 focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50",
+                  // The error outranks the focus ring: the field stays red while
+                  // the cursor is back in it.
+                  error && "focus-within:border-destructive focus-within:ring-destructive/20"
+                )}
+              >
+                <span className="shrink-0 text-foreground">+91</span>
+                <input
+                  ref={inputRef}
+                  id="login-phone"
+                  aria-invalid={!!error || undefined}
+                  aria-describedby={error ? "login-phone-error" : undefined}
+                  type="tel"
+                  inputMode="numeric"
+                  autoComplete="tel-national"
+                  placeholder={inline ? PHONE_LOGIN.placeholderShort : PHONE_LOGIN.placeholder}
+                  className="w-full min-w-0 border-0 bg-transparent p-0 text-base outline-none placeholder:text-muted-foreground md:text-sm"
+                  value={phone}
+                  onChange={(e) => setNumber(e.target.value)}
+                />
+              </div>
+            </>
+          )}
           {error && <FieldError id="login-phone-error">{error}</FieldError>}
         </Field>
 

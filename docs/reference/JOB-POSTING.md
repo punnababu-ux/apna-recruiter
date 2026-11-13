@@ -55,11 +55,12 @@ Last updated 2026-11-11.
 - **Presentation:** `docs/presentations/job-posting-flows.html`, published at
   https://claude.ai/artifact/4KSptg81ELuVtePvwsqDkx (live form vs our flows).
   Live form fields were read from employer.apna.co on 2026-11-11.
-- **Open / not done:** e2e walk tests were adapted for auto-advance and desktop
-  pages; screenshot baselines (`@visual`) need updating after review. Nothing
-  committed. Live taps/time not measured. Bug seen: with "telecaller … BPO"
-  the AI picks a role the title rule disagrees with, so "Role looks like
-  Telesales" shows on page 1 and Review.
+- **Open / not done:** live taps/time not measured. Bug seen: with
+  "telecaller … BPO" the AI picks a role the title rule disagrees with, so
+  "Role looks like Telesales" shows on page 1 and Review.
+- **Checked 2026-11-12:** all of the above is committed and pushed (last job
+  posting commit `0268601`); the job posting screenshots (`@visual`) match
+  their macOS baselines in a full `npm run test:e2e` run.
 
 ## Preview: pay hint (`?payhint=1`, 2026-11-12)
 

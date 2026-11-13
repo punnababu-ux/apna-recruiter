@@ -32,7 +32,7 @@ Never make product copy a control to reach a state.
 | | | `applicants` | `0` no applicants yet | same |
 | | | `deck` / `views` / `pill` | `0` shows the pre-2026-11-09 version | same |
 | Onboarding (new recruiter) | `/onboarding` (signed out; from the OTP, enter `1111`) | `offer` | *(none)* first-job offer shown · `off` hidden | `src/app/(auth)/onboarding/page.tsx` |
-| | | `check` | What "Post a job" shows when answers are missing. *(none)* live: every missing answer turns red with its error · `note` no red, one quiet line above the button says what is missing · `first` only the first missing answer turns red, and the next takes over as each is answered (previews, 2026-11-13). Press "Post a job" to see it | same |
+| | | `check` | What "Post a job" shows when answers are missing. *(none)* live: every missing answer turns red with its error · `soft` every missing answer gets its error line, and the field, chips and checkbox keep their normal look · `note` no red, one quiet line above the button says what is missing · `first` only the first missing answer turns red, and the next takes over as each is answered (previews, 2026-11-13). Press "Post a job" to see it | same |
 | Marketing pages | any | `mother` | `plum` the saved mother gradient | `src/components/marketing/mother-preview.tsx` |
 
 Params combine, e.g. `/apnahire/jobs/new/plans?layout=subscription&credits=job4`.

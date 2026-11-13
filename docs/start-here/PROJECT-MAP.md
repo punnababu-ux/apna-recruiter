@@ -21,7 +21,10 @@ One-page index: what Punna means → where it lives. Rules are in `AGENTS.md`
 | header / footer / contact band | marketing layout | `marketing/site-header.tsx`, `site-footer.tsx`, `contact-section.tsx`, `(marketing)/layout.tsx` |
 | clay pictures / 3D assets | /design-system/foundations/clay | **style + prompt: `docs/reference/CLAY-ILLUSTRATIONS.md`, `src/content/clay-style.ts`**; `marketing/value-art.tsx` (`READY`), `public/images/company/values/`, `scripts/clay-cutout.py` |
 | login / OTP / enterprise login | `/login`, `/login/otp`, `/login/enterprise` | `components/auth/*`, `content/auth.ts` |
-| onboarding (new recruiter, after the OTP) | `/onboarding` | `app/(auth)/onboarding/page.tsx`, `content/onboarding.ts` |
+| login frame (brand panel, form on the page) | every `(auth)` page | `components/auth/auth-shell.tsx` (`AuthShell`, `AuthCard`, `LegalLine`) |
+| login number field (+91), its three looks | `/login`, homepage hero | `marketing/hero-lead-card.tsx` (`PhoneLoginForm`: `floatingLabel` on /login, `inline` on the homepage) |
+| field with the label inside (floating label, prefix, action at the end) | login steps, onboarding | `packages/design-system/src/components/ui/floating-input.tsx` |
+| onboarding (new recruiter, after the OTP), missing-answer previews `?check=` | `/onboarding` | `app/(auth)/onboarding/page.tsx`, `content/onboarding.ts` (`missingNote`) |
 | self-checkout / buy credits / plans page | `/apnahire/credits` | `apnahire/self-checkout.tsx`, `job-credit-bundles.tsx`, `database-credit-bundles.tsx`, `subscription-plans.tsx`, `unlimited-side-card.tsx`, `contact-sales-card.tsx` |
 | express checkout / plans step (in job post) | `/apnahire/jobs/new/plans` | `apnahire/job-plan-selection.tsx`, `job-plan-cards.tsx`, `mobile-plan-row.tsx`, `content/job-plans.ts` |
 | order summary / checkout drawer | — | `apnahire/checkout-drawer.tsx`, `ai-calling-addon-card.tsx`, `use-attention-ring.ts` |

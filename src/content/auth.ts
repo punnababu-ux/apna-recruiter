@@ -40,7 +40,6 @@ export const ENTERPRISE_LOGIN = {
   title: "Sign in with your Enterprise email",
   label: "Enterprise Email",
   hint: "This email is for enterprise users only",
-  placeholder: "Enter Enterprise email address",
   cta: "Continue",
   register: "Want to register your Enterprise email?",
   registerLink: "Contact us",

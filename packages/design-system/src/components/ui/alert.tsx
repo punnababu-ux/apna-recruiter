@@ -12,14 +12,17 @@ const alertVariants = cva(
         /* Neutral, but visible on a card — e.g. a job card's "finish
          * posting" note. `default` is the card colour itself. */
         muted: "bg-muted text-foreground border-border",
+        /* Text on a tint is that tint's `-subtle-foreground` (AGENTS.md,
+         * "Contrast"). The role colour itself measured 3.6–4.2:1 on its
+         * tint, and 3.2–3.6:1 for the description (2026-11-12). */
         destructive:
-          "bg-destructive-subtle text-destructive border-destructive/20 *:data-[slot=alert-description]:text-destructive/90 *:[svg]:text-current",
+          "bg-destructive-subtle text-destructive-subtle-foreground border-destructive/20 *:data-[slot=alert-description]:text-destructive-subtle-foreground/90 *:[svg]:text-current",
         success:
-          "bg-success-subtle text-success border-success/20 *:data-[slot=alert-description]:text-success/90 *:[svg]:text-current",
+          "bg-success-subtle text-success-subtle-foreground border-success/20 *:data-[slot=alert-description]:text-success-subtle-foreground/90 *:[svg]:text-current",
         warning:
           "bg-warning-subtle text-warning-subtle-foreground border-warning/40 *:data-[slot=alert-description]:text-warning-subtle-foreground/90 *:[svg]:text-current",
         info:
-          "bg-info-subtle text-info border-info/20 *:data-[slot=alert-description]:text-info/90 *:[svg]:text-current",
+          "bg-info-subtle text-info-subtle-foreground border-info/20 *:data-[slot=alert-description]:text-info-subtle-foreground/90 *:[svg]:text-current",
       },
     },
     defaultVariants: {

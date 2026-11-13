@@ -2,8 +2,8 @@
  * (auth) — the login steps: /login, /login/otp, /login/enterprise, and
  * /onboarding for a new recruiter.
  *
- * Framed like the live employer.apna.co sign-in (AuthShell): brand half and
- * form half from md, a brand bar and a flat form on phones. Already signed
+ * Framed by AuthShell: from md a brand panel with the form on the page
+ * beside it, on phones a brand bar and the form under it. Already signed
  * in? Straight on to `?next=` (SignedInRedirect).
  */
 

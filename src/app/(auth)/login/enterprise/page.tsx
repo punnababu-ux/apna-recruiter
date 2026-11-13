@@ -21,10 +21,9 @@ import {
   Button,
   Field,
   FieldError,
-  FieldLabel,
   FieldSeparator,
+  FloatingInput,
   Info,
-  Input,
   Phone,
   Tooltip,
   TooltipContent,
@@ -98,32 +97,36 @@ function EnterpriseInner() {
 
         <form className="flex flex-col gap-6" onSubmit={submitPassword} noValidate>
           <Field>
-            <div className="flex items-baseline justify-between gap-3">
-              <FieldLabel htmlFor="ent-password">Password</FieldLabel>
-              <Button
-                type="button"
-                variant="link"
-                size="sm"
-                aria-pressed={showPassword}
-                onClick={() => setShowPassword((v) => !v)}
-              >
-                {showPassword ? "Hide" : "Show"}
-              </Button>
-            </div>
-            <Input
+            {/* Keyed: without it React reuses the email step's input here
+                (same place in the tree), and `autoFocus` runs only on a new
+                one. After a click on Continue the cursor was nowhere. */}
+            <FloatingInput
+              key="password"
               id="ent-password"
-              inputSize="lg"
+              label="Password"
               type={showPassword ? "text" : "password"}
               autoComplete="current-password"
               autoFocus
               value={password}
               aria-invalid={!!passwordError || undefined}
+              aria-describedby={passwordError ? "ent-password-error" : undefined}
               onChange={(e) => {
                 setPassword(e.target.value)
                 setPasswordError(null)
               }}
+              trailing={
+                <Button
+                  type="button"
+                  variant="link"
+                  size="sm"
+                  aria-pressed={showPassword}
+                  onClick={() => setShowPassword((v) => !v)}
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </Button>
+              }
             />
-            {passwordError && <FieldError>{passwordError}</FieldError>}
+            {passwordError && <FieldError id="ent-password-error">{passwordError}</FieldError>}
           </Field>
           <Button type="submit" size="lg" className="w-full" loading={busy}>
             Log in
@@ -145,33 +148,33 @@ function EnterpriseInner() {
 
         <form className="flex flex-col gap-6" onSubmit={submitEmail} noValidate>
           <Field>
-            <div className="flex items-center gap-1">
-              <FieldLabel htmlFor="ent-email">{ENTERPRISE_LOGIN.label}</FieldLabel>
-              <Tooltip>
-                <TooltipTrigger
-                  render={
-                    <Button type="button" variant="ghost" size="icon-xs" className="text-muted-foreground" aria-label={ENTERPRISE_LOGIN.hint}>
-                      <Info />
-                    </Button>
-                  }
-                />
-                <TooltipContent>{ENTERPRISE_LOGIN.hint}</TooltipContent>
-              </Tooltip>
-            </div>
-            <Input
+            <FloatingInput
+              key="email"
               id="ent-email"
-              inputSize="lg"
+              label={ENTERPRISE_LOGIN.label}
               type="email"
               autoComplete="username"
-              placeholder={ENTERPRISE_LOGIN.placeholder}
               value={email}
               aria-invalid={!!emailError || undefined}
+              aria-describedby={emailError ? "ent-email-error" : undefined}
               onChange={(e) => {
                 setEmail(e.target.value)
                 setEmailError(null)
               }}
+              trailing={
+                <Tooltip>
+                  <TooltipTrigger
+                    render={
+                      <Button type="button" variant="ghost" size="icon-xs" className="text-muted-foreground" aria-label={ENTERPRISE_LOGIN.hint}>
+                        <Info />
+                      </Button>
+                    }
+                  />
+                  <TooltipContent>{ENTERPRISE_LOGIN.hint}</TooltipContent>
+                </Tooltip>
+              }
             />
-            {emailError && <FieldError>{emailError}</FieldError>}
+            {emailError && <FieldError id="ent-email-error">{emailError}</FieldError>}
           </Field>
           <Button type="submit" size="lg" className="w-full" loading={busy}>
             {ENTERPRISE_LOGIN.cta}

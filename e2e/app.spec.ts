@@ -57,6 +57,8 @@ type Screen = {
   prepare?: (page: Page) => Promise<void>
   desktopOnly?: boolean
   scroll?: boolean
+  /** The login steps: opened with no session (signed in, they redirect to the app). */
+  signedOut?: boolean
   /** A real product bug at 320px, not yet fixed: what, where, by how many px. */
   fixme320?: string
 }
@@ -68,7 +70,7 @@ function screens(group: string, list: Screen[]) {
       test(s.name, async ({ page }) => {
         test.skip(!!s.desktopOnly && isPhone(), "desktop only")
         if (s.scroll) test.slow()
-        await open(page, s.path)
+        await open(page, s.path, { signedOut: s.signedOut })
         await s.prepare?.(page)
         await expectLayout(page, s.name)
         if (s.scroll) await scrollThrough(page, s.name)
@@ -79,7 +81,7 @@ function screens(group: string, list: Screen[]) {
         test.fixme(!!s.fixme320, s.fixme320)
         if (s.scroll) test.slow()
         await page.setViewportSize({ width: 320, height: 640 })
-        await open(page, s.path)
+        await open(page, s.path, { signedOut: s.signedOut })
         await s.prepare?.(page)
         await expectLayout(page, `${s.name} at 320px`)
         if (s.scroll) await scrollThrough(page, `${s.name} at 320px`)
@@ -324,6 +326,250 @@ screens("product routes", [
   { name: "sidebar specs", path: "/apnahire/sidebar-specs" },
   { name: "sidebar specs, interactive", path: "/apnahire/sidebar-specs/interactive" },
 ])
+
+// ── Login (the number, the OTP, enterprise) ─────────────────────────────────
+// Signed out: a signed-in recruiter is sent on to the app. One frame for all of them (AuthShell).
+
+const OTP = "/login/otp?phone=9876543210"
+const ENTERPRISE = "/login/enterprise"
+
+const enterpriseEmail = async (page: Page, email: string) => {
+  await page.locator("#ent-email").fill(email)
+  await page.getByRole("button", { name: "Continue", exact: true }).click()
+}
+
+const enterprisePassword = async (page: Page) => {
+  await enterpriseEmail(page, "asha@vermalogistics.in")
+  await expect(page.locator("#ent-password")).toBeVisible()
+}
+
+screens("login", [
+  { name: "login", path: "/login", signedOut: true },
+  {
+    name: "login, no number",
+    path: "/login",
+    signedOut: true,
+    prepare: async (page) => {
+      await page.getByRole("button", { name: "Send OTP" }).click()
+      await expect(page.getByText("Enter your 10-digit mobile number")).toBeVisible()
+    },
+  },
+  { name: "login, back from the OTP with the number", path: "/login?phone=9876543210", signedOut: true },
+  { name: "verify OTP", path: OTP, signedOut: true },
+  {
+    name: "verify OTP, wrong code",
+    path: OTP,
+    signedOut: true,
+    prepare: async (page) => {
+      await page.keyboard.type("0000")
+      await expect(page.getByText("Incorrect OTP.")).toBeVisible()
+    },
+  },
+  { name: "enterprise login", path: ENTERPRISE, signedOut: true },
+  {
+    name: "enterprise login, personal email",
+    path: ENTERPRISE,
+    signedOut: true,
+    prepare: async (page) => {
+      await enterpriseEmail(page, "asha@gmail.com")
+      await expect(page.getByText("This email isn't registered")).toBeVisible()
+    },
+  },
+  { name: "enterprise login, password", path: ENTERPRISE, signedOut: true, prepare: enterprisePassword },
+  {
+    name: "enterprise login, wrong password",
+    path: ENTERPRISE,
+    signedOut: true,
+    prepare: async (page) => {
+      await enterprisePassword(page)
+      await page.locator("#ent-password").fill("wrong")
+      await page.getByRole("button", { name: "Log in" }).click()
+      await expect(page.getByText("That password isn't right.")).toBeVisible()
+    },
+  },
+])
+
+test.describe("login: fields", () => {
+  test("the number field: +91 shows with the number, never beside the resting label", async ({ page }) => {
+    await open(page, "/login", { signedOut: true })
+    const field = page.locator("#login-phone")
+    const prefix = page.locator("[data-slot=floating-input-prefix]")
+    await expect(prefix).toHaveCSS("opacity", "0")
+    await field.focus()
+    await expect(prefix).toHaveCSS("opacity", "1")
+    await field.fill("9876543210")
+    await field.blur()
+    await expect(prefix).toHaveCSS("opacity", "1")
+    // The floated label's text ends above +91 (the number's line), and starts where +91 does.
+    // The text itself, not its box: both boxes are padded out to the line height.
+    const text = await page.locator("[data-slot=floating-input]").evaluate((frame) => {
+      const of = (slot: string) => {
+        const range = document.createRange()
+        range.selectNodeContents(frame.querySelector(`[data-slot=${slot}]`)!)
+        return range.getBoundingClientRect()
+      }
+      const [label, prefix] = [of("floating-input-label"), of("floating-input-prefix")]
+      return { labelBottom: label.bottom, labelLeft: label.left, prefixTop: prefix.top, prefixLeft: prefix.left }
+    })
+    expect(text.labelBottom, "the label runs into the number's line").toBeLessThanOrEqual(text.prefixTop)
+    expect(Math.abs(text.prefixLeft - text.labelLeft), "+91 starts where the label does").toBeLessThanOrEqual(1)
+  })
+
+  // Until 2026-11-13 the field kept the first ten digits of anything: +91 98765 43210 became 9198765432.
+  test("the number field: a number with a country code or a leading 0 keeps its own ten digits", async ({ page }) => {
+    await open(page, "/login", { signedOut: true })
+    const field = page.locator("#login-phone")
+    for (const arrived of ["+91 98765 43210", "919876543210", "09876543210", "98765 43210"]) {
+      await field.fill(arrived) // in one go, as a paste or autofill sets it
+      await expect(field, arrived).toHaveValue("9876543210")
+    }
+    await field.fill("")
+    await field.pressSequentially("98765432109") // key by key; the eleventh digit is ignored
+    await expect(field).toHaveValue("9876543210")
+    await field.fill("9123456789") // ten digits that start with 91 are a number, not a country code
+    await expect(field).toHaveValue("9123456789")
+  })
+
+  test("the homepage's number field stores the same ten digits", async ({ page }) => {
+    await open(page, "/", { signedOut: true })
+    const field = page.locator("#login-phone")
+    await field.fill("+91 98765 43210")
+    await expect(field).toHaveValue("9876543210")
+  })
+
+  test("enterprise: the password field takes the cursor after Continue is pressed", async ({ page }) => {
+    await open(page, ENTERPRISE, { signedOut: true })
+    await enterprisePassword(page)
+    await expect(page.locator("#ent-password")).toBeFocused()
+  })
+})
+
+// ── Onboarding (a new recruiter's one screen after the OTP) ─────────────────
+// It stays put signed in or out: the signed-in redirect is on /login* only. `check` is a preview
+// (docs/reference/REVIEW-STATES.md): how a press with answers missing is shown.
+
+const ONBOARDING = "/onboarding?phone=9876543210"
+
+const postWithNothingFilled = async (page: Page) => {
+  await page.getByRole("button", { name: "Post a job" }).click()
+  await settle(page)
+}
+
+const nameAndCompany = async (page: Page) => {
+  await page.locator("#onboarding-name").fill("Asha Verma")
+  await page.locator("#onboarding-company").fill("Verma Logistics")
+}
+
+screens("onboarding", [
+  { name: "onboarding", path: ONBOARDING, scroll: true },
+  { name: "onboarding, every answer missing", path: ONBOARDING, prepare: postWithNothingFilled, scroll: true },
+  { name: "onboarding, every answer missing, words only", path: `${ONBOARDING}&check=soft`, prepare: postWithNothingFilled, scroll: true },
+  { name: "onboarding, every answer missing, one quiet line", path: `${ONBOARDING}&check=note`, prepare: postWithNothingFilled, scroll: true },
+  { name: "onboarding, every answer missing, first one red", path: `${ONBOARDING}&check=first`, prepare: postWithNothingFilled, scroll: true },
+])
+
+test.describe("onboarding: a missed answer takes the cursor", () => {
+  // A chip question has no field of its own. Until 2026-11-13 the cursor stayed on the button.
+  const QUESTIONS = [
+    { name: "consultancy", id: "#onboarding-consultancy", firstChip: "Yes", before: nameAndCompany },
+    {
+      name: "number of employees",
+      id: "#onboarding-employees",
+      firstChip: "0–50",
+      before: async (page: Page) => {
+        await nameAndCompany(page)
+        await page.getByRole("tab", { name: "No", exact: true }).click()
+      },
+    },
+  ]
+  for (const q of QUESTIONS) {
+    for (const narrow of [false, true]) {
+      test(`${q.name}${narrow ? " at 320px" : ""}`, async ({ page }) => {
+        test.skip(narrow && isDesktop(), "phone width only")
+        if (narrow) await page.setViewportSize({ width: 320, height: 640 })
+        await open(page, ONBOARDING)
+        await q.before(page)
+        await page.getByRole("button", { name: "Post a job" }).click()
+        const question = page.locator(q.id)
+        await expect(question.getByRole("tab", { name: q.firstChip, exact: true })).toBeFocused()
+        // The whole question: its label, the chips and its error.
+        await expect(question).toBeInViewport({ ratio: 1 })
+      })
+    }
+  }
+})
+
+test.describe("onboarding: quieter ways to show missing answers (previews)", () => {
+  const errors = (page: Page) => page.locator("[data-slot=field-error]")
+  const note = (page: Page) => page.locator("#onboarding-note")
+
+  test("words only: every gap is said, no control turns red, and a line goes as its answer is given", async ({ page }) => {
+    await open(page, `${ONBOARDING}&check=soft`)
+    const redControls = page.locator("[aria-invalid=true], [role=tab][class*=destructive]")
+    await page.getByRole("button", { name: "Post a job" }).click()
+    await expect(errors(page)).toHaveText([
+      "Enter your full name.",
+      "Enter your company name.",
+      "Select yes or no.",
+      "Select the number of employees in your company.",
+      "Enter a valid work email address.",
+      "Agree to the terms to continue.",
+    ])
+    await expect(redControls).toHaveCount(0)
+    await expect(page.locator("#onboarding-name")).toBeFocused()
+    await nameAndCompany(page)
+    await expect(errors(page)).toHaveCount(4)
+    // A mistyped email keeps its line until the address is right.
+    await page.locator("#onboarding-email").fill("asha@verma")
+    await expect(errors(page).filter({ hasText: "Enter a valid work email address." })).toHaveCount(1)
+    await page.locator("#onboarding-email").fill("asha@vermalogistics.in")
+    await expect(errors(page)).toHaveText(["Select yes or no.", "Select the number of employees in your company.", "Agree to the terms to continue."])
+    await page.getByRole("tab", { name: "No", exact: true }).click()
+    await page.getByRole("tab", { name: "51–100" }).click()
+    await page.getByRole("checkbox").click()
+    await expect(errors(page)).toHaveCount(0)
+    await expect(redControls).toHaveCount(0)
+  })
+
+  test("one quiet line: nothing turns red, and the line follows what is left", async ({ page }) => {
+    await open(page, `${ONBOARDING}&check=note`)
+    await expect(note(page)).toBeEmpty()
+    await page.getByRole("button", { name: "Post a job" }).click()
+    await expect(note(page)).toHaveText("Answer all 5 questions to post this job.")
+    await expect(page.locator("#onboarding-name")).toBeFocused()
+    await expect(errors(page)).toHaveCount(0)
+    await expect(page.locator("[aria-invalid=true]")).toHaveCount(0)
+    await nameAndCompany(page)
+    await expect(note(page)).toHaveText("Answer the remaining 3 questions to post this job.")
+    await page.getByRole("tab", { name: "No", exact: true }).click()
+    await page.getByRole("tab", { name: "51–100" }).click()
+    await page.locator("#onboarding-email").fill("asha@verma")
+    await expect(note(page)).toHaveText("Add a valid official email ID to post this job.")
+    await page.locator("#onboarding-email").fill("asha@vermalogistics.in")
+    await expect(note(page)).toHaveText("Agree to the terms to post this job.")
+    await page.getByRole("checkbox").click()
+    await expect(note(page)).toBeEmpty()
+    await expect(errors(page)).toHaveCount(0)
+  })
+
+  test("first one red: one error at a time, and the next takes over with no second press", async ({ page }) => {
+    await open(page, `${ONBOARDING}&check=first`)
+    await page.getByRole("button", { name: "Post a job" }).click()
+    await expect(errors(page)).toHaveText(["Enter your full name."])
+    await expect(page.locator("#onboarding-name")).toBeFocused()
+    await page.locator("#onboarding-name").fill("Asha Verma")
+    await expect(errors(page)).toHaveText(["Enter your company name."])
+    await page.locator("#onboarding-company").fill("Verma Logistics")
+    await expect(errors(page)).toHaveText(["Select yes or no."])
+    await page.getByRole("tab", { name: "No", exact: true }).click()
+    await page.getByRole("tab", { name: "51–100" }).click()
+    await expect(errors(page)).toHaveText(["Enter a valid work email address."])
+    await page.locator("#onboarding-email").fill("asha@vermalogistics.in")
+    await expect(errors(page)).toHaveText(["Agree to the terms to continue."])
+    await page.getByRole("checkbox").click()
+    await expect(errors(page)).toHaveCount(0)
+  })
+})
 
 // ── Screenshots (local only) ────────────────────────────────────────────────
 

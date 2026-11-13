@@ -12,6 +12,24 @@ ship, and keep one line per item. Open price questions live in
 - [ ] Design the Database candidate profile (differs from the applied one)
 - [ ] Real resume files for View and Download (toasts today)
 
+## Onboarding and login (2026-11-12; context: `history/SESSION-2026-11-12-ONBOARDING.md`, rounds 2 and 3)
+- [x] Desktop frame: `panel`, live on `/login`, `/login/otp`, `/login/enterprise` and `/onboarding` (Punna's pick; built 2026-11-13). The other previews and `?shell=` are deleted
+- [x] Floating fields: live on onboarding, the login number and the enterprise fields (Punna's pick; built 2026-11-13). `FloatingInput` has `prefix` and `trailing`; `?fields=` is deleted
+- [x] A missed chip question takes the cursor (it stayed on the button); the enterprise password field takes it after Continue is pressed
+- [ ] **Punna picks** how "Post a job" shows missing answers, between four: live (every answer in full red), `/onboarding?check=soft` (what Punna asked to see: a red sentence under every gap, the controls in their normal look), `?check=note` (one grey line above the button) and `?check=first` (only the first gap red). Live is unchanged until then. After the pick: delete the other paths and the `check` param (`DECISIONS.md`, 2026-11-13)
+- [x] +91 shows only after the login field is tapped, and stays while there is a number (Punna, 2026-11-13)
+- [ ] Punna decides whether the homepage hero's number field follows the login's look (`DECISIONS.md`, 2026-11-13)
+- [x] The number field on `/login` and the homepage keeps a number's own ten digits (Punna, 2026-11-13). Rule: digits only; when more than ten arrive, leading 0s and one country code 91 are dropped, then the first ten are kept. `+91 98765 43210`, `09876543210` and Chrome's autofill now store 9876543210 (they stored 9198765432 and 0987654321). `mobileDigits` in `src/lib/mobile-number.ts`, with a unit test
+- [ ] Check the live sign-in (employer.apna.co) for the same number bug
+- [ ] Enterprise email's info button: its tooltip opens on hover and keyboard focus only; a tap on a phone opens nothing (as before it moved into the field). Move it to `TapTooltip` (AGENTS.md, explainer copy)
+- [ ] `HeroLeadCard` is on no page (the homepage uses `HeroLeadForm`). Delete it or place it; the label-above branch of the number field goes with it
+- [ ] `AuthCard` is no longer a card at any width; rename it when next in `auth-shell.tsx`
+- [ ] Real phone and Safari: the floating fields with the keyboard open, autofill, and the three `check` previews
+- [ ] Linux screenshot baselines for the inputs page: push with `[update-linux-snapshots]`
+- [ ] Stat labels on the login's brand side and the homepage hero strip measure 3.1:1 on the mesh (shared `Stat`)
+- [ ] Figma: `FloatingInput` (with prefix and trailing) and the panel frame in the design system file
+- [ ] The brand side on onboarding still shows the homepage pitch; say what happens next instead?
+
 ## Next, high priority
 - [ ] **Job edit flow:** "View or edit job" needs its own flow; first settle what may change after applications start (Open in `docs/DECISIONS.md`, 2026-11-12). Needs the live list of editable fields.
 - [ ] Follow up: decide if it needs a date, a reminder, or its own queue (today it is only a call status)

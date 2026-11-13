@@ -17,7 +17,7 @@ function LoginInner() {
   return (
     <>
       <AuthCard>
-        <PhoneLoginForm next={params.get("next") ?? undefined} defaultPhone={params.get("phone") ?? ""} />
+        <PhoneLoginForm floatingLabel next={params.get("next") ?? undefined} defaultPhone={params.get("phone") ?? ""} />
       </AuthCard>
       <LegalLine />
     </>

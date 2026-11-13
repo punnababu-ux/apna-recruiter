@@ -12,6 +12,8 @@ type Seed = {
   offer?: boolean
   /** Had the offer before: exit pop-ups give no discount. */
   returning?: boolean
+  /** No session: the login steps (/login*) send a signed-in recruiter on to the app. */
+  signedOut?: boolean
 }
 
 /**
@@ -19,13 +21,13 @@ type Seed = {
  * scripts/capture-handoff.mjs): a phone session, a job draft, today's
  * pricing phase, the order-summary animation already played.
  */
-export async function open(page: Page, path: string, { offer = false, returning = false }: Seed = {}) {
+export async function open(page: Page, path: string, { offer = false, returning = false, signedOut = false }: Seed = {}) {
   await page.addInitScript(
-    ({ offer, returning }) => {
+    ({ offer, returning, signedOut }) => {
       if (sessionStorage.getItem("e2e:init")) return
       sessionStorage.setItem("e2e:init", "1")
       localStorage.clear()
-      localStorage.setItem("apnahire:session", JSON.stringify({ kind: "phone", phone: "9876543210" }))
+      if (!signedOut) localStorage.setItem("apnahire:session", JSON.stringify({ kind: "phone", phone: "9876543210" }))
       localStorage.setItem(
         "apnahire:job-draft",
         JSON.stringify({ draft: { title: "Delivery executive", city: "Bengaluru", locationType: "office" } }),
@@ -36,7 +38,7 @@ export async function open(page: Page, path: string, { offer = false, returning 
       if (offer) localStorage.setItem("apna:extra-off-deadline", String(Date.now() + 86_399_000 - 48_000))
       if (returning) localStorage.setItem("apna:returning-recruiter", "1")
     },
-    { offer, returning },
+    { offer, returning, signedOut },
   )
   // On every load, reloads included: the Next dev badge sits over bottom-left buttons on phones,
   // and the text caret blinks between screenshots.

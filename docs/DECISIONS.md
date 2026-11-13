@@ -28,6 +28,80 @@ or **Open**.
 - **Would change it:** a headline that wraps to three lines on a phone, or a clay render that still needs the arrow to be understood.
 - **Status:** Decided (design). The picker is Open.
 
+## 2026-11-13 — Onboarding: "Post a job" with answers missing, said quietly
+
+- **Question:** Punna: pressing "Post a job" with the form unfilled turns every field red with its own error, and that is overwhelming. Make it subtle. Punna's first idea: a constant message at the bottom.
+- **Decision:** none yet. Three previews behind `?check=` on `/onboarding`; live is unchanged (every missing answer in full red). Press "Post a job" with answers missing to see them.
+  - `soft` (Punna's direction, 2026-11-13 afternoon, after seeing the first two): "Let's show the gaps on every field, but in a subtle way, not that red color, full-on red color. Maybe a red info message." Every missing answer is marked, in words only: its existing error sentence (`ONBOARDING.*.error`, `FieldError`) under the question. The field, the chips and the checkbox keep their normal look: no red border, no red chips, no `aria-invalid`. A line goes as its answer is given, with no second press; a mistyped email keeps its line until the address is right.
+  - `note`: nothing turns red and no error line shows. One grey line (`text-sm text-muted-foreground`) appears right above the button, says what is missing, follows the form as it is filled, and goes when nothing is missing. One or two missing questions are named ("Add your name and your company name to post this job."); three or more are counted ("Answer the remaining 3 questions to post this job."); the terms are asked for last, alone ("Agree to the terms to post this job."). Copy: `missingNote` in `src/content/onboarding.ts`.
+  - `first`: only the first missing answer turns red, with its existing error. As each is answered the next takes the red, with no second press.
+  - All three: the cursor goes to the first missing answer and the whole question scrolls into view. Live does the same since 2026-11-13; until then a missed chip question left the cursor on the button.
+- **Why `soft`:** Punna did not want the full red, and did not pick the single line or the first field only. `soft` keeps what live does well, a reason at every gap, and drops what made it loud: the red borders, the red rings, nine red chips and the red checkbox. It also closes the two gaps seen in `note`: a mistyped email has its reason under the field, and a missed chip question or the terms has a line right under it.
+- **What `soft` looks like once built:** on an empty form it is still six red sentences, so it reads as six things to do; it is clearly quieter than live because no control changes. With one or two gaps, the usual case, it is one or two short red lines under normal fields. No third colour was tried: red text is the system's error text (`text-destructive`).
+- **Seen in `note` and `first` (why they were not picked):**
+  1. `note`, a mistyped email: the field looks filled and nothing beside it says what is wrong. On a phone the cursor opens the keyboard, and the line under the form may be behind it. Not checked on a real phone.
+  2. `note`, chip questions and the terms: after a tap the browser draws no focus ring on a chip or a checkbox (it does for a keyboard), so nothing on the question marks it. A ring on the first chip was considered and refused: it reads as "Yes" being suggested.
+  3. `first`: the red moves while the recruiter types. The first letter of the name turns the company field red.
+  4. `note` on phones: the line is one line for most sentences and two for the longest, at 393, 375 and 320px. The button moves down 36 to 56px when it appears.
+- **Screen readers:** `soft` and `note` set no `aria-invalid`. In `soft` each line is an alert and a typed field is described by its line. In `note` the line is a live region and the button is described by it.
+- **Considered, not built:** a line that never changes ("Fill in every field to post a job"); grey lines in place of red ones.
+- **Would change it:** Punna finding six red sentences still too much on an empty press; then `soft` for one or two gaps and the single line when more are missing.
+- **Status:** Leaning (`soft`, Punna's direction; to confirm after seeing it). Live stays the full red until then. Code: `src/app/(auth)/onboarding/page.tsx` (`check`, `wordsOnly`), `src/content/onboarding.ts` (`missingNote`).
+
+## 2026-11-13 — Login number: a country code or a leading 0 is dropped, the ten digits are kept
+
+- **Question:** the number field kept the first ten digits of anything. Pasted `+91 98765 43210` became 9198765432, and Chrome's autofill of that number became 0987654321 (it writes the trunk 0 into a `tel-national` field). Both passed the 10-digit check and went on to the OTP.
+- **Decision:** Punna, 2026-11-13: "Identify numbers pasted with a zero in front or +91 and place them accurately." The field keeps digits only. When more than ten digits arrive, leading 0s and one country code 91 are dropped, then the first ten are kept. Ten digits or fewer stay as typed, also when they start with 91 or 0, so typing one digit at a time is unchanged. One function, `mobileDigits` (`src/lib/mobile-number.ts`), used by `PhoneLoginForm`: `/login` and the homepage hero get the same digits. The homepage field's look is not changed.
+- **Stores 9876543210:** `+91 98765 43210`, `919876543210`, `09876543210`, `98765 43210`, `0091 98765 43210`, and Chrome's autofill of `+919876543210`.
+- **Known edge:** an eleventh digit typed onto a number that itself starts with 91 reads as a country code, and the field then shows nine digits. The rule cannot tell the two apart; the recruiter sees it at once and the form does not go on.
+- **Would change it:** numbers from other countries being allowed.
+- **Status:** Decided (Punna, 2026-11-13).
+
+## 2026-11-13 — Login number: +91 shows once the label floats; the homepage keeps its own field
+
+- **Question:** the floating label moved to the login (entry below). Its number field needs +91. Where is +91 while the label rests on the text line? And does the homepage hero's number field follow? It is the same form (`PhoneLoginForm`).
+- **Decision, +91:** only after the field is tapped (Punna, 2026-11-13). Punna thought aloud about keeping +91 always in view on the left, then corrected it: "No, actually no. Plus 91 should only be visible after the field is tapped." Empty and not focused, the field shows one text, "Mobile number". On focus the label floats up and +91 appears before the cursor; it stays while there is a number. The label and +91 never share a line. In code: `FloatingInput`'s `prefix` shows with the value, as in Material.
+- **Considered:** +91 always in view with the label always floated (the field would never show the floating motion, and an empty field would show two texts); +91 as its own segment with a rule (more chrome for one fixed prefix).
+- **Decision, homepage:** not changed. `/login` passes `floatingLabel`. The hero's pill (48px, the CTA inside it) and `HeroLeadCard` (on no page today) keep their fields. The login and the hero already differed before this: a 44px field with its label above, against a pill with no visible label.
+- **Would change it:** Punna wanting the homepage to match the login.
+- **Status:** Decided (+91 timing; Punna, 2026-11-13). Open (homepage).
+
+## 2026-11-12 — Login and onboarding on desktop: the form leaves the grey half and its card
+
+- **Question:** Punna: on desktop the screen is split in two, the right half is grey, and on the grey sits another box. Three surfaces hold one form. What frame replaces it?
+- **Decision:** `panel` (Punna, 2026-11-12). Live since 2026-11-13 on `/login`, `/login/otp`, `/login/enterprise` and `/onboarding`. One white page. The brand is a rounded panel (`rounded-card`) inset 16px from the window; the form sits on the page, with no card. Phones are unchanged: a brand bar, then the form.
+- **Why:** it removes two of the three surfaces and leaves one object (the brand) and one page (the form), which is what phones already show.
+- **The other two previews, deleted:** `flat` (the brand half and a white half; the soft gradient ended on a hard line against white and read as cut off) and `canvas` (one gradient, the form in a frosted card; it kept a card, and the inputs sat on glass over a moving gradient). `?shell=` no longer exists.
+- **What it changed besides:** the brand panel stays in view while a long form scrolls. "Looking for a job?" moved into the panel beside the logo (as in the phone's brand bar), so the form side holds only the form and centres in the full height.
+- **Measured, onboarding at 1440×790** (a 13-inch laptop's window): before, "Post a job" ended 60px below the fold (page 923px). Now, with the floating fields (entry below), the whole form shows with no scroll (page 790px).
+- **Reopens:** "The login shell is shared, and it keeps its own look" (entry below, same day). The shell is still shared.
+- **Not done:** the brand side's content is unchanged (the homepage pitch). For onboarding it could say what happens next instead; a separate question.
+- **Would change it:** the Figma "What does apna offer" dark panel being wanted after all.
+- **Status:** Decided (Punna, 2026-11-12). Code: `src/components/auth/auth-shell.tsx`.
+
+## 2026-11-12 — Onboarding: text fields with the label inside (FloatingInput)
+
+- **Question:** Punna: simplify the fields. Only the hint text in the field; on tap it moves to the top, as in Android's Material fields. Or something better?
+- **Decision:** adopt (Punna, 2026-11-12), and the login follows. Live since 2026-11-13: onboarding's name, company and email; the login's mobile number; the enterprise email and password. They use the primitive `FloatingInput`. Two changes from Material's outlined field:
+  1. The label floats **inside** the box, onto its top line, not onto the border. A label that cuts the border needs a patch of the surface colour behind it; a frosted or gradient surface has none.
+  2. Choice questions (consultancy, employees) keep the label above the chips. A chip row has no text line for a label to rest on. The OTP boxes stay as they are.
+- **Why:** an empty field shows one text, not two. The placeholders that only repeated the label are gone ("Your full name" / "Enter your full name", "Enterprise Email" / "Enter Enterprise email address"); "e.g. Swiggy" stays and shows on focus. The onboarding form is 42px shorter; on an iPhone 14 Pro (393×852) "Post a job" comes into view (it ended 25px below the fold). Recruiters know the pattern from Android apps.
+- **What the login needed:** `prefix` (+91; entry above) and `trailing`, one small action at the end of the field: Show / Hide on the password, the info button on the enterprise email. Both were beside the label above the field before.
+- **What it costs:** the label is 12px once the field is filled (14px above the field before). The example shows only on focus. One form has two label positions: inside for typed answers, above for choices.
+- **Considered:** labels above with the repeating placeholders removed (a smaller change, larger labels, no height saved). Material's notch on the border (refused, reason 1).
+- **Would change it:** recruiters missing the small label or an error in testing.
+- **Status:** Decided (Punna, 2026-11-12). Code: `packages/design-system/src/components/ui/floating-input.tsx`; used in `src/app/(auth)/onboarding/page.tsx`, `src/app/(auth)/login/enterprise/page.tsx`, `src/components/marketing/hero-lead-card.tsx` (`floatingLabel`).
+
+## 2026-11-12 — Alert and invalid chips: text on a tint takes the tint's own foreground
+
+- **Question:** axe failed onboarding's offer banner (live) and the red chips of a missed choice question. Both are primitives: `Alert` `success` and `ChipTabs` `aria-invalid`.
+- **Decision:** the rule from 2026-11-07 ("Text on a tinted fill uses that tint's `-subtle-foreground`") now holds in both. `Alert` `success`, `info` and `destructive` read `text-*-subtle-foreground` (`warning` already did); an invalid `choice` chip reads `text-destructive-subtle-foreground`.
+- **Measured:** the role colour on its tint was 3.6–4.2:1 for the title and 3.2–3.6:1 for the description, light and dark. Now 6.9–9.2:1 and 5.9–7.2:1.
+- **Shows on:** onboarding's offer banner; "Plan cancelled" (`cancel-plan-flow.tsx`) and the title-edit note (`job-title-edit.tsx`), both `info`; choice chips with a missing answer (onboarding, OnlyRounds job details and rounds).
+- **Not fixed:** the stat labels on the login's brand side (shared `Stat`, also the homepage hero strip) measure 3.1:1 on the mesh. axe cannot read text over a gradient, so no test sees it.
+- **Would change it:** Punna wanting a lighter text on these tints; then the `-subtle-fg` tokens change, not the components.
+- **Status:** Decided by the 2026-11-07 rule; Punna to look at the three alerts.
+
 ## 2026-11-12 — Onboarding follows Figma "Onboarding fixes"
 
 - **Question:** whose form wins for /onboarding: my layout, or the latest Figma (Onboarding file, page "Onboarding fixes", 4127:1760 phone, 4149:620 desktop, the frames with "Looking for a job?")?
