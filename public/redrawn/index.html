@@ -77,7 +77,7 @@ body {
 }
 .slide {
   scroll-snap-align: start;
-  min-height: 100dvh;
+  min-height: 100dvh; box-sizing: border-box;
   display: grid;
   place-items: center;
   position: relative;
@@ -85,7 +85,7 @@ body {
   isolation: isolate;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-block: clamp(56px, 9vh, 120px);
+  padding-block: clamp(32px, 5vh, 72px);
 }
 .inner { width: min(1120px, 100%); display: flex; flex-direction: column; gap: clamp(20px, 3.5vh, 40px); }
 .center { align-items: center; text-align: center; }
@@ -221,7 +221,7 @@ em { font-style: normal; }
 /* ── Product screens ─────────────────────────────────── */
 /* Width follows the screen's height too, so the whole window (bar + full
    screenshot) fits on the slide under the heading — never cropped. */
-.browser { margin: 0; width: min(1040px, 100%, calc((100dvh - 340px) * 1.6 + 2px)); border-radius: 18px; overflow: hidden; background: var(--stage-2); border: 1px solid var(--ink-faint); box-shadow: 0 50px 100px -40px var(--shadow); }
+.browser { margin: 0; width: min(1040px, 100%, calc((100dvh - 430px) * 1.6 + 2px)); border-radius: 18px; overflow: hidden; background: var(--stage-2); border: 1px solid var(--ink-faint); box-shadow: 0 50px 100px -40px var(--shadow); }
 .browser-bar { display: flex; align-items: center; gap: 8px; height: 38px; padding: 0 14px; background: var(--bar); }
 .browser-bar i { width: 11px; height: 11px; border-radius: 50%; background: var(--ink-faint); }
 .browser-bar span { margin-left: 12px; font-size: 12px; color: var(--ink-dim); padding: 4px 14px; border-radius: 99px; background: rgba(255, 255, 255, 0.06); }
@@ -502,6 +502,15 @@ em { font-style: normal; }
 .link-card strong { font-family: var(--font-display); font-weight: 700; font-size: clamp(20px, 2.2vw, 30px); line-height: 1.15; overflow-wrap: normal; word-break: keep-all; }
 .link-card span { font-size: 15px; line-height: 1.45; color: var(--ink-dim); }
 @media (max-width: 640px) { .links { grid-template-columns: 1fr; } }
+
+
+/* ── Banners: one structure, any skin ── */
+.banners { display: flex; flex-direction: column; gap: clamp(12px, 2.4vh, 24px); width: min(100%, calc((100dvh - 420px) * 2.9)); min-width: min(320px, 100%); }
+.banner { margin: 0; display: flex; flex-direction: column; gap: 10px; text-align: left; }
+.banner img { width: 100%; height: auto; display: block; border-radius: clamp(10px, 1.4vw, 20px); box-shadow: 0 30px 60px -30px var(--shadow); }
+.banner figcaption { font-size: 13px; color: var(--ink-dim); }
+.banner-parts { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.banner-parts span { font-size: 13px; padding: 6px 12px; border-radius: 99px; border: 1px solid var(--ink-faint); color: var(--ink-dim); }
 
 /* ── Final reveal ── */
 .reveal-line { display: grid; }
@@ -901,7 +910,7 @@ em { font-style: normal; }
         <div class="pg-tok"><code>--ambient-glow</code><b data-v='["white 10%","none"]'>white 10%</b></div>
         <div class="pg-tok"><code>--duration-ambient</code><b data-v='["16s","24s","12s","16s"]'>16s</b></div>
         <div class="pg-tok"><code>--ease-glide</code><b data-v='["0.22, 1, 0.36, 1"]'>0.22, 1, 0.36, 1</b></div>
-        <p class="pg-note">Real values, retuned this week. The names never moved.</p>
+        <p class="pg-note">Real values from the code. The names never moved.</p>
       </div>
     </div>
   </section>
@@ -1049,6 +1058,19 @@ em { font-style: normal; }
         </div>
       </div>
       <button type="button" class="switch rise" id="nudge-replay">Play again</button>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="Banners">
+    <div class="inner center">
+      <p class="kicker rise">Banners</p>
+      <h2 class="rise">One structure, <em>any occasion.</em></h2>
+      <div class="banners rise">
+        <figure class="banner"><img src="img/banner-normal.jpg" alt="Everyday banner: 0 job credits left, get 6 job credits at &#8377;608 each, &#8377;3,649, Buy 6 credits" loading="lazy"><figcaption>Every day</figcaption></figure>
+        <figure class="banner"><img src="img/banner-diwali.jpg" alt="Diwali banner: Hiring Utsav, 22 job credits at just &#8377;455 each, &#8377;9,999, Buy job credits, with a toran, lanterns and a diya" loading="lazy"><figcaption>Diwali</figcaption></figure>
+      </div>
+      <div class="banner-parts rise" aria-label="Parts every banner keeps"><span>Clay</span><span>Chip</span><span>Headline</span><span>Price</span><span>One CTA</span></div>
+      <p class="lede rise">Every banner keeps the same parts in the same places. A festival changes only the background, the headline font and the clay.</p>
     </div>
   </section>
 
