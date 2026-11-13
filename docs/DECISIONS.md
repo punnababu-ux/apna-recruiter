@@ -9,6 +9,25 @@ or **Open**.
 ---
 
 
+## 2026-11-13 — Offer banners: one negative, and it lives in the chip
+
+- **Question:** the banners sit on the jobs dashboard and the logged-in plans page. A chip that states the problem and a headline that states it again ("Your plan ended" then "Hiring has stopped") reads as two blows.
+- **Decision:** one negative per banner, in the chip (the plain fact: "Your plan ended", "0 job credits left", "Plan ends in 5 days"). The headline is the way forward, a gain, with the gold price. It does not say stops, can't, stopped, expired or lose. Urgency stays in the deadline, or as something they can keep before it goes ("Renew before it goes", "Last day to go annual"). Renew, chosen by Punna: "Your **old price** is still yours. Renew before it goes" (rebuy cases and `PlanEndedBanner`). The chip stays a sentence-case `Badge`.
+- **Headlines:** Plan ends in 5 days → "Keep your job live at ₹1,500/month", or "Go annual for ₹787/month" in the last week. Upgrade offer → "Go annual for ₹833/month"; last day → "Last day to go annual for ₹833/month". 1 of 1 job live → "Add another live job at ₹1,999/job"; 2 of 2 jobs live → "Add a third live job at ₹1,999/job". 0 job credits left → "Get 6 job credits at ₹608 each"; 1 left → "Keep hiring. Get 6 job credits at ₹608 each". 0 database credits left → "Get 1,000 database credits at ₹6 each"; 80 left → "Get 1,000 more at ₹6 each". Auto-pay is off → "Turn on auto-pay and keep hiring" (the button stays "Turn on auto-pay"; the sub stays the renewal price). Hiring Utsav stays "Hire for 365 days at ₹833/month" and "22 job credits cost ₹455 each".
+- **Reason:** two negatives back to back feel punishing. The headline should be the way back.
+- **Supersedes:** the "headline says what stops" line in the entry below. Where a banner shows, and the deadline, stay as logged there. The chip stays sentence case.
+- **Would change it:** a headline that wraps to three lines on a phone.
+- **Status:** Decided. Which banner is due stays Open.
+
+## 2026-11-13 — Offer banners: the headline says the loss, and they sit on the plans page
+
+- **Question:** the banner structure is settled. How does it create urgency, and where does a logged-in recruiter see it?
+- **Decision:** the headline says what stops, in plain words ("Your job stops", "You can't post a job"), not a metaphor. The price stays the gold number. A timed offer says a date ("Ends 19 Nov"), and a timer only in the last 24 hours. "Limited time offer" is dropped. The clay shows that same stake, not a document with an arrow. On the logged-in plans page (`/apnahire/credits`) one banner shows above the tabs: Jobs shows 0 job credits, Database shows 0 database credits, Unlimited shows the annual offer, Enterprise shows none. `?bar=` previews any case. The public pricing page stays without it.
+- **Not in this pass:** which banner is really due, and how they stack. That stays for the developers.
+- **Why:** a price alone gives nothing to lose. The plans page is where the recruiter acts on it.
+- **Would change it:** a headline that wraps to three lines on a phone, or a clay render that still needs the arrow to be understood.
+- **Status:** Decided (design). The picker is Open.
+
 ## 2026-11-12 — Onboarding follows Figma "Onboarding fixes"
 
 - **Question:** whose form wins for /onboarding: my layout, or the latest Figma (Onboarding file, page "Onboarding fixes", 4127:1760 phone, 4149:620 desktop, the frames with "Looking for a job?")?

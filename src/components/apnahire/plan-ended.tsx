@@ -7,8 +7,8 @@
  *
  *   PlanEndedBanner    for a week (BANNER_DAYS), above the page title on the
  *                      jobs dashboard, Manage plan and the plans page: a red
- *                      rebuy OfferBar: "Your plan ended", "Renew at your old
- *                      price", the plan's slot and database credits, the
+ *                      rebuy OfferBar: "Your plan ended on …", "Your old price
+ *                      is still yours. Renew before it goes", the plan's slot and database credits, the
  *                      price last paid and Renew plan. The plan card is gone
  *                      by then.
  *   PlanEndedState     Manage plan's body for that week, in place of "No
@@ -64,7 +64,7 @@ export function PlanEndedBanner({ className, onRenew }: { className?: string; on
       badge={`Your plan ended on ${dayLabel(prev.endedOn)}`}
       headline={
         <>
-          Renew at your <OfferBarAccent>old price</OfferBarAccent>
+          Your <OfferBarAccent>old price</OfferBarAccent> is still yours. Renew before it goes
         </>
       }
       sub={[slotTermLabel({ slots: prev.slots, slotDays: SUBSCRIPTION_TERMS[prev.term].slotDays }), ...(db ? [`${num(db)} database credits`] : [])].join(" · ")}

@@ -196,49 +196,49 @@ export const CLAY_BANNER_EXAMPLES: ClayExample[] = [
     name: "Monthly → quarterly, quarterly → annual (plum)",
     file: "banner-upgrade",
     subject:
-      "a rounded clay desk calendar with a chunky up arrow rising from its top edge. Off-white calendar pages, a mint binding, a big sky blue arrow.",
+      "a tall stack of about six rounded clay calendar pages, with a small chunky clay briefcase resting on the top page. Off-white pages, a mint briefcase, a sky blue handle, a thin deep plum band on the briefcase. No arrow.",
   },
   {
     name: "2nd / 3rd job live at a time (plum)",
     file: "banner-slots",
     subject:
-      "two rounded clay job cards side by side with a third card sliding in, and a round plus badge on it. Off-white cards, a mint card sliding in, a sky blue plus badge, thin deep plum lines on the cards.",
+      "a small rounded clay shelf holding two chunky clay briefcases, with a clear empty space and a third briefcase hovering just above that space, about to land. Off-white shelf, mint briefcases, sky blue handles, a thin deep plum edge on the shelf. No plus sign.",
   },
   {
     name: "Rebuy, plan ended (plum)",
     file: "banner-rebuy",
     subject:
-      "a rounded clay calendar with a chunky circular arrow looping around it, warm and welcoming. Off-white calendar, a mint arrow, a sky blue binding.",
+      "a chunky rounded clay price tag with a small clay padlock clasped through its hole, as if the old price is held. Off-white tag, a mint padlock, a sky blue string. No text, no numbers, no arrow.",
   },
   {
     name: "Auto-pay is off (plum)",
     file: "banner-autopay",
     subject:
-      "a rounded clay payment card with a large round refresh arrow badge on its corner, the arrow paused (two short bars inside it). Off-white card, a mint stripe, a sky blue badge with off-white bars.",
+      "a desk calendar with a raised mint repeat symbol (two curved arrows). Off-white pages, a sky blue header strip and rings, thin deep plum ring holes.",
   },
   {
     name: "1 job credit left (green)",
     file: "banner-credits-low",
     subject:
-      "a rounded clay coin jar with a single big coin resting at the bottom, lid beside it. Off-white jar, one warm yellow coin, an off-white lid with a warm yellow knob.",
+      "a rounded clay coin tray with six round wells in two rows of three, only the front-left well holding one big coin, the other five wells empty. Off-white tray, one warm yellow coin. No green, no mint, no lid.",
   },
   {
     name: "0 job credits left (red)",
     file: "banner-credits-empty",
     subject:
-      "a rounded clay coin jar, empty, tipped slightly on its side, lid off. Off-white jar, an off-white lid, a warm yellow rim band.",
+      "the same rounded clay coin tray with six round wells in two rows of three, every well empty. Off-white tray, a warm yellow rim. No coin, no green, no mint, no lid.",
   },
   {
     name: "Database credits running low (green)",
     file: "banner-database",
     subject:
-      "a short rounded clay stack of three database discs with a chunky magnifying glass leaning on it. Off-white discs, a warm yellow magnifier rim and handle.",
+      "three rounded clay profile cards fanned out, each with a blank circle for a face, and a chunky clay key leaning against the fan. Off-white cards, a warm yellow key, a sky blue circle on the front card. No green, no mint, no discs, no magnifier.",
   },
   {
     name: "0 database credits left (red)",
     file: "banner-database-empty",
     subject:
-      "a short rounded clay stack of three database discs, the top disc lifted off and tipped, an empty hollow inside, a chunky magnifying glass lying beside it. Off-white discs with warm yellow edges, a warm yellow magnifier rim and handle, an off-white lens.",
+      "three rounded clay profile cards fanned out, each with a blank circle for a face, held shut by a chunky clay padlock in front of them. Off-white cards, a warm yellow padlock, a sky blue circle on the front card. No green, no mint, no discs.",
   },
   {
     name: "Hiring Utsav (marigold)",

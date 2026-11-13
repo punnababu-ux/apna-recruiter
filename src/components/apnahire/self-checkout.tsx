@@ -75,6 +75,7 @@ import { PaymentFailed, PaymentSuccess } from "@/components/apnahire/payment-suc
 import { startSubscription, upgradeSubscription } from "@/hooks/use-job-slots"
 import { usePlanChange, useChoosePlan } from "@/components/apnahire/plan-change"
 import { PlanEndedBanner } from "@/components/apnahire/plan-ended"
+import { isOfferBannerCase, OfferBannerFor, PLANS_PAGE_BAR } from "@/components/apnahire/offer-banners"
 import { addPurchasedJobCredits } from "@/hooks/use-plans-ingress"
 import { useHeaderSlot } from "@/components/marketing/header-slot"
 import { ExitOfferDialog } from "@/components/apnahire/offers/exit-offer-dialog"
@@ -195,6 +196,15 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
 
   // Restore tab from ?tab= or the last tab this visit. Read once; writing
   // the URL back happens after render.
+  // Which offer banner. `?bar=` previews a case; otherwise a stand-in per
+  // tab, so the logged-in plans page always shows one. Enterprise has none.
+  // Which case is real, and when, is left for later.
+  const barFromUrl = useClientSnapshot(() => {
+    const v = new URLSearchParams(window.location.search).get("bar")
+    return isOfferBannerCase(v) ? v : null
+  }, null)
+  const plansBar = isLoggedOut ? null : (barFromUrl ?? (activeTab === "enterprise" ? null : PLANS_PAGE_BAR[activeTab] ?? null))
+
   const restoredTab = useClientSnapshot(() => {
     const urlTab = parsePricingTab(new URLSearchParams(window.location.search).get("tab"))
     if (urlTab) return { tab: urlTab, writeUrl: false }
@@ -700,6 +710,7 @@ export function SelfCheckout({ authState }: { authState: CheckoutAuthState }) {
               <>
                 <PriceChangeBanner placement="plans" />
                 <PlanEndedBanner onRenew={() => changeTab("unlimited")} />
+                {plansBar && <OfferBannerFor bar={plansBar} />}
               </>
             }
           />

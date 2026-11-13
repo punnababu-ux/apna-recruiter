@@ -161,7 +161,7 @@ export function PricingHero({
           // No heading (user call, 2026-10-30): the top bar says "Select
           // plans"; the banner, then the tabs. `empty:hidden`: with no banner
           // showing, the wrapper and its spacing go too.
-          <div className={cn("empty:hidden", bannerClassName)}>{banner}</div>
+          <div className={cn("flex w-full flex-col gap-3 empty:hidden", bannerClassName)}>{banner}</div>
         )}
 
         {/* Plain block wrapper (not `display: contents`) — needed so

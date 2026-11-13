@@ -37,7 +37,7 @@ function FestiveSkins() {
             }
             sub="Valid for 365 days"
             price={{ amount: "₹9,999", strike: "₹15,383" }}
-            deadline="Limited time offer"
+            deadline="Ends 15 Nov"
             cta={<Button variant="emphasis" className={k.trail ? "cta-trail" : k.surface === "light" ? "holi-splash-cta" : undefined}>Buy job credits</Button>}
           />
         </div>

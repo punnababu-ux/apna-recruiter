@@ -10,18 +10,20 @@
  *     tone="upgrade"                    the badge dot: upgrade · warning (gold), renew · urgent (salmon)
  *     art={<img … />}                   clay object, 64px / 96px from md
  *     badge="Plan ends in 5 days"       why the bar shows (the trigger)
- *     headline={<>Hire all year for just <OfferBarAccent>₹833/month</OfferBarAccent></>}
- *     sub="1 live job for 365 days · 2,400 database credits"
+ *     headline={<>Go annual for <OfferBarAccent>₹833/month</OfferBarAccent></>}
+ *     sub="1 job live at a time for 365 days · 2,400 database credits"
  *     price={{ amount: "₹9,999", strike: "₹11,110" }}   the % is worked out
- *     deadline="Limited time offer"     between price and CTA; a timer in the last 24h
+ *     deadline="Ends 19 Nov"            between price and CTA; a timer in the last 24h
  *     cta={<Button variant="emphasis">Upgrade to annual</Button>}
  *   />
  *
  * Rules
  * - The surface follows the pop-up the CTA opens: subscription plum (with a
  *   gold corner glow), credits green, out of credits red, festive marigold.
- * - The badge carries the trigger; time ("Limited time offer", "Ends in
- *   05:41:55") goes in `deadline`, never in the badge.
+ * - The badge carries the one negative, in sentence case (why it shows).
+ *   The headline is the way forward, a gain, and never a second negative.
+ *   Time ("Ends 19 Nov", "Ends in 05:41:55") goes in `deadline`, never in
+ *   the badge.
  * - The saving is text beside the struck price (Badge "discount"), no chip. The
  *   group reads outward from the price: price, strike, % on phones (left);
  *   %, strike, price from md (right-aligned).
@@ -93,10 +95,10 @@ function OfferBar({ surface = "subscription", tone = "upgrade", art, badge, head
         {art && <div className="hidden size-24 shrink-0 drop-shadow-lg md:block [&>*]:size-full [&>*]:object-contain">{art}</div>}
         <div className="flex min-w-0 flex-col items-start gap-1.5">
           {badge && (
-            <span className={cn("flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold tracking-wide uppercase", light ? "bg-foreground/10" : "bg-surface-inverted-fg/15")}>
+            <Badge variant={light ? "on-tint" : "on-dark"} size="lg">
               <span className={cn("size-2 rounded-full", dot)} />
               {badge}
-            </span>
+            </Badge>
           )}
           <p className="text-lg leading-snug font-bold md:text-2xl">{headline}</p>
           {sub && <p className={cn("text-sm", muted, price && "hidden md:block")}>{sub}</p>}

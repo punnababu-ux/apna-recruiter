@@ -18,7 +18,7 @@ export default function BannersCatalogPage() {
           rules={[
             "One component: OfferBar. Clay object, badge, headline with one gold number, then price, deadline and CTA on the right.",
             "The surface follows the pop-up the CTA opens: subscription plum, credits green, out of credits red, festive gold.",
-            "The badge says why the banner shows. Time goes in the deadline: Limited time offer, then Ends in hh:mm:ss in the last 24 hours.",
+            "One negative per banner, and it lives in the badge (sentence case): why it shows. The headline is the way forward, a gain, with one gold price. It never repeats the badge and never assumes a job is being posted. Time goes in the deadline: a date, then Ends in hh:mm:ss in the last 24 hours.",
             "The CTA is the white emphasis button at the default size.",
             "Phones: the clay hides, the CTA goes full width, the deadline joins the price line where it fits.",
             "A festive skin changes only the background, the headline face and the clay, never the structure.",

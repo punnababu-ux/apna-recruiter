@@ -75,6 +75,7 @@ export const SCREENS: Screen[] = [
           { value: "enterprise", label: "Enterprise" },
         ],
       },
+      { key: "bar", label: "Offer bar", options: BAR_OPTIONS },
     ],
   },
   {
@@ -121,6 +122,16 @@ export const SCREENS: Screen[] = [
         options: [
           { value: NONE, label: "Shown" },
           { value: "off", label: "Hidden" },
+        ],
+      },
+      {
+        // Previews (2026-11-13): press "Post a job" with answers missing.
+        key: "check",
+        label: "Answers missing",
+        options: [
+          { value: NONE, label: "Live: every one red" },
+          { value: "note", label: "One quiet line" },
+          { value: "first", label: "First one red" },
         ],
       },
     ],

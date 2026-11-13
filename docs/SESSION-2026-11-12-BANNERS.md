@@ -72,3 +72,8 @@ diwali.svg now animates inside the SVG itself: lanterns sway ±3° from the tora
 - Holi props removed (Punna: looked weird): the flat pichkari/matki clashed with the 3D clay and the matki repeated its pots; dots were noise. Back to pastel clouds + specks on the wash; the clay carries Holi.
 - Holi v3 (balance like Diwali): props only in the empty middle band (≈50–78% of the width), clear of the clay and the price: three water balloons hang from the top edge and sway, a shaded clay-like pichkari rests at an angle and sprays a dotted arc that lands in a small mint splash. No matki (the clay has pots), no dot trail.
 - Holi phones: own art (holi-phone.svg), only the three balloons in the empty top-right beside the badge, short strings so they clear the headline; desktop keeps the full scene from md.
+
+## FOMO copy and plans page (2026-11-13)
+One negative per banner, and it lives in the chip. The headline is the way forward, a gain; the gold number stays the price. Urgency is the deadline ("Ends 19 Nov", then a timer in the last 24 hours) or a keep-it line ("Renew before it goes"). Logged-in `/apnahire/credits` shows one banner above the tabs (Jobs: credits-0, Database: database-0, Unlimited: quarterly-to-annual, Enterprise: none). `?bar=` previews any case. `/pricing` shows none. Which case is really due is still open.
+The chip is a sentence-case `Badge` (`on-dark` / `on-tint`, `lg`). Renew reads "Your old price is still yours. Renew before it goes". Every case is in DECISIONS 2026-11-13.
+Clay subjects rewritten in `src/content/clay-style.ts` (the stake, not a document with an arrow). Draft renders were made and not installed: the cut-out left a grey fringe. The live PNGs are still the previous set.

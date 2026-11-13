@@ -433,7 +433,7 @@ export const PRODUCT_CATALOG: CatalogGroup[] = [
         live: "/apnahire/jobs",
         where: "Jobs dashboard, above the list",
         rules: [
-          "One bar at a time; which one is not decided yet (templates only). The jobs page shows none.",
+          "One bar at a time. The logged-in plans page shows a stand-in (jobs: 0 credits, database: 0 credits, unlimited: the annual offer); ?bar= previews any case. Which case is real comes later.",
           "The bar's CTA is the dark companion (emphasis, white on the plum), never green.",
           "Plan names and lengths in our words: quarterly / annual plan, days.",
         ],

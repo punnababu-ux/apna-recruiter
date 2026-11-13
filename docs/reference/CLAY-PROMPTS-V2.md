@@ -394,6 +394,40 @@ off-white = paper, neutral parts.
 
 ---
 
+## Banner prompts (2026-11-13)
+
+For the OfferBar clay (96px, banner's left edge, desktop only; see
+CLAY-ILLUSTRATIONS.md). Installed 2026-11-13 from user renders:
+`banner-upgrade`, `banner-slots`, `banner-rebuy`. Match their look: off-white
+body, mint, sky blue, gold where the table says, no plum body. Each block
+below is the full paste: opening line + subject + style block. Attach
+`three-jobs` and add "Match the material, angle, lighting and bevel of the
+reference image."
+
+**banner-autopay** (Auto-pay is off)
+> A single 3D clay icon object, centred, three-quarter view from the front and slightly above, the object turned about 20° — never flat-on. Subject: a thick rounded desk calendar standing on its folded base, two chunky binding rings at the top; the front page carries a large raised repeat symbol: two thick curved arrows chasing each other in a circle, each with a chunky arrowhead. Sky blue header strip and rings (#6CB8F0), off-white pages (#F4F1EC), a mint repeat symbol (#7FD8B4). No numbers, no text, no toggle. [Style block]
+
+**banner-credits-low** (1 job credit left)
+> A single 3D clay icon object, centred, three-quarter view from the front and slightly above, the object turned about 20° — never flat-on. Subject: a chunky rounded coin tray, compact (about 1.3 times as wide as deep), with six round wells in two rows of three, thick rims around each well. Finished state: only the front-left well holds one big thick coin lying flat, the other five wells clearly empty with plain floors. Off-white tray (#F4F1EC), one gold coin (#FFC94D) with a raised rim and no symbol. No green, no mint, no lid, no other coins. [Style block]
+
+**banner-credits-empty** (0 job credits left)
+> A single 3D clay icon object, centred, three-quarter view from the front and slightly above, the object turned about 20° — never flat-on. Subject: a chunky rounded coin tray, compact (about 1.3 times as wide as deep), with six round wells in two rows of three, thick rims around each well. Finished state: every well completely empty, plain floors, nothing in or around the tray. Off-white tray (#F4F1EC) with a thick gold rim around the top edge (#FFC94D). No coin, no green, no mint, no lid. [Style block]
+
+**banner-database** (Database credits running low)
+> A single 3D clay icon object, centred, three-quarter view from the front and slightly above, the object turned about 20° — never flat-on. Subject: three wide rounded profile cards fanned in a clear arc so all three show whole, each with a raised blank circle for a face and two raised lines below it; a chunky key, about two thirds of the cards' height, leaning upright against the front card's lower right, never covering a face. Off-white cards (#F4F1EC), a sky blue face circle on every card (#6CB8F0), a gold key (#FFC94D) with a round head and three thick teeth. No green, no mint, no discs, no magnifier. [Style block]
+
+**banner-database-empty** (0 database credits left)
+> A single 3D clay icon object, centred, three-quarter view from the front and slightly above, the object turned about 20° — never flat-on. Subject: three wide rounded profile cards fanned in a clear arc so all three show whole, each with a raised blank circle for a face and two raised lines below it; a chunky padlock, about half the cards' height, standing in front of the cards' lower right, never covering a face. Finished state: the thick shackle fully closed into the body. Off-white cards (#F4F1EC), a sky blue face circle on every card (#6CB8F0), a gold padlock (#FFC94D) with a dark slate keyhole. No green, no mint, no discs. [Style block]
+
+`[Style block]` = the style block above, pasted as is.
+
+**All eight installed 2026-11-13 (user renders).** The accepted set departs
+from the style block on purpose: the database key and padlock are mint (not
+gold), and thin deep plum details (ring holes, tray studs, keyhole) are kept.
+Match the installed set, not the prompts, when redoing one.
+
+---
+
 ## How to check a round
 
 1. Generate in one session, same tool and settings, with the reference

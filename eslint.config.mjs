@@ -14,6 +14,11 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     ".claude/**",
     "packages/design-system/**",
+    // Playwright's output (git-ignored). A local HTML report holds minified
+    // bundles; linting them failed `npm run lint` with ~3,000 problems.
+    "playwright-report/**",
+    "test-results/**",
+    "blob-report/**",
   ]),
 ]);
 
