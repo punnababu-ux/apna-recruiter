@@ -1088,7 +1088,7 @@
   opacity: var(--ambient-grain-opacity);
   mix-blend-mode: overlay;
   background-size: 160px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 /* Expand / collapse in place — one motion for every disclosure (sidebar
@@ -1714,8 +1714,9 @@
   }
   section[data-tone="card"] &[data-slot] {
     background-color: var(--card);
-    background-image: var(--gradient-checkout-hero);
-    background-size: cover;
+    background-image: var(--grain-noise), var(--gradient-checkout-hero);
+    background-blend-mode: var(--grain-blend);
+    background-size: var(--grain-size-cover);
     background-position: center;
     border-color: var(--border);
     backdrop-filter: none;
@@ -1739,8 +1740,9 @@
   }
   section[data-tone="card"] &[data-slot] {
     background-color: var(--card);
-    background-image: var(--gradient-checkout-hero);
-    background-size: cover;
+    background-image: var(--grain-noise), var(--gradient-checkout-hero);
+    background-blend-mode: var(--grain-blend);
+    background-size: var(--grain-size-cover);
     background-position: center;
     border-color: var(--border);
     backdrop-filter: none;
@@ -1792,25 +1794,32 @@ a[href] > [data-slot="card"] {
  * ========================================================================== */
 
 @utility bg-gradient-primary {
-  background-image: var(--gradient-primary);
+  background-image: var(--grain-noise), var(--gradient-primary);
+  background-blend-mode: var(--grain-blend);
 }
 @utility bg-gradient-accent {
-  background-image: var(--gradient-accent);
+  background-image: var(--grain-noise), var(--gradient-accent);
+  background-blend-mode: var(--grain-blend);
 }
 @utility bg-gradient-banner-default {
-  background-image: var(--gradient-banner-default);
+  background-image: var(--grain-noise), var(--gradient-banner-default);
+  background-blend-mode: var(--grain-blend);
 }
 @utility bg-gradient-banner-info {
-  background-image: var(--gradient-banner-info);
+  background-image: var(--grain-noise), var(--gradient-banner-info);
+  background-blend-mode: var(--grain-blend);
 }
 @utility bg-gradient-banner-success {
-  background-image: var(--gradient-banner-success);
+  background-image: var(--grain-noise), var(--gradient-banner-success);
+  background-blend-mode: var(--grain-blend);
 }
 @utility bg-gradient-banner-warning {
-  background-image: var(--gradient-banner-warning);
+  background-image: var(--grain-noise), var(--gradient-banner-warning);
+  background-blend-mode: var(--grain-blend);
 }
 @utility bg-gradient-banner-destructive {
-  background-image: var(--gradient-banner-destructive);
+  background-image: var(--grain-noise), var(--gradient-banner-destructive);
+  background-blend-mode: var(--grain-blend);
 }
 /* Result washes drift slowly (same colours, the fade edge eases up and
  * down) so the page feels live. Still under reduced motion. */
@@ -1819,14 +1828,16 @@ a[href] > [data-slot="card"] {
   to { background-position: 50% 100%; }
 }
 @utility bg-gradient-result-success {
-  background-image: var(--gradient-result-success);
-  background-size: 100% 140%;
+  background-image: var(--grain-noise), var(--gradient-result-success);
+  background-blend-mode: var(--grain-blend);
+  background-size: auto, 100% 140%;
   animation: result-wash-drift 6s ease-in-out infinite alternate;
   @media (prefers-reduced-motion: reduce) { animation: none; }
 }
 @utility bg-gradient-result-failure {
-  background-image: var(--gradient-result-failure);
-  background-size: 100% 140%;
+  background-image: var(--grain-noise), var(--gradient-result-failure);
+  background-blend-mode: var(--grain-blend);
+  background-size: auto, 100% 140%;
   animation: result-wash-drift 6s ease-in-out infinite alternate;
   @media (prefers-reduced-motion: reduce) { animation: none; }
 }
@@ -1840,10 +1851,11 @@ a[href] > [data-slot="card"] {
 }
 
 @utility bg-gradient-checkout-hero {
-  background-image: var(--gradient-checkout-hero);
-  background-size: cover;
+  background-image: var(--grain-noise), var(--gradient-checkout-hero);
+  background-blend-mode: var(--grain-blend);
+  background-size: var(--grain-size-cover);
   background-position: center top;
-  background-repeat: no-repeat;
+  background-repeat: var(--grain-repeat-cover);
   /* Load-bearing, and the source reference sets it too. The positioning
      area for a `fixed` background is the viewport, not the element — so
      `cover` sizes the mesh to ~1440x900 and its warm/pink corner blobs
@@ -1853,35 +1865,45 @@ a[href] > [data-slot="card"] {
   background-attachment: fixed;
 }
 @utility bg-gradient-offer {
-  background-image: var(--gradient-offer);
+  background-image: var(--grain-noise), var(--gradient-offer);
+  background-blend-mode: var(--grain-blend);
 }
 @utility bg-gradient-illustration-green {
-  background-image: var(--gradient-illustration-green);
+  background-image: var(--grain-noise), var(--gradient-illustration-green);
+  background-blend-mode: var(--grain-blend);
 }
 @utility bg-gradient-illustration-sky {
-  background-image: var(--gradient-illustration-sky);
+  background-image: var(--grain-noise), var(--gradient-illustration-sky);
+  background-blend-mode: var(--grain-blend);
 }
 @utility bg-gradient-illustration-plum {
-  background-image: var(--gradient-illustration-plum);
+  background-image: var(--grain-noise), var(--gradient-illustration-plum);
+  background-blend-mode: var(--grain-blend);
 }
 @utility bg-gradient-product-smart-jobs {
-  background-image: var(--gradient-product-smart-jobs);
+  background-image: var(--grain-noise), var(--gradient-product-smart-jobs);
+  background-blend-mode: var(--grain-blend);
 }
 @utility bg-gradient-ai-tag {
-  background-image: var(--gradient-ai-tag);
+  background-image: var(--grain-noise), var(--gradient-ai-tag);
+  background-blend-mode: var(--grain-blend);
 }
 @utility bg-gradient-ai {
-  background-image: var(--gradient-ai);
+  background-image: var(--grain-noise), var(--gradient-ai);
+  background-blend-mode: var(--grain-blend);
 }
 
 @utility bg-gradient-product-ai-calling {
-  background-image: var(--gradient-product-ai-calling);
+  background-image: var(--grain-noise), var(--gradient-product-ai-calling);
+  background-blend-mode: var(--grain-blend);
 }
 @utility bg-gradient-product-database {
-  background-image: var(--gradient-product-database);
+  background-image: var(--grain-noise), var(--gradient-product-database);
+  background-blend-mode: var(--grain-blend);
 }
 @utility bg-gradient-product-unlimited {
-  background-image: var(--gradient-product-unlimited);
+  background-image: var(--grain-noise), var(--gradient-product-unlimited);
+  background-blend-mode: var(--grain-blend);
 }
 /* A very large, very light number behind a card's text (About's story
  * cards: "2019", "400M"). Inter, tabular, at 6% of the ink, so the copy
@@ -1899,7 +1921,8 @@ a[href] > [data-slot="card"] {
 
 /* The enclosing [data-product]'s gradient (none outside one). */
 @utility bg-gradient-product {
-  background-image: var(--product-gradient);
+  background-image: var(--grain-noise), var(--product-gradient);
+  background-blend-mode: var(--grain-blend);
 }
 /* Fades a full-bleed band out at its foot, so a product hero's gradient
  * melts into the page instead of ending on a hard edge. */
@@ -1913,7 +1936,8 @@ a[href] > [data-slot="card"] {
   mask-image: linear-gradient(to right, black calc(100% - 1.5rem), transparent);
 }
 @utility bg-gradient-illustration-gold {
-  background-image: var(--gradient-illustration-gold);
+  background-image: var(--grain-noise), var(--gradient-illustration-gold);
+  background-blend-mode: var(--grain-blend);
 }
 
 /* Festive skin example: the Diwali toran. */
@@ -1923,55 +1947,69 @@ a[href] > [data-slot="card"] {
    a stacked phone card fills with text, so phones keep only the balloons in
    the empty top-right beside the badge. */
 @utility bg-festive-holi {
-  background: url("/images/festive/holi-phone.svg") top right / 100% auto no-repeat, var(--gradient-festive-holi);
+  background-blend-mode: normal, var(--grain-blend);
+  background: url("/images/festive/holi-phone.svg") top right / 100% auto no-repeat, var(--grain-noise), var(--gradient-festive-holi);
   @media (width >= 48rem) {
-    background: url("/images/festive/holi.svg") center / cover no-repeat, var(--gradient-festive-holi);
+    background: url("/images/festive/holi.svg") center / cover no-repeat, var(--grain-noise), var(--gradient-festive-holi);
   }
 }
 @utility bg-festive-diwali {
-  background: url("/images/festive/diwali.svg") top center / 100% auto no-repeat, var(--gradient-festive);
+  background-blend-mode: normal, var(--grain-blend);
+  background: url("/images/festive/diwali.svg") top center / 100% auto no-repeat, var(--grain-noise), var(--gradient-festive);
 }
 @utility bg-mesh-offer-subscription {
-  background: var(--mesh-offer-subscription);
+  background: var(--grain-noise), var(--mesh-offer-subscription);
+  background-blend-mode: var(--grain-blend);
 }
 @utility bg-mesh-offer-credits {
-  background: var(--mesh-offer-credits);
+  background: var(--grain-noise), var(--mesh-offer-credits);
+  background-blend-mode: var(--grain-blend);
 }
 @utility bg-mesh-offer-urgent {
-  background: var(--mesh-offer-urgent);
+  background: var(--grain-noise), var(--mesh-offer-urgent);
+  background-blend-mode: var(--grain-blend);
 }
 @utility bg-mesh-offer-festive {
-  background: var(--mesh-offer-festive);
+  background: var(--grain-noise), var(--mesh-offer-festive);
+  background-blend-mode: var(--grain-blend);
 }
 @utility bg-gradient-festive {
-  background-image: var(--gradient-festive);
+  background-image: var(--grain-noise), var(--gradient-festive);
+  background-blend-mode: var(--grain-blend);
 }
 @utility bg-gradient-offer-bar {
-  background-image: var(--gradient-offer-bar);
+  background-image: var(--grain-noise), var(--gradient-offer-bar);
+  background-blend-mode: var(--grain-blend);
 }
 
 @utility bg-gradient-offer-premium {
-  background-image: var(--gradient-offer-premium);
+  background-image: var(--grain-noise), var(--gradient-offer-premium);
+  background-blend-mode: var(--grain-blend);
 }
 
 @utility bg-gradient-night-sky {
-  background-image: var(--gradient-night-sky);
+  background-image: var(--grain-noise), var(--gradient-night-sky);
+  background-blend-mode: var(--grain-blend);
 }
 
 @utility bg-gradient-ai-subtle {
-  background-image: var(--gradient-ai-subtle);
+  background-image: var(--grain-noise), var(--gradient-ai-subtle);
+  background-blend-mode: var(--grain-blend);
 }
 
 @utility bg-gradient-ai-demo-strong {
-  background-image: var(--gradient-ai-demo-strong);
+  background-image: var(--grain-noise), var(--gradient-ai-demo-strong);
+  background-blend-mode: var(--grain-blend);
 }
 
 @utility bg-gradient-ai-demo {
-  background-image: var(--gradient-ai-demo);
+  background-image: var(--grain-noise), var(--gradient-ai-demo);
+  background-blend-mode: var(--grain-blend);
 }
 
 @utility bg-gradient-checkout-unlimited {
-  background-image: var(--gradient-checkout-unlimited);
+  background-image: var(--grain-noise), var(--gradient-checkout-unlimited);
+  background-blend-mode: var(--grain-blend);
 }
 
 /* ----------------------------------------------------------------------------

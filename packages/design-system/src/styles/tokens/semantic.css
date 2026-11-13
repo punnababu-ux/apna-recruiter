@@ -518,7 +518,20 @@
   --ambient-blob-3: color-mix(in srgb, var(--color-apna-green-200) 30%, transparent);
   --ambient-blob-4: color-mix(in srgb, var(--color-apna-gold-200) 85%, transparent);
   --ambient-glow:   color-mix(in srgb, var(--color-gray-0) 85%, transparent);
-  --ambient-grain-opacity: 0.06;
+  --ambient-grain-opacity: 0.35;
+  /* GRAIN (2026-11-13, after workable.com) — film grain on every gradient.
+     The gradient utilities, the marketing canvas and the band/feature fills
+     lay --grain-noise (a 180px grey noise tile at its own size, so it
+     repeats) over their gradient and blend it with --grain-blend: overlay
+     on the noise layer only, normal on every gradient layer under it (the
+     list is long enough for the deepest gradient token). Glows, washes and
+     text gradients stay smooth. */
+  --grain-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  --grain-blend: overlay, normal, normal, normal, normal, normal, normal, normal, normal, normal, normal, normal, normal, normal, normal, normal;
+  /* For a gradient sized to cover (canvas, band fills): the noise keeps its
+     own size and repeats; every layer under it covers and doesn't. */
+  --grain-size-cover: auto, cover, cover, cover, cover, cover, cover, cover, cover, cover, cover, cover, cover, cover, cover, cover;
+  --grain-repeat-cover: repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
   /* AI hues (voice-glow, ai-wash): the job prompt's halo while the mic
    * listens, and the drafting wash that drifts sky → plum → green. */
   --gradient-voice-glow: linear-gradient(90deg, var(--color-apna-sky-300), var(--color-apna-plum-300), var(--color-apna-green-300));
@@ -1265,9 +1278,11 @@
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background-image: var(--canvas-image);
-  background-size: cover;
+  background-image: var(--grain-noise), var(--canvas-image);
+  background-size: var(--grain-size-cover);
+  background-repeat: var(--grain-repeat-cover);
   background-position: center;
+  background-blend-mode: var(--grain-blend);
 }
 [data-slot="marketing-canvas"]:has([data-product-canvas="smart-jobs"]) { --canvas-image: var(--gradient-canvas-smart-jobs); }
 [data-slot="marketing-canvas"]:has([data-product-canvas="ai-calling"]) { --canvas-image: var(--gradient-canvas-ai-calling); }

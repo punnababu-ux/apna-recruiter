@@ -9,6 +9,16 @@ or **Open**.
 ---
 
 
+## 2026-11-13 — Film grain on every gradient (after workable.com)
+
+- **Question:** Punna likes workable.com's homepage, especially its grainy gradients. What do we take?
+- **Decision:** film grain on all our gradients, live: the marketing canvas (brand gradient and the product canvases), every `bg-gradient-*`, `bg-mesh-offer-*` and festive fill, and the band/feature fills. One noise tile (`--grain-noise`, semantic.css) laid over the gradient and blended with overlay; the homepage hero's own grain (`ambient-grain`) raised from 6% to 35% to match. Grain size: noise frequency 0.55 (0.85 read too fine; Punna, same day). Glows, AI washes and text gradients stay smooth.
+- **Why:** the grain gives the flat gradients texture and depth, as on Workable, without changing any colour.
+- **Tried and dropped (same day):** Workable's way (grain only on painted panels round product screens, on a flat white page). On our gradient page the panels lose their contrast, and a flat page loses the brand gradient. Punna chose the grain on the gradient itself.
+- **Other Workable ideas, not done:** product UI on gradient panels in place of stock photos; a bento grid for "Why hire".
+- **Would change it:** grain reading as dirt on a phone screen, or too strong in dark mode (it shows more there).
+- **Status:** Decided (Punna, 2026-11-13).
+
 ## 2026-11-13 — ID card: wordmark at the foot, centred
 
 **Question.** The ID card's wordmark sat top left and read off balance (Punna). Top centre or the foot?
