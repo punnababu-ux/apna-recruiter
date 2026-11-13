@@ -9,6 +9,91 @@ or **Open**.
 ---
 
 
+## 2026-11-13 — apna Recruiter app icon: the green tile
+
+**Question.** The Recruiter home-screen icon was a solid green box, white
+wordmark and gold all-caps "RECRUITER", off the new brand. A first redraw
+on the candidate icon's light tile looked too much like the candidate app
+(Punna: "They are not the same app").
+
+**Decision.** The tile tells the apps apart: candidate app light, Recruiter
+green (#186954) with blurred light (green, sky, gold in the corners). White
+"apna", pale green "Recruiter" (#C6EFE0), sentence case, both the same
+width. Master: `public/brand/apna-recruiter-icon.svg`; PNGs in
+`public/recruiter/` (512, 192, maskable 512, apple-touch 180). Dark mode
+(iOS 18+ dark icon): a deep green tile (#0B2E25), white "apna", bright
+green "Recruiter" (#3EBA8D): `public/brand/apna-recruiter-icon-dark.svg`.
+The rule: the tile's hue is the app (candidate neutral, Recruiter green);
+dark mode only darkens it. A near-black Recruiter tile was dropped: it
+matches the candidate app's dark icon. Android themed icons tint every app
+alike, so there only the word "Recruiter" tells them apart; the web
+manifest has no dark icon and keeps the green one.
+
+**Why.** On a home screen people find an app by its tile colour before
+they read a word, so the word "Recruiter" alone can't separate two apps.
+Green is the employer colour, and existing recruiters already know a green
+apna icon.
+
+**Would change it.** Store review, or the candidate app moving to green.
+
+**Status.** Decided (Punna, 2026-11-13: "lets go with recruiter in green").
+
+---
+
+## 2026-11-13 — Redrawn: the logo story runs box → name → light → motion, with less text
+
+**Question:** how should Redrawn tell the rebrand, and how much text should a slide carry?
+**Decision:** the story is four slides in a row: the logo today, out of the box (the wordmark grows to ~1.9× as the box falls away), the name in black, then "Stripes became light. Light that moves." (the stripes melt into the gradient, then drift on a 16–22s loop). The separate Motion slide is gone; motion is told as what makes the light feel alive. The two type slides are one (demo plus three measured facts). Every slide is a headline plus at most one short line, apart from demos and the principles table.
+**Why:** Punna, 2026-11-13: too much text per slide; the colours-into-gradient story had been cut; the logo should be the focus once it leaves the box; type and motion read better merged.
+**Would change it:** a presenter who needs speaker notes on the slides; put them in notes, not on the slide.
+**Status:** Decided
+
+## 2026-11-13 — Candidates: green leads (proposed)
+
+**Question:** which colour leads on the candidate side: green, sky or gold?
+**Decision:** green leads for candidates. Redrawn presents it as a proposal, not a question; sky and gold appear only as "also considered". The employer side is told apart by the green "apna Recruiter" lockup, not a second colour.
+**Why:** each colour has one job. Sky means AI and help; gold means value and offers. Leading candidates with either gives it a second meaning. Green keeps "do this" for everyone, and matches the "one apna" promise on the title slide.
+**Would change it:** research showing candidates and employers confuse the two apps, or leadership choosing B or C in the read-round.
+**Status:** Leaning (Punna, 2026-11-13: "propose green for now")
+
+## 2026-11-13 — The wordmark leaves the box; only the app icon keeps one
+
+**Question:** keep apna inside the rounded box everywhere, or only where a square is required?
+**Decision:** the wordmark stands alone on every surface (site, print, signs, collateral). The box survives only as the app icon (stores, home screens, profile pictures).
+**Why:** a box is a platform need for app grids, not a brand idea. Elsewhere it fences the name in and keeps the colours small; out of it, the name reads like a signature and the colours spread as gradients. Punna's framing: removing the box and the stripes "expanded its horizon". Redrawn slide 3 now tells it in four steps (stripes off, name black, box opens, colours fill the page).
+**Would change it:** a placement that needs a fixed square mark other than an app or avatar slot.
+**Status:** Decided
+
+## 2026-11-13 — Redrawn and the brand guide explain each choice with evidence
+
+**Question:** how do we show that the brand choices were reasoned, not taste?
+**Decision:** add three evidence slides to Redrawn (type: measured x-heights 0.55/0.52/0.48 and tabular figures; colour: OKLCH lightness 38/54/77/88, contrast, simulated colour blindness, OKLab mixing; UX: Von Restorff, Hick, Fitts, Gestalt, Doherty, Jakob, WCAG 2.3.3), "Why" lines on brand slides, and matching sections in the guide (numbers table, type table, principles, apna Recruiter lockup, candidate poster, files). All copy rewritten plain: no slogans.
+**Why:** Punna asked for every decision to have a story and a reason, and for the copy to sound human. Numbers were measured in the browser or computed (WCAG formula, Machado 2009 simulation), not quoted from memory.
+**Would change it:** new brand colours or typefaces: re-measure and update both pages.
+**Status:** Decided
+
+## 2026-11-13 — No stripes in the new brand
+
+**Question:** Do the green, sky and gold bars stay as a brand signature (card feet, sign plates, lanyards)?
+**Decision:** No. The bars belong to the old logo; the rebrand story is that the colours lift off and become light. Where a surface needs colour it uses a gradient from the library. The bars appear only when showing the old logo (Redrawn's "before" slides). New app icon: black wordmark on soft green, sky and gold light (dark version in the guide: white on the dark gradient). In the product since 2026-11-13: ApnaLogo, public/apna-logo.svg, favicon.ico.
+**Why:** Punna, 2026-11-13: keeping the stripes contradicts "lift the colours, keep the name".
+**Status:** Decided. App icon: Decided in the product; app stores still need the new artwork uploaded.
+
+## 2026-11-13 — The wordmark is neutral black; plum lives only in gradients
+
+**Question:** What colour is the apna wordmark in the rebrand, and what is plum for?
+**Decision:** The wordmark is neutral black (gray-950, #09090B) on light, white on black or the dark gradient. Plum is part of the gradient library only (Database, the deep end of gradients), never the wordmark or a solid fill. The four colours keep one job each: green acts, sky informs, plum deepens, gold rewards.
+**Why:** Punna's call. Freed from the stripes, colour belongs to the gradients; a neutral wordmark sits on any of them.
+**Would change it:** A brand review that keeps plum as the wordmark colour.
+**Status:** Decided (deck + brand guide). The product code (`LogoApnaWordmark`, was plum #4D3951) now matches (--logo-apna → gray-950). The app icon (ApnaLogo, apna-logo.svg) keeps its plum wordmark for now.
+
+## 2026-11-13 — Redrawn tells the story; a separate brand guide holds the rules
+
+**Question:** One long deck, or the Redrawn story plus a brand guide?
+**Decision:** Redrawn stays the keynote, staged: intent (no wordmark) → the old logo → the colours lift off → they become light → the black wordmark drawn → what each colour means. Then a slide introduces the guide at `/brand`, which holds wordmark use, clear space, misuse, colour, gradients, type, print, signage and collateral.
+**Why:** A story and a reference are read differently; teams need to look rules up.
+**Status:** Decided. Candidate lead colour (green, sky or gold) is **Open**: options on the Redrawn "Candidates" slide.
+
 ## 2026-11-13 — Offer banners: one negative, and it lives in the chip
 
 - **Question:** the banners sit on the jobs dashboard and the logged-in plans page. A chip that states the problem and a headline that states it again ("Your plan ended" then "Hiring has stopped") reads as two blows.

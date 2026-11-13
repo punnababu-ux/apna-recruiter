@@ -739,10 +739,10 @@
      light; on dark a lifted plum pill with a light label. */
   --tabs-inverted-pill:  var(--foreground);
   --tabs-inverted-label: var(--background);
-  /* One "apna" colour everywhere: the landing page header's darkest plum,
-     now the dashboard and login lockups too (2026-10-18). */
+  /* One "apna" colour everywhere: neutral black, the same as body text
+     (rebrand 2026-11-13; it was plum). Plum now lives only in gradients. */
   --logo-apna:      var(--logo-apna-deep);
-  --logo-apna-deep: var(--color-apna-plum-950);
+  --logo-apna-deep: var(--color-gray-950);
   /* "Recruiter" of the lockup: the CTA green, light and dark, so the logo
      and the primary buttons are one green (2026-10-18). */
   --logo-hire:      var(--cta-primary);
@@ -870,8 +870,8 @@
   --checkout-inset-cta-hover:  color-mix(in srgb, var(--input) 50%, transparent);
   --tabs-inverted-pill:  color-mix(in srgb, var(--foreground) 16%, var(--muted));
   --tabs-inverted-label: var(--foreground);
-  --logo-apna:      var(--color-apna-plum-50);
-  --logo-apna-deep: var(--color-apna-plum-50);
+  --logo-apna:      var(--color-gray-50);
+  --logo-apna-deep: var(--color-gray-50);
   /* Plans button on dark: a quiet plum one step above the sidebar (600 →
      800), no gold bloom; the gold Coin icon carries the premium accent.
      (The light plums and gold glow glared on a dark sidebar.) */

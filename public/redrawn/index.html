@@ -85,9 +85,9 @@ body {
   isolation: isolate;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-block: clamp(32px, 5vh, 72px);
+  padding-block: clamp(24px, 3.5vh, 56px);
 }
-.inner { width: min(1120px, 100%); display: flex; flex-direction: column; gap: clamp(20px, 3.5vh, 40px); }
+.inner { width: min(1120px, 100%); display: flex; flex-direction: column; gap: clamp(14px, 2.6vh, 32px); }
 .center { align-items: center; text-align: center; }
 
 .kicker { font-size: clamp(15px, 1.2vw, 18px); font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-dim); }
@@ -146,7 +146,7 @@ em { font-style: normal; }
 .sw i { width: 64px; height: 64px; border-radius: 50%; }
 
 /* ── 3. Stripes become light ──────────────────────────── */
-.morph { position: relative; width: min(860px, 100%); aspect-ratio: 16 / 7; border-radius: 28px; overflow: hidden; background: var(--stage-2); }
+.morph { position: relative; width: min(860px, 100%); aspect-ratio: 16 / 5.4; border-radius: 28px; overflow: hidden; background: var(--stage-2); }
 .morph { --m: 0; }
 .morph .stripe {
   position: absolute; top: 0; bottom: 0; width: 33.4%;
@@ -175,7 +175,7 @@ em { font-style: normal; }
 .prod:hover { transform: translateY(-6px); }
 .prod:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
 .prod[aria-pressed="true"] { transform: translateY(-10px) scale(1.03); box-shadow: 0 30px 60px -20px var(--shadow); }
-.products.has-pick .prod:not([aria-pressed="true"]) { opacity: 0.45; }
+.products.has-pick .prod:not([aria-pressed="true"]) { opacity: 0.72; }
 .stage-tint { position: absolute; inset: 0; z-index: -1; opacity: 0; transition: opacity 900ms cubic-bezier(0.22, 1, 0.36, 1), background 900ms ease; }
 .tintable[data-tint] .stage-tint { opacity: 1; }
 .tintable[data-tint="sky"]   .stage-tint { background: radial-gradient(ellipse 80% 70% at 20% 10%, rgba(131, 189, 228, 0.45), transparent 70%), radial-gradient(ellipse 60% 60% at 90% 90%, rgba(131, 189, 228, 0.25), transparent 70%); }
@@ -494,13 +494,14 @@ em { font-style: normal; }
 
 /* Try it yourself: two live links, on the Thank you slide. */
 .ty-try { margin-top: clamp(12px, 3vh, 32px); }
-.links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(14px, 2vw, 24px); width: min(920px, 100%); }
+.links { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 2vw, 24px); width: min(1120px, 100%); }
 .link-card { display: flex; flex-direction: column; gap: 8px; padding: clamp(20px, 2.6vw, 32px); border-radius: 20px; border: 1px solid var(--ink-faint); background: var(--chrome); color: var(--ink); text-decoration: none; text-align: left; transition: border-color 300ms ease, transform 300ms cubic-bezier(0.22, 1, 0.36, 1); }
 .link-card:hover { border-color: var(--green-bright); transform: translateY(-3px); }
 .link-card:focus-visible { outline: 2px solid var(--sky); outline-offset: 3px; }
 .link-card small { font-size: clamp(15px, 1.2vw, 18px); font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-dim); }
 .link-card strong { font-family: var(--font-display); font-weight: 700; font-size: clamp(20px, 2.2vw, 30px); line-height: 1.15; overflow-wrap: normal; word-break: keep-all; }
-.link-card span { font-size: 15px; line-height: 1.45; color: var(--ink-dim); }
+.link-card span { font-size: 16px; line-height: 1.45; color: var(--ink-dim); }
+.link-card .url { margin-top: auto; padding-top: 8px; font-family: var(--font-body); font-size: 14px; font-weight: 600; color: var(--green-bright); overflow-wrap: anywhere; }
 @media (max-width: 640px) { .links { grid-template-columns: 1fr; } }
 
 
@@ -511,6 +512,136 @@ em { font-style: normal; }
 .banner figcaption { font-size: 13px; color: var(--ink-dim); }
 .banner-parts { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
 .banner-parts span { font-size: 13px; padding: 6px 12px; border-radius: 99px; border: 1px solid var(--ink-faint); color: var(--ink-dim); }
+
+
+/* ── Opening: the intent, no wordmark yet ── */
+.intent { font-size: clamp(48px, 7.4vw, 112px); }
+/* ── Wordmark reveal: drawn as a wireframe, then filled ── */
+.mark-stage { position: relative; width: min(600px, 70vw); margin-top: 16px; }
+.mark-stage svg { width: 100%; height: auto; overflow: visible; display: block; }
+.mark-guide { stroke: var(--sky); stroke-width: 0.025; stroke-dasharray: 0.12 0.08; opacity: 0; }
+.mark-path { fill: var(--mark); fill-opacity: 0; stroke: var(--mark); stroke-width: 0.07; stroke-dasharray: 1; stroke-dashoffset: 1; }
+[data-mode="dark"] .mark-path { fill: #FFFFFF; stroke: #FFFFFF; }
+.mark-stage { isolation: isolate; }
+.mark-glow { position: absolute; inset: -40% -10%; z-index: -1; filter: blur(60px); opacity: 0; }
+.mark-glow i { position: absolute; width: 44%; aspect-ratio: 1; border-radius: 50%; }
+.mark-glow i:nth-child(1) { background: #3EBA8D; left: 0; top: 10%; } .mark-glow i:nth-child(2) { background: var(--sky); right: 0; top: 0; } .mark-glow i:nth-child(3) { background: var(--gold); left: 30%; bottom: 0; }
+.slide.seen.drawn .mark-glow { animation: light-on 1.8s ease 3.4s forwards; }
+@media (prefers-reduced-motion: reduce) { .mark-glow { opacity: var(--glow-opacity); } }
+.mark-bars { display: grid; grid-template-columns: repeat(3, 1fr); height: clamp(8px, 1.2vw, 14px); margin-top: clamp(20px, 3vw, 36px); border-radius: 99px; overflow: hidden; }
+.mark-bars i { transform: scaleX(0); transform-origin: left; }
+.mark-bars i:nth-child(1) { background: #2BB793; } .mark-bars i:nth-child(2) { background: var(--sky); } .mark-bars i:nth-child(3) { background: var(--gold); }
+.slide.seen.drawn .mark-guide { animation: guide 3.4s ease forwards; }
+.slide.seen.drawn .mark-path { animation: draw 2.6s cubic-bezier(0.65, 0, 0.35, 1) 0.4s forwards, ink 1.1s ease 2.8s forwards; }
+.slide.seen.drawn .mark-bars i { animation: bar 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.slide.seen.drawn .mark-bars i:nth-child(1) { animation-delay: 3.6s; } .slide.seen.drawn .mark-bars i:nth-child(2) { animation-delay: 3.75s; } .slide.seen.drawn .mark-bars i:nth-child(3) { animation-delay: 3.9s; }
+@keyframes guide { 15%, 70% { opacity: 0.7; } to { opacity: 0; } }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes ink { to { fill-opacity: 1; stroke-width: 0; } }
+@keyframes bar { to { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .mark-path { fill-opacity: 1; stroke-width: 0; animation: none !important; } .mark-bars i { transform: none; animation: none !important; } .mark-guide { display: none; } }
+.no-js .mark-path { fill-opacity: 1; stroke-width: 0; } .no-js .mark-bars i { transform: none; }
+
+/* ── Colour meaning ── */
+.roles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; width: 100%; }
+.role { display: flex; flex-direction: column; gap: 8px; padding: 18px; border-radius: 20px; border: 1px solid var(--ink-faint); text-align: left; min-width: 0; }
+.role i { width: 36px; height: 36px; border-radius: 50%; }
+.role b { font-size: 18px; } .role span { font-size: 15px; line-height: 1.45; color: var(--ink-dim); }
+.why { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; width: 100%; text-align: left; }
+.why p { margin: 0; font-size: 15px; line-height: 1.5; color: var(--ink-dim); } .why b { display: block; color: var(--ink); font-size: 16px; margin-bottom: 4px; }
+
+/* ── Candidate colour options ── */
+
+/* ── Brand guide intro ── */
+.guide-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 820px; }
+.guide-list span { font-size: 15px; padding: 8px 14px; border-radius: 99px; border: 1px solid var(--ink-faint); color: var(--ink-dim); }
+@media (max-width: 860px) { .roles { grid-template-columns: repeat(2, 1fr); } .why { grid-template-columns: 1fr; } }
+
+
+/* ── Taking the logo apart: colours lift off, the name turns black, colours become light ── */
+:root { --mark: #09090B; }
+.apart { position: relative; width: min(900px, 100%); height: min(34vh, 320px); display: grid; place-items: center; }
+.apart-tile { position: relative; z-index: 1; width: min(240px, 24vh); aspect-ratio: 1; border-radius: 22%; background: var(--paper); box-shadow: 0 40px 80px -30px var(--shadow); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.apart-tile svg { width: 64%; height: auto; color: #4E3A52; }
+.apart-bars { position: absolute; left: 0; right: 0; bottom: 0; height: 14%; display: grid; grid-template-columns: repeat(3, 1fr); border-radius: 0 0 22% 22% / 0 0 100% 100%; }
+.apart-bars i:nth-child(1) { background: #2BB793; } .apart-bars i:nth-child(2) { background: var(--sky); } .apart-bars i:nth-child(3) { background: var(--gold); }
+.apart-light { position: absolute; inset: -10%; z-index: 0; filter: blur(60px); opacity: 0; }
+.apart-light i { position: absolute; width: 46%; aspect-ratio: 1; border-radius: 50%; }
+.apart-light i:nth-child(1) { background: #3EBA8D; left: 0; top: 12%; } .apart-light i:nth-child(2) { background: var(--sky); right: 2%; top: 4%; } .apart-light i:nth-child(3) { background: var(--gold); left: 28%; bottom: 0; }
+.steps { display: flex; gap: clamp(16px, 4vw, 48px); justify-content: center; flex-wrap: wrap; font-size: 15px; color: var(--ink-dim); }
+.steps span { opacity: 0.35; transition: opacity 500ms ease, color 500ms ease; }
+.played .steps span:nth-child(1) { animation: step-on 600ms ease 0.6s forwards; }
+.played .steps span:nth-child(2) { animation: step-on 600ms ease 2.2s forwards; }
+.played .steps span:nth-child(3) { animation: step-on 600ms ease 2.8s forwards; }
+@keyframes step-on { to { opacity: 1; color: var(--ink); } }
+.played .apart-bars i { animation: lift 1.4s cubic-bezier(0.65, 0, 0.35, 1) 0.6s forwards; }
+.played .apart-bars i:nth-child(1) { --x: -260%; } .played .apart-bars i:nth-child(2) { --x: 0%; } .played .apart-bars i:nth-child(3) { --x: 260%; }
+@keyframes lift { 40% { transform: translate(calc(var(--x) * 0.4), 160%); border-radius: 12px; } to { transform: translate(var(--x), 240%) scale(1.4, 3); border-radius: 50%; opacity: 0; } }
+.played .apart-tile svg { animation: to-black 900ms ease 2.2s forwards, grow 1.6s cubic-bezier(0.22, 1, 0.36, 1) 2.8s forwards; }
+@keyframes grow { to { scale: 1.9; } }
+@keyframes to-black { to { color: var(--mark); } }
+[data-mode="dark"] .played .apart-tile svg { animation-name: to-white, grow; } @keyframes to-white { to { color: #FFFFFF; } }
+.played .apart-tile { animation: tile-off 1.2s ease 2.6s forwards; }
+@keyframes tile-off { to { background: transparent; box-shadow: none; } }
+.played .apart-light { animation: light-on 2s ease 3.4s forwards; }
+@keyframes light-on { to { opacity: var(--glow-opacity); } }
+@media (prefers-reduced-motion: reduce) { .played .apart-bars i, .played .apart-tile, .played .apart-tile svg, .played .apart-light, .played .steps span { animation-duration: 1ms !important; animation-delay: 0s !important; } }
+
+
+/* A short reason under a slide: why we made this call. */
+.why-note { margin: 0; max-width: 62ch; font-size: clamp(16px, 1.3vw, 19px); line-height: 1.5; color: var(--ink-dim); text-wrap: pretty; }
+.why-note b { color: var(--ink); font-weight: 600; }
+.center .why-note { margin-inline: auto; }
+
+.role span, .why p { font-size: 17px; } .role b { font-size: 19px; }
+.caption { font-size: 16px; }
+.guide-list span { font-size: 16px; }
+.center .products, .center .stats { text-align: left; }
+
+/* ── Science slides ── */
+.sci { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; width: 100%; text-align: left; }
+.sci > div { border: 1px solid var(--ink-faint); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 12px; min-width: 0; background: var(--chrome); }
+.sci h3 { margin: 0; font-size: 19px; font-weight: 600; } .sci p { margin: 0; font-size: 16px; line-height: 1.5; color: var(--ink-dim); }
+.sci b { color: var(--ink); }
+.xh { display: flex; flex-direction: column; gap: 4px; }
+.xh-row { position: relative; display: flex; align-items: baseline; gap: 12px; font-size: 56px; line-height: 1; height: 64px; }
+.xh-row span { font-size: 13px; color: var(--ink-dim); font-family: var(--font-body); }
+.xh-row i { font-style: normal; color: var(--ink); }
+.xh-row .bar { position: absolute; left: 0; width: 132px; bottom: 8px; background: rgba(62, 186, 141, 0.18); border-top: 1.5px solid var(--green-bright); }
+.nums { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; font-size: 22px; font-weight: 600; color: var(--ink); }
+.nums small { grid-column: span 1; font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-dim); }
+.nums .p { font-variant-numeric: proportional-nums; } .nums .t { font-variant-numeric: tabular-nums; }
+.nums div { display: flex; flex-direction: column; align-items: flex-end; border-left: 2px solid var(--ink-faint); padding-left: 10px; }
+.swatches { display: grid; grid-template-columns: auto repeat(4, 1fr); gap: 6px; align-items: center; }
+.swatches span { font-size: 13px; color: var(--ink-dim); padding-right: 4px; }
+.swatches i { height: 36px; border-radius: 10px; }
+.reads { display: flex; flex-direction: column; gap: 8px; }
+.reads span { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 999px; font-size: 15px; font-weight: 600; }
+.reads .bad { opacity: .9; }
+.ladder { position: relative; height: 150px; border-radius: 14px; background: linear-gradient(90deg, #000, #fff); }
+.ladder i { position: absolute; top: 50%; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,.3); }
+.ladder span { position: absolute; top: calc(50% + 20px); transform: translateX(-50%); font-size: 12px; font-weight: 600; color: #000; background: rgba(255,255,255,.8); padding: 1px 6px; border-radius: 6px; white-space: nowrap; }
+.cvd { display: grid; grid-template-columns: auto repeat(4, 1fr); gap: 6px; align-items: center; font-size: 13px; color: var(--ink-dim); }
+.cvd i { height: 26px; border-radius: 8px; }
+.mix { display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: var(--ink-dim); }
+.mix i { height: 30px; border-radius: 10px; }
+.ux { width: 100%; border-collapse: collapse; text-align: left; font-size: 17px; }
+.ux th { font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-dim); padding: 0 12px 10px 0; border-bottom: 1px solid var(--ink-faint); }
+.ux td { padding: 11px 12px 11px 0; border-bottom: 1px solid var(--ink-faint); vertical-align: top; color: var(--ink-dim); }
+.ux td:first-child { color: var(--ink); font-weight: 600; width: 30%; } .ux td:nth-child(2) { width: 24%; color: var(--ink); }
+@media (max-width: 960px) { .sci { grid-template-columns: 1fr; } }
+
+
+/* The light keeps drifting once the stripes have melted (16s, like the homepage). */
+.morph.alive .stripe { animation: drift 16s ease-in-out infinite alternate; }
+.morph.alive .s2 { animation-duration: 19s; animation-delay: -6s; }
+.morph.alive .s3 { animation-duration: 22s; animation-delay: -11s; }
+@keyframes drift { 0% { translate: 0 0; } 50% { translate: 8% -10%; } 100% { translate: -6% 8%; } }
+@media (prefers-reduced-motion: reduce) { .morph.alive .stripe { animation: none; } }
+.type-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; width: 100%; }
+.type-facts > div { display: flex; flex-direction: column; gap: 4px; padding: 16px 20px; border-radius: 18px; border: 1px solid var(--ink-faint); text-align: left; }
+.type-facts b { font-size: 26px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+.type-facts span { font-size: 16px; line-height: 1.45; color: var(--ink-dim); }
 
 /* ── Final reveal ── */
 .reveal-line { display: grid; }
@@ -757,9 +888,9 @@ em { font-style: normal; }
   <section class="slide" aria-label="Title">
     <div class="glow" aria-hidden="true"><i></i><i></i><i></i></div>
     <div class="inner center">
-      <p class="kicker rise">apna for employers · Brand and design review</p>
-      <h1 class="rise title-mark"><span class="sr">apna</span><svg class="title-wordmark" viewBox="0 0 30 11" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.357 4.953C6.357 5.19567 6.38733 5.3755 6.448 5.4925C6.50867 5.6095 6.617 5.69833 6.773 5.759L6.253 7.41C5.785 7.37533 5.40367 7.2865 5.109 7.1435C4.81433 7.0005 4.57167 6.76867 4.381 6.448C3.93033 7.124 3.23267 7.462 2.288 7.462C1.60333 7.462 1.05084 7.25617 0.6305 6.8445C0.210165 6.43283 0 5.902 0 5.252C0 4.48066 0.285997 3.89134 0.858 3.484C1.43 3.07666 2.262 2.873 3.354 2.873H3.848V2.704C3.848 2.35733 3.77867 2.12333 3.64 2.002C3.50133 1.88067 3.237 1.82 2.847 1.82C2.639 1.82 2.3725 1.8525 2.0475 1.9175C1.7225 1.9825 1.391 2.07133 1.053 2.184L0.494 0.546C0.918669 0.372666 1.38016 0.238334 1.8785 0.143C2.37684 0.0476662 2.82967 0 3.237 0C4.32901 0 5.122 0.210165 5.616 0.6305C6.11 1.05084 6.357 1.69433 6.357 2.561V4.953ZM3.082 5.653C3.238 5.653 3.38316 5.614 3.5175 5.536C3.65183 5.458 3.76233 5.35833 3.849 5.237V4.21H3.576C3.212 4.21 2.94333 4.275 2.77 4.405C2.59666 4.535 2.51 4.73433 2.51 5.003C2.51 5.20233 2.562 5.3605 2.666 5.4775C2.77 5.5945 2.90866 5.653 3.082 5.653ZM13.8185 0.975C13.3808 0.324997 12.733 0 11.875 0C11.5283 0 11.1838 0.0736659 10.8415 0.221C10.4992 0.368334 10.1893 0.606665 9.912 0.936L9.808 0.26H7.52V10.153L10.094 9.893V6.773C10.51 7.23234 11.0473 7.462 11.706 7.462C12.252 7.462 12.7352 7.2995 13.1555 6.9745C13.5758 6.6495 13.9008 6.20317 14.1305 5.6355C14.3602 5.06783 14.475 4.42434 14.475 3.705C14.475 2.53499 14.2562 1.625 13.8185 0.975ZM10.857 5.633C11.507 5.633 11.832 5.00467 11.832 3.748C11.832 3.21933 11.7973 2.81634 11.728 2.539C11.6587 2.26167 11.5655 2.0775 11.4485 1.9865C11.3315 1.8955 11.182 1.85 11 1.85C10.636 1.85 10.3327 2.06666 10.09 2.5V5.152C10.2027 5.32533 10.3197 5.44883 10.441 5.5225C10.5623 5.59617 10.701 5.633 10.857 5.633ZM21.2085 0.546C20.8748 0.181998 20.4177 0 19.837 0C19.421 0 19.0462 0.0779992 18.7125 0.234C18.3788 0.390001 18.0517 0.636998 17.731 0.975L17.549 0.26H15.3V7.202H17.874V2.561C18.1687 2.10166 18.459 1.872 18.745 1.872C18.875 1.872 18.9725 1.91967 19.0375 2.015C19.1025 2.11033 19.135 2.288 19.135 2.548V7.202H21.709V2.08C21.709 1.42133 21.5422 0.910002 21.2085 0.546ZM28.747 4.953C28.747 5.19567 28.7773 5.3755 28.838 5.4925C28.8987 5.6095 29.007 5.69833 29.163 5.759L28.643 7.41C28.175 7.37533 27.7937 7.2865 27.499 7.1435C27.2043 7.0005 26.9617 6.76867 26.771 6.448C26.3203 7.124 25.6227 7.462 24.678 7.462C23.9933 7.462 23.4408 7.25617 23.0205 6.8445C22.6002 6.43283 22.39 5.902 22.39 5.252C22.39 4.48066 22.676 3.89134 23.248 3.484C23.82 3.07666 24.652 2.873 25.744 2.873H26.238V2.704C26.238 2.35733 26.1687 2.12333 26.03 2.002C25.8913 1.88067 25.627 1.82 25.237 1.82C25.029 1.82 24.7625 1.8525 24.4375 1.9175C24.1125 1.9825 23.781 2.07133 23.443 2.184L22.884 0.546C23.3087 0.372666 23.7702 0.238334 24.2685 0.143C24.7668 0.0476662 25.2197 0 25.627 0C26.719 0 27.512 0.210165 28.006 0.6305C28.5 1.05084 28.747 1.69433 28.747 2.561V4.953ZM25.9075 5.536C25.7732 5.614 25.628 5.653 25.472 5.653C25.2987 5.653 25.16 5.5945 25.056 5.4775C24.952 5.3605 24.9 5.20233 24.9 5.003C24.9 4.73433 24.9867 4.535 25.16 4.405C25.3333 4.275 25.602 4.21 25.966 4.21H26.239V5.237C26.1523 5.35833 26.0418 5.458 25.9075 5.536Z" fill="currentColor"/></svg>, <em>redrawn.</em></h1>
-      <p class="lede rise">A new website, a modern brand, and one design system behind every screen.</p>
+      <p class="kicker rise">apna · Brand review · November 2026</p>
+      <h1 class="rise intent">One apna, for employers <em>and job seekers.</em></h1>
+      <p class="lede rise">Designed for employers first. Here&rsquo;s how it carries to everyone.</p>
     </div>
     <p class="preshow-hint" aria-hidden="true">Press any key to begin</p>
   </section>
@@ -767,7 +898,7 @@ em { font-style: normal; }
   <section class="slide" aria-label="Where we started">
     <div class="inner center">
       <p class="kicker rise">Where we started</p>
-      <h2 class="rise">Four colours.<br>One <em>promise.</em></h2>
+      <h2 class="rise">This is the logo<br>we have <em>today.</em></h2>
       <div class="tile icon-tile rise" role="img" aria-label="The apna app icon: the plum wordmark over green, sky and yellow stripes"><svg class="app-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
 <path fill-rule="evenodd" clip-rule="evenodd" d="M7.21875 0H28.7812C32.7681 0 36 3.23194 36 7.21875V28.7812C36 32.7681 32.7681 36 28.7812 36H7.21875C3.23194 36 0 32.7681 0 28.7812V7.21875C0 3.23194 3.23194 0 7.21875 0Z" fill="white"/>
 <path d="M35.4688 31.5C34.3948 34.139 31.806 36 28.7812 36H24V31.5H35.4688Z" fill="#FFD166"/>
@@ -778,58 +909,135 @@ em { font-style: normal; }
       <div class="swatches rise">
         <div class="sw"><i style="background:#2BB793"></i>Green</div>
         <div class="sw"><i style="background:var(--sky)"></i>Sky</div>
-        <div class="sw"><i style="background:var(--gold)"></i>Yellow</div>
+        <div class="sw"><i style="background:var(--gold)"></i>Gold</div>
         <div class="sw"><i style="background:var(--plum)"></i>Plum</div>
       </div>
     </div>
   </section>
 
-  <section class="slide" aria-label="From stripes to light">
+  <section class="slide" aria-label="Taking it apart" id="apart-slide">
     <div class="inner center">
-      <p class="kicker rise">The idea</p>
-      <h2 class="rise">We kept the colours.<br>We let them <em>breathe.</em></h2>
+      <p class="kicker rise">Taking it apart</p>
+      <h2 class="rise">We took apna<br>out of the <em>box.</em></h2>
+      <div class="apart rise" role="img" aria-label="The old app icon: its three colour bars lift off, the wordmark turns black, and the colours spread into soft light">
+        <div class="apart-tile" aria-hidden="true"><svg viewBox="0 0 30 11"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M6.357 4.953C6.357 5.19567 6.38733 5.3755 6.448 5.4925C6.50867 5.6095 6.617 5.69833 6.773 5.759L6.253 7.41C5.785 7.37533 5.40367 7.2865 5.109 7.1435C4.81433 7.0005 4.57167 6.76867 4.381 6.448C3.93033 7.124 3.23267 7.462 2.288 7.462C1.60333 7.462 1.05084 7.25617 0.6305 6.8445C0.210165 6.43283 0 5.902 0 5.252C0 4.48066 0.285997 3.89134 0.858 3.484C1.43 3.07666 2.262 2.873 3.354 2.873H3.848V2.704C3.848 2.35733 3.77867 2.12333 3.64 2.002C3.50133 1.88067 3.237 1.82 2.847 1.82C2.639 1.82 2.3725 1.8525 2.0475 1.9175C1.7225 1.9825 1.391 2.07133 1.053 2.184L0.494 0.546C0.918669 0.372666 1.38016 0.238334 1.8785 0.143C2.37684 0.0476662 2.82967 0 3.237 0C4.32901 0 5.122 0.210165 5.616 0.6305C6.11 1.05084 6.357 1.69433 6.357 2.561V4.953ZM3.082 5.653C3.238 5.653 3.38316 5.614 3.5175 5.536C3.65183 5.458 3.76233 5.35833 3.849 5.237V4.21H3.576C3.212 4.21 2.94333 4.275 2.77 4.405C2.59666 4.535 2.51 4.73433 2.51 5.003C2.51 5.20233 2.562 5.3605 2.666 5.4775C2.77 5.5945 2.90866 5.653 3.082 5.653ZM13.8185 0.975C13.3808 0.324997 12.733 0 11.875 0C11.5283 0 11.1838 0.0736659 10.8415 0.221C10.4992 0.368334 10.1893 0.606665 9.912 0.936L9.808 0.26H7.52V10.153L10.094 9.893V6.773C10.51 7.23234 11.0473 7.462 11.706 7.462C12.252 7.462 12.7352 7.2995 13.1555 6.9745C13.5758 6.6495 13.9008 6.20317 14.1305 5.6355C14.3602 5.06783 14.475 4.42434 14.475 3.705C14.475 2.53499 14.2562 1.625 13.8185 0.975ZM10.857 5.633C11.507 5.633 11.832 5.00467 11.832 3.748C11.832 3.21933 11.7973 2.81634 11.728 2.539C11.6587 2.26167 11.5655 2.0775 11.4485 1.9865C11.3315 1.8955 11.182 1.85 11 1.85C10.636 1.85 10.3327 2.06666 10.09 2.5V5.152C10.2027 5.32533 10.3197 5.44883 10.441 5.5225C10.5623 5.59617 10.701 5.633 10.857 5.633ZM21.2085 0.546C20.8748 0.181998 20.4177 0 19.837 0C19.421 0 19.0462 0.0779992 18.7125 0.234C18.3788 0.390001 18.0517 0.636998 17.731 0.975L17.549 0.26H15.3V7.202H17.874V2.561C18.1687 2.10166 18.459 1.872 18.745 1.872C18.875 1.872 18.9725 1.91967 19.0375 2.015C19.1025 2.11033 19.135 2.288 19.135 2.548V7.202H21.709V2.08C21.709 1.42133 21.5422 0.910002 21.2085 0.546ZM28.747 4.953C28.747 5.19567 28.7773 5.3755 28.838 5.4925C28.8987 5.6095 29.007 5.69833 29.163 5.759L28.643 7.41C28.175 7.37533 27.7937 7.2865 27.499 7.1435C27.2043 7.0005 26.9617 6.76867 26.771 6.448C26.3203 7.124 25.6227 7.462 24.678 7.462C23.9933 7.462 23.4408 7.25617 23.0205 6.8445C22.6002 6.43283 22.39 5.902 22.39 5.252C22.39 4.48066 22.676 3.89134 23.248 3.484C23.82 3.07666 24.652 2.873 25.744 2.873H26.238V2.704C26.238 2.35733 26.1687 2.12333 26.03 2.002C25.8913 1.88067 25.627 1.82 25.237 1.82C25.029 1.82 24.7625 1.8525 24.4375 1.9175C24.1125 1.9825 23.781 2.07133 23.443 2.184L22.884 0.546C23.3087 0.372666 23.7702 0.238334 24.2685 0.143C24.7668 0.0476662 25.2197 0 25.627 0C26.719 0 27.512 0.210165 28.006 0.6305C28.5 1.05084 28.747 1.69433 28.747 2.561V4.953ZM25.9075 5.536C25.7732 5.614 25.628 5.653 25.472 5.653C25.2987 5.653 25.16 5.5945 25.056 5.4775C24.952 5.3605 24.9 5.20233 24.9 5.003C24.9 4.73433 24.9867 4.535 25.16 4.405C25.3333 4.275 25.602 4.21 25.966 4.21H26.239V5.237C26.1523 5.35833 26.0418 5.458 25.9075 5.536Z"/></svg><div class="apart-bars"><i></i><i></i><i></i></div></div>
+      </div>
+      <div class="steps rise"><span>Stripes lift off</span><span>The box falls away</span><span>The name stands alone</span></div>
+      <p class="why-note rise">A box suits an app grid. Everywhere else, it fences the name in.</p>
+      <button type="button" class="switch rise" id="apart-replay">Play again</button>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="Colours become light">
+    <div class="inner center">
+      <p class="kicker rise">Where the stripes went</p>
+      <h2 class="rise">The stripes became light.<br>Light that <em>moves.</em></h2>
       <div class="morph rise" id="morph" aria-hidden="true"><i class="stripe s1"></i><i class="stripe s2"></i><i class="stripe s3"></i></div>
       <div class="scrub rise">
-        <label for="melt" class="morph-labels"><span>Flat stripes</span><span>Soft, living light</span></label>
-        <input type="range" id="melt" min="0" max="100" value="0" aria-label="From flat stripes to soft light">
-        <span class="hint">Drag to see it happen</span>
+        <label for="melt" class="morph-labels"><span>Stripes</span><span>Light</span></label>
+        <input type="range" id="melt" min="0" max="100" value="0" aria-label="From stripes to soft light">
+      </div>
+      <p class="why-note rise">It drifts over 16 seconds: slow enough to stay calm, enough to feel alive.</p>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="The wordmark" id="mark-slide">
+    <div class="inner center">
+      <p class="kicker rise">Put back together</p>
+      <h2 class="rise">The name, <em>on the light.</em></h2>
+      <div class="mark-stage rise" role="img" aria-label="The apna wordmark, drawn as an outline, filled in black, then soft green, sky and gold light behind it">
+        <svg viewBox="0 0 30 11" aria-hidden="true">
+          <line class="mark-guide" x1="-1" x2="31" y1="0" y2="0"/><line class="mark-guide" x1="-1" x2="31" y1="7.46" y2="7.46"/><line class="mark-guide" x1="-1" x2="31" y1="10.15" y2="10.15"/>
+          <line class="mark-guide" x1="7.52" x2="7.52" y1="-1" y2="11"/><line class="mark-guide" x1="22.39" x2="22.39" y1="-1" y2="11"/>
+          <path class="mark-path" pathLength="1" fill-rule="evenodd" clip-rule="evenodd" d="M6.357 4.953C6.357 5.19567 6.38733 5.3755 6.448 5.4925C6.50867 5.6095 6.617 5.69833 6.773 5.759L6.253 7.41C5.785 7.37533 5.40367 7.2865 5.109 7.1435C4.81433 7.0005 4.57167 6.76867 4.381 6.448C3.93033 7.124 3.23267 7.462 2.288 7.462C1.60333 7.462 1.05084 7.25617 0.6305 6.8445C0.210165 6.43283 0 5.902 0 5.252C0 4.48066 0.285997 3.89134 0.858 3.484C1.43 3.07666 2.262 2.873 3.354 2.873H3.848V2.704C3.848 2.35733 3.77867 2.12333 3.64 2.002C3.50133 1.88067 3.237 1.82 2.847 1.82C2.639 1.82 2.3725 1.8525 2.0475 1.9175C1.7225 1.9825 1.391 2.07133 1.053 2.184L0.494 0.546C0.918669 0.372666 1.38016 0.238334 1.8785 0.143C2.37684 0.0476662 2.82967 0 3.237 0C4.32901 0 5.122 0.210165 5.616 0.6305C6.11 1.05084 6.357 1.69433 6.357 2.561V4.953ZM3.082 5.653C3.238 5.653 3.38316 5.614 3.5175 5.536C3.65183 5.458 3.76233 5.35833 3.849 5.237V4.21H3.576C3.212 4.21 2.94333 4.275 2.77 4.405C2.59666 4.535 2.51 4.73433 2.51 5.003C2.51 5.20233 2.562 5.3605 2.666 5.4775C2.77 5.5945 2.90866 5.653 3.082 5.653ZM13.8185 0.975C13.3808 0.324997 12.733 0 11.875 0C11.5283 0 11.1838 0.0736659 10.8415 0.221C10.4992 0.368334 10.1893 0.606665 9.912 0.936L9.808 0.26H7.52V10.153L10.094 9.893V6.773C10.51 7.23234 11.0473 7.462 11.706 7.462C12.252 7.462 12.7352 7.2995 13.1555 6.9745C13.5758 6.6495 13.9008 6.20317 14.1305 5.6355C14.3602 5.06783 14.475 4.42434 14.475 3.705C14.475 2.53499 14.2562 1.625 13.8185 0.975ZM10.857 5.633C11.507 5.633 11.832 5.00467 11.832 3.748C11.832 3.21933 11.7973 2.81634 11.728 2.539C11.6587 2.26167 11.5655 2.0775 11.4485 1.9865C11.3315 1.8955 11.182 1.85 11 1.85C10.636 1.85 10.3327 2.06666 10.09 2.5V5.152C10.2027 5.32533 10.3197 5.44883 10.441 5.5225C10.5623 5.59617 10.701 5.633 10.857 5.633ZM21.2085 0.546C20.8748 0.181998 20.4177 0 19.837 0C19.421 0 19.0462 0.0779992 18.7125 0.234C18.3788 0.390001 18.0517 0.636998 17.731 0.975L17.549 0.26H15.3V7.202H17.874V2.561C18.1687 2.10166 18.459 1.872 18.745 1.872C18.875 1.872 18.9725 1.91967 19.0375 2.015C19.1025 2.11033 19.135 2.288 19.135 2.548V7.202H21.709V2.08C21.709 1.42133 21.5422 0.910002 21.2085 0.546ZM28.747 4.953C28.747 5.19567 28.7773 5.3755 28.838 5.4925C28.8987 5.6095 29.007 5.69833 29.163 5.759L28.643 7.41C28.175 7.37533 27.7937 7.2865 27.499 7.1435C27.2043 7.0005 26.9617 6.76867 26.771 6.448C26.3203 7.124 25.6227 7.462 24.678 7.462C23.9933 7.462 23.4408 7.25617 23.0205 6.8445C22.6002 6.43283 22.39 5.902 22.39 5.252C22.39 4.48066 22.676 3.89134 23.248 3.484C23.82 3.07666 24.652 2.873 25.744 2.873H26.238V2.704C26.238 2.35733 26.1687 2.12333 26.03 2.002C25.8913 1.88067 25.627 1.82 25.237 1.82C25.029 1.82 24.7625 1.8525 24.4375 1.9175C24.1125 1.9825 23.781 2.07133 23.443 2.184L22.884 0.546C23.3087 0.372666 23.7702 0.238334 24.2685 0.143C24.7668 0.0476662 25.2197 0 25.627 0C26.719 0 27.512 0.210165 28.006 0.6305C28.5 1.05084 28.747 1.69433 28.747 2.561V4.953ZM25.9075 5.536C25.7732 5.614 25.628 5.653 25.472 5.653C25.2987 5.653 25.16 5.5945 25.056 5.4775C24.952 5.3605 24.9 5.20233 24.9 5.003C24.9 4.73433 24.9867 4.535 25.16 4.405C25.3333 4.275 25.602 4.21 25.966 4.21H26.239V5.237C26.1523 5.35833 26.0418 5.458 25.9075 5.536Z"/>
+        </svg>
+        <div class="mark-glow" aria-hidden="true"><i></i><i></i><i></i></div>
+      </div>
+      <p class="why-note rise">Black for the name: the most contrast on any background. Colour moves to the light.</p>
+      <button type="button" class="switch rise" id="mark-replay">Draw again</button>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="What each colour means">
+    <div class="inner center">
+      <p class="kicker rise">What each colour means</p>
+      <h2 class="rise">Each colour now<br>has <em>one job.</em></h2>
+      <div class="roles rise">
+        <div class="role"><i style="background:var(--green)"></i><b>Green acts</b><span>Jobs, and the one action on every screen.</span></div>
+        <div class="role"><i style="background:var(--sky)"></i><b>Sky informs</b><span>AI, help and information.</span></div>
+        <div class="role"><i style="background:var(--plum)"></i><b>Plum deepens</b><span>Database, and depth in gradients.</span></div>
+        <div class="role"><i style="background:var(--gold)"></i><b>Gold rewards</b><span>Premium, offers and apna Unlimited.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="Colour checks">
+    <div class="inner center">
+      <p class="kicker rise">Checking the colours</p>
+      <h2 class="rise">Three tests every colour <em>had to pass.</em></h2>
+      <div class="sci rise">
+        <div>
+          <h3>Can you tell them apart without colour?</h3>
+          <div class="swatches" role="img" aria-label="Plum, green, sky and gold in colour, then in black and white: four different greys">
+            <span>Colour</span><i style="background:#4E3A52"></i><i style="background:#1F8268"></i><i style="background:#83BDE4"></i><i style="background:#FFD166"></i>
+            <span>Black and white</span><i style="background:oklch(0.38 0 0)"></i><i style="background:oklch(0.54 0 0)"></i><i style="background:oklch(0.77 0 0)"></i><i style="background:oklch(0.88 0 0)"></i>
+          </div>
+          <p><b>Yes.</b> Each colour has its own brightness, so even in black and white they look different.</p>
+        </div>
+        <div>
+          <h3>Does it work for colour-blind people?</h3>
+          <div class="swatches" role="img" aria-label="The four colours as most people see them, then as about 1 in 12 men see them: green and sky come close">
+            <span>Most people</span><i style="background:#2BB793"></i><i style="background:#83BDE4"></i><i style="background:#FFD166"></i><i style="background:#4E3A52"></i>
+            <span>1 in 12 men</span><i style="background:#A09D95"></i><i style="background:#9FB2E3"></i><i style="background:#F2DC6A"></i><i style="background:#3C4251"></i>
+          </div>
+          <p><b>Yes, with help.</b> Green and sky come close, so colour never works alone: a label or icon always goes with it.</p>
+        </div>
+        <div>
+          <h3>Can you read text on it?</h3>
+          <div class="reads" aria-hidden="true">
+            <span style="background:#1F8268;color:#fff">Post a job <b>✓</b></span>
+            <span style="background:#FFD166;color:#000">View plans <b>✓</b></span>
+            <span class="bad" style="background:#FFD166;color:#fff">View plans <b>✕</b></span>
+          </div>
+          <p><b>Yes.</b> White on green, black on gold. White on gold is too faint, so we never use it.</p>
+        </div>
       </div>
     </div>
   </section>
 
   <section class="slide tintable" id="products-slide" aria-label="One colour per product">
     <div class="stage-tint" aria-hidden="true"></div>
-    <div class="inner">
-      <p class="kicker rise">Every product owns a colour</p>
-      <h2 class="rise">Four products.<br>Four <em>moods.</em></h2>
+    <div class="inner center">
+      <p class="kicker rise">Products</p>
+      <h2 class="rise">Each product has<br>its own <em>colour.</em></h2>
       <div class="products rise" role="group" aria-label="Pick a product">
         <button type="button" class="prod p-green" data-tint="green" aria-pressed="false"><small>Green</small><span class="dot" style="background:var(--green)"></span><strong>Smart job posting</strong></button>
         <button type="button" class="prod p-sky" data-tint="sky" aria-pressed="false"><small>Sky</small><span class="dot" style="background:var(--sky)"></span><strong>AI calling agent</strong></button>
         <button type="button" class="prod p-plum" data-tint="plum" aria-pressed="false"><small>Plum</small><span class="dot" style="background:var(--plum)"></span><strong>apna Database</strong></button>
         <button type="button" class="prod p-gold" data-tint="gold" aria-pressed="false"><small>Gold</small><span class="dot" style="background:var(--gold)"></span><strong>apna Unlimited</strong></button>
       </div>
-      <p class="lede rise">Pick one: the whole stage takes its colour. All four come from the logo, so the brand stays recognisable.</p>
+      <p class="lede rise">People know where they are before they read a word.</p>
     </div>
   </section>
 
   <section class="slide" aria-label="Product pages continue the brand">
     <div class="inner center">
       <p class="kicker rise">Header to footer</p>
-      <h2 class="rise">Each page wears <em>its</em> colour.</h2>
+      <h2 class="rise">Each product page uses <em>its</em> colour.</h2>
       <div class="pages rise" id="pages" role="group" aria-label="Tap a page to bring it forward">
         <div class="page c-green"><div class="bar"><svg class="mini-mark" viewBox="0 0 30 11" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.357 4.953C6.357 5.19567 6.38733 5.3755 6.448 5.4925C6.50867 5.6095 6.617 5.69833 6.773 5.759L6.253 7.41C5.785 7.37533 5.40367 7.2865 5.109 7.1435C4.81433 7.0005 4.57167 6.76867 4.381 6.448C3.93033 7.124 3.23267 7.462 2.288 7.462C1.60333 7.462 1.05084 7.25617 0.6305 6.8445C0.210165 6.43283 0 5.902 0 5.252C0 4.48066 0.285997 3.89134 0.858 3.484C1.43 3.07666 2.262 2.873 3.354 2.873H3.848V2.704C3.848 2.35733 3.77867 2.12333 3.64 2.002C3.50133 1.88067 3.237 1.82 2.847 1.82C2.639 1.82 2.3725 1.8525 2.0475 1.9175C1.7225 1.9825 1.391 2.07133 1.053 2.184L0.494 0.546C0.918669 0.372666 1.38016 0.238334 1.8785 0.143C2.37684 0.0476662 2.82967 0 3.237 0C4.32901 0 5.122 0.210165 5.616 0.6305C6.11 1.05084 6.357 1.69433 6.357 2.561V4.953ZM3.082 5.653C3.238 5.653 3.38316 5.614 3.5175 5.536C3.65183 5.458 3.76233 5.35833 3.849 5.237V4.21H3.576C3.212 4.21 2.94333 4.275 2.77 4.405C2.59666 4.535 2.51 4.73433 2.51 5.003C2.51 5.20233 2.562 5.3605 2.666 5.4775C2.77 5.5945 2.90866 5.653 3.082 5.653ZM13.8185 0.975C13.3808 0.324997 12.733 0 11.875 0C11.5283 0 11.1838 0.0736659 10.8415 0.221C10.4992 0.368334 10.1893 0.606665 9.912 0.936L9.808 0.26H7.52V10.153L10.094 9.893V6.773C10.51 7.23234 11.0473 7.462 11.706 7.462C12.252 7.462 12.7352 7.2995 13.1555 6.9745C13.5758 6.6495 13.9008 6.20317 14.1305 5.6355C14.3602 5.06783 14.475 4.42434 14.475 3.705C14.475 2.53499 14.2562 1.625 13.8185 0.975ZM10.857 5.633C11.507 5.633 11.832 5.00467 11.832 3.748C11.832 3.21933 11.7973 2.81634 11.728 2.539C11.6587 2.26167 11.5655 2.0775 11.4485 1.9865C11.3315 1.8955 11.182 1.85 11 1.85C10.636 1.85 10.3327 2.06666 10.09 2.5V5.152C10.2027 5.32533 10.3197 5.44883 10.441 5.5225C10.5623 5.59617 10.701 5.633 10.857 5.633ZM21.2085 0.546C20.8748 0.181998 20.4177 0 19.837 0C19.421 0 19.0462 0.0779992 18.7125 0.234C18.3788 0.390001 18.0517 0.636998 17.731 0.975L17.549 0.26H15.3V7.202H17.874V2.561C18.1687 2.10166 18.459 1.872 18.745 1.872C18.875 1.872 18.9725 1.91967 19.0375 2.015C19.1025 2.11033 19.135 2.288 19.135 2.548V7.202H21.709V2.08C21.709 1.42133 21.5422 0.910002 21.2085 0.546ZM28.747 4.953C28.747 5.19567 28.7773 5.3755 28.838 5.4925C28.8987 5.6095 29.007 5.69833 29.163 5.759L28.643 7.41C28.175 7.37533 27.7937 7.2865 27.499 7.1435C27.2043 7.0005 26.9617 6.76867 26.771 6.448C26.3203 7.124 25.6227 7.462 24.678 7.462C23.9933 7.462 23.4408 7.25617 23.0205 6.8445C22.6002 6.43283 22.39 5.902 22.39 5.252C22.39 4.48066 22.676 3.89134 23.248 3.484C23.82 3.07666 24.652 2.873 25.744 2.873H26.238V2.704C26.238 2.35733 26.1687 2.12333 26.03 2.002C25.8913 1.88067 25.627 1.82 25.237 1.82C25.029 1.82 24.7625 1.8525 24.4375 1.9175C24.1125 1.9825 23.781 2.07133 23.443 2.184L22.884 0.546C23.3087 0.372666 23.7702 0.238334 24.2685 0.143C24.7668 0.0476662 25.2197 0 25.627 0C26.719 0 27.512 0.210165 28.006 0.6305C28.5 1.05084 28.747 1.69433 28.747 2.561V4.953ZM25.9075 5.536C25.7732 5.614 25.628 5.653 25.472 5.653C25.2987 5.653 25.16 5.5945 25.056 5.4775C24.952 5.3605 24.9 5.20233 24.9 5.003C24.9 4.73433 24.9867 4.535 25.16 4.405C25.3333 4.275 25.602 4.21 25.966 4.21H26.239V5.237C26.1523 5.35833 26.0418 5.458 25.9075 5.536Z" fill="currentColor"/></svg></div><div class="hero"><span class="chip">Smart job posting</span><h3>Get applications from relevant, high-intent candidates</h3><span class="btn">Post a smart-AI job</span><div class="cards"><i></i><i></i><i></i><i></i></div></div></div>
         <div class="page c-sky"><div class="bar"><svg class="mini-mark" viewBox="0 0 30 11" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.357 4.953C6.357 5.19567 6.38733 5.3755 6.448 5.4925C6.50867 5.6095 6.617 5.69833 6.773 5.759L6.253 7.41C5.785 7.37533 5.40367 7.2865 5.109 7.1435C4.81433 7.0005 4.57167 6.76867 4.381 6.448C3.93033 7.124 3.23267 7.462 2.288 7.462C1.60333 7.462 1.05084 7.25617 0.6305 6.8445C0.210165 6.43283 0 5.902 0 5.252C0 4.48066 0.285997 3.89134 0.858 3.484C1.43 3.07666 2.262 2.873 3.354 2.873H3.848V2.704C3.848 2.35733 3.77867 2.12333 3.64 2.002C3.50133 1.88067 3.237 1.82 2.847 1.82C2.639 1.82 2.3725 1.8525 2.0475 1.9175C1.7225 1.9825 1.391 2.07133 1.053 2.184L0.494 0.546C0.918669 0.372666 1.38016 0.238334 1.8785 0.143C2.37684 0.0476662 2.82967 0 3.237 0C4.32901 0 5.122 0.210165 5.616 0.6305C6.11 1.05084 6.357 1.69433 6.357 2.561V4.953ZM3.082 5.653C3.238 5.653 3.38316 5.614 3.5175 5.536C3.65183 5.458 3.76233 5.35833 3.849 5.237V4.21H3.576C3.212 4.21 2.94333 4.275 2.77 4.405C2.59666 4.535 2.51 4.73433 2.51 5.003C2.51 5.20233 2.562 5.3605 2.666 5.4775C2.77 5.5945 2.90866 5.653 3.082 5.653ZM13.8185 0.975C13.3808 0.324997 12.733 0 11.875 0C11.5283 0 11.1838 0.0736659 10.8415 0.221C10.4992 0.368334 10.1893 0.606665 9.912 0.936L9.808 0.26H7.52V10.153L10.094 9.893V6.773C10.51 7.23234 11.0473 7.462 11.706 7.462C12.252 7.462 12.7352 7.2995 13.1555 6.9745C13.5758 6.6495 13.9008 6.20317 14.1305 5.6355C14.3602 5.06783 14.475 4.42434 14.475 3.705C14.475 2.53499 14.2562 1.625 13.8185 0.975ZM10.857 5.633C11.507 5.633 11.832 5.00467 11.832 3.748C11.832 3.21933 11.7973 2.81634 11.728 2.539C11.6587 2.26167 11.5655 2.0775 11.4485 1.9865C11.3315 1.8955 11.182 1.85 11 1.85C10.636 1.85 10.3327 2.06666 10.09 2.5V5.152C10.2027 5.32533 10.3197 5.44883 10.441 5.5225C10.5623 5.59617 10.701 5.633 10.857 5.633ZM21.2085 0.546C20.8748 0.181998 20.4177 0 19.837 0C19.421 0 19.0462 0.0779992 18.7125 0.234C18.3788 0.390001 18.0517 0.636998 17.731 0.975L17.549 0.26H15.3V7.202H17.874V2.561C18.1687 2.10166 18.459 1.872 18.745 1.872C18.875 1.872 18.9725 1.91967 19.0375 2.015C19.1025 2.11033 19.135 2.288 19.135 2.548V7.202H21.709V2.08C21.709 1.42133 21.5422 0.910002 21.2085 0.546ZM28.747 4.953C28.747 5.19567 28.7773 5.3755 28.838 5.4925C28.8987 5.6095 29.007 5.69833 29.163 5.759L28.643 7.41C28.175 7.37533 27.7937 7.2865 27.499 7.1435C27.2043 7.0005 26.9617 6.76867 26.771 6.448C26.3203 7.124 25.6227 7.462 24.678 7.462C23.9933 7.462 23.4408 7.25617 23.0205 6.8445C22.6002 6.43283 22.39 5.902 22.39 5.252C22.39 4.48066 22.676 3.89134 23.248 3.484C23.82 3.07666 24.652 2.873 25.744 2.873H26.238V2.704C26.238 2.35733 26.1687 2.12333 26.03 2.002C25.8913 1.88067 25.627 1.82 25.237 1.82C25.029 1.82 24.7625 1.8525 24.4375 1.9175C24.1125 1.9825 23.781 2.07133 23.443 2.184L22.884 0.546C23.3087 0.372666 23.7702 0.238334 24.2685 0.143C24.7668 0.0476662 25.2197 0 25.627 0C26.719 0 27.512 0.210165 28.006 0.6305C28.5 1.05084 28.747 1.69433 28.747 2.561V4.953ZM25.9075 5.536C25.7732 5.614 25.628 5.653 25.472 5.653C25.2987 5.653 25.16 5.5945 25.056 5.4775C24.952 5.3605 24.9 5.20233 24.9 5.003C24.9 4.73433 24.9867 4.535 25.16 4.405C25.3333 4.275 25.602 4.21 25.966 4.21H26.239V5.237C26.1523 5.35833 26.0418 5.458 25.9075 5.536Z" fill="currentColor"/></svg></div><div class="hero"><span class="chip">AI calling agent</span><h3>AI calling agent interviews and shortlists candidates 24/7</h3><span class="btn">Post a job now</span><div class="cards"><i></i><i></i><i></i><i></i></div></div></div>
         <div class="page c-plum"><div class="bar"><svg class="mini-mark" viewBox="0 0 30 11" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.357 4.953C6.357 5.19567 6.38733 5.3755 6.448 5.4925C6.50867 5.6095 6.617 5.69833 6.773 5.759L6.253 7.41C5.785 7.37533 5.40367 7.2865 5.109 7.1435C4.81433 7.0005 4.57167 6.76867 4.381 6.448C3.93033 7.124 3.23267 7.462 2.288 7.462C1.60333 7.462 1.05084 7.25617 0.6305 6.8445C0.210165 6.43283 0 5.902 0 5.252C0 4.48066 0.285997 3.89134 0.858 3.484C1.43 3.07666 2.262 2.873 3.354 2.873H3.848V2.704C3.848 2.35733 3.77867 2.12333 3.64 2.002C3.50133 1.88067 3.237 1.82 2.847 1.82C2.639 1.82 2.3725 1.8525 2.0475 1.9175C1.7225 1.9825 1.391 2.07133 1.053 2.184L0.494 0.546C0.918669 0.372666 1.38016 0.238334 1.8785 0.143C2.37684 0.0476662 2.82967 0 3.237 0C4.32901 0 5.122 0.210165 5.616 0.6305C6.11 1.05084 6.357 1.69433 6.357 2.561V4.953ZM3.082 5.653C3.238 5.653 3.38316 5.614 3.5175 5.536C3.65183 5.458 3.76233 5.35833 3.849 5.237V4.21H3.576C3.212 4.21 2.94333 4.275 2.77 4.405C2.59666 4.535 2.51 4.73433 2.51 5.003C2.51 5.20233 2.562 5.3605 2.666 5.4775C2.77 5.5945 2.90866 5.653 3.082 5.653ZM13.8185 0.975C13.3808 0.324997 12.733 0 11.875 0C11.5283 0 11.1838 0.0736659 10.8415 0.221C10.4992 0.368334 10.1893 0.606665 9.912 0.936L9.808 0.26H7.52V10.153L10.094 9.893V6.773C10.51 7.23234 11.0473 7.462 11.706 7.462C12.252 7.462 12.7352 7.2995 13.1555 6.9745C13.5758 6.6495 13.9008 6.20317 14.1305 5.6355C14.3602 5.06783 14.475 4.42434 14.475 3.705C14.475 2.53499 14.2562 1.625 13.8185 0.975ZM10.857 5.633C11.507 5.633 11.832 5.00467 11.832 3.748C11.832 3.21933 11.7973 2.81634 11.728 2.539C11.6587 2.26167 11.5655 2.0775 11.4485 1.9865C11.3315 1.8955 11.182 1.85 11 1.85C10.636 1.85 10.3327 2.06666 10.09 2.5V5.152C10.2027 5.32533 10.3197 5.44883 10.441 5.5225C10.5623 5.59617 10.701 5.633 10.857 5.633ZM21.2085 0.546C20.8748 0.181998 20.4177 0 19.837 0C19.421 0 19.0462 0.0779992 18.7125 0.234C18.3788 0.390001 18.0517 0.636998 17.731 0.975L17.549 0.26H15.3V7.202H17.874V2.561C18.1687 2.10166 18.459 1.872 18.745 1.872C18.875 1.872 18.9725 1.91967 19.0375 2.015C19.1025 2.11033 19.135 2.288 19.135 2.548V7.202H21.709V2.08C21.709 1.42133 21.5422 0.910002 21.2085 0.546ZM28.747 4.953C28.747 5.19567 28.7773 5.3755 28.838 5.4925C28.8987 5.6095 29.007 5.69833 29.163 5.759L28.643 7.41C28.175 7.37533 27.7937 7.2865 27.499 7.1435C27.2043 7.0005 26.9617 6.76867 26.771 6.448C26.3203 7.124 25.6227 7.462 24.678 7.462C23.9933 7.462 23.4408 7.25617 23.0205 6.8445C22.6002 6.43283 22.39 5.902 22.39 5.252C22.39 4.48066 22.676 3.89134 23.248 3.484C23.82 3.07666 24.652 2.873 25.744 2.873H26.238V2.704C26.238 2.35733 26.1687 2.12333 26.03 2.002C25.8913 1.88067 25.627 1.82 25.237 1.82C25.029 1.82 24.7625 1.8525 24.4375 1.9175C24.1125 1.9825 23.781 2.07133 23.443 2.184L22.884 0.546C23.3087 0.372666 23.7702 0.238334 24.2685 0.143C24.7668 0.0476662 25.2197 0 25.627 0C26.719 0 27.512 0.210165 28.006 0.6305C28.5 1.05084 28.747 1.69433 28.747 2.561V4.953ZM25.9075 5.536C25.7732 5.614 25.628 5.653 25.472 5.653C25.2987 5.653 25.16 5.5945 25.056 5.4775C24.952 5.3605 24.9 5.20233 24.9 5.003C24.9 4.73433 24.9867 4.535 25.16 4.405C25.3333 4.275 25.602 4.21 25.966 4.21H26.239V5.237C26.1523 5.35833 26.0418 5.458 25.9075 5.536Z" fill="currentColor"/></svg></div><div class="hero"><span class="chip">apna Database</span><h3>Quickly hire active jobseekers around your office.</h3><span class="btn">Search candidates</span><div class="cards"><i></i><i></i><i></i><i></i></div></div></div>
         <div class="page c-gold"><div class="bar"><svg class="mini-mark" viewBox="0 0 30 11" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.357 4.953C6.357 5.19567 6.38733 5.3755 6.448 5.4925C6.50867 5.6095 6.617 5.69833 6.773 5.759L6.253 7.41C5.785 7.37533 5.40367 7.2865 5.109 7.1435C4.81433 7.0005 4.57167 6.76867 4.381 6.448C3.93033 7.124 3.23267 7.462 2.288 7.462C1.60333 7.462 1.05084 7.25617 0.6305 6.8445C0.210165 6.43283 0 5.902 0 5.252C0 4.48066 0.285997 3.89134 0.858 3.484C1.43 3.07666 2.262 2.873 3.354 2.873H3.848V2.704C3.848 2.35733 3.77867 2.12333 3.64 2.002C3.50133 1.88067 3.237 1.82 2.847 1.82C2.639 1.82 2.3725 1.8525 2.0475 1.9175C1.7225 1.9825 1.391 2.07133 1.053 2.184L0.494 0.546C0.918669 0.372666 1.38016 0.238334 1.8785 0.143C2.37684 0.0476662 2.82967 0 3.237 0C4.32901 0 5.122 0.210165 5.616 0.6305C6.11 1.05084 6.357 1.69433 6.357 2.561V4.953ZM3.082 5.653C3.238 5.653 3.38316 5.614 3.5175 5.536C3.65183 5.458 3.76233 5.35833 3.849 5.237V4.21H3.576C3.212 4.21 2.94333 4.275 2.77 4.405C2.59666 4.535 2.51 4.73433 2.51 5.003C2.51 5.20233 2.562 5.3605 2.666 5.4775C2.77 5.5945 2.90866 5.653 3.082 5.653ZM13.8185 0.975C13.3808 0.324997 12.733 0 11.875 0C11.5283 0 11.1838 0.0736659 10.8415 0.221C10.4992 0.368334 10.1893 0.606665 9.912 0.936L9.808 0.26H7.52V10.153L10.094 9.893V6.773C10.51 7.23234 11.0473 7.462 11.706 7.462C12.252 7.462 12.7352 7.2995 13.1555 6.9745C13.5758 6.6495 13.9008 6.20317 14.1305 5.6355C14.3602 5.06783 14.475 4.42434 14.475 3.705C14.475 2.53499 14.2562 1.625 13.8185 0.975ZM10.857 5.633C11.507 5.633 11.832 5.00467 11.832 3.748C11.832 3.21933 11.7973 2.81634 11.728 2.539C11.6587 2.26167 11.5655 2.0775 11.4485 1.9865C11.3315 1.8955 11.182 1.85 11 1.85C10.636 1.85 10.3327 2.06666 10.09 2.5V5.152C10.2027 5.32533 10.3197 5.44883 10.441 5.5225C10.5623 5.59617 10.701 5.633 10.857 5.633ZM21.2085 0.546C20.8748 0.181998 20.4177 0 19.837 0C19.421 0 19.0462 0.0779992 18.7125 0.234C18.3788 0.390001 18.0517 0.636998 17.731 0.975L17.549 0.26H15.3V7.202H17.874V2.561C18.1687 2.10166 18.459 1.872 18.745 1.872C18.875 1.872 18.9725 1.91967 19.0375 2.015C19.1025 2.11033 19.135 2.288 19.135 2.548V7.202H21.709V2.08C21.709 1.42133 21.5422 0.910002 21.2085 0.546ZM28.747 4.953C28.747 5.19567 28.7773 5.3755 28.838 5.4925C28.8987 5.6095 29.007 5.69833 29.163 5.759L28.643 7.41C28.175 7.37533 27.7937 7.2865 27.499 7.1435C27.2043 7.0005 26.9617 6.76867 26.771 6.448C26.3203 7.124 25.6227 7.462 24.678 7.462C23.9933 7.462 23.4408 7.25617 23.0205 6.8445C22.6002 6.43283 22.39 5.902 22.39 5.252C22.39 4.48066 22.676 3.89134 23.248 3.484C23.82 3.07666 24.652 2.873 25.744 2.873H26.238V2.704C26.238 2.35733 26.1687 2.12333 26.03 2.002C25.8913 1.88067 25.627 1.82 25.237 1.82C25.029 1.82 24.7625 1.8525 24.4375 1.9175C24.1125 1.9825 23.781 2.07133 23.443 2.184L22.884 0.546C23.3087 0.372666 23.7702 0.238334 24.2685 0.143C24.7668 0.0476662 25.2197 0 25.627 0C26.719 0 27.512 0.210165 28.006 0.6305C28.5 1.05084 28.747 1.69433 28.747 2.561V4.953ZM25.9075 5.536C25.7732 5.614 25.628 5.653 25.472 5.653C25.2987 5.653 25.16 5.5945 25.056 5.4775C24.952 5.3605 24.9 5.20233 24.9 5.003C24.9 4.73433 24.9867 4.535 25.16 4.405C25.3333 4.275 25.602 4.21 25.966 4.21H26.239V5.237C26.1523 5.35833 26.0418 5.458 25.9075 5.536Z" fill="currentColor"/></svg></div><div class="hero"><span class="chip">apna Unlimited</span><h3>Post unlimited jobs in one plan</h3><span class="btn">Subscribe now</span><div class="cards"><i></i><i></i><i></i><i></i></div></div></div>
       </div>
-      <p class="caption rise">The headlines are the live product pages. Green stays the one action button everywhere.</p>
+      <p class="caption rise">Green stays the one action, on every page.</p>
     </div>
   </section>
 
   <section class="slide" aria-label="Typography">
     <div class="inner">
-      <p class="kicker rise">Type · Google Sans Flex and Inter</p>
-      <h2 class="rise">A face for the story. One for the work.</h2>
+      <p class="kicker rise">Type</p>
+      <h2 class="rise">Two typefaces, <em>two jobs.</em></h2>
       <div class="type-demo rise" id="typedemo">
         <p class="type-eyebrow">India's #1 hiring platform</p>
         <p class="type-head"><span class="rx-b">India's Largest <em>AI-Native</em> Early Talent Platform</span><span class="rx-a">India's largest <span class="accent-word">AI-native</span> early talent platform</span></p>
@@ -841,19 +1049,20 @@ em { font-style: normal; }
           <button type="button" id="type-before" aria-pressed="false">Before</button>
           <button type="button" id="type-after" aria-pressed="true">After</button>
         </div>
-        <p class="type-product">The website&rsquo;s headlines are Google Sans Flex, bold; everything else is Inter. The accent word is a slow sweep of sky into green: the AI colour meeting the brand. The product stays all Inter.</p>
+        <p class="type-product">Google Sans Flex for website headlines. Inter for everything else.</p>
       </div>
-      <div class="type-rules rise">
-        <div><strong class="tr-hero">Hero titles</strong><span>Google Sans Flex, bold, sentence case, on the website only: heroes and section titles. 64px heroes on a desktop, 40px on a phone; 48px for a page&rsquo;s closing line.</span></div>
-        <div><strong class="tr-sans">Everything else</strong><span>Section titles, body, buttons, forms, quotes and every number, and the whole product: Inter.</span></div>
+      <div class="type-facts rise">
+        <div><b>0.55</b><span>Inter&rsquo;s lowercase height. Taller than Arial (0.52), so it reads bigger on small screens.</span></div>
+        <div><b>&#8377;1,111 &middot; &#8377;9,999</b><span>Every digit the same width, so prices line up.</span></div>
+        <div><b>1 file</b><span>Google Sans Flex: every headline weight. Noto Sans for Indian scripts.</span></div>
       </div>
     </div>
   </section>
 
   <section class="slide" aria-label="Clay illustrations">
     <div class="inner center">
-      <p class="kicker rise">A warmer voice</p>
-      <h2 class="rise">Ideas you could <em>hold.</em></h2>
+      <p class="kicker rise">Illustration</p>
+      <h2 class="rise">Clay objects instead of <em>flat icons.</em></h2>
       <div class="clay rise">
         <img src="img/ownership.png" alt="Clay key: ownership">
         <img src="img/student.png" alt="Clay graduation cap: students">
@@ -863,28 +1072,11 @@ em { font-style: normal; }
         <img src="img/mission.png" alt="Clay flag on a platform: the mission">
       </div>
       <ul class="clay-why rise">
-        <li><strong>Human.</strong><span>Hand-pressed and a little imperfect, as if someone made it. Right for a platform about people&rsquo;s livelihoods.</span></li>
-        <li><strong>Ours.</strong><span>Made only in the logo&rsquo;s four colours, so every object is unmistakably apna.</span><i class="clay-dots" aria-hidden="true"><b class="d-green"></b><b class="d-sky"></b><b class="d-gold"></b><b class="d-plum"></b></i></li>
-        <li><strong>Simple.</strong><span>One object, one idea, no words. It reads at a glance, in any language, from Bengaluru to Bareilly.</span></li>
+        <li><strong>Warm.</strong><span>Made by hand, not by a bank.</span></li>
+        <li><strong>Ours.</strong><span>Only our four colours.</span><i class="clay-dots" aria-hidden="true"><b class="d-green"></b><b class="d-sky"></b><b class="d-gold"></b><b class="d-plum"></b></i></li>
+        <li><strong>No words needed.</strong><span>Reads the same in any language.</span></li>
       </ul>
-      <p class="clay-room rise"><em>Glass is the room. Clay is what&rsquo;s on display.</em> Two real materials, each with one job.</p>
-      <p class="caption rise">Forty-six so far, across culture, campus, Enterprise and every product pop-up, all from one recipe.</p>
-    </div>
-  </section>
-
-  <section class="slide" aria-label="Motion">
-    <div class="inner center">
-      <p class="kicker rise">Motion</p>
-      <h2 class="rise">A page that feels <em>alive.</em></h2>
-      <div class="living rise" id="living">
-        <div class="blobs" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><b class="wander"></b></div>
-        <p><span class="lv-b">Hire top talent in 48<br>hours with apna.</span><span class="lv-a">India's largest <span class="accent-word">AI-native</span><br>early talent platform</span></p>
-      </div>
-      <div class="toggle rise" role="group" aria-label="Compare">
-        <button type="button" id="flat-btn" aria-pressed="false">Before: flat</button>
-        <button type="button" id="alive-btn" aria-pressed="true">After: alive</button>
-      </div>
-      <p class="caption rise">The homepage hero, before and after: a flat plum page with still circles becomes light that drifts slowly behind the content, and cards move with weight, never a jump.</p>
+      <p class="caption rise">Forty-six so far, all from one recipe.</p>
     </div>
   </section>
 
@@ -894,38 +1086,38 @@ em { font-style: normal; }
         <p class="kicker rise">Introducing</p>
         <h2 class="rise"><span class="dhi" lang="sa">धी</span> <em class="dhi">Dhī.</em></h2>
         <p class="dhi-say rise">/dhee/ · Sanskrit for insight. Say it out loud: <em>the</em> design system.</p>
-        <p class="lede rise">Not a design system. <em>The</em> design system: one source every apna screen is drawn from. Which green, how round, how fast, decided once with insight, so no screen has to think twice.</p>
+        <p class="lede rise">Every colour, size and motion, decided once.</p>
         <ol class="pg-laws rise">
-          <li><strong>Written once, read everywhere</strong><span>Every colour, size and motion is a named token. Change it in one place and every screen follows.</span></li>
-          <li><strong>Compose, never re-style</strong><span>Pages are built from existing parts. A new need becomes a new part first, so nothing is drawn twice.</span></li>
-          <li><strong>Subtract the obvious, add the meaningful</strong><span>After Maeda&rsquo;s laws of simplicity: one green action per surface, one product typeface, and the warmth kept in.</span></li>
+          <li><strong>Written once, read everywhere</strong></li>
+          <li><strong>Compose, never re-style</strong></li>
+          <li><strong>Subtract the obvious, add the meaningful</strong></li>
         </ol>
       </div>
       <div class="pg-tablet rise" aria-hidden="true">
         <span class="pg-mark" lang="sa">धी</span>
-        <p class="pg-carved">One source of thinking. <em>The values keep learning.</em></p>
+        <p class="pg-carved">Values from the code. <em>Change one, every screen follows.</em></p>
         <div class="pg-tok"><code>--primary</code><i class="pg-sw"></i><b data-v='["#1F8268"]'>#1F8268</b></div>
         <div class="pg-tok"><code>--radius-card</code><i class="pg-rad"></i><b data-v='["20px"]'>20px</b></div>
-        <div class="pg-tok"><code>--surface-glass</code><b data-v='["card 90%","card 80%"]'>card 90%</b></div>
-        <div class="pg-tok"><code>--ambient-glow</code><b data-v='["white 10%","none"]'>white 10%</b></div>
-        <div class="pg-tok"><code>--duration-ambient</code><b data-v='["16s","24s","12s","16s"]'>16s</b></div>
+        <div class="pg-tok"><code>--surface-glass</code><b data-v='["card 80%"]'>card 80%</b></div>
+        <div class="pg-tok"><code>--ambient-glow</code><b data-v='["white 85%"]'>white 85%</b></div>
+        <div class="pg-tok"><code>--duration-ambient</code><b data-v='["16s"]'>16s</b></div>
         <div class="pg-tok"><code>--ease-glide</code><b data-v='["0.22, 1, 0.36, 1"]'>0.22, 1, 0.36, 1</b></div>
-        <p class="pg-note">Real values from the code. The names never moved.</p>
+        <p class="pg-note">Real values from the code.</p>
       </div>
     </div>
   </section>
 
   <section class="slide" aria-label="The design system">
-    <div class="inner">
+    <div class="inner center">
       <p class="kicker rise">Dhī, in numbers</p>
-      <h2 class="rise">One system.<br>Every <em>screen.</em></h2>
+      <h2 class="rise">What&rsquo;s in<br>the <em>system.</em></h2>
       <div class="facts rise">
-        <div class="fact"><b data-count="41">41</b><span>components in 8 categories, from a button to a pricing card</span></div>
-        <div class="fact"><b data-count="4">4</b><span>product colours, all from the logo</span></div>
-        <div class="fact"><b data-count="2">2</b><span>typefaces: Google Sans Flex for website headlines, Inter for everything else</span></div>
+        <div class="fact"><b data-count="41">41</b><span>components</span></div>
+        <div class="fact"><b data-count="4">4</b><span>product colours</span></div>
+        <div class="fact"><b data-count="2">2</b><span>typefaces</span></div>
         <div class="fact"><b data-count="1">1</b><span>green action per screen</span></div>
       </div>
-      <p class="lede rise">Designers and engineers build from the same parts. A change made once shows up everywhere.</p>
+      <p class="lede rise">Design and code use the same parts.</p>
     </div>
   </section>
 
@@ -954,19 +1146,19 @@ em { font-style: normal; }
         </div>
         <div class="ts-progress"><i></i></div>
       </div>
-      <p class="caption rise">One name, set in one place. Colours can't be typed in by hand, so one change reaches every screen at once.</p>
+      <p class="caption rise">Pick a colour. Every part changes at once.</p>
     </div>
   </section>
 
   <section class="slide" aria-label="Simple rules">
     <div class="inner">
-      <p class="kicker rise">Simple rules, kept everywhere</p>
-      <h2 class="rise">Consistency, <em>by design.</em></h2>
+      <p class="kicker rise">Rules</p>
+      <h2 class="rise">A few rules, <em>applied everywhere.</em></h2>
       <div class="rx rise">
         <div class="rx-list" role="tablist" aria-label="Rules">
-          <button class="rx-rule" role="tab" aria-selected="true" data-rx="glass"><strong>Cards on a gradient are glass</strong><span>One rule, on for every marketing page at once. Nobody edited a page.</span></button>
-          <button class="rx-rule" role="tab" aria-selected="false" data-rx="accent"><strong>Sentence case, everywhere</strong><span>Headlines, buttons and labels capitalise only the first word. No italic accents; the voice holds, whoever writes the copy.</span></button>
-          <button class="rx-rule" role="tab" aria-selected="false" data-rx="green"><strong>One green button per surface</strong><span>A surface is the screen, or one card in a list of equal cards. The add-on used to wear the same green as &ldquo;Proceed to pay&rdquo;. Now it&rsquo;s dark, so paying is the one clear next step. In a list, each card keeps one green for its own action, such as &ldquo;Call&rdquo; on a candidate card.</span></button>
+          <button class="rx-rule" role="tab" aria-selected="true" data-rx="glass"><strong>Cards on a gradient are glass</strong><span>One rule, every page.</span></button>
+          <button class="rx-rule" role="tab" aria-selected="false" data-rx="accent"><strong>Sentence case, everywhere</strong><span>Capitalise only the first word.</span></button>
+          <button class="rx-rule" role="tab" aria-selected="false" data-rx="green"><strong>One green button per surface</strong><span>Paying is the one clear next step.</span></button>
         </div>
         <div class="rx-stage">
           <div class="toggle rx-toggle" role="group" aria-label="Show">
@@ -1002,10 +1194,42 @@ em { font-style: normal; }
     </div>
   </section>
 
+  <section class="slide" aria-label="Why these rules">
+    <div class="inner">
+      <p class="kicker rise">Why these rules</p>
+      <h2 class="rise">Each rule comes from how <em>people use screens.</em></h2>
+      <table class="ux rise">
+        <thead><tr><th>Our rule</th><th>The principle</th><th>What it says</th></tr></thead>
+        <tbody>
+          <tr><td>One green button per screen</td><td>Von Restorff effect</td><td>People notice and remember the one thing that looks different.</td></tr>
+          <tr><td>Few choices at a time</td><td>Hick&rsquo;s law</td><td>The more options people see, the longer they take to pick one.</td></tr>
+          <tr><td>The pay button is the biggest (48px)</td><td>Fitts&rsquo;s law</td><td>Big targets are faster to hit, and easier with a thumb.</td></tr>
+          <tr><td>Same thing, same look, same name</td><td>Gestalt similarity</td><td>Things that look alike are read as one group.</td></tr>
+          <tr><td>Taps answer in 150&ndash;200ms</td><td>Doherty threshold</td><td>Replies under 400ms keep people moving; slower ones feel broken.</td></tr>
+          <tr><td>Bottom sheets on phones</td><td>Jakob&rsquo;s law</td><td>People expect an app to work like the other apps they use.</td></tr>
+          <tr><td>Motion turns off on request</td><td>WCAG 2.3.3</td><td>Some people get dizzy from motion; the system respects their setting.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="Banners">
+    <div class="inner center">
+      <p class="kicker rise">Banners</p>
+      <h2 class="rise">Every banner has <em>the same parts.</em></h2>
+      <div class="banners rise">
+        <figure class="banner"><img src="img/banner-normal.jpg" alt="Everyday banner: 0 job credits left, get 6 job credits at &#8377;608 each, &#8377;3,649, Buy 6 credits" loading="lazy"><figcaption>Every day</figcaption></figure>
+        <figure class="banner"><img src="img/banner-diwali.jpg" alt="Diwali banner: Hiring Utsav, 22 job credits at just &#8377;455 each, &#8377;9,999, Buy job credits, with a toran, lanterns and a diya" loading="lazy"><figcaption>Diwali</figcaption></figure>
+      </div>
+      <div class="banner-parts rise" aria-label="Parts every banner keeps"><span>Clay</span><span>Chip</span><span>Headline</span><span>Price</span><span>One CTA</span></div>
+      <p class="lede rise">A festival changes only the background, font and clay.</p>
+    </div>
+  </section>
+
   <section class="slide" aria-label="Feedback and motion">
     <div class="inner center">
       <p class="kicker rise">Press to try</p>
-      <h2 class="rise">Everything answers <em>your touch.</em></h2>
+      <h2 class="rise">Every tap gets <em>a response.</em></h2>
       <div class="play rise">
         <div class="play-cell">
           <button type="button" class="k-btn k-primary k-big ink">Press me</button>
@@ -1033,65 +1257,52 @@ em { font-style: normal; }
           <small>Panels glide open, never pop</small>
         </div>
       </div>
-      <p class="lede rise">Every button, chip, panel and card in the product behaves like this: built in once, inherited everywhere, in light and dark.</p>
+      <p class="lede rise">Built into every part.</p>
     </div>
   </section>
 
   <section class="slide" aria-label="Nudges">
     <div class="inner center">
       <p class="kicker rise">Nudges</p>
-      <h2 class="rise">Asks once, then lets go.</h2>
+      <h2 class="rise">We point things out once, <em>then stop.</em></h2>
       <div class="nudges rise">
         <div class="nudge">
           <div class="nudge-stage" aria-hidden="true">
             <div class="nb-bar"><b>Jobs</b><span class="nb-slot" id="nb-slot"><span class="nb-btn credits">Available credits</span><span class="nb-btn plans"><i class="nb-coin">&#8377;</i>View plans</span><span class="nudge-ring" id="nb-ring"></span></span></div>
           </div>
           <strong>Running low on credits</strong>
-          <p>&ldquo;Available credits&rdquo; gets one ring of light, then flips over into View plans. Once a session, only when one job credit or fewer is left.</p>
+          <p>One ring of light, then it flips to View plans.</p>
         </div>
         <div class="nudge">
           <div class="nudge-stage" aria-hidden="true">
             <div class="na-card"><span class="nudge-ring" id="na-ring"></span><b>AI calling agent</b><span>Calls and shortlists every applicant, 24/7</span><span class="na-price">&#8377;1,600 for this job</span><span class="na-cta">Add AI calling agent</span></div>
           </div>
           <strong>A new add-on</strong>
-          <p>As the order summary opens, the add-on (AI calling, or Database in self-checkout) announces itself with light, then goes quiet. Database: once a session. AI calling: on every open, mid-posting.</p>
+          <p>It lights up once as the summary opens, then goes quiet.</p>
         </div>
       </div>
       <button type="button" class="switch rise" id="nudge-replay">Play again</button>
     </div>
   </section>
 
-  <section class="slide" aria-label="Banners">
-    <div class="inner center">
-      <p class="kicker rise">Banners</p>
-      <h2 class="rise">One structure, <em>any occasion.</em></h2>
-      <div class="banners rise">
-        <figure class="banner"><img src="img/banner-normal.jpg" alt="Everyday banner: 0 job credits left, get 6 job credits at &#8377;608 each, &#8377;3,649, Buy 6 credits" loading="lazy"><figcaption>Every day</figcaption></figure>
-        <figure class="banner"><img src="img/banner-diwali.jpg" alt="Diwali banner: Hiring Utsav, 22 job credits at just &#8377;455 each, &#8377;9,999, Buy job credits, with a toran, lanterns and a diya" loading="lazy"><figcaption>Diwali</figcaption></figure>
-      </div>
-      <div class="banner-parts rise" aria-label="Parts every banner keeps"><span>Clay</span><span>Chip</span><span>Headline</span><span>Price</span><span>One CTA</span></div>
-      <p class="lede rise">Every banner keeps the same parts in the same places. A festival changes only the background, the headline font and the clay.</p>
-    </div>
-  </section>
-
   <section class="slide" aria-label="What is live">
     <div class="inner center">
       <p class="kicker rise">What's built</p>
-      <h2 class="rise">A whole new <em>front door.</em></h2>
+      <h2 class="rise">What we&rsquo;ve <em>built so far.</em></h2>
       <div class="sitemap rise">
         <span>Home</span><span>Pricing</span><span>Enterprise</span>
         <span class="prod-green">Smart job posting</span><span class="prod-sky">AI calling agent</span><span class="prod-plum">apna Database</span><span class="prod-gold">apna Unlimited</span>
         <span>About</span><span>Culture</span><span>Leadership</span><span>Management</span><span>By the numbers</span>
         <span>Careers</span><span>Customer stories</span><span>Newsroom</span><span>Awards</span><span>AI interview prep lounge</span><span>Login</span>
       </div>
-      <p class="lede rise">Eighteen pages, one brand, one system.</p>
+      <p class="lede rise">Eighteen website pages and the recruiter app, all on the same system.</p>
     </div>
   </section>
 
   <section class="slide" aria-label="The product on desktop">
     <div class="inner center">
       <p class="kicker rise">The product</p>
-      <h2 class="rise">Built for the <em>daily work.</em></h2>
+      <h2 class="rise">The recruiter <em>app.</em></h2>
       <div class="toggle rise" role="group" aria-label="Choose a screen">
         <button type="button" class="screen-btn" data-screen="dashboard" aria-pressed="true">Recruiter dashboard</button>
         <button type="button" class="screen-btn" data-screen="home" aria-pressed="false">Homepage</button>
@@ -1109,12 +1320,21 @@ em { font-style: normal; }
   <section class="slide" aria-label="The product on phones">
     <div class="glow soft" aria-hidden="true"><i></i><i></i><i></i></div>
     <div class="inner center">
-      <p class="kicker rise">Mobile first</p>
-      <h2 class="rise">In every <em>pocket.</em></h2>
+      <p class="kicker rise">The product</p>
+      <h2 class="rise">And <em>on phones.</em></h2>
       <div class="phones rise">
         <figure class="phone"><img src="img/mobile-home.jpg" data-dark="img/mobile-home-dark.jpg" alt="The homepage on a phone: headline and sign-up card" loading="lazy"><figcaption>Sign up in the first screen</figcaption></figure>
         <figure class="phone"><img src="img/mobile-dashboard.jpg" data-dark="img/mobile-dashboard-dark.jpg" alt="The recruiter dashboard on a phone: jobs with applied and active-lead counts, and a bottom bar with Plans" loading="lazy"><figcaption>Every job, one thumb away</figcaption></figure>
       </div>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="The brand guide">
+    <div class="inner center">
+      <p class="kicker rise">The brand guide</p>
+      <h2 class="rise">The rules, written down<br><em>in one place.</em></h2>
+      <div class="guide-list rise"><span>Logo and lockups</span><span>Clear space and sizes</span><span>Colour, with the numbers</span><span>Gradients</span><span>Type</span><span>Icons</span><span>Voice and copy</span><span>Print and signs</span><span>ID and visiting cards</span><span>Job listing cards</span><span>Social and email</span><span>Logo files</span></div>
+      <a class="link-card rise" href="../brand/index.html" target="_blank" rel="noopener"><small>Brand guide</small><strong>Open the guide</strong><span>Rules, examples and files.</span></a>
     </div>
   </section>
 
@@ -1127,7 +1347,7 @@ em { font-style: normal; }
       </h2>
       <div class="reveal-line rise">
         <p class="lede before">Every colour, every product, every page.</p>
-        <p class="lede after">Every colour has a dark twin. The whole system switches with one setting, so apna is ready for dark mode.</p>
+        <p class="lede after">Every colour has a dark version. One setting switches the whole product.</p>
       </div>
       <button type="button" class="switch rise" id="lights" aria-pressed="false"><span class="knob" aria-hidden="true"></span><span id="lights-label">Lights off</span></button>
     </div>
@@ -1165,7 +1385,7 @@ em { font-style: normal; }
           <div class="kit-foot"><span>Controls</span><button type="button" class="mini-switch" aria-label="Switch Controls to dark"></button></div>
         </div>
       </div>
-      <p class="caption rise">Watch each part turn dark. Nothing was redrawn: every part reads its colours from the system. Tap any switch to flip it back.</p>
+      <p class="caption rise">Nothing was redrawn. Tap a switch to flip it.</p>
     </div>
   </section>
 
@@ -1174,18 +1394,23 @@ em { font-style: normal; }
     <div class="glow" aria-hidden="true"><i></i><i></i><i></i></div>
     <div class="inner center">
       <h1 class="rise">Thank <em>you.</em></h1>
-      <p class="lede rise">apna for employers · Brand and design</p>
+      <p class="lede rise">apna · Brand and design</p>
       <p class="kicker rise ty-try">It&rsquo;s all live. Try it yourself</p>
       <div class="links rise">
         <a class="link-card" href="https://poneglyphag.vercel.app" target="_blank" rel="noopener">
-          <small>The website</small>
-          <strong>poneglyphag.vercel.app</strong>
+          <strong>The website</strong>
           <span>Home, product pages, pricing, the login and the recruiter app.</span>
+          <code class="url">poneglyphag.vercel.app</code>
         </a>
         <a class="link-card" href="https://poneglyphag.vercel.app/design-system" target="_blank" rel="noopener">
-          <small>The design system</small>
-          <strong>poneglyphag.vercel.app<wbr>/design-system</strong>
+          <strong>The design system</strong>
           <span>Every token and component, live, in light and dark.</span>
+          <code class="url">poneglyphag.vercel.app/<wbr>design-system</code>
+        </a>
+        <a class="link-card" href="../brand/index.html" target="_blank" rel="noopener">
+          <strong>The brand guide</strong>
+          <span>Logo, colour, type, print, signs and collateral.</span>
+          <code class="url">poneglyphag.vercel.app/brand/index.html</code>
         </a>
       </div>
     </div>
@@ -1249,12 +1474,12 @@ em { font-style: normal; }
   var morph = document.getElementById("morph"), melt = document.getElementById("melt"), played = false, meltWait = null;
   function setMelt(v) { morph.style.setProperty("--m", v / 100); melt.value = v; }
   melt.addEventListener("input", function () { played = true; clearTimeout(meltWait); morph.classList.add("dragging"); setMelt(+melt.value); });
-  melt.addEventListener("change", function () { morph.classList.remove("dragging"); });
+  melt.addEventListener("change", function () { morph.classList.remove("dragging"); morph.classList.toggle("alive", +melt.value > 90); });
   new IntersectionObserver(function (es) {
     es.forEach(function (e) {
       if (!e.isIntersecting) { clearTimeout(meltWait); return; }
       if (!played) {
-        if (reduce) { played = true; setMelt(100); return; }
+        if (reduce) { played = true; setMelt(100); morph.classList.add("alive"); return; }
         clearTimeout(meltWait);
         meltWait = setTimeout(function () {
         played = true;
@@ -1263,7 +1488,7 @@ em { font-style: normal; }
           if (t0 === null) t0 = t;
           var p = Math.min(1, (t - t0) / 2600), eased = 1 - Math.pow(1 - p, 3);
           morph.classList.add("dragging"); setMelt(Math.round(eased * 100));
-          if (p < 1) requestAnimationFrame(step); else morph.classList.remove("dragging");
+          if (p < 1) requestAnimationFrame(step); else { morph.classList.remove("dragging"); morph.classList.add("alive"); }
         })(performance.now());
         }, 1800);
       }
@@ -1563,12 +1788,6 @@ em { font-style: normal; }
     if (root.classList.contains("preshow") && window.scrollY > 40) root.classList.remove("preshow");
   }, { passive: true });
 
-  // Before / after.
-  var living = document.getElementById("living"), flatBtn = document.getElementById("flat-btn"), aliveBtn = document.getElementById("alive-btn");
-  function setAlive(on) { living.classList.toggle("flat", !on); aliveBtn.setAttribute("aria-pressed", String(on)); flatBtn.setAttribute("aria-pressed", String(!on)); }
-  flatBtn.addEventListener("click", function () { setAlive(false); });
-  aliveBtn.addEventListener("click", function () { setAlive(true); });
-
   // Numbers count up when their slide arrives.
   var facts = document.querySelector(".facts"), counted = false;
   new IntersectionObserver(function (es) {
@@ -1720,6 +1939,22 @@ em { font-style: normal; }
     var armed = true;
     new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting && armed) { armed = false; play(); } else if (!e.isIntersecting) armed = true; }); }, { threshold: 0.6 }).observe(root);
   })();
+})();
+
+// Wordmark: draw it each time the slide comes into view; "Draw again" replays.
+(() => {
+  const m = document.getElementById("mark-slide"); if (!m) return;
+  const go = () => { m.classList.remove("drawn"); void m.offsetWidth; m.classList.add("drawn"); };
+  new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) go(); else m.classList.remove("drawn"); }), { threshold: 0.6 }).observe(m);
+  document.getElementById("mark-replay").addEventListener("click", go);
+})();
+
+// Taking it apart: play on arrival; "Play again" replays.
+(() => {
+  const m = document.getElementById("apart-slide"); if (!m) return;
+  const go = () => { m.classList.remove("played"); void m.offsetWidth; m.classList.add("played"); };
+  new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) go(); else m.classList.remove("played"); }), { threshold: 0.6 }).observe(m);
+  document.getElementById("apart-replay").addEventListener("click", go);
 })();
 </script>
 

@@ -7,11 +7,11 @@
  *   LogoApnaWordmark   "apna" alone (30×11): the website header and
  *                      footer, the collapsed desktop sidebar
  *
- * Brand fills: "apna" in plum #4D3951, "Recruiter" in the CTA green. Their
- * colours ARE the brand, so they are literal here (logo-* files sit outside
- * the token colour check). `variant="deep"` draws "apna" in the darkest plum
- * (apna-plum-950); `variant="white"` draws "apna" in white for an
- * always-dark surface; "Recruiter" stays green.
+ * Brand fills: "apna" in neutral black (--logo-apna, gray-950; near-white
+ * on dark), "Recruiter" in the CTA green. The wordmark was plum until the
+ * 2026-11-13 rebrand; plum now lives only in gradients. `variant="deep"` is
+ * the same black (kept for callers); `variant="white"` draws "apna" in white
+ * for an always-dark surface; "Recruiter" stays green.
  *
  * Size with a height class (`h-6 w-auto`); the viewBox keeps the ratio.
  * Decorative by default; pass `aria-label` (and `role="img"`) to name it.
@@ -20,12 +20,12 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
 
-/** "apna" reads the logo tokens, so it turns near-white in dark mode. */
-const APNA_PLUM = "var(--logo-apna)"
-/** The plum ramp's darkest step on light (the marketing header); near-white on dark. */
-const APNA_PLUM_DEEP = "var(--logo-apna-deep)"
+/** "apna" reads the logo tokens: neutral black, near-white in dark mode. */
+const APNA_INK = "var(--logo-apna)"
+/** Same black as APNA_INK since the rebrand; near-white on dark. */
+const APNA_INK_DEEP = "var(--logo-apna-deep)"
 const apnaFill = (variant: "default" | "deep" | "white") =>
-  variant === "white" ? "#FFFFFF" : variant === "deep" ? APNA_PLUM_DEEP : APNA_PLUM
+  variant === "white" ? "#FFFFFF" : variant === "deep" ? APNA_INK_DEEP : APNA_INK
 /** "Recruiter" in the CTA green (--logo-hire = --cta-primary), light and dark. */
 const RECRUITER_GREEN = "var(--logo-hire)"
 
