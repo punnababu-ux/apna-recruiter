@@ -1,0 +1,11 @@
+/* apna brand colours (screen). Print: confirm with a printer proof. */
+:root {
+  --apna-black: #09090B;   /* wordmark, text */
+  --apna-ink: #1C151E;     /* body text */
+  --apna-canvas: #FBFAFC;  /* page background */
+  --apna-green: #1F8268;   /* act: buttons, Recruiter; white text 4.7:1 */
+  --apna-green-bright: #3EBA8D; /* green on dark surfaces */
+  --apna-sky: #83BDE4;     /* AI and help */
+  --apna-gold: #FFD166;    /* offers; black text only */
+  --apna-plum: #4E3A52;    /* gradients only, never the wordmark */
+}

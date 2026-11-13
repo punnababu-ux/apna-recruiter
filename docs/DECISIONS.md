@@ -9,6 +9,35 @@ or **Open**.
 ---
 
 
+## 2026-11-13 — ID card: wordmark at the foot, centred
+
+**Question.** The ID card's wordmark sat top left and read off balance (Punna). Top centre or the foot?
+**Decision.** Centred at the foot, as a sign-off under the photo, name and role. The top stays clear for the lanyard slot, and the photo leads. Visiting card front gains a contact list and a QR to save the contact; the back adds the web address.
+**Why.** A portrait card is a centred column; one left-aligned mark breaks it. At the foot the wordmark reads like a signature, which is how the brand uses it everywhere, and it does not crowd the lanyard slot.
+**Would change it.** A printer or security spec that needs the issuer at the top.
+**Status.** Leaning.
+
+---
+
+## 2026-11-13 — Install icon: the deep green tile
+
+**Question.** Which icon goes on the home screen when a recruiter installs
+the dashboard from Chrome ("Install app") or Safari ("Add to Home Screen")?
+
+**Decision.** The deep green tile (`apna-recruiter-icon-dark.svg`): white
+"apna", bright green "Recruiter". All four PNGs in `public/recruiter/` come
+from it (apple-touch 180 full bleed, 192 and 512 as drawn, maskable 512
+with the wordmark in the 80% safe zone). The green tile stays the master
+for print and the brand guide.
+
+**Why.** Punna's call: the deep tile is the one we want people to see on
+their phone. A web install gets one icon, with no light and dark pair, so
+we pick one.
+
+**What would change it.** A native app, which can ship both.
+
+**Status.** Decided.
+
 ## 2026-11-13 — apna Recruiter app icon: the green tile
 
 **Question.** The Recruiter home-screen icon was a solid green box, white
@@ -51,7 +80,7 @@ apna icon.
 ## 2026-11-13 — Candidates: green leads (proposed)
 
 **Question:** which colour leads on the candidate side: green, sky or gold?
-**Decision:** green leads for candidates. Redrawn presents it as a proposal, not a question; sky and gold appear only as "also considered". The employer side is told apart by the green "apna Recruiter" lockup, not a second colour.
+**Decision:** green leads for candidates. Redrawn presents it as a proposal, not a question; sky and gold appear only as "also considered". apna Recruiter material sits on the brand gradient (green, sky and gold together) with the "apna Recruiter" lockup (Punna, 2026-11-13: candidates all green, Recruiter multicolour).
 **Why:** each colour has one job. Sky means AI and help; gold means value and offers. Leading candidates with either gives it a second meaning. Green keeps "do this" for everyone, and matches the "one apna" promise on the title slide.
 **Would change it:** research showing candidates and employers confuse the two apps, or leadership choosing B or C in the read-round.
 **Status:** Leaning (Punna, 2026-11-13: "propose green for now")
