@@ -17,6 +17,14 @@ or **Open**.
 - **What would change it:** a browser that drops the transition trick. Then use an inset shadow in the field's own colour.
 - **Status:** Decided.
 
+## 2026-11-14 — Filled and outlined buttons paint the same size
+
+- **Question:** the outlined (secondary) button looked taller than the green primary beside it. Why?
+- **Decision:** every button's fill now reaches its outer edge (`bg-origin-border`, no `bg-clip-padding` in Button's base). Measured on the Describe footer: before, the outline painted 40px and the green 38px (its fill stopped inside a 1px transparent border); now both paint 40px. Gradient fills are sized to the full box, so no 1px seam shows at the edge.
+- **Why:** Punna saw it (2026-11-14). Same box, same size on screen: a pair of buttons must read as equal.
+- **What would change it:** nothing expected; a variant that needs an inset edge draws it with its own border colour.
+- **Status:** Decided.
+
 ## 2026-11-13 — Job posting Describe: an "OK Google" dot grid while the mic listens
 
 - **Question:** Punna likes the dotted mesh around the bar on Android's "OK Google". Should the first step of job posting do something like it while the mic listens?
