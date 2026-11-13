@@ -2146,6 +2146,20 @@ a[href] > [data-slot="card"] {
     @apply font-heading font-semibold;
   }
 
+  /* Autofill keeps the field's own look. Browsers paint a filled field
+     light blue with `!important`, which can't be overridden, so the paint
+     is held back by a transition that never finishes (2026-11-13). The
+     text keeps the foreground colour. !important beats the field's own
+     `transition-interactive`, only while autofilled. */
+  input:autofill,
+  input:-webkit-autofill,
+  textarea:autofill,
+  select:autofill {
+    -webkit-text-fill-color: var(--foreground);
+    caret-color: var(--foreground);
+    transition: background-color 0s 600000s, color 0s 600000s !important;
+  }
+
   /* Respect reduced-motion preference globally. Components that animate
      should still check their own intent, but this is a safe floor. */
   @media (prefers-reduced-motion: reduce) {

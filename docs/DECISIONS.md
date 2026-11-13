@@ -9,6 +9,25 @@ or **Open**.
 ---
 
 
+## 2026-11-13 — Autofilled fields keep their own look
+
+- **Question:** a number filled in from the phone's saved data turned the login and homepage fields light blue. Keep the browser's tint?
+- **Decision:** no. One rule in the design system's base layer (`index.css`) holds back the browser's autofill paint on every input, textarea and select, on phone and desktop. The text stays the foreground colour.
+- **Why:** the tint is a second background the design never chose. On the homepage hero it painted a box inside the pill, so the field looked broken.
+- **What would change it:** a browser that drops the transition trick. Then use an inset shadow in the field's own colour.
+- **Status:** Decided.
+
+## 2026-11-13 — Job posting Describe: an "OK Google" dot grid while the mic listens
+
+- **Question:** Punna likes the dotted mesh around the bar on Android's "OK Google". Should the first step of job posting do something like it while the mic listens?
+- **Leaning:** a preview at `/apnahire/jobs/new?voice=mesh`. When the mic starts, a faint halftone of neutral gray dots (`text-muted-foreground`, about a third strength) flows out around the prompt box (`VoiceDots`, a canvas in `post-job/voice-dots.tsx`). It sits beside the existing `voice-glow`. The dots are biggest at the box and get smaller and fainter outward. The outer edge is a few broad lobes that drift, so the shape is uneven and never a frame. The rows ripple like fabric: each dot moves up to 3px on a slow wave, so the grid bends instead of sitting in straight lines. Stopping draws it back in. The live flow is unchanged.
+- **Tried first and dropped:** (1) a colour wash rising from the bottom of the screen. Punna: the colours were already right; the dots were the point. (2) A CSS dot grid in a fixed band round the box. Punna: too contained, and the dots should shrink as they fade. (3) Sky dots. Punna: gray, neutral and very subtle.
+- **Why:** the dots make "we are listening" read at a glance, the way phones show a voice assistant. Sideways they never pass the page edge (1rem on phones). Above, they are small and faint by the time they reach the subtitle.
+- **Spacing (Punna, 2026-11-13, live for all, not only the preview):** 16px between the field and the chips on phones and desktop (was 8px). The dots stop 4px from the screen edge and fade over their last 12px, because the field sits only 16px in and the dots were cut off at the edge.
+- **The mic button while listening (preview):** neutral outline, with one line that moves like a voice waveform (`VoiceLine`). It swells when new words arrive and settles to a gentle ripple in a pause. It replaces the sky-gold gradient pill (`ai-voice`) and the five bars, which Punna found awkward. The live flow still has the gradient until this is approved.
+- **What would change it:** Punna's review on a real phone.
+- **Status:** Leaning (preview only).
+
 ## 2026-11-13 — Film grain on every gradient (after workable.com)
 
 - **Question:** Punna likes workable.com's homepage, especially its grainy gradients. What do we take?

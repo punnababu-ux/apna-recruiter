@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils"
 import { promptSignals, type PromptSignals } from "@/lib/apnahire/prompt-parse"
 import { DEMO_ROLES, rolePromptChips, type PromptChip } from "@/lib/apnahire/role-profiles"
 import { useSpeechRecognition } from "@/hooks/use-speech-recognition"
+import { VoiceDots, VoiceLine } from "./voice-dots"
 import { DraftingState } from "@/components/apnahire/post-job/drafting-state"
 import type { JobPostDraft } from "@/types/apnahire-job"
 
@@ -122,6 +123,9 @@ function PromptCoverage({
   )
 }
 
+const noSubscribe = () => () => {}
+const meshFlag = () => new URLSearchParams(window.location.search).get("voice") === "mesh"
+
 export function DescribeStep({
   prompt,
   onPromptChange,
@@ -132,6 +136,8 @@ export function DescribeStep({
   essential,
 }: DescribeStepProps) {
   const speech = useSpeechRecognition()
+  // PREVIEW (?voice=mesh): an "OK Google" halftone flows around the box while listening.
+  const mesh = React.useSyncExternalStore(noSubscribe, meshFlag, () => false)
   const baseRef = React.useRef("")
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
 
@@ -159,13 +165,14 @@ export function DescribeStep({
     <Button
       type="button"
       size="icon"
-      variant={speech.listening ? "ghost" : "outline"}
-      className={cn("rounded-full", speech.listening && "ai-voice")}
+      variant={speech.listening && !mesh ? "ghost" : "outline"}
+      className={cn("rounded-full", speech.listening && !mesh && "ai-voice")}
       aria-pressed={speech.listening}
       aria-label={speech.listening ? "Stop speaking" : "Speak"}
       onClick={toggleMic}
     >
-      {speech.listening ? <VoiceWave /> : <AudioLines aria-hidden />}
+      {/* PREVIEW (?voice=mesh): a neutral button with a line that moves with the voice. */}
+      {speech.listening ? mesh ? <VoiceLine pulse={speech.transcript} /> : <VoiceWave /> : <AudioLines aria-hidden />}
     </Button>
   )
 
@@ -186,12 +193,13 @@ export function DescribeStep({
         description="Type or speak. We’ll fill in the rest."
       />
 
-      <div {...rise(1)} className={`${rise(1).className} flex w-full flex-col gap-2`}>
+      <div {...rise(1)} className={`${rise(1).className} flex w-full flex-col gap-4`}>
         {/* While drafting, the prompt is read-only and wears the loading ring;
             the steps appear in a gray card under it instead of a new screen.
             While listening, it glows. */}
         <div className="relative z-10 rounded-2xl">
           {speech.listening ? <span aria-hidden className="voice-glow" /> : !drafting && <span aria-hidden className="ai-idle" />}
+          {mesh && <VoiceDots active={speech.listening} />}
           <PromptInput
             id="job-prompt"
             aria-label="About the job"
