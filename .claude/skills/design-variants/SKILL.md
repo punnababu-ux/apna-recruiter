@@ -175,6 +175,11 @@ gets a pointer here, not a copy.
     2026-11-14). Size a home-screen icon's text against each platform's
     crop (iOS rounded square, Android's middle 72 of 108 dp circle), not
     the drawn tile: iOS 72% wide, Android as close to the circle as a few px.
+32h. **Simple on phones keeps the warmth** (approved 2026-11-14). Cutting a
+    phone layout to its essentials drops copy and extra facts, not the one
+    clay object. Offer banners show a 40px clay at the end of the badge row,
+    hanging into the padding so the banner keeps its height. One object per corner: a skin's own
+    phone art gives way to the clay.
 
 ## 1a. Audit: the current version
 

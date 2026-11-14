@@ -8,7 +8,7 @@
  *   <OfferBar
  *     surface="subscription"            subscription · credits · urgent · festive
  *     tone="upgrade"                    the badge dot: upgrade · warning (gold), renew · urgent (salmon)
- *     art={<img … />}                   clay object, 64px / 96px from md
+ *     art={<img … />}                   clay object: 40px in the badge row on phones, 96px on the left from md
  *     badge="Plan ends in 5 days"       why the bar shows (the trigger)
  *     headline={<>Go annual for <OfferBarAccent>₹833/month</OfferBarAccent></>}
  *     sub="1 job live at a time for 365 days · 2,400 database credits"
@@ -27,8 +27,9 @@
  * - The saving is text beside the struck price (Badge "discount"), no chip. The
  *   group reads outward from the price: price, strike, % on phones (left);
  *   %, strike, price from md (right-aligned).
- * - Phones: the art hides; badge (the reason it shows), headline, price,
- *   deadline, then a full-width CTA. The sub line hides when there is a price.
+ * - Phones: badge (the reason it shows) with a 40px clay at the row's end,
+ *   headline, price, deadline, then a full-width CTA. The sub line hides
+ *   when there is a price.
  * - The surface is marked dark, so an `emphasis` CTA renders white.
  */
 
@@ -93,12 +94,18 @@ function OfferBar({ surface = "subscription", tone = "upgrade", art, badge, head
     >
       <div className="flex min-w-0 flex-1 items-center gap-4 md:gap-6">
         {art && <div className="hidden size-24 shrink-0 drop-shadow-lg md:block [&>*]:size-full [&>*]:object-contain">{art}</div>}
-        <div className="flex min-w-0 flex-col items-start gap-1.5">
+        <div className="flex min-w-0 flex-1 flex-col items-start gap-1.5">
           {badge && (
-            <Badge variant={light ? "on-tint" : "on-dark"} size="lg">
-              <span className={cn("size-2 rounded-full", dot)} />
-              {badge}
-            </Badge>
+            // Phones: the clay (40px, as beside a pop-up title) ends the badge row. It hangs
+            // 4px above and below, so the row keeps the badge's height (32px), the clay sits
+            // 12px from the card's top and still clears the headline.
+            <div className="flex w-full items-center justify-between gap-3">
+              <Badge variant={light ? "on-tint" : "on-dark"} size="lg">
+                <span className={cn("size-2 rounded-full", dot)} />
+                {badge}
+              </Badge>
+              {art && <div className="-my-1 size-10 shrink-0 drop-shadow-md md:hidden [&>*]:size-full [&>*]:object-contain">{art}</div>}
+            </div>
           )}
           <p className="text-lg leading-snug font-bold md:text-2xl">{headline}</p>
           {sub && <p className={cn("text-sm", muted, price && "hidden md:block")}>{sub}</p>}

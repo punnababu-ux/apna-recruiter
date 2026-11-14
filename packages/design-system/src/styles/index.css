@@ -1943,14 +1943,20 @@ a[href] > [data-slot="card"] {
 /* Festive skin example: the Diwali toran. */
 /* Diwali skin example: a marigold toran and hanging lanterns over the
    festive gradient. Artwork: public/images/festive/diwali.svg (drawn here). */
-/* Phones get their own art: the desktop props sit in the empty middle, which
-   a stacked phone card fills with text, so phones keep only the balloons in
-   the empty top-right beside the badge. */
+/* Phones: the desktop props sit in the empty middle, which a stacked phone
+   card fills with text, and the banner's clay already takes the top-right
+   (2026-11-14), so phones show the wash alone. */
 @utility bg-festive-holi {
-  background-blend-mode: normal, var(--grain-blend);
-  background: url("/images/festive/holi-phone.svg") top right / 100% auto no-repeat, var(--grain-noise), var(--gradient-festive-holi);
+  background: var(--grain-noise), var(--gradient-festive-holi);
+  background-blend-mode: var(--grain-blend);
   @media (width >= 48rem) {
     background: url("/images/festive/holi.svg") center / cover no-repeat, var(--grain-noise), var(--gradient-festive-holi);
+    background-blend-mode: normal, var(--grain-blend);
+    /* Dark: the pale clouds sit behind white text, so a plum veil sinks them. */
+    &:where(.dark *) {
+      background: linear-gradient(color-mix(in srgb, var(--color-apna-plum-900) 60%, transparent), color-mix(in srgb, var(--color-apna-plum-900) 60%, transparent)), url("/images/festive/holi.svg") center / cover no-repeat, var(--grain-noise), var(--gradient-festive-holi);
+      background-blend-mode: normal, normal, var(--grain-blend);
+    }
   }
 }
 @utility bg-festive-diwali {

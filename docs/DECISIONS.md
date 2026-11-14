@@ -73,6 +73,18 @@ or **Open**.
 - **Would change it:** grain reading as dirt on a phone screen, or too strong in dark mode (it shows more there).
 - **Status:** Decided (Punna, 2026-11-13).
 
+## 2026-11-14 — Offer banners: clay on phones
+
+- **Question:** phones hid the banner's clay, and most phone banners left empty space at the top right. Bring it back?
+- **Why it was hidden:** the 12 Nov "Y" round cut the phone banner to headline, price and CTA (Sumit's simplicity lenses 1, 3, 5). Nobody tried a small clay in the gap that leaves.
+- **Decision (Punna):** every `OfferBar` with `art` shows it on phones as a 40px clay at the end of the badge row, the same size as the clay beside a pop-up title. It hangs 4px above and below the badge, so the banner keeps its height (no extra space) and the clay sits 12px from the card top; it can't meet the headline, price or deadline, whatever the copy. Desktop is unchanged (96px on the left).
+- **Why:** the clay is the brand's warmth and shows the banner's stake; one small object adds no choice. The empty top-right was already used for art on Holi.
+- **Holi:** its phone balloons (`holi-phone.svg`) are removed so the corner holds one object, the clay ("one warm object, never a crowd").
+- **Holi in dark mode (bug fix, same day):** the skin is a light surface whose text follows the theme, so in dark mode it was white on the pastel wash. `--gradient-festive-holi` now has a dark value (the wash sunk into plum-900), and from md a plum veil dims the pale clouds behind the price.
+- **Checked:** all 18 cases on /apnahire/banners at 320 and 375px: no overflow, the longest badge ("80 database credits left") keeps 8px+ clear.
+- **What would change it:** the final banner clay set reading poorly at 40px.
+- **Status:** Decided.
+
 ## 2026-11-13 — ID card: wordmark at the foot, centred
 
 **Question.** The ID card's wordmark sat top left and read off balance (Punna). Top centre or the foot?

@@ -1174,6 +1174,9 @@
    *   unlimited    a black tint, the mirror of the Job credits white tint */
   --checkout-discount-bg: color-mix(in srgb, var(--card) 40%, transparent);
   --checkout-discount-fg: var(--color-apna-green-300);
+  /* Holi skin on dark: the same blush-to-ice wash, sunk into the dark plum base,
+     so the skin's text (foreground roles) reads white on it. */
+  --gradient-festive-holi: linear-gradient(110deg, color-mix(in oklab, var(--color-atmosphere-blush) 38%, var(--color-apna-plum-900)) 0%, var(--color-apna-plum-900) 50%, color-mix(in oklab, var(--color-atmosphere-ice) 38%, var(--color-apna-plum-900)) 100%);
   /* Green offer header on dark: the product pages' dark canvas treatment
      (--gradient-canvas-ai-calling): green glows over the dark plum base,
      not a flat green sweep. */
