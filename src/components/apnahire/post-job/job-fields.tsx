@@ -9,12 +9,14 @@
  */
 
 import * as React from "react"
+import { mobileDigits } from "@/lib/mobile-number"
 import {
   SuggestionChips,
   Button,
   ChipTabs,
   Field,
   FieldLabel,
+  FloatingInput,
   Input,
   Backpack,
   Ban,
@@ -495,25 +497,20 @@ export function OtherRecruiterFields({ draft, update }: FieldEditorProps) {
   const r = draft.otherRecruiter
   const set = (patch: Partial<typeof r>) => update("otherRecruiter", { ...r, ...patch })
   return (
-    <div className="flex flex-col gap-5">
-      <Field>
-        <FieldLabel htmlFor="rec-name">Name</FieldLabel>
-        <Input id="rec-name" value={r.name} onChange={(e) => set({ name: e.target.value })} />
-      </Field>
-      <Field>
-        <FieldLabel htmlFor="rec-phone">WhatsApp number</FieldLabel>
-        <Input
-          id="rec-phone"
-          inputMode="tel"
-          value={r.phone}
-          onChange={(e) => set({ phone: e.target.value })}
-          placeholder="+91"
-        />
-      </Field>
-      <Field>
-        <FieldLabel htmlFor="rec-email">Email</FieldLabel>
-        <Input id="rec-email" type="email" value={r.email} onChange={(e) => set({ email: e.target.value })} />
-      </Field>
+    // Several text fields together: labels inside (FloatingInput), as on onboarding.
+    <div className="flex flex-col gap-4">
+      <FloatingInput id="rec-name" label="Name" autoComplete="name" value={r.name} onChange={(e) => set({ name: e.target.value })} />
+      <FloatingInput
+        id="rec-phone"
+        label="WhatsApp number"
+        prefix="+91"
+        type="tel"
+        inputMode="numeric"
+        autoComplete="tel-national"
+        value={r.phone}
+        onChange={(e) => set({ phone: mobileDigits(e.target.value) })}
+      />
+      <FloatingInput id="rec-email" label="Email" type="email" autoComplete="email" value={r.email} onChange={(e) => set({ email: e.target.value })} />
     </div>
   )
 }

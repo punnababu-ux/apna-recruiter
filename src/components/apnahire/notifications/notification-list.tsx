@@ -34,10 +34,10 @@ import {
   Button,
   TrendingUp,
   Check,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+  ActionMenu,
+  ActionMenuContent,
+  ActionMenuItem,
+  ActionMenuTrigger,
   MoreVertical,
   Separator,
   SheetPanelHeader,
@@ -181,21 +181,21 @@ export function NotificationList({ variant }: { variant: "panel" | "page" }) {
 
   // The list's actions; one item today, room for more (settings, clear read).
   const menu = (
-    <DropdownMenu>
-      <DropdownMenuTrigger
+    <ActionMenu>
+      <ActionMenuTrigger
         render={
           <Button variant="ghost" size="icon-sm" aria-label="Notification actions" className="shrink-0 text-muted-foreground" />
         }
       >
         <MoreVertical className="size-5" aria-hidden />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem className="whitespace-nowrap" disabled={unreadCount === 0} onClick={markAllRead}>
-          <Check className="size-3.5" />
+      </ActionMenuTrigger>
+      <ActionMenuContent align="end">
+        <ActionMenuItem className="whitespace-nowrap" disabled={unreadCount === 0} onClick={markAllRead}>
+          <Check />
           Mark all as read
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+        </ActionMenuItem>
+      </ActionMenuContent>
+    </ActionMenu>
   )
 
   return (

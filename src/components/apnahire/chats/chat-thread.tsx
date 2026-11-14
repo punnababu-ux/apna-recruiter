@@ -88,10 +88,10 @@ import {
   ChatMessageList,
   ChatNotice,
   ChatUnreadDivider,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+  ActionMenu,
+  ActionMenuContent,
+  ActionMenuItem,
+  ActionMenuTrigger,
   MapPin,
   MoreVertical,
   Paperclip,
@@ -479,26 +479,26 @@ export function ChatThread({ thread }: { thread: Thread }) {
           >
             <UserRound className="size-4" aria-hidden />
           </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger
+          <ActionMenu>
+            <ActionMenuTrigger
               render={
                 <Button variant="ghost" size="icon-sm" aria-label="Chat actions" className="shrink-0 text-muted-foreground" />
               }
             >
               <MoreVertical className="size-5" aria-hidden />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            </ActionMenuTrigger>
+            <ActionMenuContent align="end">
               {/* PRD: the recruiter's "Not interested" closes the thread as
                   "Not a fit" and stops the AI. Undo is in the toast. */}
-              <DropdownMenuItem
+              <ActionMenuItem
                 className="whitespace-nowrap"
                 disabled={!!unavailable}
                 onClick={closed ? () => reopenThread(thread.id) : notInterested}
               >
                 {closed ? "Reopen chat" : "Not interested"}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              </ActionMenuItem>
+            </ActionMenuContent>
+          </ActionMenu>
         </div>
         {/* The job card: which job this thread is about. From md it is the
             sub-row under the band (one line, same height as the list's and

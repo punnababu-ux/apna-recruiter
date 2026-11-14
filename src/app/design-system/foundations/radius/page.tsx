@@ -313,7 +313,7 @@ export default function RadiusMotionPage() {
                 </div>
               </div>
             </AccordionTrigger>
-            <AccordionContent className="pt-6">
+            <AccordionContent className="pt-7">
               <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
                 {primitiveRadiuses.map((r) => (
                   <div key={r.token} className="rounded-xl border border-border bg-card p-3 text-center space-y-2 flex flex-col justify-between shadow-xs">

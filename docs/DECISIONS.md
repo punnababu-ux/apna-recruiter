@@ -9,6 +9,18 @@ or **Open**.
 ---
 
 
+## 2026-11-14 — Install icon: a bigger wordmark
+
+**Question.** On a phone, "apna" and "Recruiter" read small next to other app icons. How much bigger can they go without being cropped?
+
+**Decision.** The wordmark is 12% larger on the iPhone and desktop icons (64% → 72% of the width). The Android maskable icon gets 5%. Android shows only the middle 72 of 108 dp in a circle, so the wordmark's farthest corner now sits at 164 of the 171 px it can reach (512 px canvas). The master SVGs are unchanged; `scripts/render-recruiter-icons.mjs` renders the PNGs with these scales. The icon URLs carry `?v=2` so phones fetch the new icon.
+
+**Why.** Punna: bigger, "not a lot", because a larger wordmark gets cropped on some devices. The Android icon was already close to its crop line.
+
+**What would change it.** A native app, with its own icon sizes per platform.
+
+**Status.** Decided.
+
 ## 2026-11-13 — Autofilled fields keep their own look
 
 - **Question:** a number filled in from the phone's saved data turned the login and homepage fields light blue. Keep the browser's tint?
@@ -16,6 +28,21 @@ or **Open**.
 - **Why:** the tint is a second background the design never chose. On the homepage hero it painted a box inside the pill, so the field looked broken.
 - **What would change it:** a browser that drops the transition trick. Then use an inset shadow in the field's own colour.
 - **Status:** Decided.
+
+## 2026-11-14 — Menus on phones: one component, ActionMenu
+
+- **Question:** the job card's ⋮ opened as a small dropdown on a phone. We agreed (2026-10-29) that menus are bottom sheets on phones. Why did it break?
+- **Decision:** the rule lived in one hand-built component (the job-posting help menu); every other ⋮ used a bare `DropdownMenu`. New primitive `ActionMenu` (dropdown on desktop, bottom sheet on phones, same rows; the sheet titled with what it acts on, e.g. the job title). Moved to it: the job card, Manage plan, the chat thread ⋮, the notifications ⋮.
+- **Not moved yet:** the menus that pick an option (radio or checkbox rows): the chat inbox's sort and filter, the contact-number chooser, the job page's picker. They need radio and checkbox rows in the sheet (TODO). OnlyRounds (a separate desktop tool) and the desktop-only candidates table keep the dropdown.
+- **Why:** the same pattern in one component can't drift (AGENTS.md: "Same pattern, same component").
+- **Status:** Decided.
+
+## 2026-11-14 — Floating labels only where text fields are grouped
+
+- **Question:** onboarding's fields have the label inside (`FloatingInput`). Did job posting and the other forms follow?
+- **Decision (Punna):** a screen that asks one question at a time (each job-posting step) may keep a different field: the heading is its label. Floating labels are for two or more text fields together, where they make the group less cluttered. Applied now: job posting's other-recruiter contact (name, WhatsApp number with +91, email).
+- **Audit, 2026-11-14:** `FloatingInput` is a design-system primitive (onboarding, login, enterprise login, the homepage hero). Still label-above although grouped: the manual location entry (area, nearest city, pin code; the city is a picker), the walk-in details (address with dates and times), and the marketing contact form (with selects). Open: whether a group that mixes text with pickers goes inside or stays above (TODO).
+- **Status:** Decided (rule); open for mixed groups.
 
 ## 2026-11-14 — Filled and outlined buttons paint the same size
 

@@ -38,11 +38,11 @@ import {
   Button,
   Copy,
   Database,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  ActionMenu,
+  ActionMenuContent,
+  ActionMenuItem,
+  ActionMenuSeparator,
+  ActionMenuTrigger,
   Info,
   Lightbulb,
   ListChecks,
@@ -181,51 +181,51 @@ function JobActions({ job }: { job: ApnaJob }) {
   return (
     <>
       {cta}
-      <DropdownMenu>
-        <DropdownMenuTrigger
+      <ActionMenu>
+        <ActionMenuTrigger
           render={
             <Button variant="ghost" size="icon" aria-label={`Actions for ${job.title}`} className="text-muted-foreground">
               <MoreVertical className="size-4" />
             </Button>
           }
         />
-        <DropdownMenuContent align="end">
+        <ActionMenuContent title={job.title} align="end">
           {job.status !== "expired" && (
-            <DropdownMenuItem>
-              <Pencil className="size-3.5" />
+            <ActionMenuItem>
+              <Pencil />
               Edit
-            </DropdownMenuItem>
+            </ActionMenuItem>
           )}
           {job.status === "active" && (
-            <DropdownMenuItem>
-              <Share2 className="size-3.5" />
+            <ActionMenuItem>
+              <Share2 />
               Share
-            </DropdownMenuItem>
+            </ActionMenuItem>
           )}
-          <DropdownMenuItem>
-            <Copy className="size-3.5" />
+          <ActionMenuItem>
+            <Copy />
             Duplicate
-          </DropdownMenuItem>
+          </ActionMenuItem>
           {job.status === "active" && (
             <>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-destructive">
-                <PowerOff className="size-3.5" />
+              <ActionMenuSeparator />
+              <ActionMenuItem variant="destructive">
+                <PowerOff />
                 Close job
-              </DropdownMenuItem>
+              </ActionMenuItem>
             </>
           )}
           {job.status === "draft" && (
             <>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-destructive">
-                <Trash2 className="size-3.5" />
+              <ActionMenuSeparator />
+              <ActionMenuItem variant="destructive">
+                <Trash2 />
                 Delete draft
-              </DropdownMenuItem>
+              </ActionMenuItem>
             </>
           )}
-        </DropdownMenuContent>
-      </DropdownMenu>
+        </ActionMenuContent>
+      </ActionMenu>
     </>
   )
 }

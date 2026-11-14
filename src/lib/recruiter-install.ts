@@ -8,9 +8,12 @@ import type { Metadata } from "next"
  *   apple-touch-icon.png   180, full-bleed square (iOS rounds it)
  *   icon-192 / icon-512    the icon as drawn (Android's install list)
  *   icon-maskable-512      padded square (launchers that crop to a shape)
+ * Rendered by scripts/render-recruiter-icons.mjs, with the wordmark 12%
+ * larger than the master (5% on the maskable, which Android crops). Bump ?v=
+ * when they change, so phones fetch the new icon.
  */
 export const RECRUITER_INSTALL: Pick<Metadata, "manifest" | "appleWebApp" | "icons"> = {
   manifest: "/recruiter/manifest.webmanifest",
   appleWebApp: { capable: true, title: "apna Recruiter", statusBarStyle: "default" },
-  icons: { apple: "/recruiter/apple-touch-icon.png" },
+  icons: { apple: "/recruiter/apple-touch-icon.png?v=2" },
 }

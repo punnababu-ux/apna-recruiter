@@ -56,13 +56,15 @@ function AccordionContent({
       data-slot="accordion-content"
       // Base UI animates the panel's own height (--accordion-panel-height,
       // 0 at the starting / ending style); transition-expand gives it the
-      // system's expand glide and fade.
-      className="h-(--accordion-panel-height) overflow-hidden text-sm transition-expand data-starting-style:h-0 data-starting-style:opacity-0 data-ending-style:h-0 data-ending-style:opacity-0"
+      // system's expand glide and fade. The clip sits 4px outside the content
+      // (-mx-1 -mt-1, given back as padding below), so a field's 3px focus ring
+      // inside isn't cut off at the edges.
+      className="-mx-1 -mt-1 h-(--accordion-panel-height) overflow-hidden text-sm transition-expand data-starting-style:h-0 data-starting-style:opacity-0 data-ending-style:h-0 data-ending-style:opacity-0"
       {...props}
     >
       <div
         className={cn(
-          "pt-0 pb-2.5 [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-4",
+          "px-1 pt-1 pb-2.5 [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-4",
           className
         )}
       >

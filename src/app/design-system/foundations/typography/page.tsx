@@ -351,7 +351,7 @@ export default function TypographyPage() {
                 </div>
               </div>
             </AccordionTrigger>
-            <AccordionContent className="pt-6">
+            <AccordionContent className="pt-7">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Weight Scale */}
                 <div className="rounded-xl border border-border bg-card p-5 space-y-3">

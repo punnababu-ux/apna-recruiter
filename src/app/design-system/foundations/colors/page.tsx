@@ -361,7 +361,7 @@ export default function ColorsPage() {
                 </div>
               </div>
             </AccordionTrigger>
-            <AccordionContent className="pt-6 space-y-6">
+            <AccordionContent className="pt-7 space-y-6">
               {primitiveRamps.map((ramp) => (
                 <div key={ramp.name} className="space-y-2">
                   <h3 className="text-xs font-semibold text-foreground font-mono">

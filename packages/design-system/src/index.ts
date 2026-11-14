@@ -62,6 +62,7 @@ export * from "./components/ui/sticky-cta-bar"
 // 5. Overlays & Dialogs
 export * from "./components/ui/tooltip"
 export * from "./components/ui/popover"
+export * from "./components/ui/action-menu"
 export * from "./components/ui/dropdown-menu"
 export * from "./components/ui/dialog"
 export * from "./components/ui/close-bubble"

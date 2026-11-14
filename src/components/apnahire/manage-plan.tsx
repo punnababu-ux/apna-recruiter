@@ -54,10 +54,10 @@ import {
   Tooltip,
   MoreVertical,
   XCircle,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+  ActionMenu,
+  ActionMenuContent,
+  ActionMenuItem,
+  ActionMenuTrigger,
   Layers,
   ReceiptText,
   MapPin,
@@ -371,8 +371,8 @@ function CurrentPlan({
             <span className="hidden items-center gap-1 sm:flex">{badges}</span>
             {/* Already cancelled: nothing to cancel; "Renew plan" is below. */}
             {!sub.cancelled && (
-              <DropdownMenu>
-                <DropdownMenuTrigger
+              <ActionMenu>
+                <ActionMenuTrigger
                   render={
                     <Button
                       variant="ghost"
@@ -384,13 +384,13 @@ function CurrentPlan({
                     </Button>
                   }
                 />
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem variant="destructive" onClick={onCancel}>
+                <ActionMenuContent align="end">
+                  <ActionMenuItem variant="destructive" onClick={onCancel}>
                     <XCircle />
                     Cancel plan
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                  </ActionMenuItem>
+                </ActionMenuContent>
+              </ActionMenu>
             )}
           </div>
         </div>

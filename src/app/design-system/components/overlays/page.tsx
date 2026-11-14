@@ -8,6 +8,11 @@ import {
   Popover,
   PopoverTrigger,
   PopoverContent,
+  ActionMenu,
+  ActionMenuContent,
+  ActionMenuItem,
+  ActionMenuSeparator,
+  ActionMenuTrigger,
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
@@ -26,7 +31,7 @@ import {
   SheetPanel,
   SheetPanelHeader,
 } from "@apna/design-system"
-import { MoreHorizontal, Info, Edit, Trash, Settings } from "@apna/design-system"
+import { MoreHorizontal, MoreVertical, Copy, Info, Edit, Trash, Settings } from "@apna/design-system"
 
 export default function OverlaysComponentsPage() {
   return (
@@ -116,7 +121,35 @@ export default function OverlaysComponentsPage() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          {/* ActionMenu: the same list on desktop, a bottom sheet on phones. */}
+          <ActionMenu>
+            <ActionMenuTrigger
+              render={
+                <Button variant="ghost" size="icon" aria-label="Actions for Telecaller">
+                  <MoreVertical />
+                </Button>
+              }
+            />
+            <ActionMenuContent title="Telecaller">
+              <ActionMenuItem>
+                <Edit />
+                Edit
+              </ActionMenuItem>
+              <ActionMenuItem>
+                <Copy />
+                Duplicate
+              </ActionMenuItem>
+              <ActionMenuSeparator />
+              <ActionMenuItem variant="destructive">
+                <Trash />
+                Close job
+              </ActionMenuItem>
+            </ActionMenuContent>
+          </ActionMenu>
         </div>
+        <p className="text-sm text-muted-foreground">
+          The ⋮ is <code className="font-mono">ActionMenu</code>: a dropdown here, a bottom sheet on phones. Use it for every action menu a phone can reach.
+        </p>
       </div>
 
       {/* Modal Dialog */}

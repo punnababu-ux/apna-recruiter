@@ -87,6 +87,7 @@ Inventory of components in `@apna/design-system`. Organized according to **Ant D
 | Tooltip          | `import { Tooltip, TooltipTrigger, TooltipContent } from "@apna/design-system"` | Short hover hint. Not for interactive content. |
 | Popover          | `import { Popover, PopoverTrigger, PopoverContent } from "@apna/design-system"` | Click-open floating panel.          |
 | DropdownMenu     | `import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@apna/design-system"` | Popup action menu built on Base UI Menu. |
+| ActionMenu       | `import { ActionMenu, ActionMenuTrigger, ActionMenuContent, ActionMenuItem, ActionMenuSeparator } from "@apna/design-system"` | Action menu (the ⋮): dropdown on desktop, bottom sheet on phones. Use it for every action menu a phone can reach. |
 | Dialog           | `import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@apna/design-system"` | Modal. Focus-trapped. |
 | AlertDialog      | `import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from "@apna/design-system"` | Confirm destructive / irreversible actions. |
 | Sheet            | `import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter } from "@apna/design-system"` | Edge-docked drawer. A bottom `SheetContent` is a phone pop-up (CloseBubble outside it). |

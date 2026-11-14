@@ -36,10 +36,13 @@
  * it, and a frosted or gradient surface has no such colour. Inside the field
  * it works on any surface.
  *
- * When to use it: a short text answer with a short label (name, company,
- * email, mobile number, password). Keep `Field` + `FieldLabel` + `Input`
- * when the label is a full question or when an example must stay visible.
- * Choice questions (chips, radios) always keep their label above.
+ * When to use it (Punna, 2026-11-14): where two or more short text fields sit
+ * together (a form: name, company, email, mobile number, password), so the
+ * group reads uncluttered. A screen that asks ONE question (each job-posting
+ * step) keeps `Input` under its heading: the heading is the label. Keep
+ * `Field` + `FieldLabel` + `Input` when the label is a full question or an
+ * example must stay visible. Choice questions (chips, radios), selects,
+ * dates and times keep their label above.
  *
  * Errors and hints sit under it as with Input: wrap it in `Field` and add
  * `FieldError` / `FieldDescription`. `aria-invalid` paints the error border,

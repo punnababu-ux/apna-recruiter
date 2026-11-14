@@ -171,6 +171,10 @@ gets a pointer here, not a copy.
     neutral outline with one moving line. No gradient on the button; the
     prompt's glow is the only colour. Decorations never run off a phone
     screen.
+32g. **An icon's wordmark is as big as its crop allows** (approved
+    2026-11-14). Size a home-screen icon's text against each platform's
+    crop (iOS rounded square, Android's middle 72 of 108 dp circle), not
+    the drawn tile: iOS 72% wide, Android as close to the circle as a few px.
 
 ## 1a. Audit: the current version
 

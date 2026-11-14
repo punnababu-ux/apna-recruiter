@@ -342,6 +342,18 @@ step pop-up (a question, a confirm, a "what changes"):
    `AlertDialogMedia`, rule, buttons side by side; the
    primary is green `default`, never the dark `emphasis`).
 
+**Text fields: label inside only in a group** (Punna, 2026-11-14). Two or
+more short text fields together (a form) use `FloatingInput`: the label
+sits inside and floats up. A screen that asks one question (each job-posting
+step) keeps a plain `Input` under its heading, which is the label. Choices,
+selects, dates and times keep their label above. Rule in `FloatingInput`'s
+JSDoc.
+
+**Action menus are `ActionMenu`** (2026-11-14). A ⋮ or any menu of actions
+a phone can reach uses `ActionMenu`: a dropdown on desktop, a bottom sheet
+on phones, same rows. A bare `DropdownMenu` opens as a small list on a
+phone and breaks the menu rule below.
+
 **Menus have one type scale** (user call, 2026-10-29). A menu that opens
 from an icon (the job-posting help menu, the profile menu): a popover on
 desktop, a bottom sheet on phones, same content in both.

@@ -94,6 +94,9 @@ Open before ECC: keep "View number" as the green action, or make Shortlist prima
 - [ ] Steps menu: two hand-built chips (step number, "you are here") could be `Badge` (`job-posting-chrome.tsx`)
 - [ ] 13 design-system primitive candidates from the 2026-11-05 audit wait for Punna's pick
 
+- [ ] ActionMenu: radio and checkbox rows in the phone sheet, then move the picker menus (chat inbox sort/filter, contact-number chooser, job page picker) (2026-11-14)
+- [ ] Floating labels in mixed groups (text + a picker): manual location entry, walk-in details, marketing contact form. Punna to decide (2026-11-14)
+
 ## Job details & leads
 - [ ] Job list → job details flow (`/apnahire/jobs` → `/apnahire/jobs/[id]`): candidate leads, Applied | Database matches (Active leads)
 - [ ] Job details journeys: no leads yet · leads arriving · after the job expires (empty states and banners for each)
